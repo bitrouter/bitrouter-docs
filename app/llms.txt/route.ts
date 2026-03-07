@@ -51,7 +51,7 @@ BitRouter is like OpenRouter but permissionless (no KYC, no geo-restrictions), c
 - [Full Documentation](${BASE_URL}/api/docs/llms-full.txt): Complete docs as plain text for LLM ingestion
 - [What is BitRouter?](${BASE_URL}/docs/overview/what-is-bitrouter): Detailed explainer and comparison with OpenRouter
 - [Changelog](${BASE_URL}/docs/overview/changelog): Recent updates and changes
-- [Blog](${BASE_URL}/docs/blog/introducing-bitrouter): Introduction to BitRouter
+- [Blog](${BASE_URL}/blog/introducing-bitrouter): Introduction to BitRouter
 `;
 
 export function GET() {

@@ -48,7 +48,7 @@ const jsonLd = {
       name: "BitRouter SWE-bench Routing Benchmark",
       description:
         "Comparison of AI model routing strategies on SWE-bench Verified, measuring resolve rate vs cost per session.",
-      url: `${BASE_URL}/docs/blog/routing-methodology`,
+      url: `${BASE_URL}/blog/routing-methodology`,
       variableMeasured: [
         {
           "@type": "PropertyValue",

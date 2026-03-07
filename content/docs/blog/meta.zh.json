@@ -1,5 +1,0 @@
-{
-  "title": "博客",
-  "root": true,
-  "pages": ["introducing-bitrouter", "how-bitrouter-works", "routing-methodology"]
-}

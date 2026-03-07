@@ -19,7 +19,7 @@ export const footerLinks: FooterLinkGroup[] = [
       { label: "About", href: "#" },
       { label: "Privacy", href: "#" },
       { label: "Terms of Service", href: "#" },
-      { label: "Blog", href: "/docs/blog" },
+      { label: "Blog", href: "/blog" },
     ],
   },
   {

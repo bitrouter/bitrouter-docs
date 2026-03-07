@@ -279,7 +279,7 @@ export function Benchmarks() {
           </div>
 
           <Link
-            href="/docs/blog/routing-methodology"
+            href="/blog/routing-methodology"
             className="inline-block text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             {t("methodologyLink")} &rarr;

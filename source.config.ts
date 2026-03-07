@@ -1,6 +1,5 @@
 import {
   defineConfig,
-  defineCollections,
   defineDocs,
   frontmatterSchema,
   metaSchema,
@@ -22,10 +21,14 @@ export const docs = defineDocs({
   },
 });
 
-export const blog = defineCollections({
-  type: "doc",
+export const blog = defineDocs({
   dir: "content/blog",
-  schema: frontmatterSchema,
+  docs: {
+    schema: frontmatterSchema,
+  },
+  meta: {
+    schema: metaSchema,
+  },
 });
 
 export default defineConfig({

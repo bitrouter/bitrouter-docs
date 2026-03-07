@@ -1,0 +1,25 @@
+{
+  "title": "Overview",
+  "root": true,
+  "pages": [
+    "---Introduction---",
+    "index",
+    "faqs",
+    "changelog",
+    "enterprise",
+    "---Key Concepts---",
+    "service-primitives",
+    "pay-per-use",
+    "know-your-agent",
+    "payment-delegation-key",
+    "---Onboarding Guide---",
+    "skills-cli",
+    "manual-guide",
+    "self-host",
+    "---About Us---",
+    "terms-of-service",
+    "privacy-policy",
+    "[Brand Kit](https://github.com/AIMOverse/brand-kit)",
+    "[Contact](mailto:contact@bitrouter.ai)"
+  ]
+}

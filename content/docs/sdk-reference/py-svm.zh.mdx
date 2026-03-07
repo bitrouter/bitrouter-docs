@@ -1,0 +1,66 @@
+---
+title: aimo_network.svm
+description: AiMo Network Python SDK 的 Solana 钱包支持
+---
+
+# aimo_network.svm
+
+AiMo Python 客户端的 Solana (SVM) 钱包支持。提供 `SvmClientSigner`，实现了用于 Solana 钱包的 [`ClientSigner`](/docs/sdk-reference/py-client#clientsigner-protocol) 协议。
+
+```bash
+pip install "aimo-network[solana]"
+```
+
+**依赖：** `solders>=0.21`, `base58>=2.1`, `x402[svm]>=2.2`
+
+## SvmClientSigner
+
+```python
+from solders.keypair import Keypair
+from aimo_network.svm import SvmClientSigner, SOLANA_MAINNET_CHAIN_ID
+
+keypair = Keypair.from_base58_string("your-base58-private-key")
+
+signer = SvmClientSigner(
+    keypair=keypair,
+    chain_id=SOLANA_MAINNET_CHAIN_ID,
+)
+```
+
+### 构造函数参数
+
+| 参数 | 类型 | 必需 | 默认值 | 描述 |
+|------|------|------|--------|------|
+| `keypair` | `solders.Keypair` | 是 | — | Solana 密钥对 |
+| `chain_id` | `str` | 否 | `SOLANA_MAINNET_CHAIN_ID` | CAIP-2 链标识符 |
+| `rpc_url` | `str \| None` | 否 | `None` | 自定义 Solana RPC URL |
+
+### 属性和方法
+
+| 成员 | 类型 | 描述 |
+|------|------|------|
+| `address` | `str` (property) | Base58 编码的 Solana 公钥 |
+| `network` | `str` (property) | CAIP-2 链标识符 |
+| `scheme` | `str` (property) | `"exact"` |
+| `await sign_payload(payload)` | `str` | 签名 SIWx 载荷，返回 base58 签名 |
+| `await create_payment_payload(...)` | `dict` | 创建 x402 支付载荷 |
+
+### 自定义 RPC URL
+
+```python
+signer = SvmClientSigner(
+    keypair=keypair,
+    chain_id=SOLANA_MAINNET_CHAIN_ID,
+    rpc_url="https://your-rpc-provider.com",
+)
+```
+
+## Chain ID 常量
+
+```python
+from aimo_network.svm import (
+    SOLANA_MAINNET_CHAIN_ID,   # "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp"
+    SOLANA_DEVNET_CHAIN_ID,    # "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1"
+    SOLANA_TESTNET_CHAIN_ID,   # "solana:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z"
+)
+```

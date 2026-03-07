@@ -1,0 +1,123 @@
+---
+title: 模型、工具与 Agent
+---
+
+与常见的 LLM 聚合器仅统一模型不同，BitRouter 聚合了模型、工具和 Agent，使服务可以以高度灵活、Agent 原生的方式进行组合和集成。
+
+## 服务原语
+
+在 BitRouter 上注册的所有服务都属于三种原语之一：模型、工具和 Agent，以其 API 标准进行区分。
+
+单个服务可以同时实现多种原语。
+
+### 模型
+
+模型服务通过 OpenAI 兼容的 Chat/Completion 端点提供 LLM 推理能力。
+
+```json
+// Request
+POST /v1/chat/completions
+{
+  "model": "deepseek/deepseek-v3.2",
+  "messages": [
+    { "role": "user", "content": "Hello" }
+  ]
+}
+
+// Response
+{
+  "id": "chatcmpl-123",
+  "choices": [{
+    "message": { "role": "assistant", "content": "Hi there!" }
+  }]
+}
+```
+
+#### 多模态支持
+
+模型可以支持文本之外的多种输入和输出模态：
+
+- **视觉**：向支持视觉的模型发送图像进行分析、描述和 OCR
+- **图像生成**：使用兼容模型从文本提示生成图像
+
+多模态输入使用相同的 `/v1/chat/completions` 端点。图像可以作为直接 URL（`https://example.com/image.jpg`）或 base64 编码数据（`data:image/jpeg;base64,{data}`）提供。
+
+访问 [Marketplace](https://aimo.network/marketplace) 查找支持所需模态的模型。
+
+### 工具
+
+工具服务遵循 [MCP (Model Context Protocol)](https://modelcontextprotocol.io) 标准，通过 JSON-RPC 2.0 暴露功能。
+
+```json
+// Discover available tools
+{ "jsonrpc": "2.0", "id": 1, "method": "tools/list" }
+
+// Response
+{
+  "jsonrpc": "2.0", "id": 1,
+  "result": {
+    "tools": [{
+      "name": "get_price",
+      "description": "Get token price",
+      "inputSchema": {
+        "type": "object",
+        "properties": { "symbol": { "type": "string" } },
+        "required": ["symbol"]
+      }
+    }]
+  }
+}
+
+// Invoke a tool
+{ "jsonrpc": "2.0", "id": 2, "method": "tools/call",
+  "params": { "name": "get_price", "arguments": { "symbol": "ETH" } } }
+
+// Response
+{
+  "jsonrpc": "2.0", "id": 2,
+  "result": { "content": [{ "type": "text", "text": "ETH: $3,245.50" }] }
+}
+```
+
+### Agent
+
+Agent 服务遵循 [A2A (Agent2Agent)](https://a2a-protocol.org) 标准，通过基于 HTTP 的 JSON-RPC 2.0 实现自主的 Agent 间通信。
+
+```json
+// Agent Card (capability discovery at /.well-known/agent.json)
+{
+  "name": "TradingAgent",
+  "description": "Executes crypto trades",
+  "skills": [{ "id": "execute_trade", "name": "Execute Trade" }],
+  "protocolVersion": "0.3"
+}
+
+// Send task to agent
+POST /a2a
+{
+  "message": {
+    "messageId": "msg-123",
+    "role": "user",
+    "parts": [{ "text": "Buy 1 ETH at market price" }]
+  }
+}
+
+// Task response
+{
+  "id": "task-456",
+  "status": { "state": "completed" },
+  "artifacts": [{ "parts": [{ "text": "Purchased 1 ETH at $3,245.50" }] }]
+}
+```
+
+## 最佳实践
+
+单个服务可以根据使用场景暴露不同的原语。选择合适的原语有助于 AI Agent 更高效地与 BitRouter 交互。
+
+**示例：加密货币 AI 交易 Agent**
+
+| 使用场景 | 推荐原语 | 协议 |
+|----------|----------------------|----------|
+| 前端应用的后端 | 模型 | Chat/Completion |
+| 供其他 Agent 调用的工具 | 工具 | MCP |
+| 自主的 Agent 间交互 | Agent | A2A |

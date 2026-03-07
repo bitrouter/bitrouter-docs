@@ -1,0 +1,108 @@
+---
+title: "How BitRouter Works: A Technical Deep Dive"
+description: "Under the hood of BitRouter's routing pipeline — how we classify tasks, select models, handle escalation, and maintain session awareness across multi-turn agent conversations."
+---
+
+BitRouter sits between your AI agent and the LLM providers. It looks like a standard OpenAI-compatible API, but behind the scenes it makes intelligent routing decisions on every call. This post walks through the technical details of how that works.
+
+## Architecture overview
+
+```
+Agent → BitRouter Gateway → Router → LLM Provider
+                              ↑
+                         Session Store
+```
+
+The gateway receives standard chat completion requests. Before forwarding to an LLM provider, the router examines the request and decides which model to use. The session store maintains context across calls within the same agent session.
+
+## The routing pipeline
+
+Every incoming request passes through four stages:
+
+### 1. Session identification
+
+BitRouter groups related calls into sessions using a combination of signals:
+
+- Explicit session IDs (if your agent provides them)
+- Conversation thread detection (matching `messages` arrays across calls)
+- Temporal proximity (calls from the same API key within a short window)
+
+Session grouping is critical because routing decisions depend on what's happened earlier in the session. A call that looks simple in isolation might be part of an error recovery loop that needs a more capable model.
+
+### 2. Task classification
+
+The classifier examines the incoming request and assigns a difficulty score. It considers:
+
+- **Prompt complexity** — length, number of instructions, presence of code, structured output requirements
+- **Tool usage patterns** — what tools the agent has called recently, and what the results were
+- **Session trajectory** — is the agent making progress, or has it been stuck in a loop?
+- **Error signals** — test failures, syntax errors, or agent self-corrections in recent turns
+
+The classifier is a lightweight model itself — a fine-tuned embedding model that runs in under 2ms. It outputs a difficulty score from 0 to 1.
+
+### 3. Model selection
+
+The difficulty score maps to a model tier through a configurable threshold table:
+
+| Difficulty | Balanced config | Cost-optimized config |
+|---|---|---|
+| 0.0 – 0.3 | Haiku | Haiku |
+| 0.3 – 0.6 | Sonnet | Haiku |
+| 0.6 – 0.8 | Sonnet | Sonnet |
+| 0.8 – 1.0 | Opus | Sonnet |
+
+These thresholds are tunable. The balanced configuration favors quality (using Sonnet for medium tasks), while the cost-optimized configuration pushes more calls to Haiku.
+
+### 4. Response monitoring and escalation
+
+After sending the request to the selected model, BitRouter monitors the response for quality signals:
+
+- **Coherence check** — does the response logically follow from the prompt?
+- **Completion check** — did the model finish its response or truncate?
+- **Error pattern detection** — does the response contain known failure patterns (e.g., "I don't know", repeated content, malformed code)?
+- **Tool call validation** — if the model is calling tools, are the calls well-formed?
+
+If quality signals indicate a problem, BitRouter triggers an **escalation**: the same request is re-sent to a more capable model. The escalated response replaces the original.
+
+Escalation decisions happen in real time, typically within the first few tokens of a streaming response. This minimizes wasted compute — we don't wait for the full response before deciding to escalate.
+
+## Session awareness
+
+The most important architectural decision in BitRouter is maintaining session state. Without it, the router would treat every call independently and miss critical context.
+
+### What session state tracks
+
+- **Call history** — which models were used for previous calls and what the outcomes were
+- **Error accumulation** — how many errors have occurred in the session and how recently
+- **Escalation history** — which calls were escalated and whether escalation helped
+- **Task phase detection** — whether the agent appears to be in exploration, implementation, or debugging phases
+
+### How session state influences routing
+
+A simple example: if the last three calls all produced errors, the router biases toward more capable models for the next call, regardless of what the classifier says. Conversely, if the session has been running smoothly on Haiku for 10 calls, there's no reason to escalate.
+
+This session-aware approach is why BitRouter outperforms static routing rules. A fixed "use Haiku for short prompts, Opus for long ones" rule misses the dynamic nature of agent sessions.
+
+## Latency budget
+
+BitRouter adds overhead to every call. Here's where the time goes:
+
+| Component | Latency (p50) | Latency (p99) |
+|---|---|---|
+| Session lookup | 0.5ms | 1.2ms |
+| Task classification | 1.5ms | 2.8ms |
+| Model selection | 0.1ms | 0.3ms |
+| Request forwarding | 2.0ms | 5.0ms |
+| **Total overhead** | **4.1ms** | **9.3ms** |
+
+The total overhead stays under 10ms at p99. For comparison, the LLM response itself typically takes 500ms–10s depending on the model and prompt length. BitRouter's overhead is negligible.
+
+## What's next
+
+We're actively working on:
+
+- **Multi-provider routing** — selecting across Anthropic, OpenAI, and Google models within a single session based on each provider's strengths
+- **Custom classifiers** — letting users train domain-specific classifiers for their particular agent workloads
+- **Predictive escalation** — using early streaming tokens to predict whether a response will need escalation, reducing wasted tokens
+
+Read more about our [benchmark methodology](/docs/blog/routing-methodology) or [get started](/) with BitRouter today.

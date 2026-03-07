@@ -1,0 +1,96 @@
+---
+title: "@aimo.network/svm"
+description: AiMo Network SDK 的 Solana 钱包支持
+---
+
+# @aimo.network/svm
+
+AiMo 客户端的 Solana (SVM) 钱包支持。提供 `SvmClientSigner`，实现了用于 Solana 钱包的 [`ClientSigner`](/docs/sdk-reference/ts-client#clientsigner) 接口。
+
+```bash
+npm install @aimo.network/svm
+```
+
+**对等依赖：** `@aimo.network/client`, `@solana/kit`, `bs58`
+
+## SvmClientSigner
+
+```typescript
+import { SvmClientSigner, SOLANA_MAINNET_CHAIN_ID } from "@aimo.network/svm";
+import { createKeyPairSignerFromBytes } from "@solana/kit";
+import bs58 from "bs58";
+
+const privateKeyBytes = bs58.decode(process.env.SOLANA_PRIVATE_KEY!);
+const keypairSigner = await createKeyPairSignerFromBytes(privateKeyBytes);
+
+const signer = new SvmClientSigner({
+  signer: keypairSigner,
+  chainId: SOLANA_MAINNET_CHAIN_ID,
+});
+```
+
+### SvmClientSignerOptions
+
+| 属性 | 类型 | 必需 | 默认值 | 描述 |
+|------|------|------|--------|------|
+| `signer` | `SvmSigner` | 是 | — | Solana 密钥对签名器（来自 `@solana/kit`） |
+| `chainId` | `` `${string}:${string}` `` | 否 | `SOLANA_MAINNET_CHAIN_ID` | CAIP-2 链标识符 |
+| `config` | `ClientSvmConfig` | 否 | — | x402 配置（例如自定义 `rpcUrl`） |
+
+### 属性和方法
+
+| 成员 | 类型 | 描述 |
+|------|------|------|
+| `address` | `Address` (readonly) | Base58 编码的 Solana 公钥 |
+| `network` | `` `${string}:${string}` `` | CAIP-2 链标识符 |
+| `scheme` | `"exact"` | x402 支付方案 |
+| `signPayload(payload)` | `Promise<string>` | 签名 SIWx 载荷，返回 base58 签名 |
+| `createPaymentPayload(x402Version, paymentRequirements)` | `Promise<...>` | 创建 x402 支付载荷 |
+
+### 自定义 RPC URL
+
+```typescript
+const signer = new SvmClientSigner({
+  signer: keypairSigner,
+  chainId: SOLANA_MAINNET_CHAIN_ID,
+  config: {
+    rpcUrl: "https://your-rpc-provider.com",
+  },
+});
+```
+
+## createSvmClientSigner
+
+工厂函数 — 等同于 `new SvmClientSigner(options)`。
+
+```typescript
+import { createSvmClientSigner } from "@aimo.network/svm";
+
+const signer = createSvmClientSigner({
+  signer: keypairSigner,
+  chainId: SOLANA_MAINNET_CHAIN_ID,
+});
+```
+
+## Chain ID 常量
+
+```typescript
+import {
+  SOLANA_MAINNET_CHAIN_ID,   // "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp"
+  SOLANA_DEVNET_CHAIN_ID,    // "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1"
+  SOLANA_TESTNET_CHAIN_ID,   // "solana:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z"
+} from "@aimo.network/svm";
+```
+
+## 类型
+
+```typescript
+// 最小消息签名接口
+interface SvmMessageSigner {
+  address: Address;
+  signMessages(messages: ...): Promise<SignatureDictionary[]>;
+}
+
+// 组合签名器类型（消息签名 + 交易签名）
+type SvmSigner = SvmMessageSigner & ClientSvmSigner;
+```

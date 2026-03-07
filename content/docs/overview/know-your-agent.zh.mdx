@@ -1,0 +1,29 @@
+---
+title: Know Your Agent (KYA)
+---
+
+当今的在线商务依赖双重 KYC 体系——来自 Amazon 等平台和 Stripe 等支付服务商——来保护买卖双方的权益。但这种模式并不适用于 Agent 化的网络。传统 KYC 无法验证 AI Agent，而 Agent 间的交易更加微额且即时。这就需要一个原生支持 Agent 信任机制的支付服务商。
+
+## KYA 技术栈
+
+BitRouter Know Your Agent 系统的核心是 [ERC-8004](https://eips.ethereum.org/EIPS/eip-8004)（"Trustless Agents"）——一个用于 Agent 身份、信誉和验证的链上标准。每个 Agent 都会获得一个可移植的 ID 和可验证的 KYA 分数，可跨平台使用。
+
+ERC-8004 与新兴的 Agent 化网络原生集成：
+
+- **[A2A](https://google.github.io/A2A/)** — Google 的 Agent-to-Agent 协议，用于发现和消息传递。ERC-8004 为每次交互添加链上信任。
+- **[MCP](https://modelcontextprotocol.io/)** — Anthropic 的 Model Context Protocol，用于工具访问。ERC-8004 让 Agent 在使用前验证工具提供者。
+- **[x402](https://www.x402.org/)** — Coinbase 的基于 HTTP 的稳定币微支付通道。ERC-8004 确保付款方和收款方在结算前都具有可验证的信誉。
+
+这些技术共同为 BitRouter 提供了完全**无许可**和**无信任**的基础——任何 Agent 都可以参与，信誉存储在链上而非由平台声明。
+
+## 工作原理
+
+1. **发现**（链上）— 客户端搜索身份注册表，找到具有所需能力的 Agent。每个 Agent 都有一个链上可移植 ID，关联其支持的端点、钱包地址和信任模型。
+
+2. **评估**（BitRouter 网络）— 客户端查看由 BitRouter 网络以跨链方式聚合的信誉分数——从任何支持链上的交易中提取反馈，汇聚成统一的 KYA 档案。
+
+3. **验证**（BitRouter 网络，可选，即将推出）— 对于高风险任务，BitRouter 网络协调独立的第三方验证（质押重执行、zkML 或 TEE 认证），跨链进行，不将 Agent 锁定在单一结算层。
+
+4. **交易**（链上）— 客户端雇用 Agent，支付在链上结算。任务完成后，客户端留下反馈——为 Agent 的下一次交互积累信誉。
+
+关于 ERC-8004 的详细说明，请参阅 [Introduction to ERC-8004: The Trust Layer for AI Agents](https://ai.ethereum.foundation/blog/intro-erc-8004)。

@@ -1,0 +1,51 @@
+---
+title: aimo_network.evm
+description: Ethereum and Base wallet support for AiMo Network Python SDK
+---
+
+# aimo_network.evm
+
+Ethereum and Base (EVM) wallet support for the AiMo Python client. Provides `EvmClientSigner` which implements the [`ClientSigner`](/docs/sdk-reference/py-client#clientsigner-protocol) protocol for EVM wallets.
+
+```bash
+pip install "aimo-network[evm]"
+```
+
+**Dependencies:** `eth-account>=0.13`, `x402[evm]>=2.2`
+
+## EvmClientSigner
+
+```python
+from eth_account import Account
+from aimo_network.evm import EvmClientSigner, EVM_MAINNET_CHAIN_ID
+
+account = Account.from_key("0x...")
+
+signer = EvmClientSigner(
+    account=account,
+    chain_id=EVM_MAINNET_CHAIN_ID,
+)
+```
+
+### Constructor Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `account` | `eth_account.Account` | Yes | — | Ethereum account |
+| `chain_id` | `str` | No | `EVM_MAINNET_CHAIN_ID` | CAIP-2 chain identifier |
+
+### Properties & Methods
+
+| Member | Type | Description |
+|--------|------|-------------|
+| `address` | `str` (property) | `0x`-prefixed hex Ethereum address |
+| `network` | `str` (property) | CAIP-2 chain identifier |
+| `scheme` | `str` (property) | `"exact"` |
+| `await sign_payload(payload)` | `str` | Sign a SIWx payload, returns hex signature |
+| `await create_payment_payload(...)` | `dict` | Create x402 payment payload |
+
+## Chain ID Constants
+
+```python
+from aimo_network.evm import EVM_MAINNET_CHAIN_ID  # "eip155:1"
+```

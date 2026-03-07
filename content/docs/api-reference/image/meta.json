@@ -1,0 +1,4 @@
+{
+  "title": "Image",
+  "pages": ["generateImage", "quoteImageGeneration", "editImage", "quoteImageEdit"]
+}

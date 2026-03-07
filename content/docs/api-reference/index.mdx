@@ -1,0 +1,45 @@
+---
+title: API Reference
+description: REST API documentation for the AiMo Network router.
+---
+
+The AiMo Network API provides access to a decentralized routing network for AI services. It connects clients who need AI capabilities with agents and providers who supply them, handling authentication, payments, and protocol translation.
+
+## Base URL
+
+```
+https://beta.aimo.network/api/v1
+```
+
+## Authentication
+
+AiMo uses **SIWx (Sign-In-With-X)** — a permissionless, wallet-based authentication scheme. You authenticate by signing a CAIP-122 message with a Solana or EVM wallet and sending the signature in the `Sign-In-With-X` header as a base64-encoded JSON envelope:
+
+```json
+{
+  "message": "<CAIP-122 message>",
+  "signature": "<base58 for Solana, hex for EVM>"
+}
+```
+
+Signatures expire after 5 minutes.
+
+## Payments
+
+Paid endpoints (chat, image generation, video generation) require either:
+
+- **Session balance** — pre-funded USDC balance tied to your wallet identity. The router debits per-request.
+- **X402 payment** — per-request crypto payment via the `PAYMENT-SIGNATURE` header.
+
+If no balance or payment is provided, the router returns `402 Payment Required`.
+
+## Endpoints
+
+| Section | Description |
+|---|---|
+| [Chat](/docs/api-reference/chat) | OpenAI-compatible chat completions |
+| [Image](/docs/api-reference/image) | Synchronous image generation and editing |
+| [Video](/docs/api-reference/video) | Async video generation (queue-and-poll) |
+| [Models](/docs/api-reference/models) | Model discovery and search |
+| [Analytics](/docs/api-reference/analytics) | Public platform analytics |
+| [Health](/docs/api-reference/health) | Health check |

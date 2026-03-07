@@ -1,0 +1,62 @@
+---
+title: Provider Routing
+---
+
+## Price-Based Load Balancing (Default Strategy)
+
+For each model in your request, BitRouter's default behavior is to load balance requests across providers, prioritizing price.
+
+If you are more sensitive to throughput than price, you can use the `sort` field to explicitly prioritize throughput.
+
+Here is BitRouter's default load balancing strategy:
+
+1. Prioritize providers that have not seen significant outages in the last 30 seconds.
+2. For the stable providers, look at the lowest-cost candidates and select one weighted by inverse square of the price.
+3. Use the remaining providers as fallbacks.
+
+**Example**: If Provider A costs $1 per million tokens, Provider B costs $2, and Provider C costs $3, and Provider B recently saw a few outages:
+- Your request is routed to Provider A. Provider A is 9x more likely to be first routed to than Provider C because (1 / 3² = 1/9) (inverse square of the price).
+- If Provider A fails, then Provider C will be tried next.
+- If Provider C also fails, Provider B will be tried last.
+
+If you have `sort` or `order` set in your provider preferences, load balancing will be disabled.
+
+## Provider Sorting
+
+As described above, BitRouter load balances based on price, while taking uptime into account.
+
+If you instead want to _explicitly_ prioritize a particular provider attribute, you can include the `sort` field in the `provider` preferences. Load balancing will be disabled, and the router will try providers in order.
+
+The three sort options are:
+
+- `"price"`: prioritize lowest price
+- `"throughput"`: prioritize highest throughput
+- `"latency"`: prioritize lowest latency
+
+To _always_ prioritize low prices, and not apply any load balancing, set `sort` to `"price"`.
+
+To _always_ prioritize low latency, and not apply any load balancing, set `sort` to `"latency"`.
+
+## Ordering Specific Providers
+
+You can set the providers that BitRouter will prioritize for your request using the `order` field.
+
+| Field | Type | Default | Description |
+| --- | --- | --- | --- |
+| `order` | string[] | - | List of provider slugs to try in order (e.g. `["anthropic", "openai"]`). |
+
+The router will prioritize providers in this list, and in this order, for the model you're using. If you don't set this field, the router will load balance across the top providers to maximize uptime.
+
+BitRouter will try them one at a time and proceed to other providers if none are operational. If you don't want to allow any other providers, you should disable fallbacks as well.
+
+## Disabling Fallbacks
+
+To guarantee that your request is only served by the top (lowest-cost) provider, you can disable fallbacks.
+
+This is combined with the `order` field from Ordering Specific Providers to restrict the providers that BitRouter will prioritize to just your chosen list.
+
+| Field | Type | Default | Description |
+| --- | --- | --- | --- |
+| `allow_fallbacks` | boolean | `true` | Whether to allow backup providers when the primary is unavailable. |
+
+## JSON Schema

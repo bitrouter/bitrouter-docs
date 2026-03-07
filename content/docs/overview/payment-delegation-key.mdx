@@ -1,0 +1,33 @@
+---
+title: Payment Delegation Key (PDK)
+---
+
+<Callout type="info">
+PDK is optional. For fully permissionless access, you can use BitRouter directly with a signer parameter (supports both Base and Solana). See the [SDK Reference](/docs/sdk-reference) to learn more.
+</Callout>
+
+A Payment Delegation Key (PDK) lets AI agents pay for services on your behalf—without giving them full control of your wallet.
+
+## Overview
+
+Traditional AI platforms require you to create an account, top up credits, and generate an API key. Your funds sit in their custody, locked to that single platform. PDKs work differently: you delegate specific permissions to an agent while your funds stay in your own wallet until the moment of use.
+
+When you create a PDK, you define exactly what the agent can do—spending limits, expiration, allowed recipients. The agent operates autonomously within those boundaries, and you retain full custody of your funds.
+
+## Permission Parameters
+
+When generating a PDK, users configure permissions to control what the AI agent can do. These are the core parameters:
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `max_transaction_value` | number | Maximum value allowed per single transaction |
+| `daily_spending_limit` | number | Total amount that can be spent within 24 hours |
+| `valid_until` | timestamp | When the PDK expires and becomes invalid |
+| `allowed_recipients` | address[] | Addresses the PDK can send transactions to |
+
+For most use cases, setting a `daily_spending_limit` and `valid_until` provides sufficient protection while allowing agents to operate autonomously.
+
+<Callout type="info">
+PDK is built on top of [Privy's policy engine](https://docs.privy.io/controls/overview). For advanced configurations like contract allowlists, calldata restrictions, and typed data signing rules, see the [Privy documentation](https://docs.privy.io/controls/policies/overview).
+</Callout>
+

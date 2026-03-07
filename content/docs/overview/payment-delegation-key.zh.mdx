@@ -1,0 +1,32 @@
+---
+title: Payment Delegation Key (PDK)
+---
+
+<Callout type="info">
+PDK 是可选的。如需完全无许可的访问，你可以直接使用带有 signer 参数的 BitRouter（支持 Base 和 Solana）。详见 [SDK 参考](/docs/sdk-reference)。
+</Callout>
+
+Payment Delegation Key (PDK) 让 AI Agent 可以代表你支付服务费用——而无需赋予它们对钱包的完全控制权。
+
+## 概述
+
+传统 AI 平台要求你创建账户、充值额度并生成 API 密钥。你的资金托管在它们那里，且锁定在单一平台。PDK 的工作方式不同：你将特定权限委托给 Agent，而你的资金在使用前一直保留在自己的钱包中。
+
+创建 PDK 时，你可以精确定义 Agent 的权限——支出限额、有效期、允许的接收方。Agent 在这些边界内自主运行，而你保留对资金的完全掌控。
+
+## 权限参数
+
+生成 PDK 时，用户可配置权限来控制 AI Agent 的操作范围。以下是核心参数：
+
+| 参数 | 类型 | 描述 |
+|-----------|------|-------------|
+| `max_transaction_value` | number | 单笔交易允许的最大金额 |
+| `daily_spending_limit` | number | 24 小时内允许的总支出金额 |
+| `valid_until` | timestamp | PDK 失效时间 |
+| `allowed_recipients` | address[] | PDK 可以向其发送交易的地址列表 |
+
+对于大多数使用场景，设置 `daily_spending_limit` 和 `valid_until` 即可提供足够的保护，同时允许 Agent 自主运行。
+
+<Callout type="info">
+PDK 基于 [Privy 的策略引擎](https://docs.privy.io/controls/overview)构建。如需高级配置，如合约白名单、calldata 限制和类型化数据签名规则，请参阅 [Privy 文档](https://docs.privy.io/controls/policies/overview)。
+</Callout>

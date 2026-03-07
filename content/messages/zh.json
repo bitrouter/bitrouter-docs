@@ -1,0 +1,111 @@
+{
+  "Metadata": {
+    "title": "比特路由 — LLM Agents的开放智能路由",
+    "description": "两行代码优化你的Agent Runtime。性能提升 10 倍，成本降低 10 倍。"
+  },
+  "Header": {
+    "search": "搜索",
+    "searchPlaceholder": "输入命令或搜索...",
+    "signIn": "登录 / 注册",
+    "dashboard": "控制台",
+    "benchmark": "基准测试",
+    "pagesHeading": "页面",
+    "accountHeading": "账户",
+    "keys": "密钥",
+    "usage": "用量",
+    "balance": "余额",
+    "themeHeading": "主题",
+    "light": "浅色",
+    "dark": "深色",
+    "languageHeading": "语言",
+    "noResults": "未找到结果。",
+    "searchDescription": "搜索页面和操作"
+  },
+  "Nav": {
+    "playground": "Playground",
+    "models": "Models",
+    "docs": "Docs",
+    "getStarted": "Get started"
+  },
+  "Hero": {
+    "headline": "LLM\u00a0Agent的开放智能路由",
+    "subtitle": "两行代码优化你的Agent Runtime。性能提升 10 倍，成本降低 10 倍。",
+    "ctaPrimary": "开始使用",
+    "timelineLabel": "实时演示 — 一个 10 次调用的智能体会话",
+    "codeComment": "就这么简单"
+  },
+  "IntegrationBar": {
+    "heading": "适配所有主流Agent Runtime",
+    "tagline": "兼容 OpenAI 接口，一行代码即可接入。",
+    "andMore": "更多"
+  },
+  "Features": {
+    "runtimeNative": {
+      "title": "运行时原生",
+      "benefit": "内置于你的技术栈，而非外挂。",
+      "description": "作为原生 SDK 直接集成到你的智能体运行时——不是外部代理。两行代码，零基础设施改动。"
+    },
+    "smartRouting": {
+      "title": "智能路由",
+      "benefit": "每次调用，自动选择最优模型。",
+      "description": "每次调用按任务类型分类，路由到能够处理的最经济模型。完整的路由日志和每次调用的推理过程均可查看。"
+    },
+    "policyControl": {
+      "title": "策略管控",
+      "benefit": "设定规则，自动执行。",
+      "description": "按会话或按智能体定义消费上限、模型白名单、速率限制和升级策略。策略自动执行——无需人工监管。"
+    },
+    "docsLink": "阅读文档"
+  },
+  "Benchmarks": {
+    "heading": "真实智能体负载验证",
+    "xAxisLabel": "每会话成本 ($)",
+    "yAxisLabel": "SWE-bench 解决率 (%)",
+    "resolveRate": "解决率",
+    "costPerSession": "每会话成本",
+    "calloutLabel": "SWE-bench Verified",
+    "calloutHeadline": "93.2% 解决率，仅 42% 的成本",
+    "calloutSubtext": "BitRouter Balanced 对比 全 Opus 基线",
+    "statOverhead": "网关延迟 (p99)",
+    "statRecovery": "升级恢复率",
+    "methodologyLink": "测试方法"
+  },
+  "Timeline": {
+    "colNumber": "#",
+    "colTaskType": "任务类型",
+    "colModel": "模型",
+    "colReason": "原因",
+    "colCost": "成本",
+    "totalCost": "总成本",
+    "baseline": "全 Opus 基线",
+    "saved": "节省",
+    "healthScore": "健康评分",
+    "footer": "1 次升级触发 \u00b7 0 次质量回退"
+  },
+  "Setup": {
+    "heading": "一行代码，开始省钱",
+    "subtitle": "BitRouter 兼容 OpenAI 接口。替换 base URL，其他保持不变。",
+    "responseLabel": "返回内容",
+    "docsLink": "查看 API 文档",
+    "pills": {
+      "openaiCompat": "兼容 OpenAI",
+      "streaming": "流式传输",
+      "overhead": "< 10ms 延迟",
+      "sessionAware": "会话感知",
+      "multiProvider": "多供应商"
+    }
+  },
+  "Footer": {
+    "ctaHeading": "开始智能路由。",
+    "ctaPrimary": "免费开始",
+    "ctaSecondary": "联系我们",
+    "terms": "服务条款",
+    "privacy": "隐私政策",
+    "brandKit": "品牌素材",
+    "contact": "联系我们",
+    "github": "GitHub",
+    "x": "Twitter/X",
+    "discord": "Discord",
+    "copyright": "\u00a9 2026 BitRouter"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "title": "概览",
+  "root": true,
+  "pages": [
+    "---简介---",
+    "index",
+    "faqs",
+    "changelog",
+    "enterprise",
+    "---核心概念---",
+    "service-primitives",
+    "pay-per-use",
+    "know-your-agent",
+    "payment-delegation-key",
+    "---入门指南---",
+    "skills-cli",
+    "manual-guide",
+    "self-host",
+    "---关于我们---",
+    "terms-of-service",
+    "privacy-policy",
+    "[品牌资源](https://github.com/AIMOverse/brand-kit)",
+    "[联系我们](mailto:contact@bitrouter.ai)"
+  ]
+}

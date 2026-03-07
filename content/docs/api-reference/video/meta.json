@@ -1,0 +1,4 @@
+{
+  "title": "Video",
+  "pages": ["queueVideo", "retrieveVideo", "quoteVideo", "completeVideo"]
+}

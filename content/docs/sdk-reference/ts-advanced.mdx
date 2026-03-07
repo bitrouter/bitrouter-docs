@@ -1,0 +1,175 @@
+---
+title: Advanced Usage
+description: Advanced TypeScript SDK usage — streaming, local development, custom fetch, error handling
+---
+
+# Advanced Usage
+
+## Streaming
+
+The SDK supports OpenAI-compatible SSE streaming via the raw `Response` from `chatCompletions`:
+
+```typescript
+const response = await client.chatCompletions({
+  model: "openai/gpt-4o",
+  messages: [{ role: "user", content: "Tell me a story" }],
+  stream: true,
+});
+
+const reader = response.body!.getReader();
+const decoder = new TextDecoder();
+
+while (true) {
+  const { done, value } = await reader.read();
+  if (done) break;
+
+  const chunk = decoder.decode(value);
+  const lines = chunk.split("\n").filter((line) => line.trim());
+
+  for (const line of lines) {
+    if (line.startsWith("data: ") && line.slice(6) !== "[DONE]") {
+      const data = JSON.parse(line.slice(6));
+      const content = data.choices[0]?.delta?.content;
+      if (content) {
+        process.stdout.write(content);
+      }
+    }
+  }
+}
+```
+
+For a higher-level streaming API, use the [`@aimo.network/provider`](/docs/sdk-reference/ts-provider) with Vercel AI SDK's `streamText`.
+
+## Local Development
+
+When developing against a local server that validates against a production domain:
+
+```typescript
+const client = new AimoClient({
+  signer,
+  baseUrl: "http://localhost:8000",
+  siwxDomain: "beta.aimo.network",  // Override signing domain
+});
+```
+
+This also works with the provider:
+
+```typescript
+const aimo = aimoNetwork({
+  signer,
+  baseURL: "http://localhost:8000",
+  siwxDomain: "beta.aimo.network",
+});
+```
+
+## Custom Fetch Interceptors
+
+Add custom request/response handling by providing a `fetchOverride`:
+
+```typescript
+const customFetch: typeof fetch = async (url, init) => {
+  console.log(`Request: ${init?.method} ${url}`);
+  const response = await fetch(url, init);
+  console.log(`Response: ${response.status}`);
+  return response;
+};
+
+const client = new AimoClient({
+  signer,
+  baseUrl: "https://beta.aimo.network",
+  fetchOverride: customFetch,
+});
+```
+
+## Error Handling
+
+`chatCompletions` returns a raw `Response`, so check `response.ok` before parsing:
+
+```typescript
+try {
+  const response = await client.chatCompletions({
+    model: "openai/gpt-4o",
+    messages: [{ role: "user", content: "Hello!" }],
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    console.error(`API error: ${error.error}`);
+  } else {
+    const data = await response.json();
+    console.log(data.choices[0].message.content);
+  }
+} catch (error) {
+  console.error(`Request failed: ${error.message}`);
+}
+```
+
+## Multi-Turn Conversation
+
+```typescript
+const messages = [
+  { role: "system", content: "You are a helpful assistant." },
+  { role: "user", content: "What is AiMo Network?" },
+];
+
+const response1 = await client.chatCompletions({
+  model: "openai/gpt-4o",
+  messages,
+});
+
+const data1 = await response1.json();
+messages.push(data1.choices[0].message);
+
+// Continue conversation
+messages.push({ role: "user", content: "How does it work?" });
+
+const response2 = await client.chatCompletions({
+  model: "openai/gpt-4o",
+  messages,
+});
+```
+
+## Best Practices
+
+### Security
+
+```typescript
+// Load keys from environment variables
+const privateKey = process.env.SOLANA_PRIVATE_KEY;
+
+// Never hardcode private keys in source code
+```
+
+### Performance
+
+```typescript
+// Reuse client instances — SIWx sessions are cached for 1 hour
+const client = new AimoClient({ signer, baseUrl: "https://beta.aimo.network" });
+
+await client.chatCompletions({ ... });
+await client.chatCompletions({ ... }); // reuses cached SIWx session
+```
+
+### Using Different Models
+
+All models are accessed through the OpenAI-compatible endpoint:
+
+```typescript
+// OpenAI
+await client.chatCompletions({
+  model: "openai/gpt-4o",
+  messages: [{ role: "user", content: "Hello!" }],
+});
+
+// Anthropic
+await client.chatCompletions({
+  model: "anthropic/claude-sonnet-4",
+  messages: [{ role: "user", content: "Hello!" }],
+});
+
+// Google
+await client.chatCompletions({
+  model: "google/gemini-2.0-flash",
+  messages: [{ role: "user", content: "Hello!" }],
+});
+```

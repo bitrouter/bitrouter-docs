@@ -1,0 +1,1556 @@
+openapi: 3.1.0
+info:
+  title: AiMo Network API
+  version: 1.0.0
+  description: |
+    The AiMo Network API provides access to a decentralized routing network for AI services.
+    It connects clients who need AI capabilities with agents and providers who supply them,
+    handling authentication, payments, and protocol translation.
+
+    ## Base URL
+
+    ```
+    https://beta.aimo.network/api/v1
+    ```
+
+    ## Authentication
+
+    AiMo uses **SIWx (Sign-In-With-X)** — a permissionless, wallet-based authentication scheme.
+    You authenticate by signing a CAIP-122 message with a Solana or EVM wallet and sending the
+    signature in the `Sign-In-With-X` header (base64-encoded JSON envelope).
+
+    ```
+    Sign-In-With-X: <base64_encoded_json>
+    ```
+
+    The JSON envelope contains:
+
+    ```json
+    {
+      "message": "<CAIP-122 message>",
+      "signature": "<base58 for Solana, hex for EVM>"
+    }
+    ```
+
+    Alternatively, you can use the `Authorization` header:
+
+    ```
+    Authorization: Bearer <base64_encoded_json>
+    ```
+
+    Signatures expire after 5 minutes.
+
+    ## Payments
+
+    Paid endpoints require either:
+    - **Session balance** — pre-funded USDC balance tied to your wallet identity
+    - **X402 payment** — per-request crypto payment via the `PAYMENT-SIGNATURE` header
+
+    If no balance or payment is provided, the router returns `402 Payment Required`.
+
+servers:
+  - url: https://beta.aimo.network/api/v1
+    description: Production
+
+tags:
+  - name: Chat
+    description: OpenAI-compatible chat completions endpoint. Accepts the same request schema as the OpenAI API and returns the same response format.
+  - name: Image
+    description: Synchronous image generation and editing endpoints. Supports multiple output modes (JSON with base64 data URLs or raw binary files).
+  - name: Video
+    description: Asynchronous video generation with a queue-and-poll workflow. Submit a job, poll for progress, and retrieve the completed video.
+  - name: Models
+    description: Model discovery, listing, and search endpoints.
+  - name: Analytics
+    description: Public platform analytics and service leaderboard.
+  - name: Health
+    description: Health check endpoint.
+
+components:
+  securitySchemes:
+    SIWx:
+      type: apiKey
+      in: header
+      name: Sign-In-With-X
+      description: |
+        Base64-encoded JSON envelope containing a CAIP-122 sign-in message and its cryptographic signature.
+        ```json
+        {
+          "message": "<CAIP-122 message>",
+          "signature": "<base58 for Solana, hex for EVM>"
+        }
+        ```
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: Machine-readable error code.
+            message:
+              type: string
+              description: Human-readable error description.
+          required:
+            - code
+            - message
+
+    # ── Chat ──────────────────────────────────────────────────
+
+    ChatCompletionRequest:
+      type: object
+      required:
+        - model
+        - messages
+      properties:
+        model:
+          type: string
+          description: Model ID to use for the completion (e.g. `gpt-4o`, `claude-sonnet-4`).
+          example: gpt-4o
+        messages:
+          type: array
+          description: A list of messages comprising the conversation so far.
+          items:
+            $ref: "#/components/schemas/ChatMessage"
+        temperature:
+          type: number
+          description: Sampling temperature (0.0–2.0).
+          minimum: 0
+          maximum: 2
+        top_p:
+          type: number
+          description: Nucleus sampling parameter.
+          minimum: 0
+          maximum: 1
+        n:
+          type: integer
+          description: Number of completions to generate.
+          default: 1
+        stream:
+          type: boolean
+          description: Whether to stream partial responses using SSE.
+          default: false
+        stop:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string
+          description: Up to 4 sequences where the API will stop generating.
+        max_tokens:
+          type: integer
+          description: Maximum number of tokens to generate.
+        presence_penalty:
+          type: number
+          description: Presence penalty (-2.0 to 2.0).
+        frequency_penalty:
+          type: number
+          description: Frequency penalty (-2.0 to 2.0).
+        user:
+          type: string
+          description: A unique identifier representing your end-user.
+
+    ChatMessage:
+      type: object
+      required:
+        - role
+        - content
+      properties:
+        role:
+          type: string
+          enum:
+            - system
+            - user
+            - assistant
+          description: The role of the message author.
+        content:
+          type: string
+          description: The content of the message.
+
+    ChatCompletionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: A unique identifier for the completion.
+        object:
+          type: string
+          enum:
+            - chat.completion
+        created:
+          type: integer
+          description: Unix timestamp (seconds) of when the completion was created.
+        model:
+          type: string
+          description: The model used for the completion.
+        choices:
+          type: array
+          items:
+            type: object
+            properties:
+              index:
+                type: integer
+              message:
+                $ref: "#/components/schemas/ChatMessage"
+              finish_reason:
+                type: string
+                enum:
+                  - stop
+                  - length
+                  - tool_calls
+                  - content_filter
+        usage:
+          type: object
+          properties:
+            prompt_tokens:
+              type: integer
+            completion_tokens:
+              type: integer
+            total_tokens:
+              type: integer
+
+    # ── Image ─────────────────────────────────────────────────
+
+    ImageGenerateRequest:
+      type: object
+      required:
+        - model
+        - prompt
+      properties:
+        model:
+          type: string
+          description: Canonical model slug (e.g. `dall-e-3`, `flux-pro`).
+          example: dall-e-3
+        prompt:
+          type: string
+          description: Text prompt describing the desired image.
+        negative_prompt:
+          type: string
+          nullable: true
+          description: Things to avoid in the generated image.
+        n:
+          type: integer
+          description: Number of images to generate (1–10).
+          minimum: 1
+          maximum: 10
+          default: 1
+        width:
+          type: string
+          nullable: true
+          description: Output image width in pixels (e.g. `"1024"`).
+        height:
+          type: string
+          nullable: true
+          description: Output image height in pixels (e.g. `"1024"`).
+        aspect_ratio:
+          type: string
+          nullable: true
+          description: "Aspect ratio hint (e.g. `16:9`, `1:1`)."
+        style:
+          type: string
+          nullable: true
+          description: Free-form style hint.
+        quality:
+          type: string
+          nullable: true
+          description: "Quality level: `low`, `medium`, `high`, or `auto`."
+          enum:
+            - low
+            - medium
+            - high
+            - auto
+        output_format:
+          type: string
+          nullable: true
+          description: "Output format: `png`, `jpeg`, or `webp`. Defaults to `png`."
+          enum:
+            - png
+            - jpeg
+            - webp
+        output_type:
+          type: string
+          nullable: true
+          description: "`data_url` for JSON response with base64 images, `file` for raw binary (single image only)."
+          enum:
+            - data_url
+            - file
+        seed:
+          type: integer
+          nullable: true
+          description: "-1 for nondeterministic; 0–2147483647 for reproducible results."
+        guide_scale:
+          type: number
+          nullable: true
+          description: Guidance scale (0.0–50.0).
+        stream:
+          type: boolean
+          nullable: true
+          description: Whether to stream intermediate results.
+        steps:
+          type: integer
+          nullable: true
+          description: Number of inference steps.
+        style_preset:
+          type: string
+          nullable: true
+          description: "Image style preset (e.g. `3D Model`, `Anime`)."
+        resolution:
+          type: string
+          nullable: true
+          description: "Resolution tier (e.g. `1K`, `2K`, `4K`)."
+        hide_watermark:
+          type: boolean
+          nullable: true
+          description: Whether to hide the watermark.
+        lora_strength:
+          type: integer
+          nullable: true
+          description: LoRA strength (0–100).
+        safe_mode:
+          type: boolean
+          nullable: true
+          description: Whether to blur adult content.
+        embed_exif_metadata:
+          type: boolean
+          nullable: true
+          description: Whether to embed the prompt in EXIF metadata.
+        enable_web_search:
+          type: boolean
+          nullable: true
+          description: Whether to enable web search during generation.
+        user:
+          type: string
+          nullable: true
+          description: End-user identifier for auditing.
+        metadata:
+          type: object
+          nullable: true
+          description: Free-form metadata (max ~4 KB).
+
+    ImageGenerateResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique request identifier.
+          example: req-abc123
+        created:
+          type: integer
+          description: Unix timestamp (seconds).
+        status:
+          type: string
+          description: "`completed` on success."
+          enum:
+            - completed
+        images:
+          type: array
+          description: Array of generated image objects.
+          items:
+            $ref: "#/components/schemas/GeneratedImage"
+        error:
+          $ref: "#/components/schemas/Error"
+        provider_metadata:
+          type: object
+          nullable: true
+          description: Optional provider debugging info.
+          properties:
+            provider:
+              type: string
+            raw:
+              type: object
+
+    GeneratedImage:
+      type: object
+      properties:
+        index:
+          type: integer
+          description: Zero-based index of the image.
+        data_url:
+          type: string
+          description: "RFC 2397 data URL (`data:<mime>;base64,<data>`)."
+        width:
+          type: integer
+          description: Image width in pixels.
+        height:
+          type: integer
+          description: Image height in pixels.
+        format:
+          type: string
+          description: Image format (matches the MIME type).
+        seed:
+          type: integer
+          nullable: true
+          description: Seed used for this image.
+
+    ImageGenerateQuoteRequest:
+      type: object
+      required:
+        - model
+      properties:
+        model:
+          type: string
+          description: Canonical model slug.
+        width:
+          type: integer
+          nullable: true
+          description: Desired image width in pixels.
+        height:
+          type: integer
+          nullable: true
+          description: Desired image height in pixels.
+        variants:
+          type: integer
+          nullable: true
+          description: Number of image variants.
+        resolution:
+          type: string
+          nullable: true
+          description: "Resolution tier (e.g. `1K`, `2K`, `4K`)."
+
+    QuoteResponse:
+      type: object
+      properties:
+        price_usd:
+          type: number
+          description: Estimated price in USD.
+          example: 0.04
+        valid:
+          type: boolean
+          description: Whether the requested parameters are supported.
+        message:
+          type: string
+          description: Explanation when `valid` is `false`, or additional details. Omitted when not applicable.
+
+    ImageSource:
+      type: object
+      description: "Image source — provide either `b64` (data URL) or `url` (HTTPS URL)."
+      properties:
+        b64:
+          type: string
+          description: "Base64-encoded data URL (e.g. `data:image/png;base64,...`)."
+        url:
+          type: string
+          description: HTTPS URL to the image.
+
+    ImageEditRequest:
+      type: object
+      required:
+        - model
+        - images
+        - prompt
+      properties:
+        model:
+          type: string
+          description: Canonical model slug.
+        images:
+          type: array
+          description: Input images. The first image is the base image.
+          items:
+            $ref: "#/components/schemas/ImageSource"
+        mask:
+          $ref: "#/components/schemas/ImageSource"
+          nullable: true
+          description: Mask image for inpainting. Opaque regions are kept; transparent regions are edited.
+        prompt:
+          type: string
+          description: Text prompt describing the desired edit.
+        negative_prompt:
+          type: string
+          nullable: true
+          description: Things to avoid.
+        n:
+          type: integer
+          nullable: true
+          description: Number of output variants (1–6).
+          minimum: 1
+          maximum: 6
+        width:
+          type: string
+          nullable: true
+          description: Output image width in pixels.
+        height:
+          type: string
+          nullable: true
+          description: Output image height in pixels.
+        aspect_ratio:
+          type: string
+          nullable: true
+          description: Aspect ratio hint.
+        prompt_extend:
+          type: boolean
+          nullable: true
+          description: Whether to extend the prompt automatically.
+        watermark:
+          type: boolean
+          nullable: true
+          description: Whether to add a watermark.
+        output_format:
+          type: string
+          nullable: true
+          enum:
+            - png
+            - jpeg
+            - webp
+        output_type:
+          type: string
+          nullable: true
+          enum:
+            - data_url
+            - file
+        seed:
+          type: integer
+          nullable: true
+          description: Seed for reproducibility.
+        guide_scale:
+          type: number
+          nullable: true
+          description: Guidance scale (0.0–50.0).
+        stream:
+          type: boolean
+          nullable: true
+          description: Whether to stream intermediate results.
+        user:
+          type: string
+          nullable: true
+          description: End-user identifier.
+        metadata:
+          type: object
+          nullable: true
+          description: Free-form metadata.
+
+    ImageEditResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique request identifier.
+        created:
+          type: integer
+          description: Unix timestamp (seconds).
+        status:
+          type: string
+          enum:
+            - completed
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/GeneratedImage"
+        input_images:
+          type: array
+          description: Echoed input image dimensions.
+          items:
+            type: object
+            properties:
+              width:
+                type: integer
+              height:
+                type: integer
+        error:
+          $ref: "#/components/schemas/Error"
+        provider_metadata:
+          type: object
+          nullable: true
+          properties:
+            provider:
+              type: string
+            raw:
+              type: object
+
+    ImageEditQuoteRequest:
+      type: object
+      required:
+        - model
+      properties:
+        model:
+          type: string
+          description: Canonical model slug.
+        width:
+          type: integer
+          nullable: true
+        height:
+          type: integer
+          nullable: true
+        variants:
+          type: integer
+          nullable: true
+        resolution:
+          type: string
+          nullable: true
+        image_count:
+          type: integer
+          nullable: true
+          description: Number of input images.
+
+    # ── Video ─────────────────────────────────────────────────
+
+    VideoQueueRequest:
+      type: object
+      required:
+        - model
+        - duration
+      properties:
+        model:
+          type: string
+          description: Canonical model slug.
+          example: kling-v2
+        prompt:
+          type: string
+          nullable: true
+          description: Text prompt (optional if `image_url` is provided).
+        image_url:
+          $ref: "#/components/schemas/ImageSource"
+          nullable: true
+          description: Seed image for image-to-video generation.
+        end_image_url:
+          $ref: "#/components/schemas/ImageSource"
+          nullable: true
+          description: End frame image (if supported by model).
+        reference_image_urls:
+          type: array
+          nullable: true
+          description: Reference images for consistency (up to 4).
+          items:
+            $ref: "#/components/schemas/ImageSource"
+        video_url:
+          $ref: "#/components/schemas/ImageSource"
+          nullable: true
+          description: Input video reference.
+        audio_url:
+          $ref: "#/components/schemas/ImageSource"
+          nullable: true
+          description: Background audio.
+        duration:
+          type: string
+          description: "Duration string (e.g. `5s`, `10s`). Validated by provider."
+          example: "5s"
+        negative_prompt:
+          type: string
+          nullable: true
+          description: Things to avoid in the generated video.
+        resolution:
+          type: string
+          nullable: true
+          description: "One of `480p`, `720p`, `1080p`, `4k`."
+          enum:
+            - 480p
+            - 720p
+            - 1080p
+            - 4k
+        aspect_ratio:
+          type: string
+          nullable: true
+          description: "Aspect ratio (e.g. `16:9`, `9:16`)."
+        frame_rate:
+          type: integer
+          nullable: true
+          description: Frames per second.
+        generate_audio:
+          type: boolean
+          nullable: true
+          description: Whether to generate audio for the video.
+        audio_prompt:
+          type: string
+          nullable: true
+          description: Prompt for generated audio / TTS.
+        camera_fixed:
+          type: boolean
+          nullable: true
+          description: Whether the camera should stay fixed.
+        watermark:
+          type: boolean
+          nullable: true
+          description: Whether to add a watermark.
+        seed:
+          type: integer
+          nullable: true
+          description: "Seed for reproducibility (-1 = nondeterministic)."
+        n:
+          type: integer
+          nullable: true
+          description: Number of video variants to generate.
+        user:
+          type: string
+          nullable: true
+          description: End-user identifier.
+        metadata:
+          type: object
+          nullable: true
+          description: Free-form metadata.
+
+    VideoQueueResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Task identifier for polling. Composed of the provider's public key and a base64-encoded opaque task object.
+          example: "provider_pubkey:base64_task"
+        created:
+          type: integer
+          description: Unix timestamp (seconds).
+        status:
+          type: string
+          enum:
+            - queued
+        variants_expected:
+          type: integer
+          description: Number of video variants that will be generated.
+
+    VideoRetrieveRequest:
+      type: object
+      required:
+        - task_id
+      properties:
+        task_id:
+          type: string
+          description: Task ID returned by `/video/queue`.
+        wait_for_final:
+          type: boolean
+          nullable: true
+          description: If `true`, the server blocks (up to ~30s) waiting for the task to finish.
+        user:
+          type: string
+          nullable: true
+          description: End-user identifier.
+        metadata:
+          type: object
+          nullable: true
+
+    VideoRetrieveResponse:
+      type: object
+      description: |
+        Response depends on task status:
+        - **queued/generating**: Returns JSON with progress info
+        - **completed (single variant)**: Returns raw MP4 binary (`Content-Type: video/mp4`)
+        - **completed (multiple variants)**: Returns ZIP archive (`Content-Type: application/zip`)
+        - **failed**: Returns JSON with error details
+      properties:
+        id:
+          type: string
+          description: Task identifier.
+        status:
+          type: string
+          enum:
+            - queued
+            - generating
+            - completed
+            - failed
+        progress:
+          type: number
+          nullable: true
+          description: Progress from 0.0 to 1.0.
+        estimated_seconds:
+          type: number
+          nullable: true
+          description: Estimated seconds remaining.
+        error:
+          type: object
+          nullable: true
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+        provider_metadata:
+          type: object
+          nullable: true
+          properties:
+            provider:
+              type: string
+            raw:
+              type: object
+
+    VideoQuoteRequest:
+      type: object
+      required:
+        - model
+        - duration
+      properties:
+        model:
+          type: string
+          description: Canonical model slug.
+        duration:
+          type: string
+          description: "Duration string (e.g. `5s`, `10s`)."
+        aspect_ratio:
+          type: string
+          nullable: true
+        resolution:
+          type: string
+          nullable: true
+        audio:
+          type: boolean
+          nullable: true
+          description: Whether audio generation is included.
+
+    VideoQuoteResponse:
+      type: object
+      properties:
+        price_usd:
+          type: number
+          description: Estimated price in USD.
+          example: 0.25
+
+    VideoCompleteRequest:
+      type: object
+      required:
+        - model
+        - queue_id
+      properties:
+        model:
+          type: string
+          description: Canonical model slug.
+        queue_id:
+          type: string
+          description: Queue ID returned by `/video/queue`.
+
+    VideoCompleteResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Whether cleanup completed successfully.
+
+    # ── Models ────────────────────────────────────────────────
+
+    ModelsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          description: Chat models from connected providers.
+          items:
+            $ref: "#/components/schemas/ChatModel"
+        agents:
+          type: array
+          description: Chat-enabled agents.
+          items:
+            type: object
+        image_models:
+          type: array
+          description: Image generation models.
+          items:
+            $ref: "#/components/schemas/ImageModel"
+        video_models:
+          type: array
+          description: Video generation models.
+          items:
+            $ref: "#/components/schemas/VideoModel"
+
+    ChatModel:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Model ID.
+        object:
+          type: string
+        created:
+          type: integer
+        owned_by:
+          type: string
+
+    ImageModel:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Canonical model slug used in generation requests.
+          example: dall-e-3
+        name:
+          type: string
+          description: Display name.
+        providers:
+          type: array
+          items:
+            type: string
+          description: Available providers for this model.
+        supported_params:
+          type: array
+          items:
+            type: string
+          description: Request parameters the model accepts.
+        constraints:
+          type: object
+          description: Model-specific limits (aspect ratios, formats, max sizes, etc.).
+          properties:
+            aspect_ratios:
+              type: array
+              items:
+                type: string
+            formats:
+              type: array
+              items:
+                type: string
+        pricing:
+          type: object
+          nullable: true
+          description: Price per generation in USD.
+          properties:
+            generation:
+              type: number
+
+    VideoModel:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Canonical model slug used in generation requests.
+          example: kling-v2
+        name:
+          type: string
+          description: Display name.
+        providers:
+          type: array
+          items:
+            type: string
+        model_type:
+          type: string
+          description: "`text-to-video`, `image-to-video`, etc."
+        supported_params:
+          type: array
+          items:
+            type: string
+        constraints:
+          type: object
+          properties:
+            resolutions:
+              type: array
+              items:
+                type: string
+            durations:
+              type: array
+              items:
+                type: string
+            aspect_ratios:
+              type: array
+              items:
+                type: string
+        pricing:
+          type: object
+          nullable: true
+          description: Price matrix keyed by resolution and duration, in USD.
+
+    SearchResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+          description: Array of matching results.
+        total_count:
+          type: integer
+          description: Total number of matching results.
+        has_more:
+          type: boolean
+          description: Whether there are more results beyond this page.
+
+    # ── Analytics ─────────────────────────────────────────────
+
+    PublicAnalyticsResponse:
+      type: object
+      properties:
+        total_requests:
+          type: integer
+          description: Total number of requests processed.
+        total_volume:
+          type: integer
+          description: Total spending volume in micro-USD (6 decimals).
+        total_volume_usd:
+          type: number
+          description: Total spending volume in USD (float).
+        total_active_providers:
+          type: integer
+          description: Number of unique active service providers.
+        total_active_services:
+          type: integer
+          description: Number of unique services (models/agents/tools).
+        total_active_users:
+          type: integer
+          description: Total active users (registered + wallet).
+        registered_users:
+          type: integer
+          description: Registered users.
+        wallet_users:
+          type: integer
+          description: Unique wallet addresses.
+        total_tokens:
+          type: integer
+          description: Total tokens (prompt + completion + reasoning).
+        total_prompt_tokens:
+          type: integer
+          description: Total prompt tokens processed.
+        total_completion_tokens:
+          type: integer
+          description: Total completion tokens processed.
+        total_reasoning_tokens:
+          type: integer
+          description: Total reasoning tokens processed.
+        requests_over_time:
+          type: array
+          items:
+            $ref: "#/components/schemas/TimeSeriesPoint"
+        volume_over_time:
+          type: array
+          items:
+            $ref: "#/components/schemas/TimeSeriesPoint"
+        providers_over_time:
+          type: array
+          items:
+            $ref: "#/components/schemas/TimeSeriesPoint"
+        users_over_time:
+          type: array
+          items:
+            $ref: "#/components/schemas/TimeSeriesPoint"
+        date_range:
+          type: object
+          properties:
+            start_date:
+              type: string
+            end_date:
+              type: string
+
+    TimeSeriesPoint:
+      type: object
+      properties:
+        date:
+          type: string
+          description: Date in `YYYY-MM-DD` format.
+          example: "2025-11-28"
+        value:
+          type: integer
+          description: Value for this date.
+
+    LeaderboardResponse:
+      type: object
+      properties:
+        services:
+          type: array
+          items:
+            type: object
+            properties:
+              service_type:
+                type: string
+                description: "Type of service: `Model`, `Agent`, or `Tool`."
+              service_id:
+                type: string
+                description: Service identifier (model ID, agent ID, etc.).
+              provider_id:
+                type: string
+                description: Provider identifier.
+              request_count:
+                type: integer
+                description: Total requests for this service.
+              total_volume:
+                type: integer
+                description: Total volume in micro-USD.
+              total_volume_usd:
+                type: number
+                description: Total volume in USD.
+        filters:
+          type: object
+          properties:
+            service_type:
+              type: string
+            start_date:
+              type: string
+            end_date:
+              type: string
+            sort_by:
+              type: string
+            limit:
+              type: integer
+        totals:
+          type: object
+          properties:
+            services:
+              type: integer
+              description: Number of services in current page.
+            request_count:
+              type: integer
+              description: Sum of request counts in current page.
+            total_volume:
+              type: integer
+              description: Sum of total volume in current page.
+
+paths:
+  # ── Chat ──────────────────────────────────────────────────
+
+  /chat/completions:
+    post:
+      operationId: createChatCompletion
+      summary: Create chat completion
+      description: |
+        Creates a chat completion for the given messages. This endpoint is a drop-in replacement
+        for the OpenAI Chat Completions API — it accepts the same request schema and returns the
+        same response format, including `usage` with token counts.
+
+        The router selects a provider that serves the requested model, forwards the request,
+        streams (or batches) the response, and calculates cost from actual token usage.
+      tags:
+        - Chat
+      security:
+        - SIWx: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatCompletionRequest"
+      responses:
+        "200":
+          description: Chat completion response.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatCompletionResponse"
+        "401":
+          description: Authentication required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "402":
+          description: Payment required — no session balance or X402 payment provided.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  # ── Image ─────────────────────────────────────────────────
+
+  /image/generate:
+    post:
+      operationId: generateImage
+      summary: Generate images
+      description: |
+        Generate one or more images from a text prompt.
+
+        Two output modes are available:
+        - `output_type: "data_url"` (default) — Returns JSON with base64-encoded data URLs. Supports multiple images (`n >= 1`).
+        - `output_type: "file"` — Returns the raw binary file directly. Only supports a single output (`n = 1`).
+      tags:
+        - Image
+      security:
+        - SIWx: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ImageGenerateRequest"
+      responses:
+        "200":
+          description: |
+            Generated image(s). When `output_type = "data_url"`, returns JSON. When `output_type = "file"`, returns raw binary with `Content-Type: image/<format>`.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImageGenerateResponse"
+        "400":
+          description: Bad request (e.g. `output_type = "file"` with `n > 1`).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Authentication required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "402":
+          description: Payment required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /image/generate/quote:
+    post:
+      operationId: quoteImageGeneration
+      summary: Quote image generation
+      description: Get a price estimate for an image generation request before committing.
+      tags:
+        - Image
+      security:
+        - SIWx: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ImageGenerateQuoteRequest"
+      responses:
+        "200":
+          description: Price estimate.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuoteResponse"
+
+  /image/edit:
+    post:
+      operationId: editImage
+      summary: Edit an image
+      description: |
+        Edit or inpaint an existing image using a text prompt. The response format follows
+        the same `output_type` rules as `/image/generate`.
+      tags:
+        - Image
+      security:
+        - SIWx: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ImageEditRequest"
+      responses:
+        "200":
+          description: |
+            Edited image(s). When `output_type = "data_url"`, returns JSON. When `output_type = "file"`, returns raw binary.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImageEditResponse"
+        "400":
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Authentication required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "402":
+          description: Payment required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /image/edit/quote:
+    post:
+      operationId: quoteImageEdit
+      summary: Quote image edit
+      description: Get a price estimate for an image editing request.
+      tags:
+        - Image
+      security:
+        - SIWx: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ImageEditQuoteRequest"
+      responses:
+        "200":
+          description: Price estimate.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuoteResponse"
+
+  # ── Video ─────────────────────────────────────────────────
+
+  /video/queue:
+    post:
+      operationId: queueVideo
+      summary: Submit video generation job
+      description: |
+        Submit a video generation job. Returns immediately with a task identifier for polling.
+
+        Video generation is asynchronous — use the returned `id` with `/video/retrieve` to poll for progress and retrieve the completed video.
+      tags:
+        - Video
+      security:
+        - SIWx: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VideoQueueRequest"
+      responses:
+        "202":
+          description: Job accepted and queued.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VideoQueueResponse"
+        "401":
+          description: Authentication required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "402":
+          description: Payment required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /video/retrieve:
+    post:
+      operationId: retrieveVideo
+      summary: Poll or retrieve video
+      description: |
+        Poll the status of a video generation job, or retrieve the completed video.
+
+        Response depends on the current task status:
+        - **queued/generating**: Returns JSON with progress info
+        - **completed (single variant)**: Returns raw MP4 binary (`Content-Type: video/mp4`)
+        - **completed (multiple variants)**: Returns ZIP archive (`Content-Type: application/zip`)
+        - **failed**: Returns JSON with error details
+      tags:
+        - Video
+      security:
+        - SIWx: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VideoRetrieveRequest"
+      responses:
+        "200":
+          description: |
+            Task status or completed video. Content type varies based on task status.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VideoRetrieveResponse"
+
+  /video/quote:
+    post:
+      operationId: quoteVideo
+      summary: Quote video generation
+      description: Get a price estimate for a video generation request.
+      tags:
+        - Video
+      security:
+        - SIWx: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VideoQuoteRequest"
+      responses:
+        "200":
+          description: Price estimate.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VideoQuoteResponse"
+
+  /video/complete:
+    post:
+      operationId: completeVideo
+      summary: Signal video download complete
+      description: Signal that a video has been downloaded and server-side resources can be cleaned up.
+      tags:
+        - Video
+      security:
+        - SIWx: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VideoCompleteRequest"
+      responses:
+        "200":
+          description: Cleanup successful.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VideoCompleteResponse"
+
+  # ── Models ────────────────────────────────────────────────
+
+  /models:
+    get:
+      operationId: listModels
+      summary: List available models
+      description: |
+        List available models from connected providers and registered agents.
+        The response groups models by type and includes each model's supported parameters,
+        constraints, and pricing.
+      tags:
+        - Models
+      parameters:
+        - name: type
+          in: query
+          description: "Filter by model type. Defaults to `chat` if omitted."
+          schema:
+            type: string
+            enum:
+              - chat
+              - image
+              - video
+              - all
+            default: chat
+        - name: filter
+          in: query
+          description: Filter between models and agents.
+          schema:
+            type: string
+            enum:
+              - models
+              - agents
+      responses:
+        "200":
+          description: List of models grouped by type.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModelsResponse"
+
+  /models/search:
+    get:
+      operationId: searchModels
+      summary: Search models
+      description: |
+        Search for AI models by name. Returns paginated results with case-insensitive substring matching.
+      tags:
+        - Models
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: Search query string.
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Maximum results per page (1–100, default 20).
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: skip
+          in: query
+          description: Number of results to skip for pagination.
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Search results.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResponse"
+
+  # ── Analytics ─────────────────────────────────────────────
+
+  /analytics/public:
+    get:
+      operationId: getPublicAnalytics
+      summary: Get public analytics
+      description: |
+        Fetch global public analytics for the platform with chart data.
+        All integer money fields are in micro-USD (6 decimal places, i.e., 1 USD = 1,000,000 micro-USD).
+      tags:
+        - Analytics
+      parameters:
+        - name: start_date
+          in: query
+          description: "Start date (ISO 8601 or `YYYY-MM-DD`). Defaults to 7 days ago."
+          schema:
+            type: string
+        - name: end_date
+          in: query
+          description: "End date (ISO 8601 or `YYYY-MM-DD`). Defaults to today."
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Public platform analytics.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicAnalyticsResponse"
+
+  /analytics/public/leaderboard:
+    get:
+      operationId: getPublicLeaderboard
+      summary: Get services leaderboard
+      description: Fetch trending services leaderboard with optional filtering.
+      tags:
+        - Analytics
+      parameters:
+        - name: service_type
+          in: query
+          description: "Filter by type. Defaults to `all`."
+          schema:
+            type: string
+            enum:
+              - all
+              - model
+              - agent
+              - tool
+            default: all
+        - name: start_date
+          in: query
+          description: "Start date (ISO 8601 or `YYYY-MM-DD`)."
+          schema:
+            type: string
+        - name: end_date
+          in: query
+          description: "End date (ISO 8601 or `YYYY-MM-DD`)."
+          schema:
+            type: string
+        - name: sort_by
+          in: query
+          description: "Sort by `volume` or `requests`. Defaults to `volume`."
+          schema:
+            type: string
+            enum:
+              - volume
+              - requests
+            default: volume
+        - name: limit
+          in: query
+          description: Max results (1–100, default 10).
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+      responses:
+        "200":
+          description: Services leaderboard.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LeaderboardResponse"
+
+  # ── Health ────────────────────────────────────────────────
+
+  /ping:
+    get:
+      operationId: healthCheck
+      summary: Health check
+      description: Returns `pong` if the router is healthy.
+      tags:
+        - Health
+      responses:
+        "200":
+          description: Router is healthy.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: pong

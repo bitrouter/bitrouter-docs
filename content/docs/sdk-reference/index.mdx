@@ -1,0 +1,78 @@
+---
+title: SDK Reference
+description: Official SDKs for AiMo Network — TypeScript and Python
+---
+
+# AiMo Network SDKs
+
+Official SDKs for interacting with [AiMo Network](https://aimo.network) — a decentralized AI inference marketplace. Both SDKs provide wallet-based authentication (SIWx), automatic micropayment handling (x402), and OpenAI-compatible chat completions.
+
+## Available SDKs
+
+| SDK | Language | Package | Status |
+|-----|----------|---------|--------|
+| [TypeScript](/docs/sdk-reference/typescript) | TypeScript / JavaScript | `@aimo.network/*` (npm) | v1.8.0 |
+| [Python](/docs/sdk-reference/python) | Python 3.10+ | `aimo-network` (PyPI) | v0.1.0 |
+
+## Installation
+
+### TypeScript
+
+```bash
+# Core client (required)
+npm install @aimo.network/client
+
+# Chain-specific signer (pick one or both)
+npm install @aimo.network/svm   # Solana
+npm install @aimo.network/evm   # Ethereum / Base
+
+# Vercel AI SDK integration (optional)
+npm install @aimo.network/provider ai
+```
+
+### Python
+
+```bash
+# Core + Solana support
+pip install "aimo-network[solana]"
+
+# Core + EVM support
+pip install "aimo-network[evm]"
+
+# With OpenAI SDK integration
+pip install "aimo-network[openai]"
+
+# Everything
+pip install "aimo-network[all]"
+```
+
+## Quick Comparison
+
+Both SDKs share the same architecture and API surface:
+
+| Feature | TypeScript | Python |
+|---------|-----------|--------|
+| Core client | `AimoClient` | `AimoClient` (async) |
+| Solana signer | `SvmClientSigner` | `SvmClientSigner` |
+| EVM signer | `EvmClientSigner` | `EvmClientSigner` |
+| AI SDK integration | `@aimo.network/provider` (Vercel AI SDK) | `create_openai_client()` (OpenAI SDK) |
+| Auth | SIWx (automatic) | SIWx (automatic) |
+| Payments | x402 (automatic) | x402 (automatic) |
+| HTTP | `fetch` / custom fetch | `httpx` / custom transport |
+| Streaming | SSE via `Response.body` | SSE via `httpx.Response` |
+
+## Authentication
+
+Both SDKs use **SIWx (Sign-In-With-X)** for wallet-based authentication. Every request is automatically signed with your wallet, providing permissionless access without API keys.
+
+## Payments
+
+Both SDKs integrate with **x402** for automatic micropayment handling. When API requests require payment, the SDK handles it transparently via your wallet.
+
+## Resources
+
+- **GitHub**: [github.com/AIMOverse/aimo-sdk](https://github.com/AIMOverse/aimo-sdk)
+- **NPM**: [@aimo.network/client](https://www.npmjs.com/package/@aimo.network/client)
+- **PyPI**: [aimo-network](https://pypi.org/project/aimo-network/)
+- **AI Agent Guide**: [/docs/overview/ai-agent-guide](/docs/overview/ai-agent-guide)
+- **API Reference**: [/docs/api-reference](/docs/api-reference)

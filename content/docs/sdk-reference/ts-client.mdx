@@ -1,0 +1,209 @@
+---
+title: "@aimo.network/client"
+description: Core client library for AiMo Network — AimoClient, authentication, and payment helpers
+---
+
+# @aimo.network/client
+
+The core client library. All other packages depend on this. Provides the `AimoClient` class, `ClientSigner` interface, SIWx authentication helpers, and x402 payment utilities.
+
+```bash
+npm install @aimo.network/client
+```
+
+## AimoClient
+
+Main class for interacting with the AiMo Network API.
+
+```typescript
+import { AimoClient } from "@aimo.network/client";
+
+const client = new AimoClient({
+  signer,
+  baseUrl: "https://beta.aimo.network",
+});
+```
+
+### AimoClientOptions
+
+| Property | Type | Required | Default | Description |
+|----------|------|----------|---------|-------------|
+| `signer` | `ClientSigner` | Yes | — | Wallet signer for authentication and payments |
+| `baseUrl` | `string` | Yes | — | API server URL (e.g., `"https://beta.aimo.network"`) |
+| `apiBase` | `string` | No | `"/api/v1"` | API path prefix |
+| `siwxDomain` | `string` | No | — | Override SIWx signing domain (for local development) |
+| `fetchOverride` | `typeof fetch` | No | — | Custom fetch implementation |
+| `endpointsOverride` | `Partial<AimoEndpoints>` | No | — | Override default endpoint paths |
+
+### client.chatCompletions(body, init?)
+
+Makes an OpenAI-compatible chat completion request. Returns a raw `Response` to support both regular and streaming responses.
+
+```typescript
+const response = await client.chatCompletions({
+  model: "openai/gpt-4o",
+  messages: [
+    { role: "system", content: "You are a helpful assistant." },
+    { role: "user", content: "Hello!" },
+  ],
+  temperature: 0.7,
+  max_tokens: 150,
+  stream: false,
+});
+
+const data = await response.json();
+console.log(data.choices[0].message.content);
+```
+
+**Parameters:**
+- `body: unknown` — OpenAI-compatible request body
+- `init?: RequestInit` — Additional fetch options
+
+**Returns:** `Promise<Response>`
+
+### client.sessionBalance(init?)
+
+Queries the session balance for the authenticated wallet.
+
+```typescript
+const balance = await client.sessionBalance();
+console.log(`CAIP Account: ${balance.caip_account_id}`);
+console.log(`Balance (USD): ${balance.balance_usd}`);
+console.log(`Balance (micro USDC): ${balance.balance_micro_usdc}`);
+```
+
+**Returns:** `Promise<SessionBalanceResponse>`
+
+```typescript
+interface SessionBalanceResponse {
+  caip_account_id: string;       // CAIP-10 account identifier
+  balance_micro_usdc: number;    // Balance in micro USDC (1 USDC = 1,000,000)
+  balance_usd: string;           // Human-readable USD balance
+}
+```
+
+---
+
+## ClientSigner
+
+Interface that all chain-specific signers implement. Combines x402 payment capabilities with SIWx authentication.
+
+```typescript
+type ClientSigner = SchemeNetworkClient & {
+  address: string;
+  network: `${string}:${string}`;  // CAIP-2 chain identifier
+  signPayload(payload: Omit<SIWxPayload, "signature">): Promise<string>;
+};
+```
+
+Implementations:
+- [`SvmClientSigner`](/docs/sdk-reference/ts-svm) — Solana wallets
+- [`EvmClientSigner`](/docs/sdk-reference/ts-evm) — Ethereum / Base wallets
+
+---
+
+## wrapFetchWithSigner
+
+Wraps a fetch function with automatic SIWx authentication headers and x402 payment handling. This is what `AimoClient` uses internally, but you can use it directly for custom integrations.
+
+```typescript
+import { wrapFetchWithSigner } from "@aimo.network/client";
+
+const authedFetch = wrapFetchWithSigner(fetch, signer, {
+  siwxDomain: "beta.aimo.network", // optional
+});
+
+// All requests made with authedFetch will include SIWx auth + x402 payments
+const response = await authedFetch("https://beta.aimo.network/api/v1/chat/completions", {
+  method: "POST",
+  body: JSON.stringify({ model: "openai/gpt-4o", messages: [...] }),
+});
+```
+
+**Parameters:**
+- `fetch: typeof fetch` — The fetch function to wrap
+- `signer: ClientSigner` — Wallet signer
+- `options?: WrapFetchOptions` — Optional config (e.g., `siwxDomain`)
+
+**Returns:** A wrapped `fetch` function with auth and payments
+
+SIWx sessions are cached for 1 hour to avoid re-signing on every request.
+
+---
+
+## SIWx Helpers
+
+Low-level utilities for building custom authentication flows.
+
+### createSIWxMessage(payload)
+
+Creates a CAIP-122 formatted message from a SIWx payload.
+
+```typescript
+import { createSIWxMessage } from "@aimo.network/client";
+
+const message = createSIWxMessage(payload);
+```
+
+### encodeSIWxHeader(message, signature)
+
+Base64-encodes a message and signature into the auth header value.
+
+```typescript
+import { encodeSIWxHeader } from "@aimo.network/client";
+
+const headerValue = encodeSIWxHeader(message, signature);
+```
+
+### prepareSIWxForSigning(payload)
+
+Convenience function that prepares a payload for signing and provides a header creator.
+
+```typescript
+import { prepareSIWxForSigning } from "@aimo.network/client";
+
+const { message, createHeader } = prepareSIWxForSigning(payload);
+const signature = await signer.signMessage(message);
+const header = createHeader(signature);
+```
+
+---
+
+## x402 Helpers
+
+Convert `ClientSigner` instances to x402-compatible formats for direct x402 usage.
+
+### toX402Client(signer)
+
+```typescript
+import { toX402Client } from "@aimo.network/client";
+
+// Single signer
+const x402Client = toX402Client(signer);
+
+// Multiple signers (e.g., support both Solana and EVM payments)
+const x402Client = toX402Client([svmSigner, evmSigner]);
+```
+
+### toSchemeRegistrations(signer)
+
+```typescript
+import { toSchemeRegistrations } from "@aimo.network/client";
+
+const registration = toSchemeRegistrations(signer);
+```
+
+---
+
+## Constants
+
+```typescript
+import { AimoEndpoints, ApiBase } from "@aimo.network/client";
+
+// Default endpoint paths
+AimoEndpoints.chatCompletions; // "/chat/completions"
+AimoEndpoints.sessionBalance;  // "/session/balance"
+
+// Default API base path
+ApiBase; // "/api/v1"
+```

@@ -1,0 +1,111 @@
+{
+  "Metadata": {
+    "title": "BitRouter — Open Intelligence Router for LLM Agents",
+    "description": "Optimize your agent runtime with two lines of code. 10x up performance & 10x down cost."
+  },
+  "Header": {
+    "search": "Search",
+    "searchPlaceholder": "Type a command or search...",
+    "signIn": "Sign In / Sign Up",
+    "dashboard": "Dashboard",
+    "benchmark": "Benchmark",
+    "pagesHeading": "Pages",
+    "accountHeading": "Account",
+    "keys": "Keys",
+    "usage": "Usage",
+    "balance": "Balance",
+    "themeHeading": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "languageHeading": "Language",
+    "noResults": "No results found.",
+    "searchDescription": "Search pages and actions"
+  },
+  "Nav": {
+    "playground": "Playground",
+    "models": "Models",
+    "docs": "Docs",
+    "getStarted": "Get started"
+  },
+  "Hero": {
+    "headline": "Open Intelligence Router for LLM\u00a0Agents",
+    "subtitle": "Optimize your agent runtime with two lines of code. 10x up performance & 10x down cost.",
+    "ctaPrimary": "Get started",
+    "timelineLabel": "See it in action — a 10-call agent session, routed in real time",
+    "codeComment": "that's it"
+  },
+  "IntegrationBar": {
+    "heading": "Works with any leading agent runtime",
+    "tagline": "OpenAI-compatible. Drop in one line.",
+    "andMore": "and more"
+  },
+  "Features": {
+    "runtimeNative": {
+      "title": "Runtime-Native",
+      "benefit": "Built into your stack. Not bolted on.",
+      "description": "Integrates directly into your agent runtime as a native SDK — not an external proxy. Two lines of code, zero infrastructure changes."
+    },
+    "smartRouting": {
+      "title": "Smart Routing",
+      "benefit": "Right model for every call. Automatically.",
+      "description": "Each call is classified by task type and routed to the cheapest model that handles it. Full routing logs and per-call reasoning included."
+    },
+    "policyControl": {
+      "title": "Policy Control",
+      "benefit": "Set the rules. Enforce automatically.",
+      "description": "Define spend caps, model allowlists, rate limits, and escalation policies per session or per agent. Policies enforce themselves — no manual oversight needed."
+    },
+    "docsLink": "Read the docs"
+  },
+  "Benchmarks": {
+    "heading": "Proven on real agent workloads",
+    "xAxisLabel": "Cost per session ($)",
+    "yAxisLabel": "SWE-bench resolve rate (%)",
+    "resolveRate": "Resolve rate",
+    "costPerSession": "Cost/session",
+    "calloutLabel": "SWE-bench Verified",
+    "calloutHeadline": "93.2% resolve rate at 42% of the cost",
+    "calloutSubtext": "BitRouter Balanced vs. all-Opus baseline",
+    "statOverhead": "gateway overhead (p99)",
+    "statRecovery": "escalation recovery rate",
+    "methodologyLink": "Methodology"
+  },
+  "Timeline": {
+    "colNumber": "#",
+    "colTaskType": "Task Type",
+    "colModel": "Model",
+    "colReason": "Reason",
+    "colCost": "Cost",
+    "totalCost": "Total cost",
+    "baseline": "All-Opus baseline",
+    "saved": "Saved",
+    "healthScore": "Health score",
+    "footer": "1 escalation triggered \u00b7 0 quality regressions"
+  },
+  "Setup": {
+    "heading": "One line to start saving",
+    "subtitle": "BitRouter is OpenAI-compatible. Swap your base URL. Keep everything else.",
+    "responseLabel": "What you get back",
+    "docsLink": "View API docs",
+    "pills": {
+      "openaiCompat": "OpenAI compatible",
+      "streaming": "Streaming",
+      "overhead": "< 10ms overhead",
+      "sessionAware": "Session-aware",
+      "multiProvider": "Multi-provider"
+    }
+  },
+  "Footer": {
+    "ctaHeading": "Start routing smarter.",
+    "ctaPrimary": "Get started free",
+    "ctaSecondary": "Talk to us",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "brandKit": "Brand Kit",
+    "contact": "Contact",
+    "github": "GitHub",
+    "x": "Twitter/X",
+    "discord": "Discord",
+    "copyright": "\u00a9 2026 BitRouter"
+  }
+}

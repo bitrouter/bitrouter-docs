@@ -1,0 +1,137 @@
+---
+title: Advanced Usage
+description: Advanced Python SDK usage — local development, error handling, custom httpx, best practices
+---
+
+# Advanced Usage
+
+## Local Development
+
+When developing against a local server that validates against a production domain:
+
+```python
+async with AimoClient(AimoClientOptions(
+    signer=signer,
+    base_url="http://localhost:8000",
+    siwx_domain="beta.aimo.network",
+)) as client:
+    balance = await client.session_balance()
+```
+
+This also works with the OpenAI provider:
+
+```python
+client = create_openai_client(
+    signer=signer,
+    base_url="http://localhost:8000",
+    siwx_domain="beta.aimo.network",
+)
+```
+
+## Error Handling
+
+`chat_completions` returns an `httpx.Response`, so check the status code before parsing:
+
+```python
+try:
+    response = await client.chat_completions({
+        "model": "openai/gpt-4o",
+        "messages": [{"role": "user", "content": "Hello!"}],
+    })
+
+    if response.status_code != 200:
+        error = response.json()
+        print(f"API error: {error.get('error')}")
+    else:
+        data = response.json()
+        print(data["choices"][0]["message"]["content"])
+
+except Exception as e:
+    print(f"Request failed: {e}")
+```
+
+## Multi-Turn Conversation
+
+```python
+messages = [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "What is AiMo Network?"},
+]
+
+response1 = await client.chat_completions({
+    "model": "openai/gpt-4o",
+    "messages": messages,
+})
+
+data1 = response1.json()
+messages.append(data1["choices"][0]["message"])
+
+# Continue the conversation
+messages.append({"role": "user", "content": "How does it work?"})
+
+response2 = await client.chat_completions({
+    "model": "openai/gpt-4o",
+    "messages": messages,
+})
+```
+
+## Using Different Models
+
+All models are accessed through the OpenAI-compatible endpoint:
+
+```python
+models = ["openai/gpt-4o", "anthropic/claude-sonnet-4", "google/gemini-2.0-flash"]
+
+for model in models:
+    response = await client.chat_completions({
+        "model": model,
+        "messages": [{"role": "user", "content": "Hello!"}],
+    })
+    data = response.json()
+    print(f"{model}: {data['choices'][0]['message']['content']}")
+```
+
+## Best Practices
+
+### Security
+
+```python
+import os
+
+# Load keys from environment variables
+private_key = os.environ["SOLANA_PRIVATE_KEY"]
+
+# Never hardcode private keys in source code
+```
+
+### Performance
+
+```python
+# Reuse client instances — SIWx sessions are cached
+async with AimoClient(options) as client:
+    # Reuses cached SIWx session across requests
+    await client.chat_completions({...})
+    await client.chat_completions({...})
+
+# Don't create new clients for each request
+```
+
+### Custom httpx Client
+
+Pass a custom httpx `AsyncClient` for fine-grained control over timeouts, connection pooling, and other transport settings:
+
+```python
+import httpx
+
+custom_httpx = httpx.AsyncClient(
+    timeout=60.0,
+    limits=httpx.Limits(max_connections=10),
+)
+
+async with AimoClient(AimoClientOptions(
+    signer=signer,
+    base_url="https://beta.aimo.network",
+    httpx_client=custom_httpx,
+)) as client:
+    await client.chat_completions({...})
+```

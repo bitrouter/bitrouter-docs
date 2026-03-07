@@ -1,0 +1,28 @@
+import type { NextConfig } from "next";
+import { createMDX } from "fumadocs-mdx/next";
+import createNextIntlPlugin from "next-intl/plugin";
+
+const nextConfig: NextConfig = {
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  async redirects() {
+    return [
+      { source: "/docs", destination: "/docs/overview", permanent: false },
+      { source: "/zh/docs", destination: "/zh/docs/overview", permanent: false },
+    ];
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/docs/:path*.mdx",
+        destination: "/api/docs/llms-mdx/:path*",
+      },
+    ];
+  },
+};
+
+const withMDX = createMDX();
+const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
+
+export default withNextIntl(withMDX(nextConfig));

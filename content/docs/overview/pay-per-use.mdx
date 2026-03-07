@@ -1,0 +1,31 @@
+---
+title: Pay Per Use
+---
+
+Traditional SaaS subscriptions don't fit AI agents. Agents operate on-demand, with unpredictable usage patterns—paying a flat monthly fee makes little sense.
+
+## The Problem with Current Alternatives
+
+Many AI platforms now offer usage-based pricing, but they still require:
+
+- **Upfront deposits** — topping up credits or tokens before you can use the service
+- **Custodial accounts** — your funds sit in the provider's system
+- **Vendor lock-in** — credits are non-transferable between platforms
+
+## Self-Custodial Pay-Per-Use
+
+BitRouter takes a different approach. Users pay for each request directly from their own wallet.
+
+**How it works:**
+
+1. Users generate a wallet keypair or connect an external wallet
+2. Each API call is authenticated with a wallet signature
+3. Payments are processed via session balance or X402 protocol
+4. Funds remain in the user's control until the moment of use
+
+BitRouter uses the [x402 protocol](https://www.x402.org/) to process blockchain payments on Base or Solana without custodial intermediaries.
+
+## Supported Pricing Models
+
+- **Per-call pricing** — fixed cost per API request
+- **Token-based pricing** — cost based on input/output tokens (for LLMs)

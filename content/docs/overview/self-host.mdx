@@ -1,0 +1,468 @@
+---
+title: Self-Host Options
+description: Run the BitRouter proxy on your own infrastructure
+---
+import { Callout } from 'fumadocs-ui/components/callout';
+
+Run the open-source BitRouter proxy on your own infrastructure to route AI model requests through the BitRouter Network. Self-hosting gives you full control over your deployment, model configuration, and infrastructure.
+
+## Overview
+
+The BitRouter proxy is an open-source service that connects your AI model endpoints to the BitRouter Network router. You configure which models to expose, set pricing, and deploy the proxy — the router handles discovery, authentication, and request routing.
+
+**Source code:** [github.com/AIMOverse/bitrouter-proxy](https://github.com/AIMOverse/bitrouter-proxy)
+
+## Prerequisites
+
+- A Solana or EVM wallet
+- One or more OpenAI-compatible AI model API endpoints (your own or third-party keys)
+- Docker (recommended) or Rust toolchain
+
+---
+
+## Step 1: Install CLI and Generate Keypair
+
+```bash
+# Install CLI
+curl -fsSL https://aimo-cli-releases.s3.ap-northeast-1.amazonaws.com/install.sh | sh
+
+# Generate keypair
+aimo keygen
+
+# Keypair saved to ~/.config/aimo/keypair.json
+
+# Check your address
+aimo address
+```
+
+Your keypair is used for authenticating with the router and signing configuration updates.
+
+<Callout type="warn">
+Store your keypair securely. This file grants control over your proxy registration.
+</Callout>
+
+---
+
+## Step 2: Ensure API Compatibility
+
+Your model endpoints must be compatible with OpenAI's chat completion API format.
+
+### Requirements
+
+Your API must:
+- Accept POST requests to `/v1/chat/completions`
+- Support OpenAI-formatted JSON requests
+- Return responses matching OpenAI's structure
+- **Include usage data in every response**
+
+### Request Format
+
+```json
+POST /v1/chat/completions
+Content-Type: application/json
+
+{
+  "model": "your-model-name",
+  "messages": [
+    {"role": "user", "content": "Hello, AI!"}
+  ],
+  "stream": false,
+  "max_tokens": 150,
+  "temperature": 0.7
+}
+```
+
+### Response Format (Non-Streaming)
+
+```json
+{
+  "choices": [
+    {
+      "message": {
+        "role": "assistant",
+        "content": "Hello! How can I help you today?"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 15,
+    "completion_tokens": 8,
+    "total_tokens": 23
+  }
+}
+```
+
+### Response Format (Streaming)
+
+```http
+Content-Type: text/event-stream
+
+data: {"choices":[{"delta":{"content":"Hello"}}]}
+
+data: {"choices":[{"delta":{"content":" there!"}}]}
+
+data: {"choices":[{"delta":{},"finish_reason":"stop"}],"usage":{"prompt_tokens":15,"completion_tokens":8,"total_tokens":23}}
+
+data: [DONE]
+```
+
+<Callout type="warn">
+**Critical: Usage Data Required**
+
+You must include a `usage` object in every response. Without usage data, token counting and billing will not work correctly.
+
+**Non-streaming:** Include `usage` in the final response object.
+**Streaming:** Include `usage` in the last chunk before `[DONE]`.
+</Callout>
+
+### Adapting Non-OpenAI APIs
+
+If your API uses a different format, create a lightweight adapter:
+
+**Python Example:**
+```python
+from flask import Flask, request, jsonify
+
+@app.route('/v1/chat/completions', methods=['POST'])
+def openai_compatible():
+    data = request.json
+    messages = data['messages']
+
+    # Call your native API
+    response = your_model.generate(messages)
+
+    # Convert to OpenAI format
+    return jsonify({
+        'choices': [{
+            'message': {
+                'role': 'assistant',
+                'content': response.text
+            },
+            'finish_reason': 'stop'
+        }],
+        'usage': {
+            'prompt_tokens': response.prompt_tokens,
+            'completion_tokens': response.completion_tokens,
+            'total_tokens': response.total_tokens
+        }
+    })
+```
+
+**Popular API Gateways:**
+- [LiteLLM](https://github.com/BerriAI/litellm) - Proxy for 100+ LLM APIs
+- Custom middleware in your preferred language
+
+---
+
+## Step 3: Create Configuration File
+
+Create a `proxy.toml` file to define your models and connection settings.
+
+### Example Configuration
+
+```toml
+[router]
+url = "https://beta.aimo.network"
+
+# SIWx wallet-based authentication
+[router.siwx]
+chain_id = "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp"
+keypair_file = "~/.config/aimo/keypair.json"
+
+# Model 1: OpenAI GPT-4o
+[[models]]
+name = "gpt-4o"
+display_name = "OpenAI: GPT-4o"
+provider_name = "openai"
+context_length = 128000
+input_modalities = ["text"]
+output_modalities = ["text"]
+
+[models.pricing]
+# USDC per million tokens
+prompt = 2.5
+completion = 10.0
+
+[models.params]
+model = "gpt-4o"
+api_base = "https://api.openai.com/v1"
+api_key = "std::env::OPENAI_API_KEY"
+
+# Model 2: DeepSeek
+[[models]]
+name = "deepseek-chat-v3"
+display_name = "DeepSeek: DeepSeek V3"
+provider_name = "deepseek"
+context_length = 64000
+
+[models.pricing]
+prompt = 0.5
+completion = 1.0
+
+[models.params]
+model = "deepseek-chat"
+api_base = "https://api.deepseek.com/v1"
+api_key = "std::env::DEEPSEEK_API_KEY"
+
+# Model 3: Google Gemini
+[[models]]
+name = "gemini-2.5-flash"
+display_name = "Google: Gemini 2.5 Flash Preview"
+provider_name = "google"
+context_length = 1000000
+
+[models.pricing]
+prompt = 0.3
+completion = 0.85
+
+[models.params]
+model = "gemini-2.5-flash"
+api_base = "https://generativelanguage.googleapis.com/v1"
+api_key = "std::env::GOOGLE_API_KEY"
+```
+
+<Callout type="info">
+**Single vs Multiple Models**: Include one `[[models]]` block per model. Add as many as you need.
+</Callout>
+
+### Configuration Fields Reference
+
+#### Router Settings
+
+| Field | Description | Required |
+|-------|-------------|----------|
+| `url` | BitRouter router endpoint | Yes |
+| `siwx.chain_id` | CAIP-2 chain ID for your wallet | Yes |
+| `siwx.keypair_file` | Path to your keypair file | Yes (Solana) |
+| `siwx.private_key` | Private key (alternative to file) | Yes (EVM) |
+
+#### Model Metadata
+
+| Field | Description | Required | Example |
+|-------|-------------|----------|---------|
+| `name` | Unique model identifier | Yes | `gpt-4o` |
+| `display_name` | User-facing name | Yes | `OpenAI: GPT-4o` |
+| `provider_name` | Your provider identifier | Yes | `openai` |
+| `context_length` | Maximum context window | No | `128000` |
+| `input_modalities` | Supported input types | No | `["text", "image"]` |
+| `output_modalities` | Supported output types | No | `["text"]` |
+
+#### Pricing
+
+| Field | Description | Unit | Required |
+|-------|-------------|------|----------|
+| `prompt` | Input token cost | USDC per 1M tokens | Yes |
+| `completion` | Output token cost | USDC per 1M tokens | Yes |
+| `image` | Image input cost | USDC per image | No |
+
+#### Model Parameters
+
+| Field | Description | Required |
+|-------|-------------|----------|
+| `model` | Model identifier for API | Yes |
+| `api_base` | Base URL for API endpoint | Yes |
+| `api_key` | Authentication key | Yes |
+
+### Multimodal Model Configuration
+
+For models supporting image inputs:
+
+```toml
+[[models]]
+name = "gpt-4-vision"
+display_name = "OpenAI: GPT-4 Vision"
+provider_name = "openai"
+input_modalities = ["text", "image"]
+output_modalities = ["text"]
+
+[models.pricing]
+prompt = 10.0
+completion = 30.0
+image = 1.0  # Per image cost
+
+[models.params]
+model = "gpt-4-vision-preview"
+api_base = "https://api.openai.com/v1"
+api_key = "std::env::OPENAI_API_KEY"
+```
+
+### Environment Variables
+
+Set your API keys as environment variables:
+
+```bash
+export OPENAI_API_KEY="sk-your-openai-key"
+export DEEPSEEK_API_KEY="sk-your-deepseek-key"
+export GOOGLE_API_KEY="your-google-api-key"
+```
+
+In `proxy.toml`, reference them with the `std::env::` prefix:
+
+```toml
+api_key = "std::env::OPENAI_API_KEY"
+```
+
+---
+
+## Step 4: Deploy the Proxy
+
+### Option A: Docker (Recommended)
+
+Create `compose.yml`:
+
+```yaml
+services:
+  proxy:
+    image: ghcr.io/aimoverse/bitrouter-proxy:main
+    container_name: bitrouter-proxy
+    network_mode: host
+    volumes:
+      - ./proxy.toml:/etc/proxy/proxy.toml
+      - ~/.config/aimo/keypair.json:/root/.config/aimo/keypair.json:ro
+    environment:
+      CONFIG_FILE_PATH: /etc/proxy/proxy.toml
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
+```
+
+```bash
+# Start proxy in background
+docker compose up -d
+
+# View logs
+docker compose logs -f
+
+# Stop proxy
+docker compose down
+```
+
+### Option B: Build from Source
+
+```bash
+# Install proxy via Cargo
+cargo install bitrouter-proxy
+
+# Run proxy with your config
+bitrouter-proxy --config proxy.toml
+
+# Or with verbose logging
+bitrouter-proxy --config proxy.toml --log-level debug
+```
+
+### Verify Connection
+
+Your proxy is running successfully when you see:
+
+```
+[INFO] Connected to router: https://beta.aimo.network
+[INFO] Model registered: gpt-4o
+[INFO] Model registered: deepseek-chat-v3
+[INFO] Ready to serve requests
+```
+
+<Callout type="info">
+The proxy automatically reconnects if the router restarts. This is normal during active development.
+</Callout>
+
+### Configuration Validation
+
+Test your configuration before deployment:
+
+```bash
+# Dry-run to validate config
+bitrouter-proxy --config proxy.toml --validate
+
+# Run with verbose logging
+bitrouter-proxy --config proxy.toml --log-level debug
+```
+
+---
+
+## Testing Your Deployment
+
+### Test API Compatibility
+
+```bash
+# Test non-streaming
+curl https://your-api.example.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d '{
+    "model": "your-model",
+    "messages": [{"role": "user", "content": "Hello!"}],
+    "stream": false
+  }'
+```
+
+**Verify response includes:**
+- Proper JSON structure
+- `choices` array with `message` object
+- **`usage` object with token counts**
+- `finish_reason` field
+
+### Test Streaming
+
+```bash
+curl https://your-api.example.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d '{
+    "model": "your-model",
+    "messages": [{"role": "user", "content": "Hello!"}],
+    "stream": true
+  }'
+```
+
+**Verify:**
+- `Content-Type: text/event-stream`
+- Each line starts with `data: `
+- **Final chunk includes `usage`**
+- Ends with `data: [DONE]`
+
+### Pre-Deployment Checklist
+
+- [ ] Generated wallet keypair
+- [ ] Created `proxy.toml` with all models
+- [ ] Set environment variables for API keys
+- [ ] API accepts POST to `/v1/chat/completions`
+- [ ] API returns proper JSON structure
+- [ ] **API includes `usage` object in every response**
+- [ ] Tested both streaming and non-streaming modes
+- [ ] Proxy connects to router successfully
+- [ ] Models registered in BitRouter Network
+
+---
+
+## Common Issues
+
+### Missing Usage Data
+**Problem:** Response missing `usage` field
+**Solution:** Always calculate and include token counts in responses
+
+### Incorrect Streaming Format
+**Problem:** Streaming chunks malformed
+**Solution:** Each chunk must be valid JSON prefixed with `data: `
+
+### Wrong Content-Type
+**Problem:** Streaming returns `application/json`
+**Solution:** Use `text/event-stream` for streaming responses
+
+### Proxy Connection Failed
+**Problem:** Cannot connect to router
+**Solution:** Check keypair file is valid and network connectivity
+
+### Model Not Registered
+**Problem:** Model doesn't appear in network
+**Solution:** Check config syntax, restart proxy, view logs
+
+### Token Counting Accuracy
+**Problem:** Inaccurate token counts
+**Solution:** Use proper tokenizer for your model (e.g., tiktoken for GPT models)
+
+## Next Steps
+
+- Review [API Reference](/docs/api-reference) - Detailed API documentation
+- Check [SKILLS + CLI Guide](/docs/overview/skills-cli) - Onboard agents to use your self-hosted models
+- Join [Discord Community](https://discord.gg/MkeG9Zwuaw) - Get support and updates

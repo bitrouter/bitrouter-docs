@@ -1,0 +1,101 @@
+---
+title: Cherry Studio
+description: 在 Cherry Studio 中配置和使用 AiMo
+---
+
+<Callout type="warn">
+**注意：** 本教程使用基于仪表盘的 API 密钥系统，以便与 Cherry Studio 等第三方应用兼容。如需直接通过 CLI 或编程方式访问，请参阅使用钱包认证的 [AI Agent 指南](/docs/overview/ai-agent-guide)。
+</Callout>
+
+本教程将引导你在 Cherry Studio 中将 AiMo Network 设置为模型提供商、添加模型并开始对话。
+
+## Cherry Studio 简介及安装方法
+
+Cherry Studio 是一款桌面端 AI 聊天客户端，支持 OpenAI 兼容的提供商、提示词和多模型工作流。
+
+- 从官方网站或 Releases 页面下载并安装适用于你操作系统（macOS/Windows/Linux）的最新版本。
+- 安装完成后启动应用。
+
+## 获取 AiMo API Key（AiMo 网页仪表盘）
+
+在配置 Cherry Studio 之前，请先准备好你的 AiMo 账户和 API 密钥：
+
+1. 打开 [AiMo 网页仪表盘](https://aimo.network/dashboard)。
+2. 连接你的钱包。
+3. 充值余额/额度。
+4. 创建一个 API Key 并复制。格式通常为：`aimo-sk-dev-xxxxxxxx`。
+
+请妥善保存此密钥——你需要将其粘贴到 Cherry Studio 中。
+
+<Callout type="info">
+AiMo 兼容 OpenAI 协议。你将使用 AiMo 的 Base URL 和 API Key 进行认证。
+</Callout>
+
+## 在 Cherry Studio 中添加 AiMo Network 作为模型提供商
+
+{/* ![Cherry Studio Config](/cherry-studio-config.png) */}
+
+1. 打开 Cherry Studio。
+2. 进入设置 → 提供商（具体标签可能为"Providers"或"Model Providers"）。
+3. 添加新提供商，选择"OpenAI-compatible"（有时标记为"OpenAI API"、"Custom OpenAI"或类似名称）。
+4. 配置提供商：
+   - API Host / Base URL / Endpoint：`https://beta.aimo.network/api`（Base URL 预览应为 `https://beta.aimo.network/api/v1/chat/completions`）
+   - API Key / Token：你的 AiMo API 密钥，例如 `aimo-sk-dev-xxxxxxxx`
+   - Provider Name（可选）："AiMo Network"
+5. 保存。
+
+注意事项：
+- 不同版本的 Cherry Studio 可能使用略有不同的字段名称（如"Base URL"、"API Host"或"Endpoint"）。上述值适用于任何这些字段。
+- 如果 Cherry Studio 要求填写"Organization"或其他可选字段，可以留空。
+
+## 在 AiMo Discover 中查找模型并添加到 Cherry Studio
+
+1. 在 AiMo 仪表盘中，打开 Discover 部分/面板浏览可用模型。
+2. 复制 AiMo 中显示的模型标识符。格式为：
+   - `provider_pubkey:model_name`
+   - 示例：`HjRMtkc54ZNgq2PGCsiuhR1z4WR2YDTfA4PfW1GHXbLh:kimi-k2-0905-preview`
+3. 返回 Cherry Studio，进入模型部分：
+   - 点击"Add Model"（或"New Model"）。
+   - 选择你创建的 AiMo 提供商。
+   - 将模型标识符粘贴为 Model（必填）。
+   - 可选设置友好名称、描述、默认参数（temperature、max tokens）等。
+4. 保存模型条目。
+
+## 开始对话
+
+1. 在 Cherry Studio 中创建新对话。
+2. 从模型选择器中选择你添加的 AiMo 模型。
+3. 开始你的对话。如果 Cherry Studio 支持，你可以按对话调整 temperature、max tokens 或系统提示词等参数。
+
+## 快速参考
+
+- Base URL / API Host：`https://beta.aimo.network/api/v1`
+- API Key 格式：`aimo-sk-dev-xxxxxxxx`
+- Model ID 格式：`provider_pubkey:model_name`（从 AiMo Discover 复制）
+
+## 故障排除
+
+- 401 Unauthorized
+  - 检查是否粘贴了正确的 API Key。
+  - 确保没有前导/尾随空格或隐藏字符。
+  - 确认你的密钥在 AiMo 仪表盘中处于激活状态。
+
+- 404 Model Not Found
+  - 验证模型 ID 是否与 AiMo Discover 中显示的完全一致。
+  - 确保你在配置的 AiMo 提供商下添加了该模型。
+
+- 余额不足 / 429 或支付错误
+  - 在 AiMo 仪表盘中充值额度。
+  - 重试请求。
+
+- 超时 / 响应缓慢
+  - 增加请求超时时间（如果 Cherry Studio 提供此设置）。
+  - 尝试其他模型或稍后重试。
+
+- 一般连接问题
+  - 确认 Base URL 为 `https://beta.aimo.network/api/v1`。
+  - 检查你的网络/防火墙规则是否阻止了请求。
+
+<Callout type="info">
+如果你计划使用多个 AiMo 模型，请在 Cherry Studio 的模型部分全部添加，以便在对话中快速切换。
+</Callout>

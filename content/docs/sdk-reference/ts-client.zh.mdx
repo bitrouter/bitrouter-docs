@@ -1,0 +1,209 @@
+---
+title: "@aimo.network/client"
+description: AiMo Network 核心客户端库 — AimoClient、身份验证和支付辅助工具
+---
+
+# @aimo.network/client
+
+核心客户端库。所有其他包都依赖于此包。提供 `AimoClient` 类、`ClientSigner` 接口、SIWx 身份验证辅助工具和 x402 支付工具。
+
+```bash
+npm install @aimo.network/client
+```
+
+## AimoClient
+
+与 AiMo Network API 交互的主要类。
+
+```typescript
+import { AimoClient } from "@aimo.network/client";
+
+const client = new AimoClient({
+  signer,
+  baseUrl: "https://beta.aimo.network",
+});
+```
+
+### AimoClientOptions
+
+| 属性 | 类型 | 必需 | 默认值 | 描述 |
+|------|------|------|--------|------|
+| `signer` | `ClientSigner` | 是 | — | 用于身份验证和支付的钱包签名器 |
+| `baseUrl` | `string` | 是 | — | API 服务器 URL（例如 `"https://beta.aimo.network"`） |
+| `apiBase` | `string` | 否 | `"/api/v1"` | API 路径前缀 |
+| `siwxDomain` | `string` | 否 | — | 覆盖 SIWx 签名域名（用于本地开发） |
+| `fetchOverride` | `typeof fetch` | 否 | — | 自定义 fetch 实现 |
+| `endpointsOverride` | `Partial<AimoEndpoints>` | 否 | — | 覆盖默认端点路径 |
+
+### client.chatCompletions(body, init?)
+
+发起 OpenAI 兼容的聊天补全请求。返回原始 `Response` 以支持普通和流式响应。
+
+```typescript
+const response = await client.chatCompletions({
+  model: "openai/gpt-4o",
+  messages: [
+    { role: "system", content: "You are a helpful assistant." },
+    { role: "user", content: "Hello!" },
+  ],
+  temperature: 0.7,
+  max_tokens: 150,
+  stream: false,
+});
+
+const data = await response.json();
+console.log(data.choices[0].message.content);
+```
+
+**参数：**
+- `body: unknown` — OpenAI 兼容的请求体
+- `init?: RequestInit` — 额外的 fetch 选项
+
+**返回值：** `Promise<Response>`
+
+### client.sessionBalance(init?)
+
+查询已认证钱包的会话余额。
+
+```typescript
+const balance = await client.sessionBalance();
+console.log(`CAIP Account: ${balance.caip_account_id}`);
+console.log(`Balance (USD): ${balance.balance_usd}`);
+console.log(`Balance (micro USDC): ${balance.balance_micro_usdc}`);
+```
+
+**返回值：** `Promise<SessionBalanceResponse>`
+
+```typescript
+interface SessionBalanceResponse {
+  caip_account_id: string;       // CAIP-10 账户标识符
+  balance_micro_usdc: number;    // 以 micro USDC 为单位的余额（1 USDC = 1,000,000）
+  balance_usd: string;           // 人类可读的 USD 余额
+}
+```
+
+---
+
+## ClientSigner
+
+所有链特定签名器实现的接口。结合了 x402 支付能力与 SIWx 身份验证。
+
+```typescript
+type ClientSigner = SchemeNetworkClient & {
+  address: string;
+  network: `${string}:${string}`;  // CAIP-2 链标识符
+  signPayload(payload: Omit<SIWxPayload, "signature">): Promise<string>;
+};
+```
+
+实现：
+- [`SvmClientSigner`](/docs/sdk-reference/ts-svm) — Solana 钱包
+- [`EvmClientSigner`](/docs/sdk-reference/ts-evm) — Ethereum / Base 钱包
+
+---
+
+## wrapFetchWithSigner
+
+将 fetch 函数包装为自动附加 SIWx 身份验证头部和 x402 支付处理。这是 `AimoClient` 内部使用的方法，但您也可以直接使用它进行自定义集成。
+
+```typescript
+import { wrapFetchWithSigner } from "@aimo.network/client";
+
+const authedFetch = wrapFetchWithSigner(fetch, signer, {
+  siwxDomain: "beta.aimo.network", // 可选
+});
+
+// 使用 authedFetch 发出的所有请求都将包含 SIWx 身份验证 + x402 支付
+const response = await authedFetch("https://beta.aimo.network/api/v1/chat/completions", {
+  method: "POST",
+  body: JSON.stringify({ model: "openai/gpt-4o", messages: [...] }),
+});
+```
+
+**参数：**
+- `fetch: typeof fetch` — 要包装的 fetch 函数
+- `signer: ClientSigner` — 钱包签名器
+- `options?: WrapFetchOptions` — 可选配置（例如 `siwxDomain`）
+
+**返回值：** 带有身份验证和支付功能的包装 `fetch` 函数
+
+SIWx 会话缓存 1 小时，避免每次请求重新签名。
+
+---
+
+## SIWx 辅助工具
+
+用于构建自定义身份验证流程的底层工具。
+
+### createSIWxMessage(payload)
+
+从 SIWx 载荷创建 CAIP-122 格式的消息。
+
+```typescript
+import { createSIWxMessage } from "@aimo.network/client";
+
+const message = createSIWxMessage(payload);
+```
+
+### encodeSIWxHeader(message, signature)
+
+将消息和签名 Base64 编码为认证头部值。
+
+```typescript
+import { encodeSIWxHeader } from "@aimo.network/client";
+
+const headerValue = encodeSIWxHeader(message, signature);
+```
+
+### prepareSIWxForSigning(payload)
+
+便捷函数，准备待签名的载荷并提供头部创建器。
+
+```typescript
+import { prepareSIWxForSigning } from "@aimo.network/client";
+
+const { message, createHeader } = prepareSIWxForSigning(payload);
+const signature = await signer.signMessage(message);
+const header = createHeader(signature);
+```
+
+---
+
+## x402 辅助工具
+
+将 `ClientSigner` 实例转换为 x402 兼容格式以直接使用 x402。
+
+### toX402Client(signer)
+
+```typescript
+import { toX402Client } from "@aimo.network/client";
+
+// 单个签名器
+const x402Client = toX402Client(signer);
+
+// 多个签名器（例如同时支持 Solana 和 EVM 支付）
+const x402Client = toX402Client([svmSigner, evmSigner]);
+```
+
+### toSchemeRegistrations(signer)
+
+```typescript
+import { toSchemeRegistrations } from "@aimo.network/client";
+
+const registration = toSchemeRegistrations(signer);
+```
+
+---
+
+## 常量
+
+```typescript
+import { AimoEndpoints, ApiBase } from "@aimo.network/client";
+
+// 默认端点路径
+AimoEndpoints.chatCompletions; // "/chat/completions"
+AimoEndpoints.sessionBalance;  // "/session/balance"
+
+// 默认 API 基础路径
+ApiBase; // "/api/v1"
+```

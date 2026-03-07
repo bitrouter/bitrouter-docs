@@ -1,0 +1,156 @@
+---
+title: Rewards Program (Early Beta)
+description: Earn rewards and refer friends to earn more rewards.
+---
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## Welcome to BitRouter Rewards
+
+BitRouter's rewards program gives you cashback and API credits every time you use our platform. Plus, you can earn even more by inviting friends and building your network.
+
+**What you earn:**
+- **Points** - API credits you can use for any model (1 point = $1)
+- **USDC Cashback** - Real money you can withdraw
+- **Referral Rewards** - Ongoing earnings from your network's activity
+
+<Callout type="info">
+This rewards program is subject to change as we refine the platform. We're committed to ensuring any changes remain fair to all users.
+</Callout>
+
+---
+
+## Membership Tiers
+
+### Rewards Comparison
+
+| | 🥉 Bronze | 🥈 Silver | 🥇 Gold |
+|---|---|---|---|
+| **Total Cashback** | 20% | 40% | 65% |
+| Points (API credits) | 15% | 30% | 50% |
+| USDC Cash | 5% | 10% | 15% |
+| **Referral Earnings** | | | |
+| L1 (direct referrals) | 20% | 20% | 25% |
+| L2 (referrals of referrals) | — | 10% | 10% |
+| L3 (third level) | — | — | 5% |
+| **Bonus Points** | 1 (welcome) | 5 | 50 |
+
+### Additional Perks by Tier
+
+| Perk | 🥉 Bronze | 🥈 Silver | 🥇 Gold |
+|---|:---:|:---:|:---:|
+| Priority support | | ✓ | ✓ |
+| Unlimited referrals | | ✓ | ✓ |
+| Exclusive NFT badge | | | ✓ |
+| First access to new models | | | ✓ |
+| Exclusive airdrops | | | ✓ |
+| Partner compute discounts | | | ✓ |
+| Dedicated support channel | | | ✓ |
+
+### How to Unlock Each Tier
+
+**🥉 Bronze** — Starting tier (automatic)
+
+**🥈 Silver** — All of the following:
+1. Spend $50 on the platform
+2. Complete social tasks (follow Twitter, join Discord)
+3. Build your network (choose one):
+   - **Path A:** 5 referrals who each spend $10+
+   - **Path B:** 3 referrals who each spend $30+
+   - **Path C:** Spend $150 yourself (no referrals needed)
+
+**🥇 Gold** — Standard path (all required):
+1. Spend $500 yourself
+2. $2,000 total network volume (L1 + L2 combined)
+3. 10 active L1 referrals (spent $10+ in last 30 days)
+4. Account age: at least 30 days
+
+**Gold Fast Track Options:**
+- **Whale Path:** Spend $5,000+ instantly (no referrals needed)
+- **Partnership Track:** Compute providers who integrate with BitRouter
+- **Top Performer:** Top 10 referrers each month
+
+---
+
+## Getting Started
+
+### Step 1: Sign Up & Earn Your First Points
+
+Complete these quick tasks to start earning:
+
+| Task | Reward |
+|------|--------|
+| Sign up & verify email | 1 point |
+| Follow [@BitRouterAI](https://twitter.com/aimonetwork) | 1 point |
+| Join [Discord](https://discord.gg/aimo) | 2 points |
+| **Total** | **4 points** |
+
+These social tasks are also required to unlock Silver tier later.
+
+---
+
+### Step 2: Start Using the API
+
+Use your trial credit and start earning cashback:
+
+```bash
+# Every API call earns you rewards
+curl -X POST https://api.aimo.network/v1/chat/completions \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "deepseek/deepseek-v3.2",
+    "messages": [{"role": "user", "content": "Hello!"}]
+  }'
+```
+
+Every dollar you spend automatically earns:
+- **15% back in points** (Bronze tier)
+- **5% back in USDC** (Bronze tier)
+
+---
+
+### Step 3: Share Your Referral Link
+
+1. **Get your link** from the dashboard
+2. **Share** with developers, teams, or communities
+3. **Track** your earnings in real-time
+4. **Earn** automatically when they transact
+
+---
+
+## FAQ
+
+<Accordions type="single">
+  <Accordion title="How do referrals work?">
+    **Levels:** L1 = people you directly refer. L2 = people your L1s refer (Silver+). L3 = people your L2s refer (Gold only). A referral is valid when they sign up through your link, verify email, and make a $1+ transaction. "Active" referrals (for Gold tier) must have spent $10+ and used the API in the last 30 days.
+  </Accordion>
+
+  <Accordion title="How do points work?">
+    Points are auto-applied to your next API calls (1 point = $1). They don't expire during beta but cannot be transferred. When you have both points and USDC, points are applied first, then any remaining balance is charged to your USDC.
+  </Accordion>
+
+  <Accordion title="How does USDC cashback work?">
+    Minimum withdrawal is $5 USDC. Payouts happen automatically every Monday to your connected wallet (Solana or Base). Gas fees are free during beta.
+  </Accordion>
+
+  <Accordion title="What are the Gold tier requirements?">
+    You need $500 personal spend, $2,000 network volume (total L1 + L2 spend, all-time), 10 active L1 referrals, and 30+ day account age. Inactive referrals still count toward your total but not toward the "10 active" requirement.
+  </Accordion>
+
+  <Accordion title="Can I lose my tier?">
+    Not during the beta phase. After beta, we may introduce tier decay for accounts inactive for 60+ days.
+  </Accordion>
+
+  <Accordion title="Can my company get Gold tier?">
+    Yes! Contact us at team@aimo.network to discuss partnership options for companies and DAOs.
+  </Accordion>
+
+  <Accordion title="Will the reward percentages change?">
+    Possibly after beta ends. All beta users will be grandfathered at current rates for a minimum of 6 months.
+  </Accordion>
+
+  <Accordion title="What are the fair play rules?">
+    We want to keep the program fair for everyone. **Not allowed:** self-referrals, fake transactions, multiple accounts from the same wallet, and wash trading. We use email & wallet verification, minimum $10 transactions for tier progress, and pattern detection. Violations result in warnings, tier revocation, or reward clawback depending on severity.
+  </Accordion>
+</Accordions>

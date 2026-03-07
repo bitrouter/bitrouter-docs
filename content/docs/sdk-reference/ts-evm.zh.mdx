@@ -1,0 +1,79 @@
+---
+title: "@aimo.network/evm"
+description: AiMo Network SDK 的 Ethereum 和 Base 钱包支持
+---
+
+# @aimo.network/evm
+
+AiMo 客户端的 Ethereum 和 Base (EVM) 钱包支持。提供 `EvmClientSigner`，实现了用于 EVM 钱包的 [`ClientSigner`](/docs/sdk-reference/ts-client#clientsigner) 接口。
+
+```bash
+npm install @aimo.network/evm
+```
+
+**对等依赖：** `@aimo.network/client`, `viem`
+
+## EvmClientSigner
+
+```typescript
+import { EvmClientSigner, EVM_MAINNET_CHAIN_ID } from "@aimo.network/evm";
+import { privateKeyToAccount } from "viem/accounts";
+
+const account = privateKeyToAccount(process.env.EVM_PRIVATE_KEY as `0x${string}`);
+
+const signer = new EvmClientSigner({
+  signer: account,
+  chainId: EVM_MAINNET_CHAIN_ID,
+});
+```
+
+### EvmClientSignerOptions
+
+| 属性 | 类型 | 必需 | 默认值 | 描述 |
+|------|------|------|--------|------|
+| `signer` | `EvmSigner` | 是 | — | EVM 账户（来自 `viem`） |
+| `chainId` | `` `${string}:${string}` `` | 否 | `EVM_MAINNET_CHAIN_ID` | CAIP-2 链标识符 |
+
+### 属性和方法
+
+| 成员 | 类型 | 描述 |
+|------|------|------|
+| `address` | `` `0x${string}` `` (readonly) | 十六进制编码的 Ethereum 地址 |
+| `network` | `` `${string}:${string}` `` | CAIP-2 链标识符 |
+| `chainId` | `` `${string}:${string}` `` | `network` 的别名 |
+| `scheme` | `"exact"` | x402 支付方案 |
+| `signPayload(payload)` | `Promise<string>` | 签名 SIWx 载荷，返回十六进制签名 |
+| `createPaymentPayload(x402Version, paymentRequirements)` | `Promise<...>` | 创建 x402 支付载荷 |
+
+## createEvmClientSigner
+
+工厂函数 — 等同于 `new EvmClientSigner(options)`。
+
+```typescript
+import { createEvmClientSigner } from "@aimo.network/evm";
+
+const signer = createEvmClientSigner({
+  signer: account,
+  chainId: EVM_MAINNET_CHAIN_ID,
+});
+```
+
+## Chain ID 常量
+
+```typescript
+import { EVM_MAINNET_CHAIN_ID } from "@aimo.network/evm";
+// "eip155:1" (Ethereum 主网)
+```
+
+## 类型
+
+```typescript
+// 最小消息签名接口
+interface EvmMessageSigner {
+  address: `0x${string}`;
+  signMessage(args: { message: string }): Promise<`0x${string}`>;
+}
+
+// 组合签名器类型（消息签名 + 交易签名）
+type EvmSigner = EvmMessageSigner & ClientEvmSigner;
+```

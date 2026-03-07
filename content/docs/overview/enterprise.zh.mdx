@@ -1,0 +1,82 @@
+---
+title: 企业版
+description: 面向团队和组织的企业级 AI 基础设施
+---
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## 为企业打造的 AI 基础设施
+
+BitRouter 为企业团队提供通过单一 API 实现的无许可、多供应商 AI 访问——同时满足你的组织在合规性、可靠性和成本控制方面的需求。
+
+## 企业团队选择 BitRouter 的理由
+
+### 多供应商接入，一个 API
+
+通过单一的 OpenAI 兼容端点访问来自 OpenAI、Anthropic、Google、DeepSeek 等数百个模型。无供应商锁定——无需更改代码即可即时切换供应商。
+
+### 成本透明与可控
+
+- **按需付费** — 无最低消费或预留容量
+- **团队级支出控制** — 通过 Payment Delegation Keys (PDKs) 实现
+- **实时用量面板** — 按团队、项目或模型追踪支出
+- **报价端点** — 在每次请求前获取精确的成本预估
+
+### 自托管支付
+
+资金在使用前一直保留在你组织的钱包中。无需将预付额度锁定在供应商账户中。通过 USDC（Solana 或 Base）链上结算。
+
+### 智能路由与可靠性
+
+跨供应商的自动故障转移确保正常运行。按价格、延迟或吞吐量路由——或在合规要求时指定特定供应商。
+
+### 隐私与合规
+
+- **无需 KYC** — 默认无许可
+- **不保留数据** — 请求仅代理转发，不存储
+- **可自托管代理** — 在你自己的基础设施上运行整个路由层（[自托管指南](/docs/overview/self-host)）
+- **链上结算** — 完全的支付可审计性
+
+## 企业使用场景
+
+| 使用场景 | BitRouter 如何帮助 |
+|----------|---------------|
+| **多模型评估** | 跨供应商 A/B 测试，无需管理多个 API 密钥 |
+| **成本优化** | 自动路由到同等模型中价格最低的供应商 |
+| **团队访问管理** | 为每个团队发放带有支出限额和有效期的 PDK |
+| **自主 Agent 集群** | 基于钱包的认证可扩展到数千个 Agent，无需管理 API 密钥 |
+| **合规敏感工作负载** | 自托管代理、指定供应商、链上审计所有支付 |
+
+## 开始使用
+
+<Callout type="info">
+**企业接入由我们亲自协助。** 我们与你的团队直接合作，配置路由、设置团队 PDK，并针对你的工作负载进行优化。
+
+请通过 [contact@bitrouter.ai](mailto:contact@bitrouter.ai) 联系我们，或加入我们的 [Discord](https://discord.gg/MkeG9Zwuaw) 开始使用。
+</Callout>
+
+### 快速集成
+
+BitRouter 兼容 OpenAI——大多数团队几分钟内即可开始使用：
+
+```javascript
+import OpenAI from 'openai';
+
+const client = new OpenAI({
+  apiKey: process.env.AIMO_API_KEY,
+  baseURL: 'https://api.console.aimo.network/v1'
+});
+
+const completion = await client.chat.completions.create({
+  model: 'openai/gpt-5',
+  messages: [{ role: 'user', content: 'Hello!' }]
+});
+```
+
+无需迁移 SDK。无需学习新的抽象层。只需更改 base URL。
+
+## 下一步
+
+- **[手动接入指南](/docs/overview/manual-guide)** — 面向开发者的分步设置
+- **[自托管方案](/docs/overview/self-host)** — 在你的基础设施上运行 BitRouter 代理
+- **[Payment Delegation Keys](/docs/overview/payment-delegation-key)** — 面向团队的作用域访问控制
+- **[API 参考](/docs/api-reference)** — 完整的端点文档

@@ -1,0 +1,123 @@
+---
+title: Models, Tools, & Agents
+---
+
+Unlike common LLM aggregators that only unify models, BitRouter aggregates models, tools, and agents, allowing services to be composed and integrated in a highly flexible, agent-native manner.
+
+## Service Primitives
+
+All services registered on BitRouter fall into one of three primitives: models, tools, and agents, differentiated by their API standards.
+
+A single service can implement multiple primitives simultaneously.
+
+### Models
+
+Model services provide LLM inference capabilities through OpenAI-compatible chat/completion endpoints.
+
+```json
+// Request
+POST /v1/chat/completions
+{
+  "model": "deepseek/deepseek-v3.2",
+  "messages": [
+    { "role": "user", "content": "Hello" }
+  ]
+}
+
+// Response
+{
+  "id": "chatcmpl-123",
+  "choices": [{
+    "message": { "role": "assistant", "content": "Hi there!" }
+  }]
+}
+```
+
+#### Multimodal Support
+
+Models can support multiple input and output modalities beyond text:
+
+- **Vision**: Send images to vision-capable models for analysis, description, and OCR
+- **Image Generation**: Generate images from text prompts using compatible models
+
+Multimodal inputs use the same `/v1/chat/completions` endpoint. Images can be provided as direct URLs (`https://example.com/image.jpg`) or base64-encoded data (`data:image/jpeg;base64,{data}`).
+
+Visit the [Marketplace](https://aimo.network/marketplace) to find models that support your desired modalities.
+
+### Tools
+
+Tool services expose functionality following the [MCP (Model Context Protocol)](https://modelcontextprotocol.io) standard via JSON-RPC 2.0.
+
+```json
+// Discover available tools
+{ "jsonrpc": "2.0", "id": 1, "method": "tools/list" }
+
+// Response
+{
+  "jsonrpc": "2.0", "id": 1,
+  "result": {
+    "tools": [{
+      "name": "get_price",
+      "description": "Get token price",
+      "inputSchema": {
+        "type": "object",
+        "properties": { "symbol": { "type": "string" } },
+        "required": ["symbol"]
+      }
+    }]
+  }
+}
+
+// Invoke a tool
+{ "jsonrpc": "2.0", "id": 2, "method": "tools/call",
+  "params": { "name": "get_price", "arguments": { "symbol": "ETH" } } }
+
+// Response
+{
+  "jsonrpc": "2.0", "id": 2,
+  "result": { "content": [{ "type": "text", "text": "ETH: $3,245.50" }] }
+}
+```
+
+### Agents
+
+Agent services enable autonomous agent-to-agent communication following the [A2A (Agent2Agent)](https://a2a-protocol.org) standard via JSON-RPC 2.0 over HTTP.
+
+```json
+// Agent Card (capability discovery at /.well-known/agent.json)
+{
+  "name": "TradingAgent",
+  "description": "Executes crypto trades",
+  "skills": [{ "id": "execute_trade", "name": "Execute Trade" }],
+  "protocolVersion": "0.3"
+}
+
+// Send task to agent
+POST /a2a
+{
+  "message": {
+    "messageId": "msg-123",
+    "role": "user",
+    "parts": [{ "text": "Buy 1 ETH at market price" }]
+  }
+}
+
+// Task response
+{
+  "id": "task-456",
+  "status": { "state": "completed" },
+  "artifacts": [{ "parts": [{ "text": "Purchased 1 ETH at $3,245.50" }] }]
+}
+```
+
+## Best Practices
+
+A single service can expose different primitives depending on the use case. Choosing the appropriate primitive helps AI agents interact with BitRouter more effectively.
+
+**Example: Crypto AI Trading Agent**
+
+| Use Case | Recommended Primitive | Protocol |
+|----------|----------------------|----------|
+| Backend for a frontend application | Model | Chat/Completion |
+| Tool for other agents to invoke | Tool | MCP |
+| Autonomous agent-to-agent interaction | Agent | A2A |

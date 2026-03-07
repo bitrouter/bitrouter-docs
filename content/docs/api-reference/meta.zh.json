@@ -1,0 +1,16 @@
+{
+  "title": "API 参考",
+  "root": true,
+  "pages": [
+    "index",
+    "---核心服务---",
+    "chat",
+    "image",
+    "video",
+    "---发现---",
+    "models",
+    "---平台---",
+    "analytics",
+    "health"
+  ]
+}

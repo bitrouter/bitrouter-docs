@@ -1,0 +1,82 @@
+---
+title: Enterprise
+description: Enterprise-grade AI infrastructure for teams and organizations
+---
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## AI Infrastructure Built for Enterprise
+
+BitRouter provides enterprise teams with permissionless, multi-provider AI access through a single API — with the compliance, reliability, and cost controls your organization needs.
+
+## Why Enterprise Teams Choose BitRouter
+
+### Multi-Provider Access, One API
+
+Access hundreds of models from OpenAI, Anthropic, Google, DeepSeek, and more through a single OpenAI-compatible endpoint. No vendor lock-in — switch providers instantly without code changes.
+
+### Cost Transparency & Control
+
+- **Pay-per-use pricing** — no minimum commitments or reserved capacity
+- **Per-team spending controls** via Payment Delegation Keys (PDKs)
+- **Real-time usage dashboards** — track spend by team, project, or model
+- **Quote endpoints** — get exact cost estimates before every request
+
+### Self-Custodial Payments
+
+Funds stay in your organization's wallet until the moment of use. No prepaid credits locked in a vendor's account. Settle on-chain with USDC (Solana or Base).
+
+### Intelligent Routing & Reliability
+
+Automatic failover across providers ensures uptime. Route by price, latency, or throughput — or pin to a specific provider when compliance requires it.
+
+### Privacy & Compliance
+
+- **No KYC required** — permissionless by default
+- **No data retention** — requests are proxied, not stored
+- **Self-hostable proxy** — run the entire routing layer on your own infrastructure ([Self-Host Guide](/docs/overview/self-host))
+- **On-chain settlement** — full payment auditability
+
+## Enterprise Use Cases
+
+| Use Case | How BitRouter Helps |
+|----------|---------------|
+| **Multi-model evaluation** | A/B test across providers without managing multiple API keys |
+| **Cost optimization** | Automatic routing to cheapest provider for equivalent models |
+| **Team access management** | Issue scoped PDKs per team with spending limits and expiration |
+| **Autonomous agent fleets** | Wallet-based auth scales to thousands of agents without API key management |
+| **Compliance-sensitive workloads** | Self-host the proxy, pin providers, audit all payments on-chain |
+
+## Getting Started
+
+<Callout type="info">
+**Enterprise onboarding is hands-on.** We work directly with your team to configure routing, set up team PDKs, and optimize for your workloads.
+
+Reach out at [contact@bitrouter.ai](mailto:contact@bitrouter.ai) or join our [Discord](https://discord.gg/MkeG9Zwuaw) to get started.
+</Callout>
+
+### Quick Integration
+
+BitRouter is OpenAI-compatible — most teams are up and running in minutes:
+
+```javascript
+import OpenAI from 'openai';
+
+const client = new OpenAI({
+  apiKey: process.env.AIMO_API_KEY,
+  baseURL: 'https://api.console.aimo.network/v1'
+});
+
+const completion = await client.chat.completions.create({
+  model: 'openai/gpt-5',
+  messages: [{ role: 'user', content: 'Hello!' }]
+});
+```
+
+No SDK migration. No new abstractions. Just change the base URL.
+
+## Next Steps
+
+- **[Manual Onboarding Guide](/docs/overview/manual-guide)** — Step-by-step setup for developers
+- **[Self-Host Options](/docs/overview/self-host)** — Run BitRouter proxy on your own infrastructure
+- **[Payment Delegation Keys](/docs/overview/payment-delegation-key)** — Scoped access control for teams
+- **[API Reference](/docs/api-reference)** — Complete endpoint documentation

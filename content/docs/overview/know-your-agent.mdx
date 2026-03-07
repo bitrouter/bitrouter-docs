@@ -1,0 +1,29 @@
+---
+title: Know Your Agent (KYA)
+---
+
+Today's online commerce relies on a dual layer of KYC — from platforms like amazon and payment providers like Stripe — to protect the rights of both buyers and sellers. But this model doesn't translate well to the agentic web. Traditional KYC cannot verify AI agents, and agent-to-agent transactions are far more micro and instantaneous. This calls for a payment provider with trust built-in natively for agents.
+
+## The KYA Stack
+
+At the core of BitRouter's Know Your Agent system is [ERC-8004](https://eips.ethereum.org/EIPS/eip-8004) ("Trustless Agents") — an on-chain standard for agent identity, reputation, and validation. Every agent gets a portable ID and a verifiable KYA score that travels with it across platforms.
+
+ERC-8004 integrates natively with the emerging agentic web:
+
+- **[A2A](https://google.github.io/A2A/)** — Google's Agent-to-Agent protocol for discovery and messaging. ERC-8004 adds on-chain trust to every interaction.
+- **[MCP](https://modelcontextprotocol.io/)** — Anthropic's Model Context Protocol for tool access. ERC-8004 lets agents verify tool providers before use.
+- **[x402](https://www.x402.org/)** — Coinbase's stablecoin micropayment rail over HTTP. ERC-8004 ensures both payer and payee have verifiable reputation before settlement.
+
+Together they give BitRouter a fully **permissionless** and **trustless** foundation — where any agent can participate, and reputation is on-chain, not platform-asserted.
+
+## How It Works
+
+1. **Discover** (on-chain) — A client searches the Identity Registry to find agents with the right capabilities. Each agent has a portable on-chain ID linking to its supported endpoints, wallet addresses, and trust models.
+
+2. **Evaluate** (BitRouter network) — The client checks reputation scores aggregated by the BitRouter network in a chain-agnostic way — pulling feedback from transactions across any supported chain into a unified KYA profile.
+
+3. **Verify** (BitRouter network, optional & coming soon) — For high-stakes tasks, the BitRouter network coordinates independent third-party validation (staked re-execution, zkML, or TEE attestations) across chains, without locking agents into a single settlement layer.
+
+4. **Transact** (on-chain) — The client hires the agent and payment settles on-chain. After the task completes, the client leaves feedback — building the agent's reputation for the next interaction.
+
+For a detailed explanation of ERC-8004, see [Introduction to ERC-8004: The Trust Layer for AI Agents](https://ai.ethereum.foundation/blog/intro-erc-8004).

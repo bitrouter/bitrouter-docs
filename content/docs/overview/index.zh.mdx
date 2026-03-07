@@ -1,0 +1,108 @@
+---
+title: 快速入门
+description: BitRouter 入门指南
+---
+
+## 欢迎使用 BitRouter
+
+BitRouter 是一个去中心化的 AI 市场，通过单一的 OpenAI 兼容 API 提供对数百个 AI 模型的无许可访问。采用 X402 协议进行透明的区块链支付，按使用量付费——这是一个基于 Solana 和 Base 构建的去中心化按需付费系统，无需传统支付中介。
+
+## 视频教程
+
+[视频教程将在此嵌入]
+
+## Hello World 示例
+
+使用 BitRouter CLI 快速开始：
+
+```bash
+# Install CLI
+curl -fsSL https://aimo-cli-releases.s3.ap-northeast-1.amazonaws.com/install.sh | sh
+
+# Generate a keypair
+aimo keygen
+
+# Chat with any model
+aimo chat --model deepseek/deepseek-v3.2 --message "Hello, AI!"
+```
+
+就这么简单！OpenAI 兼容的 API，搭配去中心化的无许可基础设施。
+
+## 选择你的路径
+
+### SKILLS + CLI（Agent 自动接入）
+
+最快的路径。在你的 IDE（Claude Code、Cursor、Copilot）中安装 Agent Skills，或直接使用 BitRouter CLI——你的 Agent 会自主完成剩余工作。
+
+**你将完成：**
+- 安装 BitRouter Agent Skill 或 CLI
+- 生成钱包密钥对
+- 立即访问模型、MCP 工具和 A2A Agent
+- 通过钱包签名自主支付
+
+> **[开始使用：SKILLS + CLI 指南](/docs/overview/skills-cli)**
+
+### 手动接入（开发者引导）
+
+面向需要完全控制的开发者的分步设置指南。创建账户、为钱包充值、生成 PDK，并与任何语言或框架集成。
+
+**你将完成：**
+- 通过 Console 创建账户
+- 充值 USDC 并生成 Payment Delegation Key
+- 使用 curl、JavaScript、Python 或任何 OpenAI 兼容 SDK 进行 API 调用
+- 访问多模态生成（图像、视频）
+
+> **[开始构建：手动指南](/docs/overview/manual-guide)**
+
+### 自托管方案
+
+在你自己的基础设施上运行开源的 BitRouter 代理。完全掌控路由、模型配置和部署。
+
+**你将完成：**
+- 通过 Docker 或 Cargo 部署 BitRouter 代理
+- 配置你自己的模型端点
+- 连接到 BitRouter 路由器
+
+> **[部署：自托管指南](/docs/overview/self-host)**
+
+## 核心特性
+
+**OpenAI 兼容 API**
+可直接替换 OpenAI API。只需更改 base URL，即可使用现有 SDK。
+
+**去中心化与无许可**
+无供应商锁定，透明的链上支付，注重隐私，供应商竞争带来最优定价。
+
+**智能供应商路由**
+根据可用性、延迟和价格，自动将请求路由到最佳可用供应商。
+
+**多种支付方式**
+- Session Balance：预充值钱包身份，实现自动支付
+- X402 Direct：基于区块链的原生按需付费，每次请求使用加密货币支付
+
+## 快速链接
+
+**开始使用：**
+- [控制台](https://aimo.network/dashboard) - 管理钱包余额和查看用量
+- [市场](https://aimo.network/marketplace) - 浏览可用模型和定价
+- [API 参考](/api-reference) - 完整的技术文档
+- [SDK 参考](/docs/sdk-reference) - TypeScript SDK 无缝集成
+
+**了解更多：**
+- [集成](/integrations) - OpenAI SDK、LangChain、Vercel AI SDK
+- [功能](/features) - 深入了解各项能力
+- [教程](/tutorial) - 分步集成指南
+
+**社区与支持：**
+- [Discord 社区](https://discord.gg/MkeG9Zwuaw) - 获取帮助并与用户交流
+- [支持](mailto:kelsenliu@aimo.network) - 联系团队
+
+## 工作原理
+
+1. **选择路径**：SKILLS + CLI、手动接入或自托管
+2. **身份认证**：使用 CLI 生成钱包密钥对或通过 Console 注册
+3. **连接**：使用我们的 OpenAI 兼容端点
+4. **按需付费**：通过 Session Balance 或 X402 协议进行自动、透明的支付
+5. **扩展**：访问量随需求增长，无需预先承诺
+
+准备好了吗？选择上面的路径，按照详细指南开始你的使用场景。

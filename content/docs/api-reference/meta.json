@@ -1,0 +1,16 @@
+{
+  "title": "API Reference",
+  "root": true,
+  "pages": [
+    "index",
+    "---Core Services---",
+    "chat",
+    "image",
+    "video",
+    "---Discovery---",
+    "models",
+    "---Platform---",
+    "analytics",
+    "health"
+  ]
+}

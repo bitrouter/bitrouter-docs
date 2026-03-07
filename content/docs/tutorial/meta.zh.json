@@ -1,0 +1,17 @@
+{
+  "title": "教程",
+  "root": true,
+  "pages": [
+    "index",
+    "---框架与 SDK---",
+    "openai-sdk",
+    "langchain",
+    "ai-sdk",
+    "eliza",
+    "---BYOK 应用---",
+    "moltbot",
+    "claude-code",
+    "sillytavern",
+    "janitor-ai"
+  ]
+}

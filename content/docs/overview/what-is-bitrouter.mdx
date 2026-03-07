@@ -1,0 +1,44 @@
+---
+title: What is BitRouter?
+description: BitRouter is an open, permissionless AI model router — like OpenRouter but crypto-native, with intelligent routing that optimizes cost and quality per request.
+---
+
+## What is BitRouter?
+
+BitRouter is a decentralized AI model router that gives you unified access to 200+ models from OpenAI, Anthropic, Google, and more through a single OpenAI-compatible API endpoint. Instead of managing multiple API keys and billing accounts, you connect once and pay per request with stablecoins.
+
+What makes BitRouter different from a simple proxy is **intelligent routing**: rather than always using the most expensive model, BitRouter analyzes each request and selects the optimal model to balance quality and cost. On the SWE-bench coding benchmark, BitRouter Balanced achieves a 93.2% resolve rate at 42% of the cost of using Opus for every request.
+
+BitRouter is fully permissionless — no KYC, no geo-restrictions, no censorship. It's built for AI agents and developers who need reliable, low-latency access to frontier models without traditional payment friction.
+
+## Key Differentiators
+
+- **Intelligent Routing** — Automatically picks the right model for each task. Starts with cheaper models and escalates only when needed. Sub-10ms routing overhead.
+- **Permissionless & Decentralized** — No sign-up forms, no KYC, no geo-blocks. Generate a keypair and start making requests.
+- **Agent-Native** — Built for autonomous AI agents with features like Know-Your-Agent identity, payment delegation keys, and the X402 pay-per-use protocol.
+
+## BitRouter vs OpenRouter
+
+| | BitRouter | OpenRouter |
+|---|---|---|
+| **Access** | Permissionless — no KYC or geo-restrictions | Requires account creation |
+| **Payments** | Crypto pay-per-use (stablecoins on Solana/Base) | Credit card or crypto top-up |
+| **Routing** | Intelligent routing with auto-escalation (93.2% SWE-bench at 42% All-Opus cost) | Basic auto routing |
+| **Overhead** | Sub-10ms routing latency | Varies |
+| **API** | OpenAI-compatible | OpenAI-compatible |
+| **Models** | 200+ models | 200+ models |
+| **Agent Features** | KYA identity, payment delegation, X402 protocol | Standard API keys |
+
+## BitRouter vs Direct API Access
+
+| | BitRouter | Direct API (e.g. OpenAI, Anthropic) |
+|---|---|---|
+| **Models** | 200+ from all providers via one endpoint | Only that provider's models |
+| **Billing** | Single crypto wallet, pay-per-use | Separate billing per provider |
+| **Routing** | Automatic model selection per task | Manual model selection |
+| **Setup** | Change base URL, use existing SDK | Separate SDK/key per provider |
+| **Cost** | Optimized via intelligent routing | Pay full price for chosen model |
+
+## Get Started
+
+BitRouter is a drop-in replacement for the OpenAI API. Check out the [Quick Start](/docs/overview) guide to begin, or see [OpenAI SDK Integration](/docs/tutorial/openai-sdk) to switch in two lines of code.

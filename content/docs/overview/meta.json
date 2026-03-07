@@ -4,6 +4,7 @@
   "pages": [
     "---Introduction---",
     "index",
+    "what-is-bitrouter",
     "faqs",
     "changelog",
     "enterprise",

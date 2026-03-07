@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     url: BASE_URL,
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "BitRouter — Open Intelligence Router for LLM Agents",
     description:
       "Unified API access to 200+ AI models. Pay-per-use with crypto. Two lines of code.",

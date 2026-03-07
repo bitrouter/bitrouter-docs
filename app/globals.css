@@ -5,9 +5,16 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * Fonts — Geist Mono everywhere
+ * Color tokens — defined once in :root / .dark below.
+ * fumadocs-ui/css/shadcn.css maps these to --color-fd-* automatically.
+ * The @theme block exposes them to Tailwind v4 utilities (bg-background, etc.).
+ */
 @theme inline {
   --font-sans: var(--font-geist-mono), ui-monospace, monospace;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --radius: 0.5rem;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -29,51 +36,50 @@
   --color-ring: var(--ring);
 }
 
-/* Light mode — warm stone palette */
+/* Light mode — neutral palette (opencode-inspired) */
 :root {
-  --radius: 0.25rem;
-  --background: #fafaf9;
-  --foreground: #0c0a09;
+  --background: #ffffff;
+  --foreground: #171717;
   --card: #ffffff;
-  --card-foreground: #0c0a09;
+  --card-foreground: #171717;
   --popover: #ffffff;
-  --popover-foreground: #0c0a09;
-  --primary: #0c0a09;
-  --primary-foreground: #fafaf9;
-  --secondary: #f5f5f4;
-  --secondary-foreground: #1c1917;
-  --muted: #f5f5f4;
-  --muted-foreground: #78716c;
-  --accent: #57534e;
+  --popover-foreground: #171717;
+  --primary: #171717;
+  --primary-foreground: #ffffff;
+  --secondary: #f5f5f5;
+  --secondary-foreground: #262626;
+  --muted: #f5f5f5;
+  --muted-foreground: #737373;
+  --accent: #737373;
   --accent-foreground: #ffffff;
   --destructive: #dc2626;
   --destructive-foreground: #fef2f2;
-  --border: #e7e5e4;
-  --input: #e7e5e4;
-  --ring: #57534e;
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: #a3a3a3;
 }
 
-/* Dark mode — warm stone palette */
+/* Dark mode — neutral palette (opencode-inspired) */
 .dark {
-  --background: #0c0a09;
-  --foreground: #fafaf9;
-  --card: #1c1917;
-  --card-foreground: #fafaf9;
-  --popover: #292524;
-  --popover-foreground: #fafaf9;
-  --primary: #fafaf9;
-  --primary-foreground: #0c0a09;
-  --secondary: #292524;
-  --secondary-foreground: #fafaf9;
-  --muted: #292524;
-  --muted-foreground: #a8a29e;
-  --accent: #a8a29e;
-  --accent-foreground: #0c0a09;
+  --background: #0a0a0a;
+  --foreground: #fafafa;
+  --card: #141414;
+  --card-foreground: #fafafa;
+  --popover: #1c1c1c;
+  --popover-foreground: #fafafa;
+  --primary: #fafafa;
+  --primary-foreground: #0a0a0a;
+  --secondary: #1c1c1c;
+  --secondary-foreground: #fafafa;
+  --muted: #1c1c1c;
+  --muted-foreground: #a3a3a3;
+  --accent: #a3a3a3;
+  --accent-foreground: #0a0a0a;
   --destructive: #f87171;
-  --destructive-foreground: #1c1917;
-  --border: #292524;
-  --input: #44403c;
-  --ring: #a8a29e;
+  --destructive-foreground: #1c1c1c;
+  --border: #262626;
+  --input: #404040;
+  --ring: #a3a3a3;
 }
 
 @layer base {
@@ -82,8 +88,5 @@
   }
   body {
     @apply bg-background text-foreground;
-  }
-  :root {
-    --color-fd-card: var(--card);
   }
 }

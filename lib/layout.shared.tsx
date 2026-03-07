@@ -3,7 +3,16 @@ import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
 export function baseOptions(): BaseLayoutProps {
   return {
     nav: {
-      title: "BitRouter",
+      title: (
+        <>
+          <img
+            src="/logo.svg"
+            alt="BitRouter"
+            className="h-8 w-8 dark:invert"
+          />
+          <span>BitRouter</span>
+        </>
+      ),
     },
     i18n: true,
     links: [

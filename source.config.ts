@@ -1,4 +1,11 @@
-import { defineConfig, defineDocs, frontmatterSchema, metaSchema } from "fumadocs-mdx/config";
+import {
+  defineConfig,
+  defineCollections,
+  defineDocs,
+  frontmatterSchema,
+  metaSchema,
+} from "fumadocs-mdx/config";
+import lastModified from "fumadocs-mdx/plugins/last-modified";
 import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 
@@ -15,9 +22,16 @@ export const docs = defineDocs({
   },
 });
 
+export const blog = defineCollections({
+  type: "doc",
+  dir: "content/blog",
+  schema: frontmatterSchema,
+});
+
 export default defineConfig({
   mdxOptions: {
     remarkPlugins: [remarkGfm],
     rehypePlugins: [rehypeSlug],
   },
+  plugins: [lastModified()],
 });

@@ -37,6 +37,7 @@ export default async function Page({ params }: Props) {
     }) as unknown as React.ReactElement;
   }
 
+  const { lastModified } = await page.data.load();
   const MDX = page.data.body;
   const slugPath = slug?.join("/") ?? "";
   const markdownUrl = `/docs/${slugPath}.mdx`;
@@ -74,6 +75,7 @@ export default async function Page({ params }: Props) {
     <DocsPage
       toc={page.data.toc}
       full={page.data.full}
+      lastUpdate={lastModified}
       tableOfContent={{
         footer: (
           <div className="flex flex-col gap-2 mt-4">

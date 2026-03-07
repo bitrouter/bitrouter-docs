@@ -1,18 +1,18 @@
 ---
 title: SDK 参考
-description: AiMo Network 官方 SDK — TypeScript 和 Python
+description: BitRouter 官方 SDK — TypeScript 和 Python
 ---
 
-# AiMo Network SDK
+# BitRouter SDK
 
-与 [AiMo Network](https://aimo.network) 交互的官方 SDK — 一个去中心化的 AI 推理市场。两个 SDK 都提供基于钱包的身份验证 (SIWx)、自动微支付处理 (x402) 以及 OpenAI 兼容的聊天补全接口。
+与 [BitRouter](https://bitrouter.ai) 交互的官方 SDK — 一个去中心化的 AI 推理市场。两个 SDK 都提供基于钱包的身份验证 (SIWx)、自动微支付处理 (x402) 以及 OpenAI 兼容的聊天补全接口。
 
 ## 可用的 SDK
 
 | SDK | 语言 | 包 | 状态 |
 |-----|------|-----|------|
-| [TypeScript](/docs/sdk-reference/typescript) | TypeScript / JavaScript | `@aimo.network/*` (npm) | v1.8.0 |
-| [Python](/docs/sdk-reference/python) | Python 3.10+ | `aimo-network` (PyPI) | v0.1.0 |
+| [TypeScript](/docs/sdk-reference/typescript) | TypeScript / JavaScript | `@bitrouter/*` (npm) | v1.8.0 |
+| [Python](/docs/sdk-reference/python) | Python 3.10+ | `bitrouter` (PyPI) | v0.1.0 |
 
 ## 安装
 
@@ -20,30 +20,30 @@ description: AiMo Network 官方 SDK — TypeScript 和 Python
 
 ```bash
 # 核心客户端（必需）
-npm install @aimo.network/client
+npm install @bitrouter/client
 
 # 链特定签名器（选择其一或两者）
-npm install @aimo.network/svm   # Solana
-npm install @aimo.network/evm   # Ethereum / Base
+npm install @bitrouter/svm   # Solana
+npm install @bitrouter/evm   # Ethereum / Base
 
 # Vercel AI SDK 集成（可选）
-npm install @aimo.network/provider ai
+npm install @bitrouter/provider ai
 ```
 
 ### Python
 
 ```bash
 # 核心 + Solana 支持
-pip install "aimo-network[solana]"
+pip install "bitrouter[solana]"
 
 # 核心 + EVM 支持
-pip install "aimo-network[evm]"
+pip install "bitrouter[evm]"
 
 # 包含 OpenAI SDK 集成
-pip install "aimo-network[openai]"
+pip install "bitrouter[openai]"
 
 # 全部安装
-pip install "aimo-network[all]"
+pip install "bitrouter[all]"
 ```
 
 ## 快速对比
@@ -52,10 +52,10 @@ pip install "aimo-network[all]"
 
 | 功能 | TypeScript | Python |
 |------|-----------|--------|
-| 核心客户端 | `AimoClient` | `AimoClient` (async) |
+| 核心客户端 | `BitRouterClient` | `BitRouterClient` (async) |
 | Solana 签名器 | `SvmClientSigner` | `SvmClientSigner` |
 | EVM 签名器 | `EvmClientSigner` | `EvmClientSigner` |
-| AI SDK 集成 | `@aimo.network/provider` (Vercel AI SDK) | `create_openai_client()` (OpenAI SDK) |
+| AI SDK 集成 | `@bitrouter/provider` (Vercel AI SDK) | `create_openai_client()` (OpenAI SDK) |
 | 身份验证 | SIWx（自动） | SIWx（自动） |
 | 支付 | x402（自动） | x402（自动） |
 | HTTP | `fetch` / 自定义 fetch | `httpx` / 自定义 transport |
@@ -71,8 +71,8 @@ pip install "aimo-network[all]"
 
 ## 资源
 
-- **GitHub**: [github.com/AIMOverse/aimo-sdk](https://github.com/AIMOverse/aimo-sdk)
-- **NPM**: [@aimo.network/client](https://www.npmjs.com/package/@aimo.network/client)
-- **PyPI**: [aimo-network](https://pypi.org/project/aimo-network/)
+- **GitHub**: [github.com/bitrouter/bitrouter-sdk](https://github.com/bitrouter/bitrouter-sdk)
+- **NPM**: [@bitrouter/client](https://www.npmjs.com/package/@bitrouter/client)
+- **PyPI**: [bitrouter](https://pypi.org/project/bitrouter/)
 - **AI Agent 指南**: [/docs/overview/ai-agent-guide](/docs/overview/ai-agent-guide)
 - **API 参考**: [/docs/api-reference](/docs/api-reference)

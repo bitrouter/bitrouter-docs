@@ -1,45 +1,45 @@
 ---
 title: LangChain
-description: Integrate AiMo Network with LangChain for building AI workflows
+description: Integrate BitRouter with LangChain for building AI workflows
 ---
 
-Integrate AiMo Network with LangChain for building complex AI workflows, chains, and agents using decentralized AI models.
+Integrate BitRouter with LangChain for building complex AI workflows, chains, and agents using decentralized AI models.
 
 <Callout type="info">
-**Authentication Update:** AiMo Network uses wallet-based SIWx authentication. You have three options:
-1. **AiMo CLI** (simplest) - See [AI Agent Guide](/docs/overview/ai-agent-guide)
-2. **AiMo TypeScript SDK with Vercel AI SDK** (recommended for LangChain.js) - See below
+**Authentication Update:** BitRouter uses wallet-based SIWx authentication. You have three options:
+1. **BitRouter CLI** (simplest) - See [AI Agent Guide](/docs/overview/ai-agent-guide)
+2. **BitRouter TypeScript SDK with Vercel AI SDK** (recommended for LangChain.js) - See below
 3. **Manual SIWx** (advanced) - See [advanced setup](#advanced-setup) section below
 </Callout>
 
-## Recommended: Use AiMo CLI
+## Recommended: Use BitRouter CLI
 
 For most LangChain use cases, the CLI provides the simplest integration:
 
 ```bash
 # Install CLI
-curl -fsSL https://aimo-cli-releases.s3.ap-northeast-1.amazonaws.com/install.sh | sh
+curl -fsSL https://bitrouter-cli-releases.s3.ap-northeast-1.amazonaws.com/install.sh | sh
 
 # Generate keypair
-aimo keygen
+bitrouter keygen
 
 # Use with any model
-aimo chat --model deepseek/deepseek-v3.2 --message "Hello, AI!"
+bitrouter chat --model deepseek/deepseek-v3.2 --message "Hello, AI!"
 ```
 
-## Alternative: Use AiMo SDK with Vercel AI SDK
+## Alternative: Use BitRouter SDK with Vercel AI SDK
 
-For LangChain.js applications, you can use the AiMo provider with Vercel AI SDK:
+For LangChain.js applications, you can use the BitRouter provider with Vercel AI SDK:
 
 ```bash
-npm install @aimo.network/client @aimo.network/svm @aimo.network/provider ai langchain
+npm install @bitrouter/client @bitrouter/svm @bitrouter/provider ai langchain
 ```
 
 ```typescript
 import { ChatLanguageModel } from "@langchain/core/language_models/chat_models";
 import { AIMessage, BaseMessage, HumanMessage } from "@langchain/core/messages";
-import { aimoNetwork } from "@aimo.network/provider";
-import { SvmClientSigner, SOLANA_MAINNET_CHAIN_ID } from "@aimo.network/svm";
+import { bitrouter } from "@bitrouter/provider";
+import { SvmClientSigner, SOLANA_MAINNET_CHAIN_ID } from "@bitrouter/svm";
 import { createKeyPairSignerFromBytes } from "@solana/kit";
 import { streamText } from "ai";
 import bs58 from "bs58";
@@ -47,7 +47,7 @@ import fs from "fs";
 
 // Load keypair
 const keypairData = JSON.parse(
-  fs.readFileSync(process.env.HOME + "/.config/aimo/keypair.json", "utf-8")
+  fs.readFileSync(process.env.HOME + "/.config/bitrouter/keypair.json", "utf-8")
 );
 
 const privateKeyBytes = new Uint8Array(keypairData);
@@ -59,18 +59,18 @@ const signer = new SvmClientSigner({
   chainId: SOLANA_MAINNET_CHAIN_ID,
 });
 
-// Create AiMo provider
-const aimo = aimoNetwork({
+// Create BitRouter provider
+const provider = bitrouter({
   signer,
-  baseURL: "https://beta.aimo.network",
+  baseURL: "https://beta.bitrouter.ai",
 });
 
 // Use with Vercel AI SDK
 const result = await streamText({
-  model: aimo.chat("deepseek/deepseek-v3.2"),
+  model: provider.chat("deepseek/deepseek-v3.2"),
   messages: [
     { role: "system", content: "You are a helpful assistant." },
-    { role: "user", content: "What is AiMo Network?" }
+    { role: "user", content: "What is BitRouter?" }
   ],
 });
 
@@ -100,7 +100,7 @@ npm install @langchain/openai @langchain/core
 
 ## Advanced Setup
 
-LangChain with AiMo requires custom SIWx authentication:
+LangChain with BitRouter requires custom SIWx authentication:
 
 <Tabs items={['Python', 'JavaScript']} persist groupId="language">
 <Tab value="Python">
@@ -113,7 +113,7 @@ from datetime import datetime, timedelta
 from nacl.signing import SigningKey
 
 # Load keypair and generate SIWx signature (see AI Agent Guide)
-def generate_siwx_header(keypair_path, domain="beta.aimo.network"):
+def generate_siwx_header(keypair_path, domain="beta.bitrouter.ai"):
     with open(keypair_path) as f:
         keypair_data = json.load(f)
         secret_key = bytes(keypair_data[:32])
@@ -144,13 +144,13 @@ Expiration Time: {expiration_time}"""
     
     return base64.b64encode(json.dumps(payload).encode()).decode()
 
-# Configure for AiMo Network
+# Configure for BitRouter
 llm = ChatOpenAI(
     api_key="not-used",
-    base_url="https://beta.aimo.network/api/v1",
+    base_url="https://beta.bitrouter.ai/api/v1",
     model="deepseek/deepseek-v3.2",
     default_headers={
-        "Sign-In-With-X": generate_siwx_header("~/.config/aimo/keypair.json")
+        "Sign-In-With-X": generate_siwx_header("~/.config/bitrouter/keypair.json")
     }
 )
 
@@ -172,7 +172,7 @@ import * as ed25519 from "@noble/ed25519";
 import * as fs from "fs";
 
 // Load keypair and generate SIWx signature (see AI Agent Guide)
-async function generateSiwxHeader(keypairPath, domain = "beta.aimo.network") {
+async function generateSiwxHeader(keypairPath, domain = "beta.bitrouter.ai") {
   const keypairData = JSON.parse(fs.readFileSync(keypairPath, "utf-8"));
   const secretKey = new Uint8Array(keypairData.slice(0, 32));
   const publicKey = await ed25519.getPublicKeyAsync(secretKey);
@@ -203,14 +203,14 @@ Expiration Time: ${expirationTime}`;
   return Buffer.from(JSON.stringify(payload)).toString("base64");
 }
 
-// Configure for AiMo Network
-const siwxHeader = await generateSiwxHeader("~/.config/aimo/keypair.json");
+// Configure for BitRouter
+const siwxHeader = await generateSiwxHeader("~/.config/bitrouter/keypair.json");
 
 const llm = new ChatOpenAI({
   apiKey: "not-used",
   model: "deepseek/deepseek-v3.2",
   configuration: {
-    baseURL: "https://beta.aimo.network/api/v1",
+    baseURL: "https://beta.bitrouter.ai/api/v1",
     defaultHeaders: {
       "Sign-In-With-X": siwxHeader
     }
@@ -305,12 +305,12 @@ for await (const chunk of stream) {
 
 ### Building Complex Chains
 
-LangChain allows you to build sophisticated AI workflows by chaining multiple operations together. With AiMo Network, you can leverage decentralized models in these chains.
+LangChain allows you to build sophisticated AI workflows by chaining multiple operations together. With BitRouter, you can leverage decentralized models in these chains.
 
 ### Agent Integration
 
-LangChain agents can use AiMo Network models as their reasoning engine, enabling decentralized AI-powered decision making.
+LangChain agents can use BitRouter models as their reasoning engine, enabling decentralized AI-powered decision making.
 
 ### Memory and Context
 
-LangChain's memory capabilities work seamlessly with AiMo Network models, allowing you to maintain conversation context across multiple interactions.
+LangChain's memory capabilities work seamlessly with BitRouter models, allowing you to maintain conversation context across multiple interactions.

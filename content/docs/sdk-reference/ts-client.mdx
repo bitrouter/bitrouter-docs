@@ -1,39 +1,39 @@
 ---
-title: "@aimo.network/client"
-description: Core client library for AiMo Network — AimoClient, authentication, and payment helpers
+title: "@bitrouter/client"
+description: Core client library for BitRouter — BitRouterClient, authentication, and payment helpers
 ---
 
-# @aimo.network/client
+# @bitrouter/client
 
-The core client library. All other packages depend on this. Provides the `AimoClient` class, `ClientSigner` interface, SIWx authentication helpers, and x402 payment utilities.
+The core client library. All other packages depend on this. Provides the `BitRouterClient` class, `ClientSigner` interface, SIWx authentication helpers, and x402 payment utilities.
 
 ```bash
-npm install @aimo.network/client
+npm install @bitrouter/client
 ```
 
-## AimoClient
+## BitRouterClient
 
-Main class for interacting with the AiMo Network API.
+Main class for interacting with the BitRouter API.
 
 ```typescript
-import { AimoClient } from "@aimo.network/client";
+import { BitRouterClient } from "@bitrouter/client";
 
-const client = new AimoClient({
+const client = new BitRouterClient({
   signer,
-  baseUrl: "https://beta.aimo.network",
+  baseUrl: "https://beta.bitrouter.ai",
 });
 ```
 
-### AimoClientOptions
+### BitRouterClientOptions
 
 | Property | Type | Required | Default | Description |
 |----------|------|----------|---------|-------------|
 | `signer` | `ClientSigner` | Yes | — | Wallet signer for authentication and payments |
-| `baseUrl` | `string` | Yes | — | API server URL (e.g., `"https://beta.aimo.network"`) |
+| `baseUrl` | `string` | Yes | — | API server URL (e.g., `"https://beta.bitrouter.ai"`) |
 | `apiBase` | `string` | No | `"/api/v1"` | API path prefix |
 | `siwxDomain` | `string` | No | — | Override SIWx signing domain (for local development) |
 | `fetchOverride` | `typeof fetch` | No | — | Custom fetch implementation |
-| `endpointsOverride` | `Partial<AimoEndpoints>` | No | — | Override default endpoint paths |
+| `endpointsOverride` | `Partial<BitRouterEndpoints>` | No | — | Override default endpoint paths |
 
 ### client.chatCompletions(body, init?)
 
@@ -104,17 +104,17 @@ Implementations:
 
 ## wrapFetchWithSigner
 
-Wraps a fetch function with automatic SIWx authentication headers and x402 payment handling. This is what `AimoClient` uses internally, but you can use it directly for custom integrations.
+Wraps a fetch function with automatic SIWx authentication headers and x402 payment handling. This is what `BitRouterClient` uses internally, but you can use it directly for custom integrations.
 
 ```typescript
-import { wrapFetchWithSigner } from "@aimo.network/client";
+import { wrapFetchWithSigner } from "@bitrouter/client";
 
 const authedFetch = wrapFetchWithSigner(fetch, signer, {
-  siwxDomain: "beta.aimo.network", // optional
+  siwxDomain: "beta.bitrouter.ai", // optional
 });
 
 // All requests made with authedFetch will include SIWx auth + x402 payments
-const response = await authedFetch("https://beta.aimo.network/api/v1/chat/completions", {
+const response = await authedFetch("https://beta.bitrouter.ai/api/v1/chat/completions", {
   method: "POST",
   body: JSON.stringify({ model: "openai/gpt-4o", messages: [...] }),
 });
@@ -140,7 +140,7 @@ Low-level utilities for building custom authentication flows.
 Creates a CAIP-122 formatted message from a SIWx payload.
 
 ```typescript
-import { createSIWxMessage } from "@aimo.network/client";
+import { createSIWxMessage } from "@bitrouter/client";
 
 const message = createSIWxMessage(payload);
 ```
@@ -150,7 +150,7 @@ const message = createSIWxMessage(payload);
 Base64-encodes a message and signature into the auth header value.
 
 ```typescript
-import { encodeSIWxHeader } from "@aimo.network/client";
+import { encodeSIWxHeader } from "@bitrouter/client";
 
 const headerValue = encodeSIWxHeader(message, signature);
 ```
@@ -160,7 +160,7 @@ const headerValue = encodeSIWxHeader(message, signature);
 Convenience function that prepares a payload for signing and provides a header creator.
 
 ```typescript
-import { prepareSIWxForSigning } from "@aimo.network/client";
+import { prepareSIWxForSigning } from "@bitrouter/client";
 
 const { message, createHeader } = prepareSIWxForSigning(payload);
 const signature = await signer.signMessage(message);
@@ -176,7 +176,7 @@ Convert `ClientSigner` instances to x402-compatible formats for direct x402 usag
 ### toX402Client(signer)
 
 ```typescript
-import { toX402Client } from "@aimo.network/client";
+import { toX402Client } from "@bitrouter/client";
 
 // Single signer
 const x402Client = toX402Client(signer);
@@ -188,7 +188,7 @@ const x402Client = toX402Client([svmSigner, evmSigner]);
 ### toSchemeRegistrations(signer)
 
 ```typescript
-import { toSchemeRegistrations } from "@aimo.network/client";
+import { toSchemeRegistrations } from "@bitrouter/client";
 
 const registration = toSchemeRegistrations(signer);
 ```
@@ -198,11 +198,11 @@ const registration = toSchemeRegistrations(signer);
 ## Constants
 
 ```typescript
-import { AimoEndpoints, ApiBase } from "@aimo.network/client";
+import { BitRouterEndpoints, ApiBase } from "@bitrouter/client";
 
 // Default endpoint paths
-AimoEndpoints.chatCompletions; // "/chat/completions"
-AimoEndpoints.sessionBalance;  // "/session/balance"
+BitRouterEndpoints.chatCompletions; // "/chat/completions"
+BitRouterEndpoints.sessionBalance;  // "/session/balance"
 
 // Default API base path
 ApiBase; // "/api/v1"

@@ -1,14 +1,14 @@
 ---
-title: aimo_network.svm
-description: AiMo Network Python SDK 的 Solana 钱包支持
+title: bitrouter.svm
+description: BitRouter Python SDK 的 Solana 钱包支持
 ---
 
-# aimo_network.svm
+# bitrouter.svm
 
-AiMo Python 客户端的 Solana (SVM) 钱包支持。提供 `SvmClientSigner`，实现了用于 Solana 钱包的 [`ClientSigner`](/docs/sdk-reference/py-client#clientsigner-protocol) 协议。
+BitRouter Python 客户端的 Solana (SVM) 钱包支持。提供 `SvmClientSigner`，实现了用于 Solana 钱包的 [`ClientSigner`](/docs/sdk-reference/py-client#clientsigner-protocol) 协议。
 
 ```bash
-pip install "aimo-network[solana]"
+pip install "bitrouter[solana]"
 ```
 
 **依赖：** `solders>=0.21`, `base58>=2.1`, `x402[svm]>=2.2`
@@ -17,7 +17,7 @@ pip install "aimo-network[solana]"
 
 ```python
 from solders.keypair import Keypair
-from aimo_network.svm import SvmClientSigner, SOLANA_MAINNET_CHAIN_ID
+from bitrouter.svm import SvmClientSigner, SOLANA_MAINNET_CHAIN_ID
 
 keypair = Keypair.from_base58_string("your-base58-private-key")
 
@@ -58,7 +58,7 @@ signer = SvmClientSigner(
 ## Chain ID 常量
 
 ```python
-from aimo_network.svm import (
+from bitrouter.svm import (
     SOLANA_MAINNET_CHAIN_ID,   # "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp"
     SOLANA_DEVNET_CHAIN_ID,    # "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1"
     SOLANA_TESTNET_CHAIN_ID,   # "solana:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z"

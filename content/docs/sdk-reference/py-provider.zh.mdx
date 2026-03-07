@@ -1,14 +1,14 @@
 ---
-title: aimo_network.provider
-description: AiMo Network Python SDK 的 OpenAI SDK 集成
+title: bitrouter.provider
+description: BitRouter Python SDK 的 OpenAI SDK 集成
 ---
 
-# aimo_network.provider
+# bitrouter.provider
 
-AiMo Network 的 OpenAI SDK 集成。返回一个标准的 `openai.AsyncOpenAI` 客户端，其中 SIWx 身份验证已内置于 httpx transport 中。
+BitRouter 的 OpenAI SDK 集成。返回一个标准的 `openai.AsyncOpenAI` 客户端，其中 SIWx 身份验证已内置于 httpx transport 中。
 
 ```bash
-pip install "aimo-network[openai]"
+pip install "bitrouter[openai]"
 ```
 
 **依赖：** `openai>=1.50`
@@ -18,11 +18,11 @@ pip install "aimo-network[openai]"
 创建一个由 SIWx 认证的 httpx transport 支持的 `AsyncOpenAI` 客户端。
 
 ```python
-from aimo_network.provider import create_openai_client
+from bitrouter.provider import create_openai_client
 
 client = create_openai_client(
     signer=signer,
-    base_url="https://beta.aimo.network",
+    base_url="https://beta.bitrouter.ai",
 )
 ```
 
@@ -31,7 +31,7 @@ client = create_openai_client(
 | 参数 | 类型 | 必需 | 默认值 | 描述 |
 |------|------|------|--------|------|
 | `signer` | `ClientSigner` | 是 | — | 钱包签名器 |
-| `base_url` | `str` | 否 | `"https://beta.aimo.network"` | API 服务器 URL |
+| `base_url` | `str` | 否 | `"https://beta.bitrouter.ai"` | API 服务器 URL |
 | `api_key` | `str` | 否 | `"siwx"` | 占位 API 密钥（实际认证使用 SIWx） |
 | `siwx_domain` | `str \| None` | 否 | `None` | 覆盖 SIWx 签名域名 |
 | `**openai_kwargs` | — | 否 | — | 额外的 `AsyncOpenAI` 构造函数参数 |
@@ -43,13 +43,13 @@ client = create_openai_client(
 ### 生成文本
 
 ```python
-from aimo_network.provider import create_openai_client
+from bitrouter.provider import create_openai_client
 
 client = create_openai_client(signer=signer)
 
 response = await client.chat.completions.create(
     model="openai/gpt-4o",
-    messages=[{"role": "user", "content": "What is AiMo Network?"}],
+    messages=[{"role": "user", "content": "What is BitRouter?"}],
 )
 
 print(response.choices[0].message.content)
@@ -77,7 +77,7 @@ response = await client.chat.completions.create(
     model="openai/gpt-4o",
     messages=[
         {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": "What is AiMo Network?"},
+        {"role": "user", "content": "What is BitRouter?"},
     ],
 )
 ```

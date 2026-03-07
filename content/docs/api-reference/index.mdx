@@ -1,19 +1,19 @@
 ---
 title: API Reference
-description: REST API documentation for the AiMo Network router.
+description: REST API documentation for the BitRouter router.
 ---
 
-The AiMo Network API provides access to a decentralized routing network for AI services. It connects clients who need AI capabilities with agents and providers who supply them, handling authentication, payments, and protocol translation.
+The BitRouter API provides access to a decentralized routing network for AI services. It connects clients who need AI capabilities with agents and providers who supply them, handling authentication, payments, and protocol translation.
 
 ## Base URL
 
 ```
-https://beta.aimo.network/api/v1
+https://beta.bitrouter.ai/api/v1
 ```
 
 ## Authentication
 
-AiMo uses **SIWx (Sign-In-With-X)** — a permissionless, wallet-based authentication scheme. You authenticate by signing a CAIP-122 message with a Solana or EVM wallet and sending the signature in the `Sign-In-With-X` header as a base64-encoded JSON envelope:
+BitRouter uses **SIWx (Sign-In-With-X)** — a permissionless, wallet-based authentication scheme. You authenticate by signing a CAIP-122 message with a Solana or EVM wallet and sending the signature in the `Sign-In-With-X` header as a base64-encoded JSON envelope:
 
 ```json
 {

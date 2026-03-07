@@ -62,8 +62,8 @@ BitRouter 兼容 OpenAI——大多数团队几分钟内即可开始使用：
 import OpenAI from 'openai';
 
 const client = new OpenAI({
-  apiKey: process.env.AIMO_API_KEY,
-  baseURL: 'https://api.console.aimo.network/v1'
+  apiKey: process.env.BITROUTER_API_KEY,
+  baseURL: 'https://api.console.bitrouter.ai/v1'
 });
 
 const completion = await client.chat.completions.create({

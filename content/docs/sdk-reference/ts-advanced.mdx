@@ -38,27 +38,27 @@ while (true) {
 }
 ```
 
-For a higher-level streaming API, use the [`@aimo.network/provider`](/docs/sdk-reference/ts-provider) with Vercel AI SDK's `streamText`.
+For a higher-level streaming API, use the [`@bitrouter/provider`](/docs/sdk-reference/ts-provider) with Vercel AI SDK's `streamText`.
 
 ## Local Development
 
 When developing against a local server that validates against a production domain:
 
 ```typescript
-const client = new AimoClient({
+const client = new BitRouterClient({
   signer,
   baseUrl: "http://localhost:8000",
-  siwxDomain: "beta.aimo.network",  // Override signing domain
+  siwxDomain: "beta.bitrouter.ai",  // Override signing domain
 });
 ```
 
 This also works with the provider:
 
 ```typescript
-const aimo = aimoNetwork({
+const br =bitrouter({
   signer,
   baseURL: "http://localhost:8000",
-  siwxDomain: "beta.aimo.network",
+  siwxDomain: "beta.bitrouter.ai",
 });
 ```
 
@@ -74,9 +74,9 @@ const customFetch: typeof fetch = async (url, init) => {
   return response;
 };
 
-const client = new AimoClient({
+const client = new BitRouterClient({
   signer,
-  baseUrl: "https://beta.aimo.network",
+  baseUrl: "https://beta.bitrouter.ai",
   fetchOverride: customFetch,
 });
 ```
@@ -109,7 +109,7 @@ try {
 ```typescript
 const messages = [
   { role: "system", content: "You are a helpful assistant." },
-  { role: "user", content: "What is AiMo Network?" },
+  { role: "user", content: "What is BitRouter?" },
 ];
 
 const response1 = await client.chatCompletions({
@@ -144,7 +144,7 @@ const privateKey = process.env.SOLANA_PRIVATE_KEY;
 
 ```typescript
 // Reuse client instances — SIWx sessions are cached for 1 hour
-const client = new AimoClient({ signer, baseUrl: "https://beta.aimo.network" });
+const client = new BitRouterClient({ signer, baseUrl: "https://beta.bitrouter.ai" });
 
 await client.chatCompletions({ ... });
 await client.chatCompletions({ ... }); // reuses cached SIWx session

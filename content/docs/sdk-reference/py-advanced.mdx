@@ -10,10 +10,10 @@ description: Advanced Python SDK usage — local development, error handling, cu
 When developing against a local server that validates against a production domain:
 
 ```python
-async with AimoClient(AimoClientOptions(
+async with BitRouterClient(BitRouterClientOptions(
     signer=signer,
     base_url="http://localhost:8000",
-    siwx_domain="beta.aimo.network",
+    siwx_domain="beta.bitrouter.ai",
 )) as client:
     balance = await client.session_balance()
 ```
@@ -24,7 +24,7 @@ This also works with the OpenAI provider:
 client = create_openai_client(
     signer=signer,
     base_url="http://localhost:8000",
-    siwx_domain="beta.aimo.network",
+    siwx_domain="beta.bitrouter.ai",
 )
 ```
 
@@ -55,7 +55,7 @@ except Exception as e:
 ```python
 messages = [
     {"role": "system", "content": "You are a helpful assistant."},
-    {"role": "user", "content": "What is AiMo Network?"},
+    {"role": "user", "content": "What is BitRouter?"},
 ]
 
 response1 = await client.chat_completions({
@@ -108,7 +108,7 @@ private_key = os.environ["SOLANA_PRIVATE_KEY"]
 
 ```python
 # Reuse client instances — SIWx sessions are cached
-async with AimoClient(options) as client:
+async with BitRouterClient(options) as client:
     # Reuses cached SIWx session across requests
     await client.chat_completions({...})
     await client.chat_completions({...})
@@ -128,9 +128,9 @@ custom_httpx = httpx.AsyncClient(
     limits=httpx.Limits(max_connections=10),
 )
 
-async with AimoClient(AimoClientOptions(
+async with BitRouterClient(BitRouterClientOptions(
     signer=signer,
-    base_url="https://beta.aimo.network",
+    base_url="https://beta.bitrouter.ai",
     httpx_client=custom_httpx,
 )) as client:
     await client.chat_completions({...})

@@ -1,36 +1,36 @@
 ---
-title: aimo_network.client
-description: AiMo Network Python SDK 核心客户端 — AimoClient、ClientSigner 协议和 SIWx 辅助工具
+title: bitrouter.client
+description: BitRouter Python SDK 核心客户端 — BitRouterClient、ClientSigner 协议和 SIWx 辅助工具
 ---
 
-# aimo_network.client
+# bitrouter.client
 
-核心客户端模块。提供 `AimoClient` 类、`ClientSigner` 协议、SIWx 身份验证辅助工具以及 httpx transport 工具。
+核心客户端模块。提供 `BitRouterClient` 类、`ClientSigner` 协议、SIWx 身份验证辅助工具以及 httpx transport 工具。
 
 ```bash
-pip install aimo-network
+pip install bitrouter
 ```
 
-## AimoClient
+## BitRouterClient
 
-与 AiMo Network API 交互的主要异步客户端。支持作为异步上下文管理器使用以自动清理资源。
+与 BitRouter API 交互的主要异步客户端。支持作为异步上下文管理器使用以自动清理资源。
 
 ```python
-from aimo_network import AimoClient, AimoClientOptions
+from bitrouter import BitRouterClient, BitRouterClientOptions
 
-async with AimoClient(AimoClientOptions(
+async with BitRouterClient(BitRouterClientOptions(
     signer=signer,
-    base_url="https://beta.aimo.network",
+    base_url="https://beta.bitrouter.ai",
 )) as client:
     balance = await client.session_balance()
 ```
 
-### AimoClientOptions
+### BitRouterClientOptions
 
 | 属性 | 类型 | 必需 | 默认值 | 描述 |
 |------|------|------|--------|------|
 | `signer` | `ClientSigner` | 是 | — | 用于身份验证和支付的钱包签名器 |
-| `base_url` | `str` | 是 | — | API 服务器 URL（例如 `"https://beta.aimo.network"`） |
+| `base_url` | `str` | 是 | — | API 服务器 URL（例如 `"https://beta.bitrouter.ai"`） |
 | `api_base` | `str` | 否 | `"/api/v1"` | API 路径前缀 |
 | `siwx_domain` | `str \| None` | 否 | `None` | 覆盖 SIWx 签名域名（用于本地开发） |
 | `endpoints_override` | `dict[str, str]` | 否 | `{}` | 覆盖默认端点路径 |
@@ -89,7 +89,7 @@ class SessionBalanceResponse:
 ### 异步上下文管理器
 
 ```python
-async with AimoClient(options) as client:
+async with BitRouterClient(options) as client:
     # 客户端已准备就绪
     balance = await client.session_balance()
 # 客户端在此自动关闭
@@ -102,7 +102,7 @@ async with AimoClient(options) as client:
 所有链特定的签名器都实现此运行时可检查协议：
 
 ```python
-from aimo_network.client import ClientSigner
+from bitrouter.client import ClientSigner
 
 @runtime_checkable
 class ClientSigner(Protocol):
@@ -137,7 +137,7 @@ class ClientSigner(Protocol):
 从 SIWx 载荷创建 CAIP-122 格式的消息。
 
 ```python
-from aimo_network import create_siwx_message
+from bitrouter import create_siwx_message
 
 message = create_siwx_message(payload)
 ```
@@ -147,7 +147,7 @@ message = create_siwx_message(payload)
 将消息和签名 Base64 编码为认证头部值。
 
 ```python
-from aimo_network import encode_siwx_header
+from bitrouter import encode_siwx_header
 
 header_value = encode_siwx_header(message, signature)
 ```
@@ -157,7 +157,7 @@ header_value = encode_siwx_header(message, signature)
 便捷函数，准备待签名的载荷并提供头部创建器。
 
 ```python
-from aimo_network import prepare_siwx_for_signing
+from bitrouter import prepare_siwx_for_signing
 
 prepared = prepare_siwx_for_signing(payload)
 # prepared.message — 待签名的消息
@@ -190,16 +190,16 @@ class SIWxPayload:
 ### create_siwx_httpx_client(signer, options?)
 
 ```python
-from aimo_network.client import create_siwx_httpx_client, WrapHttpxOptions
+from bitrouter.client import create_siwx_httpx_client, WrapHttpxOptions
 
 httpx_client = create_siwx_httpx_client(
     signer=signer,
-    options=WrapHttpxOptions(siwx_domain="beta.aimo.network"),
+    options=WrapHttpxOptions(siwx_domain="beta.bitrouter.ai"),
 )
 
 # 所有请求都包含 SIWx 身份验证 + x402 支付
 response = await httpx_client.post(
-    "https://beta.aimo.network/api/v1/chat/completions",
+    "https://beta.bitrouter.ai/api/v1/chat/completions",
     json={"model": "openai/gpt-4o", "messages": [...]},
 )
 ```
@@ -207,7 +207,7 @@ response = await httpx_client.post(
 ### 其他导出
 
 ```python
-from aimo_network.client import (
+from bitrouter.client import (
     to_scheme_registration,    # 将签名器转换为 x402 scheme registration
     to_x402_client,            # 将签名器转换为 x402 客户端
 )

@@ -1,11 +1,11 @@
 ---
 title: Python SDK
-description: AiMo Network Python SDK — 异步钱包身份验证、支付和 AI 推理
+description: BitRouter Python SDK — 异步钱包身份验证、支付和 AI 推理
 ---
 
 # Python SDK
 
-AiMo Network 官方 Python SDK。提供异步的基于钱包的身份验证 (SIWx)、自动支付处理 (x402) 以及 OpenAI 兼容的聊天补全接口。
+BitRouter 官方 Python SDK。提供异步的基于钱包的身份验证 (SIWx)、自动支付处理 (x402) 以及 OpenAI 兼容的聊天补全接口。
 
 **系统要求：** Python 3.10+
 
@@ -13,22 +13,22 @@ AiMo Network 官方 Python SDK。提供异步的基于钱包的身份验证 (SIW
 
 ```bash
 # 仅核心
-pip install aimo-network
+pip install bitrouter
 
 # 包含 Solana 支持
-pip install "aimo-network[solana]"
+pip install "bitrouter[solana]"
 
 # 包含 EVM 支持
-pip install "aimo-network[evm]"
+pip install "bitrouter[evm]"
 
 # 包含 OpenAI SDK 集成
-pip install "aimo-network[openai]"
+pip install "bitrouter[openai]"
 
 # 包含 x402 支付支持
-pip install "aimo-network[x402]"
+pip install "bitrouter[x402]"
 
 # 全部安装
-pip install "aimo-network[all]"
+pip install "bitrouter[all]"
 ```
 
 ### 可选依赖
@@ -47,8 +47,8 @@ pip install "aimo-network[all]"
 
 ```python
 from solders.keypair import Keypair
-from aimo_network import AimoClient, AimoClientOptions
-from aimo_network.svm import SvmClientSigner, SOLANA_MAINNET_CHAIN_ID
+from bitrouter import BitRouterClient, BitRouterClientOptions
+from bitrouter.svm import SvmClientSigner, SOLANA_MAINNET_CHAIN_ID
 
 # 从私钥创建 Solana 密钥对
 keypair = Keypair.from_base58_string("your-base58-private-key")
@@ -59,10 +59,10 @@ signer = SvmClientSigner(
     chain_id=SOLANA_MAINNET_CHAIN_ID,
 )
 
-# 创建 AiMo 客户端（异步上下文管理器）
-async with AimoClient(AimoClientOptions(
+# 创建 BitRouter 客户端（异步上下文管理器）
+async with BitRouterClient(BitRouterClientOptions(
     signer=signer,
-    base_url="https://beta.aimo.network",
+    base_url="https://beta.bitrouter.ai",
 )) as client:
     # 查询会话余额
     balance = await client.session_balance()
@@ -72,7 +72,7 @@ async with AimoClient(AimoClientOptions(
     # 发起聊天补全请求
     response = await client.chat_completions({
         "model": "openai/gpt-4o",
-        "messages": [{"role": "user", "content": "Hello, what is AiMo Network?"}],
+        "messages": [{"role": "user", "content": "Hello, what is BitRouter?"}],
     })
 
     data = response.json()
@@ -83,8 +83,8 @@ async with AimoClient(AimoClientOptions(
 
 ```python
 from eth_account import Account
-from aimo_network import AimoClient, AimoClientOptions
-from aimo_network.evm import EvmClientSigner, EVM_MAINNET_CHAIN_ID
+from bitrouter import BitRouterClient, BitRouterClientOptions
+from bitrouter.evm import EvmClientSigner, EVM_MAINNET_CHAIN_ID
 
 # 从私钥创建 EVM 账户
 account = Account.from_key("0x...")
@@ -95,9 +95,9 @@ signer = EvmClientSigner(
     chain_id=EVM_MAINNET_CHAIN_ID,
 )
 
-async with AimoClient(AimoClientOptions(
+async with BitRouterClient(BitRouterClientOptions(
     signer=signer,
-    base_url="https://beta.aimo.network",
+    base_url="https://beta.bitrouter.ai",
 )) as client:
     balance = await client.session_balance()
     print(f"Balance: {balance.balance_usd} USD")

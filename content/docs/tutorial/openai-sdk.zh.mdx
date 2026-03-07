@@ -1,53 +1,53 @@
 ---
 title: OpenAI SDK
-description: 使用官方 OpenAI SDK 集成 AiMo Network
+description: 使用官方 OpenAI SDK 集成 BitRouter
 ---
 
-使用官方 OpenAI SDK 集成 AiMo Network，通过熟悉的 OpenAI 兼容 API 无缝访问 AI 模型。
+使用官方 OpenAI SDK 集成 BitRouter，通过熟悉的 OpenAI 兼容 API 无缝访问 AI 模型。
 
 <Callout type="info">
-**认证更新：** AiMo Network 使用基于钱包的 SIWx 认证。你有三种选择：
-1. **AiMo CLI**（最简单）- 参见 [AI Agent 指南](/docs/overview/ai-agent-guide)
-2. **AiMo TypeScript SDK**（推荐用于应用开发）- 参见 [SDK 参考](/docs/sdk-reference)
+**认证更新：** BitRouter 使用基于钱包的 SIWx 认证。你有三种选择：
+1. **BitRouter CLI**（最简单）- 参见 [AI Agent 指南](/docs/overview/ai-agent-guide)
+2. **BitRouter TypeScript SDK**（推荐用于应用开发）- 参见 [SDK 参考](/docs/sdk-reference)
 3. **手动 SIWx**（高级）- 参见下方[高级认证](#advanced-authentication)部分
 </Callout>
 
-## 推荐方式：使用 AiMo CLI
+## 推荐方式：使用 BitRouter CLI
 
-使用 AiMo Network 最简单的方式是通过 CLI：
+使用 BitRouter 最简单的方式是通过 CLI：
 
 ```bash
 # Install CLI
-curl -fsSL https://aimo-cli-releases.s3.ap-northeast-1.amazonaws.com/install.sh | sh
+curl -fsSL https://bitrouter-cli-releases.s3.ap-northeast-1.amazonaws.com/install.sh | sh
 
 # Generate keypair
-aimo keygen
+bitrouter keygen
 
 # List available models
-aimo router list-models
+bitrouter router list-models
 
 # Chat with any model
-aimo chat --model deepseek/deepseek-v3.2 --message "Hello, AI!"
+bitrouter chat --model deepseek/deepseek-v3.2 --message "Hello, AI!"
 ```
 
-## 替代方式：使用 AiMo TypeScript SDK
+## 替代方式：使用 BitRouter TypeScript SDK
 
 对于 TypeScript/JavaScript 应用，可以使用官方 SDK，它会自动处理认证：
 
 ```bash
-npm install @aimo.network/client @aimo.network/svm
+npm install @bitrouter/client @bitrouter/svm
 ```
 
 ```typescript
-import { AimoClient } from "@aimo.network/client";
-import { SvmClientSigner, SOLANA_MAINNET_CHAIN_ID } from "@aimo.network/svm";
+import { BitRouterClient } from "@bitrouter/client";
+import { SvmClientSigner, SOLANA_MAINNET_CHAIN_ID } from "@bitrouter/svm";
 import { createKeyPairSignerFromBytes } from "@solana/kit";
 import bs58 from "bs58";
 import fs from "fs";
 
 // Load CLI-generated keypair
 const keypairData = JSON.parse(
-  fs.readFileSync(process.env.HOME + "/.config/aimo/keypair.json", "utf-8")
+  fs.readFileSync(process.env.HOME + "/.config/bitrouter/keypair.json", "utf-8")
 );
 
 const privateKeyBytes = new Uint8Array(keypairData);
@@ -60,9 +60,9 @@ const signer = new SvmClientSigner({
 });
 
 // Create client
-const client = new AimoClient({
+const client = new BitRouterClient({
   signer,
-  baseUrl: "https://beta.aimo.network",
+  baseUrl: "https://beta.bitrouter.ai",
 });
 
 // Make chat completion
@@ -122,7 +122,7 @@ npm install openai
 
 ## 高级认证
 
-AiMo Network 使用 SIWx（Sign-In-With-X）基于钱包的认证。OpenAI SDK 需要自定义请求头注入：
+BitRouter 使用 SIWx（Sign-In-With-X）基于钱包的认证。OpenAI SDK 需要自定义请求头注入：
 
 <Tabs items={['Python', 'JavaScript']} persist groupId="language">
 <Tab value="Python">
@@ -134,13 +134,13 @@ from datetime import datetime, timedelta
 from nacl.signing import SigningKey
 
 # Load your keypair
-with open("/home/user/.config/aimo/keypair.json") as f:
+with open("/home/user/.config/bitrouter/keypair.json") as f:
     keypair_data = json.load(f)
     secret_key = bytes(keypair_data[:32])
     signing_key = SigningKey(secret_key)
 
 # Generate SIWx signature
-def generate_siwx_header(domain="beta.aimo.network"):
+def generate_siwx_header(domain="beta.bitrouter.ai"):
     issued_at = datetime.utcnow().isoformat() + "Z"
     expiration_time = (datetime.utcnow() + timedelta(minutes=5)).isoformat() + "Z"
 
@@ -168,7 +168,7 @@ Expiration Time: {expiration_time}"""
 
 # Configure client with SIWx authentication
 client = openai.OpenAI(
-    base_url="https://beta.aimo.network/api/v1",
+    base_url="https://beta.bitrouter.ai/api/v1",
     api_key="not-used",
     default_headers={
         "Sign-In-With-X": generate_siwx_header()
@@ -194,13 +194,13 @@ import * as fs from "fs";
 
 // Load keypair
 const keypairData = JSON.parse(
-  fs.readFileSync("/home/user/.config/aimo/keypair.json", "utf-8")
+  fs.readFileSync("/home/user/.config/bitrouter/keypair.json", "utf-8")
 );
 const secretKey = new Uint8Array(keypairData.slice(0, 32));
 const publicKey = await ed25519.getPublicKeyAsync(secretKey);
 
 // Generate SIWx signature
-async function generateSiwxHeader(domain = "beta.aimo.network") {
+async function generateSiwxHeader(domain = "beta.bitrouter.ai") {
   const issuedAt = new Date().toISOString();
   const expirationTime = new Date(Date.now() + 5 * 60 * 1000).toISOString();
 
@@ -232,7 +232,7 @@ Expiration Time: ${expirationTime}`;
 
 // Configure client
 const client = new OpenAI({
-  baseURL: "https://beta.aimo.network/api/v1",
+  baseURL: "https://beta.bitrouter.ai/api/v1",
   apiKey: "not-used",
   defaultHeaders: {
     "Sign-In-With-X": await generateSiwxHeader()
@@ -295,8 +295,8 @@ for await (const chunk of stream) {
 
 ```bash
 # Use the CLI to discover models
-aimo router list-models
-aimo router search-models "deepseek"
+bitrouter router list-models
+bitrouter router search-models "deepseek"
 ```
 
 或通过编程方式：

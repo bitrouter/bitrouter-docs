@@ -10,7 +10,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 BitRouter 代理是一个开源服务，将你的 AI 模型端点连接到 BitRouter Network 路由器。你配置要暴露的模型、设定定价并部署代理——路由器负责发现、认证和请求路由。
 
-**源代码：** [github.com/AIMOverse/bitrouter-proxy](https://github.com/AIMOverse/bitrouter-proxy)
+**源代码：** [github.com/bitrouter/bitrouter-proxy](https://github.com/bitrouter/bitrouter-proxy)
 
 ## 前置要求
 
@@ -24,15 +24,15 @@ BitRouter 代理是一个开源服务，将你的 AI 模型端点连接到 BitRo
 
 ```bash
 # Install CLI
-curl -fsSL https://aimo-cli-releases.s3.ap-northeast-1.amazonaws.com/install.sh | sh
+curl -fsSL https://bitrouter-cli-releases.s3.ap-northeast-1.amazonaws.com/install.sh | sh
 
 # Generate keypair
-aimo keygen
+bitrouter keygen
 
-# Keypair saved to ~/.config/aimo/keypair.json
+# Keypair saved to ~/.config/bitrouter/keypair.json
 
 # Check your address
-aimo address
+bitrouter address
 ```
 
 你的密钥对用于向路由器进行认证和签署配置更新。
@@ -163,12 +163,12 @@ def openai_compatible():
 
 ```toml
 [router]
-url = "https://beta.aimo.network"
+url = "https://beta.bitrouter.ai"
 
 # SIWx wallet-based authentication
 [router.siwx]
 chain_id = "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp"
-keypair_file = "~/.config/aimo/keypair.json"
+keypair_file = "~/.config/bitrouter/keypair.json"
 
 # Model 1: OpenAI GPT-4o
 [[models]]
@@ -314,12 +314,12 @@ api_key = "std::env::OPENAI_API_KEY"
 ```yaml
 services:
   proxy:
-    image: ghcr.io/aimoverse/bitrouter-proxy:main
+    image: ghcr.io/bitrouter/bitrouter-proxy:main
     container_name: bitrouter-proxy
     network_mode: host
     volumes:
       - ./proxy.toml:/etc/proxy/proxy.toml
-      - ~/.config/aimo/keypair.json:/root/.config/aimo/keypair.json:ro
+      - ~/.config/bitrouter/keypair.json:/root/.config/bitrouter/keypair.json:ro
     environment:
       CONFIG_FILE_PATH: /etc/proxy/proxy.toml
       OPENAI_API_KEY: ${OPENAI_API_KEY}
@@ -356,7 +356,7 @@ bitrouter-proxy --config proxy.toml --log-level debug
 当你看到以下日志时，说明代理已成功运行：
 
 ```
-[INFO] Connected to router: https://beta.aimo.network
+[INFO] Connected to router: https://beta.bitrouter.ai
 [INFO] Model registered: gpt-4o
 [INFO] Model registered: deepseek-chat-v3
 [INFO] Ready to serve requests

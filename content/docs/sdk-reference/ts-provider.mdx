@@ -1,42 +1,42 @@
 ---
-title: "@aimo.network/provider"
-description: Vercel AI SDK integration for AiMo Network
+title: "@bitrouter/provider"
+description: Vercel AI SDK integration for BitRouter
 ---
 
-# @aimo.network/provider
+# @bitrouter/provider
 
-Vercel AI SDK integration for AiMo Network. Wraps `@ai-sdk/openai` with SIWx-authenticated fetch for seamless use with AI SDK functions. Uses `LanguageModelV3` (AI SDK v4+).
+Vercel AI SDK integration for BitRouter. Wraps `@ai-sdk/openai` with SIWx-authenticated fetch for seamless use with AI SDK functions. Uses `LanguageModelV3` (AI SDK v4+).
 
 ```bash
-npm install @aimo.network/provider ai
+npm install @bitrouter/provider ai
 ```
 
-**Peer dependencies:** `@aimo.network/client`, `ai`, `@ai-sdk/openai`, `@ai-sdk/provider`
+**Peer dependencies:** `@bitrouter/client`, `ai`, `@ai-sdk/openai`, `@ai-sdk/provider`
 
-## aimoNetwork(options)
+## bitrouter(options)
 
 Creates an AI SDK-compatible provider backed by SIWx-authenticated fetch.
 
 ```typescript
-import { aimoNetwork } from "@aimo.network/provider";
+import { bitrouter } from "@bitrouter/provider";
 
-const aimo = aimoNetwork({
+const br =bitrouter({
   signer,
-  baseURL: "https://beta.aimo.network",
+  baseURL: "https://beta.bitrouter.ai",
 });
 ```
 
-### AimoNetworkOptions
+### BitRouterOptions
 
 | Property | Type | Required | Default | Description |
 |----------|------|----------|---------|-------------|
 | `signer` | `ClientSigner` | Yes | — | Wallet signer |
-| `baseURL` | `string` | No | `"https://beta.aimo.network"` | API server URL |
+| `baseURL` | `string` | No | `"https://beta.bitrouter.ai"` | API server URL |
 | `fetch` | `typeof fetch` | No | — | Custom fetch implementation |
 | `siwxDomain` | `string` | No | — | Override SIWx signing domain |
 | `apiKey` | `string` | No | `"siwx"` | Dummy API key (real auth is SIWx) |
 
-## aimo.chat(modelId)
+## br.chat(modelId)
 
 Returns a `LanguageModelV3` instance for use with AI SDK functions.
 
@@ -50,14 +50,14 @@ Returns a `LanguageModelV3` instance for use with AI SDK functions.
 ### Generate Text
 
 ```typescript
-import { aimoNetwork } from "@aimo.network/provider";
+import { bitrouter } from "@bitrouter/provider";
 import { generateText } from "ai";
 
-const aimo = aimoNetwork({ signer });
+const br =bitrouter({ signer });
 
 const result = await generateText({
-  model: aimo.chat("openai/gpt-4o"),
-  prompt: "What is AiMo Network?",
+  model: br.chat("openai/gpt-4o"),
+  prompt: "What is BitRouter?",
 });
 
 console.log(result.text);
@@ -69,7 +69,7 @@ console.log(result.text);
 import { streamText } from "ai";
 
 const stream = await streamText({
-  model: aimo.chat("anthropic/claude-sonnet-4"),
+  model: br.chat("anthropic/claude-sonnet-4"),
   prompt: "Tell me a story",
 });
 
@@ -84,10 +84,10 @@ for await (const chunk of stream.textStream) {
 import { generateText } from "ai";
 
 const result = await generateText({
-  model: aimo.chat("openai/gpt-4o"),
+  model: br.chat("openai/gpt-4o"),
   messages: [
     { role: "system", content: "You are a helpful assistant." },
-    { role: "user", content: "What is AiMo Network?" },
+    { role: "user", content: "What is BitRouter?" },
   ],
 });
 ```
@@ -97,24 +97,24 @@ const result = await generateText({
 All models are accessed through the same OpenAI-compatible interface:
 
 ```typescript
-const aimo = aimoNetwork({ signer });
+const br =bitrouter({ signer });
 
 // OpenAI
-const gpt = aimo.chat("openai/gpt-4o");
+const gpt = br.chat("openai/gpt-4o");
 
 // Anthropic
-const claude = aimo.chat("anthropic/claude-sonnet-4");
+const claude = br.chat("anthropic/claude-sonnet-4");
 
 // Google
-const gemini = aimo.chat("google/gemini-2.0-flash");
+const gemini = br.chat("google/gemini-2.0-flash");
 ```
 
 ## How It Works
 
-Under the hood, `@aimo.network/provider` wraps `@ai-sdk/openai`'s `createOpenAI()` with [`wrapFetchWithSigner`](/docs/sdk-reference/ts-client#wrapfetchwithsigner) for automatic SIWx authentication and x402 payments. This means it supports all features of the OpenAI-compatible provider, including tool calls, structured output, and streaming.
+Under the hood, `@bitrouter/provider` wraps `@ai-sdk/openai`'s `createOpenAI()` with [`wrapFetchWithSigner`](/docs/sdk-reference/ts-client#wrapfetchwithsigner) for automatic SIWx authentication and x402 payments. This means it supports all features of the OpenAI-compatible provider, including tool calls, structured output, and streaming.
 
 ---
 
-## @aimo.network/react
+## @bitrouter/react
 
-React hooks and components for AiMo Network. **This package is coming soon** — it is published as a placeholder at v1.8.0 but does not yet contain functional exports.
+React hooks and components for BitRouter. **This package is coming soon** — it is published as a placeholder at v1.8.0 but does not yet contain functional exports.

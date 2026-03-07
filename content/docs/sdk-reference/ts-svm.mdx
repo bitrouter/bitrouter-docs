@@ -1,22 +1,22 @@
 ---
-title: "@aimo.network/svm"
-description: Solana wallet support for AiMo Network SDK
+title: "@bitrouter/svm"
+description: Solana wallet support for BitRouter SDK
 ---
 
-# @aimo.network/svm
+# @bitrouter/svm
 
-Solana (SVM) wallet support for the AiMo client. Provides `SvmClientSigner` which implements the [`ClientSigner`](/docs/sdk-reference/ts-client#clientsigner) interface for Solana wallets.
+Solana (SVM) wallet support for the BitRouter client. Provides `SvmClientSigner` which implements the [`ClientSigner`](/docs/sdk-reference/ts-client#clientsigner) interface for Solana wallets.
 
 ```bash
-npm install @aimo.network/svm
+npm install @bitrouter/svm
 ```
 
-**Peer dependencies:** `@aimo.network/client`, `@solana/kit`, `bs58`
+**Peer dependencies:** `@bitrouter/client`, `@solana/kit`, `bs58`
 
 ## SvmClientSigner
 
 ```typescript
-import { SvmClientSigner, SOLANA_MAINNET_CHAIN_ID } from "@aimo.network/svm";
+import { SvmClientSigner, SOLANA_MAINNET_CHAIN_ID } from "@bitrouter/svm";
 import { createKeyPairSignerFromBytes } from "@solana/kit";
 import bs58 from "bs58";
 
@@ -64,7 +64,7 @@ const signer = new SvmClientSigner({
 Factory function — equivalent to `new SvmClientSigner(options)`.
 
 ```typescript
-import { createSvmClientSigner } from "@aimo.network/svm";
+import { createSvmClientSigner } from "@bitrouter/svm";
 
 const signer = createSvmClientSigner({
   signer: keypairSigner,
@@ -79,7 +79,7 @@ import {
   SOLANA_MAINNET_CHAIN_ID,   // "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp"
   SOLANA_DEVNET_CHAIN_ID,    // "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1"
   SOLANA_TESTNET_CHAIN_ID,   // "solana:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z"
-} from "@aimo.network/svm";
+} from "@bitrouter/svm";
 ```
 
 ## Types

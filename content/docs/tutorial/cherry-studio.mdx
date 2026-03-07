@@ -1,13 +1,13 @@
 ---
 title: Cherry Studio
-description: Configure and Use AiMo in Cherry Studio
+description: Configure and Use BitRouter in Cherry Studio
 ---
 
 <Callout type="warn">
 **Note:** This tutorial uses the dashboard-based API key system for compatibility with third-party applications like Cherry Studio. For direct CLI or programmatic access, see the [AI Agent Guide](/docs/overview/ai-agent-guide) which uses wallet-based authentication.
 </Callout>
 
-This tutorial walks you through setting up AiMo Network as a model provider in Cherry Studio, adding models, and starting a chat.
+This tutorial walks you through setting up BitRouter as a model provider in Cherry Studio, adding models, and starting a chat.
 
 ## What is Cherry Studio and how to install it
 
@@ -16,22 +16,22 @@ Cherry Studio is a desktop AI chat client that supports OpenAI-compatible provid
 - Download and install the latest Cherry Studio build from its official website or Releases page for your OS (macOS/Windows/Linux).
 - Launch the app once installed.
 
-## Get your AiMo API Key (AiMo Web Dashboard)
+## Get your BitRouter API Key (BitRouter Web Dashboard)
 
-Before configuring Cherry Studio, prepare your AiMo account and API key:
+Before configuring Cherry Studio, prepare your BitRouter account and API key:
 
-1. Open the [AiMo Web Dashboard](https://aimo.network/dashboard).
+1. Open the [BitRouter Web Dashboard](https://bitrouter.ai/dashboard).
 2. Connect your wallet.
 3. Top up your balance/credits.
-4. Create an API Key and copy it. It typically looks like: `aimo-sk-dev-xxxxxxxx`.
+4. Create an API Key and copy it. It typically looks like: `bitrouter-sk-dev-xxxxxxxx`.
 
 Keep this key handy—you'll paste it into Cherry Studio.
 
 <Callout type="info">
-AiMo is OpenAI-compatible. You'll use AiMo's Base URL and your API Key to authenticate.
+BitRouter is OpenAI-compatible. You'll use BitRouter's Base URL and your API Key to authenticate.
 </Callout>
 
-## Add AiMo Network as a Model Provider in Cherry Studio
+## Add BitRouter as a Model Provider in Cherry Studio
 
 {/* ![Cherry Studio Config](/cherry-studio-config.png) */}
 
@@ -39,24 +39,24 @@ AiMo is OpenAI-compatible. You'll use AiMo's Base URL and your API Key to authen
 2. Go to Settings → Providers (the exact label may be "Providers" or "Model Providers").
 3. Add a new provider and choose "OpenAI-compatible" (sometimes listed as "OpenAI API", "Custom OpenAI", or similar).
 4. Configure the provider:
-   - API Host / Base URL / Endpoint: `https://beta.aimo.network/api` (Base URL preview should be exactly `https://beta.aimo.network/api/v1/chat/completions`)
-   - API Key / Token: your AiMo API key, e.g., `aimo-sk-dev-xxxxxxxx`
-   - Provider Name (optional): "AiMo Network"
+   - API Host / Base URL / Endpoint: `https://beta.bitrouter.ai/api` (Base URL preview should be exactly `https://beta.bitrouter.ai/api/v1/chat/completions`)
+   - API Key / Token: your BitRouter API key, e.g., `bitrouter-sk-dev-xxxxxxxx`
+   - Provider Name (optional): "BitRouter"
 5. Save.
 
 Notes:
 - Different Cherry Studio versions may use slightly different field names (e.g., "Base URL", "API Host", or "Endpoint"). Use the value above for any of these fields.
 - If Cherry Studio asks for "Organization" or other optional fields, you can leave them empty.
 
-## Find a model in AiMo Discover and add it to Cherry Studio
+## Find a model in BitRouter Discover and add it to Cherry Studio
 
-1. In the AiMo Dashboard, open the Discover section/panel to browse available models.
-2. Copy the model identifier shown in AiMo. The format is:
+1. In the BitRouter Dashboard, open the Discover section/panel to browse available models.
+2. Copy the model identifier shown in BitRouter. The format is:
    - `provider_pubkey:model_name`
    - Example: `HjRMtkc54ZNgq2PGCsiuhR1z4WR2YDTfA4PfW1GHXbLh:kimi-k2-0905-preview`
 3. Back in Cherry Studio, go to the Models section:
    - Click "Add Model" (or "New Model").
-   - Choose the AiMo provider you created.
+   - Choose the BitRouter provider you created.
    - Paste the model identifier as the Model (required).
    - Optionally set a friendly name, description, default parameters (temperature, max tokens), etc.
 4. Save the model entry.
@@ -64,28 +64,28 @@ Notes:
 ## Start chatting
 
 1. Create a new chat in Cherry Studio.
-2. Select the AiMo model you added from the model selector.
+2. Select the BitRouter model you added from the model selector.
 3. Start your conversation. You can adjust parameters like temperature, max tokens, or system prompts per chat if Cherry Studio supports it.
 
 ## Quick reference
 
-- Base URL / API Host: `https://beta.aimo.network/api/v1`
-- API Key format: `aimo-sk-dev-xxxxxxxx`
-- Model ID format: `provider_pubkey:model_name` (copy from AiMo Discover)
+- Base URL / API Host: `https://beta.bitrouter.ai/api/v1`
+- API Key format: `bitrouter-sk-dev-xxxxxxxx`
+- Model ID format: `provider_pubkey:model_name` (copy from BitRouter Discover)
 
 ## Troubleshooting
 
 - 401 Unauthorized
   - Check that you pasted the correct API Key.
   - Ensure there are no leading/trailing spaces or hidden characters.
-  - Confirm your key is active in the AiMo Dashboard.
+  - Confirm your key is active in the BitRouter Dashboard.
 
 - 404 Model Not Found
-  - Verify the model ID matches exactly what's shown in AiMo Discover.
-  - Ensure you added the model under the AiMo provider you configured.
+  - Verify the model ID matches exactly what's shown in BitRouter Discover.
+  - Ensure you added the model under the BitRouter provider you configured.
 
 - Insufficient Balance / 429 or Payment errors
-  - Top up your credits in the AiMo Dashboard.
+  - Top up your credits in the BitRouter Dashboard.
   - Retry the request.
 
 - Timeouts / Slow responses
@@ -93,9 +93,9 @@ Notes:
   - Try a different model or retry later.
 
 - General connectivity
-  - Confirm Base URL is exactly `https://beta.aimo.network/api/v1`.
+  - Confirm Base URL is exactly `https://beta.bitrouter.ai/api/v1`.
   - Check your network/firewall rules if requests are being blocked.
 
 <Callout type="info">
-If you plan to use multiple AiMo models, add them all in Cherry Studio's Models section so you can quickly switch during chats.
+If you plan to use multiple BitRouter models, add them all in Cherry Studio's Models section so you can quickly switch during chats.
 </Callout>

@@ -1,14 +1,14 @@
 ---
-title: aimo_network.evm
-description: AiMo Network Python SDK 的 Ethereum 和 Base 钱包支持
+title: bitrouter.evm
+description: BitRouter Python SDK 的 Ethereum 和 Base 钱包支持
 ---
 
-# aimo_network.evm
+# bitrouter.evm
 
-AiMo Python 客户端的 Ethereum 和 Base (EVM) 钱包支持。提供 `EvmClientSigner`，实现了用于 EVM 钱包的 [`ClientSigner`](/docs/sdk-reference/py-client#clientsigner-protocol) 协议。
+BitRouter Python 客户端的 Ethereum 和 Base (EVM) 钱包支持。提供 `EvmClientSigner`，实现了用于 EVM 钱包的 [`ClientSigner`](/docs/sdk-reference/py-client#clientsigner-protocol) 协议。
 
 ```bash
-pip install "aimo-network[evm]"
+pip install "bitrouter[evm]"
 ```
 
 **依赖：** `eth-account>=0.13`, `x402[evm]>=2.2`
@@ -17,7 +17,7 @@ pip install "aimo-network[evm]"
 
 ```python
 from eth_account import Account
-from aimo_network.evm import EvmClientSigner, EVM_MAINNET_CHAIN_ID
+from bitrouter.evm import EvmClientSigner, EVM_MAINNET_CHAIN_ID
 
 account = Account.from_key("0x...")
 
@@ -47,5 +47,5 @@ signer = EvmClientSigner(
 ## Chain ID 常量
 
 ```python
-from aimo_network.evm import EVM_MAINNET_CHAIN_ID  # "eip155:1"
+from bitrouter.evm import EVM_MAINNET_CHAIN_ID  # "eip155:1"
 ```

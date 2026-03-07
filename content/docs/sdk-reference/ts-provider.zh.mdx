@@ -1,42 +1,42 @@
 ---
-title: "@aimo.network/provider"
-description: AiMo Network 的 Vercel AI SDK 集成
+title: "@bitrouter/provider"
+description: BitRouter 的 Vercel AI SDK 集成
 ---
 
-# @aimo.network/provider
+# @bitrouter/provider
 
-AiMo Network 的 Vercel AI SDK 集成。使用 SIWx 认证的 fetch 包装 `@ai-sdk/openai`，实现与 AI SDK 函数的无缝对接。使用 `LanguageModelV3` (AI SDK v4+)。
+BitRouter 的 Vercel AI SDK 集成。使用 SIWx 认证的 fetch 包装 `@ai-sdk/openai`，实现与 AI SDK 函数的无缝对接。使用 `LanguageModelV3` (AI SDK v4+)。
 
 ```bash
-npm install @aimo.network/provider ai
+npm install @bitrouter/provider ai
 ```
 
-**对等依赖：** `@aimo.network/client`, `ai`, `@ai-sdk/openai`, `@ai-sdk/provider`
+**对等依赖：** `@bitrouter/client`, `ai`, `@ai-sdk/openai`, `@ai-sdk/provider`
 
-## aimoNetwork(options)
+## bitrouter(options)
 
 创建一个由 SIWx 认证的 fetch 支持的 AI SDK 兼容 provider。
 
 ```typescript
-import { aimoNetwork } from "@aimo.network/provider";
+import { bitrouter } from "@bitrouter/provider";
 
-const aimo = aimoNetwork({
+const br =bitrouter({
   signer,
-  baseURL: "https://beta.aimo.network",
+  baseURL: "https://beta.bitrouter.ai",
 });
 ```
 
-### AimoNetworkOptions
+### BitRouterOptions
 
 | 属性 | 类型 | 必需 | 默认值 | 描述 |
 |------|------|------|--------|------|
 | `signer` | `ClientSigner` | 是 | — | 钱包签名器 |
-| `baseURL` | `string` | 否 | `"https://beta.aimo.network"` | API 服务器 URL |
+| `baseURL` | `string` | 否 | `"https://beta.bitrouter.ai"` | API 服务器 URL |
 | `fetch` | `typeof fetch` | 否 | — | 自定义 fetch 实现 |
 | `siwxDomain` | `string` | 否 | — | 覆盖 SIWx 签名域名 |
 | `apiKey` | `string` | 否 | `"siwx"` | 占位 API 密钥（实际认证使用 SIWx） |
 
-## aimo.chat(modelId)
+## br.chat(modelId)
 
 返回一个用于 AI SDK 函数的 `LanguageModelV3` 实例。
 
@@ -50,14 +50,14 @@ const aimo = aimoNetwork({
 ### 生成文本
 
 ```typescript
-import { aimoNetwork } from "@aimo.network/provider";
+import { bitrouter } from "@bitrouter/provider";
 import { generateText } from "ai";
 
-const aimo = aimoNetwork({ signer });
+const br =bitrouter({ signer });
 
 const result = await generateText({
-  model: aimo.chat("openai/gpt-4o"),
-  prompt: "What is AiMo Network?",
+  model: br.chat("openai/gpt-4o"),
+  prompt: "What is BitRouter?",
 });
 
 console.log(result.text);
@@ -69,7 +69,7 @@ console.log(result.text);
 import { streamText } from "ai";
 
 const stream = await streamText({
-  model: aimo.chat("anthropic/claude-sonnet-4"),
+  model: br.chat("anthropic/claude-sonnet-4"),
   prompt: "Tell me a story",
 });
 
@@ -84,10 +84,10 @@ for await (const chunk of stream.textStream) {
 import { generateText } from "ai";
 
 const result = await generateText({
-  model: aimo.chat("openai/gpt-4o"),
+  model: br.chat("openai/gpt-4o"),
   messages: [
     { role: "system", content: "You are a helpful assistant." },
-    { role: "user", content: "What is AiMo Network?" },
+    { role: "user", content: "What is BitRouter?" },
   ],
 });
 ```
@@ -97,24 +97,24 @@ const result = await generateText({
 所有模型通过相同的 OpenAI 兼容接口访问：
 
 ```typescript
-const aimo = aimoNetwork({ signer });
+const br =bitrouter({ signer });
 
 // OpenAI
-const gpt = aimo.chat("openai/gpt-4o");
+const gpt = br.chat("openai/gpt-4o");
 
 // Anthropic
-const claude = aimo.chat("anthropic/claude-sonnet-4");
+const claude = br.chat("anthropic/claude-sonnet-4");
 
 // Google
-const gemini = aimo.chat("google/gemini-2.0-flash");
+const gemini = br.chat("google/gemini-2.0-flash");
 ```
 
 ## 工作原理
 
-在底层，`@aimo.network/provider` 使用 [`wrapFetchWithSigner`](/docs/sdk-reference/ts-client#wrapfetchwithsigner) 包装 `@ai-sdk/openai` 的 `createOpenAI()`，实现自动的 SIWx 身份验证和 x402 支付。这意味着它支持 OpenAI 兼容 provider 的所有功能，包括工具调用、结构化输出和流式传输。
+在底层，`@bitrouter/provider` 使用 [`wrapFetchWithSigner`](/docs/sdk-reference/ts-client#wrapfetchwithsigner) 包装 `@ai-sdk/openai` 的 `createOpenAI()`，实现自动的 SIWx 身份验证和 x402 支付。这意味着它支持 OpenAI 兼容 provider 的所有功能，包括工具调用、结构化输出和流式传输。
 
 ---
 
-## @aimo.network/react
+## @bitrouter/react
 
-AiMo Network 的 React hooks 和组件。**此包即将推出** — 目前作为占位符发布在 v1.8.0，尚未包含可用的导出。
+BitRouter 的 React hooks 和组件。**此包即将推出** — 目前作为占位符发布在 v1.8.0，尚未包含可用的导出。

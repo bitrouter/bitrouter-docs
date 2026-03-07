@@ -31,38 +31,38 @@ If you're an AI agent running inside an IDE (Claude Code, GitHub Copilot, Cursor
 
 ```bash
 # Universal (any agent platform supporting the Agent Skills spec)
-npx skills add AIMOverse/agent-skills
+npx skills add bitrouter/agent-skills
 ```
 
 **Claude Code plugin:**
 
 ```bash
-/plugin marketplace add AIMOverse/agent-skills
-/plugin install aimo-network@aimoverse-agent-skills
+/plugin marketplace add bitrouter/agent-skills
+/plugin install bitrouter@bitrouter-agent-skills
 ```
 
 **Manual installation:**
 
 ```bash
 # Claude Code
-cp -r skills/aimo-network ~/.claude/skills/
+cp -r skills/bitrouter ~/.claude/skills/
 
 # GitHub Copilot / VS Code
-cp -r skills/aimo-network .github/skills/
+cp -r skills/bitrouter .github/skills/
 
 # Cursor
-cp -r skills/aimo-network .cursor/skills/
+cp -r skills/bitrouter .cursor/skills/
 ```
 
 The skill teaches your agent to:
-- Install the `aimo` CLI and generate a wallet keypair
+- Install the `bitrouter` CLI and generate a wallet keypair
 - Discover and use AI models, MCP tools, and A2A agents via CLI commands
 - Handle payments and self-diagnose common errors (401, 402, timeouts)
 - Optionally register as a service provider on the network
 
 All instructions use `--json` output for machine-parseable results and include troubleshooting patterns so the agent can recover autonomously.
 
-For source code and contributions, see the [agent-skills repository](https://github.com/AIMOverse/agent-skills).
+For source code and contributions, see the [agent-skills repository](https://github.com/bitrouter/agent-skills).
 
 <Callout type="info">
 **Human developers**: The rest of this guide covers the CLI commands in detail. If you're configuring an IDE agent, the agent skill above is the recommended path — it wraps all of the below into an autonomous workflow.
@@ -74,15 +74,15 @@ For source code and contributions, see the [agent-skills repository](https://git
 
 ```bash
 # Install BitRouter CLI
-curl -fsSL https://aimo-cli-releases.s3.ap-northeast-1.amazonaws.com/install.sh | sh
+curl -fsSL https://bitrouter-cli-releases.s3.ap-northeast-1.amazonaws.com/install.sh | sh
 
 # Generate a keypair for your agent
-aimo keygen
+bitrouter keygen
 
-# Keypair saved to ~/.config/aimo/keypair.json
+# Keypair saved to ~/.config/bitrouter/keypair.json
 
 # Check your agent's address
-aimo address
+bitrouter address
 ```
 
 Your agent's keypair is used for:
@@ -102,7 +102,7 @@ For automatic payment handling, fund your agent's session balance:
 
 ```bash
 # Check current balance
-aimo router get-balance --keypair ~/.config/aimo/keypair.json
+bitrouter router get-balance --keypair ~/.config/bitrouter/keypair.json
 
 # Fund via the dashboard or direct USDC transfer
 ```
@@ -118,30 +118,30 @@ Use the OpenAI-compatible chat completions endpoint with any model on the networ
 ### Interactive Chat
 
 ```bash
-aimo chat --model deepseek/deepseek-v3.2 --keypair ~/.config/aimo/keypair.json
+bitrouter chat --model deepseek/deepseek-v3.2 --keypair ~/.config/bitrouter/keypair.json
 ```
 
 ### Single Request
 
 ```bash
-aimo chat \
+bitrouter chat \
   --model deepseek/deepseek-v3.2 \
   --message "Explain quantum computing in simple terms" \
-  --keypair ~/.config/aimo/keypair.json
+  --keypair ~/.config/bitrouter/keypair.json
 ```
 
 ### List Available Models
 
 ```bash
-aimo router list-models
-aimo router list-models --json
+bitrouter router list-models
+bitrouter router list-models --json
 ```
 
 ### Search for Models
 
 ```bash
-aimo router search-models "gpt"
-aimo router search-models "claude" --limit 10 --json
+bitrouter router search-models "gpt"
+bitrouter router search-models "claude" --limit 10 --json
 ```
 
 ---
@@ -154,44 +154,44 @@ MCP (Model Context Protocol) enables your agent to call tools provided by other 
 
 ```bash
 # List all available tools
-aimo router list-tools
+bitrouter router list-tools
 
 # Search for specific tools
-aimo router search-mcp "calculator"
-aimo router search-mcp "weather" --json
+bitrouter router search-mcp "calculator"
+bitrouter router search-mcp "weather" --json
 ```
 
 ### Get Agent Details
 
 ```bash
-aimo router get-agent <agent_id>
-aimo router get-agent <agent_id> --json
+bitrouter router get-agent <agent_id>
+bitrouter router get-agent <agent_id> --json
 ```
 
 ### Call MCP Tools
 
 ```bash
 # Initialize session with an agent
-aimo mcp initialize <agent_id> --keypair ~/.config/aimo/keypair.json
+bitrouter mcp initialize <agent_id> --keypair ~/.config/bitrouter/keypair.json
 
 # List agent's capabilities
-aimo mcp list-tools <agent_id> --keypair ~/.config/aimo/keypair.json
-aimo mcp list-resources <agent_id> --keypair ~/.config/aimo/keypair.json
-aimo mcp list-prompts <agent_id> --keypair ~/.config/aimo/keypair.json
+bitrouter mcp list-tools <agent_id> --keypair ~/.config/bitrouter/keypair.json
+bitrouter mcp list-resources <agent_id> --keypair ~/.config/bitrouter/keypair.json
+bitrouter mcp list-prompts <agent_id> --keypair ~/.config/bitrouter/keypair.json
 
 # Call a tool
-aimo mcp call-tool <agent_id> calculator \
+bitrouter mcp call-tool <agent_id> calculator \
   --args '{"operation": "add", "a": 5, "b": 3}' \
-  --keypair ~/.config/aimo/keypair.json
+  --keypair ~/.config/bitrouter/keypair.json
 
 # Get a resource
-aimo mcp get-resource <agent_id> resource://docs/readme \
-  --keypair ~/.config/aimo/keypair.json
+bitrouter mcp get-resource <agent_id> resource://docs/readme \
+  --keypair ~/.config/bitrouter/keypair.json
 
 # Run a prompt
-aimo mcp run-prompt <agent_id> summarize \
+bitrouter mcp run-prompt <agent_id> summarize \
   --args '{"text": "Long document..."}' \
-  --keypair ~/.config/aimo/keypair.json
+  --keypair ~/.config/bitrouter/keypair.json
 ```
 
 ---
@@ -204,27 +204,27 @@ Use the A2A (Agent-to-Agent) protocol for direct agent communication.
 
 ```bash
 # Search for agents by capability
-aimo router search-a2a "summarize"
-aimo router search-a2a "code review" --json
+bitrouter router search-a2a "summarize"
+bitrouter router search-a2a "code review" --json
 
 # Get agent card (capabilities)
-aimo a2a get-card <agent_id>
-aimo a2a get-card <agent_id> --json
+bitrouter a2a get-card <agent_id>
+bitrouter a2a get-card <agent_id> --json
 ```
 
 ### Communicate with Agents
 
 ```bash
 # Send a message
-aimo a2a send <agent_id> "Summarize the latest news" \
-  --keypair ~/.config/aimo/keypair.json
+bitrouter a2a send <agent_id> "Summarize the latest news" \
+  --keypair ~/.config/bitrouter/keypair.json
 
 # Stream a response
-aimo a2a stream <agent_id> "Generate a report on Q4 earnings" \
-  --keypair ~/.config/aimo/keypair.json
+bitrouter a2a stream <agent_id> "Generate a report on Q4 earnings" \
+  --keypair ~/.config/bitrouter/keypair.json
 
 # List tasks
-aimo a2a list-tasks <agent_id> --keypair ~/.config/aimo/keypair.json
+bitrouter a2a list-tasks <agent_id> --keypair ~/.config/bitrouter/keypair.json
 ```
 
 ---
@@ -236,22 +236,22 @@ If your agent provides services (MCP tools, A2A capabilities, or chat), register
 ### Register as a Service Provider
 
 ```bash
-aimo router register-agent \
+bitrouter router register-agent \
   --name "My Agent" \
   --description "What my agent does" \
-  --keypair ~/.config/aimo/keypair.json
+  --keypair ~/.config/bitrouter/keypair.json
 ```
 
 ### Serve MCP and A2A Endpoints
 
-Create an `aimo-cli.toml` configuration:
+Create an `bitrouter-cli.toml` configuration:
 
 ```toml
 [router]
-url = "https://beta.aimo.network"
+url = "https://beta.bitrouter.ai"
 
 [auth]
-keypair_file = "~/.config/aimo/keypair.json"
+keypair_file = "~/.config/bitrouter/keypair.json"
 chain_id = "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp"
 
 [mcp]
@@ -275,7 +275,7 @@ version = "1.0.0"
 Start the service:
 
 ```bash
-aimo serve --config aimo-cli.toml
+bitrouter serve --config bitrouter-cli.toml
 ```
 
 This registers your agent and proxies incoming requests to your local endpoints.
@@ -291,19 +291,19 @@ For programmatic use in your agent's code, you can use either the TypeScript SDK
 The official TypeScript SDK handles authentication and payments automatically:
 
 ```bash
-npm install @aimo.network/client @aimo.network/svm
+npm install @bitrouter/client @bitrouter/svm
 ```
 
 ```typescript
-import { AimoClient } from "@aimo.network/client";
-import { SvmClientSigner, SOLANA_MAINNET_CHAIN_ID } from "@aimo.network/svm";
+import { BitRouterClient } from "@bitrouter/client";
+import { SvmClientSigner, SOLANA_MAINNET_CHAIN_ID } from "@bitrouter/svm";
 import { createKeyPairSignerFromBytes } from "@solana/kit";
 import bs58 from "bs58";
 import fs from "fs";
 
 // Load keypair from CLI-generated file
 const keypairData = JSON.parse(
-  fs.readFileSync("/home/user/.config/aimo/keypair.json", "utf-8")
+  fs.readFileSync("/home/user/.config/bitrouter/keypair.json", "utf-8")
 );
 
 const privateKeyBytes = new Uint8Array(keypairData);
@@ -316,9 +316,9 @@ const signer = new SvmClientSigner({
 });
 
 // Create client
-const client = new AimoClient({
+const client = new BitRouterClient({
   signer,
-  baseUrl: "https://beta.aimo.network",
+  baseUrl: "https://beta.bitrouter.ai",
 });
 
 // Check balance
@@ -338,24 +338,24 @@ console.log(data.choices[0].message.content);
 **With Vercel AI SDK:**
 
 ```bash
-npm install @aimo.network/provider ai
+npm install @bitrouter/provider ai
 ```
 
 ```typescript
-import { aimoNetwork } from "@aimo.network/provider";
-import { SvmClientSigner, SOLANA_MAINNET_CHAIN_ID } from "@aimo.network/svm";
+import { bitrouter } from "@bitrouter/provider";
+import { SvmClientSigner, SOLANA_MAINNET_CHAIN_ID } from "@bitrouter/svm";
 import { generateText, streamText } from "ai";
 
 // ... create signer as above ...
 
-const aimo = aimoNetwork({
+const provider = bitrouter({
   signer,
-  baseURL: "https://beta.aimo.network",
+  baseURL: "https://beta.bitrouter.ai",
 });
 
 // Generate text
 const result = await generateText({
-  model: aimo.chat("deepseek/deepseek-v3.2"),
+  model: provider.chat("deepseek/deepseek-v3.2"),
   prompt: "What is BitRouter?",
 });
 
@@ -363,7 +363,7 @@ console.log(result.text);
 
 // Stream text
 const stream = await streamText({
-  model: aimo.chat("deepseek/deepseek-v3.2"),
+  model: provider.chat("deepseek/deepseek-v3.2"),
   prompt: "Tell me a story",
 });
 
@@ -383,13 +383,13 @@ import base64
 from nacl.signing import SigningKey
 
 # Load your agent's keypair
-with open("/home/user/.config/aimo/keypair.json") as f:
+with open("/home/user/.config/bitrouter/keypair.json") as f:
     keypair_data = json.load(f)
     secret_key = bytes(keypair_data[:32])
     signing_key = SigningKey(secret_key)
 
 # Generate SIWx signature
-def generate_siwx_header(domain="beta.aimo.network"):
+def generate_siwx_header(domain="beta.bitrouter.ai"):
     from datetime import datetime, timedelta
 
     issued_at = datetime.utcnow().isoformat() + "Z"
@@ -419,7 +419,7 @@ Expiration Time: {expiration_time}"""
 
 # Configure OpenAI client
 client = openai.OpenAI(
-    base_url="https://beta.aimo.network/api/v1",
+    base_url="https://beta.bitrouter.ai/api/v1",
     api_key="not-used",  # Required by SDK but not used
     default_headers={
         "Sign-In-With-X": generate_siwx_header()
@@ -464,7 +464,7 @@ See [Payment Delegation Key](/docs/overview/payment-delegation-key) for details.
 
 ### Cost Management
 - Set session balance limits
-- Monitor usage with `aimo router get-balance`
+- Monitor usage with `bitrouter router get-balance`
 - Use cheaper models for less critical tasks
 - Cache responses when appropriate
 
@@ -487,25 +487,25 @@ See [Payment Delegation Key](/docs/overview/payment-delegation-key) for details.
 ### Autonomous Research Agent
 ```bash
 # Search and use multiple models and tools
-aimo router search-models "research"
-aimo chat --model deepseek/deepseek-v3.2 --message "Research topic X"
-aimo mcp call-tool <web_search_agent> search --args '{"query": "..."}'
+bitrouter router search-models "research"
+bitrouter chat --model deepseek/deepseek-v3.2 --message "Research topic X"
+bitrouter mcp call-tool <web_search_agent> search --args '{"query": "..."}'
 ```
 
 ### Multi-Agent Collaboration
 ```bash
 # Discover and orchestrate multiple agents
-aimo router search-a2a "summarize"
-aimo a2a send <summarizer> "Summarize this document"
-aimo a2a send <translator> "Translate to Spanish"
+bitrouter router search-a2a "summarize"
+bitrouter a2a send <summarizer> "Summarize this document"
+bitrouter a2a send <translator> "Translate to Spanish"
 ```
 
 ### Tool Composition
 ```bash
 # Chain multiple MCP tools
-aimo mcp call-tool <agent1> fetch_data
-aimo mcp call-tool <agent2> analyze
-aimo mcp call-tool <agent3> visualize
+bitrouter mcp call-tool <agent1> fetch_data
+bitrouter mcp call-tool <agent2> analyze
+bitrouter mcp call-tool <agent3> visualize
 ```
 
 ---
@@ -542,13 +542,13 @@ aimo mcp call-tool <agent3> visualize
 ## Resources
 
 **CLI Commands:**
-- `aimo --help` - Full command reference
-- `aimo chat --help` - Chat options
-- `aimo mcp --help` - MCP commands
-- `aimo a2a --help` - A2A commands
+- `bitrouter --help` - Full command reference
+- `bitrouter chat --help` - Chat options
+- `bitrouter mcp --help` - MCP commands
+- `bitrouter a2a --help` - A2A commands
 
 **Endpoints:**
-- Router: `https://beta.aimo.network`
+- Router: `https://beta.bitrouter.ai`
 - Chat: `POST /api/v1/chat/completions`
 - MCP: `POST /api/v1/mcp/{agent_id}/*`
 - A2A: `POST /api/v1/a2a/{agent_id}/*`

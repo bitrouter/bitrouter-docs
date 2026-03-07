@@ -13,15 +13,15 @@ Get started in 3 simple steps and make your first API call in under 5 minutes.
 
 ### Step 1: Create Your Account
 
-Visit [Console](https://consol.aimo.network) and sign up by connecting an external wallet (Base or Solana) or using social login, which automatically creates an embedded wallet for you.
+Visit [Console](https://console.bitrouter.ai) and sign up by connecting an external wallet (Base or Solana) or using social login, which automatically creates an embedded wallet for you.
 
 ### Step 2: Fund Your Account
 
-Deposit USDC into your self-custodial wallet at [Credits](https://console.aimo.network/dashboard/credits). Your funds remain in your own wallet until the moment of use.
+Deposit USDC into your self-custodial wallet at [Credits](https://console.bitrouter.ai/dashboard/credits). Your funds remain in your own wallet until the moment of use.
 
 ### Step 3: Generate a Payment Delegation Key (PDK)
 
-1. Go to [Keys](https://console.aimo.network/dashboard/keys)
+1. Go to [Keys](https://console.bitrouter.ai/dashboard/keys)
 2. Click "Generate PDK"
 3. Configure permissions (spending limits, expiration, allowed recipients)
 4. Copy your PDK (format: `br-p-[base58-encoded-key]`)
@@ -29,14 +29,14 @@ Deposit USDC into your self-custodial wallet at [Credits](https://console.aimo.n
 <Callout type="info">
 A PDK lets AI agents pay for services on your behalf without giving them full control of your wallet. Learn more about how PDKs work and advanced configuration options in the [Payment Delegation Key](/docs/overview/payment-delegation-key) guide.
 
-PDK is optional — for fully permissionless access, you can use BitRouter directly with any EVM or Solana signer. We recommend using the [aimo-sdk](/docs/sdk-reference) for the best experience. When using a raw signer, the base URL is `https://beta.aimo.network`; when using a PDK, the base URL is `https://api.console.aimo.network/v1`. See the [SDK Reference](/docs/sdk-reference) to learn more.
+PDK is optional — for fully permissionless access, you can use BitRouter directly with any EVM or Solana signer. We recommend using the [bitrouter-sdk](/docs/sdk-reference) for the best experience. When using a raw signer, the base URL is `https://beta.bitrouter.ai`; when using a PDK, the base URL is `https://api.console.bitrouter.ai/v1`. See the [SDK Reference](/docs/sdk-reference) to learn more.
 </Callout>
 
 
 ## Making Your First Request
 
 <Callout type="info">
-Want to try it out without writing code? Experiment with models directly in the [BitRouter Playground](https://console.aimo.network/playground/llms).
+Want to try it out without writing code? Experiment with models directly in the [BitRouter Playground](https://console.bitrouter.ai/playground/llms).
 </Callout>
 
 <Callout type="info">
@@ -46,7 +46,7 @@ The examples below use the chat completions endpoint for models. BitRouter also 
 ### Basic Example
 
 ```bash
-curl -X POST "https://api.console.aimo.network/v1/chat/completions" \
+curl -X POST "https://api.console.bitrouter.ai/v1/chat/completions" \
   -H "Authorization: Bearer br-p-[your-api-key]" \
   -H "Content-Type: application/json" \
   -d '{
@@ -64,7 +64,7 @@ curl -X POST "https://api.console.aimo.network/v1/chat/completions" \
 <Tab value="JavaScript">
 
 ```javascript
-const response = await fetch('https://api.console.aimo.network/v1/chat/completions', {
+const response = await fetch('https://api.console.bitrouter.ai/v1/chat/completions', {
   method: 'POST',
   headers: {
     'Authorization': 'Bearer br-p-[your-api-key]',
@@ -90,7 +90,7 @@ console.log(data.choices[0].message.content);
 import requests
 
 response = requests.post(
-    'https://api.console.aimo.network/v1/chat/completions',
+    'https://api.console.bitrouter.ai/v1/chat/completions',
     headers={
         'Authorization': 'Bearer br-p-[your-api-key]',
         'Content-Type': 'application/json'
@@ -119,7 +119,7 @@ For real-time, token-by-token responses, add `stream: true` to your request. Res
 <Tab value="JavaScript">
 
 ```javascript
-const response = await fetch('https://api.console.aimo.network/v1/chat/completions', {
+const response = await fetch('https://api.console.bitrouter.ai/v1/chat/completions', {
   method: 'POST',
   headers: {
     'Authorization': 'Bearer br-p-[your-api-key]',
@@ -158,7 +158,7 @@ import requests
 import json
 
 response = requests.post(
-    'https://api.console.aimo.network/v1/chat/completions',
+    'https://api.console.bitrouter.ai/v1/chat/completions',
     headers={
         'Authorization': 'Bearer br-p-[your-api-key]',
         'Content-Type': 'application/json'
@@ -205,7 +205,7 @@ Use `POST /image/generate` to create images from a text prompt. By default, the 
 <Tab value="curl">
 
 ```bash
-curl -X POST "https://api.console.aimo.network/v1/image/generate" \
+curl -X POST "https://api.console.bitrouter.ai/v1/image/generate" \
   -H "Authorization: Bearer br-p-[your-api-key]" \
   -H "Content-Type: application/json" \
   -d '{
@@ -221,7 +221,7 @@ curl -X POST "https://api.console.aimo.network/v1/image/generate" \
 <Tab value="JavaScript">
 
 ```javascript
-const response = await fetch('https://api.console.aimo.network/v1/image/generate', {
+const response = await fetch('https://api.console.bitrouter.ai/v1/image/generate', {
   method: 'POST',
   headers: {
     'Authorization': 'Bearer br-p-[your-api-key]',
@@ -248,7 +248,7 @@ console.log(data.images[0].data_url);
 import requests
 
 response = requests.post(
-    'https://api.console.aimo.network/v1/image/generate',
+    'https://api.console.bitrouter.ai/v1/image/generate',
     headers={
         'Authorization': 'Bearer br-p-[your-api-key]',
         'Content-Type': 'application/json'
@@ -277,7 +277,7 @@ Set `"output_type": "file"` to receive the raw binary image directly instead of 
 Use `POST /image/edit` to edit or inpaint an existing image. Provide the base image as a base64 data URL, and optionally include a mask for inpainting (transparent regions are edited, opaque regions are kept).
 
 ```bash
-curl -X POST "https://api.console.aimo.network/v1/image/edit" \
+curl -X POST "https://api.console.bitrouter.ai/v1/image/edit" \
   -H "Authorization: Bearer br-p-[your-api-key]" \
   -H "Content-Type: application/json" \
   -d '{
@@ -297,7 +297,7 @@ Video generation is **asynchronous**. You submit a job, poll for progress, and r
 **Step 1 — Queue a job:**
 
 ```bash
-curl -X POST "https://api.console.aimo.network/v1/video/queue" \
+curl -X POST "https://api.console.bitrouter.ai/v1/video/queue" \
   -H "Authorization: Bearer br-p-[your-api-key]" \
   -H "Content-Type: application/json" \
   -d '{
@@ -322,7 +322,7 @@ The response returns a `task_id` you'll use to check status:
 **Step 2 — Poll for results:**
 
 ```bash
-curl -X POST "https://api.console.aimo.network/v1/video/retrieve" \
+curl -X POST "https://api.console.bitrouter.ai/v1/video/retrieve" \
   -H "Authorization: Bearer br-p-[your-api-key]" \
   -H "Content-Type: application/json" \
   -d '{
@@ -337,7 +337,7 @@ While generating, the response includes `status`, `progress` (0.0–1.0), and `e
 After downloading the video, signal completion to free server-side resources:
 
 ```bash
-curl -X POST "https://api.console.aimo.network/v1/video/complete" \
+curl -X POST "https://api.console.bitrouter.ai/v1/video/complete" \
   -H "Authorization: Bearer br-p-[your-api-key]" \
   -H "Content-Type: application/json" \
   -d '{
@@ -354,13 +354,13 @@ Use the quote endpoints to get price estimates before committing to a generation
 
 ```bash
 # Image generation quote
-curl -X POST "https://api.console.aimo.network/v1/image/generate/quote" \
+curl -X POST "https://api.console.bitrouter.ai/v1/image/generate/quote" \
   -H "Authorization: Bearer br-p-[your-api-key]" \
   -H "Content-Type: application/json" \
   -d '{ "model": "dall-e-3", "width": 1024, "height": 1024 }'
 
 # Video generation quote
-curl -X POST "https://api.console.aimo.network/v1/video/quote" \
+curl -X POST "https://api.console.bitrouter.ai/v1/video/quote" \
   -H "Authorization: Bearer br-p-[your-api-key]" \
   -H "Content-Type: application/json" \
   -d '{ "model": "kling-v2", "duration": "5s", "resolution": "720p" }'
@@ -373,20 +373,20 @@ Both return `{ "price_usd": <amount> }` with the estimated cost in USD.
 For TypeScript/JavaScript applications, the official SDK provides a simpler integration with automatic authentication and payment handling:
 
 ```bash
-npm install @aimo.network/client @aimo.network/svm
+npm install @bitrouter/client @bitrouter/svm
 ```
 
 <Tabs items={['With PDK', 'Permissionless (Wallet)']}>
 <Tab value="With PDK">
 
 ```typescript
-import { AimoClient } from "@aimo.network/client";
-import { SvmClientSigner, SOLANA_MAINNET_CHAIN_ID } from "@aimo.network/svm";
+import { BitRouterClient } from "@bitrouter/client";
+import { SvmClientSigner, SOLANA_MAINNET_CHAIN_ID } from "@bitrouter/svm";
 import { createKeyPairSignerFromBytes } from "@solana/kit";
 import bs58 from "bs58";
 
 // If using PDK from the console
-// Use the console base URL: https://api.console.aimo.network/v1
+// Use the console base URL: https://api.console.bitrouter.ai/v1
 // Authentication is handled via your PDK
 ```
 
@@ -394,8 +394,8 @@ import bs58 from "bs58";
 <Tab value="Permissionless (Wallet)">
 
 ```typescript
-import { AimoClient } from "@aimo.network/client";
-import { SvmClientSigner, SOLANA_MAINNET_CHAIN_ID } from "@aimo.network/svm";
+import { BitRouterClient } from "@bitrouter/client";
+import { SvmClientSigner, SOLANA_MAINNET_CHAIN_ID } from "@bitrouter/svm";
 import { createKeyPairSignerFromBytes } from "@solana/kit";
 import bs58 from "bs58";
 
@@ -410,9 +410,9 @@ const signer = new SvmClientSigner({
 });
 
 // Create client (permissionless router)
-const client = new AimoClient({
+const client = new BitRouterClient({
   signer,
-  baseUrl: "https://beta.aimo.network",
+  baseUrl: "https://beta.bitrouter.ai",
 });
 
 // Check balance
@@ -463,23 +463,23 @@ while (true) {
 **With Vercel AI SDK:**
 
 ```bash
-npm install @aimo.network/provider ai
+npm install @bitrouter/provider ai
 ```
 
 ```typescript
-import { aimoNetwork } from "@aimo.network/provider";
-import { SvmClientSigner, SOLANA_MAINNET_CHAIN_ID } from "@aimo.network/svm";
+import { bitrouter } from "@bitrouter/provider";
+import { SvmClientSigner, SOLANA_MAINNET_CHAIN_ID } from "@bitrouter/svm";
 import { generateText } from "ai";
 
 // ... create signer as above ...
 
-const aimo = aimoNetwork({
+const provider = bitrouter({
   signer,
-  baseURL: "https://beta.aimo.network",
+  baseURL: "https://beta.bitrouter.ai",
 });
 
 const result = await generateText({
-  model: aimo.chat("openai/gpt-5"),
+  model: provider.chat("openai/gpt-5"),
   prompt: "What is BitRouter?",
 });
 
@@ -495,7 +495,7 @@ See the [SDK Reference](/docs/sdk-reference) for complete documentation.
 **List all models via API:**
 
 ```bash
-curl "https://api.console.aimo.network/v1/models" \
+curl "https://api.console.bitrouter.ai/v1/models" \
   -H "Authorization: Bearer br-p-[your-api-key]"
 ```
 
@@ -503,17 +503,17 @@ Filter by type using the `type` query parameter (`chat`, `image`, `image_edit`, 
 
 ```bash
 # List only image generation models
-curl "https://api.console.aimo.network/v1/models?type=image" \
+curl "https://api.console.bitrouter.ai/v1/models?type=image" \
   -H "Authorization: Bearer br-p-[your-api-key]"
 
 # List only video generation models
-curl "https://api.console.aimo.network/v1/models?type=video" \
+curl "https://api.console.bitrouter.ai/v1/models?type=video" \
   -H "Authorization: Bearer br-p-[your-api-key]"
 ```
 
 **Browse visually:**
 
-Visit [Marketplace](https://console.aimo.network/marketplace) to explore all available models with their capabilities and pricing.
+Visit [Marketplace](https://console.bitrouter.ai/marketplace) to explore all available models with their capabilities and pricing.
 
 ### Model Specification
 
@@ -537,7 +537,7 @@ The system automatically routes to the best available provider.
 }
 ```
 
-Route directly to a specific provider. Find provider public keys at the [marketplace](https://aimo.network/marketplace).
+Route directly to a specific provider. Find provider public keys at the [marketplace](https://bitrouter.ai/marketplace).
 
 ## Request Parameters
 
@@ -561,14 +561,14 @@ Standard OpenAI-compatible parameters are supported:
 
 ## Authentication & Security
 
-Manage your PDKs and API keys at the [Dashboard](https://aimo.network/dashboard) — generate new keys, monitor usage, and revoke compromised ones.
+Manage your PDKs and API keys at the [Dashboard](https://bitrouter.ai/dashboard) — generate new keys, monitor usage, and revoke compromised ones.
 
 <Callout type="warn">
 Store keys securely using environment variables. Never commit them to version control or expose them in client-side code. If a key is compromised, revoke it immediately from the dashboard and generate a replacement.
 </Callout>
 
 ```bash
-export AIMO_API_KEY="br-p-[your-key]"
+export BITROUTER_API_KEY="br-p-[your-key]"
 ```
 
 ## Usage & Billing
@@ -585,7 +585,7 @@ Use the [quote endpoints](#estimating-costs) to get exact price estimates before
 
 ### Monitor Your Usage
 
-Track your spending and usage at [Usage](https://console.aimo.network/dashboard/usage):
+Track your spending and usage at [Usage](https://console.bitrouter.ai/dashboard/usage):
 - Current balance
 - Usage history
 - Spending by model
@@ -616,8 +616,8 @@ BitRouter works seamlessly with popular AI frameworks:
 import OpenAI from 'openai';
 
 const openai = new OpenAI({
-  apiKey: process.env.AIMO_API_KEY,
-  baseURL: 'https://api.console.aimo.network/v1'
+  apiKey: process.env.BITROUTER_API_KEY,
+  baseURL: 'https://api.console.bitrouter.ai/v1'
 });
 
 const completion = await openai.chat.completions.create({
@@ -634,7 +634,7 @@ from langchain_openai import ChatOpenAI
 llm = ChatOpenAI(
     model="openai/gpt-5",
     openai_api_key="br-p-[your-key]",
-    openai_api_base="https://api.console.aimo.network/v1"
+    openai_api_base="https://api.console.bitrouter.ai/v1"
 )
 
 response = llm.invoke("What is BitRouter?")
@@ -648,8 +648,8 @@ import { generateText } from 'ai';
 
 const { text } = await generateText({
   model: openai('gpt-5', {
-    baseURL: 'https://api.console.aimo.network/v1',
-    apiKey: process.env.AIMO_API_KEY
+    baseURL: 'https://api.console.bitrouter.ai/v1',
+    apiKey: process.env.BITROUTER_API_KEY
   }),
   prompt: 'Explain quantum computing'
 });
@@ -660,7 +660,7 @@ const { text } = await generateText({
 ## Troubleshooting
 
 <Callout type="info">
-If you encounter any issues, please reach out to us on [Discord](https://discord.gg/aimo) or [Telegram](https://t.me/aimonetwork). Our team is happy to help you debug and resolve any problems.
+If you encounter any issues, please reach out to us on [Discord](https://discord.gg/aimo) or [Telegram](https://t.me/BitRouterAI). Our team is happy to help you debug and resolve any problems.
 </Callout>
 
 ## What's Next?

@@ -10,7 +10,7 @@ Run the open-source BitRouter proxy on your own infrastructure to route AI model
 
 The BitRouter proxy is an open-source service that connects your AI model endpoints to the BitRouter Network router. You configure which models to expose, set pricing, and deploy the proxy — the router handles discovery, authentication, and request routing.
 
-**Source code:** [github.com/AIMOverse/bitrouter-proxy](https://github.com/AIMOverse/bitrouter-proxy)
+**Source code:** [github.com/bitrouter/bitrouter-proxy](https://github.com/bitrouter/bitrouter-proxy)
 
 ## Prerequisites
 
@@ -24,15 +24,15 @@ The BitRouter proxy is an open-source service that connects your AI model endpoi
 
 ```bash
 # Install CLI
-curl -fsSL https://aimo-cli-releases.s3.ap-northeast-1.amazonaws.com/install.sh | sh
+curl -fsSL https://bitrouter-cli-releases.s3.ap-northeast-1.amazonaws.com/install.sh | sh
 
 # Generate keypair
-aimo keygen
+bitrouter keygen
 
-# Keypair saved to ~/.config/aimo/keypair.json
+# Keypair saved to ~/.config/bitrouter/keypair.json
 
 # Check your address
-aimo address
+bitrouter address
 ```
 
 Your keypair is used for authenticating with the router and signing configuration updates.
@@ -163,12 +163,12 @@ Create a `proxy.toml` file to define your models and connection settings.
 
 ```toml
 [router]
-url = "https://beta.aimo.network"
+url = "https://beta.bitrouter.ai"
 
 # SIWx wallet-based authentication
 [router.siwx]
 chain_id = "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp"
-keypair_file = "~/.config/aimo/keypair.json"
+keypair_file = "~/.config/bitrouter/keypair.json"
 
 # Model 1: OpenAI GPT-4o
 [[models]]
@@ -314,12 +314,12 @@ Create `compose.yml`:
 ```yaml
 services:
   proxy:
-    image: ghcr.io/aimoverse/bitrouter-proxy:main
+    image: ghcr.io/bitrouter/bitrouter-proxy:main
     container_name: bitrouter-proxy
     network_mode: host
     volumes:
       - ./proxy.toml:/etc/proxy/proxy.toml
-      - ~/.config/aimo/keypair.json:/root/.config/aimo/keypair.json:ro
+      - ~/.config/bitrouter/keypair.json:/root/.config/bitrouter/keypair.json:ro
     environment:
       CONFIG_FILE_PATH: /etc/proxy/proxy.toml
       OPENAI_API_KEY: ${OPENAI_API_KEY}
@@ -356,7 +356,7 @@ bitrouter-proxy --config proxy.toml --log-level debug
 Your proxy is running successfully when you see:
 
 ```
-[INFO] Connected to router: https://beta.aimo.network
+[INFO] Connected to router: https://beta.bitrouter.ai
 [INFO] Model registered: gpt-4o
 [INFO] Model registered: deepseek-chat-v3
 [INFO] Ready to serve requests

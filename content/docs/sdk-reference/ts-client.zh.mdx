@@ -1,39 +1,39 @@
 ---
-title: "@aimo.network/client"
-description: AiMo Network 核心客户端库 — AimoClient、身份验证和支付辅助工具
+title: "@bitrouter/client"
+description: BitRouter 核心客户端库 — BitRouterClient、身份验证和支付辅助工具
 ---
 
-# @aimo.network/client
+# @bitrouter/client
 
-核心客户端库。所有其他包都依赖于此包。提供 `AimoClient` 类、`ClientSigner` 接口、SIWx 身份验证辅助工具和 x402 支付工具。
+核心客户端库。所有其他包都依赖于此包。提供 `BitRouterClient` 类、`ClientSigner` 接口、SIWx 身份验证辅助工具和 x402 支付工具。
 
 ```bash
-npm install @aimo.network/client
+npm install @bitrouter/client
 ```
 
-## AimoClient
+## BitRouterClient
 
-与 AiMo Network API 交互的主要类。
+与 BitRouter API 交互的主要类。
 
 ```typescript
-import { AimoClient } from "@aimo.network/client";
+import { BitRouterClient } from "@bitrouter/client";
 
-const client = new AimoClient({
+const client = new BitRouterClient({
   signer,
-  baseUrl: "https://beta.aimo.network",
+  baseUrl: "https://beta.bitrouter.ai",
 });
 ```
 
-### AimoClientOptions
+### BitRouterClientOptions
 
 | 属性 | 类型 | 必需 | 默认值 | 描述 |
 |------|------|------|--------|------|
 | `signer` | `ClientSigner` | 是 | — | 用于身份验证和支付的钱包签名器 |
-| `baseUrl` | `string` | 是 | — | API 服务器 URL（例如 `"https://beta.aimo.network"`） |
+| `baseUrl` | `string` | 是 | — | API 服务器 URL（例如 `"https://beta.bitrouter.ai"`） |
 | `apiBase` | `string` | 否 | `"/api/v1"` | API 路径前缀 |
 | `siwxDomain` | `string` | 否 | — | 覆盖 SIWx 签名域名（用于本地开发） |
 | `fetchOverride` | `typeof fetch` | 否 | — | 自定义 fetch 实现 |
-| `endpointsOverride` | `Partial<AimoEndpoints>` | 否 | — | 覆盖默认端点路径 |
+| `endpointsOverride` | `Partial<BitRouterEndpoints>` | 否 | — | 覆盖默认端点路径 |
 
 ### client.chatCompletions(body, init?)
 
@@ -104,17 +104,17 @@ type ClientSigner = SchemeNetworkClient & {
 
 ## wrapFetchWithSigner
 
-将 fetch 函数包装为自动附加 SIWx 身份验证头部和 x402 支付处理。这是 `AimoClient` 内部使用的方法，但您也可以直接使用它进行自定义集成。
+将 fetch 函数包装为自动附加 SIWx 身份验证头部和 x402 支付处理。这是 `BitRouterClient` 内部使用的方法，但您也可以直接使用它进行自定义集成。
 
 ```typescript
-import { wrapFetchWithSigner } from "@aimo.network/client";
+import { wrapFetchWithSigner } from "@bitrouter/client";
 
 const authedFetch = wrapFetchWithSigner(fetch, signer, {
-  siwxDomain: "beta.aimo.network", // 可选
+  siwxDomain: "beta.bitrouter.ai", // 可选
 });
 
 // 使用 authedFetch 发出的所有请求都将包含 SIWx 身份验证 + x402 支付
-const response = await authedFetch("https://beta.aimo.network/api/v1/chat/completions", {
+const response = await authedFetch("https://beta.bitrouter.ai/api/v1/chat/completions", {
   method: "POST",
   body: JSON.stringify({ model: "openai/gpt-4o", messages: [...] }),
 });
@@ -140,7 +140,7 @@ SIWx 会话缓存 1 小时，避免每次请求重新签名。
 从 SIWx 载荷创建 CAIP-122 格式的消息。
 
 ```typescript
-import { createSIWxMessage } from "@aimo.network/client";
+import { createSIWxMessage } from "@bitrouter/client";
 
 const message = createSIWxMessage(payload);
 ```
@@ -150,7 +150,7 @@ const message = createSIWxMessage(payload);
 将消息和签名 Base64 编码为认证头部值。
 
 ```typescript
-import { encodeSIWxHeader } from "@aimo.network/client";
+import { encodeSIWxHeader } from "@bitrouter/client";
 
 const headerValue = encodeSIWxHeader(message, signature);
 ```
@@ -160,7 +160,7 @@ const headerValue = encodeSIWxHeader(message, signature);
 便捷函数，准备待签名的载荷并提供头部创建器。
 
 ```typescript
-import { prepareSIWxForSigning } from "@aimo.network/client";
+import { prepareSIWxForSigning } from "@bitrouter/client";
 
 const { message, createHeader } = prepareSIWxForSigning(payload);
 const signature = await signer.signMessage(message);
@@ -176,7 +176,7 @@ const header = createHeader(signature);
 ### toX402Client(signer)
 
 ```typescript
-import { toX402Client } from "@aimo.network/client";
+import { toX402Client } from "@bitrouter/client";
 
 // 单个签名器
 const x402Client = toX402Client(signer);
@@ -188,7 +188,7 @@ const x402Client = toX402Client([svmSigner, evmSigner]);
 ### toSchemeRegistrations(signer)
 
 ```typescript
-import { toSchemeRegistrations } from "@aimo.network/client";
+import { toSchemeRegistrations } from "@bitrouter/client";
 
 const registration = toSchemeRegistrations(signer);
 ```
@@ -198,11 +198,11 @@ const registration = toSchemeRegistrations(signer);
 ## 常量
 
 ```typescript
-import { AimoEndpoints, ApiBase } from "@aimo.network/client";
+import { BitRouterEndpoints, ApiBase } from "@bitrouter/client";
 
 // 默认端点路径
-AimoEndpoints.chatCompletions; // "/chat/completions"
-AimoEndpoints.sessionBalance;  // "/session/balance"
+BitRouterEndpoints.chatCompletions; // "/chat/completions"
+BitRouterEndpoints.sessionBalance;  // "/session/balance"
 
 // 默认 API 基础路径
 ApiBase; // "/api/v1"

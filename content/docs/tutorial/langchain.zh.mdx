@@ -1,45 +1,45 @@
 ---
 title: LangChain
-description: 将 AiMo Network 与 LangChain 集成，构建 AI 工作流
+description: 将 BitRouter 与 LangChain 集成，构建 AI 工作流
 ---
 
-将 AiMo Network 与 LangChain 集成，使用去中心化 AI 模型构建复杂的 AI 工作流、链和代理。
+将 BitRouter 与 LangChain 集成，使用去中心化 AI 模型构建复杂的 AI 工作流、链和代理。
 
 <Callout type="info">
-**认证更新：** AiMo Network 使用基于钱包的 SIWx 认证。你有三种选择：
-1. **AiMo CLI**（最简单）- 参见 [AI Agent 指南](/docs/overview/ai-agent-guide)
-2. **AiMo TypeScript SDK 与 Vercel AI SDK**（推荐用于 LangChain.js）- 见下方
+**认证更新：** BitRouter 使用基于钱包的 SIWx 认证。你有三种选择：
+1. **BitRouter CLI**（最简单）- 参见 [AI Agent 指南](/docs/overview/ai-agent-guide)
+2. **BitRouter TypeScript SDK 与 Vercel AI SDK**（推荐用于 LangChain.js）- 见下方
 3. **手动 SIWx**（高级）- 参见下方[高级设置](#advanced-setup)部分
 </Callout>
 
-## 推荐方式：使用 AiMo CLI
+## 推荐方式：使用 BitRouter CLI
 
 对于大多数 LangChain 用例，CLI 提供了最简单的集成方式：
 
 ```bash
 # Install CLI
-curl -fsSL https://aimo-cli-releases.s3.ap-northeast-1.amazonaws.com/install.sh | sh
+curl -fsSL https://bitrouter-cli-releases.s3.ap-northeast-1.amazonaws.com/install.sh | sh
 
 # Generate keypair
-aimo keygen
+bitrouter keygen
 
 # Use with any model
-aimo chat --model deepseek/deepseek-v3.2 --message "Hello, AI!"
+bitrouter chat --model deepseek/deepseek-v3.2 --message "Hello, AI!"
 ```
 
-## 替代方式：使用 AiMo SDK 与 Vercel AI SDK
+## 替代方式：使用 BitRouter SDK 与 Vercel AI SDK
 
-对于 LangChain.js 应用，你可以将 AiMo provider 与 Vercel AI SDK 配合使用：
+对于 LangChain.js 应用，你可以将 BitRouter provider 与 Vercel AI SDK 配合使用：
 
 ```bash
-npm install @aimo.network/client @aimo.network/svm @aimo.network/provider ai langchain
+npm install @bitrouter/client @bitrouter/svm @bitrouter/provider ai langchain
 ```
 
 ```typescript
 import { ChatLanguageModel } from "@langchain/core/language_models/chat_models";
 import { AIMessage, BaseMessage, HumanMessage } from "@langchain/core/messages";
-import { aimoNetwork } from "@aimo.network/provider";
-import { SvmClientSigner, SOLANA_MAINNET_CHAIN_ID } from "@aimo.network/svm";
+import { bitrouter } from "@bitrouter/provider";
+import { SvmClientSigner, SOLANA_MAINNET_CHAIN_ID } from "@bitrouter/svm";
 import { createKeyPairSignerFromBytes } from "@solana/kit";
 import { streamText } from "ai";
 import bs58 from "bs58";
@@ -47,7 +47,7 @@ import fs from "fs";
 
 // Load keypair
 const keypairData = JSON.parse(
-  fs.readFileSync(process.env.HOME + "/.config/aimo/keypair.json", "utf-8")
+  fs.readFileSync(process.env.HOME + "/.config/bitrouter/keypair.json", "utf-8")
 );
 
 const privateKeyBytes = new Uint8Array(keypairData);
@@ -59,18 +59,18 @@ const signer = new SvmClientSigner({
   chainId: SOLANA_MAINNET_CHAIN_ID,
 });
 
-// Create AiMo provider
-const aimo = aimoNetwork({
+// Create BitRouter provider
+const provider = bitrouter({
   signer,
-  baseURL: "https://beta.aimo.network",
+  baseURL: "https://beta.bitrouter.ai",
 });
 
 // Use with Vercel AI SDK
 const result = await streamText({
-  model: aimo.chat("deepseek/deepseek-v3.2"),
+  model: provider.chat("deepseek/deepseek-v3.2"),
   messages: [
     { role: "system", content: "You are a helpful assistant." },
-    { role: "user", content: "What is AiMo Network?" }
+    { role: "user", content: "What is BitRouter?" }
   ],
 });
 
@@ -100,7 +100,7 @@ npm install @langchain/openai @langchain/core
 
 ## 高级设置
 
-将 LangChain 与 AiMo 配合使用需要自定义 SIWx 认证：
+将 LangChain 与 BitRouter 配合使用需要自定义 SIWx 认证：
 
 <Tabs items={['Python', 'JavaScript']} persist groupId="language">
 <Tab value="Python">
@@ -113,7 +113,7 @@ from datetime import datetime, timedelta
 from nacl.signing import SigningKey
 
 # Load keypair and generate SIWx signature (see AI Agent Guide)
-def generate_siwx_header(keypair_path, domain="beta.aimo.network"):
+def generate_siwx_header(keypair_path, domain="beta.bitrouter.ai"):
     with open(keypair_path) as f:
         keypair_data = json.load(f)
         secret_key = bytes(keypair_data[:32])
@@ -144,13 +144,13 @@ Expiration Time: {expiration_time}"""
 
     return base64.b64encode(json.dumps(payload).encode()).decode()
 
-# Configure for AiMo Network
+# Configure for BitRouter
 llm = ChatOpenAI(
     api_key="not-used",
-    base_url="https://beta.aimo.network/api/v1",
+    base_url="https://beta.bitrouter.ai/api/v1",
     model="deepseek/deepseek-v3.2",
     default_headers={
-        "Sign-In-With-X": generate_siwx_header("~/.config/aimo/keypair.json")
+        "Sign-In-With-X": generate_siwx_header("~/.config/bitrouter/keypair.json")
     }
 )
 
@@ -172,7 +172,7 @@ import * as ed25519 from "@noble/ed25519";
 import * as fs from "fs";
 
 // Load keypair and generate SIWx signature (see AI Agent Guide)
-async function generateSiwxHeader(keypairPath, domain = "beta.aimo.network") {
+async function generateSiwxHeader(keypairPath, domain = "beta.bitrouter.ai") {
   const keypairData = JSON.parse(fs.readFileSync(keypairPath, "utf-8"));
   const secretKey = new Uint8Array(keypairData.slice(0, 32));
   const publicKey = await ed25519.getPublicKeyAsync(secretKey);
@@ -203,14 +203,14 @@ Expiration Time: ${expirationTime}`;
   return Buffer.from(JSON.stringify(payload)).toString("base64");
 }
 
-// Configure for AiMo Network
-const siwxHeader = await generateSiwxHeader("~/.config/aimo/keypair.json");
+// Configure for BitRouter
+const siwxHeader = await generateSiwxHeader("~/.config/bitrouter/keypair.json");
 
 const llm = new ChatOpenAI({
   apiKey: "not-used",
   model: "deepseek/deepseek-v3.2",
   configuration: {
-    baseURL: "https://beta.aimo.network/api/v1",
+    baseURL: "https://beta.bitrouter.ai/api/v1",
     defaultHeaders: {
       "Sign-In-With-X": siwxHeader
     }
@@ -305,12 +305,12 @@ for await (const chunk of stream) {
 
 ### 构建复杂链
 
-LangChain 允许你通过将多个操作串联在一起来构建复杂的 AI 工作流。借助 AiMo Network，你可以在这些链中使用去中心化模型。
+LangChain 允许你通过将多个操作串联在一起来构建复杂的 AI 工作流。借助 BitRouter，你可以在这些链中使用去中心化模型。
 
 ### 代理集成
 
-LangChain 代理可以使用 AiMo Network 模型作为其推理引擎，实现由去中心化 AI 驱动的智能决策。
+LangChain 代理可以使用 BitRouter 模型作为其推理引擎，实现由去中心化 AI 驱动的智能决策。
 
 ### 记忆与上下文
 
-LangChain 的记忆功能与 AiMo Network 模型无缝配合，允许你在多次交互中保持对话上下文。
+LangChain 的记忆功能与 BitRouter 模型无缝配合，允许你在多次交互中保持对话上下文。

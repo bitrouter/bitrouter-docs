@@ -38,27 +38,27 @@ while (true) {
 }
 ```
 
-如需更高级的流式 API，请使用 [`@aimo.network/provider`](/docs/sdk-reference/ts-provider) 配合 Vercel AI SDK 的 `streamText`。
+如需更高级的流式 API，请使用 [`@bitrouter/provider`](/docs/sdk-reference/ts-provider) 配合 Vercel AI SDK 的 `streamText`。
 
 ## 本地开发
 
 当针对需要验证生产域名的本地服务器进行开发时：
 
 ```typescript
-const client = new AimoClient({
+const client = new BitRouterClient({
   signer,
   baseUrl: "http://localhost:8000",
-  siwxDomain: "beta.aimo.network",  // 覆盖签名域名
+  siwxDomain: "beta.bitrouter.ai",  // 覆盖签名域名
 });
 ```
 
 这同样适用于 provider：
 
 ```typescript
-const aimo = aimoNetwork({
+const br =bitrouter({
   signer,
   baseURL: "http://localhost:8000",
-  siwxDomain: "beta.aimo.network",
+  siwxDomain: "beta.bitrouter.ai",
 });
 ```
 
@@ -74,9 +74,9 @@ const customFetch: typeof fetch = async (url, init) => {
   return response;
 };
 
-const client = new AimoClient({
+const client = new BitRouterClient({
   signer,
-  baseUrl: "https://beta.aimo.network",
+  baseUrl: "https://beta.bitrouter.ai",
   fetchOverride: customFetch,
 });
 ```
@@ -109,7 +109,7 @@ try {
 ```typescript
 const messages = [
   { role: "system", content: "You are a helpful assistant." },
-  { role: "user", content: "What is AiMo Network?" },
+  { role: "user", content: "What is BitRouter?" },
 ];
 
 const response1 = await client.chatCompletions({
@@ -144,7 +144,7 @@ const privateKey = process.env.SOLANA_PRIVATE_KEY;
 
 ```typescript
 // 复用客户端实例 — SIWx 会话缓存 1 小时
-const client = new AimoClient({ signer, baseUrl: "https://beta.aimo.network" });
+const client = new BitRouterClient({ signer, baseUrl: "https://beta.bitrouter.ai" });
 
 await client.chatCompletions({ ... });
 await client.chatCompletions({ ... }); // 复用缓存的 SIWx 会话

@@ -1,19 +1,19 @@
 ---
 title: API 参考
-description: AiMo Network 路由器的 REST API 文档。
+description: BitRouter 路由器的 REST API 文档。
 ---
 
-AiMo Network API 提供对去中心化 AI 服务路由网络的访问。它将需要 AI 能力的客户端与提供这些能力的代理和提供商连接起来，处理身份验证、支付和协议转换。
+BitRouter API 提供对去中心化 AI 服务路由网络的访问。它将需要 AI 能力的客户端与提供这些能力的代理和提供商连接起来，处理身份验证、支付和协议转换。
 
 ## 基础 URL
 
 ```
-https://beta.aimo.network/api/v1
+https://beta.bitrouter.ai/api/v1
 ```
 
 ## 身份验证
 
-AiMo 使用 **SIWx (Sign-In-With-X)** —— 一种无需许可的、基于钱包的身份验证方案。您通过使用 Solana 或 EVM 钱包签署 CAIP-122 消息进行身份验证，并将签名以 base64 编码的 JSON 信封形式通过 `Sign-In-With-X` 头部发送：
+BitRouter 使用 **SIWx (Sign-In-With-X)** —— 一种无需许可的、基于钱包的身份验证方案。您通过使用 Solana 或 EVM 钱包签署 CAIP-122 消息进行身份验证，并将签名以 base64 编码的 JSON 信封形式通过 `Sign-In-With-X` 头部发送：
 
 ```json
 {

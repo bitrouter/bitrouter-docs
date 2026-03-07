@@ -1,36 +1,36 @@
 ---
-title: aimo_network.client
-description: Core Python client for AiMo Network — AimoClient, ClientSigner protocol, and SIWx helpers
+title: bitrouter.client
+description: Core Python client for BitRouter — BitRouterClient, ClientSigner protocol, and SIWx helpers
 ---
 
-# aimo_network.client
+# bitrouter.client
 
-The core client module. Provides the `AimoClient` class, `ClientSigner` protocol, SIWx authentication helpers, and httpx transport utilities.
+The core client module. Provides the `BitRouterClient` class, `ClientSigner` protocol, SIWx authentication helpers, and httpx transport utilities.
 
 ```bash
-pip install aimo-network
+pip install bitrouter
 ```
 
-## AimoClient
+## BitRouterClient
 
-The main async client for interacting with the AiMo Network API. Supports use as an async context manager for automatic cleanup.
+The main async client for interacting with the BitRouter API. Supports use as an async context manager for automatic cleanup.
 
 ```python
-from aimo_network import AimoClient, AimoClientOptions
+from bitrouter import BitRouterClient, BitRouterClientOptions
 
-async with AimoClient(AimoClientOptions(
+async with BitRouterClient(BitRouterClientOptions(
     signer=signer,
-    base_url="https://beta.aimo.network",
+    base_url="https://beta.bitrouter.ai",
 )) as client:
     balance = await client.session_balance()
 ```
 
-### AimoClientOptions
+### BitRouterClientOptions
 
 | Property | Type | Required | Default | Description |
 |----------|------|----------|---------|-------------|
 | `signer` | `ClientSigner` | Yes | — | Wallet signer for authentication and payments |
-| `base_url` | `str` | Yes | — | API server URL (e.g., `"https://beta.aimo.network"`) |
+| `base_url` | `str` | Yes | — | API server URL (e.g., `"https://beta.bitrouter.ai"`) |
 | `api_base` | `str` | No | `"/api/v1"` | API path prefix |
 | `siwx_domain` | `str \| None` | No | `None` | Override SIWx signing domain (for local development) |
 | `endpoints_override` | `dict[str, str]` | No | `{}` | Override default endpoint paths |
@@ -89,7 +89,7 @@ Closes the underlying httpx client. Called automatically when using the async co
 ### Async Context Manager
 
 ```python
-async with AimoClient(options) as client:
+async with BitRouterClient(options) as client:
     # client is ready to use
     balance = await client.session_balance()
 # client is automatically closed here
@@ -102,7 +102,7 @@ async with AimoClient(options) as client:
 All chain-specific signers implement this runtime-checkable protocol:
 
 ```python
-from aimo_network.client import ClientSigner
+from bitrouter.client import ClientSigner
 
 @runtime_checkable
 class ClientSigner(Protocol):
@@ -137,7 +137,7 @@ Low-level utilities for building custom authentication flows.
 Creates a CAIP-122 formatted message from a SIWx payload.
 
 ```python
-from aimo_network import create_siwx_message
+from bitrouter import create_siwx_message
 
 message = create_siwx_message(payload)
 ```
@@ -147,7 +147,7 @@ message = create_siwx_message(payload)
 Base64-encodes a message and signature into the auth header value.
 
 ```python
-from aimo_network import encode_siwx_header
+from bitrouter import encode_siwx_header
 
 header_value = encode_siwx_header(message, signature)
 ```
@@ -157,7 +157,7 @@ header_value = encode_siwx_header(message, signature)
 Convenience function that prepares a payload for signing and provides a header creator.
 
 ```python
-from aimo_network import prepare_siwx_for_signing
+from bitrouter import prepare_siwx_for_signing
 
 prepared = prepare_siwx_for_signing(payload)
 # prepared.message — the message to sign
@@ -190,16 +190,16 @@ For custom integrations, create an httpx `AsyncClient` with SIWx auth built into
 ### create_siwx_httpx_client(signer, options?)
 
 ```python
-from aimo_network.client import create_siwx_httpx_client, WrapHttpxOptions
+from bitrouter.client import create_siwx_httpx_client, WrapHttpxOptions
 
 httpx_client = create_siwx_httpx_client(
     signer=signer,
-    options=WrapHttpxOptions(siwx_domain="beta.aimo.network"),
+    options=WrapHttpxOptions(siwx_domain="beta.bitrouter.ai"),
 )
 
 # All requests include SIWx auth + x402 payments
 response = await httpx_client.post(
-    "https://beta.aimo.network/api/v1/chat/completions",
+    "https://beta.bitrouter.ai/api/v1/chat/completions",
     json={"model": "openai/gpt-4o", "messages": [...]},
 )
 ```
@@ -207,7 +207,7 @@ response = await httpx_client.post(
 ### Other Exports
 
 ```python
-from aimo_network.client import (
+from bitrouter.client import (
     to_scheme_registration,    # Convert signer to x402 scheme registration
     to_x402_client,            # Convert signer(s) to x402 client
 )

@@ -2,107 +2,150 @@
 title: 快速入门
 description: BitRouter 入门指南
 ---
+import { Callout } from 'fumadocs-ui/components/callout';
 
 ## 欢迎使用 BitRouter
 
-BitRouter 是一个去中心化的 AI 市场，通过单一的 OpenAI 兼容 API 提供对数百个 AI 模型的无许可访问。采用 X402 协议进行透明的区块链支付，按使用量付费——这是一个基于 Solana 和 Base 构建的去中心化按需付费系统，无需传统支付中介。
+BitRouter 是一个去中心化的 AI 市场，通过单一的 OpenAI 兼容 API 提供对数百个 AI 模型的无许可访问。按使用量付费，透明的区块链支付——无需注册、无需 API 密钥，仅需钱包签名。
 
-## 视频教程
-
-[视频教程将在此嵌入]
-
-## Hello World 示例
-
-使用 BitRouter CLI 快速开始：
+## 安装 CLI 并生成密钥对
 
 ```bash
-# Install CLI
+# 安装 BitRouter CLI
 curl -fsSL https://bitrouter-cli-releases.s3.ap-northeast-1.amazonaws.com/install.sh | sh
 
-# Generate a keypair
+# 为你的 Agent 生成密钥对
 bitrouter keygen
 
-# Chat with any model
-bitrouter chat --model deepseek/deepseek-v3.2 --message "Hello, AI!"
+# 密钥对保存至 ~/.config/bitrouter/keypair.json
+
+# 查看你的 Agent 地址
+bitrouter address
 ```
 
-就这么简单！OpenAI 兼容的 API，搭配去中心化的无许可基础设施。
+你的密钥对用于通过 SIWx 签名认证 API 请求、支付归属和 Session Balance 管理。
 
-## 选择你的路径
+<Callout type="info">
+**无许可认证**：无需注册。你的钱包签名即可证明所有权并获得访问权限。
+</Callout>
 
-### SKILLS + CLI（Agent 自动接入）
+就这样——你已准备好使用 BitRouter。
 
-最快的路径。在你的 IDE（Claude Code、Cursor、Copilot）中安装 Agent Skills，或直接使用 BitRouter CLI——你的 Agent 会自主完成剩余工作。
+---
 
-**你将完成：**
-- 安装 BitRouter Agent Skill 或 CLI
-- 生成钱包密钥对
-- 立即访问模型、MCP 工具和 A2A Agent
-- 通过钱包签名自主支付
+## 为你的 Agent 充值（可选）
 
-> **[开始使用：SKILLS + CLI 指南](/docs/overview/skills-cli)**
+如需自动支付处理，为你的 Agent 充值 Session Balance：
 
-### 手动接入（开发者引导）
+```bash
+# 查看当前余额
+bitrouter router get-balance --keypair ~/.config/bitrouter/keypair.json
 
-面向需要完全控制的开发者的分步设置指南。创建账户、为钱包充值、生成 PDK，并与任何语言或框架集成。
+# 通过控制台或直接 USDC 转账充值
+```
 
-**你将完成：**
-- 通过 Console 创建账户
-- 充值 USDC 并生成 Payment Delegation Key
-- 使用 curl、JavaScript、Python 或任何 OpenAI 兼容 SDK 进行 API 调用
-- 访问多模态生成（图像、视频）
+或者，使用 X402 按请求支付，无需预充值。
 
-> **[开始构建：手动指南](/docs/overview/manual-guide)**
+---
 
-### 自托管方案
+## 访问 AI 模型
 
-在你自己的基础设施上运行开源的 BitRouter 代理。完全掌控路由、模型配置和部署。
+使用 OpenAI 兼容的 Chat Completions 端点访问网络上的任何模型。
 
-**你将完成：**
-- 通过 Docker 或 Cargo 部署 BitRouter 代理
-- 配置你自己的模型端点
-- 连接到 BitRouter 路由器
+```bash
+# 交互式对话
+bitrouter chat --model deepseek/deepseek-v3.2 --keypair ~/.config/bitrouter/keypair.json
 
-> **[部署：自托管指南](/docs/overview/self-host)**
+# 单次请求
+bitrouter chat \
+  --model deepseek/deepseek-v3.2 \
+  --message "用简单的话解释量子计算" \
+  --keypair ~/.config/bitrouter/keypair.json
 
-## 核心特性
+# 列出可用模型
+bitrouter router list-models
 
-**OpenAI 兼容 API**
-可直接替换 OpenAI API。只需更改 base URL，即可使用现有 SDK。
+# 搜索模型
+bitrouter router search-models "claude" --limit 10 --json
+```
 
-**去中心化与无许可**
-无供应商锁定，透明的链上支付，注重隐私，供应商竞争带来最优定价。
+---
 
-**智能供应商路由**
-根据可用性、延迟和价格，自动将请求路由到最佳可用供应商。
+## 使用 MCP 工具
 
-**多种支付方式**
-- Session Balance：预充值钱包身份，实现自动支付
-- X402 Direct：基于区块链的原生按需付费，每次请求使用加密货币支付
+MCP (Model Context Protocol) 使你的 Agent 能够调用网络上其他 Agent 提供的工具。
 
-## 快速链接
+```bash
+# 发现工具
+bitrouter router list-tools
+bitrouter router search-mcp "calculator" --json
 
-**开始使用：**
-- [控制台](https://bitrouter.ai/dashboard) - 管理钱包余额和查看用量
-- [市场](https://bitrouter.ai/marketplace) - 浏览可用模型和定价
-- [API 参考](/api-reference) - 完整的技术文档
-- [SDK 参考](/docs/sdk-reference) - TypeScript SDK 无缝集成
+# 与 Agent 初始化会话
+bitrouter mcp initialize <agent_id> --keypair ~/.config/bitrouter/keypair.json
 
-**了解更多：**
-- [集成](/integrations) - OpenAI SDK、LangChain、Vercel AI SDK
-- [功能](/features) - 深入了解各项能力
-- [教程](/tutorial) - 分步集成指南
+# 列出 Agent 的能力
+bitrouter mcp list-tools <agent_id> --keypair ~/.config/bitrouter/keypair.json
 
-**社区与支持：**
-- [Discord 社区](https://discord.gg/MkeG9Zwuaw) - 获取帮助并与用户交流
-- [支持](mailto:contact@bitrouter.ai) - 联系团队
+# 调用工具
+bitrouter mcp call-tool <agent_id> calculator \
+  --args '{"operation": "add", "a": 5, "b": 3}' \
+  --keypair ~/.config/bitrouter/keypair.json
+```
 
-## 工作原理
+---
 
-1. **选择路径**：SKILLS + CLI、手动接入或自托管
-2. **身份认证**：使用 CLI 生成钱包密钥对或通过 Console 注册
-3. **连接**：使用我们的 OpenAI 兼容端点
-4. **按需付费**：通过 Session Balance 或 X402 协议进行自动、透明的支付
-5. **扩展**：访问量随需求增长，无需预先承诺
+## Agent 间通信
 
-准备好了吗？选择上面的路径，按照详细指南开始你的使用场景。
+使用 A2A (Agent-to-Agent) 协议进行 Agent 间的直接通信。
+
+```bash
+# 按能力搜索 Agent
+bitrouter router search-a2a "summarize" --json
+
+# 获取 Agent 卡片（能力）
+bitrouter a2a get-card <agent_id>
+
+# 发送消息
+bitrouter a2a send <agent_id> "总结最新新闻" \
+  --keypair ~/.config/bitrouter/keypair.json
+
+# 流式响应
+bitrouter a2a stream <agent_id> "生成一份 Q4 财报分析" \
+  --keypair ~/.config/bitrouter/keypair.json
+```
+
+---
+
+## 注册你的 Agent（可选）
+
+如果你的 Agent 提供服务（MCP 工具、A2A 能力或对话），注册它以便其他人发现和使用。
+
+```bash
+bitrouter router register-agent \
+  --name "My Agent" \
+  --description "我的 Agent 做什么" \
+  --keypair ~/.config/bitrouter/keypair.json
+```
+
+要提供 MCP 和 A2A 端点，创建 `bitrouter-cli.toml` 配置文件并运行：
+
+```bash
+bitrouter serve --config bitrouter-cli.toml
+```
+
+详见 [bitrouter-proxy 仓库](https://github.com/bitrouter/bitrouter-proxy) 获取完整配置说明。
+
+---
+
+## 其他接入方式
+
+- **[手动指南](/docs/overview/manual-guide)** — 通过 Console 分步设置并使用 PDK，适合需要完全控制的开发者
+
+---
+
+## 下一步
+
+- [SDK 参考](/docs/sdk-reference) — TypeScript SDK 和编程集成
+- [API 参考](/docs/api-reference) — 完整的端点文档
+- [控制台](https://app.bitrouter.ai) — 管理钱包余额和查看用量
+- [Discord 社区](https://discord.gg/MkeG9Zwuaw) — 获取帮助和更新

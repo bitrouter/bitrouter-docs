@@ -1,33 +1,57 @@
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
+import { LanguageToggleButton } from "@/components/language-toggle";
 
+const sharedNav: BaseLayoutProps["nav"] = {
+  title: (
+    <>
+      <img
+        src="/logo.svg"
+        alt="BitRouter"
+        className="h-8 w-8 dark:invert"
+      />
+      <span>BitRouter</span>
+    </>
+  ),
+};
+
+const sharedLinks: BaseLayoutProps["links"] = [
+  { text: "Documentation", url: "/docs/overview", active: "nested-url" },
+  { text: "Blog", url: "/blog" },
+  { text: "GitHub", url: "https://github.com/bitrouter", external: true },
+  { text: "Discord", url: "https://discord.gg/G3zVrZDa5C", external: true },
+  { text: "Twitter/X", url: "https://x.com/BitRouterAI", external: true },
+  {
+    type: "custom",
+    secondary: true,
+    children: <LanguageToggleButton />,
+  },
+  {
+    type: "button",
+    text: "Sign In / Sign Up",
+    url: "https://app.bitrouter.ai",
+    external: true,
+    secondary: true,
+  },
+];
+
+/**
+ * Options for layouts with a top navbar (home, blog).
+ */
 export function baseOptions(): BaseLayoutProps {
   return {
-    nav: {
-      title: (
-        <>
-          <img
-            src="/logo.svg"
-            alt="BitRouter"
-            className="h-8 w-8 dark:invert"
-          />
-          <span>BitRouter</span>
-        </>
-      ),
-    },
-    i18n: true,
-    links: [
-      { text: "Documentation", url: "/docs/overview", active: "nested-url" },
-      { text: "Blog", url: "/blog" },
-      { text: "GitHub", url: "https://github.com/bitrouter", external: true },
-      { text: "Discord", url: "https://discord.gg/G3zVrZDa5C", external: true },
-      { text: "Twitter/X", url: "https://x.com/BitRouterAI", external: true },
-      {
-        type: "button",
-        text: "Sign In / Sign Up",
-        url: "https://app.bitrouter.ai",
-        external: true,
-        secondary: true,
-      },
-    ],
+    nav: sharedNav,
+    i18n: false,
+    links: sharedLinks,
+  };
+}
+
+/**
+ * Options for the docs layout — no links in sidebar, navbar provided separately.
+ */
+export function docsOptions(): BaseLayoutProps {
+  return {
+    nav: sharedNav,
+    i18n: false,
+    links: [],
   };
 }

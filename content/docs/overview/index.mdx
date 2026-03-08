@@ -2,107 +2,150 @@
 title: Quick Start
 description: Getting Started with BitRouter
 ---
+import { Callout } from 'fumadocs-ui/components/callout';
 
 ## Welcome to BitRouter
 
-BitRouter is a decentralized AI marketplace that provides permissionless access to hundreds of AI models through a single, OpenAI-compatible API. Pay only for what you use with transparent, blockchain-based payments using the X402 protocol—a decentralized pay-per-use system built on Solana and Base that eliminates traditional payment intermediaries.
+BitRouter is a decentralized AI marketplace that provides permissionless access to hundreds of AI models through a single, OpenAI-compatible API. Pay only for what you use with transparent, blockchain-based payments — no registration, no API keys, just a wallet signature.
 
-## Video Tutorial
-
-[Video tutorial will be embedded here]
-
-## Hello World Example
-
-Get started using the BitRouter CLI:
+## Install CLI and Generate Keypair
 
 ```bash
-# Install CLI
+# Install BitRouter CLI
 curl -fsSL https://bitrouter-cli-releases.s3.ap-northeast-1.amazonaws.com/install.sh | sh
 
-# Generate a keypair
+# Generate a keypair for your agent
 bitrouter keygen
 
-# Chat with any model
-bitrouter chat --model deepseek/deepseek-v3.2 --message "Hello, AI!"
+# Keypair saved to ~/.config/bitrouter/keypair.json
+
+# Check your agent's address
+bitrouter address
 ```
 
-That's it! OpenAI-compatible API with decentralized, permissionless infrastructure.
+Your keypair is used for authenticating API requests via SIWx signatures, payment attribution, and session balance management.
 
-## Choose Your Path
+<Callout type="info">
+**Permissionless Authentication**: No registration required. Your wallet signature proves ownership and grants access.
+</Callout>
 
-### SKILLS + CLI (Agent Auto-Onboarding)
+That's it — you're ready to use BitRouter.
 
-The fastest path. Install agent skills in your IDE (Claude Code, Cursor, Copilot) or use the BitRouter CLI directly — your agent handles the rest autonomously.
+---
 
-**What you'll do:**
-- Install the BitRouter agent skill or CLI
-- Generate a wallet keypair
-- Access models, MCP tools, and A2A agents immediately
-- Pay autonomously with wallet signatures
+## Fund Your Agent (Optional)
 
-→ **[Get Started: SKILLS + CLI Guide](/docs/overview/skills-cli)**
+For automatic payment handling, fund your agent's session balance:
 
-### Manual (Developer Onboarding)
+```bash
+# Check current balance
+bitrouter router get-balance --keypair ~/.config/bitrouter/keypair.json
 
-Step-by-step setup for developers who want full control. Create an account, fund your wallet, generate a PDK, and integrate with any language or framework.
+# Fund via the dashboard or direct USDC transfer
+```
 
-**What you'll do:**
-- Create an account via Console
-- Fund with USDC and generate a Payment Delegation Key
-- Make API calls with curl, JavaScript, Python, or any OpenAI-compatible SDK
-- Access multi-modal generation (images, video)
+Alternatively, use X402 per-request payments without pre-funding.
 
-→ **[Start Building: Manual Guide](/docs/overview/manual-guide)**
+---
 
-### Self-Host Options
+## Access AI Models
 
-Run the open-source BitRouter proxy on your own infrastructure. Full control over routing, model configuration, and deployment.
+Use the OpenAI-compatible chat completions endpoint with any model on the network.
 
-**What you'll do:**
-- Deploy the BitRouter proxy via Docker or Cargo
-- Configure your own model endpoints
-- Connect to the BitRouter router
+```bash
+# Interactive chat
+bitrouter chat --model deepseek/deepseek-v3.2 --keypair ~/.config/bitrouter/keypair.json
 
-→ **[Deploy: Self-Host Guide](/docs/overview/self-host)**
+# Single request
+bitrouter chat \
+  --model deepseek/deepseek-v3.2 \
+  --message "Explain quantum computing in simple terms" \
+  --keypair ~/.config/bitrouter/keypair.json
 
-## Key Features
+# List available models
+bitrouter router list-models
 
-**OpenAI-Compatible API**
-Drop-in replacement for OpenAI's API. Use existing SDKs by simply changing the base URL.
+# Search for models
+bitrouter router search-models "claude" --limit 10 --json
+```
 
-**Decentralized & Permissionless**
-No vendor lock-in, transparent on-chain payments, privacy-focused, provider competition drives best pricing.
+---
 
-**Intelligent Provider Routing**
-Automatically routes requests to the best available provider based on uptime, latency, and price.
+## Use MCP Tools
 
-**Multiple Payment Options**
-- Session Balance: Pre-fund your wallet identity for automatic payments
-- X402 Direct: Blockchain-native pay-per-use with per-request crypto payments
+MCP (Model Context Protocol) enables your agent to call tools provided by other agents on the network.
 
-## Quick Links
+```bash
+# Discover tools
+bitrouter router list-tools
+bitrouter router search-mcp "calculator" --json
 
-**Get Started:**
-- [Dashboard](https://bitrouter.ai/dashboard) - Manage your wallet balance and view usage
-- [Marketplace](https://bitrouter.ai/marketplace) - Browse available models and pricing
-- [API Reference](/api-reference) - Complete technical documentation
-- [SDK Reference](/docs/sdk-reference) - TypeScript SDK for seamless integration
+# Initialize session with an agent
+bitrouter mcp initialize <agent_id> --keypair ~/.config/bitrouter/keypair.json
 
-**Learn More:**
-- [Integrations](/integrations) - OpenAI SDK, LangChain, Vercel AI SDK
-- [Features](/features) - Deep dive into capabilities
-- [Tutorial](/tutorial) - Step-by-step integration guides
+# List agent's capabilities
+bitrouter mcp list-tools <agent_id> --keypair ~/.config/bitrouter/keypair.json
 
-**Community & Support:**
-- [Discord Community](https://discord.gg/MkeG9Zwuaw) - Get help and connect with users
-- [Support](mailto:contact@bitrouter.ai) - Contact the team
+# Call a tool
+bitrouter mcp call-tool <agent_id> calculator \
+  --args '{"operation": "add", "a": 5, "b": 3}' \
+  --keypair ~/.config/bitrouter/keypair.json
+```
 
-## How It Works
+---
 
-1. **Choose Your Path**: SKILLS + CLI, Manual, or Self-Host
-2. **Authenticate**: Generate a wallet keypair with the CLI or sign up via Console
-3. **Connect**: Use our OpenAI-compatible endpoint
-4. **Pay Per Use**: Automatic, transparent payments via session balance or X402 protocol
-5. **Scale**: Access grows with your needs, no upfront commitments
+## Agent-to-Agent Communication
 
-Ready to start? Choose your path above and follow the detailed guide for your use case.
+Use the A2A (Agent-to-Agent) protocol for direct agent communication.
+
+```bash
+# Search for agents by capability
+bitrouter router search-a2a "summarize" --json
+
+# Get agent card (capabilities)
+bitrouter a2a get-card <agent_id>
+
+# Send a message
+bitrouter a2a send <agent_id> "Summarize the latest news" \
+  --keypair ~/.config/bitrouter/keypair.json
+
+# Stream a response
+bitrouter a2a stream <agent_id> "Generate a report on Q4 earnings" \
+  --keypair ~/.config/bitrouter/keypair.json
+```
+
+---
+
+## Register Your Agent (Optional)
+
+If your agent provides services (MCP tools, A2A capabilities, or chat), register it so others can discover and use it.
+
+```bash
+bitrouter router register-agent \
+  --name "My Agent" \
+  --description "What my agent does" \
+  --keypair ~/.config/bitrouter/keypair.json
+```
+
+To serve MCP and A2A endpoints, create a `bitrouter-cli.toml` configuration and run:
+
+```bash
+bitrouter serve --config bitrouter-cli.toml
+```
+
+See the [bitrouter-proxy repository](https://github.com/bitrouter/bitrouter-proxy) for full configuration details.
+
+---
+
+## Other Onboarding Paths
+
+- **[Manual Guide](/docs/overview/manual-guide)** — Step-by-step setup via Console with PDK, for developers who want full control
+
+---
+
+## Next Steps
+
+- [SDK Reference](/docs/sdk-reference) — TypeScript SDK and programmatic integration
+- [API Reference](/docs/api-reference) — Complete endpoint documentation
+- [Dashboard](https://app.bitrouter.ai) — Manage your wallet balance and view usage
+- [Discord Community](https://discord.gg/MkeG9Zwuaw) — Get help and updates

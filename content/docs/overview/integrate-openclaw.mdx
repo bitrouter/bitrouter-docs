@@ -1,0 +1,59 @@
+---
+title: OpenClaw
+description: Use BitRouter as the LLM backend for OpenClaw
+---
+import { Callout } from 'fumadocs-ui/components/callout';
+
+[OpenClaw](https://openclaw.ai) is an open-source personal AI agent runtime that connects chat platforms (WhatsApp, Discord, Telegram, Signal) to AI models. Configure it to use BitRouter for access to hundreds of models through a single provider.
+
+## Setup
+
+Add BitRouter as a custom model provider in your OpenClaw configuration file:
+
+```json
+{
+  "mode": "merge",
+  "models": {
+    "providers": {
+      "bitrouter": {
+        "baseUrl": "https://api.console.bitrouter.ai/v1",
+        "apiKey": "br-p-[your-pdk]",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "anthropic/claude-sonnet-4-20250514",
+            "name": "Claude Sonnet"
+          },
+          {
+            "id": "openai/gpt-5",
+            "name": "GPT-5"
+          },
+          {
+            "id": "deepseek/deepseek-v3.2",
+            "name": "DeepSeek V3.2"
+          }
+        ]
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "bitrouter/anthropic/claude-sonnet-4-20250514"
+      }
+    }
+  }
+}
+```
+
+<Callout type="info">
+You need a **Payment Delegation Key (PDK)** for authentication. [Generate one here](https://console.bitrouter.ai/dashboard/keys) or see the [PDK guide](/docs/overview/payment-delegation-key).
+</Callout>
+
+## Adding More Models
+
+Browse the [BitRouter marketplace](https://console.bitrouter.ai/marketplace) for all available models, then add them to the `models` array using the model ID as `id`.
+
+## Verify
+
+Send a message through your connected chat platform and confirm requests appear on your [usage dashboard](https://console.bitrouter.ai/dashboard/usage).

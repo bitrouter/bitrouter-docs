@@ -1,6 +1,7 @@
 import { source } from "@/lib/source";
 import { DocsLayout } from "fumadocs-ui/layouts/docs";
-import { baseOptions } from "@/lib/layout.shared";
+import { docsOptions } from "@/lib/layout.shared";
+import { SidebarFooterControls } from "@/components/sidebar-footer-controls";
 import { setRequestLocale } from "next-intl/server";
 import { Bot } from "lucide-react";
 import {
@@ -22,7 +23,11 @@ export default async function Layout({ children, params }: Props) {
 
   return (
     <AISearch>
-      <DocsLayout tree={source.getPageTree(locale)} {...baseOptions()}>
+      <DocsLayout
+        tree={source.getPageTree(locale)}
+        {...docsOptions()}
+        themeSwitch={{ component: <SidebarFooterControls /> }}
+      >
         {children}
         <AISearchPanel />
         <AISearchTrigger

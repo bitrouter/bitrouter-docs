@@ -1,61 +1,87 @@
 ---
 title: 什么是 BitRouter？
-description: BitRouter 是一个开放的、无需许可的 AI 模型路由器——类似 OpenRouter，但原生支持加密货币，并具备智能路由功能，可按请求优化成本和质量。
+description: 面向 LLM Agent 的开放智能路由器
 ---
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ## 什么是 BitRouter？
 
-BitRouter 是一个去中心化的 AI 模型路由器，通过单一的 OpenAI 兼容 API 端点，为您提供对来自 OpenAI、Anthropic、Google 等 200 多个模型的统一访问。无需管理多个 API 密钥和计费账户，只需连接一次，即可使用稳定币按请求付费。
+BitRouter 是一个专为 AI Agent 运行时打造的开源 LLM 网关。它是一个高性能 Rust 代理，让 [OpenClaw](https://openclaw.ai)、[OpenCode](https://opencode.ai)、[Claude Code](https://claude.ai/claude-code) 等 Agent 通过单一 OpenAI 兼容端点，统一访问来自 OpenAI、Anthropic、Google 等提供商的 200+ 模型。
 
-BitRouter 与简单代理的不同之处在于**智能路由**：BitRouter 不会始终使用最昂贵的模型，而是分析每个请求并选择最佳模型以平衡质量和成本。在 SWE-bench 编码基准测试中，BitRouter Balanced 以全 Opus 策略 42% 的成本实现了 93.2% 的解决率。
+单一二进制文件部署，零基础设施依赖。Agent 在运行时自主发现并路由到 LLM、工具和子 Agent，通过 CLI + TUI 实现完整的可观测性。对于不想自托管的团队，BitRouter 还提供托管服务，支持 Agent 原生的稳定币支付——无 KYC、无地域限制。
 
-BitRouter 完全无需许可——无 KYC、无地域限制、无审查。它专为需要可靠、低延迟访问前沿模型的 AI 代理和开发者而构建，消除了传统支付摩擦。
+## 为什么选择 BitRouter？
 
-## 核心差异化优势
-
-- **智能路由** — 自动为每个任务选择合适的模型。从更便宜的模型开始，仅在需要时升级。路由开销低于 10 毫秒。
-- **无需许可且去中心化** — 无需注册表单、无 KYC、无地域限制。生成密钥对即可开始请求。
-- **代理原生** — 专为自主 AI 代理构建，具备 Know-Your-Agent 身份验证、支付委托密钥和 X402 按使用付费协议。
+- **Agent 原生网关** — 为自主 Agent 而非人工交互式聊天机器人而构建。Agent 在运行时自主发现和选择模型，具备 Know-Your-Agent (KYA) 身份验证和支付委托密钥等功能。
+- **零运维部署** — 单一 Rust 二进制文件。无需 Postgres、Redis 或 Docker 编排。`cargo install bitrouter && bitrouter start` 即可启动。
+- **智能路由** — 可配置的路由表将模型名称映射到提供商。支持成本和性能优化，自动回退和升级。路由开销低于 10 毫秒。
+- **稳定币支付** — 在托管服务上使用稳定币按请求付费。无需信用卡、预充值或发票。Agent 可自主完成支付。
+- **CLI + TUI 可观测性** — 从终端实时监控和控制 Agent 会话。
 
 ## BitRouter 与 OpenRouter 对比
 
 | | BitRouter | OpenRouter |
 |---|---|---|
+| **类型** | 开源 Rust 代理 + 托管选项 | 仅托管 SaaS（闭源） |
+| **部署** | 自托管（单一二进制）或托管 | 仅云端 |
+| **支付方式** | 稳定币按使用付费（Agent 原生） | 信用卡、加密货币充值、支付宝 |
 | **访问方式** | 无需许可——无 KYC 或地域限制 | 需要创建账户 |
-| **支付方式** | 加密货币按使用付费（Solana/Base 上的稳定币） | 信用卡或加密货币充值 |
-| **路由** | 智能路由与自动升级（93.2% SWE-bench，仅 All-Opus 42% 的成本） | 基础自动路由 |
-| **开销** | 低于 10ms 路由延迟 | 不等 |
+| **路由** | 可配置路由表，支持回退 | 自动路由器（基于 NotDiamond）、提供商路由 |
+| **开销** | 低于 10ms | ~25–40ms |
+| **Agent 特性** | KYA 身份验证、支付委托、CLI/TUI 可观测性 | 工具调用、标准 API 密钥 |
+| **模型** | 200+ 模型 | 400+ 模型 / 60+ 提供商 |
 | **API** | OpenAI 兼容 | OpenAI 兼容 |
-| **模型** | 200+ 模型 | 200+ 模型 |
-| **代理特性** | KYA 身份验证、支付委托、X402 协议 | 标准 API 密钥 |
+| **许可证** | Apache 2.0 | 闭源（SDK 为 Apache 2.0） |
+
+## BitRouter 与 LiteLLM 对比
+
+| | BitRouter | LiteLLM |
+|---|---|---|
+| **类型** | Rust 代理（单一二进制） | Python 代理 + SDK（开放核心） |
+| **部署** | 单一二进制，零依赖 | Docker/K8s，需要 Postgres + Redis |
+| **性能** | 异步 Rust，无 GIL — 开销低于 10ms | 中位开销 ~0.5ms，但 Python GIL 限制大规模吞吐量 |
+| **支付** | 内置稳定币支付（托管服务） | 仅 BYOK — 不处理支付 |
+| **Agent 特性** | KYA 身份验证、支付委托、CLI/TUI | MCP 网关、A2A 协议网关 |
+| **路由** | 路由表，支持回退和升级 | 负载均衡、回退、冷却 |
+| **模型** | 200+ 模型 | 2,600+ 模型 / 120+ 提供商 |
+| **可观测性** | CLI + TUI，内置指标 | 管理面板、OpenTelemetry、Prometheus |
+| **API** | OpenAI 兼容 | OpenAI 兼容 |
+| **许可证** | Apache 2.0 | MIT（企业功能闭源） |
 
 ## BitRouter 与直接 API 访问对比
 
 | | BitRouter | 直接 API（如 OpenAI、Anthropic） |
 |---|---|---|
 | **模型** | 通过一个端点访问所有提供商的 200+ 模型 | 仅该提供商的模型 |
-| **计费** | 单一加密钱包，按使用付费 | 每个提供商单独计费 |
-| **路由** | 每个任务自动选择模型 | 手动选择模型 |
+| **计费** | 单一稳定币钱包或 BYOK | 每个提供商单独计费 |
+| **路由** | 自动选择模型，支持回退 | 手动选择模型 |
 | **设置** | 更改 base URL，使用现有 SDK | 每个提供商需要单独的 SDK/密钥 |
+| **可观测性** | 跨所有提供商的统一 CLI/TUI | 每个提供商各自的控制台 |
 | **成本** | 通过智能路由优化 | 按所选模型全价付费 |
 
 ## 常见问题
 
 <Accordions type="single">
-  <Accordion title="BitRouter 与 OpenRouter 等主流 API 聚合器有什么不同？">
-      BitRouter 受 OpenRouter 启发，但专注方向不同：
-      - **无许可**：BitRouter 运行在去中心化网络上，无需 KYC、无地域限制，也没有任何形式的审查。
-      - **稳定币而非法币**：BitRouter 为用户提供更多自定义选项。
-      - **Agent 原生**：BitRouter 培育了一个活跃的开发者和用户社区。
+  <Accordion title="BitRouter 与 OpenRouter 或 LiteLLM 有什么不同？">
+      BitRouter 专为 Agent 运行时而构建：
+      - **可自托管**：与 OpenRouter（仅云端）不同，BitRouter 以单一 Rust 二进制文件交付，无需任何基础设施依赖即可在任何地方运行。
+      - **Agent 原生支付**：与 LiteLLM（仅 BYOK）不同，BitRouter 的托管服务支持稳定币按使用付费，Agent 可自主完成支付，无需人工设置计费。
+      - **零运维**：与 LiteLLM（需要 Postgres + Redis）不同，BitRouter 仅需二进制文件即可运行。
+      - **高性能**：Rust 异步运行时意味着稳定的低延迟，不受 Python GIL 限制。
+  </Accordion>
+  <Accordion title="我可以自托管 BitRouter 还是必须使用托管服务？">
+      两者皆可。BitRouter 完全开源（Apache 2.0）。你可以使用自己的提供商 API 密钥自托管，也可以使用带稳定币支付的托管服务获得完全托管的体验。
+  </Accordion>
+  <Accordion title="哪些 Agent 运行时可以使用 BitRouter？">
+      任何支持 OpenAI API 的 Agent 都可以开箱即用地使用 BitRouter——只需更改 base URL。包括 OpenClaw、OpenCode、Claude Code，以及任何基于 OpenAI SDK 的 Agent。请参阅集成指南了解具体设置步骤。
   </Accordion>
   <Accordion title="我是模型供应商——如何接入 BitRouter？">
       我们尚未开放公开的供应商接入，但非常期待你的来信。如果你是有意在 BitRouter 上架模型的供应商，请通过 [contact@bitrouter.ai](mailto:contact@bitrouter.ai) 联系我们，或加入我们的 [Discord](https://discord.gg/MkeG9Zwuaw) 告知你的服务。
 
-      如果你想自行运行代理，请查看 [bitrouter-proxy 仓库](https://github.com/bitrouter/bitrouter-proxy)。
+      如果你想自行运行代理，请查看 [bitrouter 仓库](https://github.com/bitrouter/bitrouter)。
   </Accordion>
 </Accordions>
 
 ## 开始使用
 
-BitRouter 是 OpenAI API 的直接替代品。查看[快速入门](/docs/overview)指南开始使用，或参阅 [OpenAI SDK 集成](/docs/tutorial/openai-sdk)教程，仅需两行代码即可切换。
+BitRouter 是 OpenAI API 的直接替代品。查看[快速入门](/docs/overview)指南开始使用，或参阅 [OpenClaw](/docs/overview/integrate-openclaw)、[OpenCode](/docs/overview/integrate-opencode) 和 [Claude Code](/docs/overview/integrate-claude-code) 的集成指南来设置你的 Agent 运行时。

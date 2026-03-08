@@ -1,5 +1,6 @@
 import defaultMdxComponents from "fumadocs-ui/mdx";
 import { APIPage } from "@/components/docs/api-page";
+import { CalButton } from "@/components/landing/sections/CalButton";
 import * as TabsComponents from "fumadocs-ui/components/tabs";
 import type { MDXComponents } from "mdx/types";
 
@@ -8,6 +9,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     ...defaultMdxComponents,
     ...TabsComponents,
     APIPage,
+    CalButton,
     ...components,
   };
 }

@@ -1,81 +1,28 @@
 ---
-title: Enterprise
-description: Enterprise-grade AI infrastructure for teams and organizations
+title: For Teams
+description: Advanced features and custom support for startups & enterprises building the next generation of LLM agents
 ---
 import { Callout } from 'fumadocs-ui/components/callout';
 
-## AI Infrastructure Built for Enterprise
+## Build Smarter with BitRouter
 
-BitRouter provides enterprise teams with permissionless, multi-provider AI access through a single API — with the compliance, reliability, and cost controls your organization needs.
+Whether you're a startup shipping your first AI agent or an enterprise scaling thousands, BitRouter provides the advanced infrastructure, custom solutions, and hands-on support to help you move faster.
 
-## Why Enterprise Teams Choose BitRouter
+## Advanced Features
 
-### Multi-Provider Access, One API
+- **Priority support & dedicated onboarding** — hands-on guidance from our team to get you up and running
+- **Custom routing rules & provider pinning** — tailor routing logic to your specific compliance and performance needs
+- **Volume-based pricing** — competitive rates that scale with your usage
+- **Team spending controls** — scoped [Payment Delegation Keys](/docs/overview/payment-delegation-key) with per-team budgets and expiration
+- **Self-hostable infrastructure** — run the entire routing layer on your own servers with [bitrouter](https://github.com/bitrouter/bitrouter)
+- **SLA guarantees & uptime commitments** — reliability you can build on
+- **Custom model & fine-tuning integration** — bring your own models or fine-tunes into the routing layer
+- **Advanced analytics & usage reporting** — deep visibility into spend, latency, and usage across teams and projects
 
-Access hundreds of models from OpenAI, Anthropic, Google, DeepSeek, and more through a single OpenAI-compatible endpoint. No vendor lock-in — switch providers instantly without code changes.
-
-### Cost Transparency & Control
-
-- **Pay-per-use pricing** — no minimum commitments or reserved capacity
-- **Per-team spending controls** via Payment Delegation Keys (PDKs)
-- **Real-time usage dashboards** — track spend by team, project, or model
-- **Quote endpoints** — get exact cost estimates before every request
-
-### Self-Custodial Payments
-
-Funds stay in your organization's wallet until the moment of use. No prepaid credits locked in a vendor's account. Settle on-chain with USDC (Solana or Base).
-
-### Intelligent Routing & Reliability
-
-Automatic failover across providers ensures uptime. Route by price, latency, or throughput — or pin to a specific provider when compliance requires it.
-
-### Privacy & Compliance
-
-- **No KYC required** — permissionless by default
-- **No data retention** — requests are proxied, not stored
-- **Self-hostable proxy** — run the entire routing layer on your own infrastructure ([bitrouter-proxy](https://github.com/bitrouter/bitrouter-proxy))
-- **On-chain settlement** — full payment auditability
-
-## Enterprise Use Cases
-
-| Use Case | How BitRouter Helps |
-|----------|---------------|
-| **Multi-model evaluation** | A/B test across providers without managing multiple API keys |
-| **Cost optimization** | Automatic routing to cheapest provider for equivalent models |
-| **Team access management** | Issue scoped PDKs per team with spending limits and expiration |
-| **Autonomous agent fleets** | Wallet-based auth scales to thousands of agents without API key management |
-| **Compliance-sensitive workloads** | Self-host the proxy, pin providers, audit all payments on-chain |
-
-## Getting Started
+## Get in Touch
 
 <Callout type="info">
-**Enterprise onboarding is hands-on.** We work directly with your team to configure routing, set up team PDKs, and optimize for your workloads.
+We'd love to learn about what you're building and how we can help.
 
-Reach out at [contact@bitrouter.ai](mailto:contact@bitrouter.ai) or join our [Discord](https://discord.gg/MkeG9Zwuaw) to get started.
+<CalButton>Book a founder call</CalButton> or reach out directly at [contact@bitrouter.ai](mailto:contact@bitrouter.ai).
 </Callout>
-
-### Quick Integration
-
-BitRouter is OpenAI-compatible — most teams are up and running in minutes:
-
-```javascript
-import OpenAI from 'openai';
-
-const client = new OpenAI({
-  apiKey: process.env.BITROUTER_API_KEY,
-  baseURL: 'https://api.console.bitrouter.ai/v1'
-});
-
-const completion = await client.chat.completions.create({
-  model: 'openai/gpt-5',
-  messages: [{ role: 'user', content: 'Hello!' }]
-});
-```
-
-No SDK migration. No new abstractions. Just change the base URL.
-
-## Next Steps
-
-- **[Manual Onboarding Guide](/docs/overview/manual-guide)** — Step-by-step setup for developers
-- **[Payment Delegation Keys](/docs/overview/payment-delegation-key)** — Scoped access control for teams
-- **[API Reference](/docs/api-reference)** — Complete endpoint documentation

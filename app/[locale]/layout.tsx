@@ -5,7 +5,6 @@ import { hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { i18nUI } from "@/lib/fumadocs-i18n";
-import { benchmarkData } from "@/lib/data/landing/benchmarks";
 import type { Metadata } from "next";
 
 const BASE_URL = "https://bitrouter.ai";
@@ -42,30 +41,6 @@ const jsonLd = {
         priceCurrency: "USD",
         description: "Pay-per-use pricing with crypto payments",
       },
-    },
-    {
-      "@type": "Dataset",
-      name: "BitRouter SWE-bench Routing Benchmark",
-      description:
-        "Comparison of AI model routing strategies on SWE-bench Verified, measuring resolve rate vs cost per session.",
-      url: `${BASE_URL}/blog/routing-methodology`,
-      variableMeasured: [
-        {
-          "@type": "PropertyValue",
-          name: "SWE-bench resolve rate",
-          unitText: "percent",
-        },
-        {
-          "@type": "PropertyValue",
-          name: "Cost per session",
-          unitCode: "USD",
-        },
-      ],
-      distribution: benchmarkData.map((d) => ({
-        "@type": "DataDownload",
-        name: d.name,
-        description: `${d.name}: ${d.resolveRate}% resolve rate at $${d.cost.toFixed(3)}/session`,
-      })),
     },
   ],
 };

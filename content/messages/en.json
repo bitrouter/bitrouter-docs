@@ -1,14 +1,13 @@
 {
   "Metadata": {
     "title": "BitRouter — Open Intelligence Router for LLM Agents",
-    "description": "Optimize your agent runtime with two lines of code. 10x up performance & 10x down cost."
+    "description": "The zero-ops LLM gateway for agent runtimes. Single binary. Zero infrastructure dependencies. Agent-native control."
   },
   "Header": {
     "search": "Search",
     "searchPlaceholder": "Type a command or search...",
     "signIn": "Sign In / Sign Up",
     "dashboard": "Dashboard",
-    "benchmark": "Benchmark",
     "pagesHeading": "Pages",
     "accountHeading": "Account",
     "keys": "Keys",
@@ -29,9 +28,9 @@
   },
   "Hero": {
     "headline": "Open Intelligence Router for LLM\u00a0Agents",
-    "subtitle": "Optimize your agent runtime with two lines of code. 10x up performance & 10x down cost.",
+    "subtitle": "The zero-ops LLM gateway for agent runtimes. Single Rust binary. Agent-native routing and stablecoin payments.",
     "ctaPrimary": "Get started",
-    "timelineLabel": "See it in action — a 10-call agent session, routed in real time",
+    "timelineLabel": "See it in action — a 6-call agent session, routed in real time",
     "codeComment": "that's it"
   },
   "IntegrationBar": {
@@ -41,34 +40,21 @@
   },
   "Features": {
     "runtimeNative": {
-      "title": "Runtime-Native",
-      "benefit": "Built into your stack. Not bolted on.",
-      "description": "Integrates directly into your agent runtime as a native SDK — not an external proxy. Two lines of code, zero infrastructure changes."
+      "title": "Agent-Native Gateway",
+      "benefit": "Built for agents. Not chatbots.",
+      "description": "Agents discover and select models at runtime with KYA identity and payment delegation. Not an external proxy bolted on — a native gateway for autonomous agents."
     },
     "smartRouting": {
       "title": "Smart Routing",
       "benefit": "Right model for every call. Automatically.",
-      "description": "Each call is classified by task type and routed to the cheapest model that handles it. Full routing logs and per-call reasoning included."
+      "description": "Configurable routing tables map model names to providers. Cost and performance optimization with automatic fallbacks and escalation. Sub-10ms overhead."
     },
     "policyControl": {
-      "title": "Policy Control",
-      "benefit": "Set the rules. Enforce automatically.",
-      "description": "Define spend caps, model allowlists, rate limits, and escalation policies per session or per agent. Policies enforce themselves — no manual oversight needed."
+      "title": "Zero-Ops Deployment",
+      "benefit": "Single binary. Zero dependencies.",
+      "description": "One Rust binary — no Postgres, no Redis, no Docker orchestration. cargo install bitrouter && bitrouter start. Self-host or use the managed service."
     },
     "docsLink": "Read the docs"
-  },
-  "Benchmarks": {
-    "heading": "Proven on real agent workloads",
-    "xAxisLabel": "Cost per session ($)",
-    "yAxisLabel": "SWE-bench resolve rate (%)",
-    "resolveRate": "Resolve rate",
-    "costPerSession": "Cost/session",
-    "calloutLabel": "SWE-bench Verified",
-    "calloutHeadline": "93.2% resolve rate at 42% of the cost",
-    "calloutSubtext": "BitRouter Balanced vs. all-Opus baseline",
-    "statOverhead": "gateway overhead (p99)",
-    "statRecovery": "escalation recovery rate",
-    "methodologyLink": "Methodology"
   },
   "Timeline": {
     "colNumber": "#",
@@ -83,7 +69,7 @@
     "footer": "1 escalation triggered \u00b7 0 quality regressions"
   },
   "Setup": {
-    "heading": "One line to start saving",
+    "heading": "One line to start routing",
     "subtitle": "BitRouter is OpenAI-compatible. Swap your base URL. Keep everything else.",
     "responseLabel": "What you get back",
     "docsLink": "View API docs",
@@ -91,7 +77,7 @@
       "openaiCompat": "OpenAI compatible",
       "streaming": "Streaming",
       "overhead": "< 10ms overhead",
-      "sessionAware": "Session-aware",
+      "toolCalling": "Tool calling",
       "multiProvider": "Multi-provider"
     }
   },

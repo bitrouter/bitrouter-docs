@@ -2,27 +2,33 @@ const BASE_URL = "https://bitrouter.ai";
 
 const LLMS_TXT = `# BitRouter
 
-> BitRouter is an AI model router that provides unified API access to 200+ models from OpenAI, Anthropic, Google, and more through a single OpenAI-compatible endpoint. It features pay-per-use pricing with crypto payments, intelligent routing, and SDKs for TypeScript and Python.
+> BitRouter is an open-source LLM gateway purpose-built for AI agent runtimes. It's a high-performance Rust proxy that gives agents like OpenClaw, OpenCode, and Claude Code unified access to 200+ models from OpenAI, Anthropic, Google, and more — through a single OpenAI-compatible endpoint. Self-host with your own provider keys, or use the hosted option with agent-native stablecoin payments.
 
 ## Key Capabilities
 
-- **Intelligent Routing**: Automatically selects the optimal model per task. BitRouter Balanced achieves 93.2% SWE-bench resolve rate at 42% of the cost of All-Opus.
+- **Agent-Native Gateway**: Built for autonomous agents, not human-in-the-loop chatbots. Features Know-Your-Agent (KYA) identity and payment delegation keys.
+- **Zero-Ops Deployment**: Single Rust binary. No Postgres, no Redis, no Docker orchestration required.
+- **Smart Routing**: Configurable routing tables with cost/performance optimization, automatic fallbacks, and sub-10ms routing overhead.
 - **OpenAI-Compatible API**: Drop-in replacement — change one base URL and use any OpenAI SDK, LangChain, or Vercel AI SDK.
-- **Crypto Pay-Per-Use**: No subscriptions. Pay per request with stablecoins via the X402 protocol on Solana and Base.
-- **Auto-Escalation**: Starts with cheaper models and escalates to more capable ones only when needed, saving costs automatically.
-- **Sub-10ms Overhead**: Routing decisions add less than 10 milliseconds of latency.
+- **Stablecoin Payments**: Pay-per-use with stablecoins on the hosted service. No credit cards, no KYC, no geo-restrictions. Agents can pay autonomously.
+- **CLI + TUI Observability**: Monitor and control agent sessions in real time from the terminal.
 
 ## How It Compares
 
-BitRouter is like OpenRouter but permissionless (no KYC, no geo-restrictions), crypto-native, and with built-in intelligent routing that optimizes cost and quality per request.
+BitRouter is like OpenRouter but open-source, self-hostable, agent-native, and permissionless (no KYC, no geo-restrictions). Unlike LiteLLM, it ships as a single binary with zero infrastructure dependencies.
+
+## Getting Started
+
+- [Quick Start](${BASE_URL}/docs/overview): Install agent skills or CLI and start routing
+- [Agent Skills](https://github.com/bitrouter/agent-skills): Install skills into your agent for autonomous setup
+- [What is BitRouter?](${BASE_URL}/docs/overview/what-is-bitrouter): Detailed explainer and comparisons
 
 ## Docs
 
-- [Overview](${BASE_URL}/docs/overview): Introduction to BitRouter, key concepts, and getting started
-- [FAQs](${BASE_URL}/docs/overview/faqs): Frequently asked questions
-- [Service Primitives](${BASE_URL}/docs/overview/service-primitives): Core concepts — routing, payments, and agent identity
-- [Pay-Per-Use](${BASE_URL}/docs/overview/pay-per-use): How pricing and crypto payments work
-- [Onboarding Guide](${BASE_URL}/docs/overview/manual-guide): Step-by-step setup guide
+- [Service Primitives](${BASE_URL}/docs/overview/service-primitives): Models, tools, and agents — the three service primitives
+- [Agent-Native Control](${BASE_URL}/docs/overview/agent-native-control): Self-custodial pay-per-use and payment delegation keys
+- [Intelligent Routing](${BASE_URL}/docs/overview/intelligent-routing): Routing tables, fallbacks, and performance
+- [Onboarding Guide](${BASE_URL}/docs/overview/manual-guide): Step-by-step manual setup guide
 
 ## API Reference
 

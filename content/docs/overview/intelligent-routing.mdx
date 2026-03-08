@@ -1,0 +1,46 @@
+---
+title: Intelligent Routing
+---
+import { Callout } from 'fumadocs-ui/components/callout';
+
+BitRouter's core is a high-performance Rust proxy that routes agent requests to the optimal provider. Configurable routing tables, automatic fallbacks, and sub-10ms overhead — all without requiring infrastructure dependencies.
+
+## Routing Tables
+
+Routing tables map model names to providers. You define which providers serve which models, with priority ordering and fallback chains.
+
+```yaml
+# Example routing configuration
+routes:
+  - model: "gpt-4o"
+    providers:
+      - name: openai
+        priority: 1
+      - name: azure-openai
+        priority: 2  # fallback
+  - model: "claude-sonnet-4-20250514"
+    providers:
+      - name: anthropic
+        priority: 1
+```
+
+When a request comes in, BitRouter matches the model name against the routing table and forwards it to the highest-priority available provider.
+
+## Fallbacks & Escalation
+
+If a provider is unavailable or returns an error, BitRouter automatically falls back to the next provider in the chain. This happens transparently — the agent doesn't need to handle retries or provider-specific logic.
+
+- **Provider failover** — automatic retry with the next provider on 5xx errors or timeouts
+- **Model escalation** — optionally route to a more capable model when the primary model can't handle the request
+
+## Performance
+
+BitRouter is built in async Rust with zero infrastructure dependencies — no Postgres, no Redis, no Docker orchestration. This keeps routing overhead consistently under 10ms.
+
+## Reputation-Informed Routing (Coming Soon)
+
+<Callout type="info">
+This feature is under development and not yet available.
+</Callout>
+
+BitRouter is building toward reputation-informed routing powered by [Know Your Agent (KYA)](https://eips.ethereum.org/EIPS/eip-8004) — an on-chain standard for agent identity and reputation based on ERC-8004. In the future, KYA reputation scores will feed into routing decisions, enabling BitRouter to factor in provider reliability, quality, and trust when selecting routes — creating a scoring-feedback loop where every transaction contributes to smarter routing over time.

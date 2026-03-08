@@ -8,9 +8,8 @@
     "enterprise",
     "---核心概念---",
     "service-primitives",
-    "pay-per-use",
-    "know-your-agent",
-    "payment-delegation-key",
+    "agent-native-control",
+    "intelligent-routing",
     "---入门指南---",
     "manual-guide",
     "integrate-openclaw",
@@ -19,7 +18,6 @@
     "---关于我们---",
     "terms-of-service",
     "privacy-policy",
-    "[品牌资源](https://github.com/bitrouter/brand-kit)",
-    "[联系我们](mailto:contact@bitrouter.ai)"
+    "[品牌资源](https://github.com/bitrouter/brand-kit)"
   ]
 }

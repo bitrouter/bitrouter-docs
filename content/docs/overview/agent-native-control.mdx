@@ -1,0 +1,49 @@
+---
+title: Agent-Native Control
+---
+import { Callout } from 'fumadocs-ui/components/callout';
+
+AI agents operate on-demand with unpredictable usage patterns. Traditional SaaS subscriptions, prepaid credits, and custodial accounts don't fit. BitRouter gives agents financial autonomy — they pay for what they use, when they use it, within boundaries you define.
+
+## Self-Custodial Pay-Per-Use
+
+Users pay for each request directly from their own wallet. No top-ups, no custodial accounts, no vendor lock-in.
+
+**How it works:**
+
+1. Users generate a wallet keypair or connect an external wallet
+2. Each API call is authenticated with a wallet signature
+3. Payments are processed via session balance or X402 protocol
+4. Funds remain in the user's control until the moment of use
+
+BitRouter uses the [x402 protocol](https://www.x402.org/) to process blockchain payments on Base or Solana without custodial intermediaries.
+
+### Supported Pricing Models
+
+- **Per-call pricing** — fixed cost per API request
+- **Token-based pricing** — cost based on input/output tokens (for LLMs)
+
+## Payment Delegation Key (PDK)
+
+<Callout type="info">
+PDK is optional. For fully permissionless access, you can use BitRouter directly with a signer parameter (supports both Base and Solana). See the [SDK Reference](/docs/sdk-reference) to learn more.
+</Callout>
+
+A Payment Delegation Key (PDK) lets AI agents pay for services on your behalf — without giving them full control of your wallet.
+
+When you create a PDK, you define exactly what the agent can do — spending limits, expiration, allowed recipients. The agent operates autonomously within those boundaries, and you retain full custody of your funds.
+
+### Permission Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `max_transaction_value` | number | Maximum value allowed per single transaction |
+| `daily_spending_limit` | number | Total amount that can be spent within 24 hours |
+| `valid_until` | timestamp | When the PDK expires and becomes invalid |
+| `allowed_recipients` | address[] | Addresses the PDK can send transactions to |
+
+For most use cases, setting a `daily_spending_limit` and `valid_until` provides sufficient protection while allowing agents to operate autonomously.
+
+<Callout type="info">
+PDK is built on top of [Privy's policy engine](https://docs.privy.io/controls/overview). For advanced configurations like contract allowlists, calldata restrictions, and typed data signing rules, see the [Privy documentation](https://docs.privy.io/controls/policies/overview).
+</Callout>

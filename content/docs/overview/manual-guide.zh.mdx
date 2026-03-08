@@ -5,7 +5,7 @@ description: 面向开发者的分步手动接入指南
 import { Callout } from 'fumadocs-ui/components/callout';
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
-欢迎使用 BitRouter——去中心化智能市场，提供无许可的统一 API。通过统一接口访问数百个 LLM、工具和 Agent。
+欢迎使用 BitRouter——专为 AI Agent 运行时打造的开源 LLM 网关。通过单一的 OpenAI 兼容端点访问来自 OpenAI、Anthropic、Google 等提供商的 200+ 模型。
 
 ## 快速入门
 
@@ -27,7 +27,7 @@ import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 4. 复制你的 PDK（格式：`br-p-[base58-encoded-key]`）
 
 <Callout type="info">
-PDK 让 AI Agent 可以代表你支付服务费用，而无需赋予它们对钱包的完全控制权。了解 PDK 的工作原理和高级配置选项，请参阅 [Payment Delegation Key](/docs/overview/payment-delegation-key) 指南。
+PDK 让 AI Agent 可以代表你支付服务费用，而无需赋予它们对钱包的完全控制权。了解 PDK 的工作原理和高级配置选项，请参阅 [Agent 原生控制](/docs/overview/agent-native-control#payment-delegation-key-pdk) 指南。
 
 PDK 是可选的——如需完全无许可的访问，你可以直接使用任何 EVM 或 Solana 签名器配合 BitRouter。我们推荐使用 [bitrouter-sdk](/docs/sdk-reference) 以获得最佳体验。使用原始签名器时，base URL 为 `https://beta.bitrouter.ai`；使用 PDK 时，base URL 为 `https://api.console.bitrouter.ai/v1`。详见 [SDK 参考](/docs/sdk-reference)。
 </Callout>
@@ -660,7 +660,7 @@ const { text } = await generateText({
 ## 故障排除
 
 <Callout type="info">
-如果你遇到任何问题，请通过 [Discord](https://discord.gg/aimo) 或 [Telegram](https://t.me/BitRouterAI) 联系我们。我们的团队将很乐意帮助你调试和解决问题。
+如果你遇到任何问题，请通过 [Discord](https://discord.gg/G3zVrZDa5C) 或 [Twitter/X](https://x.com/BitRouterAI) 联系我们。我们的团队将很乐意帮助你调试和解决问题。
 </Callout>
 
 ## 自托管（开源）

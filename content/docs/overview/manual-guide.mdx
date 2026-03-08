@@ -5,7 +5,7 @@ description: Step-by-step manual onboarding for developers
 import { Callout } from 'fumadocs-ui/components/callout';
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
-Welcome to BitRouter - the decentralized intelligence marketplace with a permissionless unified API. Access hundreds of LLMs, tools, and agents through unified interfaces.
+Welcome to BitRouter — the open-source LLM gateway for AI agent runtimes. Access 200+ models from OpenAI, Anthropic, Google, and more through a single OpenAI-compatible endpoint.
 
 ## Quick Start
 
@@ -27,7 +27,7 @@ Deposit USDC into your self-custodial wallet at [Credits](https://console.bitrou
 4. Copy your PDK (format: `br-p-[base58-encoded-key]`)
 
 <Callout type="info">
-A PDK lets AI agents pay for services on your behalf without giving them full control of your wallet. Learn more about how PDKs work and advanced configuration options in the [Payment Delegation Key](/docs/overview/payment-delegation-key) guide.
+A PDK lets AI agents pay for services on your behalf without giving them full control of your wallet. Learn more about how PDKs work and advanced configuration options in the [Agent-Native Control](/docs/overview/agent-native-control#payment-delegation-key-pdk) guide.
 
 PDK is optional — for fully permissionless access, you can use BitRouter directly with any EVM or Solana signer. We recommend using the [bitrouter-sdk](/docs/sdk-reference) for the best experience. When using a raw signer, the base URL is `https://beta.bitrouter.ai`; when using a PDK, the base URL is `https://api.console.bitrouter.ai/v1`. See the [SDK Reference](/docs/sdk-reference) to learn more.
 </Callout>
@@ -660,7 +660,7 @@ const { text } = await generateText({
 ## Troubleshooting
 
 <Callout type="info">
-If you encounter any issues, please reach out to us on [Discord](https://discord.gg/aimo) or [Telegram](https://t.me/BitRouterAI). Our team is happy to help you debug and resolve any problems.
+If you encounter any issues, please reach out to us on [Discord](https://discord.gg/G3zVrZDa5C) or [Twitter/X](https://x.com/BitRouterAI). Our team is happy to help you debug and resolve any problems.
 </Callout>
 
 ## Self-Host (Open Source)

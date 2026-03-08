@@ -4,9 +4,10 @@ import { source } from "@/lib/source";
 
 export const maxDuration = 30;
 
+//TODO: later switch to bitrouter
 const bitrouter = createOpenAICompatible({
-  name: "bitrouter",
-  baseURL: "https://bitrouter.ai/api/v1",
+  name: "openrouter/auto",
+  baseURL: "https://openrouter.ai/api/v1",
   apiKey: process.env.BITROUTER_API_KEY,
 });
 
@@ -35,5 +36,5 @@ ${docsContext}`,
     messages,
   });
 
-  return result.toDataStreamResponse();
+  return result.toTextStreamResponse();
 }

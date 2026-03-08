@@ -18,9 +18,9 @@ export function baseOptions(): BaseLayoutProps {
     links: [
       { text: "Documentation", url: "/docs/overview", active: "nested-url" },
       { text: "Blog", url: "/blog" },
-      { text: "GitHub", url: "https://github.com/AIMOverse", external: true },
-      { text: "Discord", url: "https://discord.gg/TODO", external: true },
-      { text: "Twitter/X", url: "https://x.com/AIMOverse", external: true },
+      { text: "GitHub", url: "https://github.com/bitrouter", external: true },
+      { text: "Discord", url: "https://discord.gg/G3zVrZDa5C", external: true },
+      { text: "Twitter/X", url: "https://x.com/BitRouterAI", external: true },
       {
         type: "button",
         text: "Sign In / Sign Up",

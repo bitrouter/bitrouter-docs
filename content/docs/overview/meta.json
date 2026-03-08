@@ -10,7 +10,6 @@
     "service-primitives",
     "pay-per-use",
     "know-your-agent",
-    "payment-delegation-key",
     "---Onboarding Guide---",
     "manual-guide",
     "integrate-openclaw",
@@ -19,7 +18,6 @@
     "---About Us---",
     "terms-of-service",
     "privacy-policy",
-    "[Brand Kit](https://github.com/bitrouter/brand-kit)",
-    "[Contact](mailto:contact@bitrouter.ai)"
+    "[Brand Kit](https://github.com/bitrouter/brand-kit)"
   ]
 }

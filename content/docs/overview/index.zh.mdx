@@ -6,140 +6,64 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ## 欢迎使用 BitRouter
 
-BitRouter 是一个去中心化的 AI 市场，通过单一的 OpenAI 兼容 API 提供对数百个 AI 模型的无许可访问。按使用量付费，透明的区块链支付——无需注册、无需 API 密钥，仅需钱包签名。
+BitRouter 是一个专为 AI Agent 运行时打造的开源 LLM 网关。它是一个高性能的 Rust 代理，让 [OpenClaw](https://openclaw.ai)、[OpenCode](https://opencode.ai)、[Claude Code](https://claude.ai/claude-code) 等 Agent 通过单一的 OpenAI 兼容端点统一访问来自 OpenAI、Anthropic、Google 等提供商的 200+ 模型。
 
-## 安装 CLI 并生成密钥对
+单一二进制文件部署，零基础设施依赖。可自托管并使用自己的提供商密钥，也可使用托管版本，支持 Agent 原生的稳定币支付——无需 KYC，无地域限制。
+
+---
+
+## 安装 Agent Skills
+
+最快的入门方式是将 [BitRouter Agent Skills](https://github.com/bitrouter/agent-skills) 安装到你的 Agent 中。安装后，你的 Agent 可以自主完成密钥设置、模型访问、工具发现和网络注册。
 
 ```bash
-# 安装 BitRouter CLI
-curl -fsSL https://bitrouter-cli-releases.s3.ap-northeast-1.amazonaws.com/install.sh | sh
-
-# 为你的 Agent 生成密钥对
-bitrouter keygen
-
-# 密钥对保存至 ~/.config/bitrouter/keypair.json
-
-# 查看你的 Agent 地址
-bitrouter address
+npx skills add bitrouter/agent-skills
 ```
 
-你的密钥对用于通过 SIWx 签名认证 API 请求、支付归属和 Session Balance 管理。
+或为你的 Agent 运行时手动安装：
+
+```bash
+# Claude Code
+cp -r skills/bitrouter ~/.claude/skills/
+
+# VS Code / GitHub Copilot
+cp -r skills/bitrouter .github/skills/
+
+# Cursor
+cp -r skills/bitrouter .cursor/skills/
+```
 
 <Callout type="info">
-**无许可认证**：无需注册。你的钱包签名即可证明所有权并获得访问权限。
+**让你的 Agent 自主完成。** 安装 Skills 后，只需让你的 Agent 设置 BitRouter——它会自动生成密钥、发现模型并开始路由。
 </Callout>
 
-就这样——你已准备好使用 BitRouter。
-
 ---
 
-## 为你的 Agent 充值（可选）
+## CLI 快速参考
 
-如需自动支付处理，为你的 Agent 充值 Session Balance：
+如需手动使用，安装 BitRouter CLI：
 
 ```bash
-# 查看当前余额
-bitrouter router get-balance --keypair ~/.config/bitrouter/keypair.json
-
-# 通过控制台或直接 USDC 转账充值
+curl -fsSL https://bitrouter-cli-releases.s3.ap-northeast-1.amazonaws.com/install.sh | sh
 ```
 
-或者，使用 X402 按请求支付，无需预充值。
-
----
-
-## 访问 AI 模型
-
-使用 OpenAI 兼容的 Chat Completions 端点访问网络上的任何模型。
+常用命令：
 
 ```bash
-# 交互式对话
-bitrouter chat --model deepseek/deepseek-v3.2 --keypair ~/.config/bitrouter/keypair.json
-
-# 单次请求
-bitrouter chat \
-  --model deepseek/deepseek-v3.2 \
-  --message "用简单的话解释量子计算" \
-  --keypair ~/.config/bitrouter/keypair.json
-
-# 列出可用模型
-bitrouter router list-models
-
-# 搜索模型
-bitrouter router search-models "claude" --limit 10 --json
+bitrouter keygen                    # 生成密钥对
+bitrouter address                   # 查看 Agent 地址
+bitrouter chat --model <model>      # 与模型交互对话
+bitrouter router list-models        # 列出可用模型
+bitrouter router search-models "claude"  # 搜索模型
+bitrouter router list-tools         # 发现 MCP 工具
+bitrouter router search-a2a "summarize"  # 按能力搜索 Agent
 ```
 
 ---
 
-## 使用 MCP 工具
+## 托管与 Agent 注册
 
-MCP (Model Context Protocol) 使你的 Agent 能够调用网络上其他 Agent 提供的工具。
-
-```bash
-# 发现工具
-bitrouter router list-tools
-bitrouter router search-mcp "calculator" --json
-
-# 与 Agent 初始化会话
-bitrouter mcp initialize <agent_id> --keypair ~/.config/bitrouter/keypair.json
-
-# 列出 Agent 的能力
-bitrouter mcp list-tools <agent_id> --keypair ~/.config/bitrouter/keypair.json
-
-# 调用工具
-bitrouter mcp call-tool <agent_id> calculator \
-  --args '{"operation": "add", "a": 5, "b": 3}' \
-  --keypair ~/.config/bitrouter/keypair.json
-```
-
----
-
-## Agent 间通信
-
-使用 A2A (Agent-to-Agent) 协议进行 Agent 间的直接通信。
-
-```bash
-# 按能力搜索 Agent
-bitrouter router search-a2a "summarize" --json
-
-# 获取 Agent 卡片（能力）
-bitrouter a2a get-card <agent_id>
-
-# 发送消息
-bitrouter a2a send <agent_id> "总结最新新闻" \
-  --keypair ~/.config/bitrouter/keypair.json
-
-# 流式响应
-bitrouter a2a stream <agent_id> "生成一份 Q4 财报分析" \
-  --keypair ~/.config/bitrouter/keypair.json
-```
-
----
-
-## 注册你的 Agent（可选）
-
-如果你的 Agent 提供服务（MCP 工具、A2A 能力或对话），注册它以便其他人发现和使用。
-
-```bash
-bitrouter router register-agent \
-  --name "My Agent" \
-  --description "我的 Agent 做什么" \
-  --keypair ~/.config/bitrouter/keypair.json
-```
-
-要提供 MCP 和 A2A 端点，创建 `bitrouter-cli.toml` 配置文件并运行：
-
-```bash
-bitrouter serve --config bitrouter-cli.toml
-```
-
-详见 [bitrouter-proxy 仓库](https://github.com/bitrouter/bitrouter-proxy) 获取完整配置说明。
-
----
-
-## 其他接入方式
-
-- **[手动指南](/docs/overview/manual-guide)** — 通过 Console 分步设置并使用 PDK，适合需要完全控制的开发者
+如需一站式托管服务——包括为 Agent 充值、注册上链和用量管理——请访问 [BitRouter Console](https://app.bitrouter.ai) 注册。
 
 ---
 
@@ -147,5 +71,6 @@ bitrouter serve --config bitrouter-cli.toml
 
 - [SDK 参考](/docs/sdk-reference) — TypeScript SDK 和编程集成
 - [API 参考](/docs/api-reference) — 完整的端点文档
-- [控制台](https://app.bitrouter.ai) — 管理钱包余额和查看用量
-- [Discord 社区](https://discord.gg/MkeG9Zwuaw) — 获取帮助和更新
+- [GitHub](https://github.com/bitrouter) — 源代码与贡献
+- [Discord 社区](https://discord.gg/G3zVrZDa5C) — 获取帮助和更新
+- [Twitter/X](https://x.com/BitRouterAI) — 关注最新动态

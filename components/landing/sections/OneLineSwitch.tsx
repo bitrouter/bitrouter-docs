@@ -34,7 +34,7 @@ export function OneLineSwitch() {
   };
 
   return (
-    <div className="terminal-frame inline-flex items-center gap-3 px-1.5 py-1.5">
+    <div className="inline-flex flex-col items-stretch gap-1.5 rounded-md border border-border bg-card px-2 py-2 sm:flex-row sm:items-center sm:gap-3 sm:px-1.5 sm:py-1.5">
       {/* Segmented toggle */}
       <div className="flex gap-0.5 rounded-sm bg-muted/50 p-0.5 text-xs">
         {modes.map((m) => (
@@ -53,30 +53,32 @@ export function OneLineSwitch() {
         ))}
       </div>
 
-      {/* Snippet */}
-      <code className="text-sm text-muted-foreground">
-        {mode === "human" ? (
-          <>base_url = &quot;https://api.bitrouter.ai/v1&quot;</>
-        ) : (
-          <>
-            Read bitrouter.ai/skills/
-            <span className="text-foreground/60">&lt;SKILL&gt;</span>
-            .md and follow the instructions
-          </>
-        )}
-      </code>
+      {/* Snippet + tag + copy */}
+      <div className="flex items-center gap-2 min-w-0">
+        <code className="min-w-0 break-all text-xs text-muted-foreground sm:break-normal sm:text-sm">
+          {mode === "human" ? (
+            <>base_url = &quot;https://api.bitrouter.ai/v1&quot;</>
+          ) : (
+            <>
+              Read bitrouter.ai/skills/
+              <span className="text-foreground/60">&lt;SKILL&gt;</span>
+              .md and follow the instructions
+            </>
+          )}
+        </code>
 
-      {/* Tag */}
-      {active.tag && <span className="text-xs text-muted-foreground/50">{active.tag}</span>}
+        {/* Tag */}
+        {active.tag && <span className="hidden text-xs text-muted-foreground/50 sm:inline">{active.tag}</span>}
 
-      {/* Copy */}
-      <button
-        onClick={handleCopy}
-        className="text-muted-foreground/50 transition-colors hover:text-foreground"
-        aria-label="Copy snippet"
-      >
-        {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
-      </button>
+        {/* Copy */}
+        <button
+          onClick={handleCopy}
+          className="shrink-0 text-muted-foreground/50 transition-colors hover:text-foreground"
+          aria-label="Copy snippet"
+        >
+          {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
+        </button>
+      </div>
     </div>
   );
 }

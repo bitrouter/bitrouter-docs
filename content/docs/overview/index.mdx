@@ -6,18 +6,18 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ## Welcome to BitRouter
 
-BitRouter is an open-source LLM gateway purpose-built for AI agent runtimes. It's a high-performance Rust proxy that gives agents like [OpenClaw](https://openclaw.ai), [OpenCode](https://opencode.ai), and [Claude Code](https://claude.ai/claude-code) unified access to 200+ models from OpenAI, Anthropic, Google, and more — through a single OpenAI-compatible endpoint.
+BitRouter is an open-source LLM gateway purpose-built for AI agent runtimes. It's a high-performance Rust proxy that gives agents like [OpenClaw](https://openclaw.ai), [OpenCode](https://opencode.ai), and [Claude Code](https://claude.ai/claude-code) unified access to models from OpenAI, Anthropic, Google, and more — through a single endpoint.
 
 Ship a single binary with zero infrastructure dependencies. Self-host with your own provider keys, or use the hosted option with agent-native stablecoin payments — no KYC, no geo-restrictions.
 
 ---
 
-## Install Agent Skills
+## Agent Skills (Recommended)
 
-The fastest way to get started is to install [BitRouter Agent Skills](https://github.com/bitrouter/agent-skills) into your agent. Once installed, your agent can autonomously set up keys, access models, discover tools, and register on the network.
+The fastest way to get started is to install [BitRouter Agent Skills](https://github.com/BitRouterAI/agent-skills) into your agent. Once installed, your agent handles everything — installation, key detection, configuration, and server startup — autonomously.
 
 ```bash
-npx skills add bitrouter/agent-skills
+npx skills add BitRouterAI/agent-skills
 ```
 
 Or install manually for your agent runtime:
@@ -33,31 +33,63 @@ cp -r skills/bitrouter .github/skills/
 cp -r skills/bitrouter .cursor/skills/
 ```
 
+Then just paste this prompt into your agent:
+
+```
+Set up BitRouter as my local LLM proxy. Install it, configure providers
+with my existing API keys, start the server, and verify it's working.
+```
+
 <Callout type="info">
-**Let your agent handle it.** Once skills are installed, just ask your agent to set up BitRouter — it will generate keys, discover models, and start routing autonomously.
+That's it. Your agent will install BitRouter, detect your API keys, generate the config, start the proxy, and verify the health endpoint — all autonomously.
 </Callout>
+
+---
+
+## Manual Install
+
+If you prefer to set things up yourself:
+
+```bash
+cargo install bitrouter
+```
+
+On first launch with no providers configured, BitRouter automatically runs an interactive setup wizard:
+
+```bash
+# Launch — runs the setup wizard on first run, then starts the TUI + API server
+bitrouter
+```
+
+You can also run the setup wizard explicitly at any time:
+
+```bash
+bitrouter init
+```
+
+### Zero-Config Mode
+
+If you have provider API keys in your environment, BitRouter auto-detects them and enables direct routing without any configuration file:
+
+```bash
+export OPENAI_API_KEY=sk-...
+bitrouter serve
+# Use "openai:gpt-4o" as the model name
+```
 
 ---
 
 ## CLI Quick Reference
 
-For manual usage, install the BitRouter CLI:
-
-```bash
-curl -fsSL https://bitrouter-cli-releases.s3.ap-northeast-1.amazonaws.com/install.sh | sh
-```
-
-Key commands:
-
-```bash
-bitrouter keygen                    # Generate a keypair
-bitrouter address                   # Show your agent's address
-bitrouter chat --model <model>      # Interactive chat with a model
-bitrouter router list-models        # List available models
-bitrouter router search-models "claude"  # Search for models
-bitrouter router list-tools         # Discover MCP tools
-bitrouter router search-a2a "summarize"  # Find agents by capability
-```
+| Command   | What it does                                                                  |
+| --------- | ----------------------------------------------------------------------------- |
+| `bitrouter`       | Start the TUI + API server (runs setup wizard on first run)          |
+| `bitrouter init`  | Interactive setup wizard for provider configuration                  |
+| `bitrouter serve` | Start the API server in the foreground (headless, no TUI)            |
+| `bitrouter start` | Start BitRouter as a background daemon                               |
+| `bitrouter stop`  | Stop the running daemon                                              |
+| `bitrouter status`| Print resolved paths, listen address, providers, and daemon status   |
+| `bitrouter restart`| Restart the background daemon                                       |
 
 ---
 
@@ -69,6 +101,7 @@ For a one-stop hosting option — including funding your agent, registering on t
 
 ## Next Steps
 
+- [Manual Guide](/docs/overview/manual-guide) — Detailed self-host and cloud setup
 - [SDK Reference](/docs/sdk-reference) — TypeScript SDK and programmatic integration
 - [API Reference](/docs/api-reference) — Complete endpoint documentation
 - [GitHub](https://github.com/bitrouter) — Source code and contributions

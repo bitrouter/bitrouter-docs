@@ -5,13 +5,156 @@ description: 面向开发者的分步手动接入指南
 import { Callout } from 'fumadocs-ui/components/callout';
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
-欢迎使用 BitRouter——专为 AI Agent 运行时打造的开源 LLM 网关。通过单一的 OpenAI 兼容端点访问来自 OpenAI、Anthropic、Google 等提供商的 200+ 模型。
+欢迎使用 BitRouter——专为 AI Agent 运行时打造的开源 LLM 网关。通过单一端点访问来自 OpenAI、Anthropic、Google 等提供商的模型。
+
+## Agent Skills（推荐）
+
+最快的设置路径。安装 [BitRouter Agent Skills](https://github.com/BitRouterAI/agent-skills)，让你的 Agent 处理剩下的一切：
+
+```bash
+npx skills add BitRouterAI/agent-skills
+```
+
+或手动安装：
+
+```bash
+# Claude Code
+cp -r skills/bitrouter ~/.claude/skills/
+
+# VS Code / GitHub Copilot
+cp -r skills/bitrouter .github/skills/
+
+# Cursor
+cp -r skills/bitrouter .cursor/skills/
+```
+
+然后将以下提示词粘贴到你的 Agent 中：
+
+```
+Set up BitRouter as my local LLM proxy. Install it, configure providers
+with my existing API keys, start the server, and verify it's working.
+```
+
+<Callout type="info">
+你的 Agent 会自动安装 BitRouter、检测 API 密钥、生成配置、启动代理，并验证健康检查端点——全程自主完成。
+</Callout>
+
+---
 
 ## 自托管（开源）
 
-BitRouter 代理完全开源。在你自己的基础设施上运行，以完全掌控路由、定价和部署，在 BitRouter 网络上提供 AI 模型服务。
+BitRouter 代理完全开源。在你自己的基础设施上运行，完全掌控路由和部署。
 
-详见 [bitrouter 仓库](https://github.com/bitrouter/bitrouter) 获取设置说明和文档。
+### 安装
+
+```bash
+cargo install bitrouter
+```
+
+### 启动
+
+```bash
+# 交互模式：首次运行时执行设置向导，然后启动 TUI + API 服务器
+bitrouter
+
+# 无 TUI 的 API 服务器
+bitrouter serve
+
+# 后台守护进程
+bitrouter start
+```
+
+首次启动时如果没有配置提供商，BitRouter 会自动运行交互式设置向导。你也可以显式运行：
+
+```bash
+bitrouter init
+```
+
+### 零配置模式
+
+如果你的环境中已有提供商 API 密钥，BitRouter 会自动检测并启用直接路由，无需任何配置文件：
+
+```bash
+export OPENAI_API_KEY=sk-...
+bitrouter serve
+# 使用 "openai:gpt-4o" 作为模型名称
+```
+
+### 配置
+
+BitRouter 按以下顺序解析其主目录：
+
+1. `--home-dir <PATH>`（如果提供）
+2. 当前工作目录（如果 `./bitrouter.yaml` 存在）
+3. `BITROUTER_HOME` 环境变量
+4. `~/.bitrouter`（自动创建）
+
+#### 最小 `bitrouter.yaml` 配置
+
+```yaml
+server:
+  listen: 127.0.0.1:8787
+
+providers:
+  openai:
+    api_key: ${OPENAI_API_KEY}
+
+models:
+  default:
+    strategy: priority
+    endpoints:
+      - provider: openai
+        model_id: gpt-4o
+```
+
+配置加载时会自动展开 `${OPENAI_API_KEY}` 等环境变量引用。
+
+#### 自定义提供商
+
+任何 OpenAI 兼容或 Anthropic 兼容的服务都可以通过 `derives` 直接使用：
+
+```yaml
+providers:
+  openrouter:
+    derives: openai
+    api_base: "https://openrouter.ai/api/v1"
+    api_key: "${OPENROUTER_API_KEY}"
+  moonshot-anthropic:
+    derives: anthropic
+    api_base: "https://api.moonshot.ai/anthropic"
+    api_key: "${MOONSHOT_API_KEY}"
+```
+
+### CLI 参考
+
+| 命令   | 功能描述                                                                  |
+| --------- | ----------------------------------------------------------------------------- |
+| `init`    | 交互式提供商配置设置向导                           |
+| `serve`   | 在前台启动 API 服务器                                        |
+| `start`   | 以后台守护进程方式启动 BitRouter                                        |
+| `stop`    | 停止运行中的守护进程                                                       |
+| `status`  | 打印解析路径、监听地址、已配置提供商和守护进程状态 |
+| `restart` | 重启后台守护进程                                                 |
+
+所有子命令均可用的全局路径选项：
+
+- `--home-dir <PATH>` — 覆盖 BitRouter 主目录
+- `--config-file <PATH>` — 覆盖 `<home>/bitrouter.yaml`
+- `--env-file <PATH>` — 覆盖 `<home>/.env`
+- `--run-dir <PATH>` — 覆盖 `<home>/run`
+- `--logs-dir <PATH>` — 覆盖 `<home>/logs`
+
+### 支持的提供商
+
+| 提供商  | 状态 | 备注                            |
+| --------- | ------ | -------------------------------- |
+| OpenAI    | ✅     | Chat Completions + Responses API |
+| Anthropic | ✅     | Messages API                     |
+| Google    | ✅     | Generative AI API                |
+
+详见 [bitrouter 仓库](https://github.com/bitrouter/bitrouter) 获取完整源代码和文档。
+
+---
 
 <Callout type="info">
 本指南的其余部分介绍如何使用 **BitRouter Cloud**（通过 [app.bitrouter.ai](https://app.bitrouter.ai)）。无论你选择自托管还是使用云服务，API 都是相同的 OpenAI 兼容接口。

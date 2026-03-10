@@ -6,18 +6,18 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ## 欢迎使用 BitRouter
 
-BitRouter 是一个专为 AI Agent 运行时打造的开源 LLM 网关。它是一个高性能的 Rust 代理，让 [OpenClaw](https://openclaw.ai)、[OpenCode](https://opencode.ai)、[Claude Code](https://claude.ai/claude-code) 等 Agent 通过单一的 OpenAI 兼容端点统一访问来自 OpenAI、Anthropic、Google 等提供商的 200+ 模型。
+BitRouter 是一个专为 AI Agent 运行时打造的开源 LLM 网关。它是一个高性能的 Rust 代理，让 [OpenClaw](https://openclaw.ai)、[OpenCode](https://opencode.ai)、[Claude Code](https://claude.ai/claude-code) 等 Agent 通过单一端点统一访问来自 OpenAI、Anthropic、Google 等提供商的模型。
 
 单一二进制文件部署，零基础设施依赖。可自托管并使用自己的提供商密钥，也可使用托管版本，支持 Agent 原生的稳定币支付——无需 KYC，无地域限制。
 
 ---
 
-## 安装 Agent Skills
+## Agent Skills（推荐）
 
-最快的入门方式是将 [BitRouter Agent Skills](https://github.com/bitrouter/agent-skills) 安装到你的 Agent 中。安装后，你的 Agent 可以自主完成密钥设置、模型访问、工具发现和网络注册。
+最快的入门方式是将 [BitRouter Agent Skills](https://github.com/BitRouterAI/agent-skills) 安装到你的 Agent 中。安装后，你的 Agent 会自主完成一切——安装、密钥检测、配置和服务器启动。
 
 ```bash
-npx skills add bitrouter/agent-skills
+npx skills add BitRouterAI/agent-skills
 ```
 
 或为你的 Agent 运行时手动安装：
@@ -33,31 +33,63 @@ cp -r skills/bitrouter .github/skills/
 cp -r skills/bitrouter .cursor/skills/
 ```
 
+然后将以下提示词粘贴到你的 Agent 中：
+
+```
+Set up BitRouter as my local LLM proxy. Install it, configure providers
+with my existing API keys, start the server, and verify it's working.
+```
+
 <Callout type="info">
-**让你的 Agent 自主完成。** 安装 Skills 后，只需让你的 Agent 设置 BitRouter——它会自动生成密钥、发现模型并开始路由。
+就这样。你的 Agent 会自动安装 BitRouter、检测 API 密钥、生成配置、启动代理，并验证健康检查端点——全程自主完成。
 </Callout>
+
+---
+
+## 手动安装
+
+如果你更喜欢自己动手：
+
+```bash
+cargo install bitrouter
+```
+
+首次启动时如果没有配置提供商，BitRouter 会自动运行交互式设置向导：
+
+```bash
+# 启动——首次运行时执行设置向导，然后启动 TUI + API 服务器
+bitrouter
+```
+
+你也可以随时显式运行设置向导：
+
+```bash
+bitrouter init
+```
+
+### 零配置模式
+
+如果你的环境中已有提供商 API 密钥，BitRouter 会自动检测并启用直接路由，无需任何配置文件：
+
+```bash
+export OPENAI_API_KEY=sk-...
+bitrouter serve
+# 使用 "openai:gpt-4o" 作为模型名称
+```
 
 ---
 
 ## CLI 快速参考
 
-如需手动使用，安装 BitRouter CLI：
-
-```bash
-curl -fsSL https://bitrouter-cli-releases.s3.ap-northeast-1.amazonaws.com/install.sh | sh
-```
-
-常用命令：
-
-```bash
-bitrouter keygen                    # 生成密钥对
-bitrouter address                   # 查看 Agent 地址
-bitrouter chat --model <model>      # 与模型交互对话
-bitrouter router list-models        # 列出可用模型
-bitrouter router search-models "claude"  # 搜索模型
-bitrouter router list-tools         # 发现 MCP 工具
-bitrouter router search-a2a "summarize"  # 按能力搜索 Agent
-```
+| 命令   | 功能描述                                                                  |
+| --------- | ----------------------------------------------------------------------------- |
+| `bitrouter`       | 启动 TUI + API 服务器（首次运行时执行设置向导）          |
+| `bitrouter init`  | 交互式提供商配置设置向导                  |
+| `bitrouter serve` | 在前台启动 API 服务器（无 TUI）            |
+| `bitrouter start` | 以后台守护进程方式启动 BitRouter                               |
+| `bitrouter stop`  | 停止运行中的守护进程                                              |
+| `bitrouter status`| 打印解析路径、监听地址、提供商信息和守护进程状态   |
+| `bitrouter restart`| 重启后台守护进程                                       |
 
 ---
 
@@ -69,6 +101,7 @@ bitrouter router search-a2a "summarize"  # 按能力搜索 Agent
 
 ## 下一步
 
+- [手动指南](/docs/overview/manual-guide) — 详细的自托管和云端设置
 - [SDK 参考](/docs/sdk-reference) — TypeScript SDK 和编程集成
 - [API 参考](/docs/api-reference) — 完整的端点文档
 - [GitHub](https://github.com/bitrouter) — 源代码与贡献

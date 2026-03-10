@@ -28,7 +28,7 @@
   },
   "Hero": {
     "headline": "Open Intelligence Router for LLM\u00a0Agents",
-    "subtitle": "The zero-ops LLM gateway for agent runtimes. Single Rust binary. Agent-native routing and stablecoin payments.",
+    "subtitle": "Your agent is autonomous at execution. Everything feeding it is not. Meet runtime routing intelligence.",
     "ctaPrimary": "Get started",
     "timelineLabel": "See it in action — a 6-call agent session, routed in real time",
     "codeComment": "that's it"

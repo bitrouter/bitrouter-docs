@@ -28,7 +28,7 @@
   },
   "Hero": {
     "headline": "面向 LLM\u00a0Agent 的开放智能路由",
-    "subtitle": "零运维 LLM 网关，专为 Agent 运行时打造。单一 Rust 二进制文件，Agent 原生路由与稳定币支付。",
+    "subtitle": "你的 Agent 在执行时是自主的，但喂给它的一切都不是。迎接运行时路由智能。",
     "ctaPrimary": "开始使用",
     "timelineLabel": "实时演示 — 一个 6 次调用的 Agent 会话",
     "codeComment": "就这么简单"

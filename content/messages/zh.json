@@ -28,7 +28,7 @@
   },
   "Hero": {
     "headline": "面向 LLM\u00a0Agent 的开放智能路由",
-    "subtitle": "你的 Agent 在执行时是自主的，但喂给它的一切都不是。迎接运行时路由智能。",
+    "subtitle": "优化你的 Agent 运行时，使其更省钱、更安全、更出色。迎接运行时智能路由。",
     "ctaPrimary": "开始使用",
     "timelineLabel": "实时演示 — 一个 6 次调用的 Agent 会话",
     "codeComment": "就这么简单"

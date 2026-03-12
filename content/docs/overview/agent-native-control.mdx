@@ -3,11 +3,11 @@ title: Agent-Native Control
 ---
 import { Callout } from 'fumadocs-ui/components/callout';
 
-AI agents operate on-demand with unpredictable usage patterns. Traditional SaaS subscriptions, prepaid credits, and API keys don't fit. BitRouter replaces API keys with wallet signatures — agents authenticate and pay per-use directly from a self-custodial wallet, within boundaries you define.
+AI agents operate on-demand with unpredictable usage patterns. Traditional SaaS subscriptions, prepaid credits, and API keys don't fit. BitRouter provides agent-native payment infrastructure — agents authenticate and pay per-use directly from a delegated account, within boundaries you define.
 
-## Wallet-Based Access
+## Account-Based Access
 
-Instead of issuing API keys, BitRouter authenticates every request with a wallet signature. Payments are processed per-use via the [x402 protocol](https://www.x402.org/) on Base or Solana — no custodial intermediaries, no prepaid balances, no vendor lock-in.
+Instead of issuing static API keys, BitRouter authenticates every request through your agent's account. Payments are processed per-use at the moment of consumption — no prepaid balances, no vendor lock-in.
 
 ### Supported Pricing Models
 
@@ -16,7 +16,7 @@ Instead of issuing API keys, BitRouter authenticates every request with a wallet
 
 ## Payment Delegation Key (PDK)
 
-To let an agent act on your behalf, you create a Payment Delegation Key. A PDK grants an agent delegated spending authority from your wallet — without exposing your private key. You define the constraints, and the agent operates autonomously within them.
+To let an agent act on your behalf, you create a Payment Delegation Key. A PDK grants an agent delegated spending authority from your account — without exposing your credentials. You define the constraints, and the agent operates autonomously within them.
 
 ### Permission Parameters
 
@@ -25,10 +25,27 @@ To let an agent act on your behalf, you create a Payment Delegation Key. A PDK g
 | `max_transaction_value` | number | Maximum value allowed per single transaction |
 | `daily_spending_limit` | number | Total amount that can be spent within 24 hours |
 | `valid_until` | timestamp | When the PDK expires and becomes invalid |
-| `allowed_recipients` | address[] | Addresses the PDK can send transactions to |
+| `allowed_recipients` | address[] | Services the PDK can send transactions to |
 
 For most use cases, setting a `daily_spending_limit` and `valid_until` provides sufficient protection while allowing agents to operate autonomously.
 
 <Callout type="info">
-The current PDK implementation is built on [Privy's policy engine](https://docs.privy.io/controls/overview) and is self-custodial. Future versions will be signer-compatible, allowing direct use with any external wallet. For advanced configurations like contract allowlists, calldata restrictions, and typed data signing rules, see the [Privy documentation](https://docs.privy.io/controls/policies/overview).
+PDKs are built on a policy engine that enforces spending constraints at the infrastructure level. For advanced configurations like service allowlists and fine-grained transaction rules, see the [SDK Reference](/docs/sdk-reference).
 </Callout>
+
+## Payment Infrastructure
+
+Under the hood, BitRouter's agent-native payments are powered by stablecoin settlement (USDC) on high-performance networks. This enables instant, low-cost, permissionless transactions — without the friction of traditional payment processors.
+
+<Callout type="info">
+**Why stablecoins?** Traditional payment rails (credit cards, invoices) require human identity verification and can't support autonomous agent-to-service payments. Stablecoin settlement removes these barriers while maintaining dollar-denominated pricing. Agents and developers interact with familiar USD amounts — the settlement layer is an implementation detail.
+</Callout>
+
+### Supported Networks
+
+- Base (USDC)
+- Solana (USDC)
+
+### Signing Options
+
+For developers who want direct access without the hosted console, BitRouter supports raw signing with any compatible wallet. See the [SDK Reference](/docs/sdk-reference) for integration details.

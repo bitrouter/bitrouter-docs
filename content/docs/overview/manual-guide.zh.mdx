@@ -166,11 +166,11 @@ providers:
 
 ### 第 1 步：创建你的账户
 
-访问 [App](https://app.bitrouter.ai) 并通过连接外部钱包（Base 或 Solana）或使用社交登录注册，社交登录会自动为你创建一个嵌入式钱包。
+访问 [App](https://app.bitrouter.ai) 并通过社交登录或连接现有账户注册。
 
 ### 第 2 步：为你的账户充值
 
-在 [Credits](https://app.bitrouter.ai/dashboard/credits) 将 USDC 存入你的自托管钱包。你的资金在使用前一直保留在你自己的钱包中。
+在 [Credits](https://app.bitrouter.ai/dashboard/credits) 添加额度。你的资金在使用前一直保留在你的账户中——无预充值资金池或最低承诺。
 
 ### 第 3 步：生成 Payment Delegation Key (PDK)
 
@@ -180,9 +180,9 @@ providers:
 4. 复制你的 PDK（格式：`br-p-[base58-encoded-key]`）
 
 <Callout type="info">
-PDK 让 AI Agent 可以代表你支付服务费用，而无需赋予它们对钱包的完全控制权。了解 PDK 的工作原理和高级配置选项，请参阅 [Agent 原生控制](/docs/overview/agent-native-control#payment-delegation-key-pdk) 指南。
+PDK 让 AI Agent 可以在你定义的边界内代表你支付服务费用。了解 PDK 的工作原理和高级配置选项，请参阅 [Agent 原生控制](/docs/overview/agent-native-control#payment-delegation-key-pdk) 指南。
 
-PDK 是可选的——如需完全无许可的访问，你可以直接使用任何 EVM 或 Solana 签名器配合 BitRouter。我们推荐使用 [bitrouter-sdk](/docs/sdk-reference) 以获得最佳体验。使用原始签名器时，base URL 为 `https://beta.bitrouter.ai`；使用 PDK 时，base URL 为 `https://api.app.bitrouter.ai/v1`。详见 [SDK 参考](/docs/sdk-reference)。
+对于高级用例，你也可以通过 SDK 直接使用签名器进行认证。使用原始签名器时，base URL 为 `https://beta.bitrouter.ai`；使用 PDK 时，base URL 为 `https://api.app.bitrouter.ai/v1`。详见 [SDK 参考](/docs/sdk-reference)。
 </Callout>
 
 
@@ -420,14 +420,11 @@ export BITROUTER_API_KEY="br-p-[your-key]"
 
 ### 为你的账户充值
 
-BitRouter 目前仅支持稳定币支付，法币支付即将推出。
-
-通过以下方式向钱包添加 USDC：
-- **钱包转账** - 从任何 Solana 或 Base 钱包发送 USDC
+通过 USDC 转账为你的账户添加额度。法币充值选项即将推出。
 
 **支持的网络：**
-- Solana Mainnet (USDC)
-- Base Mainnet (USDC)
+- Base (USDC)
+- Solana (USDC)
 
 ## 集成
 

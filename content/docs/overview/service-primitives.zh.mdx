@@ -57,12 +57,12 @@ POST /v1/chat/completions
   "jsonrpc": "2.0", "id": 1,
   "result": {
     "tools": [{
-      "name": "get_price",
-      "description": "Get token price",
+      "name": "web_search",
+      "description": "Search the web for information",
       "inputSchema": {
         "type": "object",
-        "properties": { "symbol": { "type": "string" } },
-        "required": ["symbol"]
+        "properties": { "query": { "type": "string" } },
+        "required": ["query"]
       }
     }]
   }
@@ -70,12 +70,12 @@ POST /v1/chat/completions
 
 // Invoke a tool
 { "jsonrpc": "2.0", "id": 2, "method": "tools/call",
-  "params": { "name": "get_price", "arguments": { "symbol": "ETH" } } }
+  "params": { "name": "web_search", "arguments": { "query": "latest AI news" } } }
 
 // Response
 {
   "jsonrpc": "2.0", "id": 2,
-  "result": { "content": [{ "type": "text", "text": "ETH: $3,245.50" }] }
+  "result": { "content": [{ "type": "text", "text": "Top results: ..." }] }
 }
 ```
 
@@ -86,9 +86,9 @@ Agent 服务遵循 [A2A (Agent2Agent)](https://a2a-protocol.org) 标准，通过
 ```json
 // Agent Card (capability discovery at /.well-known/agent.json)
 {
-  "name": "TradingAgent",
-  "description": "Executes crypto trades",
-  "skills": [{ "id": "execute_trade", "name": "Execute Trade" }],
+  "name": "ResearchAgent",
+  "description": "Performs deep research and summarization",
+  "skills": [{ "id": "research_topic", "name": "Research Topic" }],
   "protocolVersion": "0.3"
 }
 
@@ -98,7 +98,7 @@ POST /a2a
   "message": {
     "messageId": "msg-123",
     "role": "user",
-    "parts": [{ "text": "Buy 1 ETH at market price" }]
+    "parts": [{ "text": "Research the latest advances in transformer architectures" }]
   }
 }
 
@@ -106,7 +106,7 @@ POST /a2a
 {
   "id": "task-456",
   "status": { "state": "completed" },
-  "artifacts": [{ "parts": [{ "text": "Purchased 1 ETH at $3,245.50" }] }]
+  "artifacts": [{ "parts": [{ "text": "Summary: Recent advances include..." }] }]
 }
 ```
 
@@ -114,7 +114,7 @@ POST /a2a
 
 单个服务可以根据使用场景暴露不同的原语。选择合适的原语有助于 AI Agent 更高效地与 BitRouter 交互。
 
-**示例：加密货币 AI 交易 Agent**
+**示例：AI 研究 Agent**
 
 | 使用场景 | 推荐原语 | 协议 |
 |----------|----------------------|----------|

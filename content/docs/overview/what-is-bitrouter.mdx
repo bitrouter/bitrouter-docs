@@ -8,14 +8,14 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 BitRouter is an open-source LLM gateway purpose-built for AI agent runtimes. It's a high-performance Rust proxy that gives agents like [OpenClaw](https://openclaw.ai), [OpenCode](https://opencode.ai), and [Claude Code](https://claude.ai/claude-code) unified access to 200+ models from OpenAI, Anthropic, Google, and more — through a single OpenAI-compatible endpoint.
 
-Ship a single binary with zero infrastructure dependencies. Agents discover and route to LLMs, tools, and sub-agents at runtime, with full observability via CLI + TUI. For teams that don't want to self-host, BitRouter also offers a hosted option with agent-native stablecoin payments — no KYC, no geo-restrictions.
+Ship a single binary with zero infrastructure dependencies. Agents discover and route to LLMs, tools, and sub-agents at runtime, with full observability via CLI + TUI. For teams that don't want to self-host, BitRouter also offers a hosted option with agent-native payments — no KYC, no geo-restrictions.
 
 ## Why BitRouter?
 
-- **Agent-Native Gateway** — Built for autonomous agents, not human-in-the-loop chatbots. Agents discover and select models at runtime with features like Know-Your-Agent (KYA) identity and payment delegation keys.
+- **Agent-Native Gateway** — Built for autonomous agents, not human-in-the-loop chatbots. Agents discover and select models at runtime with features like agent identity and payment delegation keys.
 - **Zero-Ops Deployment** — Single Rust binary. No Postgres, no Redis, no Docker orchestration required. `cargo install bitrouter && bitrouter start`.
 - **Smart Routing** — Configurable routing tables map model names to providers. Cost and performance optimization with automatic fallbacks and escalation. Sub-10ms routing overhead.
-- **Stablecoin Payments** — Pay-per-use with stablecoins on the hosted service. No credit cards, no prepaid credits, no invoices. Agents can pay autonomously.
+- **Agent-Native Payments** — Pay-per-use on the hosted service. No credit cards, no prepaid credits, no invoices. Agents can pay autonomously.
 - **CLI + TUI Observability** — Monitor and control agent sessions in real time from the terminal.
 
 ## BitRouter vs OpenRouter
@@ -24,11 +24,11 @@ Ship a single binary with zero infrastructure dependencies. Agents discover and 
 |---|---|---|
 | **Type** | Open-source Rust proxy + hosted option | Hosted SaaS only (proprietary) |
 | **Deployment** | Self-host (single binary) or hosted | Cloud only |
-| **Payments** | Stablecoin pay-per-use (agent-native) | Credit card, crypto top-up, AliPay |
+| **Payments** | Agent-native pay-per-use | Credit card, crypto top-up, AliPay |
 | **Access** | Permissionless — no KYC or geo-restrictions | Account creation required |
 | **Routing** | Configurable routing tables with fallbacks | Auto router (via NotDiamond), provider routing |
 | **Overhead** | Sub-10ms | ~25–40ms |
-| **Agent Features** | KYA identity, payment delegation, CLI/TUI observability | Tool calling, standard API keys |
+| **Agent Features** | Agent identity, payment delegation, CLI/TUI observability | Tool calling, standard API keys |
 | **Models** | 200+ models | 400+ models / 60+ providers |
 | **API** | OpenAI-compatible | OpenAI-compatible |
 | **License** | Apache 2.0 | Proprietary (SDKs are Apache 2.0) |
@@ -40,8 +40,8 @@ Ship a single binary with zero infrastructure dependencies. Agents discover and 
 | **Type** | Rust proxy (single binary) | Python proxy + SDK (open-core) |
 | **Deployment** | Single binary, zero dependencies | Docker/K8s, requires Postgres + Redis |
 | **Performance** | Async Rust, no GIL — sub-10ms overhead | ~0.5ms median but Python GIL limits throughput at scale |
-| **Payments** | Built-in stablecoin payments (hosted) | BYOK only — no payment handling |
-| **Agent Features** | KYA identity, payment delegation, CLI/TUI | MCP gateway, A2A protocol gateway |
+| **Payments** | Built-in agent-native payments (hosted) | BYOK only — no payment handling |
+| **Agent Features** | Agent identity, payment delegation, CLI/TUI | MCP gateway, A2A protocol gateway |
 | **Routing** | Routing tables with fallback and escalation | Load balancing, fallbacks, cooldowns |
 | **Models** | 200+ models | 2,600+ models / 120+ providers |
 | **Observability** | CLI + TUI, built-in metrics | Admin dashboard, OpenTelemetry, Prometheus |
@@ -53,7 +53,7 @@ Ship a single binary with zero infrastructure dependencies. Agents discover and 
 | | BitRouter | Direct API (e.g. OpenAI, Anthropic) |
 |---|---|---|
 | **Models** | 200+ from all providers via one endpoint | Only that provider's models |
-| **Billing** | Single stablecoin wallet or BYOK | Separate billing per provider |
+| **Billing** | Single agent account or BYOK | Separate billing per provider |
 | **Routing** | Automatic model selection with fallbacks | Manual model selection |
 | **Setup** | Change base URL, use existing SDK | Separate SDK/key per provider |
 | **Observability** | Unified CLI/TUI across all providers | Per-provider dashboards |
@@ -65,12 +65,12 @@ Ship a single binary with zero infrastructure dependencies. Agents discover and 
   <Accordion title="How is BitRouter different from OpenRouter or LiteLLM?">
       BitRouter is built specifically for agent runtimes:
       - **Self-hostable**: Unlike OpenRouter (cloud-only), BitRouter ships as a single Rust binary you can run anywhere — no infrastructure dependencies.
-      - **Agent-native payments**: Unlike LiteLLM (BYOK only), BitRouter's hosted option supports stablecoin pay-per-use, so agents can pay autonomously without human billing setup.
+      - **Agent-native payments**: Unlike LiteLLM (BYOK only), BitRouter's hosted option supports autonomous pay-per-use, so agents can pay without human billing setup.
       - **Zero-ops**: Unlike LiteLLM (requires Postgres + Redis), BitRouter needs nothing but the binary.
       - **Performance**: Rust async runtime means consistent low latency without Python's GIL constraints.
   </Accordion>
   <Accordion title="Can I self-host BitRouter or do I need the hosted service?">
-      Both. BitRouter is fully open source (Apache 2.0). You can self-host it with your own provider API keys, or use the hosted service with stablecoin payments for a fully managed experience.
+      Both. BitRouter is fully open source (Apache 2.0). You can self-host it with your own provider API keys, or use the hosted service with agent-native payments for a fully managed experience.
   </Accordion>
   <Accordion title="Which agent runtimes work with BitRouter?">
       Any agent that supports the OpenAI API works with BitRouter out of the box — just change the base URL. This includes OpenClaw, OpenCode, Claude Code, and any OpenAI SDK-based agent. See the integration guides for specific setup instructions.

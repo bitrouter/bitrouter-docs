@@ -4,11 +4,7 @@ import { LanguageToggleButton } from "@/components/language-toggle";
 const sharedNav: BaseLayoutProps["nav"] = {
   title: (
     <>
-      <img
-        src="/logo.svg"
-        alt="BitRouter"
-        className="h-8 w-8 dark:invert"
-      />
+      <img src="/logo.svg" alt="BitRouter" className="h-8 w-8 dark:invert" />
       <span>BitRouter</span>
     </>
   ),
@@ -27,7 +23,7 @@ const sharedLinks: BaseLayoutProps["links"] = [
   },
   {
     type: "button",
-    text: "Sign In / Sign Up",
+    text: "Sign In",
     url: "https://app.bitrouter.ai",
     external: true,
     secondary: true,

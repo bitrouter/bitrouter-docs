@@ -57,12 +57,12 @@ Tool services expose functionality following the [MCP (Model Context Protocol)](
   "jsonrpc": "2.0", "id": 1,
   "result": {
     "tools": [{
-      "name": "get_price",
-      "description": "Get token price",
+      "name": "web_search",
+      "description": "Search the web for information",
       "inputSchema": {
         "type": "object",
-        "properties": { "symbol": { "type": "string" } },
-        "required": ["symbol"]
+        "properties": { "query": { "type": "string" } },
+        "required": ["query"]
       }
     }]
   }
@@ -70,12 +70,12 @@ Tool services expose functionality following the [MCP (Model Context Protocol)](
 
 // Invoke a tool
 { "jsonrpc": "2.0", "id": 2, "method": "tools/call",
-  "params": { "name": "get_price", "arguments": { "symbol": "ETH" } } }
+  "params": { "name": "web_search", "arguments": { "query": "latest AI news" } } }
 
 // Response
 {
   "jsonrpc": "2.0", "id": 2,
-  "result": { "content": [{ "type": "text", "text": "ETH: $3,245.50" }] }
+  "result": { "content": [{ "type": "text", "text": "Top results: ..." }] }
 }
 ```
 
@@ -86,9 +86,9 @@ Agent services enable autonomous agent-to-agent communication following the [A2A
 ```json
 // Agent Card (capability discovery at /.well-known/agent.json)
 {
-  "name": "TradingAgent",
-  "description": "Executes crypto trades",
-  "skills": [{ "id": "execute_trade", "name": "Execute Trade" }],
+  "name": "ResearchAgent",
+  "description": "Performs deep research and summarization",
+  "skills": [{ "id": "research_topic", "name": "Research Topic" }],
   "protocolVersion": "0.3"
 }
 
@@ -98,7 +98,7 @@ POST /a2a
   "message": {
     "messageId": "msg-123",
     "role": "user",
-    "parts": [{ "text": "Buy 1 ETH at market price" }]
+    "parts": [{ "text": "Research the latest advances in transformer architectures" }]
   }
 }
 
@@ -106,7 +106,7 @@ POST /a2a
 {
   "id": "task-456",
   "status": { "state": "completed" },
-  "artifacts": [{ "parts": [{ "text": "Purchased 1 ETH at $3,245.50" }] }]
+  "artifacts": [{ "parts": [{ "text": "Summary: Recent advances include..." }] }]
 }
 ```
 
@@ -114,7 +114,7 @@ POST /a2a
 
 A single service can expose different primitives depending on the use case. Choosing the appropriate primitive helps AI agents interact with BitRouter more effectively.
 
-**Example: Crypto AI Trading Agent**
+**Example: AI Research Agent**
 
 | Use Case | Recommended Primitive | Protocol |
 |----------|----------------------|----------|

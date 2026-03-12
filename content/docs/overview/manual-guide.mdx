@@ -166,11 +166,11 @@ Get started in 3 simple steps and make your first API call in under 5 minutes.
 
 ### Step 1: Create Your Account
 
-Visit [App](https://app.bitrouter.ai) and sign up by connecting an external wallet (Base or Solana) or using social login, which automatically creates an embedded wallet for you.
+Visit [App](https://app.bitrouter.ai) and sign up using social login or by connecting an existing account.
 
 ### Step 2: Fund Your Account
 
-Deposit USDC into your self-custodial wallet at [Credits](https://app.bitrouter.ai/dashboard/credits). Your funds remain in your own wallet until the moment of use.
+Add credits at [Credits](https://app.bitrouter.ai/dashboard/credits). Your funds remain in your account until the moment of use — no prepaid credit pools or minimum commitments.
 
 ### Step 3: Generate a Payment Delegation Key (PDK)
 
@@ -180,9 +180,9 @@ Deposit USDC into your self-custodial wallet at [Credits](https://app.bitrouter.
 4. Copy your PDK (format: `br-p-[base58-encoded-key]`)
 
 <Callout type="info">
-A PDK lets AI agents pay for services on your behalf without giving them full control of your wallet. Learn more about how PDKs work and advanced configuration options in the [Agent-Native Control](/docs/overview/agent-native-control#payment-delegation-key-pdk) guide.
+A PDK lets AI agents pay for services on your behalf within boundaries you define. Learn more about how PDKs work and advanced configuration options in the [Agent-Native Control](/docs/overview/agent-native-control#payment-delegation-key-pdk) guide.
 
-PDK is optional — for fully permissionless access, you can use BitRouter directly with any EVM or Solana signer. We recommend using the [bitrouter-sdk](/docs/sdk-reference) for the best experience. When using a raw signer, the base URL is `https://beta.bitrouter.ai`; when using a PDK, the base URL is `https://api.app.bitrouter.ai/v1`. See the [SDK Reference](/docs/sdk-reference) to learn more.
+For advanced use cases, you can also authenticate directly with a signer via the SDK. When using a raw signer, the base URL is `https://beta.bitrouter.ai`; when using a PDK, the base URL is `https://api.app.bitrouter.ai/v1`. See the [SDK Reference](/docs/sdk-reference) to learn more.
 </Callout>
 
 
@@ -420,14 +420,11 @@ Track your spending and usage at [Usage](https://app.bitrouter.ai/dashboard/usag
 
 ### Funding Your Account
 
-BitRouter currently supports stablecoin payments only. Fiat support is coming soon.
-
-Add USDC to your wallet through:
-- **Wallet Transfer** - Send USDC from any Solana or Base wallet
+Add credits to your account via USDC transfer. Fiat funding options are coming soon.
 
 **Supported Networks:**
-- Solana Mainnet (USDC)
-- Base Mainnet (USDC)
+- Base (USDC)
+- Solana (USDC)
 
 ## Integrations
 

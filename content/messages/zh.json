@@ -62,11 +62,12 @@
     "colModel": "模型",
     "colReason": "原因",
     "colCost": "成本",
-    "totalCost": "总成本",
-    "baseline": "全 Opus 基线",
-    "saved": "节省",
-    "healthScore": "健康评分",
-    "footer": "1 次升级触发 \u00b7 0 次质量回退"
+    "networkRequests": "已路由请求",
+    "networkAgents": "已连接 Agent",
+    "networkSaved": "本月节省",
+    "totalCost": "会话成本",
+    "saved": "相比基线节省",
+    "healthScore": "健康评分"
   },
   "Setup": {
     "heading": "一行代码，开始路由",

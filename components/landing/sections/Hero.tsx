@@ -30,16 +30,16 @@ export async function Hero() {
   ]);
 
   return (
-    <section className="mx-auto max-w-6xl px-4 pt-12 pb-6 sm:px-6 md:pt-8 md:pb-4">
+    <section className="mx-auto max-w-6xl px-4 pt-5 pb-4 sm:px-6 sm:pt-10 sm:pb-6 md:pt-8 md:pb-4">
       {/* Headline + subtitle + CTAs */}
       <div className="text-center">
-        <h1 className="text-2xl leading-tight tracking-tight sm:text-3xl md:text-4xl">
+        <h1 className="text-xl leading-tight tracking-tight sm:text-3xl md:text-4xl">
           {t("headline")}
         </h1>
-        <p className="mt-3 text-sm text-muted-foreground sm:text-base">
+        <p className="mt-2 text-xs text-muted-foreground sm:mt-3 sm:text-base">
           {t("subtitle")}
         </p>
-        <div className="mt-5 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+        <div className="mt-3 flex flex-col items-center gap-2 sm:mt-5 sm:flex-row sm:justify-center sm:gap-3">
           <OneLineSwitch />
           <div className="flex items-center gap-3">
             <a href="/docs">
@@ -50,17 +50,17 @@ export async function Hero() {
       </div>
 
       {/* Integration strip */}
-      <div className="mt-5 flex justify-center">
+      <div className="mt-3 flex justify-center sm:mt-4">
         <IntegrationBar />
       </div>
 
       {/* Hero demo — routing timeline */}
-      <div className="mt-5">
+      <div className="mt-3 sm:mt-4">
         <RoutingTimeline />
       </div>
 
       {/* Secondary CTA */}
-      <p className="mt-6 text-center text-sm text-muted-foreground">
+      <p className="mt-4 text-center text-sm text-muted-foreground sm:mt-6">
         Fully open-source
         {stars !== null && (
           <>

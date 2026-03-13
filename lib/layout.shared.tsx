@@ -12,21 +12,14 @@ const sharedNav: BaseLayoutProps["nav"] = {
 
 const sharedLinks: BaseLayoutProps["links"] = [
   { text: "Documentation", url: "/docs/overview", active: "nested-url" },
+  { text: "Benchmark", url: "/benchmark" },
   { text: "Blog", url: "/blog" },
-  { text: "GitHub", url: "https://github.com/bitrouter", external: true },
   { text: "Discord", url: "https://discord.gg/G3zVrZDa5C", external: true },
   { text: "Twitter/X", url: "https://x.com/BitRouterAI", external: true },
   {
     type: "custom",
     secondary: true,
     children: <LanguageToggleButton />,
-  },
-  {
-    type: "button",
-    text: "Sign In",
-    url: "https://app.bitrouter.ai",
-    external: true,
-    secondary: true,
   },
 ];
 
@@ -37,6 +30,7 @@ export function baseOptions(): BaseLayoutProps {
   return {
     nav: sharedNav,
     i18n: false,
+    githubUrl: "https://github.com/bitrouter",
     links: sharedLinks,
   };
 }
@@ -48,6 +42,7 @@ export function docsOptions(): BaseLayoutProps {
   return {
     nav: sharedNav,
     i18n: false,
+    githubUrl: "https://github.com/bitrouter",
     links: [],
   };
 }

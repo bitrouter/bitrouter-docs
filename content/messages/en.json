@@ -62,11 +62,12 @@
     "colModel": "Model",
     "colReason": "Reason",
     "colCost": "Cost",
-    "totalCost": "Total cost",
-    "baseline": "All-Opus baseline",
-    "saved": "Saved",
-    "healthScore": "Health score",
-    "footer": "1 escalation triggered \u00b7 0 quality regressions"
+    "networkRequests": "Requests routed",
+    "networkAgents": "Agents connected",
+    "networkSaved": "Saved this month",
+    "totalCost": "Session cost",
+    "saved": "Saved vs baseline",
+    "healthScore": "Health score"
   },
   "Setup": {
     "heading": "One line to start routing",

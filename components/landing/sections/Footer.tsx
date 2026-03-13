@@ -16,30 +16,30 @@ export async function Footer() {
 
   return (
     <footer className="border-t border-border">
-        <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-4 py-6 sm:px-6 md:flex-row md:justify-between">
+        <div className="mx-auto flex max-w-6xl flex-col items-center gap-2 px-4 py-3 sm:gap-4 sm:px-6 sm:py-6 md:flex-row md:justify-between">
           <div className="flex flex-wrap items-center justify-center">
             {footerLinkItems.map((link, i) => (
               <span key={link.label} className="flex items-center">
                 {link.href.startsWith("/") ? (
                   <Link
                     href={link.href}
-                    className="px-3 py-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    className="px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:text-foreground sm:px-3 sm:py-1 sm:text-sm"
                   >
                     {link.label}
                   </Link>
                 ) : (
                   <a
                     href={link.href}
-                    className="px-3 py-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    className="px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:text-foreground sm:px-3 sm:py-1 sm:text-sm"
                   >
                     {link.label}
                   </a>
                 )}
-                {i < footerLinkItems.length - 1 && <span className="h-4 w-px bg-border" />}
+                {i < footerLinkItems.length - 1 && <span className="h-3 w-px bg-border sm:h-4" />}
               </span>
             ))}
           </div>
-          <div className="shrink-0 text-xs text-muted-foreground">{t("copyright")}</div>
+          <div className="shrink-0 text-[10px] text-muted-foreground sm:text-xs">{t("copyright")}</div>
         </div>
     </footer>
   );

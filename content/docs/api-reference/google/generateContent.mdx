@@ -1,0 +1,27 @@
+---
+title: Generate content
+full: true
+_openapi:
+  method: POST
+  route: /v1beta/models/{model}:generateContent
+  toc: []
+  structuredData:
+    headings: []
+    contents:
+      - content: >
+          Generates content using the Google Generative AI API format. Compatible with
+          the Gemini generateContent endpoint.
+---
+
+{/* This file was generated from openapi.yaml. Do not edit directly. */}
+
+Generates content using the Google Generative AI API format. Compatible with the
+Gemini `generateContent` endpoint.
+
+When `stream: true`, the response is sent as newline-delimited JSON where each line
+contains a `GenerateContentStreamChunk` object.
+
+**Note:** This endpoint uses the full path `/v1beta/models/{model}:generateContent`
+rather than being relative to the `/v1` base URL.
+
+<APIPage document={"./openapi.yaml"} operations={[{"path":"/v1beta/models/{model}:generateContent","method":"post"}]} webhooks={[]} hasHead={false} />

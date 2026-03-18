@@ -1,0 +1,58 @@
+---
+title: 运行时优化
+---
+import { Callout } from 'fumadocs-ui/components/callout';
+
+BitRouter 从成本、性能和安全三个维度优化你的 LLM 运行时——只需一个开源 Rust 代理在本地运行，零基础设施依赖。高级功能将在 BitRouter Cloud 上提供（即将推出）。
+
+## 成本优化
+
+### 智能路由
+
+- 基于优先级的服务提供商选择和轮询负载均衡
+- 通过 `provider:model_id` 语法直接指定提供商路由
+- 在 5xx 错误或超时时自动故障转移——对 Agent 完全透明
+
+### 费用追踪与预算控制
+
+- 按请求计算成本，提供细粒度 Token 分解（缓存读取、缓存写入、推理 Token）
+- 按账户、模型和提供商持久化费用日志
+- 通过 JWT 声明进行预算控制——按会话或按账户限制，以微美元为单位，支持时间窗口或轮次窗口
+- 模型白名单限制 Token 可访问的模型（支持 glob 模式）
+
+## 性能优化
+
+### 异步 Rust 运行时
+
+- 基于 Tokio 的异步 I/O，路由开销低于 10ms
+- 零基础设施依赖——无需 Postgres、Redis 或 Docker
+- 原生流式支持，提供细粒度流事件（TextDelta、ToolCall、Finish）
+- 跨提供商共享连接池
+
+### 可观测性与指标
+
+- 按路由和端点的指标：请求计数、错误率、Token 使用量
+- 延迟追踪，支持 p50/p99 百分位数和首次流数据到达时间
+- 完整请求上下文审计：路由、提供商、模型、账户、Agent、延迟
+- 通过 `tracing` crate 实现结构化追踪
+
+## 安全优化
+
+### 运行时防护栏
+
+- 本地防火墙在发送至上游前和返回客户端前检查内容
+- 内置 PII 检测器（邮箱、电话号码、IP 地址）和凭证检测器（OpenAI/Anthropic/AWS/GCP/GitHub/Stripe API 密钥、私钥、内联密码）
+- 自定义正则表达式模式，支持方向控制（上行、下行、双向）
+- 按模式的操作：警告、脱敏或拦截
+
+### 认证与 Agent 身份
+
+- Web3 JWT 认证，支持 Solana（Ed25519）和 EVM（secp256k1）验证——零服务端状态
+- 作用域 Token（管理员 vs API）、模型白名单、预算声明
+- A2A Agent Cards 绑定 CAIP-10 钱包地址，提供发现端点
+
+<Callout type="info">
+高级运行时优化功能——包括分析仪表盘、团队级策略控制和托管防护栏管理——即将在 BitRouter Cloud 上推出。
+</Callout>
+
+完整源代码请访问 [BitRouter GitHub 仓库](https://github.com/bitrouter/bitrouter)。

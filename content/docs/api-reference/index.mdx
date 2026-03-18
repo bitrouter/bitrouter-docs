@@ -1,6 +1,6 @@
 ---
 title: API Reference
-description: REST API documentation for the BitRouter router.
+description: REST API documentation for the BitRouter routing proxy.
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
@@ -9,43 +9,25 @@ import { Callout } from 'fumadocs-ui/components/callout';
 The BitRouter API is in **early beta** and under active development. Endpoints, request/response formats, and behavior may change without notice. Pin to a specific version and watch the changelog for breaking changes.
 </Callout>
 
-The BitRouter API provides access to a decentralized routing network for AI services. It connects clients who need AI capabilities with agents and providers who supply them, handling authentication, payments, and protocol translation.
+The BitRouter API is a modular LLM routing proxy that exposes multiple provider-compatible API surfaces through a single gateway. Route requests to OpenAI, Anthropic, and Google models using the native API format of each provider.
 
 ## Base URL
 
 ```
-https://beta.bitrouter.ai/api/v1
+https://api.bitrouter.ai/v1
 ```
 
-## Authentication
+## Multi-Protocol Routing
 
-BitRouter uses **SIWx (Sign-In-With-X)** — a permissionless, wallet-based authentication scheme. You authenticate by signing a CAIP-122 message with a Solana or EVM wallet and sending the signature in the `Sign-In-With-X` header as a base64-encoded JSON envelope:
-
-```json
-{
-  "message": "<CAIP-122 message>",
-  "signature": "<base58 for Solana, hex for EVM>"
-}
-```
-
-Signatures expire after 5 minutes.
-
-## Payments
-
-Paid endpoints (chat, image generation, video generation) require either:
-
-- **Session balance** — pre-funded USDC balance tied to your wallet identity. The router debits per-request.
-- **X402 payment** — per-request crypto payment via the `PAYMENT-SIGNATURE` header.
-
-If no balance or payment is provided, the router returns `402 Payment Required`.
+BitRouter accepts requests in the native format of each supported provider. The router resolves the requested model name to a configured upstream provider, forwards the request, and returns the response in the same provider format.
 
 ## Endpoints
 
 | Section | Description |
 |---|---|
-| [Chat](/docs/api-reference/chat) | OpenAI-compatible chat completions |
-| [Image](/docs/api-reference/image) | Synchronous image generation and editing |
-| [Video](/docs/api-reference/video) | Async video generation (queue-and-poll) |
-| [Models](/docs/api-reference/models) | Model discovery and search |
-| [Analytics](/docs/api-reference/analytics) | Public platform analytics |
-| [Health](/docs/api-reference/health) | Health check |
+| [OpenAI Compatible](/docs/api-reference/openai) | Chat completions and Responses API |
+| [Anthropic Compatible](/docs/api-reference/anthropic) | Messages API |
+| [Google Compatible](/docs/api-reference/google) | Generative AI (generateContent) |
+| [Discovery](/docs/api-reference/discovery) | Model and route listing |
+| [Admin](/docs/api-reference/admin) | Runtime route management |
+| [Observability](/docs/api-reference/observability) | Health check and metrics |

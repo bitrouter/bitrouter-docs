@@ -9,10 +9,10 @@ Welcome to BitRouter — the open-source LLM gateway for AI agent runtimes. Acce
 
 ## Agent Skills (Recommended)
 
-The fastest path to a working setup. Install [BitRouter Agent Skills](https://github.com/BitRouterAI/agent-skills) and let your agent handle the rest:
+The fastest path to a working setup. Install [BitRouter Agent Skills](https://github.com/bitrouter/agent-skills) and let your agent handle the rest:
 
 ```bash
-npx skills add BitRouterAI/agent-skills
+npx skills add bitrouter/agent-skills
 ```
 
 Or install manually:
@@ -180,7 +180,7 @@ Add credits at [Credits](https://app.bitrouter.ai/dashboard/credits). Your funds
 4. Copy your PDK (format: `br-p-[base58-encoded-key]`)
 
 <Callout type="info">
-A PDK lets AI agents pay for services on your behalf within boundaries you define. Learn more about how PDKs work and advanced configuration options in the [Agent-Native Control](/docs/overview/agent-native-control#payment-delegation-key-pdk) guide.
+An agent authority lets AI agents pay for services on your behalf within boundaries you define. Learn more about how agent wallets work and advanced configuration options in the [Agent Wallet](/docs/overview/agent-wallet#agent-authority) guide.
 
 For advanced use cases, you can also authenticate directly with a signer via the SDK. When using a raw signer, the base URL is `https://beta.bitrouter.ai`; when using a PDK, the base URL is `https://api.app.bitrouter.ai/v1`. See the [SDK Reference](/docs/sdk-reference) to learn more.
 </Callout>

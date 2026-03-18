@@ -1,0 +1,58 @@
+---
+title: Runtime Optimization
+---
+import { Callout } from 'fumadocs-ui/components/callout';
+
+BitRouter optimizes your LLM runtime across cost, performance, and security — all from a single open-source Rust proxy running locally with zero infrastructure dependencies. Advanced features are available on BitRouter Cloud (coming soon).
+
+## Cost Optimization
+
+### Intelligent Routing
+
+- Priority-based provider selection and round-robin load balancing
+- Direct provider routing via `provider:model_id` syntax
+- Automatic failover on 5xx errors or timeouts — transparent to the agent
+
+### Spend Tracking & Budgets
+
+- Per-request cost calculation with granular token breakdown (cache reads, cache writes, reasoning tokens)
+- Persistent spend logs per account, model, and provider
+- Budget controls via JWT claims — per-session or per-account limits in micro-USD with time or round-based windows
+- Model allowlists restrict which models a token can access (glob patterns)
+
+## Performance Optimization
+
+### Async Rust Runtime
+
+- Tokio-based async I/O with sub-10ms routing overhead
+- Zero infrastructure dependencies — no Postgres, Redis, or Docker
+- First-class streaming with granular stream events (TextDelta, ToolCall, Finish)
+- Shared connection pooling across providers
+
+### Observability & Metrics
+
+- Per-route and per-endpoint metrics: request counts, error rates, token usage
+- Latency tracking with p50/p99 percentiles and time-to-stream-start
+- Full request context audit: route, provider, model, account, agent, latency
+- Structured tracing via the `tracing` crate
+
+## Security Optimization
+
+### Runtime Guardrails
+
+- Local firewall inspecting content before upstream send and before returning to client
+- Built-in detectors for PII (emails, phone numbers, IP addresses) and credentials (API keys for OpenAI/Anthropic/AWS/GCP/GitHub/Stripe, private keys, inline passwords)
+- Custom regex patterns with direction control (upgoing, downgoing, both)
+- Per-pattern actions: warn, redact, or block
+
+### Authentication & Agent Identity
+
+- Web3 JWT auth with Solana (Ed25519) and EVM (secp256k1) verification — zero server-side state
+- Scoped tokens (admin vs API), model allowlists, budget claims
+- A2A Agent Cards bound to CAIP-10 wallet addresses with discovery endpoints
+
+<Callout type="info">
+Advanced runtime optimization features — including analytics dashboards, team-level policy controls, and hosted guardrail management — are coming soon on BitRouter Cloud.
+</Callout>
+
+For full source code, visit the [BitRouter GitHub repo](https://github.com/bitrouter/bitrouter).

@@ -1,0 +1,26 @@
+---
+title: Create chat completion
+full: true
+_openapi:
+  method: POST
+  route: /chat/completions
+  toc: []
+  structuredData:
+    headings: []
+    contents:
+      - content: >
+          Creates a chat completion for the given messages. Drop-in replacement for the
+          OpenAI Chat Completions API. Supports both synchronous and streaming modes.
+---
+
+{/* This file was generated from openapi.yaml. Do not edit directly. */}
+
+Creates a chat completion for the given messages. Drop-in replacement for the
+OpenAI Chat Completions API — accepts the same request schema and returns the
+same response format, including `usage` with token counts.
+
+When `stream: true`, the response is sent as Server-Sent Events (SSE) where each
+`data` line contains a `ChatCompletionChunk` JSON object. The stream ends with
+`data: [DONE]`.
+
+<APIPage document={"./openapi.yaml"} operations={[{"path":"/chat/completions","method":"post"}]} webhooks={[]} hasHead={false} />

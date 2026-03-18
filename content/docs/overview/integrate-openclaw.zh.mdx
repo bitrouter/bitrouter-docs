@@ -1,6 +1,87 @@
 ---
 title: OpenClaw
-description: 将 BitRouter 作为 OpenClaw 的 LLM 后端
+description: 两分钟内将 OpenClaw 的 Agent 请求接入 BitRouter
 ---
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
-BitRouter plugins coming soon.
+BitRouter 以原生插件的形式接入 OpenClaw。安装插件、选择服务商，所有 Agent 请求即刻通过 BitRouter 路由 — 开箱即用的故障转移、负载均衡、内容护栏和用量统计。
+
+## 安装插件
+
+```bash
+openclaw plugins install @bitrouter/openclaw-plugin
+```
+
+## 选择服务商
+
+<Tabs items={['BitRouter Cloud', '自带密钥 (BYOK)']}>
+<Tab value="BitRouter Cloud">
+
+通过链上 Swig 钱包按量付费，无需管理 API 密钥 — BitRouter 为你处理服务商访问。
+
+```bash
+openclaw bitrouter setup
+```
+
+交互式向导会引导你创建 Swig 钱包并完成初始化。完成后：
+
+```bash
+openclaw gateway restart
+```
+
+</Tab>
+<Tab value="自带密钥 (BYOK)">
+
+使用你现有的 OpenRouter、OpenAI 或 Anthropic API 密钥。
+
+```bash
+openclaw models auth login --provider bitrouter
+```
+
+向导会提示你选择上游服务商并输入密钥。完成后：
+
+```bash
+openclaw gateway restart
+```
+
+<Callout type="info">
+**零配置捷径：** 如果环境变量中已有 `OPENAI_API_KEY`、`ANTHROPIC_API_KEY` 或 `OPENROUTER_API_KEY`，BitRouter 会自动检测，你可以直接跳过这一步。
+</Callout>
+
+</Tab>
+</Tabs>
+
+## 路由 Agent 请求
+
+默认情况下，插件仅拦截有显式路由规则的模型。运行 `switch-all` 会重写所有 Agent 的模型配置，使全部请求经由 BitRouter 转发：
+
+```bash
+openclaw bitrouter switch-all
+openclaw gateway restart
+```
+
+<Callout type="info">
+随时可撤销：`openclaw bitrouter restore-models && openclaw gateway restart`
+</Callout>
+
+## 验证
+
+```bash
+openclaw bitrouter status
+```
+
+你应该看到守护进程状态为 **healthy**、已配置的路由列表，以及 Cloud 模式下的钱包信息。
+
+## 启用的能力
+
+- **故障转移与负载均衡** — 按优先级或轮询方式跨服务商路由。[了解更多](/docs/overview/runtime-optimization)
+- **Agent 钱包** — 基于 Swig 的链上支出管控，支持按 Agent 设置预算。[了解更多](/docs/overview/agent-wallet)
+- **内容护栏** — 在传输中对敏感数据（API 密钥、PII）进行脱敏或拦截
+- **用量统计** — 按模型、按服务商的请求追踪
+- **虚拟模型** — 定义 `fast`、`smart` 等别名，映射到多个服务商端点并配置路由策略
+
+## 相关链接
+
+- [插件源码与高级配置](https://github.com/bitrouter/bitrouter-plugins/tree/main/openclaw)
+- [BitRouter GitHub](https://github.com/bitrouter/bitrouter)

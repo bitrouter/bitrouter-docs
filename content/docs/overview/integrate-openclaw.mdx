@@ -1,6 +1,87 @@
 ---
 title: OpenClaw
-description: Use BitRouter as the LLM backend for OpenClaw
+description: Route OpenClaw agent requests through BitRouter in under 2 minutes
 ---
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
-BitRouter plugins coming soon.
+BitRouter plugs into OpenClaw as a native plugin. Install it, pick a provider, and every agent request routes through BitRouter automatically — with failover, load balancing, guardrails, and usage metrics out of the box.
+
+## Install the Plugin
+
+```bash
+openclaw plugins install @bitrouter/openclaw-plugin
+```
+
+## Choose Your Provider
+
+<Tabs items={['BitRouter Cloud', 'Bring Your Own Key']}>
+<Tab value="BitRouter Cloud">
+
+Pay-per-token via an on-chain Swig wallet. No API keys to manage — BitRouter handles provider access for you.
+
+```bash
+openclaw bitrouter setup
+```
+
+This launches an interactive wizard that creates a Swig wallet and completes onboarding. Once finished:
+
+```bash
+openclaw gateway restart
+```
+
+</Tab>
+<Tab value="Bring Your Own Key">
+
+Use your existing OpenRouter, OpenAI, or Anthropic API key.
+
+```bash
+openclaw models auth login --provider bitrouter
+```
+
+The wizard prompts you to pick an upstream provider and enter your key. Once finished:
+
+```bash
+openclaw gateway restart
+```
+
+<Callout type="info">
+**Zero-config shortcut:** If `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, or `OPENROUTER_API_KEY` is already in your environment, BitRouter auto-detects it. You can skip this step entirely.
+</Callout>
+
+</Tab>
+</Tabs>
+
+## Route Your Agents
+
+By default, the plugin only intercepts models with explicit routing rules. Run `switch-all` to rewrite every agent's model config so all requests flow through BitRouter:
+
+```bash
+openclaw bitrouter switch-all
+openclaw gateway restart
+```
+
+<Callout type="info">
+To undo at any time: `openclaw bitrouter restore-models && openclaw gateway restart`
+</Callout>
+
+## Verify
+
+```bash
+openclaw bitrouter status
+```
+
+You should see the daemon marked as **healthy**, your configured routes listed, and wallet info if you're using Cloud mode.
+
+## What You Get
+
+- **Failover & load balancing** — priority or round-robin routing across providers. [Learn more](/docs/overview/runtime-optimization)
+- **Agent wallet** — scoped on-chain spending via Swig with per-agent budgets. [Learn more](/docs/overview/agent-wallet)
+- **Guardrails** — redact or block sensitive data (API keys, PII) in transit
+- **Usage metrics** — per-model, per-provider request tracking
+- **Virtual models** — define aliases like `fast` or `smart` that map to multiple provider endpoints with routing strategies
+
+## Links
+
+- [Plugin source & advanced configuration](https://github.com/bitrouter/bitrouter-plugins/tree/main/openclaw)
+- [BitRouter GitHub](https://github.com/bitrouter/bitrouter)

@@ -1,4 +1,0 @@
-{
-  "title": "视频",
-  "pages": ["queueVideo", "retrieveVideo", "quoteVideo", "completeVideo"]
-}

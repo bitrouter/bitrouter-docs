@@ -1,0 +1,22 @@
+---
+title: Remove a dynamic route
+full: true
+_openapi:
+  method: DELETE
+  route: /admin/routes/{name}
+  toc: []
+  structuredData:
+    headings: []
+    contents:
+      - content: >
+          Removes a dynamically-added route by model name. Config-defined routes cannot
+          be removed via this endpoint.
+---
+
+{/* This file was generated from openapi.yaml. Do not edit directly. */}
+
+Removes a dynamically-added route by model name. Config-defined routes cannot be
+removed via this endpoint. If the dynamic route was shadowing a config route, the
+config route becomes active again.
+
+<APIPage document={"./openapi.yaml"} operations={[{"path":"/admin/routes/{name}","method":"delete"}]} webhooks={[]} hasHead={false} />

@@ -14,7 +14,7 @@ const modes = [
   {
     key: "agent",
     label: "For agent",
-    snippet: "npx skills add BitRouterAI/agent-skills",
+    snippet: "npx skills add bitrouter/agent-skills",
     tag: "agent-skills" as string | null,
   },
 ] as const;
@@ -59,7 +59,7 @@ export function OneLineSwitch() {
           {mode === "human" ? (
             <>base_url = &quot;https://api.bitrouter.ai/v1&quot;</>
           ) : (
-            <>npx skills add BitRouterAI/agent-skills</>
+            <>npx skills add bitrouter/agent-skills</>
           )}
         </code>
 

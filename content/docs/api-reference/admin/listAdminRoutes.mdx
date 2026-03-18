@@ -1,0 +1,22 @@
+---
+title: List all routes (admin)
+full: true
+_openapi:
+  method: GET
+  route: /admin/routes
+  toc: []
+  structuredData:
+    headings: []
+    contents:
+      - content: >
+          Lists all routes including both config-defined and dynamically-added routes.
+          Dynamic routes shadow config routes with the same model name.
+---
+
+{/* This file was generated from openapi.yaml. Do not edit directly. */}
+
+Lists all routes including both config-defined and dynamically-added routes.
+Each entry includes a `source` field indicating where it was defined.
+Dynamic routes shadow config routes with the same model name.
+
+<APIPage document={"./openapi.yaml"} operations={[{"path":"/admin/routes","method":"get"}]} webhooks={[]} hasHead={false} />

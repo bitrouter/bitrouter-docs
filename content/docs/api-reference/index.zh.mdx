@@ -1,45 +1,33 @@
 ---
 title: API 参考
-description: BitRouter 路由器的 REST API 文档。
+description: BitRouter 路由代理的 REST API 文档。
 ---
 
-BitRouter API 提供对去中心化 AI 服务路由网络的访问。它将需要 AI 能力的客户端与提供这些能力的代理和提供商连接起来，处理身份验证、支付和协议转换。
+import { Callout } from 'fumadocs-ui/components/callout';
+
+<Callout type="warn">
+BitRouter API 处于 **早期测试阶段**，正在积极开发中。端点、请求/响应格式和行为可能随时变更，恕不另行通知。
+</Callout>
+
+BitRouter API 是一个模块化的 LLM 路由代理，通过单一网关暴露多个提供商兼容的 API 接口。使用每个提供商的原生 API 格式将请求路由到 OpenAI、Anthropic 和 Google 模型。
 
 ## 基础 URL
 
 ```
-https://beta.bitrouter.ai/api/v1
+https://api.bitrouter.ai/v1
 ```
 
-## 身份验证
+## 多协议路由
 
-BitRouter 使用 **SIWx (Sign-In-With-X)** —— 一种无需许可的、基于钱包的身份验证方案。您通过使用 Solana 或 EVM 钱包签署 CAIP-122 消息进行身份验证，并将签名以 base64 编码的 JSON 信封形式通过 `Sign-In-With-X` 头部发送：
-
-```json
-{
-  "message": "<CAIP-122 message>",
-  "signature": "<base58 for Solana, hex for EVM>"
-}
-```
-
-签名在 5 分钟后过期。
-
-## 支付
-
-付费端点（对话、图像生成、视频生成）需要以下任一方式：
-
-- **会话余额** —— 与您的钱包身份绑定的预充值 USDC 余额。路由器按请求扣费。
-- **X402 支付** —— 通过 `PAYMENT-SIGNATURE` 头部进行的按请求加密支付。
-
-如果未提供余额或支付信息，路由器将返回 `402 Payment Required`。
+BitRouter 接受每个支持的提供商原生格式的请求。路由器将请求的模型名称解析到已配置的上游提供商，转发请求，并以相同的提供商格式返回响应。
 
 ## 端点
 
 | 分类 | 描述 |
 |---|---|
-| [对话](/docs/api-reference/chat) | OpenAI 兼容的对话补全 |
-| [图像](/docs/api-reference/image) | 同步图像生成和编辑 |
-| [视频](/docs/api-reference/video) | 异步视频生成（排队轮询模式） |
-| [模型](/docs/api-reference/models) | 模型发现和搜索 |
-| [分析](/docs/api-reference/analytics) | 公开平台分析数据 |
-| [健康检查](/docs/api-reference/health) | 健康检查 |
+| [OpenAI 兼容](/docs/api-reference/openai) | 对话补全和 Responses API |
+| [Anthropic 兼容](/docs/api-reference/anthropic) | Messages API |
+| [Google 兼容](/docs/api-reference/google) | Generative AI (generateContent) |
+| [发现](/docs/api-reference/discovery) | 模型和路由列表 |
+| [管理](/docs/api-reference/admin) | 运行时路由管理 |
+| [可观测性](/docs/api-reference/observability) | 健康检查和指标 |

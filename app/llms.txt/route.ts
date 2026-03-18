@@ -26,8 +26,8 @@ BitRouter is like OpenRouter but open-source, self-hostable, agent-native, and p
 ## Docs
 
 - [Service Primitives](${BASE_URL}/docs/overview/service-primitives): Models, tools, and agents — the three service primitives
-- [Agent-Native Control](${BASE_URL}/docs/overview/agent-native-control): Self-custodial pay-per-use and payment delegation keys
-- [Intelligent Routing](${BASE_URL}/docs/overview/intelligent-routing): Routing tables, fallbacks, and performance
+- [Agent Wallet](${BASE_URL}/docs/overview/agent-wallet): Wallet-based identity, on-chain agent authority, and stablecoin payments
+- [Runtime Optimization](${BASE_URL}/docs/overview/runtime-optimization): Cost, performance, and security optimization
 - [Onboarding Guide](${BASE_URL}/docs/overview/manual-guide): Step-by-step manual setup guide
 
 ## API Reference

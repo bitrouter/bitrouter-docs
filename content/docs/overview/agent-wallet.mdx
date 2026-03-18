@@ -1,0 +1,96 @@
+---
+title: Agent Wallet
+---
+import { Callout } from 'fumadocs-ui/components/callout';
+
+AI agents operate on-demand with unpredictable usage patterns. Traditional SaaS subscriptions, prepaid credits, and API keys don't fit. BitRouter provides agent-native infrastructure — your wallet is your identity, agents spend within boundaries you define on-chain, and every transaction is verifiable.
+
+## Wallet as Identity
+
+BitRouter uses your cryptographic wallet as your account identity. No signup, no API keys, no vendor approval — if you have a wallet, you have an account. This makes access fully permissionless.
+
+A single master keypair derives addresses on both Solana and EVM chains, giving you one identity across networks.
+
+```bash
+# Generate your identity
+bitrouter account -g
+```
+
+This creates a master keypair stored locally at `~/.bitrouter/keys/` and displays your Solana and EVM addresses. You control your keys — BitRouter never holds them.
+
+<Callout type="info">
+**Multi-chain identity:** Your wallet identity works across both EVM chains and Solana. You can authenticate with either chain's signing scheme. On-chain payments are currently enabled on Solana, with EVM payment support coming soon.
+</Callout>
+
+## Embedded Wallet
+
+Once you have an identity, create an on-chain wallet to fund agent operations.
+
+```bash
+# Create an embedded wallet on Solana
+bitrouter swig create-wallet
+```
+
+This deploys a wallet tied to your master keypair. Deposit stablecoins (USDC or USDT) to fund it — agents you authorize will draw from this balance.
+
+<Callout type="info">
+BitRouter's embedded wallets are built on [Swig](https://swig.money), a Solana wallet protocol designed for programmable spending authority. All constraints are enforced at the protocol level, not by BitRouter.
+</Callout>
+
+## Agent Authority
+
+To let an agent spend from your wallet, you derive an agent authority. This creates a dedicated keypair for the agent and registers it on-chain with spending constraints you define.
+
+```bash
+# Authorize an agent with spend limits
+bitrouter swig derive-agent \
+  --label "my-coding-agent" \
+  --per-tx-cap 5000000 \
+  --cumulative-cap 50000000 \
+  --expires-at 1735689600
+```
+
+The agent gets its own keypair and can operate autonomously — but only within the boundaries you set, enforced on-chain.
+
+### Permission Parameters
+
+| Parameter | Description |
+|-----------|-------------|
+| `per_tx_cap` | Maximum spend per single transaction (in lamports) |
+| `cumulative_cap` | Total spend ceiling across all transactions |
+| `expires_at` | Unix timestamp when the authority expires |
+
+You can update permissions at any time without rotating the agent's keypair:
+
+```bash
+# Adjust an agent's spend limits
+bitrouter swig set-permissions \
+  --agent <agent-address> \
+  --cumulative-cap 100000000
+```
+
+### Why On-Chain?
+
+Every agent authority and its constraints are recorded on Solana. This means:
+
+- **Verifiable** — anyone can audit what an agent is allowed to spend
+- **Tamper-proof** — constraints can't be bypassed by the agent or by BitRouter
+- **Permissionless** — no approval process, no KYC for agent operations
+- **Composable** — other protocols can read and build on these authorities
+
+<Callout type="info">
+For advanced configurations like service allowlists and fine-grained transaction rules, see the [SDK Reference](/docs/sdk-reference).
+</Callout>
+
+## Payments
+
+BitRouter natively supports stablecoin payments for agent operations:
+
+- **USDC** on Solana
+- **USDT** on Solana
+
+Agents and developers interact with familiar USD amounts. Stablecoins enable instant, low-cost, permissionless settlement — without the friction of traditional payment processors.
+
+<Callout type="info">
+**Fiat support coming soon.** We're building fiat on-ramp and off-ramp support so teams can fund agent wallets directly with traditional currency.
+</Callout>

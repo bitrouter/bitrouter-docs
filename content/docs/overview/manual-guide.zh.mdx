@@ -9,10 +9,10 @@ import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
 ## Agent Skills（推荐）
 
-最快的设置路径。安装 [BitRouter Agent Skills](https://github.com/BitRouterAI/agent-skills)，让你的 Agent 处理剩下的一切：
+最快的设置路径。安装 [BitRouter Agent Skills](https://github.com/bitrouter/agent-skills)，让你的 Agent 处理剩下的一切：
 
 ```bash
-npx skills add BitRouterAI/agent-skills
+npx skills add bitrouter/agent-skills
 ```
 
 或手动安装：
@@ -180,7 +180,7 @@ providers:
 4. 复制你的 PDK（格式：`br-p-[base58-encoded-key]`）
 
 <Callout type="info">
-PDK 让 AI Agent 可以在你定义的边界内代表你支付服务费用。了解 PDK 的工作原理和高级配置选项，请参阅 [Agent 原生控制](/docs/overview/agent-native-control#payment-delegation-key-pdk) 指南。
+Agent 授权让 AI Agent 可以在你定义的边界内代表你支付服务费用。了解 Agent 钱包的工作原理和高级配置选项，请参阅 [Agent 钱包](/docs/overview/agent-wallet#agent-授权) 指南。
 
 对于高级用例，你也可以通过 SDK 直接使用签名器进行认证。使用原始签名器时，base URL 为 `https://beta.bitrouter.ai`；使用 PDK 时，base URL 为 `https://api.app.bitrouter.ai/v1`。详见 [SDK 参考](/docs/sdk-reference)。
 </Callout>

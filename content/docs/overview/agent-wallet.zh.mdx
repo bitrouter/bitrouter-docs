@@ -1,0 +1,96 @@
+---
+title: Agent 钱包
+---
+import { Callout } from 'fumadocs-ui/components/callout';
+
+AI Agent 按需运行，使用模式不可预测。传统 SaaS 订阅、预充值额度和 API 密钥都不适合。BitRouter 提供 Agent 原生基础设施——你的钱包就是你的身份，Agent 在你链上定义的边界内支出，每笔交易可验证。
+
+## 钱包即身份
+
+BitRouter 使用你的加密钱包作为账户身份。无需注册、无需 API 密钥、无需供应商审批——拥有钱包即拥有账户。访问完全无需许可。
+
+一个主密钥对可以同时派生 Solana 和 EVM 链上的地址，为你提供跨网络的统一身份。
+
+```bash
+# 生成你的身份
+bitrouter account -g
+```
+
+这会创建一个主密钥对，本地存储在 `~/.bitrouter/keys/`，并显示你的 Solana 和 EVM 地址。密钥由你掌控——BitRouter 绝不持有。
+
+<Callout type="info">
+**多链身份：** 你的钱包身份同时支持 EVM 链和 Solana。你可以使用任一链的签名方案进行认证。链上支付目前在 Solana 上启用，EVM 支付支持即将推出。
+</Callout>
+
+## 嵌入式钱包
+
+拥有身份后，创建一个链上钱包来为 Agent 操作提供资金。
+
+```bash
+# 在 Solana 上创建嵌入式钱包
+bitrouter swig create-wallet
+```
+
+这会部署一个绑定到你主密钥对的钱包。存入稳定币（USDC 或 USDT）为其充值——你授权的 Agent 将从此余额中支出。
+
+<Callout type="info">
+BitRouter 的嵌入式钱包基于 [Swig](https://swig.money) 构建，这是一个为可编程支出授权设计的 Solana 钱包协议。所有约束在协议层面强制执行，而非由 BitRouter 控制。
+</Callout>
+
+## Agent 授权
+
+要让 Agent 从你的钱包支出，你需要派生一个 Agent 授权。这会为 Agent 创建一个专用密钥对，并在链上注册你定义的支出约束。
+
+```bash
+# 授权一个 Agent 并设置支出限制
+bitrouter swig derive-agent \
+  --label "my-coding-agent" \
+  --per-tx-cap 5000000 \
+  --cumulative-cap 50000000 \
+  --expires-at 1735689600
+```
+
+Agent 获得自己的密钥对，可以自主运行——但只能在你设定的、链上强制执行的边界内操作。
+
+### 权限参数
+
+| 参数 | 描述 |
+|-----------|-------------|
+| `per_tx_cap` | 单笔交易最大支出（单位：lamports） |
+| `cumulative_cap` | 所有交易的总支出上限 |
+| `expires_at` | 授权到期的 Unix 时间戳 |
+
+你可以随时更新权限，无需轮换 Agent 的密钥对：
+
+```bash
+# 调整 Agent 的支出限制
+bitrouter swig set-permissions \
+  --agent <agent-address> \
+  --cumulative-cap 100000000
+```
+
+### 为什么选择链上？
+
+每个 Agent 授权及其约束都记录在 Solana 上。这意味着：
+
+- **可验证** — 任何人都可以审计 Agent 被允许的支出范围
+- **防篡改** — 约束无法被 Agent 或 BitRouter 绕过
+- **无需许可** — 无审批流程，Agent 操作无需 KYC
+- **可组合** — 其他协议可以读取并构建在这些授权之上
+
+<Callout type="info">
+如需高级配置，如服务白名单和细粒度交易规则，请参阅 [SDK 参考](/docs/sdk-reference)。
+</Callout>
+
+## 支付
+
+BitRouter 原生支持稳定币支付用于 Agent 操作：
+
+- **USDC**（Solana）
+- **USDT**（Solana）
+
+Agent 和开发者使用熟悉的美元金额。稳定币实现即时、低成本、无需许可的结算——没有传统支付处理器的摩擦。
+
+<Callout type="info">
+**法币支持即将推出。** 我们正在构建法币出入金支持，让团队可以直接使用传统货币为 Agent 钱包充值。
+</Callout>

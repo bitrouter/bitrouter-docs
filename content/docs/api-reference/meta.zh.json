@@ -3,14 +3,17 @@
   "root": true,
   "pages": [
     "index",
-    "---核心服务---",
-    "chat",
-    "image",
-    "video",
+    "---OpenAI 兼容---",
+    "openai",
+    "---Anthropic 兼容---",
+    "anthropic",
+    "---Google 兼容---",
+    "google",
     "---发现---",
-    "models",
-    "---平台---",
-    "analytics",
-    "health"
+    "discovery",
+    "---管理---",
+    "admin",
+    "---可观测性---",
+    "observability"
   ]
 }

@@ -18,46 +18,21 @@ Ship a single binary with zero infrastructure dependencies. Agents discover and 
 - **Agent-Native Payments** — Pay-per-use on the hosted service. No credit cards, no prepaid credits, no invoices. Agents can pay autonomously.
 - **CLI + TUI Observability** — Monitor and control agent sessions in real time from the terminal.
 
-## BitRouter vs OpenRouter
+## BitRouter vs Alternatives
 
-| | BitRouter | OpenRouter |
-|---|---|---|
-| **Type** | Open-source Rust proxy + hosted option | Hosted SaaS only (proprietary) |
-| **Deployment** | Self-host (single binary) or hosted | Cloud only |
-| **Payments** | Agent-native pay-per-use | Credit card, crypto top-up, AliPay |
-| **Access** | Permissionless — no KYC or geo-restrictions | Account creation required |
-| **Routing** | Configurable routing tables with fallbacks | Auto router (via NotDiamond), provider routing |
-| **Overhead** | Sub-10ms | ~25–40ms |
-| **Agent Features** | Agent identity, payment delegation, CLI/TUI observability | Tool calling, standard API keys |
-| **Models** | 200+ models | 400+ models / 60+ providers |
-| **API** | OpenAI-compatible | OpenAI-compatible |
-| **License** | Apache 2.0 | Proprietary (SDKs are Apache 2.0) |
-
-## BitRouter vs LiteLLM
-
-| | BitRouter | LiteLLM |
-|---|---|---|
-| **Type** | Rust proxy (single binary) | Python proxy + SDK (open-core) |
-| **Deployment** | Single binary, zero dependencies | Docker/K8s, requires Postgres + Redis |
-| **Performance** | Async Rust, no GIL — sub-10ms overhead | ~0.5ms median but Python GIL limits throughput at scale |
-| **Payments** | Built-in agent-native payments (hosted) | BYOK only — no payment handling |
-| **Agent Features** | Agent identity, payment delegation, CLI/TUI | MCP gateway, A2A protocol gateway |
-| **Routing** | Routing tables with fallback and escalation | Load balancing, fallbacks, cooldowns |
-| **Models** | 200+ models | 2,600+ models / 120+ providers |
-| **Observability** | CLI + TUI, built-in metrics | Admin dashboard, OpenTelemetry, Prometheus |
-| **API** | OpenAI-compatible | OpenAI-compatible |
-| **License** | Apache 2.0 | MIT (enterprise features proprietary) |
-
-## BitRouter vs Direct API Access
-
-| | BitRouter | Direct API (e.g. OpenAI, Anthropic) |
-|---|---|---|
-| **Models** | 200+ from all providers via one endpoint | Only that provider's models |
-| **Billing** | Single agent account or BYOK | Separate billing per provider |
-| **Routing** | Automatic model selection with fallbacks | Manual model selection |
-| **Setup** | Change base URL, use existing SDK | Separate SDK/key per provider |
-| **Observability** | Unified CLI/TUI across all providers | Per-provider dashboards |
-| **Cost** | Optimized via smart routing | Full price for chosen model |
+| | BitRouter | OpenRouter | LiteLLM | Direct API |
+|---|---|---|---|---|
+| **Type** | Open-source Rust proxy + hosted option | Hosted SaaS only (proprietary) | Python proxy + SDK (open-core) | Provider SDK |
+| **Deployment** | Single binary, zero dependencies | Cloud only | Docker/K8s, requires Postgres + Redis | Per-provider setup |
+| **Routing overhead** | Sub-10ms | ~25–40ms | ~0.5ms median (GIL limits throughput at scale) | N/A |
+| **Payments** | Agent-native pay-per-use | Credit card, crypto top-up, AliPay | BYOK only — no payment handling | Separate billing per provider |
+| **Access** | Permissionless — no KYC or geo-restrictions | Account creation required | Self-host | Per-provider accounts |
+| **Agent features** | Agent identity, payment delegation, CLI/TUI observability | Tool calling, standard API keys | MCP gateway, A2A protocol gateway | None |
+| **Routing** | Configurable routing tables with fallbacks and escalation | Auto router (via NotDiamond), provider routing | Load balancing, fallbacks, cooldowns | Manual model selection |
+| **Models** | 200+ models | 400+ models / 60+ providers | 2,600+ models / 120+ providers | Single provider only |
+| **Observability** | CLI + TUI, built-in metrics | — | Admin dashboard, OpenTelemetry, Prometheus | Per-provider dashboards |
+| **API** | OpenAI-compatible | OpenAI-compatible | OpenAI-compatible | Provider-specific |
+| **License** | Apache 2.0 | Proprietary (SDKs are Apache 2.0) | MIT (enterprise features proprietary) | N/A |
 
 ## FAQs
 

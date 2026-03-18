@@ -3,14 +3,17 @@
   "root": true,
   "pages": [
     "index",
-    "---Core Services---",
-    "chat",
-    "image",
-    "video",
+    "---OpenAI Compatible---",
+    "openai",
+    "---Anthropic Compatible---",
+    "anthropic",
+    "---Google Compatible---",
+    "google",
     "---Discovery---",
-    "models",
-    "---Platform---",
-    "analytics",
-    "health"
+    "discovery",
+    "---Admin---",
+    "admin",
+    "---Observability---",
+    "observability"
   ]
 }

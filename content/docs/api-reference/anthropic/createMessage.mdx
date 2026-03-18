@@ -1,0 +1,25 @@
+---
+title: Create message
+full: true
+_openapi:
+  method: POST
+  route: /messages
+  toc: []
+  structuredData:
+    headings: []
+    contents:
+      - content: >
+          Creates a message using the Anthropic Messages API format. Drop-in compatible
+          with the Anthropic API. Supports both synchronous and streaming modes.
+---
+
+{/* This file was generated from openapi.yaml. Do not edit directly. */}
+
+Creates a message using the Anthropic Messages API format. Drop-in compatible with
+the Anthropic API — accepts the same request schema and returns the same response format.
+
+When `stream: true`, the response is sent as Server-Sent Events (SSE). Each event has a
+`type` field indicating the event kind (`message_start`, `content_block_delta`,
+`message_delta`, `message_stop`).
+
+<APIPage document={"./openapi.yaml"} operations={[{"path":"/messages","method":"post"}]} webhooks={[]} hasHead={false} />

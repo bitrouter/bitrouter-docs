@@ -38,12 +38,6 @@ BitRouter is like OpenRouter but open-source, self-hostable, agent-native, and p
 - [Video Generation](${BASE_URL}/docs/api-reference/video): Video generation API
 - [Models](${BASE_URL}/docs/api-reference/models): List available models and pricing
 
-## SDKs
-
-- [TypeScript SDK](${BASE_URL}/docs/sdk-reference/typescript): Install and use @aimo.network/sdk
-- [Python SDK](${BASE_URL}/docs/sdk-reference/python): Install and use aimo-network-sdk
-- [Vercel AI Provider](${BASE_URL}/docs/sdk-reference/ts-provider): Use BitRouter with Vercel AI SDK
-
 ## Tutorials
 
 - [OpenAI SDK Integration](${BASE_URL}/docs/tutorial/openai-sdk): Drop-in replacement for OpenAI SDK

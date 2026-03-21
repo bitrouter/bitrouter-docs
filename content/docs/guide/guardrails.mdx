@@ -1,0 +1,148 @@
+---
+title: Guardrails
+description: Inspect, redact, or block agent traffic with the BitRouter agent firewall.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+BitRouter includes a proxy-layer firewall that inspects content flowing between agents and LLM providers. It wraps the model router transparently — your agents and providers don't need any changes.
+
+## Enable guardrails
+
+Guardrails are enabled by default. To disable them:
+
+```yaml
+guardrails:
+  enabled: false
+```
+
+## Traffic directions
+
+- **Upgoing** — outbound traffic from your agent to the LLM provider (user → model)
+- **Downgoing** — inbound traffic from the LLM provider back to your agent (model → user)
+
+## Built-in patterns
+
+BitRouter ships with 7 built-in detection patterns:
+
+### Upgoing (outbound)
+
+| Pattern ID | Detects |
+|-----------|---------|
+| `api_keys` | API keys from OpenAI, Anthropic, AWS, GCP, GitHub, Stripe |
+| `private_keys` | PEM-encoded private keys (RSA, EC, Ed25519, etc.) |
+| `credentials` | Inline passwords, basic-auth headers, database connection strings |
+| `pii_emails` | Email addresses |
+| `pii_phone_numbers` | Phone numbers |
+| `ip_addresses` | IPv4 addresses (non-localhost) |
+
+### Downgoing (inbound)
+
+| Pattern ID | Detects |
+|-----------|---------|
+| `suspicious_commands` | Dangerous shell commands (`rm -rf /`, `curl \| sh`, fork bombs, etc.) |
+
+## Actions
+
+Each pattern can be assigned one of three actions:
+
+| Action | Behavior |
+|--------|----------|
+| `warn` | Log a warning but allow the content through (default) |
+| `redact` | Replace matched content before forwarding |
+| `block` | Reject the entire request with an error |
+
+## Set actions per pattern
+
+Override the default `warn` action for specific patterns:
+
+```yaml
+guardrails:
+  upgoing:
+    api_keys: redact
+    private_keys: block
+    credentials: block
+  downgoing:
+    suspicious_commands: block
+```
+
+## Disable specific patterns
+
+Skip patterns you don't need:
+
+```yaml
+guardrails:
+  disabled_patterns:
+    - ip_addresses
+    - pii_phone_numbers
+```
+
+## Add custom patterns
+
+Define your own regex-based detection rules:
+
+```yaml
+guardrails:
+  custom_patterns:
+    - name: internal_token
+      regex: "myapp_[A-Za-z0-9]{32}"
+      direction: upgoing
+
+    - name: malicious_url
+      regex: "https://evil\\.com"
+      direction: downgoing
+
+    - name: sensitive_id
+      regex: "ACCT-[0-9]{8}"
+      direction: both
+
+  custom_upgoing:
+    internal_token: block
+
+  custom_downgoing:
+    malicious_url: block
+```
+
+The `direction` field controls which traffic the pattern inspects: `upgoing`, `downgoing`, or `both`. Actions for custom patterns default to `warn` unless overridden in `custom_upgoing` or `custom_downgoing`.
+
+## Configure block messages
+
+Control what information is included when content is blocked:
+
+```yaml
+guardrails:
+  block_message:
+    include_details: true     # Include why the content was blocked
+    include_help_link: true   # Include a link to the BitRouter repo
+```
+
+## Full example
+
+```yaml
+guardrails:
+  enabled: true
+
+  disabled_patterns:
+    - ip_addresses
+
+  upgoing:
+    api_keys: redact
+    private_keys: block
+    credentials: block
+    pii_emails: warn
+
+  downgoing:
+    suspicious_commands: block
+
+  custom_patterns:
+    - name: internal_token
+      regex: "myapp_[A-Za-z0-9]{32}"
+      direction: upgoing
+
+  custom_upgoing:
+    internal_token: redact
+
+  block_message:
+    include_details: true
+    include_help_link: true
+```

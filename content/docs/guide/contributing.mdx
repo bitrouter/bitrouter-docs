@@ -1,0 +1,103 @@
+---
+title: Contributing
+description: Contribute to the BitRouter open-source project.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## Before you start
+
+- Read the [README](https://github.com/bitrouter/bitrouter) for the project introduction
+- Read [DEVELOPMENT.md](https://github.com/bitrouter/bitrouter/blob/main/DEVELOPMENT.md) for the workspace architecture
+- Check existing [issues](https://github.com/bitrouter/bitrouter/issues) and [pull requests](https://github.com/bitrouter/bitrouter/pulls) before opening a new one
+
+## Report a bug
+
+Use the [bug report template](https://github.com/bitrouter/bitrouter/issues/new?template=bug_report.yml). Include:
+
+- A clear summary of the problem
+- Steps to reproduce
+- Expected vs actual behavior
+- Environment details (OS, Rust version)
+- Logs or a minimal redacted `bitrouter.yaml` if relevant
+
+## Request a feature
+
+Use the [feature request template](https://github.com/bitrouter/bitrouter/issues/new?template=feature_request.yml). Describe:
+
+- The use case you're trying to solve
+- Why the current behavior is insufficient
+- The expected UX or API shape
+
+For larger changes, open an issue before writing code to align on approach.
+
+## Submit a pull request
+
+1. Fork the repository and create a focused branch
+2. Keep the change scoped to a single bug fix, feature, or docs improvement
+3. Add or update tests when behavior changes
+4. Update docs when user-facing behavior changes
+5. Run the required checks locally:
+
+```bash
+cargo fmt -- --check
+cargo clippy
+cargo test --workspace
+```
+
+6. Open a pull request with a clear summary
+
+### Commit conventions
+
+Use [conventional commits](https://www.conventionalcommits.org/) format. Put what you modified in the scope:
+
+```
+feat(config): add custom provider derives
+fix(api): handle tool call in streaming responses
+docs(readme): update quick start section
+```
+
+PR titles must also follow conventional commit format — this is validated by CI.
+
+## Update built-in providers
+
+Built-in provider definitions live in `bitrouter-config/providers/*.yaml`:
+
+1. Edit the matching YAML file (e.g. `openai.yaml`, `anthropic.yaml`)
+2. Update fields like `api_base`, `models`, pricing, etc.
+3. Run the config and workspace tests
+4. Update docs if the public provider list changes
+
+## Add a new provider
+
+If the provider uses an already-supported protocol:
+
+1. Add a new YAML file under `bitrouter-config/providers/`
+2. Register it in `bitrouter-config/src/registry.rs`
+3. Add tests for the registry and config loading
+4. Update docs
+
+If the provider introduces a new protocol, also plan to update `bitrouter-core`, `bitrouter-api`, and the runtime router.
+
+## Workspace architecture
+
+BitRouter is organized as focused crates with strict bottom-up dependencies:
+
+| Layer | Crate | Responsibility |
+|-------|-------|----------------|
+| 1 | `bitrouter-core` | Shared traits, types, errors |
+| 2 | `bitrouter-openai`, `-anthropic`, `-google` | Provider adapters |
+| 3 | `bitrouter-config` | YAML config, provider registry, routing |
+| 3 | `bitrouter-guardrails` | Agent firewall |
+| 3 | `bitrouter-observe` | Spend tracking and metrics |
+| 3 | `bitrouter-accounts` | Account and session management |
+| 4 | `bitrouter-api` | Reusable HTTP filters (Warp) |
+| 5 | `bitrouter` | CLI, runtime, TUI |
+
+See [DEVELOPMENT.md](https://github.com/bitrouter/bitrouter/blob/main/DEVELOPMENT.md) for the full architecture guide.
+
+## Community
+
+- [Discord](https://discord.gg/G3zVrZDa5C)
+- [GitHub Issues](https://github.com/bitrouter/bitrouter/issues)
+- [Twitter/X](https://x.com/BitRouterAI)

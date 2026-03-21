@@ -1,0 +1,103 @@
+---
+title: 贡献
+description: 参与 BitRouter 开源项目。
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## 开始之前
+
+- 阅读 [README](https://github.com/bitrouter/bitrouter) 了解项目介绍
+- 阅读 [DEVELOPMENT.md](https://github.com/bitrouter/bitrouter/blob/main/DEVELOPMENT.md) 了解工作区架构
+- 在创建新的之前，检查已有的 [issues](https://github.com/bitrouter/bitrouter/issues) 和 [pull requests](https://github.com/bitrouter/bitrouter/pulls)
+
+## 报告 Bug
+
+使用 [Bug 报告模板](https://github.com/bitrouter/bitrouter/issues/new?template=bug_report.yml)。包含：
+
+- 问题的清晰摘要
+- 复现步骤
+- 预期行为 vs 实际行为
+- 环境详情（操作系统、Rust 版本）
+- 相关日志或最小化的脱敏 `bitrouter.yaml`
+
+## 请求功能
+
+使用[功能请求模板](https://github.com/bitrouter/bitrouter/issues/new?template=feature_request.yml)。描述：
+
+- 你要解决的用例
+- 当前行为为何不足
+- 期望的 UX 或 API 形式
+
+对于较大的改动，在编写代码之前先开一个 issue 以对齐方案。
+
+## 提交 Pull Request
+
+1. Fork 仓库并创建一个聚焦的分支
+2. 将更改限制在单个 bug 修复、功能或文档改进
+3. 行为变更时添加或更新测试
+4. 面向用户的行为变更时更新文档
+5. 在本地运行必要的检查：
+
+```bash
+cargo fmt -- --check
+cargo clippy
+cargo test --workspace
+```
+
+6. 提交带有清晰摘要的 Pull Request
+
+### 提交规范
+
+使用[约定式提交](https://www.conventionalcommits.org/)格式。将修改的内容放在范围中：
+
+```
+feat(config): add custom provider derives
+fix(api): handle tool call in streaming responses
+docs(readme): update quick start section
+```
+
+PR 标题也必须遵循约定式提交格式 — CI 会验证。
+
+## 更新内置提供商
+
+内置提供商定义位于 `bitrouter-config/providers/*.yaml`：
+
+1. 编辑对应的 YAML 文件（如 `openai.yaml`、`anthropic.yaml`）
+2. 更新 `api_base`、`models`、定价等字段
+3. 运行配置和工作区测试
+4. 如果公开的提供商列表变更，更新文档
+
+## 添加新提供商
+
+如果提供商使用已支持的协议：
+
+1. 在 `bitrouter-config/providers/` 下添加新的 YAML 文件
+2. 在 `bitrouter-config/src/registry.rs` 中注册
+3. 添加注册和配置加载的测试
+4. 更新文档
+
+如果提供商引入新协议，还需要更新 `bitrouter-core`、`bitrouter-api` 和运行时路由器。
+
+## 工作区架构
+
+BitRouter 组织为具有严格自底向上依赖的聚焦 crate：
+
+| 层级 | Crate | 职责 |
+|------|-------|------|
+| 1 | `bitrouter-core` | 共享 trait、类型、错误 |
+| 2 | `bitrouter-openai`、`-anthropic`、`-google` | 提供商适配器 |
+| 3 | `bitrouter-config` | YAML 配置、提供商注册、路由 |
+| 3 | `bitrouter-guardrails` | 代理防火墙 |
+| 3 | `bitrouter-observe` | 支出追踪和指标 |
+| 3 | `bitrouter-accounts` | 账户和会话管理 |
+| 4 | `bitrouter-api` | 可复用 HTTP 过滤器（Warp） |
+| 5 | `bitrouter` | CLI、运行时、TUI |
+
+详见 [DEVELOPMENT.md](https://github.com/bitrouter/bitrouter/blob/main/DEVELOPMENT.md) 获取完整架构指南。
+
+## 社区
+
+- [Discord](https://discord.gg/G3zVrZDa5C)
+- [GitHub Issues](https://github.com/bitrouter/bitrouter/issues)
+- [Twitter/X](https://x.com/BitRouterAI)

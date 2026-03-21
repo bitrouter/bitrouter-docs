@@ -1,0 +1,110 @@
+---
+title: 可观测性
+description: 监控 BitRouter 中的代理会话、请求和路由决策。
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+BitRouter 跟踪通过代理的每个请求 — 成本、延迟、token 使用、错误和路由决策。所有可观测性通过 `ObserveCallback` trait 流转，在每个请求完成后触发。
+
+## 跟踪内容
+
+每个请求事件包含：
+
+| 字段 | 描述 |
+|------|------|
+| `route` | 虚拟模型名称（如 `default`、`fast`） |
+| `provider` | 处理请求的上游提供商 |
+| `model` | 上游模型 ID |
+| `account_id` | 调用者账户（来自 JWT） |
+| `latency_ms` | 端到端请求延迟 |
+| `input_tokens` | 输入 token 数 |
+| `output_tokens` | 输出 token 数 |
+| `success` | 请求是否成功 |
+| `error_type` | 失败时的错误类别（如 `Transport`、`Provider`、`AccessDenied`） |
+
+## 指标
+
+BitRouter 收集内存中的按路由指标，包含按端点细分：
+
+- **请求计数** — 每个路由和端点的总请求数和错误数
+- **错误率** — 错误数 / 总请求数
+- **延迟百分位** — p50 和 p99（有界采样，每路由最多 10k 样本）
+- **平均 token 使用** — 平均输入和输出 token（仅非流式请求）
+- **最后使用** — 最近请求的时间戳
+
+通过管理 API 查询指标：
+
+```bash
+curl http://localhost:8787/admin/metrics
+```
+
+示例响应：
+
+```json
+{
+  "uptime_seconds": 3600,
+  "routes": {
+    "default": {
+      "total_requests": 150,
+      "total_errors": 3,
+      "error_rate": 0.02,
+      "latency_p50_ms": 280,
+      "latency_p99_ms": 1200,
+      "avg_input_tokens": 500,
+      "avg_output_tokens": 200,
+      "last_used": 1710000000,
+      "by_endpoint": {
+        "openai:gpt-4o": {
+          "total_requests": 100,
+          "total_errors": 1,
+          "latency_p50_ms": 250,
+          "latency_p99_ms": 1100
+        },
+        "anthropic:claude-sonnet-4-20250514": {
+          "total_requests": 50,
+          "total_errors": 2,
+          "latency_p50_ms": 320,
+          "latency_p99_ms": 1400
+        }
+      }
+    }
+  }
+}
+```
+
+<Callout type="info">
+指标仅保存在内存中，进程重启后重置。
+</Callout>
+
+## 支出追踪
+
+BitRouter 使用提供商的 token 定价为每个请求计算成本，并将支出日志持久化到配置的数据库。
+
+### 成本模型
+
+使用细粒度 token 定价按请求计算成本（每百万 token）：
+
+| Token 类别 | 描述 |
+|------------|------|
+| `input_tokens.no_cache` | 非缓存输入 token |
+| `input_tokens.cache_read` | 缓存读取输入 token |
+| `input_tokens.cache_write` | 缓存写入输入 token |
+| `output_tokens.text` | 文本输出 token |
+| `output_tokens.reasoning` | 推理输出 token |
+
+### 支出日志
+
+每个请求生成一条支出日志，包含：
+
+- 请求元数据（模型、提供商、账户、会话）
+- Token 计数（输入、输出）
+- 计算的成本
+- 延迟
+- 成功/失败状态和错误类型
+
+支出日志存储在配置的数据库中（`sqlite://`、`postgres://` 或 `mysql://`）。表通过迁移自动创建。
+
+## 流式请求
+
+对于流式请求，指标中仅记录流开始时间延迟和请求/错误计数。token 使用在流完成前不可用，因此 `avg_input_tokens` 和 `avg_output_tokens` 仅反映非流式请求。

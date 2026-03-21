@@ -1,0 +1,110 @@
+---
+title: Observability
+description: Monitor agent sessions, requests, and routing decisions in BitRouter.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+BitRouter tracks every request that flows through the proxy — cost, latency, token usage, errors, and routing decisions. All observability flows through the `ObserveCallback` trait, which fires after every request with full context.
+
+## What gets tracked
+
+Each request event includes:
+
+| Field | Description |
+|-------|-------------|
+| `route` | The virtual model name (e.g. `default`, `fast`) |
+| `provider` | The upstream provider that handled the request |
+| `model` | The upstream model ID |
+| `account_id` | The caller's account (from JWT) |
+| `latency_ms` | End-to-end request latency |
+| `input_tokens` | Input token count |
+| `output_tokens` | Output token count |
+| `success` | Whether the request succeeded |
+| `error_type` | Error category on failure (e.g. `Transport`, `Provider`, `AccessDenied`) |
+
+## Metrics
+
+BitRouter collects in-memory per-route metrics with per-endpoint breakdowns:
+
+- **Request count** — total requests and errors per route and endpoint
+- **Error rate** — errors / total requests
+- **Latency percentiles** — p50 and p99 (bounded sampling, up to 10k samples per route)
+- **Average token usage** — avg input and output tokens (non-streaming requests only)
+- **Last used** — timestamp of the most recent request
+
+Query metrics via the admin API:
+
+```bash
+curl http://localhost:8787/admin/metrics
+```
+
+Example response:
+
+```json
+{
+  "uptime_seconds": 3600,
+  "routes": {
+    "default": {
+      "total_requests": 150,
+      "total_errors": 3,
+      "error_rate": 0.02,
+      "latency_p50_ms": 280,
+      "latency_p99_ms": 1200,
+      "avg_input_tokens": 500,
+      "avg_output_tokens": 200,
+      "last_used": 1710000000,
+      "by_endpoint": {
+        "openai:gpt-4o": {
+          "total_requests": 100,
+          "total_errors": 1,
+          "latency_p50_ms": 250,
+          "latency_p99_ms": 1100
+        },
+        "anthropic:claude-sonnet-4-20250514": {
+          "total_requests": 50,
+          "total_errors": 2,
+          "latency_p50_ms": 320,
+          "latency_p99_ms": 1400
+        }
+      }
+    }
+  }
+}
+```
+
+<Callout type="info">
+Metrics are held in memory only and reset on process restart.
+</Callout>
+
+## Spend tracking
+
+BitRouter calculates cost for every request using the provider's token pricing and persists spend logs to the configured database.
+
+### Cost model
+
+Costs are calculated per-request using granular token pricing (per million tokens):
+
+| Token category | Description |
+|----------------|-------------|
+| `input_tokens.no_cache` | Non-cached input tokens |
+| `input_tokens.cache_read` | Cache-read input tokens |
+| `input_tokens.cache_write` | Cache-write input tokens |
+| `output_tokens.text` | Text output tokens |
+| `output_tokens.reasoning` | Reasoning output tokens |
+
+### Spend logs
+
+Each request produces a spend log entry with:
+
+- Request metadata (model, provider, account, session)
+- Token counts (input, output)
+- Calculated cost
+- Latency
+- Success/failure status and error type
+
+Spend logs are stored in the configured database (`sqlite://`, `postgres://`, or `mysql://`). The table is created automatically via migrations.
+
+## Streaming requests
+
+For streaming requests, only the time-to-stream-start latency and request/error counts are recorded in metrics. Token usage is not available until the stream completes, so `avg_input_tokens` and `avg_output_tokens` reflect non-streaming requests only.

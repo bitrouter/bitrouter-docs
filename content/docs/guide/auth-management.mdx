@@ -1,0 +1,130 @@
+---
+title: Auth Management
+description: Manage Ed25519 account keys and JWT tokens for BitRouter API access.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+BitRouter uses self-signed JWTs for authentication. Tokens are signed by your local web3 wallet key — there is no central auth server. The signer's CAIP-10 address in the token's `iss` claim is the sole identity.
+
+## Create an account key
+
+Generate a local Ed25519 keypair:
+
+```bash
+bitrouter account --generate-key
+```
+
+This creates a keypair under `<home>/.keys/` and sets it as the active account. To list all keys:
+
+```bash
+bitrouter account --list
+```
+
+To switch the active account:
+
+```bash
+bitrouter account --set <pubkey-prefix-or-index>
+```
+
+## Generate a JWT
+
+Sign a token with the active account key:
+
+```bash
+bitrouter keygen --exp 30d --scope api --name default
+```
+
+This creates a token, prints it, and saves it locally under the name `default`.
+
+### Common options
+
+```bash
+# API token with model restrictions and budget
+bitrouter keygen \
+  --scope api \
+  --exp 7d \
+  --models "openai:*,anthropic:claude-*" \
+  --budget 5000000 \
+  --budget-scope session \
+  --budget-range "rounds:10" \
+  --name restricted
+
+# Admin token (for account management operations)
+bitrouter keygen --scope admin --exp 1h --name admin-temp
+
+# EVM chain signing
+bitrouter keygen --chain base --scope api --exp 30d --name evm-token
+```
+
+### Token scopes
+
+| Scope | Access |
+|-------|--------|
+| `api` | LLM inference endpoints only |
+| `admin` | Account management operations (scoped to the caller's own account) |
+
+### Budget controls
+
+| Field | Description |
+|-------|-------------|
+| `--budget` | Limit in micro-USD (1,000,000 = $1.00) |
+| `--budget-scope` | `session` (per chat session) or `account` (across all sessions) |
+| `--budget-range` | `rounds:<N>` (next N conversation rounds) or `duration:<seconds>s` (time window) |
+
+### Model allowlist
+
+The `--models` flag accepts comma-separated patterns with wildcards:
+
+```bash
+--models "openai:gpt-4o,anthropic:*"
+```
+
+When omitted, the token can access all models configured on the server.
+
+## Manage saved tokens
+
+```bash
+# List all saved tokens
+bitrouter keys --list
+
+# Show decoded claims of a token
+bitrouter keys --show default
+
+# Remove a saved token
+bitrouter keys --rm default
+```
+
+## Use a token
+
+Pass the JWT as a Bearer token in API requests:
+
+```bash
+curl http://localhost:8787/v1/chat/completions \
+  -H "Authorization: Bearer <your-jwt>" \
+  -H "Content-Type: application/json" \
+  -d '{"model": "openai:gpt-4o", "messages": [{"role": "user", "content": "Hello"}]}'
+```
+
+## Supported signing algorithms
+
+| Algorithm | Chain | Identity format |
+|-----------|-------|-----------------|
+| `SOL_EDDSA` | Solana | `solana:<chain-ref>:<base58-pubkey>` |
+| `EIP191K` | EVM (Base, Ethereum, etc.) | `eip155:<chain-id>:<hex-address>` |
+
+The algorithm is automatically selected based on the `--chain` flag (default: `solana`).
+
+## JWT claims reference
+
+| Claim | Required | Description |
+|-------|----------|-------------|
+| `iss` | Yes | CAIP-10 account identifier of the signer |
+| `chain` | Yes | CAIP-2 chain identifier |
+| `scope` | Yes | `admin` or `api` |
+| `iat` | No | Issued-at UNIX timestamp |
+| `exp` | No | Expiration UNIX timestamp |
+| `models` | No | Array of allowed model name patterns |
+| `budget` | No | Budget limit in micro-USD |
+| `budget_scope` | No | `session` or `account` |
+| `budget_range` | No | `{"type": "rounds", "count": N}` or `{"type": "duration", "seconds": N}` |

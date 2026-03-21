@@ -1,0 +1,145 @@
+---
+title: Configuration
+description: Configure bitrouter.yaml, environment variables, and BITROUTER_HOME.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## Home directory
+
+BitRouter resolves its working directory in this order:
+
+1. `--home-dir <PATH>` if provided on the command line
+2. The current working directory, if `./bitrouter.yaml` exists
+3. `BITROUTER_HOME` environment variable, if it points to an existing directory
+4. `~/.bitrouter` (default fallback — scaffolded automatically)
+
+### Directory layout
+
+```text
+<home>/
+├── bitrouter.yaml   # Main configuration
+├── .env             # Environment variables (auto-loaded)
+├── .gitignore       # Ignores logs/, run/, .env
+├── .keys/           # Local Ed25519 account keys and JWTs
+├── logs/            # Server logs
+└── run/             # PID files and runtime state
+```
+
+## Setup wizard
+
+The easiest way to create your configuration:
+
+```bash
+bitrouter init
+```
+
+This launches an interactive wizard that offers two paths:
+
+- **Cloud** — connect to BitRouter Cloud Node with x402 payments (requires a Solana wallet)
+- **BYOK** — bring your own API keys for OpenAI, Anthropic, Google, or custom providers
+
+The wizard generates `bitrouter.yaml` and `.env` for you.
+
+## Configuration file
+
+The main config file is `bitrouter.yaml`. Here's a full example:
+
+```yaml
+server:
+  listen: 127.0.0.1:8787
+  log_level: info
+
+database:
+  url: "sqlite://${BITROUTER_HOME}/bitrouter.db?mode=rwc"
+
+providers:
+  openai:
+    api_key: ${OPENAI_API_KEY}
+  anthropic:
+    api_key: ${ANTHROPIC_API_KEY}
+
+models:
+  default:
+    strategy: priority
+    endpoints:
+      - provider: openai
+        model_id: gpt-4o
+  fast:
+    strategy: load_balance
+    endpoints:
+      - provider: openai
+        model_id: gpt-4o-mini
+      - provider: anthropic
+        model_id: claude-haiku-4-5-20251001
+
+guardrails:
+  enabled: true
+  upgoing:
+    api_keys: redact
+    private_keys: block
+```
+
+### Server
+
+| Field | Default | Description |
+|-------|---------|-------------|
+| `listen` | `127.0.0.1:8787` | Address and port for the API server |
+| `log_level` | `info` | Tracing log level |
+| `control.socket` | `bitrouter.sock` | Unix socket for daemon control |
+
+### Database
+
+| Field | Default | Description |
+|-------|---------|-------------|
+| `url` | SQLite in home dir | Connection URL — supports `sqlite://`, `postgres://`, `mysql://` |
+
+## Environment variables
+
+BitRouter loads `<home>/.env` automatically, then reads process environment variables. Use `${VAR}` placeholders anywhere in `bitrouter.yaml`:
+
+```yaml
+providers:
+  openai:
+    api_key: ${OPENAI_API_KEY}
+    api_base: ${OPENAI_BASE_URL}
+```
+
+### `.env` file
+
+```bash
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+GOOGLE_API_KEY=AIza...
+```
+
+<Callout type="warn">
+The `.env` file may contain secrets. The scaffolded `.gitignore` excludes it by default — do not commit it to version control.
+</Callout>
+
+## Zero-config mode
+
+If provider API keys exist in your environment, BitRouter auto-detects them and enables direct routing without a config file:
+
+```bash
+export OPENAI_API_KEY=sk-...
+bitrouter serve
+```
+
+You can then use `openai:gpt-4o` as the model name. Auto-detection uses the `env_prefix` defined in each built-in provider (e.g. `OPENAI` maps `OPENAI_API_KEY` and `OPENAI_BASE_URL`).
+
+## CLI overrides
+
+Every path and the database URL can be overridden per-invocation:
+
+```bash
+bitrouter serve \
+  --home-dir /opt/bitrouter \
+  --config-file /etc/bitrouter/bitrouter.yaml \
+  --env-file /etc/bitrouter/.env \
+  --run-dir /var/run/bitrouter \
+  --logs-dir /var/log/bitrouter \
+  --db "postgres://user:pass@localhost/bitrouter"
+```
+
+These flags are available on every subcommand.

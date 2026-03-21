@@ -1,11 +1,15 @@
 ---
 title: Manual
-description: Step-by-step manual onboarding for developers
+description: Bring your own API keys and self-host BitRouter
 ---
 import { Callout } from 'fumadocs-ui/components/callout';
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
-Welcome to BitRouter — the open-source LLM gateway for AI agent runtimes. Access models from OpenAI, Anthropic, Google, and more through a single endpoint.
+Use your own OpenAI, Anthropic, or Google API keys with BitRouter. Run the proxy on your own infrastructure with full control over routing and deployment.
+
+<Callout type="info">
+Don't have your own API keys? Use [BitRouter Cloud](/docs/overview/default-guide) instead — no provider keys needed.
+</Callout>
 
 ## Agent Skills (Recommended)
 
@@ -64,7 +68,7 @@ bitrouter serve
 bitrouter start
 ```
 
-On first launch with no providers configured, BitRouter automatically runs an interactive setup wizard. You can also run it explicitly:
+On first launch with no providers configured, BitRouter automatically runs an interactive setup wizard. Select **Bring Your Own Key** when prompted. You can also run the wizard explicitly:
 
 ```bash
 bitrouter init
@@ -154,285 +158,11 @@ Global path options available on all subcommands:
 
 See the [bitrouter repository](https://github.com/bitrouter/bitrouter) for full source code and documentation.
 
----
-
-<Callout type="info">
-The rest of this guide covers using **BitRouter Cloud** via [app.bitrouter.ai](https://app.bitrouter.ai). Whether you self-host or use the cloud, the API is the same OpenAI-compatible interface.
-</Callout>
-
-## Quick Start
-
-Get started in 3 simple steps and make your first API call in under 5 minutes.
-
-### Step 1: Create Your Account
-
-Visit [App](https://app.bitrouter.ai) and sign up using social login or by connecting an existing account.
-
-### Step 2: Fund Your Account
-
-Add credits at [Credits](https://app.bitrouter.ai/dashboard/credits). Your funds remain in your account until the moment of use — no prepaid credit pools or minimum commitments.
-
-### Step 3: Generate a Payment Delegation Key (PDK)
-
-1. Go to [Keys](https://app.bitrouter.ai/dashboard/keys)
-2. Click "Generate PDK"
-3. Configure permissions (spending limits, expiration, allowed recipients)
-4. Copy your PDK (format: `br-p-[base58-encoded-key]`)
-
-<Callout type="info">
-An agent authority lets AI agents pay for services on your behalf within boundaries you define. Learn more about how agent wallets work and advanced configuration options in the [Agent Wallet](/docs/overview/agent-wallet#agent-authority) guide.
-
-For advanced use cases, you can also authenticate directly with a signer via the SDK. When using a raw signer, the base URL is `https://beta.bitrouter.ai`; when using a PDK, the base URL is `https://api.app.bitrouter.ai/v1`. See the [SDK Reference](/docs/sdk-reference) to learn more.
-</Callout>
-
-
-## Making Your First Request
-
-<Callout type="info">
-Want to try it out without writing code? Experiment with models directly in the [BitRouter Playground](https://app.bitrouter.ai/playground/llms).
-</Callout>
-
-<Callout type="info">
-The examples below use the chat completions endpoint for models. BitRouter also supports tools (MCP) and agents (A2A). See [Models, Tools, & Agents](/docs/overview/service-primitives) for all available service primitives and endpoints.
-</Callout>
-
-### Basic Example
-
-```bash
-curl -X POST "https://api.app.bitrouter.ai/v1/chat/completions" \
-  -H "Authorization: Bearer br-p-[your-api-key]" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "openai/gpt-5",
-    "messages": [
-      {"role": "user", "content": "Hello! What can you help me with?"}
-    ],
-    "max_tokens": 200
-  }'
-```
-
-### Code Examples
-
-<Tabs items={['JavaScript', 'Python']}>
-<Tab value="JavaScript">
-
-```javascript
-const response = await fetch('https://api.app.bitrouter.ai/v1/chat/completions', {
-  method: 'POST',
-  headers: {
-    'Authorization': 'Bearer br-p-[your-api-key]',
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    model: 'anthropic/claude-opus-4.6',
-    messages: [
-      { role: 'user', content: 'Explain how BitRouter works' }
-    ],
-    max_tokens: 300
-  })
-});
-
-const data = await response.json();
-console.log(data.choices[0].message.content);
-```
-
-</Tab>
-<Tab value="Python">
-
-```python
-import requests
-
-response = requests.post(
-    'https://api.app.bitrouter.ai/v1/chat/completions',
-    headers={
-        'Authorization': 'Bearer br-p-[your-api-key]',
-        'Content-Type': 'application/json'
-    },
-    json={
-        'model': 'openai/gpt-5',
-        'messages': [
-            {'role': 'user', 'content': 'What is quantum computing?'}
-        ],
-        'max_tokens': 300
-    }
-)
-
-result = response.json()
-print(result['choices'][0]['message']['content'])
-```
-
-</Tab>
-</Tabs>
-
-### Streaming
-
-For real-time, token-by-token responses, add `stream: true` to your request. Responses use the Server-Sent Events format:
-
-<Tabs items={['JavaScript', 'Python']}>
-<Tab value="JavaScript">
-
-```javascript
-const response = await fetch('https://api.app.bitrouter.ai/v1/chat/completions', {
-  method: 'POST',
-  headers: {
-    'Authorization': 'Bearer br-p-[your-api-key]',
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    model: 'anthropic/claude-opus-4.6',
-    messages: [{ role: 'user', content: 'Tell me a short story' }],
-    stream: true,
-    max_tokens: 500
-  })
-});
-
-const reader = response.body.getReader();
-const decoder = new TextDecoder();
-
-while (true) {
-  const { done, value } = await reader.read();
-  if (done) break;
-
-  const lines = decoder.decode(value).split('\n').filter(line => line.trim());
-  for (const line of lines) {
-    if (line.startsWith('data: ') && line.slice(6) !== '[DONE]') {
-      const content = JSON.parse(line.slice(6)).choices[0]?.delta?.content;
-      if (content) process.stdout.write(content);
-    }
-  }
-}
-```
-
-</Tab>
-<Tab value="Python">
-
-```python
-import requests
-import json
-
-response = requests.post(
-    'https://api.app.bitrouter.ai/v1/chat/completions',
-    headers={
-        'Authorization': 'Bearer br-p-[your-api-key]',
-        'Content-Type': 'application/json'
-    },
-    json={
-        'model': 'openai/gpt-5',
-        'messages': [{'role': 'user', 'content': 'Tell me a story'}],
-        'stream': True,
-        'max_tokens': 500
-    },
-    stream=True
-)
-
-for line in response.iter_lines():
-    if line:
-        line = line.decode('utf-8')
-        if line.startswith('data: '):
-            data = line[6:]
-            if data == '[DONE]':
-                break
-            content = json.loads(data)['choices'][0]['delta'].get('content', '')
-            if content:
-                print(content, end='', flush=True)
-```
-
-</Tab>
-</Tabs>
-
-Each SSE message contains a JSON chunk with `choices[0].delta.content`. The stream ends with `data: [DONE]`.
-
-## Multi-Modal Generation
-
-BitRouter supports image generation, image editing, and video generation alongside chat completions.
-
-<Callout type="info">
-For complete endpoint documentation, parameters, and code examples for image and video generation, see the [API Reference](/docs/api-reference).
-</Callout>
-
-## SDK
-
-BitRouter provides official SDKs for both **TypeScript** and **Python** with automatic authentication and payment handling.
-
-<Callout type="info">
-For installation, authentication setup, and usage examples, see the [SDK Reference](/docs/sdk-reference).
-</Callout>
-
-## Available Models
-
-BitRouter offers 200+ models across chat, image, and video generation. Use intelligent routing (e.g. `openai/gpt-5`) to automatically route to the best provider, or specify a provider directly.
-
-<Callout type="info">
-For the full model list, discovery API, and routing options, see the [API Reference](/docs/api-reference). You can also browse models visually at the [Marketplace](https://app.bitrouter.ai/marketplace).
-</Callout>
-
-## Request Parameters
-
-Standard OpenAI-compatible parameters are supported:
-
-```json
-{
-  "model": "openai/gpt-5",           // Required: Model identifier
-  "messages": [                        // Required: Conversation messages
-    {"role": "system", "content": "You are a helpful assistant."},
-    {"role": "user", "content": "Hello!"}
-  ],
-  "stream": false,                     // Optional: Enable streaming (default: false)
-  "max_tokens": 500,                   // Optional: Maximum tokens to generate
-  "temperature": 0.7,                  // Optional: Sampling temperature (0.0-2.0)
-  "top_p": 1.0,                        // Optional: Nucleus sampling
-  "frequency_penalty": 0.0,            // Optional: Frequency penalty
-  "presence_penalty": 0.0              // Optional: Presence penalty
-}
-```
-
-## Authentication & Security
-
-Manage your PDKs and API keys at the [Dashboard](https://bitrouter.ai/dashboard) — generate new keys, monitor usage, and revoke compromised ones.
-
-<Callout type="warn">
-Store keys securely using environment variables. Never commit them to version control or expose them in client-side code. If a key is compromised, revoke it immediately from the dashboard and generate a replacement.
-</Callout>
-
-```bash
-export BITROUTER_API_KEY="br-p-[your-key]"
-```
-
-## Usage & Billing
-
-### How Costs Work
-
-Payments are calculated based on the type of request:
-
-- **Chat Completions**: Billed per token (input + output). Each provider sets their own per-token pricing.
-- **Image Generation & Editing**: Billed per generation. Pricing varies by model and resolution.
-- **Video Generation**: Billed per generation based on resolution and duration (e.g., 720p/5s vs 1080p/10s).
-
-Use the quote endpoints to get exact price estimates before committing to a generation. See the [API Reference](/docs/api-reference) for details.
-
-### Monitor Your Usage
-
-Track your spending and usage at [Usage](https://app.bitrouter.ai/dashboard/usage):
-- Current balance
-- Usage history
-- Spending by model
-- Transaction history
-
-### Funding Your Account
-
-Add credits to your account via USDC transfer. Fiat funding options are coming soon.
-
-**Supported Networks:**
-- Base (USDC)
-- Solana (USDC)
-
 ## Integrations
 
 BitRouter is OpenAI-compatible, so it works with any tool that supports custom OpenAI endpoints. See the integration guides for popular AI coding tools:
 
 - [OpenClaw](/docs/overview/integrate-openclaw)
-- [OpenCode](/docs/overview/integrate-opencode)
-- [Claude Code](/docs/overview/integrate-claude-code)
 
 ## Troubleshooting
 

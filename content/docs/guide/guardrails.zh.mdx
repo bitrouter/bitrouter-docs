@@ -1,0 +1,148 @@
+---
+title: 安全护栏
+description: 通过 BitRouter 代理防火墙检查、编辑或拦截代理流量。
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+BitRouter 内置代理层防火墙，检查代理与 LLM 提供商之间流动的内容。它透明地包装模型路由器 — 你的代理和提供商无需任何更改。
+
+## 启用护栏
+
+护栏默认启用。要禁用：
+
+```yaml
+guardrails:
+  enabled: false
+```
+
+## 流量方向
+
+- **Upgoing** — 从代理到 LLM 提供商的出站流量（用户 → 模型）
+- **Downgoing** — 从 LLM 提供商返回代理的入站流量（模型 → 用户）
+
+## 内置模式
+
+BitRouter 内置 7 种检测模式：
+
+### 出站（Upgoing）
+
+| 模式 ID | 检测内容 |
+|---------|----------|
+| `api_keys` | OpenAI、Anthropic、AWS、GCP、GitHub、Stripe 的 API 密钥 |
+| `private_keys` | PEM 编码的私钥（RSA、EC、Ed25519 等） |
+| `credentials` | 内联密码、Basic Auth 头、数据库连接字符串 |
+| `pii_emails` | 电子邮件地址 |
+| `pii_phone_numbers` | 电话号码 |
+| `ip_addresses` | IPv4 地址（非本地回环） |
+
+### 入站（Downgoing）
+
+| 模式 ID | 检测内容 |
+|---------|----------|
+| `suspicious_commands` | 危险 shell 命令（`rm -rf /`、`curl \| sh`、fork 炸弹等） |
+
+## 操作
+
+每个模式可以分配三种操作之一：
+
+| 操作 | 行为 |
+|------|------|
+| `warn` | 记录警告但允许内容通过（默认） |
+| `redact` | 替换匹配内容后转发 |
+| `block` | 拒绝整个请求并返回错误 |
+
+## 按模式设置操作
+
+覆盖特定模式的默认 `warn` 操作：
+
+```yaml
+guardrails:
+  upgoing:
+    api_keys: redact
+    private_keys: block
+    credentials: block
+  downgoing:
+    suspicious_commands: block
+```
+
+## 禁用特定模式
+
+跳过不需要的模式：
+
+```yaml
+guardrails:
+  disabled_patterns:
+    - ip_addresses
+    - pii_phone_numbers
+```
+
+## 添加自定义模式
+
+定义自己的基于正则表达式的检测规则：
+
+```yaml
+guardrails:
+  custom_patterns:
+    - name: internal_token
+      regex: "myapp_[A-Za-z0-9]{32}"
+      direction: upgoing
+
+    - name: malicious_url
+      regex: "https://evil\\.com"
+      direction: downgoing
+
+    - name: sensitive_id
+      regex: "ACCT-[0-9]{8}"
+      direction: both
+
+  custom_upgoing:
+    internal_token: block
+
+  custom_downgoing:
+    malicious_url: block
+```
+
+`direction` 字段控制模式检查的流量方向：`upgoing`、`downgoing` 或 `both`。自定义模式的操作默认为 `warn`，除非在 `custom_upgoing` 或 `custom_downgoing` 中覆盖。
+
+## 配置拦截消息
+
+控制内容被拦截时包含的信息：
+
+```yaml
+guardrails:
+  block_message:
+    include_details: true     # 包含拦截原因
+    include_help_link: true   # 包含 BitRouter 仓库链接
+```
+
+## 完整示例
+
+```yaml
+guardrails:
+  enabled: true
+
+  disabled_patterns:
+    - ip_addresses
+
+  upgoing:
+    api_keys: redact
+    private_keys: block
+    credentials: block
+    pii_emails: warn
+
+  downgoing:
+    suspicious_commands: block
+
+  custom_patterns:
+    - name: internal_token
+      regex: "myapp_[A-Za-z0-9]{32}"
+      direction: upgoing
+
+  custom_upgoing:
+    internal_token: redact
+
+  block_message:
+    include_details: true
+    include_help_link: true
+```

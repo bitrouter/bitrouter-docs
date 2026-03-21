@@ -1,0 +1,130 @@
+---
+title: 认证管理
+description: 管理用于 BitRouter API 访问的 Ed25519 账户密钥和 JWT 令牌。
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+BitRouter 使用自签名 JWT 进行认证。令牌由本地 web3 钱包密钥签名 — 没有中央认证服务器。令牌 `iss` 声明中签名者的 CAIP-10 地址是唯一身份标识。
+
+## 创建账户密钥
+
+生成本地 Ed25519 密钥对：
+
+```bash
+bitrouter account --generate-key
+```
+
+密钥对创建在 `<home>/.keys/` 下并设为活跃账户。列出所有密钥：
+
+```bash
+bitrouter account --list
+```
+
+切换活跃账户：
+
+```bash
+bitrouter account --set <公钥前缀或索引>
+```
+
+## 生成 JWT
+
+使用活跃账户密钥签发令牌：
+
+```bash
+bitrouter keygen --exp 30d --scope api --name default
+```
+
+创建令牌后打印并以 `default` 名称保存到本地。
+
+### 常用选项
+
+```bash
+# 带模型限制和预算的 API 令牌
+bitrouter keygen \
+  --scope api \
+  --exp 7d \
+  --models "openai:*,anthropic:claude-*" \
+  --budget 5000000 \
+  --budget-scope session \
+  --budget-range "rounds:10" \
+  --name restricted
+
+# 管理令牌（用于账户管理操作）
+bitrouter keygen --scope admin --exp 1h --name admin-temp
+
+# EVM 链签名
+bitrouter keygen --chain base --scope api --exp 30d --name evm-token
+```
+
+### 令牌范围
+
+| 范围 | 访问权限 |
+|------|----------|
+| `api` | 仅 LLM 推理端点 |
+| `admin` | 账户管理操作（限于调用者自己的账户） |
+
+### 预算控制
+
+| 字段 | 描述 |
+|------|------|
+| `--budget` | 微美元限额（1,000,000 = $1.00） |
+| `--budget-scope` | `session`（每个聊天会话）或 `account`（所有会话） |
+| `--budget-range` | `rounds:<N>`（接下来 N 轮对话）或 `duration:<seconds>s`（时间窗口） |
+
+### 模型允许列表
+
+`--models` 标志接受逗号分隔的通配符模式：
+
+```bash
+--models "openai:gpt-4o,anthropic:*"
+```
+
+省略时，令牌可以访问服务器上配置的所有模型。
+
+## 管理已保存的令牌
+
+```bash
+# 列出所有已保存的令牌
+bitrouter keys --list
+
+# 显示令牌的解码声明
+bitrouter keys --show default
+
+# 删除已保存的令牌
+bitrouter keys --rm default
+```
+
+## 使用令牌
+
+在 API 请求中以 Bearer token 传递 JWT：
+
+```bash
+curl http://localhost:8787/v1/chat/completions \
+  -H "Authorization: Bearer <your-jwt>" \
+  -H "Content-Type: application/json" \
+  -d '{"model": "openai:gpt-4o", "messages": [{"role": "user", "content": "Hello"}]}'
+```
+
+## 支持的签名算法
+
+| 算法 | 链 | 身份格式 |
+|------|------|----------|
+| `SOL_EDDSA` | Solana | `solana:<chain-ref>:<base58-pubkey>` |
+| `EIP191K` | EVM（Base、Ethereum 等） | `eip155:<chain-id>:<hex-address>` |
+
+算法根据 `--chain` 标志自动选择（默认：`solana`）。
+
+## JWT 声明参考
+
+| 声明 | 必需 | 描述 |
+|------|------|------|
+| `iss` | 是 | 签名者的 CAIP-10 账户标识符 |
+| `chain` | 是 | CAIP-2 链标识符 |
+| `scope` | 是 | `admin` 或 `api` |
+| `iat` | 否 | 签发时间 UNIX 时间戳 |
+| `exp` | 否 | 过期时间 UNIX 时间戳 |
+| `models` | 否 | 允许的模型名称模式数组 |
+| `budget` | 否 | 微美元预算限额 |
+| `budget_scope` | 否 | `session` 或 `account` |
+| `budget_range` | 否 | `{"type": "rounds", "count": N}` 或 `{"type": "duration", "seconds": N}` |

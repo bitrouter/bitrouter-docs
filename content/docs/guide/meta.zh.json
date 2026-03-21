@@ -1,0 +1,21 @@
+{
+  "title": "指南",
+  "root": true,
+  "pages": [
+    "index",
+    "---安装配置---",
+    "installation",
+    "configuration",
+    "model-providers",
+    "---功能特性---",
+    "guardrails",
+    "observability",
+    "auth-management",
+    "---协议---",
+    "mcp",
+    "a2a",
+    "402-payment",
+    "---社区---",
+    "contributing"
+  ]
+}

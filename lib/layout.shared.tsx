@@ -12,8 +12,8 @@ const sharedNav: BaseLayoutProps["nav"] = {
 
 const sharedLinks: BaseLayoutProps["links"] = [
   { text: "Documentation", url: "/docs/overview", active: "nested-url" },
-  { text: "Benchmark", url: "/benchmark" },
-  { text: "APIs", url: "/apis" },
+  // { text: "Benchmark", url: "/benchmark" }, // temporarily disabled
+  // { text: "APIs", url: "/apis" }, // temporarily disabled
   { text: "Blog", url: "/blog" },
   { text: "Discord", url: "https://discord.gg/G3zVrZDa5C", external: true },
   { text: "Twitter/X", url: "https://x.com/BitRouterAI", external: true },

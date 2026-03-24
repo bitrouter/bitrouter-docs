@@ -5,71 +5,51 @@ on:
     types: [bitrouter-release]
 
 jobs:
-  open-issue:
-    name: Open update issue
+  update-docs:
+    name: Update docs for new release
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      id-token: write
+      contents: write
+      pull-requests: write
       issues: write
     steps:
-      - name: Fetch release notes
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - uses: anomalyco/opencode/github@latest
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release view "${{ github.event.client_payload.tag }}" \
-            --repo bitrouter/bitrouter \
-            --json body \
-            --jq '.body' > release_notes.md
+          BITROUTER_API_KEY: ${{ secrets.BITROUTER_API_KEY }}
+        with:
+          model: bitrouter/kimi-k2.5
+          prompt: |
+            BitRouter ${{ github.event.client_payload.tag }} was just released.
 
-      - name: Build issue body
-        run: |
-          TAG="${{ github.event.client_payload.tag }}"
-          cat > issue_body.md <<EOF
-          ## BitRouter $TAG released — docs update needed
+            Fetch the release notes by running:
+              gh release view ${{ github.event.client_payload.tag }} --repo bitrouter/bitrouter --json body --jq '.body'
 
-          <details>
-          <summary>Release notes</summary>
+            Based on the release notes, update the documentation in this repo:
 
-          $(cat release_notes.md)
+            1. Guide pages (content/docs/guide/):
+               - Update installation.mdx if install steps or dependencies changed
+               - Update configuration.mdx if config fields were added or changed
+               - Update model-providers.mdx if new providers were added
+               - Update guardrails.mdx, observability.mdx, auth-management.mdx, skills.mdx if those features changed
+               - Update mcp.mdx, a2a.mdx, 402-payment.mdx if protocol features changed
 
-          </details>
+            2. API reference (content/docs/api-reference/):
+               - Update openapi.yaml if the API surface changed
 
-          ### Checklist
+            3. Overview pages (content/docs/overview/):
+               - Update what-is-bitrouter.mdx if major new capabilities were added
 
-          **Guide pages** (\`content/docs/guide/\`)
-          - [ ] Review \`installation.mdx\` for new install steps or dependencies
-          - [ ] Review \`configuration.mdx\` for new/changed config fields
-          - [ ] Review \`model-providers.mdx\` for new provider support
-          - [ ] Review \`guardrails.mdx\` if guardrail features changed
-          - [ ] Review \`observability.mdx\` if observability features changed
-          - [ ] Review \`auth-management.mdx\` if auth features changed
-          - [ ] Review \`skills.mdx\` if skills features changed
-          - [ ] Review \`mcp.mdx\` / \`a2a.mdx\` / \`402-payment.mdx\` if protocol features changed
+            4. Chinese translations:
+               - For every .mdx file you modify, also update its .zh.mdx counterpart with the equivalent changes translated to Chinese
 
-          **API reference** (\`content/docs/api-reference/\`)
-          - [ ] Update \`openapi.yaml\` if API surface changed
-          - [ ] Regenerate provider endpoint pages if needed
+            5. If there are breaking changes (feat!: or BREAKING CHANGE in the notes):
+               - Add a migration section to the relevant guide page
 
-          **Chinese translations**
-          - [ ] Update \`.zh.mdx\` counterparts for every modified guide page
-          - [ ] Update \`.zh.mdx\` counterparts for every modified API reference page
-
-          **Overview pages** (\`content/docs/overview/\`)
-          - [ ] Review \`what-is-bitrouter.mdx\` if major new capabilities were added
-
-          **Migration guide** (if breaking changes)
-          - [ ] Add migration section for breaking changes
-
-          ---
-          *Opened automatically by [release-propagate](https://github.com/bitrouter/bitrouter/actions/workflows/release-propagate.yml)*
-          EOF
-
-      - name: Create issue
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh issue create \
-            --repo "${{ github.repository }}" \
-            --title "docs: update for BitRouter ${{ github.event.client_payload.tag }}" \
-            --body-file issue_body.md \
-            --label "docs,automation"
+            Only modify files where the release notes indicate actual changes. Do not make speculative edits.
+            Open a PR to main with branch chore/docs-${{ github.event.client_payload.tag }}.

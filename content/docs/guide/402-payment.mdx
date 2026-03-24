@@ -2,3 +2,122 @@
 title: 402 Payment
 description: HTTP 402-based agent-native payments in BitRouter.
 ---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+BitRouter uses the **Machine Payment Protocol (MPP)** for HTTP 402-based payments, enabling monetization of LLM inference, MCP tools, and A2A agents. MPP's charge intent is compatible with the x402-exact specification.
+
+Two payment networks are supported: **Tempo** (EVM) and **Solana**.
+
+## Configuration
+
+```yaml
+mpp:
+  enabled: true
+  realm: "bitrouter.example.com"       # auto-detected if omitted
+  secret_key: "${MPP_SECRET_KEY}"       # HMAC for stateless challenge verification
+
+  networks:
+    tempo:
+      recipient: "0xYourAddress"
+      escrow_contract: "0xEscrowAddr"
+      rpc_url: "https://rpc.tempo.xyz"
+      currency: "0xTokenAddress"         # TIP-20 token
+      fee_payer: true                    # sponsor gas fees
+
+    solana:                              # requires mpp-solana feature
+      recipient: "SolanaBase58Pubkey"
+      channel_program: "ProgramAddr"
+      network: "mainnet-beta"            # or "devnet"
+
+solana_rpc_url: "https://api.mainnet-beta.solana.com"
+```
+
+### MPP fields
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `enabled` | Yes | Enable the MPP payment layer |
+| `realm` | No | Realm identifier in 402 challenges (auto-detected from hostname) |
+| `secret_key` | Yes | HMAC secret for stateless challenge verification |
+| `networks` | Yes | One or more payment network configurations |
+
+## Networks
+
+### Tempo (EVM)
+
+Tempo uses a Tempo wallet with an EVM signer derived from the BitRouter master keypair. Payments are made in TIP-20 tokens via escrow contracts.
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `recipient` | Yes | Payment recipient EVM address |
+| `escrow_contract` | Yes | Escrow contract address |
+| `rpc_url` | No | Tempo RPC endpoint (default: `https://rpc.tempo.xyz`) |
+| `currency` | No | TIP-20 token contract address |
+| `fee_payer` | No | Sponsor gas fees for callers (default: `false`) |
+
+### Solana
+
+Solana payments use **Swig smart accounts** for session-based payment channels. Vouchers are signed with Ed25519 and support delegated session keys via Swig.
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `recipient` | Yes | Base58 public key |
+| `channel_program` | Yes | Payment channel program address |
+| `network` | No | `mainnet-beta` (default) or `devnet` |
+
+<Callout type="info">
+The top-level `solana_rpc_url` field configures the Solana RPC endpoint used for Swig wallet operations.
+</Callout>
+
+## Provider auth types
+
+BitRouter supports these auth modes for connecting to upstream providers:
+
+| Type | Description |
+|------|-------------|
+| `bearer` | Standard `Authorization: Bearer <key>` |
+| `header` | API key in a custom header (e.g. `x-api-key`) |
+| `mpp` | Wallet payment via MPP (Tempo or Solana) |
+| `custom` | Extension point with arbitrary `method` and `params` |
+
+## Pricing configuration
+
+BitRouter uses pricing configs to meter usage and generate 402 challenges. Pricing can be set for LLM providers (via the provider model catalog), MCP tools, and A2A agents.
+
+### MCP tool pricing
+
+```yaml
+mcp_server_pricing:
+  github:
+    default_cost_per_call: 0.001
+    tools:
+      search_repositories: 0.005
+```
+
+### A2A agent pricing
+
+```yaml
+a2a_agent_pricing:
+  research-agent:
+    default_cost_per_call: 0.01
+    methods:
+      "message/send": 0.05
+      "tasks/get": 0.01
+```
+
+### LLM token pricing
+
+LLM costs are calculated automatically using the provider's token pricing catalog. See [Observability](/docs/guide/observability) for details on cost tracking.
+
+## How it works
+
+1. A caller makes a request without payment credentials
+2. BitRouter returns `402 Payment Required` with a challenge describing the accepted payment methods and cost
+3. The caller submits payment proof (signed transaction, voucher, or channel state)
+4. BitRouter verifies the payment and proxies the request upstream
+5. Cost is metered and logged via the [observability](/docs/guide/observability) layer
+
+<Callout type="info">
+For LLM inference, token-level cost is calculated after the request completes. For MCP tools and A2A agents, the fixed per-call cost is charged upfront.
+</Callout>

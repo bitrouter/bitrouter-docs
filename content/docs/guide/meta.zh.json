@@ -2,11 +2,10 @@
   "title": "指南",
   "root": true,
   "pages": [
-    "index",
     "---安装配置---",
-    "installation",
     "configuration",
     "model-providers",
+    "cli-tui",
     "---功能特性---",
     "guardrails",
     "observability",
@@ -15,6 +14,7 @@
     "mcp",
     "a2a",
     "402-payment",
+    "agent-skills",
     "---社区---",
     "contributing"
   ]

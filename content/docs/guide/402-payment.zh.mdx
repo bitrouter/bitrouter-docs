@@ -2,3 +2,122 @@
 title: 402 支付
 description: BitRouter 中基于 HTTP 402 的代理原生支付。
 ---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+BitRouter 使用**机器支付协议（MPP）**实现基于 HTTP 402 的支付，支持将 LLM 推理、MCP 工具和 A2A 代理的访问货币化。MPP 的 charge intent 兼容 x402-exact 规范。
+
+支持两个支付网络：**Tempo**（EVM）和 **Solana**。
+
+## 配置
+
+```yaml
+mpp:
+  enabled: true
+  realm: "bitrouter.example.com"       # 如省略则自动检测
+  secret_key: "${MPP_SECRET_KEY}"       # 用于无状态质询验证的 HMAC
+
+  networks:
+    tempo:
+      recipient: "0xYourAddress"
+      escrow_contract: "0xEscrowAddr"
+      rpc_url: "https://rpc.tempo.xyz"
+      currency: "0xTokenAddress"         # TIP-20 代币
+      fee_payer: true                    # 赞助 gas 费用
+
+    solana:                              # 需要 mpp-solana 功能
+      recipient: "SolanaBase58Pubkey"
+      channel_program: "ProgramAddr"
+      network: "mainnet-beta"            # 或 "devnet"
+
+solana_rpc_url: "https://api.mainnet-beta.solana.com"
+```
+
+### MPP 字段
+
+| 字段 | 必填 | 描述 |
+|------|------|------|
+| `enabled` | 是 | 启用 MPP 支付层 |
+| `realm` | 否 | 402 质询中的领域标识符（从主机名自动检测） |
+| `secret_key` | 是 | 用于无状态质询验证的 HMAC 密钥 |
+| `networks` | 是 | 一个或多个支付网络配置 |
+
+## 网络
+
+### Tempo（EVM）
+
+Tempo 使用 Tempo 钱包，EVM 签名器从 BitRouter 主密钥对派生。支付通过托管合约以 TIP-20 代币进行。
+
+| 字段 | 必填 | 描述 |
+|------|------|------|
+| `recipient` | 是 | 收款方 EVM 地址 |
+| `escrow_contract` | 是 | 托管合约地址 |
+| `rpc_url` | 否 | Tempo RPC 端点（默认：`https://rpc.tempo.xyz`） |
+| `currency` | 否 | TIP-20 代币合约地址 |
+| `fee_payer` | 否 | 为调用者赞助 gas 费用（默认：`false`） |
+
+### Solana
+
+Solana 支付使用 **Swig 智能账户**进行基于会话的支付通道。凭证使用 Ed25519 签名，并通过 Swig 支持委托会话密钥。
+
+| 字段 | 必填 | 描述 |
+|------|------|------|
+| `recipient` | 是 | Base58 公钥 |
+| `channel_program` | 是 | 支付通道程序地址 |
+| `network` | 否 | `mainnet-beta`（默认）或 `devnet` |
+
+<Callout type="info">
+顶层 `solana_rpc_url` 字段配置用于 Swig 钱包操作的 Solana RPC 端点。
+</Callout>
+
+## 提供商认证类型
+
+BitRouter 支持以下认证模式连接上游提供商：
+
+| 类型 | 描述 |
+|------|------|
+| `bearer` | 标准 `Authorization: Bearer <key>` |
+| `header` | 自定义头中的 API 密钥（如 `x-api-key`） |
+| `mpp` | 通过 MPP 进行钱包支付（Tempo 或 Solana） |
+| `custom` | 带任意 `method` 和 `params` 的扩展点 |
+
+## 计价配置
+
+BitRouter 使用计价配置来计量使用量并生成 402 质询。可以为 LLM 提供商（通过提供商模型目录）、MCP 工具和 A2A 代理设置计价。
+
+### MCP 工具计价
+
+```yaml
+mcp_server_pricing:
+  github:
+    default_cost_per_call: 0.001
+    tools:
+      search_repositories: 0.005
+```
+
+### A2A 代理计价
+
+```yaml
+a2a_agent_pricing:
+  research-agent:
+    default_cost_per_call: 0.01
+    methods:
+      "message/send": 0.05
+      "tasks/get": 0.01
+```
+
+### LLM Token 计价
+
+LLM 成本使用提供商的 token 价格目录自动计算。详见[可观测性](/docs/guide/observability)了解成本追踪详情。
+
+## 工作原理
+
+1. 调用者发起不带支付凭证的请求
+2. BitRouter 返回 `402 Payment Required`，附带描述可接受支付方式和成本的质询
+3. 调用者提交支付证明（签名交易、凭证或通道状态）
+4. BitRouter 验证支付并将请求代理到上游
+5. 成本通过[可观测性](/docs/guide/observability)层计量和记录
+
+<Callout type="info">
+对于 LLM 推理，token 级别的成本在请求完成后计算。对于 MCP 工具和 A2A 代理，固定的每次调用成本预先收取。
+</Callout>

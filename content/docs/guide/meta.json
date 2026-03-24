@@ -2,11 +2,11 @@
   "title": "Guide",
   "root": true,
   "pages": [
-    "index",
     "---Setup---",
-    "installation",
+    "index",
     "configuration",
     "model-providers",
+    "cli-tui",
     "---Features---",
     "guardrails",
     "observability",
@@ -15,6 +15,7 @@
     "mcp",
     "a2a",
     "402-payment",
+    "agent-skills",
     "---Community---",
     "contributing"
   ]

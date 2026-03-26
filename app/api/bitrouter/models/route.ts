@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 
-// TODO: switch back to https://api.bitrouter.ai once custom domain SSL is resolved
-const API_BASE = "https://bitrouter-node-production.up.railway.app";
+const API_BASE = "https://api.bitrouter.ai";
 
 export async function GET() {
   try {

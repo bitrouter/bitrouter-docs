@@ -1,21 +1,99 @@
 ---
-title: 指南
-description: 安装、配置和运行 BitRouter 的实用指南。
+title: 安装
+description: 通过 Cargo 或从源码安装 BitRouter。
 ---
 
-import { Cards, Card } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Steps, Step } from 'fumadocs-ui/components/steps';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
-涵盖 BitRouter 从安装到生产运维的各个阶段的实用教程。
+## 前提条件
 
-<Cards>
-  <Card title="安装" href="/docs/guide/installation" description="通过 Cargo、Docker 或预编译版本安装 BitRouter。" />
-  <Card title="配置" href="/docs/guide/configuration" description="配置 bitrouter.yaml、环境变量和 BITROUTER_HOME。" />
-  <Card title="模型提供商" href="/docs/guide/model-providers" description="添加内置和自定义的 OpenAI / Anthropic / Google 兼容提供商。" />
-  <Card title="安全护栏" href="/docs/guide/guardrails" description="通过代理防火墙检查、编辑或拦截代理流量。" />
-  <Card title="可观测性" href="/docs/guide/observability" description="监控代理会话、请求和路由决策。" />
-  <Card title="认证管理" href="/docs/guide/auth-management" description="管理 Ed25519 账户密钥和 JWT 令牌。" />
-  <Card title="MCP" href="/docs/guide/mcp" description="BitRouter 的模型上下文协议集成。" />
-  <Card title="A2A" href="/docs/guide/a2a" description="Agent-to-Agent 协议支持。" />
-  <Card title="402 支付" href="/docs/guide/402-payment" description="基于 HTTP 402 的代理原生支付。" />
-  <Card title="贡献" href="/docs/guide/contributing" description="参与 BitRouter 开源项目。" />
-</Cards>
+- [Rust 工具链](https://rustup.rs/)（stable，1.80+）
+
+## 从 crates.io 安装
+
+最快的安装方式：
+
+```bash
+cargo install bitrouter
+```
+
+此命令会将 `bitrouter` 二进制文件构建并安装到 `~/.cargo/bin`。
+
+## 从源码安装
+
+克隆仓库并使用所有默认功能构建：
+
+```bash
+git clone https://github.com/bitrouter/bitrouter.git
+cd bitrouter
+cargo build --release
+```
+
+二进制文件位于 `target/release/bitrouter`。将其复制到 PATH 或直接运行。
+
+### 功能标志
+
+BitRouter 支持可选的编译时功能：
+
+| 功能 | 默认 | 描述 |
+|------|------|------|
+| `tui` | 是 | 交互式终端界面 |
+| `swig` | 否 | 链上 Swig 钱包操作（需要 Solana 依赖） |
+
+不包含 TUI 的构建：
+
+```bash
+cargo build --release --no-default-features
+```
+
+包含 Swig 钱包支持的构建：
+
+```bash
+cargo build --release --features swig
+```
+
+## 验证安装
+
+```bash
+bitrouter status
+```
+
+此命令会打印解析后的主目录、监听地址、已配置的提供商和守护进程状态。
+
+## 首次运行
+
+不带参数启动 BitRouter：
+
+```bash
+bitrouter
+```
+
+首次运行且未配置提供商时，交互式设置向导会自动启动。它会引导你完成提供商选择、API 密钥输入，并生成 `bitrouter.yaml`。设置完成后，TUI 和 API 服务器一起启动。
+
+跳过 TUI 并运行前台 API 服务器：
+
+```bash
+bitrouter serve
+```
+
+作为后台守护进程运行：
+
+```bash
+bitrouter start
+```
+
+<Callout type="info">
+如果你的环境中已有提供商 API 密钥（如 `OPENAI_API_KEY`），BitRouter 会自动检测并启用直接路由，无需任何配置文件。详见[配置](/docs/guide/configuration)。
+</Callout>
+
+## 更新
+
+更新到最新版本：
+
+```bash
+cargo install bitrouter
+```
+
+BitRouter 还会自动检查新版本，并在命令完成后打印更新提示。

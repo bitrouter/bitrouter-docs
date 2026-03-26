@@ -1,0 +1,93 @@
+---
+title: Agent Skills
+description: 在 BitRouter 中注册和发现 Agent Skills。
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+BitRouter 支持 [Agent Skills](https://agentskills.io) 开放标准，用于注册代理可以发现和使用的提示级知识。技能是 `SKILL.md` 文件——注入到 LLM 上下文中的结构化提示——与提供运行时工具连接的 [MCP](/docs/guide/mcp) 工具不同。
+
+## 技能 vs MCP 工具
+
+| | 技能 | MCP 工具 |
+|---|------|----------|
+| **内容** | 提示级知识（SKILL.md） | 运行时工具调用（JSON-RPC） |
+| **时机** | 推理前注入到 LLM 上下文 | 推理期间由 LLM 调用 |
+| **发现** | `GET /v1/tools`（统一） | `GET /v1/tools`（统一） |
+
+两者共享统一的 `ToolEntry` 类型，因此技能和 MCP 工具在工具发现端点中一起出现。
+
+## 配置技能
+
+在 `bitrouter.yaml` 中注册技能：
+
+```yaml
+skills:
+  - name: "code-review"
+    description: "审查代码质量、安全问题和最佳实践"
+    source: "https://github.com/anthropics/skills"
+    required_apis:
+      - provider: anthropic
+
+  - name: "translate"
+    description: "使用 LLM 驱动的翻译在语言之间翻译文本"
+```
+
+| 字段 | 必填 | 描述 |
+|------|------|------|
+| `name` | 是 | 唯一的技能标识符 |
+| `description` | 是 | 人类可读的描述 |
+| `source` | 否 | 技能源的 URL 或路径 |
+| `required_apis` | 否 | 技能的提供商依赖 |
+
+`required_apis` 字段声明技能依赖哪些提供商，允许 BitRouter 透明地处理支付（通过 [402](/docs/guide/402-payment)）。
+
+## 技能 API
+
+通过 CRUD API 在运行时管理技能：
+
+| 方法 | 路径 | 描述 |
+|------|------|------|
+| `POST` | `/v1/skills` | 注册新技能 |
+| `GET` | `/v1/skills` | 列出所有已注册技能 |
+| `GET` | `/v1/skills/:name` | 获取特定技能 |
+| `DELETE` | `/v1/skills/:name` | 删除技能 |
+
+配置中定义的技能立即出现在 `GET /v1/tools` 中。通过 API 注册的技能持久化到数据库中。
+
+## 通过 CLI 安装技能
+
+技能也可以通过 `agent-skills` npm 包安装：
+
+```bash
+npx skills add BitRouterAI/agent-skills
+```
+
+## 统一工具发现
+
+所有技能和 MCP 工具通过单一端点可发现：
+
+```bash
+curl http://localhost:8787/v1/tools
+```
+
+示例响应：
+
+```json
+[
+  {
+    "name": "code-review",
+    "type": "skill",
+    "description": "审查代码质量、安全问题和最佳实践"
+  },
+  {
+    "name": "github:search_repositories",
+    "type": "mcp_tool",
+    "description": "搜索 GitHub 仓库"
+  }
+]
+```
+
+<Callout type="info">
+配置文件中注册的技能在启动时加载。通过 `/v1/skills` API 添加的技能存储在数据库中，跨重启持久化。
+</Callout>

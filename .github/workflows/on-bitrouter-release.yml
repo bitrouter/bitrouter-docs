@@ -1,0 +1,55 @@
+name: On BitRouter Release
+
+on:
+  repository_dispatch:
+    types: [bitrouter-release]
+
+jobs:
+  update-docs:
+    name: Update docs for new release
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - uses: anomalyco/opencode/github@latest
+        env:
+          BITROUTER_API_KEY: ${{ secrets.BITROUTER_API_KEY }}
+        with:
+          model: bitrouter/kimi-k2.5
+          prompt: |
+            BitRouter ${{ github.event.client_payload.tag }} was just released.
+
+            Fetch the release notes by running:
+              gh release view ${{ github.event.client_payload.tag }} --repo bitrouter/bitrouter --json body --jq '.body'
+
+            Based on the release notes, update the documentation in this repo:
+
+            1. Guide pages (content/docs/guide/):
+               - Update installation.mdx if install steps or dependencies changed
+               - Update configuration.mdx if config fields were added or changed
+               - Update model-providers.mdx if new providers were added
+               - Update guardrails.mdx, observability.mdx, auth-management.mdx, skills.mdx if those features changed
+               - Update mcp.mdx, a2a.mdx, 402-payment.mdx if protocol features changed
+
+            2. API reference (content/docs/api-reference/):
+               - Update openapi.yaml if the API surface changed
+
+            3. Overview pages (content/docs/overview/):
+               - Update what-is-bitrouter.mdx if major new capabilities were added
+
+            4. Chinese translations:
+               - For every .mdx file you modify, also update its .zh.mdx counterpart with the equivalent changes translated to Chinese
+
+            5. If there are breaking changes (feat!: or BREAKING CHANGE in the notes):
+               - Add a migration section to the relevant guide page
+
+            Only modify files where the release notes indicate actual changes. Do not make speculative edits.
+            Open a PR to main with branch chore/docs-${{ github.event.client_payload.tag }}.

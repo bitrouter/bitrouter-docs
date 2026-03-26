@@ -1,0 +1,178 @@
+---
+title: CLI + TUI
+description: BitRouter 的命令行界面和交互式终端 UI。
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+BitRouter 提供完整的 CLI，用于管理提供商、路由、账户和守护进程生命周期。不带参数运行 `bitrouter` 即可启动交互式 TUI 仪表盘。
+
+## 服务器生命周期
+
+### 前台服务器
+
+```bash
+bitrouter serve
+```
+
+在前台启动 API 服务器，日志输出到终端。适用于开发环境。
+
+### 后台守护进程
+
+```bash
+bitrouter start
+```
+
+将 BitRouter 作为后台守护进程运行。PID 存储在 `~/.bitrouter/run/bitrouter.pid`，日志写入 `~/.bitrouter/logs/`。
+
+```bash
+bitrouter stop       # 优雅停止守护进程
+bitrouter restart    # 先停止再启动
+```
+
+### 状态
+
+```bash
+bitrouter status
+```
+
+打印守护进程 PID、主目录、监听地址、已配置的提供商和活跃路由。
+
+## 设置向导
+
+```bash
+bitrouter init
+```
+
+交互式设置，引导你完成提供商选择和 API 密钥输入。在 BitRouter 主目录中生成 `bitrouter.yaml` 和 `.env`。首次启动 TUI 且未配置提供商时也会自动触发。
+
+<Callout type="info">
+向导会自动检测环境中已有的 API 密钥（如 `OPENAI_API_KEY`、`ANTHROPIC_API_KEY`）并提供使用。
+</Callout>
+
+## 账户管理
+
+BitRouter 使用 Ed25519 密钥对进行 JWT 签名和链上身份验证。
+
+```bash
+bitrouter account -g            # 生成新密钥对
+bitrouter account -l            # 列出所有密钥对
+bitrouter account --set <ID>    # 通过索引或公钥前缀设置活跃账户
+```
+
+每个账户都有 Solana 地址、EVM 地址和公钥前缀。密钥存储在 `~/.bitrouter/.keys/`。
+
+## 令牌生成
+
+使用活跃账户创建签名 JWT：
+
+```bash
+bitrouter keygen --scope api --exp 30d --models "openai:*,anthropic:claude-*"
+```
+
+| 标志 | 描述 |
+|------|------|
+| `--chain <CHAIN>` | 签名链：`solana`（默认）或 `base` |
+| `--scope <SCOPE>` | 令牌范围：`api`（默认）或 `admin` |
+| `--exp <EXP>` | 过期时间：`5m`、`1h`、`30d`、`never` |
+| `--models <MODELS>` | 逗号分隔的模型模式 |
+| `--tools <TOOLS>` | 逗号分隔的工具模式（如 `github/*,jira/search`） |
+| `--budget <BUDGET>` | 预算限额（微美元） |
+| `--budget-scope <SCOPE>` | `session` 或 `account` |
+| `--budget-range <RANGE>` | 如 `rounds:10`、`duration:3600s` |
+| `--name <LABEL>` | 使用标签在本地保存令牌 |
+
+<Callout type="info">
+管理员令牌需要显式指定 `--exp` 值以限制重放窗口。
+</Callout>
+
+### 管理已保存的令牌
+
+```bash
+bitrouter keys -l              # 列出已保存的令牌
+bitrouter keys --show <ID>     # 显示解码后的 JWT 声明
+bitrouter keys --rm <ID>       # 删除已保存的令牌
+```
+
+## 路由管理
+
+在运行时管理模型路由（需要运行中的守护进程）：
+
+```bash
+bitrouter route list
+bitrouter route add my-model openai:gpt-4o anthropic:claude-sonnet-4-20250514 --strategy priority
+bitrouter route rm my-model
+```
+
+| 策略 | 行为 |
+|------|------|
+| `priority` | 使用第一个端点；出错时故障转移到下一个 |
+| `load_balance` | 在端点之间轮询 |
+
+## 检查上游服务
+
+### MCP 工具
+
+```bash
+bitrouter tools list      # 列出所有可用的 MCP 工具
+bitrouter tools status    # 显示上游 MCP 服务器健康状态
+```
+
+### A2A 代理
+
+```bash
+bitrouter agents list     # 列出已配置的上游代理
+bitrouter agents status   # 显示连接健康状态
+```
+
+## 全局标志
+
+以下标志适用于所有命令：
+
+| 标志 | 描述 |
+|------|------|
+| `--home-dir <PATH>` | 覆盖 BitRouter 主目录 |
+| `--config-file <PATH>` | 覆盖 `<home>/bitrouter.yaml` |
+| `--env-file <PATH>` | 覆盖 `<home>/.env` |
+| `--run-dir <PATH>` | 覆盖 `<home>/run` |
+| `--logs-dir <PATH>` | 覆盖 `<home>/logs` |
+| `--db <DATABASE_URL>` | 覆盖数据库连接 URL |
+
+### 主目录解析
+
+BitRouter 按以下顺序解析主目录：
+
+1. `--home-dir` 标志
+2. 当前工作目录下的 `./bitrouter.yaml`
+3. `BITROUTER_HOME` 环境变量
+4. `~/.bitrouter`（默认，不存在时自动创建）
+
+## TUI 仪表盘
+
+```bash
+bitrouter
+```
+
+不带参数运行 BitRouter 即可启动交互式 TUI。显示内容包括：
+
+- 守护进程状态（运行中及 PID，或已停止）
+- 监听地址
+- 已配置的提供商数量
+- 活跃路由数量
+
+TUI 会根据终端宽度自适应布局，在宽终端显示完整 ASCII 标志，窄终端显示紧凑版本。
+
+### 键盘快捷键
+
+| 按键 | 操作 |
+|------|------|
+| `q` | 退出 |
+| `Ctrl+C` | 退出 |
+
+### 首次运行行为
+
+如果未配置提供商，TUI 会自动启动设置向导（`bitrouter init`）。完成设置后，TUI 会使用新配置重新加载。
+
+<Callout type="info">
+TUI 是默认启用的可选功能。使用 `cargo build --release --no-default-features` 可不包含 TUI 构建。详见[安装](/docs/guide)。
+</Callout>

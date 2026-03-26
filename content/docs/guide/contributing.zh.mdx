@@ -5,99 +5,92 @@ description: 参与 BitRouter 开源项目。
 
 import { Callout } from 'fumadocs-ui/components/callout';
 
+感谢你对 BitRouter 贡献的兴趣。本指南涵盖如何报告 Bug、请求功能、提交 Pull Request 以及更新内置提供商注册表。
+
 ## 开始之前
 
-- 阅读 [README](https://github.com/bitrouter/bitrouter) 了解项目介绍
-- 阅读 [DEVELOPMENT.md](https://github.com/bitrouter/bitrouter/blob/main/DEVELOPMENT.md) 了解工作区架构
-- 在创建新的之前，检查已有的 [issues](https://github.com/bitrouter/bitrouter/issues) 和 [pull requests](https://github.com/bitrouter/bitrouter/pulls)
+- 阅读项目 [README](https://github.com/bitrouter/bitrouter)
+- 阅读 [`DEVELOPMENT.md`](https://github.com/bitrouter/bitrouter/blob/main/DEVELOPMENT.md) 中的工作区架构指南
+- 在创建新 [issue](https://github.com/bitrouter/bitrouter/issues) 或 [pull request](https://github.com/bitrouter/bitrouter/pulls) 之前，请先检查已有的
 
 ## 报告 Bug
 
-使用 [Bug 报告模板](https://github.com/bitrouter/bitrouter/issues/new?template=bug_report.yml)。包含：
+使用 Bug 报告 issue 模板（标题以 `[BUG]` 开头）。请包含：
 
-- 问题的清晰摘要
+- 问题的清晰概述
 - 复现步骤
-- 预期行为 vs 实际行为
-- 环境详情（操作系统、Rust 版本）
-- 相关日志或最小化的脱敏 `bitrouter.yaml`
+- 预期行为与实际行为
+- 环境详情（操作系统、Rust 版本、提供商/配置上下文）
+- 日志、请求负载或截图（如有帮助）
+
+如果 Bug 与配置或路由相关，请尽可能提供一个最小化的脱敏 `bitrouter.yaml` 示例。
 
 ## 请求功能
 
-使用[功能请求模板](https://github.com/bitrouter/bitrouter/issues/new?template=feature_request.yml)。描述：
+使用功能请求 issue 模板（标题以 `[FEATURE]` 开头）。请描述：
 
-- 你要解决的用例
-- 当前行为为何不足
-- 期望的 UX 或 API 形式
+- 你要解决的使用场景
+- 为什么当前行为不够用
+- 预期的用户体验或 API 形态
+- 任何提供商特定的约束
 
-对于较大的改动，在编写代码之前先开一个 issue 以对齐方案。
+<Callout type="info">
+对于较大的变更，在编写代码之前先开一个 issue 是最快达成共识的方式。
+</Callout>
 
 ## 提交 Pull Request
 
-1. Fork 仓库并创建一个聚焦的分支
-2. 将更改限制在单个 bug 修复、功能或文档改进
-3. 行为变更时添加或更新测试
-4. 面向用户的行为变更时更新文档
-5. 在本地运行必要的检查：
+1. Fork 仓库并创建一个专注的分支
+2. 将变更范围限制在单个 Bug 修复、功能或文档改进
+3. 当行为变更时，添加或更新测试
+4. 当用户可见的行为、配置或提供商支持变更时，更新文档
+5. 在开 PR 之前本地运行验证：
 
 ```bash
 cargo fmt -- --check
 cargo clippy
-cargo test --workspace
+cargo nextest run
 ```
 
-6. 提交带有清晰摘要的 Pull Request
+6. 开一个带有清晰概述的 Pull Request，并注明任何后续工作
 
-### 提交规范
+### 好的 PR 是什么样的
 
-使用[约定式提交](https://www.conventionalcommits.org/)格式。将修改的内容放在范围中：
-
-```
-feat(config): add custom provider derives
-fix(api): handle tool call in streaming responses
-docs(readme): update quick start section
-```
-
-PR 标题也必须遵循约定式提交格式 — CI 会验证。
+- 小而易于审查
+- 与现有命名和 crate 边界保持一致
+- 通过现有 Rust 工具验证
+- 当公共行为变更时附带文档更新
 
 ## 更新内置提供商
 
-内置提供商定义位于 `bitrouter-config/providers/*.yaml`：
+内置提供商定义为 [`bitrouter-config/providers/`](https://github.com/bitrouter/bitrouter/tree/main/bitrouter-config/providers) 下的 YAML 文件，由 `bitrouter-config/src/registry.rs` 加载。
 
-1. 编辑对应的 YAML 文件（如 `openai.yaml`、`anthropic.yaml`）
-2. 更新 `api_base`、`models`、定价等字段
-3. 运行配置和工作区测试
-4. 如果公开的提供商列表变更，更新文档
+### 更新现有提供商
 
-## 添加新提供商
+编辑对应的 YAML 文件（`openai.yaml`、`anthropic.yaml`、`google.yaml`），更新 `api_protocol`、`api_base`、`env_prefix` 或 `models` 等字段。然后运行配置和工作区测试：
+
+```bash
+cargo nextest run -p bitrouter-config
+```
+
+### 添加新的内置提供商
 
 如果提供商使用已支持的协议：
 
 1. 在 `bitrouter-config/providers/` 下添加新的 YAML 文件
 2. 在 `bitrouter-config/src/registry.rs` 中注册
-3. 添加注册和配置加载的测试
-4. 更新文档
+3. 添加覆盖注册表和配置加载的测试
+4. 更新提及支持的提供商的文档
 
-如果提供商引入新协议，还需要更新 `bitrouter-core`、`bitrouter-api` 和运行时路由器。
+如果提供商引入了新的协议或传输层，范围会更广——需要更新：
 
-## 工作区架构
+| Crate | 需要变更的内容 |
+|-------|----------------|
+| `bitrouter-config` | 配置模式和注册表连接 |
+| `bitrouter-runtime` | `router.rs` 以实例化提供商 |
+| `bitrouter-api` | 公共的提供商兼容端点 |
+| 工作区清单 | 条件编译的 feature flag |
 
-BitRouter 组织为具有严格自底向上依赖的聚焦 crate：
+## 问题和讨论
 
-| 层级 | Crate | 职责 |
-|------|-------|------|
-| 1 | `bitrouter-core` | 共享 trait、类型、错误 |
-| 2 | `bitrouter-openai`、`-anthropic`、`-google` | 提供商适配器 |
-| 3 | `bitrouter-config` | YAML 配置、提供商注册、路由 |
-| 3 | `bitrouter-guardrails` | 代理防火墙 |
-| 3 | `bitrouter-observe` | 支出追踪和指标 |
-| 3 | `bitrouter-accounts` | 账户和会话管理 |
-| 4 | `bitrouter-api` | 可复用 HTTP 过滤器（Warp） |
-| 5 | `bitrouter` | CLI、运行时、TUI |
-
-详见 [DEVELOPMENT.md](https://github.com/bitrouter/bitrouter/blob/main/DEVELOPMENT.md) 获取完整架构指南。
-
-## 社区
-
-- [Discord](https://discord.gg/G3zVrZDa5C)
-- [GitHub Issues](https://github.com/bitrouter/bitrouter/issues)
-- [Twitter/X](https://x.com/BitRouterAI)
+如果你想在实现较大变更之前获得反馈，请开一个 issue 或加入 [Discord](https://discord.gg/G3zVrZDa5C) 社区。

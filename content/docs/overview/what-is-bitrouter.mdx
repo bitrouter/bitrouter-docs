@@ -6,17 +6,20 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ## What is BitRouter?
 
-BitRouter is an open-source LLM gateway purpose-built for AI agent runtimes. It's a high-performance Rust proxy that gives agents like [OpenClaw](https://openclaw.ai), [OpenCode](https://opencode.ai), and [Claude Code](https://claude.ai/claude-code) unified access to 200+ models from OpenAI, Anthropic, Google, and more — through a single OpenAI-compatible endpoint.
+BitRouter is an open-source LLM gateway purpose-built for AI agent runtimes. It's a high-performance Rust proxy that gives agents like [OpenClaw](https://openclaw.ai), [Claude Code](https://claude.ai/claude-code), [OpenCode](https://opencode.ai), [Codex CLI](https://github.com/openai/codex), and [Kilo Code](https://github.com/Kilo-Org/kilocode) unified access to models from OpenAI, Anthropic, Google, and custom providers — through a single OpenAI-compatible endpoint.
 
-Ship a single binary with zero infrastructure dependencies. Agents discover and route to LLMs, tools, and sub-agents at runtime, with full observability via CLI + TUI. For teams that don't want to self-host, BitRouter also offers a hosted option with agent-native payments — no KYC, no geo-restrictions.
+Ship a single binary with zero infrastructure dependencies. Agents discover and route to LLMs, tools, and sub-agents at runtime — with built-in guardrails, MCP and A2A gateway support, and full observability via CLI + TUI. For teams that don't want to self-host, BitRouter also offers a hosted option with agent-native payments via x402/Solana — no KYC, no geo-restrictions.
 
 ## Why BitRouter?
 
-- **Agent-Native Gateway** — Built for autonomous agents, not human-in-the-loop chatbots. Agents discover and select models at runtime with features like agent identity and payment delegation keys.
-- **Zero-Ops Deployment** — Single Rust binary. No Postgres, no Redis, no Docker orchestration required. `cargo install bitrouter && bitrouter start`.
-- **Smart Routing** — Configurable routing tables map model names to providers. Cost and performance optimization with automatic fallbacks and escalation. Sub-10ms routing overhead.
-- **Agent-Native Payments** — Pay-per-use on the hosted service. No credit cards, no prepaid credits, no invoices. Agents can pay autonomously.
-- **CLI + TUI Observability** — Monitor and control agent sessions in real time from the terminal.
+- **Agent-Native Gateway** — Built for autonomous agents, not human-in-the-loop chatbots. Agents discover and select models at runtime with features like agent identity, payment delegation, and skills registration.
+- **Zero-Ops Deployment** — Single Rust binary. No Postgres, no Redis, no Docker orchestration required. `cargo install bitrouter && bitrouter` launches an interactive setup wizard and starts the server.
+- **Smart Routing** — Multi-provider routing with cost and performance optimization. Cross-protocol routing (e.g. OpenAI format → Anthropic provider) with automatic fallbacks. Sub-10ms routing overhead.
+- **Agent Firewall** — Inspect, warn, redact, or block risky content at the proxy layer. Built-in guardrails protect agents from unsafe outputs without application-level changes.
+- **MCP & A2A Gateway** — Proxy for MCP servers so agents can discover and call tools across hosts. A2A v0.3.0 support for agent identity, discovery, and task dispatch.
+- **Skills Registry** — Track and expose agent skills following the [agentskills.io](https://agentskills.io) standard, enabling agents to register on the BitRouter network and serve requests.
+- **Agent-Native Payments** — 402/MPP payment handling for LLMs, tools, and APIs. Pay-per-use on the hosted service — no credit cards, no prepaid credits, no invoices.
+- **CLI + TUI Observability** — Monitor and control agent sessions in real time from the terminal, with per-request spend tracking and metrics.
 
 ## BitRouter vs Alternatives
 
@@ -25,14 +28,38 @@ Ship a single binary with zero infrastructure dependencies. Agents discover and 
 | **Type** | Open-source Rust proxy + hosted option | Hosted SaaS only (proprietary) | Python proxy + SDK (open-core) | Provider SDK |
 | **Deployment** | Single binary, zero dependencies | Cloud only | Docker/K8s, requires Postgres + Redis | Per-provider setup |
 | **Routing overhead** | Sub-10ms | ~25–40ms | ~0.5ms median (GIL limits throughput at scale) | N/A |
-| **Payments** | Agent-native pay-per-use | Credit card, crypto top-up, AliPay | BYOK only — no payment handling | Separate billing per provider |
+| **Payments** | Agent-native 402/MPP pay-per-use | Credit card, crypto top-up, AliPay | BYOK only — no payment handling | Separate billing per provider |
 | **Access** | Permissionless — no KYC or geo-restrictions | Account creation required | Self-host | Per-provider accounts |
-| **Agent features** | Agent identity, payment delegation, CLI/TUI observability | Tool calling, standard API keys | MCP gateway, A2A protocol gateway | None |
-| **Routing** | Configurable routing tables with fallbacks and escalation | Auto router (via NotDiamond), provider routing | Load balancing, fallbacks, cooldowns | Manual model selection |
-| **Models** | 200+ models | 400+ models / 60+ providers | 2,600+ models / 120+ providers | Single provider only |
-| **Observability** | CLI + TUI, built-in metrics | — | Admin dashboard, OpenTelemetry, Prometheus | Per-provider dashboards |
+| **Agent features** | Agent firewall, MCP gateway, A2A gateway, skills registry, CLI/TUI observability | Tool calling, standard API keys | MCP gateway, A2A protocol gateway | None |
+| **Routing** | Cross-protocol routing with fallbacks and escalation | Auto router (via NotDiamond), provider routing | Load balancing, fallbacks, cooldowns | Manual model selection |
+| **Observability** | CLI + TUI, per-request spend tracking, built-in metrics | — | Admin dashboard, OpenTelemetry, Prometheus | Per-provider dashboards |
 | **API** | OpenAI-compatible | OpenAI-compatible | OpenAI-compatible | Provider-specific |
 | **License** | Apache 2.0 | Proprietary (SDKs are Apache 2.0) | MIT (enterprise features proprietary) | N/A |
+
+## Supported Providers
+
+| Provider  | Status | Notes                            |
+| --------- | ------ | -------------------------------- |
+| OpenAI    | ✅     | Chat Completions + Responses API |
+| Anthropic | ✅     | Messages API                     |
+| Google    | ✅     | Generative AI API                |
+
+Custom OpenAI-compatible and Anthropic-compatible providers are also supported via configuration.
+
+## Supported Agent Runtimes
+
+BitRouter works as a drop-in proxy for agent runtimes that support custom API base URLs. Point your runtime at `http://localhost:8787` and route to any configured provider.
+
+| Runtime | Integration |
+| ------- | ----------- |
+| [OpenClaw](https://github.com/openclaw/openclaw) | [Native plugin](https://github.com/bitrouter/bitrouter-openclaw) |
+| [Claude Code](https://github.com/anthropics/claude-code) | CLI + Skills |
+| [ZeroClaw](https://github.com/zeroclaw-labs/zeroclaw) | CLI + Skills |
+| [Codex CLI](https://github.com/openai/codex) | CLI + Skills |
+| [OpenCode](https://github.com/opencode-ai/opencode) | CLI + Skills |
+| [Kilo Code](https://github.com/Kilo-Org/kilocode) | CLI + Skills |
+
+Any agent runtime that can target a custom OpenAI or Anthropic base URL works with BitRouter out of the box.
 
 ## FAQs
 
@@ -40,18 +67,25 @@ Ship a single binary with zero infrastructure dependencies. Agents discover and 
   <Accordion title="How is BitRouter different from OpenRouter or LiteLLM?">
       BitRouter is built specifically for agent runtimes:
       - **Self-hostable**: Unlike OpenRouter (cloud-only), BitRouter ships as a single Rust binary you can run anywhere — no infrastructure dependencies.
-      - **Agent-native payments**: Unlike LiteLLM (BYOK only), BitRouter's hosted option supports autonomous pay-per-use, so agents can pay without human billing setup.
+      - **Agent-native payments**: Unlike LiteLLM (BYOK only), BitRouter's hosted option supports autonomous 402/MPP pay-per-use, so agents can pay without human billing setup.
       - **Zero-ops**: Unlike LiteLLM (requires Postgres + Redis), BitRouter needs nothing but the binary.
+      - **Agent safety**: Built-in agent firewall for inspecting, redacting, or blocking risky content — something neither OpenRouter nor LiteLLM offers at the proxy layer.
       - **Performance**: Rust async runtime means consistent low latency without Python's GIL constraints.
   </Accordion>
   <Accordion title="Can I self-host BitRouter or do I need the hosted service?">
-      Both. BitRouter is fully open source (Apache 2.0). You can self-host it with your own provider API keys, or use the hosted service with agent-native payments for a fully managed experience.
+      Both. BitRouter is fully open source (Apache 2.0). You can self-host it in BYOK mode with your own provider API keys — BitRouter auto-detects keys from your environment so no config file is needed. Or use the hosted Cloud mode with agent-native x402/Solana payments for a fully managed experience.
   </Accordion>
   <Accordion title="Which agent runtimes work with BitRouter?">
-      Any agent that supports the OpenAI API works with BitRouter out of the box — just change the base URL. This includes OpenClaw, OpenCode, Claude Code, and any OpenAI SDK-based agent. See the integration guides for specific setup instructions.
+      Any agent that supports a custom OpenAI or Anthropic base URL works with BitRouter out of the box — just point it at `http://localhost:8787`. This includes OpenClaw, Claude Code, ZeroClaw, Codex CLI, OpenCode, Kilo Code, and any OpenAI SDK-based agent. See the integration guides for specific setup instructions.
+  </Accordion>
+  <Accordion title="What are Agent Skills?">
+      [Agent Skills](https://github.com/bitrouter/agent-skills) give your AI agent the knowledge to register on the BitRouter network, configure services, and start serving requests. Install them with `npx skills add BitRouterAI/agent-skills` in any agent runtime that supports skills (Claude Code, Copilot, Cursor, Codex, etc.).
+  </Accordion>
+  <Accordion title="What protocols does BitRouter support?">
+      BitRouter supports OpenAI Chat Completions API, OpenAI Responses API, Anthropic Messages API, and Google Generative AI API. It also acts as an MCP gateway for tool discovery and an A2A gateway (v0.3.0) for agent-to-agent communication, identity, and task dispatch.
   </Accordion>
   <Accordion title="I'm a model provider — how do I onboard to BitRouter?">
-      We're not yet open for public provider onboarding, but we'd love to hear from you. If you're a provider interested in listing your models on BitRouter, please reach out to us at [contact@bitrouter.ai](mailto:contact@bitrouter.ai) or join our [Discord](https://discord.gg/MkeG9Zwuaw) and let us know about your service.
+      We welcome provider integrations. If you're a provider interested in listing your models on BitRouter, [open an issue](https://github.com/bitrouter/bitrouter/issues) or join our [Discord](https://discord.gg/G3zVrZDa5C) and let us know about your service.
 
       In the meantime, if you want to run the proxy for your own use, check out the [bitrouter repository](https://github.com/bitrouter/bitrouter).
   </Accordion>

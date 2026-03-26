@@ -1,18 +1,72 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-// import {
-//   BarChart,
-//   Bar,
-//   XAxis,
-//   YAxis,
-//   Tooltip,
-//   ResponsiveContainer,
-//   type TooltipProps,
-// } from "recharts";
+import { useState, useMemo, useEffect, type ComponentType, type SVGProps } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+
+// ── Provider icons ───────────────────────────────────────
+import Ai21 from "@lobehub/icons/es/Ai21";
+import Alibaba from "@lobehub/icons/es/Alibaba";
+import Anthropic from "@lobehub/icons/es/Anthropic";
+import Arcee from "@lobehub/icons/es/Arcee";
+import Baidu from "@lobehub/icons/es/Baidu";
+import ByteDance from "@lobehub/icons/es/ByteDance";
+import Cohere from "@lobehub/icons/es/Cohere";
+import DeepSeek from "@lobehub/icons/es/DeepSeek";
+import EssentialAI from "@lobehub/icons/es/EssentialAI";
+import Google from "@lobehub/icons/es/Google";
+import Inception from "@lobehub/icons/es/Inception";
+import Kwaipilot from "@lobehub/icons/es/Kwaipilot";
+import Meta from "@lobehub/icons/es/Meta";
+import Minimax from "@lobehub/icons/es/Minimax";
+import Mistral from "@lobehub/icons/es/Mistral";
+import Moonshot from "@lobehub/icons/es/Moonshot";
+import Nova from "@lobehub/icons/es/Nova";
+import Nvidia from "@lobehub/icons/es/Nvidia";
+import OpenAI from "@lobehub/icons/es/OpenAI";
+import Qwen from "@lobehub/icons/es/Qwen";
+import Relace from "@lobehub/icons/es/Relace";
+import Stepfun from "@lobehub/icons/es/Stepfun";
+import Upstage from "@lobehub/icons/es/Upstage";
+import XAI from "@lobehub/icons/es/XAI";
+import XiaomiMiMo from "@lobehub/icons/es/XiaomiMiMo";
+import ZAI from "@lobehub/icons/es/ZAI";
+
+type SvgIcon = ComponentType<SVGProps<SVGSVGElement>>;
+
+const PROVIDER_ICONS: Record<string, SvgIcon> = {
+  "ai21": Ai21,
+  "alibaba": Alibaba,
+  "anthropic": Anthropic,
+  "arcee-ai": Arcee,
+  "baidu": Baidu,
+  "bytedance-seed": ByteDance,
+  "cohere": Cohere,
+  "deepseek": DeepSeek,
+  "essentialai": EssentialAI,
+  "google": Google,
+  "inception": Inception,
+  "kwaipilot": Kwaipilot,
+  "meta-llama": Meta,
+  "minimax": Minimax,
+  "mistralai": Mistral,
+  "moonshotai": Moonshot,
+  "amazon": Nova,
+  "nvidia": Nvidia,
+  "openai": OpenAI,
+  "qwen": Qwen,
+  "relace": Relace,
+  "stepfun": Stepfun,
+  "upstage": Upstage,
+  "x-ai": XAI,
+  "xiaomi": XiaomiMiMo,
+  "z-ai": ZAI,
+};
+
+function getProviderPrefix(modelId: string): string {
+  return modelId.includes("/") ? modelId.split("/")[0] : modelId.split("-")[0];
+}
 
 // ── Types ────────────────────────────────────────────────
 
@@ -443,10 +497,18 @@ export function ApisView() {
                       </td>
                       <td className="px-4 py-2.5">
                         <span className="flex items-center gap-2">
-                          <span
-                            className="inline-block shrink-0 w-2 h-2 rounded-full"
-                            style={{ backgroundColor: entry.color }}
-                          />
+                          {(() => {
+                            const prefix = getProviderPrefix(entry.id);
+                            const Icon = PROVIDER_ICONS[prefix];
+                            return Icon ? (
+                              <Icon className="shrink-0 w-4 h-4 text-muted-foreground" />
+                            ) : (
+                              <span
+                                className="inline-block shrink-0 w-2 h-2 rounded-full"
+                                style={{ backgroundColor: entry.color }}
+                              />
+                            );
+                          })()}
                           <span className="font-medium">{entry.model}</span>
                           {entry.modalities.includes("image") && (
                             <Badge

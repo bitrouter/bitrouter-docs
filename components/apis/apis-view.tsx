@@ -1,15 +1,15 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  type TooltipProps,
-} from "recharts";
+// import {
+//   BarChart,
+//   Bar,
+//   XAxis,
+//   YAxis,
+//   Tooltip,
+//   ResponsiveContainer,
+//   type TooltipProps,
+// } from "recharts";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 // ── Types ────────────────────────────────────────────────
 
 type ApiTab = "models" | "tools" | "agents";
-type TimeRange = "4w" | "12w" | "6m" | "1y";
+// type TimeRange = "4w" | "12w" | "6m" | "1y";
 type SortKey = "volume" | "pricing" | "model";
 type SortDir = "asc" | "desc";
 
@@ -33,15 +33,15 @@ interface ModelEntry {
   color: string;
 }
 
-interface VolumeTimeseries {
-  timestamp: string;
-  volume_usdc: number;
-}
+// interface VolumeTimeseries {
+//   timestamp: string;
+//   volume_usdc: number;
+// }
 
-interface VolumeData {
-  summary: { total_volume_usdc: number };
-  timeseries: VolumeTimeseries[];
-}
+// interface VolumeData {
+//   summary: { total_volume_usdc: number };
+//   timeseries: VolumeTimeseries[];
+// }
 
 interface ApiModelResponse {
   id: string;
@@ -69,20 +69,20 @@ function modelColor(id: string, index: number): string {
 
 // ── Time ranges ──────────────────────────────────────────
 
-const TIME_RANGES: { value: TimeRange; label: string; weeks: number }[] = [
-  { value: "4w", label: "4W", weeks: 4 },
-  { value: "12w", label: "12W", weeks: 12 },
-  { value: "6m", label: "6M", weeks: 26 },
-  { value: "1y", label: "1Y", weeks: 52 },
-];
+// const TIME_RANGES: { value: TimeRange; label: string; weeks: number }[] = [
+//   { value: "4w", label: "4W", weeks: 4 },
+//   { value: "12w", label: "12W", weeks: 12 },
+//   { value: "6m", label: "6M", weeks: 26 },
+//   { value: "1y", label: "1Y", weeks: 52 },
+// ];
 
 // ── Helpers ──────────────────────────────────────────────
 
-function formatVolume(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(0)}k`;
-  return n.toString();
-}
+// function formatVolume(n: number): string {
+//   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+//   if (n >= 1_000) return `${(n / 1_000).toFixed(0)}k`;
+//   return n.toString();
+// }
 
 function formatPrice(n: number): string {
   if (n === 0) return "free";
@@ -91,50 +91,50 @@ function formatPrice(n: number): string {
 
 // ── Custom tooltip ───────────────────────────────────────
 
-function ChartTooltip(props: TooltipProps<number, string>) {
-  const { active, payload, label } = props as {
-    active?: boolean;
-    payload?: Array<{ dataKey?: string; value?: number; color?: string }>;
-    label?: string;
-  };
-  if (!active || !payload?.length) return null;
-
-  const total = payload.reduce(
-    (sum: number, p) => sum + (Number(p.value) || 0),
-    0,
-  );
-
-  return (
-    <div className="bg-background border border-border px-4 py-3 shadow-md min-w-[200px]">
-      <div className="text-xs font-medium mb-2.5 text-foreground">{label}</div>
-      <div className="space-y-1.5">
-        {[...payload].reverse().map((entry) => (
-          <div
-            key={entry.dataKey}
-            className="flex items-center justify-between gap-6 text-[11px]"
-          >
-            <span className="flex items-center gap-2 text-muted-foreground">
-              <span
-                className="inline-block w-2.5 h-2.5 rounded-[2px] shrink-0"
-                style={{ backgroundColor: entry.color }}
-              />
-              {entry.dataKey}
-            </span>
-            <span className="tabular-nums text-foreground font-medium">
-              {formatVolume(Number(entry.value))}
-            </span>
-          </div>
-        ))}
-      </div>
-      <div className="border-t border-border mt-2.5 pt-2 flex items-center justify-between text-[11px]">
-        <span className="text-muted-foreground">Total</span>
-        <span className="tabular-nums text-foreground font-medium">
-          {formatVolume(total)}
-        </span>
-      </div>
-    </div>
-  );
-}
+// function ChartTooltip(props: TooltipProps<number, string>) {
+//   const { active, payload, label } = props as {
+//     active?: boolean;
+//     payload?: Array<{ dataKey?: string; value?: number; color?: string }>;
+//     label?: string;
+//   };
+//   if (!active || !payload?.length) return null;
+//
+//   const total = payload.reduce(
+//     (sum: number, p) => sum + (Number(p.value) || 0),
+//     0,
+//   );
+//
+//   return (
+//     <div className="bg-background border border-border px-4 py-3 shadow-md min-w-[200px]">
+//       <div className="text-xs font-medium mb-2.5 text-foreground">{label}</div>
+//       <div className="space-y-1.5">
+//         {[...payload].reverse().map((entry) => (
+//           <div
+//             key={entry.dataKey}
+//             className="flex items-center justify-between gap-6 text-[11px]"
+//           >
+//             <span className="flex items-center gap-2 text-muted-foreground">
+//               <span
+//                 className="inline-block w-2.5 h-2.5 rounded-[2px] shrink-0"
+//                 style={{ backgroundColor: entry.color }}
+//               />
+//               {entry.dataKey}
+//             </span>
+//             <span className="tabular-nums text-foreground font-medium">
+//               {formatVolume(Number(entry.value))}
+//             </span>
+//           </div>
+//         ))}
+//       </div>
+//       <div className="border-t border-border mt-2.5 pt-2 flex items-center justify-between text-[11px]">
+//         <span className="text-muted-foreground">Total</span>
+//         <span className="tabular-nums text-foreground font-medium">
+//           {formatVolume(total)}
+//         </span>
+//       </div>
+//     </div>
+//   );
+// }
 
 // ── Sort logic ───────────────────────────────────────────
 
@@ -196,46 +196,46 @@ function useModels() {
   return { models, loading, error };
 }
 
-function useVolume() {
-  const [volume, setVolume] = useState<VolumeData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch("/api/bitrouter/volume")
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then((data: VolumeData) => setVolume(data))
-      .catch(() => setVolume(null))
-      .finally(() => setLoading(false));
-  }, []);
-
-  return { volume, loading };
-}
+// function useVolume() {
+//   const [volume, setVolume] = useState<VolumeData | null>(null);
+//   const [loading, setLoading] = useState(true);
+//
+//   useEffect(() => {
+//     fetch("/api/bitrouter/volume")
+//       .then((res) => {
+//         if (!res.ok) throw new Error(`HTTP ${res.status}`);
+//         return res.json();
+//       })
+//       .then((data: VolumeData) => setVolume(data))
+//       .catch(() => setVolume(null))
+//       .finally(() => setLoading(false));
+//   }, []);
+//
+//   return { volume, loading };
+// }
 
 // ── Component ────────────────────────────────────────────
 
 export function ApisView() {
   const [activeTab] = useState<ApiTab>("models");
-  const [timeRange, setTimeRange] = useState<TimeRange>("12w");
+  // const [timeRange, setTimeRange] = useState<TimeRange>("12w");
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("model");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
 
   const { models, loading: modelsLoading, error: modelsError } = useModels();
-  const { volume, loading: volumeLoading } = useVolume();
+  // const { volume, loading: volumeLoading } = useVolume();
 
-  const hasVolumeData =
-    volume !== null &&
-    volume.timeseries.length > 0 &&
-    volume.summary.total_volume_usdc > 0;
+  // const hasVolumeData =
+  //   volume !== null &&
+  //   volume.timeseries.length > 0 &&
+  //   volume.summary.total_volume_usdc > 0;
 
-  const chartData = useMemo(() => {
-    if (!hasVolumeData || !volume) return [];
-    const weeks = TIME_RANGES.find((r) => r.value === timeRange)!.weeks;
-    return volume.timeseries.slice(-weeks);
-  }, [timeRange, volume, hasVolumeData]);
+  // const chartData = useMemo(() => {
+  //   if (!hasVolumeData || !volume) return [];
+  //   const weeks = TIME_RANGES.find((r) => r.value === timeRange)!.weeks;
+  //   return volume.timeseries.slice(-weeks);
+  // }, [timeRange, volume, hasVolumeData]);
 
   const filtered = useMemo(() => {
     let list = models;
@@ -301,7 +301,7 @@ export function ApisView() {
               <span className="text-[11px] text-muted-foreground tabular-nums">
                 {models.length} models
               </span>
-              {hasVolumeData && (
+              {/* {hasVolumeData && (
                 <div className="inline-flex border border-border rounded-md overflow-hidden">
                   {TIME_RANGES.map((r) => (
                     <button
@@ -318,12 +318,12 @@ export function ApisView() {
                     </button>
                   ))}
                 </div>
-              )}
+              )} */}
             </div>
           </div>
 
           {/* Chart — only shown when volume data exists */}
-          {hasVolumeData && (
+          {/* {hasVolumeData && (
             <>
               <div className="shrink-0 px-2 pt-4 pb-2 sm:px-4">
                 <ResponsiveContainer width="100%" height={260}>
@@ -370,16 +370,16 @@ export function ApisView() {
                 </span>
               </div>
             </>
-          )}
+          )} */}
 
           {/* No volume data placeholder */}
-          {!volumeLoading && !hasVolumeData && (
+          {/* {!volumeLoading && !hasVolumeData && (
             <div className="shrink-0 flex items-center justify-center border-b border-border px-4 py-8">
               <span className="text-xs text-muted-foreground/60">
                 Volume data will appear here once network traffic is recorded
               </span>
             </div>
-          )}
+          )} */}
 
           {/* Loading state */}
           {modelsLoading && (
@@ -414,9 +414,9 @@ export function ApisView() {
                       onSort={handleSort}
                       align="left"
                     />
-                    <th className="px-4 py-2.5 font-medium text-left">
+                    {/* <th className="px-4 py-2.5 font-medium text-left">
                       Providers
-                    </th>
+                    </th> */}
                     <th className="px-4 py-2.5 font-medium text-left">
                       Endpoint
                     </th>
@@ -458,7 +458,7 @@ export function ApisView() {
                           )}
                         </span>
                       </td>
-                      <td className="px-4 py-2.5">
+                      {/* <td className="px-4 py-2.5">
                         <span className="flex flex-wrap gap-1">
                           {entry.providers.slice(0, 3).map((p) => (
                             <span
@@ -474,7 +474,7 @@ export function ApisView() {
                             </span>
                           )}
                         </span>
-                      </td>
+                      </td> */}
                       <td className="px-4 py-2.5">
                         <EndpointCell model={entry.model} />
                       </td>
@@ -500,7 +500,7 @@ export function ApisView() {
                   {filtered.length === 0 && (
                     <tr>
                       <td
-                        colSpan={6}
+                        colSpan={5}
                         className="px-4 py-8 text-center text-muted-foreground text-xs"
                       >
                         No models found.

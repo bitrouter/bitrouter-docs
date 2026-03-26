@@ -18,6 +18,7 @@ import EssentialAI from "@lobehub/icons/es/EssentialAI";
 import Google from "@lobehub/icons/es/Google";
 import Inception from "@lobehub/icons/es/Inception";
 import Kwaipilot from "@lobehub/icons/es/Kwaipilot";
+import LongCat from "@lobehub/icons/es/LongCat";
 import Meta from "@lobehub/icons/es/Meta";
 import Minimax from "@lobehub/icons/es/Minimax";
 import Mistral from "@lobehub/icons/es/Mistral";
@@ -48,6 +49,7 @@ const PROVIDER_ICONS: Record<string, SvgIcon> = {
   "google": Google,
   "inception": Inception,
   "kwaipilot": Kwaipilot,
+  "meituan": LongCat,
   "meta-llama": Meta,
   "minimax": Minimax,
   "mistralai": Mistral,

@@ -6,7 +6,7 @@ export const maxDuration = 30;
 
 const bitrouter = createOpenAICompatible({
   name: "bitrouter",
-  baseURL: "https://api.bitrouter.ai/v1",
+  baseURL: process.env.BITROUTER_API_BASE!,
   apiKey: process.env.BITROUTER_API_KEY,
 });
 

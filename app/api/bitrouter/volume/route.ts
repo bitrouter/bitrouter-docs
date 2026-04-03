@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 
-// TODO: switch back to https://api.bitrouter.ai once custom domain SSL is resolved
-const API_BASE = "https://bitrouter-node-production.up.railway.app";
+const API_BASE = process.env.BITROUTER_API_BASE!;
 
 export async function GET() {
   const apiKey = process.env.BITROUTER_API_KEY;
@@ -14,7 +13,7 @@ export async function GET() {
   }
 
   try {
-    const res = await fetch(`${API_BASE}/v1/network/volume`, {
+    const res = await fetch(`${API_BASE}/network/volume`, {
       headers: { Authorization: `Bearer ${apiKey}` },
       next: { revalidate: 300 },
     });

@@ -2,7 +2,7 @@
 title: Models, Tools, & Agents
 ---
 
-Unlike common LLM aggregators that only unify models, BitRouter aggregates models, tools, and agents, allowing services to be composed and integrated in a highly flexible, agent-native manner.
+Unlike common LLM aggregators that only unify models, BitRouter aggregates **models**, **tools**, and **agents (coming soon)**, allowing services to be composed and integrated in a highly flexible, agent-native manner.
 
 ## Service Primitives
 
@@ -12,7 +12,7 @@ A single service can implement multiple primitives simultaneously.
 
 ### Models
 
-Model services provide LLM inference capabilities through OpenAI-compatible chat/completion endpoints.
+Model services provide LLM inference capabilities through OpenAI/Anthropic/Google-compatible endpoints (with openai-chat/completion as default)
 
 ```json
 // Request
@@ -79,36 +79,9 @@ Tool services expose functionality following the [MCP (Model Context Protocol)](
 }
 ```
 
-### Agents
+### Agents (coming soon)
 
-Agent services enable autonomous agent-to-agent communication following the [A2A (Agent2Agent)](https://a2a-protocol.org) standard via JSON-RPC 2.0 over HTTP.
-
-```json
-// Agent Card (capability discovery at /.well-known/agent.json)
-{
-  "name": "ResearchAgent",
-  "description": "Performs deep research and summarization",
-  "skills": [{ "id": "research_topic", "name": "Research Topic" }],
-  "protocolVersion": "0.3"
-}
-
-// Send task to agent
-POST /a2a
-{
-  "message": {
-    "messageId": "msg-123",
-    "role": "user",
-    "parts": [{ "text": "Research the latest advances in transformer architectures" }]
-  }
-}
-
-// Task response
-{
-  "id": "task-456",
-  "status": { "state": "completed" },
-  "artifacts": [{ "parts": [{ "text": "Summary: Recent advances include..." }] }]
-}
-```
+Agent services enable autonomous agent-to-agent communication following standards like the [A2A (Agent2Agent)](https://a2a-protocol.org) via JSON-RPC 2.0 over HTTP.
 
 ## Best Practices
 

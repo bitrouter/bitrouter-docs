@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const API_BASE = process.env.BITROUTER_API_BASE!;
+const API_BASE = "https://api.bitrouter.ai";
 
 export async function GET() {
   const apiKey = process.env.BITROUTER_API_KEY;

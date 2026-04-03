@@ -13,7 +13,7 @@ export async function GET() {
   }
 
   try {
-    const res = await fetch(`${API_BASE}/v1/network/volume`, {
+    const res = await fetch(`${API_BASE}/network/volume`, {
       headers: { Authorization: `Bearer ${apiKey}` },
       next: { revalidate: 300 },
     });

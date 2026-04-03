@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, type ComponentType, type SVGProps } from "react";
+import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -74,7 +75,7 @@ function getProviderPrefix(modelId: string): string {
 
 type ApiTab = "models" | "tools" | "agents";
 // type TimeRange = "4w" | "12w" | "6m" | "1y";
-type SortKey = "volume" | "pricing" | "model";
+type SortKey = "volume" | "pricing" | "model" | "name";
 type SortDir = "asc" | "desc";
 
 interface ModelEntry {
@@ -109,6 +110,13 @@ interface ApiModelResponse {
     input_tokens: { no_cache: number };
     output_tokens: { text: number };
   };
+}
+
+interface ApiToolResponse {
+  id: string;
+  name: string;
+  description: string;
+  provider?: string;
 }
 
 // ── Provider colors (deterministic by model name) ────────
@@ -217,6 +225,20 @@ function sortModels(
   });
 }
 
+function sortTools(entries: ToolEntry[], key: SortKey, dir: SortDir): ToolEntry[] {
+  return [...entries].sort((a, b) => {
+    let cmp = 0;
+    switch (key) {
+      case "name":
+        cmp = a.name.localeCompare(b.name);
+        break;
+      default:
+        cmp = a.name.localeCompare(b.name);
+    }
+    return dir === "desc" ? -cmp : cmp;
+  });
+}
+
 // ── Data fetching hooks ──────────────────────────────────
 
 function useModels() {
@@ -252,6 +274,41 @@ function useModels() {
   return { models, loading, error };
 }
 
+interface ToolEntry {
+  id: string;
+  name: string;
+  description: string;
+  provider: string;
+}
+
+function useTools() {
+  const [tools, setTools] = useState<ToolEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/bitrouter/tools")
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then((data: { data: ApiToolResponse[] }) => {
+        const entries: ToolEntry[] = data.data.map((t) => ({
+          id: t.id,
+          name: t.name,
+          description: t.description,
+          provider: t.provider ?? "custom",
+        }));
+        setTools(entries);
+        setError(null);
+      })
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  return { tools, loading, error };
+}
+
 // function useVolume() {
 //   const [volume, setVolume] = useState<VolumeData | null>(null);
 //   const [loading, setLoading] = useState(true);
@@ -273,13 +330,14 @@ function useModels() {
 // ── Component ────────────────────────────────────────────
 
 export function ApisView() {
-  const [activeTab] = useState<ApiTab>("models");
+  const [activeTab, setActiveTab] = useState<ApiTab>("models");
   // const [timeRange, setTimeRange] = useState<TimeRange>("12w");
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("model");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
 
   const { models, loading: modelsLoading, error: modelsError } = useModels();
+  const { tools, loading: toolsLoading, error: toolsError } = useTools();
   // const { volume, loading: volumeLoading } = useVolume();
 
   // const hasVolumeData =
@@ -293,7 +351,7 @@ export function ApisView() {
   //   return volume.timeseries.slice(-weeks);
   // }, [timeRange, volume, hasVolumeData]);
 
-  const filtered = useMemo(() => {
+  const filteredModels = useMemo(() => {
     let list = models;
     if (search) {
       const q = search.toLowerCase();
@@ -306,12 +364,26 @@ export function ApisView() {
     return sortModels(list, sortKey, sortDir);
   }, [models, search, sortKey, sortDir]);
 
+  const filteredTools = useMemo(() => {
+    let list = tools;
+    if (search) {
+      const q = search.toLowerCase();
+      list = list.filter(
+        (t) =>
+          t.name.toLowerCase().includes(q) ||
+          t.description.toLowerCase().includes(q) ||
+          t.provider.toLowerCase().includes(q),
+      );
+    }
+    return sortTools(list, sortKey, sortDir);
+  }, [tools, search, sortKey, sortDir]);
+
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
       setSortDir((d) => (d === "desc" ? "asc" : "desc"));
     } else {
       setSortKey(key);
-      setSortDir(key === "model" ? "asc" : "desc");
+      setSortDir(key === "model" || key === "name" ? "asc" : "desc");
     }
   };
 
@@ -323,17 +395,27 @@ export function ApisView() {
           <div className="flex flex-col gap-2 border-b border-border px-4 py-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
               <div className="inline-flex border border-border rounded-md overflow-hidden">
-                <TabButton active={activeTab === "models"} disabled={false}>
+                <TabButton
+                  active={activeTab === "models"}
+                  disabled={false}
+                  onClick={() => {
+                    setActiveTab("models");
+                    setSearch("");
+                    setSortKey("model");
+                  }}
+                >
                   Models
                 </TabButton>
-                <TabButton active={false} disabled>
+                <TabButton
+                  active={activeTab === "tools"}
+                  disabled={false}
+                  onClick={() => {
+                    setActiveTab("tools");
+                    setSearch("");
+                    setSortKey("model");
+                  }}
+                >
                   Tools
-                  <Badge
-                    variant="outline"
-                    className="text-[9px] px-1.5 py-0 font-normal border-border ml-1.5"
-                  >
-                    soon
-                  </Badge>
                 </TabButton>
                 <TabButton active={false} disabled>
                   Agents
@@ -347,7 +429,11 @@ export function ApisView() {
               </div>
               <input
                 type="text"
-                placeholder="Search models or providers..."
+                placeholder={
+                  activeTab === "models"
+                    ? "Search models or providers..."
+                    : "Search tools..."
+                }
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="bg-background border border-border rounded-md px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-foreground/30 w-full sm:w-56 transition-colors"
@@ -355,7 +441,8 @@ export function ApisView() {
             </div>
             <div className="flex items-center gap-3">
               <span className="text-[11px] text-muted-foreground tabular-nums">
-                {models.length} models
+                {activeTab === "models" ? models.length : tools.length}{" "}
+                {activeTab === "models" ? "models" : "tools"}
               </span>
               {/* {hasVolumeData && (
                 <div className="inline-flex border border-border rounded-md overflow-hidden">
@@ -489,7 +576,7 @@ export function ApisView() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.map((entry, i) => (
+                  {filteredModels.map((entry, i) => (
                     <tr
                       key={entry.id}
                       className="border-b border-border/30 transition-colors hover:bg-muted/10"
@@ -511,7 +598,12 @@ export function ApisView() {
                               />
                             );
                           })()}
-                          <span className="font-medium">{entry.model}</span>
+                          <Link
+                            href={`/apis/models/${encodeURIComponent(entry.model)}`}
+                            className="font-medium hover:text-foreground/80 transition-colors"
+                          >
+                            {entry.model}
+                          </Link>
                           {entry.modalities.includes("image") && (
                             <Badge
                               variant="outline"
@@ -561,7 +653,7 @@ export function ApisView() {
                       </td>
                     </tr>
                   ))}
-                  {filtered.length === 0 && (
+                  {filteredModels.length === 0 && (
                     <tr>
                       <td
                         colSpan={5}
@@ -576,10 +668,98 @@ export function ApisView() {
             </div>
           )}
 
+          {/* Loading state */}
+          {toolsLoading && activeTab === "tools" && (
+            <div className="flex-1 flex items-center justify-center py-16">
+              <span className="text-xs text-muted-foreground animate-pulse">
+                Loading tools...
+              </span>
+            </div>
+          )}
+
+          {/* Error state */}
+          {toolsError && !toolsLoading && activeTab === "tools" && (
+            <div className="flex-1 flex items-center justify-center py-16">
+              <span className="text-xs text-red-400">
+                Failed to load tools: {toolsError}
+              </span>
+            </div>
+          )}
+
+          {/* Tools Table */}
+          {!toolsLoading && !toolsError && activeTab === "tools" && (
+            <div className="overflow-x-auto md:flex-1 md:min-h-0 md:overflow-y-auto">
+              <table className="w-full text-sm">
+                <thead className="md:sticky md:top-0 md:z-10 bg-card">
+                  <tr className="border-b border-border text-left text-xs text-muted-foreground">
+                    <th className="px-4 py-2.5 font-medium w-8">#</th>
+                    <SortableHeader
+                      label="Tool"
+                      sortKey="name"
+                      activeSortKey={sortKey}
+                      sortDir={sortDir}
+                      onSort={handleSort}
+                      align="left"
+                    />
+                    <th className="px-4 py-2.5 font-medium text-left">
+                      Description
+                    </th>
+                    <th className="px-4 py-2.5 font-medium text-right">
+                      Provider
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredTools.map((entry, i) => (
+                    <tr
+                      key={entry.id}
+                      className="border-b border-border/30 transition-colors hover:bg-muted/10"
+                    >
+                      <td className="px-4 py-2.5 text-muted-foreground tabular-nums">
+                        {i + 1}
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <Link
+                          href={`/apis/tools/${encodeURIComponent(entry.id)}`}
+                          className="font-medium hover:text-foreground/80 transition-colors"
+                        >
+                          {entry.name}
+                        </Link>
+                      </td>
+                      <td className="px-4 py-2.5 text-muted-foreground max-w-md truncate">
+                        {entry.description}
+                      </td>
+                      <td className="px-4 py-2.5 text-right">
+                        <Badge
+                          variant="outline"
+                          className="text-[10px] px-2 py-0 font-normal border-border"
+                        >
+                          {entry.provider}
+                        </Badge>
+                      </td>
+                    </tr>
+                  ))}
+                  {filteredTools.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan={4}
+                        className="px-4 py-8 text-center text-muted-foreground text-xs"
+                      >
+                        No tools found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+
           {/* Table footer */}
           <div className="shrink-0 flex items-center justify-between border-t border-border px-4 py-2.5">
             <span className="text-[11px] text-muted-foreground">
-              {filtered.length} of {models.length} models
+              {activeTab === "models"
+                ? `${filteredModels.length} of ${models.length} models`
+                : `${filteredTools.length} of ${tools.length} tools`}
               {search && ` · matching "${search}"`}
             </span>
             <span className="text-[11px] text-muted-foreground">
@@ -598,14 +778,17 @@ function TabButton({
   active,
   disabled,
   children,
+  onClick,
 }: {
   active: boolean;
   disabled: boolean;
   children: React.ReactNode;
+  onClick?: () => void;
 }) {
   return (
     <button
       disabled={disabled}
+      onClick={onClick}
       className={cn(
         "flex items-center px-4 py-2 text-xs border-r border-border last:border-r-0 transition-colors select-none",
         active && "bg-muted text-foreground font-medium",

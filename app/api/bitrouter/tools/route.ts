@@ -1,16 +1,16 @@
 import { NextResponse } from "next/server";
 
-const API_BASE = "https://api.bitrouter.ai";
+const API_BASE = process.env.BITROUTER_API_BASE!;
 
 export async function GET() {
   try {
-    const res = await fetch(`${API_BASE}/models`, {
-      next: { revalidate: 300 }, // cache 5 minutes
+    const res = await fetch(`${API_BASE}/tools`, {
+      next: { revalidate: 300 },
     });
 
     if (!res.ok) {
       return NextResponse.json(
-        { error: "Failed to fetch models" },
+        { error: "Failed to fetch tools" },
         { status: res.status },
       );
     }
@@ -19,7 +19,7 @@ export async function GET() {
     return NextResponse.json(data);
   } catch {
     return NextResponse.json(
-      { error: "Failed to fetch models" },
+      { error: "Failed to fetch tools" },
       { status: 502 },
     );
   }

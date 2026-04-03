@@ -1,85 +1,132 @@
 ---
 title: Agent 身份与支付
 ---
-import { Callout } from 'fumadocs-ui/components/callout';
 
-AI Agent 按需运行，使用模式不可预测。传统 SaaS 订阅、预充值额度和 API 密钥都不适合。BitRouter 提供 Agent 原生基础设施——你的钱包就是你的身份，Agent 在你链上定义的边界内支出，每笔交易可验证。
+import { Callout } from "fumadocs-ui/components/callout";
+
+AI Agent 按需运行，使用模式不可预测。传统 SaaS 订阅、预充值额度和 API 密钥都不适合。BitRouter 提供 Agent 原生基础设施——你的钱包就是你的身份，Agent 在你定义的边界内运行，每个令牌可加密验证。
 
 ## 钱包即身份
 
-BitRouter 使用你的加密钱包作为账户身份。无需注册、无需 API 密钥、无需供应商审批——拥有钱包即拥有账户。访问完全无需许可。
+BitRouter 使用 [OWS（Open Wallet Standard）](https://openwallet.sh) 钱包作为操作者身份。无需注册、无需供应商审批——拥有钱包即拥有账户。访问完全无需许可。
 
-一个主密钥对可以同时派生 Solana 和 EVM 链上的地址，为你提供跨网络的统一身份。
+一个 BIP-39 助记词可以同时派生 EVM、Solana 和 Bitcoin 链上的地址，为你提供跨网络的统一身份。私钥在本地以 AES-256-GCM 加密存储，绝不离开你的设备。
 
 ```bash
-# 生成你的身份
-bitrouter account -g
+# 创建新钱包
+bitrouter wallet create --name "my-wallet"
+
+# 显示助记词以备份
+bitrouter wallet create --name "my-wallet" --words 24 --show-mnemonic
 ```
 
-这会创建一个主密钥对，本地存储在 `~/.bitrouter/keys/`，并显示你的 Solana 和 EVM 地址。密钥由你掌控——BitRouter 绝不持有。
+这会在本地 OWS 保险库中创建一个钱包，并显示你派生的链地址。密钥由你掌控——BitRouter 绝不持有。
 
 <Callout type="info">
-**多链身份：** 你的钱包身份同时支持 EVM 链和 Solana。你可以使用任一链的签名方案进行认证。链上支付目前在 Solana 上启用，EVM 支付支持即将推出。
+  **多链身份：** 你的钱包从一个助记词派生 EVM、Solana 和 Bitcoin
+  地址。你可以使用 Solana 或 EVM 签名方案进行认证。链上支付目前在 Solana
+  上启用，EVM 支付支持即将推出。
 </Callout>
 
-## 嵌入式钱包
-
-拥有身份后，创建一个链上钱包来为 Agent 操作提供资金。
+### 钱包管理
 
 ```bash
-# 在 Solana 上创建嵌入式钱包
-bitrouter swig create-wallet
+# 列出所有钱包
+bitrouter wallet list
+
+# 显示详细信息（地址、派生路径）
+bitrouter wallet info --wallet "my-wallet"
+
+# 从已有助记词导入
+bitrouter wallet import --name "imported" --mnemonic
+
+# 从私钥导入（例如旧密钥迁移）
+bitrouter wallet import --name "from-evm" --private-key --chain evm
+
+# 导出助记词（需要密码）
+bitrouter wallet export --wallet "my-wallet"
+
+# 重命名或删除
+bitrouter wallet rename --wallet "my-wallet" --new-name "treasury"
+bitrouter wallet delete --wallet "my-wallet"
 ```
 
-这会部署一个绑定到你主密钥对的钱包。存入稳定币（USDC 或 USDT）为其充值——你授权的 Agent 将从此余额中支出。
+## Agent 访问密钥
+
+要让 Agent 访问你的 BitRouter 实例，创建一个绑定到特定钱包的 OWS API 密钥。密钥可选绑定策略以实现细粒度访问控制。
+
+```bash
+# 为 Agent 创建 API 密钥
+bitrouter key create \
+  --name "claude-agent" \
+  --wallet "my-wallet"
+
+# 绑定多个钱包并设置过期时间
+bitrouter key create \
+  --name "tmp-key" \
+  --wallet "my-wallet" \
+  --wallet "other-wallet" \
+  --expires-at "2026-12-31T00:00:00Z"
+
+# 附加策略以实现细粒度控制
+bitrouter key create \
+  --name "restricted-agent" \
+  --wallet "my-wallet" \
+  --policy "policy-id"
+```
+
+令牌仅在创建时显示一次——OWS 只存储 SHA-256 哈希，原始令牌无法恢复。请立即复制并配置给你的 Agent。
+
+```bash
+# 列出所有 API 密钥（令牌永不显示）
+bitrouter key list
+
+# 撤销 API 密钥
+bitrouter key revoke --id "key-id"
+```
+
+## JWT 签名
+
+为了更细粒度的 Agent 授权，操作者可以铸造 JWT 令牌，Agent 将其作为 Bearer 认证发送到运行中的 BitRouter 服务器。JWT 由你的 OWS 钱包签名，可以编码模型限制、预算和过期时间。
+
+```bash
+# 签发 JWT，授权访问所有模型，有效期 30 天
+bitrouter key sign --wallet "my-wallet" --exp 30d
+
+# 限制到特定模型并设置预算
+bitrouter key sign \
+  --wallet "my-wallet" \
+  --models "gpt-4o,claude-sonnet-4" \
+  --budget 5000000 \
+  --budget-scope session \
+  --exp 7d
+
+# 绑定 OWS Agent 密钥以执行支付策略
+bitrouter key sign \
+  --wallet "my-wallet" \
+  --ows-key "agent-key-id" \
+  --exp 12h
+```
+
+`--exp` 标志接受人类可读的持续时间格式（`30s`、`12h`、`7d`）或原始秒数，会被转换为 JWT 中的绝对 UNIX 时间戳。
+
+### JWT 声明
+
+| 声明  | 必填 | 描述                                                                          |
+| ----- | ---- | ----------------------------------------------------------------------------- |
+| `iss` | 是   | CAIP-10 操作者身份（例如 `solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp:<pubkey>`） |
+| `iat` | 自动 | 签发时间 UNIX 时间戳（由 CLI 自动设置）                                       |
+| `exp` | 否   | 过期 UNIX 时间戳。建议短期令牌设置此字段                                      |
+| `mdl` | 否   | 模型白名单——未设置时可访问所有已配置模型                                      |
+| `bgt` | 否   | 预算限制，单位为微美元（1 USD = 1,000,000 μUSD）                              |
+| `bsc` | 否   | 预算范围：`session`（每会话）或 `account`（每账户）                           |
+| `key` | 否   | OWS Agent 密钥 ID，用于支付策略执行                                           |
+
+服务器验证 JWT 的 `iss` 与配置的操作者钱包匹配。Agent 无法伪造或修改令牌——加密签名确保防篡改授权。
 
 <Callout type="info">
-BitRouter 的嵌入式钱包基于 [Swig](https://swig.money) 构建，这是一个为可编程支出授权设计的 Solana 钱包协议。所有约束在协议层面强制执行，而非由 BitRouter 控制。
-</Callout>
-
-## Agent 授权
-
-要让 Agent 从你的钱包支出，你需要派生一个 Agent 授权。这会为 Agent 创建一个专用密钥对，并在链上注册你定义的支出约束。
-
-```bash
-# 授权一个 Agent 并设置支出限制
-bitrouter swig derive-agent \
-  --label "my-coding-agent" \
-  --per-tx-cap 5000000 \
-  --cumulative-cap 50000000 \
-  --expires-at 1735689600
-```
-
-Agent 获得自己的密钥对，可以自主运行——但只能在你设定的、链上强制执行的边界内操作。
-
-### 权限参数
-
-| 参数 | 描述 |
-|-----------|-------------|
-| `per_tx_cap` | 单笔交易最大支出（单位：lamports） |
-| `cumulative_cap` | 所有交易的总支出上限 |
-| `expires_at` | 授权到期的 Unix 时间戳 |
-
-你可以随时更新权限，无需轮换 Agent 的密钥对：
-
-```bash
-# 调整 Agent 的支出限制
-bitrouter swig set-permissions \
-  --agent <agent-address> \
-  --cumulative-cap 100000000
-```
-
-### 为什么选择链上？
-
-每个 Agent 授权及其约束都记录在 Solana 上。这意味着：
-
-- **可验证** — 任何人都可以审计 Agent 被允许的支出范围
-- **防篡改** — 约束无法被 Agent 或 BitRouter 绕过
-- **无需许可** — 无审批流程，Agent 操作无需 KYC
-- **可组合** — 其他协议可以读取并构建在这些授权之上
-
-<Callout type="info">
-如需高级配置，如服务白名单和细粒度交易规则，请参阅 [SDK 参考](/docs/sdk-reference)。
+  如需高级配置，如策略和细粒度支出规则，请参阅 [OWS
+  文档](https://openwallet.sh)。
 </Callout>
 
 ## 支付
@@ -92,5 +139,6 @@ BitRouter 原生支持稳定币支付用于 Agent 操作：
 Agent 和开发者使用熟悉的美元金额。稳定币实现即时、低成本、无需许可的结算——没有传统支付处理器的摩擦。
 
 <Callout type="info">
-**法币支持即将推出。** 我们正在构建法币出入金支持，让团队可以直接使用传统货币为 Agent 钱包充值。
+  **法币支持即将推出。**
+  我们正在构建法币出入金支持，让团队可以直接使用传统货币为 Agent 钱包充值。
 </Callout>

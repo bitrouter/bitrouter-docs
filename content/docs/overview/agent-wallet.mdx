@@ -1,85 +1,133 @@
 ---
 title: Agentic Identity & Payment
 ---
-import { Callout } from 'fumadocs-ui/components/callout';
 
-AI agents operate on-demand with unpredictable usage patterns. Traditional SaaS subscriptions, prepaid credits, and API keys don't fit. BitRouter provides agent-native infrastructure — your wallet is your identity, agents spend within boundaries you define on-chain, and every transaction is verifiable.
+import { Callout } from "fumadocs-ui/components/callout";
+
+AI agents operate on-demand with unpredictable usage patterns. Traditional SaaS subscriptions, prepaid credits, and API keys don't fit. BitRouter provides agent-native infrastructure — your wallet is your identity, agents operate within boundaries you define, and every token is cryptographically verifiable.
 
 ## Wallet as Identity
 
-BitRouter uses your cryptographic wallet as your account identity. No signup, no API keys, no vendor approval — if you have a wallet, you have an account. This makes access fully permissionless.
+BitRouter uses [OWS (Open Wallet Standard)](https://openwallet.sh) wallets as operator identity. No signup, no vendor approval — if you have a wallet, you have an account. This makes access fully permissionless.
 
-A single master keypair derives addresses on both Solana and EVM chains, giving you one identity across networks.
+A single BIP-39 mnemonic derives addresses across EVM, Solana, and Bitcoin, giving you one identity across networks. Private keys are encrypted at rest (AES-256-GCM) and never leave your machine.
 
 ```bash
-# Generate your identity
-bitrouter account -g
+# Create a new wallet
+bitrouter wallet create --name "my-wallet"
+
+# Display the mnemonic for backup
+bitrouter wallet create --name "my-wallet" --words 24 --show-mnemonic
 ```
 
-This creates a master keypair stored locally at `~/.bitrouter/keys/` and displays your Solana and EVM addresses. You control your keys — BitRouter never holds them.
+This creates an OWS wallet in your local vault and displays your derived chain addresses. You control your keys — BitRouter never holds them.
 
 <Callout type="info">
-**Multi-chain identity:** Your wallet identity works across both EVM chains and Solana. You can authenticate with either chain's signing scheme. On-chain payments are currently enabled on Solana, with EVM payment support coming soon.
+  **Multi-chain identity:** Your wallet derives addresses on EVM, Solana, and
+  Bitcoin from a single mnemonic. You can authenticate with either Solana or EVM
+  signing schemes. On-chain payments are currently enabled on Solana, with EVM
+  payment support coming soon.
 </Callout>
 
-## Embedded Wallet
-
-Once you have an identity, create an on-chain wallet to fund agent operations.
+### Wallet Management
 
 ```bash
-# Create an embedded wallet on Solana
-bitrouter swig create-wallet
+# List all wallets
+bitrouter wallet list
+
+# Show detailed info (addresses, derivation paths)
+bitrouter wallet info --wallet "my-wallet"
+
+# Import from an existing mnemonic
+bitrouter wallet import --name "imported" --mnemonic
+
+# Import from a private key (e.g. legacy key migration)
+bitrouter wallet import --name "from-evm" --private-key --chain evm
+
+# Export mnemonic (passphrase required)
+bitrouter wallet export --wallet "my-wallet"
+
+# Rename or delete
+bitrouter wallet rename --wallet "my-wallet" --new-name "treasury"
+bitrouter wallet delete --wallet "my-wallet"
 ```
 
-This deploys a wallet tied to your master keypair. Deposit stablecoins (USDC or USDT) to fund it — agents you authorize will draw from this balance.
+## Agent Access Keys
+
+To let an agent access your BitRouter instance, create an OWS API key scoped to specific wallets. Keys can optionally be bound to policies for fine-grained access control.
+
+```bash
+# Create an API key for an agent
+bitrouter key create \
+  --name "claude-agent" \
+  --wallet "my-wallet"
+
+# Scope to multiple wallets with an expiration
+bitrouter key create \
+  --name "tmp-key" \
+  --wallet "my-wallet" \
+  --wallet "other-wallet" \
+  --expires-at "2026-12-31T00:00:00Z"
+
+# Attach a policy for fine-grained control
+bitrouter key create \
+  --name "restricted-agent" \
+  --wallet "my-wallet" \
+  --policy "policy-id"
+```
+
+The token is displayed exactly once at creation — OWS only stores a SHA-256 hash, so the raw token cannot be recovered later. Copy and provision it to your agent immediately.
+
+```bash
+# List all API keys (tokens are never shown)
+bitrouter key list
+
+# Revoke an API key
+bitrouter key revoke --id "key-id"
+```
+
+## JWT Signing
+
+For finer-grained agent authorization, the operator can mint JWT tokens that agents present as bearer auth to the running BitRouter server. JWTs are signed by your OWS wallet and can encode model restrictions, budgets, and expiration.
+
+```bash
+# Sign a JWT granting access to all models, valid for 30 days
+bitrouter key sign --wallet "my-wallet" --exp 30d
+
+# Restrict to specific models with a budget
+bitrouter key sign \
+  --wallet "my-wallet" \
+  --models "gpt-4o,claude-sonnet-4" \
+  --budget 5000000 \
+  --budget-scope session \
+  --exp 7d
+
+# Bind to an OWS agent key for payment enforcement
+bitrouter key sign \
+  --wallet "my-wallet" \
+  --ows-key "agent-key-id" \
+  --exp 12h
+```
+
+The `--exp` flag accepts human-readable durations (`30s`, `12h`, `7d`) or raw seconds. These are converted to an absolute UNIX timestamp in the JWT.
+
+### JWT Claims
+
+| Claim | Required | Description                                                                         |
+| ----- | -------- | ----------------------------------------------------------------------------------- |
+| `iss` | Yes      | CAIP-10 operator identity (e.g. `solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp:<pubkey>`) |
+| `iat` | Auto     | Issued-at UNIX timestamp (set automatically by the CLI)                             |
+| `exp` | No       | Expiration UNIX timestamp. Recommended for short-lived tokens                       |
+| `mdl` | No       | Model allowlist — when omitted, all configured models are accessible                |
+| `bgt` | No       | Budget limit in micro USD (1 USD = 1,000,000 μUSD)                                  |
+| `bsc` | No       | Budget scope: `session` (per-session) or `account` (per-account)                    |
+| `key` | No       | OWS agent key ID for payment policy enforcement                                     |
+
+The server verifies that the JWT `iss` matches the configured operator wallet. Agents cannot forge or modify tokens — the cryptographic signature ensures tamper-proof authorization.
 
 <Callout type="info">
-BitRouter's embedded wallets are built on [Swig](https://swig.money), a Solana wallet protocol designed for programmable spending authority. All constraints are enforced at the protocol level, not by BitRouter.
-</Callout>
-
-## Agent Authority
-
-To let an agent spend from your wallet, you derive an agent authority. This creates a dedicated keypair for the agent and registers it on-chain with spending constraints you define.
-
-```bash
-# Authorize an agent with spend limits
-bitrouter swig derive-agent \
-  --label "my-coding-agent" \
-  --per-tx-cap 5000000 \
-  --cumulative-cap 50000000 \
-  --expires-at 1735689600
-```
-
-The agent gets its own keypair and can operate autonomously — but only within the boundaries you set, enforced on-chain.
-
-### Permission Parameters
-
-| Parameter | Description |
-|-----------|-------------|
-| `per_tx_cap` | Maximum spend per single transaction (in lamports) |
-| `cumulative_cap` | Total spend ceiling across all transactions |
-| `expires_at` | Unix timestamp when the authority expires |
-
-You can update permissions at any time without rotating the agent's keypair:
-
-```bash
-# Adjust an agent's spend limits
-bitrouter swig set-permissions \
-  --agent <agent-address> \
-  --cumulative-cap 100000000
-```
-
-### Why On-Chain?
-
-Every agent authority and its constraints are recorded on Solana. This means:
-
-- **Verifiable** — anyone can audit what an agent is allowed to spend
-- **Tamper-proof** — constraints can't be bypassed by the agent or by BitRouter
-- **Permissionless** — no approval process, no KYC for agent operations
-- **Composable** — other protocols can read and build on these authorities
-
-<Callout type="info">
-For advanced configurations like service allowlists and fine-grained transaction rules, see the [SDK Reference](/docs/sdk-reference).
+  For advanced configurations like policies and fine-grained spending rules, see
+  the [OWS documentation](https://openwallet.sh).
 </Callout>
 
 ## Payments
@@ -92,5 +140,6 @@ BitRouter natively supports stablecoin payments for agent operations:
 Agents and developers interact with familiar USD amounts. Stablecoins enable instant, low-cost, permissionless settlement — without the friction of traditional payment processors.
 
 <Callout type="info">
-**Fiat support coming soon.** We're building fiat on-ramp and off-ramp support so teams can fund agent wallets directly with traditional currency.
+  **Fiat support coming soon.** We're building fiat on-ramp and off-ramp support
+  so teams can fund agent wallets directly with traditional currency.
 </Callout>

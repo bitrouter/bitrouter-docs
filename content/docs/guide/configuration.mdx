@@ -129,22 +129,29 @@ bitrouter serve
 | `{PREFIX}_API_KEY`       | Provider API key (e.g. `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`)       |
 | `{PREFIX}_BASE_URL`      | Provider base URL override (e.g. `OPENAI_BASE_URL`)                 |
 
-## Minimal Configuration
+## Empty and Minimal Configuration
 
-The smallest useful configuration — just a listen address and one provider API key. Built-in providers are merged automatically (controlled by `inherit_defaults: true`, the default):
+BitRouter works with an empty configuration file — or even no configuration at all. All built-in providers (OpenAI, Anthropic, Google, OpenRouter, DeepSeek, and more) are available automatically. Just set API keys in `.env` or the environment:
 
-```yaml
-# ~/.bitrouter/bitrouter.yaml
-
-server:
-  listen: "127.0.0.1:8787"
-
-providers:
-  openai:
-    api_key: "${OPENAI_API_KEY}"
+```bash
+export OPENAI_API_KEY=sk-...
+bitrouter serve
+# Ready — use openai:gpt-4o, anthropic:claude-sonnet-4-20250514, etc.
 ```
 
-With this config and `OPENAI_API_KEY` set in `.env` or the environment, you can immediately use `openai:gpt-4o` or any other OpenAI model name. All built-in providers (Anthropic, Google, etc.) are also available — just add their API keys.
+The `bitrouter init` command generates a comments-only template at `~/.bitrouter/bitrouter.yaml`. No fields are required.
+
+To add a custom provider (e.g. an OpenAI-compatible proxy), define it under `providers`:
+
+```yaml
+providers:
+  my-proxy:
+    derives: openai
+    api_base: "https://api.mycompany.com/v1"
+    api_key: "${MY_PROXY_API_KEY}"
+```
+
+This inherits OpenAI's protocol and model catalog, pointed at your endpoint. Models are then available as `my-proxy:gpt-4o`, etc.
 
 ## Full Configuration Reference
 

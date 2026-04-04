@@ -129,22 +129,29 @@ bitrouter serve
 | `{PREFIX}_API_KEY`       | 提供商 API 密钥（如 `OPENAI_API_KEY`、`ANTHROPIC_API_KEY`） |
 | `{PREFIX}_BASE_URL`      | 提供商 Base URL 覆盖（如 `OPENAI_BASE_URL`）                |
 
-## 最小配置
+## 空配置与最小配置
 
-最小可用配置 — 只需监听地址和一个提供商 API 密钥。内置提供商自动合并（由 `inherit_defaults: true` 控制，这是默认值）：
+BitRouter 支持空配置文件运行 — 甚至完全不需要配置文件。所有内置提供商（OpenAI、Anthropic、Google、OpenRouter、DeepSeek 等）均自动可用。只需在 `.env` 或环境中设置 API 密钥：
 
-```yaml
-# ~/.bitrouter/bitrouter.yaml
-
-server:
-  listen: "127.0.0.1:8787"
-
-providers:
-  openai:
-    api_key: "${OPENAI_API_KEY}"
+```bash
+export OPENAI_API_KEY=sk-...
+bitrouter serve
+# 就绪 — 可使用 openai:gpt-4o、anthropic:claude-sonnet-4-20250514 等
 ```
 
-使用此配置并在 `.env` 或环境中设置 `OPENAI_API_KEY`，即可立即使用 `openai:gpt-4o` 或任何其他 OpenAI 模型名称。所有内置提供商（Anthropic、Google 等）也可用 — 只需添加对应的 API 密钥。
+`bitrouter init` 命令会在 `~/.bitrouter/bitrouter.yaml` 生成一个纯注释模板。无需填写任何字段。
+
+如需添加自定义提供商（如 OpenAI 兼容代理），在 `providers` 中定义：
+
+```yaml
+providers:
+  my-proxy:
+    derives: openai
+    api_base: "https://api.mycompany.com/v1"
+    api_key: "${MY_PROXY_API_KEY}"
+```
+
+这将继承 OpenAI 的协议和模型目录，指向你的端点。之后可使用 `my-proxy:gpt-4o` 等模型名称。
 
 ## 完整配置参考
 

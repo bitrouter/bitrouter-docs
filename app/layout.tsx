@@ -12,6 +12,9 @@ const BASE_URL = "https://bitrouter.ai";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
+  icons: {
+    icon: "/logo.svg",
+  },
   title: {
     default: "BitRouter — Open Intelligence Router for LLM Agents",
     template: "%s | BitRouter",

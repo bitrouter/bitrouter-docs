@@ -3,7 +3,7 @@ title: 配置
 description: 配置 bitrouter.yaml、环境变量和 BITROUTER_HOME。
 ---
 
-import { Callout } from 'fumadocs-ui/components/callout';
+import { Callout } from "fumadocs-ui/components/callout";
 
 ## 主目录
 
@@ -12,123 +12,21 @@ BitRouter 按以下顺序解析工作目录：
 1. 命令行指定 `--home-dir <PATH>`
 2. 当前目录（如果存在 `./bitrouter.yaml`）
 3. `BITROUTER_HOME` 环境变量（如果指向已存在的目录）
-4. `~/.bitrouter`（默认回退 — 自动创建）
+4. `~/.bitrouter`（默认回退 — 首次运行时自动创建）
 
 ### 目录结构
 
 ```text
 <home>/
 ├── bitrouter.yaml   # 主配置文件
-├── .env             # 环境变量（自动加载）
-├── .gitignore       # 忽略 logs/、run/、.env
-├── .keys/           # 本地 Ed25519 账户密钥和 JWT
+├── .env             # 环境变量（自动加载，已被 git 忽略）
+├── .gitignore       # 忽略 .env、logs/、run/、.keys/、bitrouter.db
+├── run/             # PID 文件、Unix 套接字、运行时状态
 ├── logs/            # 服务器日志
-└── run/             # PID 文件和运行时状态
+└── bitrouter.db     # SQLite 数据库（默认，自动创建）
 ```
 
-## 设置向导
-
-创建配置最简单的方式：
-
-```bash
-bitrouter init
-```
-
-向导提供两种路径：
-
-- **Cloud** — 通过 x402 支付连接 BitRouter 云节点（需要 Solana 钱包）
-- **BYOK** — 使用你自己的 OpenAI、Anthropic、Google 或自定义提供商 API 密钥
-
-向导会为你生成 `bitrouter.yaml` 和 `.env`。
-
-## 配置文件
-
-主配置文件为 `bitrouter.yaml`。完整示例：
-
-```yaml
-server:
-  listen: 127.0.0.1:8787
-  log_level: info
-
-database:
-  url: "sqlite://${BITROUTER_HOME}/bitrouter.db?mode=rwc"
-
-providers:
-  openai:
-    api_key: ${OPENAI_API_KEY}
-  anthropic:
-    api_key: ${ANTHROPIC_API_KEY}
-
-models:
-  default:
-    strategy: priority
-    endpoints:
-      - provider: openai
-        model_id: gpt-4o
-  fast:
-    strategy: load_balance
-    endpoints:
-      - provider: openai
-        model_id: gpt-4o-mini
-      - provider: anthropic
-        model_id: claude-haiku-4-5-20251001
-
-guardrails:
-  enabled: true
-  upgoing:
-    api_keys: redact
-    private_keys: block
-```
-
-### 服务器
-
-| 字段 | 默认值 | 描述 |
-|------|--------|------|
-| `listen` | `127.0.0.1:8787` | API 服务器地址和端口 |
-| `log_level` | `info` | 日志级别 |
-| `control.socket` | `bitrouter.sock` | 守护进程控制 Unix 套接字 |
-
-### 数据库
-
-| 字段 | 默认值 | 描述 |
-|------|--------|------|
-| `url` | 主目录中的 SQLite | 连接 URL — 支持 `sqlite://`、`postgres://`、`mysql://` |
-
-## 环境变量
-
-BitRouter 自动加载 `<home>/.env`，然后读取进程环境变量。在 `bitrouter.yaml` 中使用 `${VAR}` 占位符：
-
-```yaml
-providers:
-  openai:
-    api_key: ${OPENAI_API_KEY}
-    api_base: ${OPENAI_BASE_URL}
-```
-
-### `.env` 文件
-
-```bash
-OPENAI_API_KEY=sk-...
-ANTHROPIC_API_KEY=sk-ant-...
-GOOGLE_API_KEY=AIza...
-```
-
-<Callout type="warn">
-`.env` 文件可能包含敏感信息。默认的 `.gitignore` 已将其排除 — 请勿提交到版本控制。
-</Callout>
-
-## 零配置模式
-
-如果环境中已有提供商 API 密钥，BitRouter 会自动检测并启用直接路由，无需配置文件：
-
-```bash
-export OPENAI_API_KEY=sk-...
-bitrouter serve
-```
-
-然后使用 `openai:gpt-4o` 作为模型名称。自动检测使用每个内置提供商定义的 `env_prefix`（如 `OPENAI` 映射 `OPENAI_API_KEY` 和 `OPENAI_BASE_URL`）。
-
-## CLI 覆盖
+### CLI 路径覆盖
 
 每个路径和数据库 URL 都可以按次覆盖：
 
@@ -143,3 +41,446 @@ bitrouter serve \
 ```
 
 这些标志在每个子命令上都可用。
+
+## 设置向导
+
+创建配置最简单的方式：
+
+```bash
+bitrouter init
+```
+
+交互式向导会：
+
+1. 检测环境中已有的 API 密钥（`OPENAI_API_KEY`、`ANTHROPIC_API_KEY`、`GOOGLE_API_KEY`）
+2. 选择内置提供商（OpenAI、Anthropic、Google）
+3. 添加自定义的 OpenAI 兼容或 Anthropic 兼容提供商
+4. 收集 API 密钥（从环境或手动输入）
+5. 设置监听地址（默认 `127.0.0.1:8787`）
+6. 可选创建 OWS 钱包用于支付签名
+
+向导会为你生成 `bitrouter.yaml` 和 `.env`。
+
+## 环境变量
+
+BitRouter 启动时自动加载 `<home>/.env`。进程环境变量优先于 `.env` 中的值。在 `bitrouter.yaml` 中使用 `${VAR}` 占位符：
+
+```yaml
+providers:
+  openai:
+    api_key: ${OPENAI_API_KEY}
+    api_base: ${OPENAI_BASE_URL}
+```
+
+### 替换规则
+
+- **优先级：** 进程环境 > `.env` 文件
+- **语法：** 在任何 YAML 字符串值中使用 `${VAR_NAME}`
+- **缺失变量：** 替换为空字符串（不报错）
+- **未闭合大括号：** 原样输出（`${VAR` 保持不变）
+- **递归：** 在嵌套对象和数组中均有效
+
+### `.env` 文件
+
+```bash
+# API 密钥
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+GOOGLE_API_KEY=AIza...
+
+# 数据库
+BITROUTER_DATABASE_URL=postgres://user:pass@localhost/bitrouter
+
+# 钱包
+OWS_PASSPHRASE=my-wallet-passphrase
+
+# MPP
+MPP_SECRET_KEY=...
+```
+
+<Callout type="warn">
+  `.env` 文件可能包含敏感信息。默认的 `.gitignore` 已将其排除 —
+  请勿提交到版本控制。
+</Callout>
+
+### 通过 `env_prefix` 自动检测
+
+每个内置提供商定义了 `env_prefix`（如 `OPENAI`、`ANTHROPIC`）。设置 `env_prefix` 后，BitRouter 自动读取：
+
+- `{PREFIX}_API_KEY` → `provider.api_key`
+- `{PREFIX}_BASE_URL` → `provider.api_base`
+
+这使得零配置模式成为可能 — 如果环境中已有 API 密钥，提供商无需 YAML 即可工作：
+
+```bash
+export OPENAI_API_KEY=sk-...
+bitrouter serve
+# 使用 openai:gpt-4o 作为模型名称
+```
+
+### 关键环境变量
+
+| 变量                     | 描述                                                        |
+| ------------------------ | ----------------------------------------------------------- |
+| `BITROUTER_HOME`         | 覆盖主目录                                                  |
+| `BITROUTER_DATABASE_URL` | 数据库连接 URL（覆盖配置中的 `database.url`）               |
+| `OWS_PASSPHRASE`         | 钱包解密密码（未设置且有 TTY 时会提示输入）                 |
+| `MPP_SECRET_KEY`         | MPP 挑战验证的 HMAC 密钥                                    |
+| `{PREFIX}_API_KEY`       | 提供商 API 密钥（如 `OPENAI_API_KEY`、`ANTHROPIC_API_KEY`） |
+| `{PREFIX}_BASE_URL`      | 提供商 Base URL 覆盖（如 `OPENAI_BASE_URL`）                |
+
+## 最小配置
+
+最小可用配置 — 只需监听地址和一个提供商 API 密钥。内置提供商自动合并（由 `inherit_defaults: true` 控制，这是默认值）：
+
+```yaml
+# ~/.bitrouter/bitrouter.yaml
+
+server:
+  listen: "127.0.0.1:8787"
+
+providers:
+  openai:
+    api_key: "${OPENAI_API_KEY}"
+```
+
+使用此配置并在 `.env` 或环境中设置 `OPENAI_API_KEY`，即可立即使用 `openai:gpt-4o` 或任何其他 OpenAI 模型名称。所有内置提供商（Anthropic、Google 等）也可用 — 只需添加对应的 API 密钥。
+
+## 完整配置参考
+
+`bitrouter.yaml` 中所有可用的部分和字段：
+
+```yaml
+# ── 服务器 ──────────────────────────────────────────────────────────
+
+server:
+  listen: "127.0.0.1:8787" # HTTP API 服务器地址和端口
+  log_level: info # trace | debug | info | warn | error
+  control:
+    socket: bitrouter.sock # 守护进程控制 Unix 套接字
+
+# ── 数据库 ──────────────────────────────────────────────────────────
+
+database:
+  # 连接 URL。支持 sqlite://、postgres://、mysql://。
+  # 优先级：--db 标志 > BITROUTER_DATABASE_URL 环境变量 > 此字段 > 默认 SQLite
+  url: "sqlite://bitrouter.db?mode=rwc"
+
+# ── 提供商继承 ──────────────────────────────────────────────────────
+
+# 内置提供商：openai、anthropic、google、openrouter、deepseek、
+# minimax、zai、moonshot、qwen、bitrouter（300+ 聚合模型）。
+# 设为 false 则仅使用下方声明的提供商。
+inherit_defaults: true
+
+# ── 提供商 ──────────────────────────────────────────────────────────
+
+providers:
+  # 覆盖内置提供商（只修改你设置的字段）。
+  openai:
+    api_key: "${OPENAI_API_KEY}"
+
+  anthropic:
+    api_key: "${ANTHROPIC_API_KEY}"
+
+  google:
+    api_key: "${GOOGLE_API_KEY}"
+
+  # 从内置提供商继承的自定义提供商。
+  # `derives` 复制 api_protocol、api_base、模型目录等。
+  my-proxy:
+    derives: openai
+    api_base: "https://api.mycompany.com/v1"
+    api_key: "${MY_PROXY_API_KEY}"
+
+  # 完全自定义提供商（无继承）。
+  custom-llm:
+    api_protocol: openai # openai | anthropic | google | mcp | rest
+    api_base: "https://llm.example.com/v1"
+    api_key: "${CUSTOM_LLM_KEY}"
+    env_prefix: CUSTOM_LLM # 自动读取 CUSTOM_LLM_API_KEY / CUSTOM_LLM_BASE_URL
+    default_headers:
+      x-project-id: "my-project"
+    models:
+      my-model-7b:
+        name: "My Model 7B"
+        description: "自定义微调模型"
+        max_input_tokens: 32768
+        max_output_tokens: 4096
+        input_modalities: [text]
+        output_modalities: [text]
+        pricing:
+          input_tokens:
+            no_cache: 0.50 # 每百万 token（美元）
+            cache_read: 0.25
+            cache_write: 0.75
+          output_tokens:
+            text: 1.50
+            reasoning: 3.00
+
+  # MCP 工具提供商（桥接模式）。
+  github-mcp:
+    api_protocol: mcp
+    api_base: "https://api.githubcopilot.com/mcp"
+    api_key: "${GITHUB_TOKEN}"
+    bridge: true # 暴露为 POST /mcp/github-mcp
+
+  # 使用自定义 Header 认证的提供商。
+  header-auth-provider:
+    derives: openai
+    api_base: "https://api.example.com/v1"
+    auth:
+      type: header
+      header_name: "x-api-key"
+      api_key: "${HEADER_AUTH_KEY}"
+
+  # 使用 MPP（机器支付协议）认证的提供商。
+  paid-provider:
+    derives: openai
+    api_base: "https://paid.example.com/v1"
+    auth:
+      type: mpp
+
+# ── 模型路由 ────────────────────────────────────────────────────────
+#
+# 虚拟模型名称 → 提供商端点。
+# 不配置此段时，裸模型名称路由到默认的 `bitrouter` 提供商
+#（如果它存在且有 api_key）。
+
+models:
+  # Priority：按顺序尝试，出错时故障转移。
+  smart:
+    strategy: priority
+    endpoints:
+      - provider: anthropic
+        service_id: claude-sonnet-4-20250514
+      - provider: openai
+        service_id: gpt-4o
+    name: "Smart"
+    max_input_tokens: 200000
+    max_output_tokens: 16384
+
+  # Load-balanced：在端点间轮询。
+  fast:
+    strategy: load_balance
+    endpoints:
+      - provider: openai
+        service_id: gpt-4o-mini
+        api_key: "${OPENAI_KEY_POOL_A}" # 每端点覆盖
+      - provider: openai
+        service_id: gpt-4o-mini
+        api_key: "${OPENAI_KEY_POOL_B}"
+
+  # 跨提供商故障转移。
+  coding:
+    strategy: priority
+    endpoints:
+      - provider: anthropic
+        service_id: claude-sonnet-4-20250514
+      - provider: openai
+        service_id: gpt-4o
+      - provider: google
+        service_id: gemini-2.5-pro
+
+# ── 工具路由 ────────────────────────────────────────────────────────
+
+tools:
+  create_issue:
+    strategy: priority
+    endpoints:
+      - provider: github-mcp
+        service_id: create_issue
+    description: "创建 GitHub issue"
+    input_schema:
+      type: object
+      properties:
+        repo: { type: string }
+        title: { type: string }
+        body: { type: string }
+      required: [repo, title]
+    skill: "github-issues"
+
+  web_search:
+    endpoints:
+      - provider: exa
+        service_id: search
+    pricing:
+      default: 0.001 # 每次调用（美元）
+      overrides:
+        search: 0.002
+
+# ── 护栏 ────────────────────────────────────────────────────────────
+#
+# AI Agent 流量本地防火墙。
+# 内置模式：api_keys、private_keys、credentials、pii_emails、
+#   pii_phone_numbers、ip_addresses、suspicious_commands
+# 动作：warn（默认）、redact、block
+
+guardrails:
+  enabled: true
+
+  disabled_patterns:
+    - ip_addresses
+    - pii_phone_numbers
+
+  custom_patterns:
+    - name: internal_token
+      regex: "myapp_[A-Za-z0-9]{32}"
+      direction: upgoing # upgoing | downgoing | both
+
+  upgoing: # 出站（用户 → LLM）
+    api_keys: redact
+    private_keys: block
+    credentials: redact
+
+  downgoing: # 入站（LLM → 用户）
+    suspicious_commands: block
+
+  custom_upgoing:
+    internal_token: block
+
+  block_message:
+    include_details: true
+    include_help_link: true
+
+  tools:
+    enabled: true
+    providers:
+      github-mcp:
+        filter:
+          deny: [delete_repo, delete_branch]
+        param_restrictions:
+          rules:
+            create_issue:
+              deny: [assignees]
+              action: strip # strip | reject
+
+# ── 钱包 ────────────────────────────────────────────────────────────
+#
+# OWS 钱包，用于签名和支付操作。
+# 密码：OWS_PASSPHRASE 环境变量，或启动时提示输入。
+
+wallet:
+  name: "my-wallet"
+  vault_path: "~/.ows"
+  payment:
+    tempo_rpc_url: "https://rpc.moderato.tempo.xyz"
+    solana_rpc_url: "https://api.mainnet-beta.solana.com"
+    session_max_deposit: 10000000
+    session_default_deposit: 1000000
+
+# ── MPP（机器支付协议） ────────────────────────────────────────────
+#
+# 服务端支付网关（402 Payment Required）。
+
+mpp:
+  enabled: true
+  realm: "bitrouter.example.com"
+  secret_key: "${MPP_SECRET_KEY}"
+  networks:
+    tempo:
+      recipient: "0x1234..."
+      escrow_contract: "0xabcd..."
+      rpc_url: "${TEMPO_RPC_URL}"
+      currency: "${TEMPO_TOKEN_ADDRESS}"
+      fee_payer: false
+      default_deposit: "5000000"
+
+# ── Solana RPC ──────────────────────────────────────────────────────
+
+solana_rpc_url: "https://api.mainnet-beta.solana.com"
+```
+
+### 参考表
+
+#### 服务器
+
+| 字段                    | 默认值           | 描述                     |
+| ----------------------- | ---------------- | ------------------------ |
+| `server.listen`         | `127.0.0.1:8787` | API 服务器地址和端口     |
+| `server.log_level`      | `info`           | 日志级别                 |
+| `server.control.socket` | `bitrouter.sock` | 守护进程控制 Unix 套接字 |
+
+#### 数据库
+
+| 字段           | 默认值                                  | 描述                                              |
+| -------------- | --------------------------------------- | ------------------------------------------------- |
+| `database.url` | `sqlite://<home>/bitrouter.db?mode=rwc` | 连接 URL — `sqlite://`、`postgres://`、`mysql://` |
+
+优先级：`--db` CLI 标志 > `BITROUTER_DATABASE_URL` 环境变量 > `database.url` > 默认 SQLite。
+
+#### 提供商
+
+| 字段              | 必填 | 描述                                                  |
+| ----------------- | ---- | ----------------------------------------------------- |
+| `api_protocol`    | 否   | `openai`、`anthropic`、`google`、`mcp`、`rest`        |
+| `api_base`        | 否   | 上游 API 基础 URL                                     |
+| `api_key`         | 否   | 默认 API 密钥                                         |
+| `derives`         | 否   | 从另一个提供商继承（加载时解析）                      |
+| `env_prefix`      | 否   | 自动读取 `{PREFIX}_API_KEY` / `{PREFIX}_BASE_URL`     |
+| `auth`            | 否   | 认证覆盖：`bearer`、`header`、`x402`、`mpp`、`custom` |
+| `default_headers` | 否   | 每个请求附加的额外 HTTP 头                            |
+| `models`          | 否   | 每模型元数据和定价目录                                |
+| `bridge`          | 否   | 仅 MCP：暴露为 `POST /mcp/{name}`                     |
+
+#### 模型路由
+
+| 字段                       | 默认值     | 描述                                            |
+| -------------------------- | ---------- | ----------------------------------------------- |
+| `strategy`                 | `priority` | `priority`（故障转移）或 `load_balance`（轮询） |
+| `endpoints`                | 必填       | provider + service_id 对                        |
+| `endpoints[].provider`     | 必填       | 提供商名称                                      |
+| `endpoints[].service_id`   | 必填       | 上游模型 ID（别名：`model_id`）                 |
+| `endpoints[].api_key`      | 否         | 每端点 API 密钥覆盖                             |
+| `endpoints[].api_base`     | 否         | 每端点基础 URL 覆盖                             |
+| `endpoints[].api_protocol` | 否         | 每端点协议覆盖                                  |
+| `name`                     | 否         | 显示名称                                        |
+| `max_input_tokens`         | 否         | 上下文窗口大小                                  |
+| `max_output_tokens`        | 否         | 最大生成长度                                    |
+| `pricing`                  | 否         | Token 定价覆盖                                  |
+
+#### 工具路由
+
+| 字段                     | 默认值     | 描述                           |
+| ------------------------ | ---------- | ------------------------------ |
+| `strategy`               | `priority` | `priority` 或 `load_balance`   |
+| `endpoints`              | 必填       | provider + service_id 对       |
+| `endpoints[].service_id` | 必填       | 上游工具 ID（别名：`tool_id`） |
+| `pricing`                | 否         | 每次调用的固定定价             |
+| `description`            | 否         | 发现描述（REST 工具）          |
+| `input_schema`           | 否         | 参数 JSON Schema（REST 工具）  |
+| `skill`                  | 否         | 关联的 SKILL.md 名称           |
+
+#### 护栏
+
+| 模式 ID               | 方向 | 描述                             |
+| --------------------- | ---- | -------------------------------- |
+| `api_keys`            | 出站 | 常见提供商的 API 密钥            |
+| `private_keys`        | 出站 | PEM 编码的私钥                   |
+| `credentials`         | 出站 | 密码、基本认证、数据库连接字符串 |
+| `pii_emails`          | 出站 | 电子邮件地址                     |
+| `pii_phone_numbers`   | 出站 | 电话号码                         |
+| `ip_addresses`        | 出站 | IPv4 地址                        |
+| `suspicious_commands` | 入站 | 模型输出中的危险 shell 命令      |
+
+## 配置加载流程
+
+BitRouter 加载配置时按以下顺序处理：
+
+1. **加载环境** — 读取 `.env` 文件，然后读取进程环境（进程环境优先）
+2. **替换 `${VAR}`** — 替换 YAML 中所有变量引用
+3. **解析 YAML** — 反序列化为配置结构
+4. **合并内置提供商** — 除非 `inherit_defaults: false`
+5. **解析 `derives`** — 展平提供商继承链
+6. **应用 `env_prefix`** — 自动读取 `{PREFIX}_API_KEY` / `{PREFIX}_BASE_URL`
+
+### 热重载
+
+运行中的服务器可以无停机重载配置：
+
+```bash
+bitrouter reload
+# 或向服务器进程发送 SIGHUP
+```
+
+热重载会重新读取配置文件并更新路由表、护栏和工具注册表。动态路由（通过 `bitrouter route add` 添加的）在重载后保留，但进程重启后不保留。

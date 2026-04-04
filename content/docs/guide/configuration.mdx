@@ -3,132 +3,30 @@ title: Configuration
 description: Configure bitrouter.yaml, environment variables, and BITROUTER_HOME.
 ---
 
-import { Callout } from 'fumadocs-ui/components/callout';
+import { Callout } from "fumadocs-ui/components/callout";
 
-## Home directory
+## Home Directory
 
 BitRouter resolves its working directory in this order:
 
 1. `--home-dir <PATH>` if provided on the command line
 2. The current working directory, if `./bitrouter.yaml` exists
 3. `BITROUTER_HOME` environment variable, if it points to an existing directory
-4. `~/.bitrouter` (default fallback — scaffolded automatically)
+4. `~/.bitrouter` (default fallback — scaffolded automatically on first run)
 
-### Directory layout
+### Directory Layout
 
 ```text
 <home>/
-├── bitrouter.yaml   # Main configuration
-├── .env             # Environment variables (auto-loaded)
-├── .gitignore       # Ignores logs/, run/, .env
-├── .keys/           # Local Ed25519 account keys and JWTs
+├── bitrouter.yaml   # Main configuration file
+├── .env             # Environment variables (auto-loaded, git-ignored)
+├── .gitignore       # Ignores .env, logs/, run/, .keys/, bitrouter.db
+├── run/             # PID files, Unix sockets, runtime state
 ├── logs/            # Server logs
-└── run/             # PID files and runtime state
+└── bitrouter.db     # SQLite database (default, auto-created)
 ```
 
-## Setup wizard
-
-The easiest way to create your configuration:
-
-```bash
-bitrouter init
-```
-
-This launches an interactive wizard that offers two paths:
-
-- **Cloud** — connect to BitRouter Cloud Node with x402 payments (requires a Solana wallet)
-- **BYOK** — bring your own API keys for OpenAI, Anthropic, Google, or custom providers
-
-The wizard generates `bitrouter.yaml` and `.env` for you.
-
-## Configuration file
-
-The main config file is `bitrouter.yaml`. Here's a full example:
-
-```yaml
-server:
-  listen: 127.0.0.1:8787
-  log_level: info
-
-database:
-  url: "sqlite://${BITROUTER_HOME}/bitrouter.db?mode=rwc"
-
-providers:
-  openai:
-    api_key: ${OPENAI_API_KEY}
-  anthropic:
-    api_key: ${ANTHROPIC_API_KEY}
-
-models:
-  default:
-    strategy: priority
-    endpoints:
-      - provider: openai
-        model_id: gpt-4o
-  fast:
-    strategy: load_balance
-    endpoints:
-      - provider: openai
-        model_id: gpt-4o-mini
-      - provider: anthropic
-        model_id: claude-haiku-4-5-20251001
-
-guardrails:
-  enabled: true
-  upgoing:
-    api_keys: redact
-    private_keys: block
-```
-
-### Server
-
-| Field | Default | Description |
-|-------|---------|-------------|
-| `listen` | `127.0.0.1:8787` | Address and port for the API server |
-| `log_level` | `info` | Tracing log level |
-| `control.socket` | `bitrouter.sock` | Unix socket for daemon control |
-
-### Database
-
-| Field | Default | Description |
-|-------|---------|-------------|
-| `url` | SQLite in home dir | Connection URL — supports `sqlite://`, `postgres://`, `mysql://` |
-
-## Environment variables
-
-BitRouter loads `<home>/.env` automatically, then reads process environment variables. Use `${VAR}` placeholders anywhere in `bitrouter.yaml`:
-
-```yaml
-providers:
-  openai:
-    api_key: ${OPENAI_API_KEY}
-    api_base: ${OPENAI_BASE_URL}
-```
-
-### `.env` file
-
-```bash
-OPENAI_API_KEY=sk-...
-ANTHROPIC_API_KEY=sk-ant-...
-GOOGLE_API_KEY=AIza...
-```
-
-<Callout type="warn">
-The `.env` file may contain secrets. The scaffolded `.gitignore` excludes it by default — do not commit it to version control.
-</Callout>
-
-## Zero-config mode
-
-If provider API keys exist in your environment, BitRouter auto-detects them and enables direct routing without a config file:
-
-```bash
-export OPENAI_API_KEY=sk-...
-bitrouter serve
-```
-
-You can then use `openai:gpt-4o` as the model name. Auto-detection uses the `env_prefix` defined in each built-in provider (e.g. `OPENAI` maps `OPENAI_API_KEY` and `OPENAI_BASE_URL`).
-
-## CLI overrides
+### CLI Path Overrides
 
 Every path and the database URL can be overridden per-invocation:
 
@@ -143,3 +41,446 @@ bitrouter serve \
 ```
 
 These flags are available on every subcommand.
+
+## Setup Wizard
+
+The easiest way to create your configuration:
+
+```bash
+bitrouter init
+```
+
+This launches an interactive wizard that:
+
+1. Detects API keys already in your environment (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`)
+2. Lets you select built-in providers (OpenAI, Anthropic, Google)
+3. Lets you add custom OpenAI-compatible or Anthropic-compatible providers
+4. Collects API keys (from env or prompted)
+5. Sets the listen address (default `127.0.0.1:8787`)
+6. Optionally creates an OWS wallet for payment signing
+
+The wizard generates `bitrouter.yaml` and `.env` for you.
+
+## Environment Variables
+
+BitRouter loads `<home>/.env` automatically at startup. Process environment variables override `.env` values. Use `${VAR}` placeholders anywhere in `bitrouter.yaml`:
+
+```yaml
+providers:
+  openai:
+    api_key: ${OPENAI_API_KEY}
+    api_base: ${OPENAI_BASE_URL}
+```
+
+### Substitution Rules
+
+- **Precedence:** process environment > `.env` file
+- **Syntax:** `${VAR_NAME}` in any YAML string value
+- **Missing variables:** replaced with empty string (not an error)
+- **Unclosed braces:** emitted literally (`${VAR` stays as-is)
+- **Recursive:** works in nested objects and arrays
+
+### `.env` File
+
+```bash
+# API keys
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+GOOGLE_API_KEY=AIza...
+
+# Database
+BITROUTER_DATABASE_URL=postgres://user:pass@localhost/bitrouter
+
+# Wallet
+OWS_PASSPHRASE=my-wallet-passphrase
+
+# MPP
+MPP_SECRET_KEY=...
+```
+
+<Callout type="warn">
+  The `.env` file may contain secrets. The scaffolded `.gitignore` excludes it
+  by default — do not commit it to version control.
+</Callout>
+
+### Auto-Detection via `env_prefix`
+
+Each built-in provider defines an `env_prefix` (e.g. `OPENAI`, `ANTHROPIC`). When an `env_prefix` is set, BitRouter automatically reads:
+
+- `{PREFIX}_API_KEY` → `provider.api_key`
+- `{PREFIX}_BASE_URL` → `provider.api_base`
+
+This enables zero-config mode — if API keys exist in your environment, providers work without any YAML:
+
+```bash
+export OPENAI_API_KEY=sk-...
+bitrouter serve
+# Use openai:gpt-4o as the model name
+```
+
+### Key Environment Variables
+
+| Variable                 | Description                                                         |
+| ------------------------ | ------------------------------------------------------------------- |
+| `BITROUTER_HOME`         | Override the home directory                                         |
+| `BITROUTER_DATABASE_URL` | Database connection URL (overrides `database.url` in config)        |
+| `OWS_PASSPHRASE`         | Wallet decryption passphrase (prompted if missing and TTY attached) |
+| `MPP_SECRET_KEY`         | HMAC secret for MPP challenge verification                          |
+| `{PREFIX}_API_KEY`       | Provider API key (e.g. `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`)       |
+| `{PREFIX}_BASE_URL`      | Provider base URL override (e.g. `OPENAI_BASE_URL`)                 |
+
+## Minimal Configuration
+
+The smallest useful configuration — just a listen address and one provider API key. Built-in providers are merged automatically (controlled by `inherit_defaults: true`, the default):
+
+```yaml
+# ~/.bitrouter/bitrouter.yaml
+
+server:
+  listen: "127.0.0.1:8787"
+
+providers:
+  openai:
+    api_key: "${OPENAI_API_KEY}"
+```
+
+With this config and `OPENAI_API_KEY` set in `.env` or the environment, you can immediately use `openai:gpt-4o` or any other OpenAI model name. All built-in providers (Anthropic, Google, etc.) are also available — just add their API keys.
+
+## Full Configuration Reference
+
+Every section and field available in `bitrouter.yaml`:
+
+```yaml
+# ── Server ──────────────────────────────────────────────────────────
+
+server:
+  listen: "127.0.0.1:8787" # Address and port for the HTTP API server
+  log_level: info # trace | debug | info | warn | error
+  control:
+    socket: bitrouter.sock # Unix socket for daemon control
+
+# ── Database ────────────────────────────────────────────────────────
+
+database:
+  # Connection URL. Supports sqlite://, postgres://, mysql://.
+  # Resolution: --db flag > BITROUTER_DATABASE_URL env > this field > default SQLite
+  url: "sqlite://bitrouter.db?mode=rwc"
+
+# ── Provider Inheritance ────────────────────────────────────────────
+
+# Built-in providers: openai, anthropic, google, openrouter, deepseek,
+# minimax, zai, moonshot, qwen, bitrouter (300+ models aggregated).
+# Set to false to use ONLY providers declared below.
+inherit_defaults: true
+
+# ── Providers ───────────────────────────────────────────────────────
+
+providers:
+  # Override a built-in provider (only the fields you set are changed).
+  openai:
+    api_key: "${OPENAI_API_KEY}"
+
+  anthropic:
+    api_key: "${ANTHROPIC_API_KEY}"
+
+  google:
+    api_key: "${GOOGLE_API_KEY}"
+
+  # Custom provider inheriting from a built-in.
+  # `derives` copies api_protocol, api_base, model catalog, etc.
+  my-proxy:
+    derives: openai
+    api_base: "https://api.mycompany.com/v1"
+    api_key: "${MY_PROXY_API_KEY}"
+
+  # Fully custom provider (no inheritance).
+  custom-llm:
+    api_protocol: openai # openai | anthropic | google | mcp | rest
+    api_base: "https://llm.example.com/v1"
+    api_key: "${CUSTOM_LLM_KEY}"
+    env_prefix: CUSTOM_LLM # auto-reads CUSTOM_LLM_API_KEY / CUSTOM_LLM_BASE_URL
+    default_headers:
+      x-project-id: "my-project"
+    models:
+      my-model-7b:
+        name: "My Model 7B"
+        description: "Custom fine-tuned model"
+        max_input_tokens: 32768
+        max_output_tokens: 4096
+        input_modalities: [text]
+        output_modalities: [text]
+        pricing:
+          input_tokens:
+            no_cache: 0.50 # per million tokens (USD)
+            cache_read: 0.25
+            cache_write: 0.75
+          output_tokens:
+            text: 1.50
+            reasoning: 3.00
+
+  # MCP tool provider with bridge mode.
+  github-mcp:
+    api_protocol: mcp
+    api_base: "https://api.githubcopilot.com/mcp"
+    api_key: "${GITHUB_TOKEN}"
+    bridge: true # expose as POST /mcp/github-mcp
+
+  # Provider with custom header auth.
+  header-auth-provider:
+    derives: openai
+    api_base: "https://api.example.com/v1"
+    auth:
+      type: header
+      header_name: "x-api-key"
+      api_key: "${HEADER_AUTH_KEY}"
+
+  # Provider using MPP (Machine Payment Protocol) auth.
+  paid-provider:
+    derives: openai
+    api_base: "https://paid.example.com/v1"
+    auth:
+      type: mpp
+
+# ── Model Routing ───────────────────────────────────────────────────
+#
+# Virtual model names → provider endpoints.
+# Without this section, bare model names route to the default
+# `bitrouter` provider (if it exists with an api_key).
+
+models:
+  # Priority: try in order, failover on error.
+  smart:
+    strategy: priority
+    endpoints:
+      - provider: anthropic
+        service_id: claude-sonnet-4-20250514
+      - provider: openai
+        service_id: gpt-4o
+    name: "Smart"
+    max_input_tokens: 200000
+    max_output_tokens: 16384
+
+  # Load-balanced: round-robin across endpoints.
+  fast:
+    strategy: load_balance
+    endpoints:
+      - provider: openai
+        service_id: gpt-4o-mini
+        api_key: "${OPENAI_KEY_POOL_A}" # per-endpoint override
+      - provider: openai
+        service_id: gpt-4o-mini
+        api_key: "${OPENAI_KEY_POOL_B}"
+
+  # Cross-provider failover.
+  coding:
+    strategy: priority
+    endpoints:
+      - provider: anthropic
+        service_id: claude-sonnet-4-20250514
+      - provider: openai
+        service_id: gpt-4o
+      - provider: google
+        service_id: gemini-2.5-pro
+
+# ── Tool Routing ────────────────────────────────────────────────────
+
+tools:
+  create_issue:
+    strategy: priority
+    endpoints:
+      - provider: github-mcp
+        service_id: create_issue
+    description: "Create a GitHub issue"
+    input_schema:
+      type: object
+      properties:
+        repo: { type: string }
+        title: { type: string }
+        body: { type: string }
+      required: [repo, title]
+    skill: "github-issues"
+
+  web_search:
+    endpoints:
+      - provider: exa
+        service_id: search
+    pricing:
+      default: 0.001 # USD per invocation
+      overrides:
+        search: 0.002
+
+# ── Guardrails ──────────────────────────────────────────────────────
+#
+# Local firewall for AI agent traffic.
+# Built-in patterns: api_keys, private_keys, credentials, pii_emails,
+#   pii_phone_numbers, ip_addresses, suspicious_commands
+# Actions: warn (default), redact, block
+
+guardrails:
+  enabled: true
+
+  disabled_patterns:
+    - ip_addresses
+    - pii_phone_numbers
+
+  custom_patterns:
+    - name: internal_token
+      regex: "myapp_[A-Za-z0-9]{32}"
+      direction: upgoing # upgoing | downgoing | both
+
+  upgoing: # outbound (user → LLM)
+    api_keys: redact
+    private_keys: block
+    credentials: redact
+
+  downgoing: # inbound (LLM → user)
+    suspicious_commands: block
+
+  custom_upgoing:
+    internal_token: block
+
+  block_message:
+    include_details: true
+    include_help_link: true
+
+  tools:
+    enabled: true
+    providers:
+      github-mcp:
+        filter:
+          deny: [delete_repo, delete_branch]
+        param_restrictions:
+          rules:
+            create_issue:
+              deny: [assignees]
+              action: strip # strip | reject
+
+# ── Wallet ──────────────────────────────────────────────────────────
+#
+# OWS wallet for signing and payment operations.
+# Passphrase: OWS_PASSPHRASE env var, or prompted at startup.
+
+wallet:
+  name: "my-wallet"
+  vault_path: "~/.ows"
+  payment:
+    tempo_rpc_url: "https://rpc.moderato.tempo.xyz"
+    solana_rpc_url: "https://api.mainnet-beta.solana.com"
+    session_max_deposit: 10000000
+    session_default_deposit: 1000000
+
+# ── MPP (Machine Payment Protocol) ─────────────────────────────────
+#
+# Server-side payment gating (402 Payment Required).
+
+mpp:
+  enabled: true
+  realm: "bitrouter.example.com"
+  secret_key: "${MPP_SECRET_KEY}"
+  networks:
+    tempo:
+      recipient: "0x1234..."
+      escrow_contract: "0xabcd..."
+      rpc_url: "${TEMPO_RPC_URL}"
+      currency: "${TEMPO_TOKEN_ADDRESS}"
+      fee_payer: false
+      default_deposit: "5000000"
+
+# ── Solana RPC ──────────────────────────────────────────────────────
+
+solana_rpc_url: "https://api.mainnet-beta.solana.com"
+```
+
+### Reference Tables
+
+#### Server
+
+| Field                   | Default          | Description                         |
+| ----------------------- | ---------------- | ----------------------------------- |
+| `server.listen`         | `127.0.0.1:8787` | Address and port for the API server |
+| `server.log_level`      | `info`           | Tracing log level                   |
+| `server.control.socket` | `bitrouter.sock` | Unix socket for daemon control      |
+
+#### Database
+
+| Field          | Default                                 | Description                                             |
+| -------------- | --------------------------------------- | ------------------------------------------------------- |
+| `database.url` | `sqlite://<home>/bitrouter.db?mode=rwc` | Connection URL — `sqlite://`, `postgres://`, `mysql://` |
+
+Resolution priority: `--db` CLI flag > `BITROUTER_DATABASE_URL` env > `database.url` > default SQLite.
+
+#### Provider
+
+| Field             | Required | Description                                                 |
+| ----------------- | -------- | ----------------------------------------------------------- |
+| `api_protocol`    | No       | `openai`, `anthropic`, `google`, `mcp`, `rest`              |
+| `api_base`        | No       | Upstream API base URL                                       |
+| `api_key`         | No       | Default API key                                             |
+| `derives`         | No       | Inherit from another provider (resolved at load time)       |
+| `env_prefix`      | No       | Auto-read `{PREFIX}_API_KEY` / `{PREFIX}_BASE_URL` from env |
+| `auth`            | No       | Auth override: `bearer`, `header`, `x402`, `mpp`, `custom`  |
+| `default_headers` | No       | Extra HTTP headers on every request                         |
+| `models`          | No       | Per-model metadata and pricing catalog                      |
+| `bridge`          | No       | MCP only: expose as `POST /mcp/{name}`                      |
+
+#### Model Route
+
+| Field                      | Default    | Description                                           |
+| -------------------------- | ---------- | ----------------------------------------------------- |
+| `strategy`                 | `priority` | `priority` (failover) or `load_balance` (round-robin) |
+| `endpoints`                | Required   | Provider + service_id pairs                           |
+| `endpoints[].provider`     | Required   | Provider name                                         |
+| `endpoints[].service_id`   | Required   | Upstream model ID (alias: `model_id`)                 |
+| `endpoints[].api_key`      | No         | Per-endpoint API key override                         |
+| `endpoints[].api_base`     | No         | Per-endpoint base URL override                        |
+| `endpoints[].api_protocol` | No         | Per-endpoint protocol override                        |
+| `name`                     | No         | Display name                                          |
+| `max_input_tokens`         | No         | Context window size                                   |
+| `max_output_tokens`        | No         | Max generation length                                 |
+| `pricing`                  | No         | Token pricing override                                |
+
+#### Tool Route
+
+| Field                    | Default    | Description                             |
+| ------------------------ | ---------- | --------------------------------------- |
+| `strategy`               | `priority` | `priority` or `load_balance`            |
+| `endpoints`              | Required   | Provider + service_id pairs             |
+| `endpoints[].service_id` | Required   | Upstream tool ID (alias: `tool_id`)     |
+| `pricing`                | No         | Flat per-invocation pricing             |
+| `description`            | No         | Discovery description (REST tools)      |
+| `input_schema`           | No         | JSON Schema for parameters (REST tools) |
+| `skill`                  | No         | Associated SKILL.md name                |
+
+#### Guardrails
+
+| Pattern ID            | Direction | Description                                  |
+| --------------------- | --------- | -------------------------------------------- |
+| `api_keys`            | upgoing   | API keys from common providers               |
+| `private_keys`        | upgoing   | PEM-encoded private keys                     |
+| `credentials`         | upgoing   | Passwords, basic-auth, DB connection strings |
+| `pii_emails`          | upgoing   | Email addresses                              |
+| `pii_phone_numbers`   | upgoing   | Phone numbers                                |
+| `ip_addresses`        | upgoing   | IPv4 addresses                               |
+| `suspicious_commands` | downgoing | Dangerous shell commands in model output     |
+
+## Configuration Loading Pipeline
+
+When BitRouter loads your config, it processes it in this order:
+
+1. **Load environment** — reads `.env` file, then process env (process env wins)
+2. **Substitute `${VAR}`** — replaces all variable references in the YAML
+3. **Parse YAML** — deserializes into the configuration structure
+4. **Merge built-in providers** — unless `inherit_defaults: false`
+5. **Resolve `derives`** — flattens provider inheritance chains
+6. **Apply `env_prefix`** — auto-reads `{PREFIX}_API_KEY` / `{PREFIX}_BASE_URL`
+
+### Hot Reload
+
+A running server can reload its configuration without downtime:
+
+```bash
+bitrouter reload
+# Or send SIGHUP to the server process
+```
+
+Hot reload re-reads the config file and updates routing tables, guardrails, and tool registries. Dynamic routes (added via `bitrouter route add`) survive reloads but not process restarts.

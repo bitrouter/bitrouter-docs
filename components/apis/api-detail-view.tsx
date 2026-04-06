@@ -216,7 +216,7 @@ export function ApiDetailView() {
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="/apis">APIs</Link>
+              <Link href="/apis">Models</Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />

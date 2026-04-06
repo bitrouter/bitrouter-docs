@@ -4,7 +4,7 @@ const API_BASE = "https://api.bitrouter.ai";
 
 export async function GET() {
   try {
-    const res = await fetch(`${API_BASE}/models`, {
+    const res = await fetch(`${API_BASE}/v1/models`, {
       next: { revalidate: 300 }, // cache 5 minutes
     });
 

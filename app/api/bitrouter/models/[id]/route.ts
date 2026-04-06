@@ -10,7 +10,7 @@ export async function GET(
     const { id } = await params;
     const decodedId = decodeURIComponent(id);
 
-    const res = await fetch(`${API_BASE}/models`, {
+    const res = await fetch(`${API_BASE}/v1/models`, {
       next: { revalidate: 300 },
     });
 

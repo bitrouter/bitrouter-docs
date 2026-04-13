@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
     return [
       { source: "/docs", destination: "/docs/overview", permanent: false },
       { source: "/zh/docs", destination: "/zh/docs/overview", permanent: false },
+      { source: "/install.sh", destination: "https://github.com/bitrouter/bitrouter/releases/latest/download/bitrouter-installer.sh", permanent: false },
     ];
   },
   async rewrites() {

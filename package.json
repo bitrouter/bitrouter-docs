@@ -12,6 +12,7 @@
     "@ai-sdk/openai-compatible": "^2.0.35",
     "@ai-sdk/react": "^3.0.118",
     "@calcom/embed-react": "^1.5.3",
+    "@hackernoon/pixel-icon-library": "^1.1.0",
     "@lobehub/icons": "^5.0.1",
     "@orama/stopwords": "^3.1.18",
     "@orama/tokenizers": "^3.1.18",

@@ -39,6 +39,20 @@ const sharedNav: BaseLayoutProps["nav"] = {
 const sharedLinks: BaseLayoutProps["links"] = [
   { text: "LLMs", url: "/llms" },
   { text: "Tools", url: "/tools" },
+  {
+    type: "custom",
+    children: (
+      <a
+        href="/agents"
+        className="inline-flex items-center gap-1.5 text-sm text-fd-muted-foreground transition-colors hover:text-fd-foreground"
+      >
+        Agents
+        <span className="rounded-full bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-medium leading-none text-amber-500">
+          BETA
+        </span>
+      </a>
+    ),
+  },
   { text: "Blog", url: "/blog" },
   { text: "Documentation", url: "/docs/overview", active: "nested-url" },
   {

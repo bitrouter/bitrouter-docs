@@ -17,6 +17,9 @@ importers:
       '@calcom/embed-react':
         specifier: ^1.5.3
         version: 1.5.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@hackernoon/pixel-icon-library':
+        specifier: ^1.1.0
+        version: 1.1.0
       '@lobehub/icons':
         specifier: ^5.0.1
         version: 5.0.1(@lobehub/ui@5.4.0)(@types/react@19.0.12)(antd@6.3.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -624,6 +627,9 @@ packages:
     peerDependencies:
       react: ^16 || ^17 || ^18 || ^19
       react-dom: ^16 || ^17 || ^18 || ^19
+
+  '@hackernoon/pixel-icon-library@1.1.0':
+    resolution: {integrity: sha512-VEdDskTYRc37quKh3LFt65nMtriJlxuov/ifOmlomAyfK2hty4IPdL6IIXNvATOaQwZYjlfyxJTCGO+JgWbgIw==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -5130,6 +5136,8 @@ snapshots:
       giscus: 1.6.0
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
+
+  '@hackernoon/pixel-icon-library@1.1.0': {}
 
   '@iconify/types@2.0.0': {}
 

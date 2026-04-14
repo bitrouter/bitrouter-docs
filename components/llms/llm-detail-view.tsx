@@ -95,21 +95,12 @@ interface ModelData {
   };
 }
 
-interface ToolData {
-  id: string;
-  name: string;
-  description: string;
-  provider?: string;
-}
-
-export function ApiDetailView() {
+export function LlmDetailView() {
   const params = useParams();
   const router = useRouter();
-  const type = params.type as string;
   const id = params.id as string;
 
   const [model, setModel] = useState<ModelData | null>(null);
-  const [tool, setTool] = useState<ToolData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [copiedEndpoint, setCopiedEndpoint] = useState(false);
@@ -119,32 +110,18 @@ export function ApiDetailView() {
   const decodedId = decodeURIComponent(id);
 
   useEffect(() => {
-    if (type === "models") {
-      fetch(`/api/bitrouter/models/${encodeURIComponent(decodedId)}`)
-        .then((res) => {
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          return res.json();
-        })
-        .then((data: { data: ModelData }) => {
-          setModel(data.data);
-          setError(null);
-        })
-        .catch((err) => setError(err.message))
-        .finally(() => setLoading(false));
-    } else if (type === "tools") {
-      fetch(`/api/bitrouter/tools/${encodeURIComponent(decodedId)}`)
-        .then((res) => {
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          return res.json();
-        })
-        .then((data: { data: ToolData }) => {
-          setTool(data.data);
-          setError(null);
-        })
-        .catch((err) => setError(err.message))
-        .finally(() => setLoading(false));
-    }
-  }, [type, decodedId]);
+    fetch(`/api/bitrouter/models/${encodeURIComponent(decodedId)}`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then((data: { data: ModelData }) => {
+        setModel(data.data);
+        setError(null);
+      })
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, [decodedId]);
 
   const prefix = getProviderPrefix(decodedId);
   const Icon = PROVIDER_ICONS[prefix];
@@ -208,21 +185,13 @@ export function ApiDetailView() {
     );
   }
 
-  const isTool = type === "tools";
-
   return (
     <div className="max-w-4xl mx-auto">
       <Breadcrumb className="mb-6">
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="/apis">Models</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href={`/apis?tab=${type}`}>{type.charAt(0).toUpperCase() + type.slice(1)}</Link>
+              <Link href="/llms">LLMs</Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
@@ -247,33 +216,25 @@ export function ApiDetailView() {
             <div className="flex-1 min-w-0">
               <h1 className="text-xl font-semibold truncate">{decodedId}</h1>
               <p className="text-sm text-muted-foreground mt-1">
-                {isTool
-                  ? tool?.description
-                  : model?.name || `Model by ${prefix}`}
+                {model?.name || `Model by ${prefix}`}
               </p>
               <div className="flex flex-wrap gap-2 mt-3">
-                {!isTool &&
-                  model?.input_modalities?.map((modality) => (
-                    <Badge
-                      key={modality}
-                      variant="outline"
-                      className="text-xs font-normal"
-                    >
-                      {modality}
-                    </Badge>
-                  ))}
-                {isTool && tool?.provider && (
-                  <Badge variant="outline" className="text-xs font-normal">
-                    {tool.provider}
+                {model?.input_modalities?.map((modality) => (
+                  <Badge
+                    key={modality}
+                    variant="outline"
+                    className="text-xs font-normal"
+                  >
+                    {modality}
                   </Badge>
-                )}
+                ))}
               </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {!isTool && model && (
+      {model && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <Card>
             <CardContent className="pt-4">

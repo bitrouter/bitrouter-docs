@@ -4,7 +4,9 @@ import { useState, useMemo, useEffect, type ComponentType, type SVGProps } from 
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { Input } from "@/components/ui/input";
+import { LayoutList, Table } from "lucide-react";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import {
   ModelsFilterSidebar,
   EMPTY_FILTERS,
@@ -252,12 +254,6 @@ export function LlmsView({ banner }: { banner?: React.ReactNode } = {}) {
         onChange={setFilters}
         availableProviders={availableProviders}
         availableModalities={availableModalities}
-        search={search}
-        onSearchChange={setSearch}
-        totalCount={models.length}
-        filteredCount={filteredModels.length}
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
         banner={banner}
       />
 
@@ -292,6 +288,43 @@ export function LlmsView({ banner }: { banner?: React.ReactNode } = {}) {
                 bitrouter config set default-provider openai
               </code>
             </div>
+          </div>
+        </div>
+
+        {/* Search + View toggle */}
+        <div className="shrink-0 flex items-center gap-3 border-b border-border px-6 py-2">
+          <Input
+            type="text"
+            placeholder="Search models..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="h-7 max-w-xs text-xs"
+          />
+          <div className="flex items-center gap-1 ml-auto">
+            <button
+              onClick={() => setViewMode("table")}
+              className={cn(
+                "flex items-center gap-1.5 px-2 py-1 text-[11px] transition-colors",
+                viewMode === "table"
+                  ? "bg-accent text-accent-foreground font-medium"
+                  : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
+              )}
+            >
+              <Table className="size-3" />
+              Table
+            </button>
+            <button
+              onClick={() => setViewMode("list")}
+              className={cn(
+                "flex items-center gap-1.5 px-2 py-1 text-[11px] transition-colors",
+                viewMode === "list"
+                  ? "bg-accent text-accent-foreground font-medium"
+                  : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
+              )}
+            >
+              <LayoutList className="size-3" />
+              List
+            </button>
           </div>
         </div>
 

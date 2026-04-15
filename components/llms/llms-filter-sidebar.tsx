@@ -152,12 +152,6 @@ interface ModelsFilterSidebarProps {
   onChange: (filters: ModelFilters) => void;
   availableProviders: string[];
   availableModalities: string[];
-  search: string;
-  onSearchChange: (value: string) => void;
-  totalCount: number;
-  filteredCount: number;
-  viewMode: ViewMode;
-  onViewModeChange: (mode: ViewMode) => void;
   banner?: React.ReactNode;
 }
 
@@ -166,12 +160,6 @@ export function ModelsFilterSidebar({
   onChange,
   availableProviders,
   availableModalities,
-  search,
-  onSearchChange,
-  totalCount,
-  filteredCount,
-  viewMode,
-  onViewModeChange,
   banner,
 }: ModelsFilterSidebarProps) {
   const sortedProviders = useMemo(
@@ -220,15 +208,6 @@ export function ModelsFilterSidebar({
 
   return (
     <FilterSidebar
-      search={search}
-      onSearchChange={onSearchChange}
-      searchPlaceholder="Search models..."
-      totalCount={totalCount}
-      filteredCount={filteredCount}
-      viewMode={viewMode}
-      onViewModeChange={onViewModeChange}
-      hasActiveFilters={hasActiveFilters}
-      onClearFilters={() => onChange(EMPTY_FILTERS)}
       banner={banner}
     >
       {/* Provider filter */}

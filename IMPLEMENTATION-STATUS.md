@@ -174,6 +174,20 @@
 
 49. **Dotted map background** — Installed `@magicui/dotted-map` via shadcn CLI (`components/ui/dotted-map.tsx` + `svg-dotted-map` dependency). Added `DottedMap` as absolute-positioned background in left pane with `opacity-50`, `pointer-events-none`. 8 pulsing markers at global cities (SF, London, Tokyo, Singapore, Sydney, Paris, Moscow, Hong Kong). Uses `currentColor` for dots/markers, `6000` map samples, `0.22` dot radius.
 
+### Phase 12: Cloud Page Sidebar Refinements
+
+50. **SidebarTrigger removed** (`components/shared/filter-sidebar.tsx`) — Removed `SidebarTrigger` import and usage. Sidebar is always visible (`collapsible="none"`), no toggle button needed.
+
+51. **Tab banner integrated into SidebarHeader** — Merged the tab banner (LLMs/Tools/Agents) and filter header into a single `SidebarHeader` with `p-0`. Tabs sit at the top of the sidebar as native content, not a floating bar above it.
+
+52. **Filters header removed** — Removed the "Filters 126/126" row and Clear button from `FilterSidebar`. Simplified `FilterSidebar` props to just `banner` and `children`.
+
+53. **Search + view toggle moved to right side** — Removed search input and Table/List view toggle from `FilterSidebar`. Added them to each view's main content area (between hero and data table) in `LlmsView`, `ToolsView`, `AgentsView`. Search uses `Input` component, view toggle uses `Table`/`LayoutList` icons from lucide-react. Positioned with `ml-auto` to push toggle to the right.
+
+54. **Filter sidebar props simplified** — `ModelsFilterSidebar`, `ToolsFilterSidebar`, `AgentsFilterSidebar` all stripped of `search`, `onSearchChange`, `totalCount`, `filteredCount`, `viewMode`, `onViewModeChange` props. Only `filters`, `onChange`, provider/category arrays, and `banner` remain.
+
+55. **Agents ALPHA badge removed** (`components/cloud/cloud-view.tsx`) — Removed `badge: "ALPHA"` from the Agents tab in the `TABS` array.
+
 ## Files Created (Session 4)
 - `components/landing/sections/DashboardPreview.tsx` — Dashboard preview (replaces RoutingTimeline)
 - `components/landing/sections/DashboardCharts.tsx` — Client component for recharts
@@ -186,6 +200,14 @@
 - `components/landing/sections/FeatureGrid.tsx` — Expanded 3 → 9 features, added sm:grid-cols-2
 - `content/messages/en.json` — Added Dashboard, CodeConfig, Ecosystem namespaces + 6 new Feature keys
 - `content/messages/zh.json` — Added matching Chinese translations
+- `components/shared/filter-sidebar.tsx` — Stripped to minimal: banner + children only, removed SidebarTrigger/search/view toggle/filters header
+- `components/cloud/cloud-view.tsx` — Removed ALPHA badge from Agents tab
+- `components/llms/llms-filter-sidebar.tsx` — Removed search/viewMode/count props
+- `components/llms/llms-view.tsx` — Added search bar + view toggle to main content area
+- `components/tools/tools-filter-sidebar.tsx` — Removed search/viewMode/count props
+- `components/tools/tools-view.tsx` — Added search bar + view toggle to main content area
+- `components/agents/agents-filter-sidebar.tsx` — Removed search/viewMode/count props
+- `components/agents/agents-view.tsx` — Added search bar + view toggle to main content area
 
 ## Files Deleted (Session 4)
 - `components/landing/sections/RoutingTimeline.tsx` — Replaced by DashboardPreview
@@ -199,7 +221,7 @@
 1. **Homepage left pane** — Headline "Open Intelligence Router for LLM Agents" + "Get started" / "Sign In" buttons. Dotted world map background with pulsing markers at 8 cities. Sticky on desktop, full viewport height.
 2. **Homepage right pane** — Scrollable sections in order: README (description, OneLineSwitch, IntegrationBar, GitHub stars), DASHBOARD (metrics, charts, routing log), CONFIGURATION (tabbed YAML/TS code), FEATURES (9-card 3x3 grid), ECOSYSTEM (provider logo grids).
 3. **Header** — Tab bar: `BITROUTER. | Readme | Docs | Proxy ↗ | Cloud | Enterprise | Blog | [spacer] | Sign-In ↗`. Fixed position, full viewport width on all pages including docs.
-4. **Cloud page** (`/cloud`) — Type tabs (LLMs/Tools/Agents) in sidebar header. Filter sidebar below with search, view toggle, filter sections. Content area shows models/tools/agents.
+4. **Cloud page** (`/cloud`) — Type tabs (LLMs/Tools/Agents) in sidebar header. Filter checkboxes directly below tabs (no filters header row). Search bar + Table/List toggle in main content area between hero and data table. Sidebar always visible (no toggle).
 5. **Docs sidebar** (`/docs/overview`) — Search bar at top (⌘K), unified sidebar with Overview + Reference collapsible folders. Left-border active state (transparent background). Uppercase mono section labels.
 6. **Redirects** — `/llms`, `/tools`, `/agents` should redirect to `/cloud`.
 7. **Detail pages** — `/llms/[id]`, `/tools/[id]`, `/agents/[id]` still work, breadcrumbs link to `/cloud`.

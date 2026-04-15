@@ -63,12 +63,6 @@ interface AgentsFilterSidebarProps {
   filters: AgentFilters;
   onChange: (filters: AgentFilters) => void;
   availableProviders: string[];
-  search: string;
-  onSearchChange: (value: string) => void;
-  totalCount: number;
-  filteredCount: number;
-  viewMode: ViewMode;
-  onViewModeChange: (mode: ViewMode) => void;
   banner?: React.ReactNode;
 }
 
@@ -76,12 +70,6 @@ export function AgentsFilterSidebar({
   filters,
   onChange,
   availableProviders,
-  search,
-  onSearchChange,
-  totalCount,
-  filteredCount,
-  viewMode,
-  onViewModeChange,
   banner,
 }: AgentsFilterSidebarProps) {
   const toggleCategory = (category: string) => {
@@ -118,15 +106,6 @@ export function AgentsFilterSidebar({
 
   return (
     <FilterSidebar
-      search={search}
-      onSearchChange={onSearchChange}
-      searchPlaceholder="Search agents..."
-      totalCount={totalCount}
-      filteredCount={filteredCount}
-      viewMode={viewMode}
-      onViewModeChange={onViewModeChange}
-      hasActiveFilters={hasActiveFilters}
-      onClearFilters={() => onChange(EMPTY_FILTERS)}
       banner={banner}
     >
       {/* Category filter */}

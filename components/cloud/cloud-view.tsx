@@ -12,7 +12,7 @@ type CloudTab = "llms" | "tools" | "agents";
 const TABS: { key: CloudTab; label: string; icon: typeof Box; badge?: string }[] = [
   { key: "llms", label: "LLMs", icon: Box },
   { key: "tools", label: "Tools", icon: Wrench },
-  { key: "agents", label: "Agents", icon: Bot, badge: "ALPHA" },
+  { key: "agents", label: "Agents", icon: Bot },
 ];
 
 export function CloudView() {

@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import {
   ToolsFilterSidebar,
   EMPTY_FILTERS,
@@ -122,12 +123,11 @@ function EndpointCell({ toolId }: { toolId: string }) {
 
 // ── Component ───────────────────────────────────────────
 
-export function ToolsView() {
+export function ToolsView({ banner }: { banner?: React.ReactNode } = {}) {
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("name");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
   const [filters, setFilters] = useState<ToolFilters>(EMPTY_FILTERS);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("table");
 
   const tools = MOCK_TOOLS;
@@ -163,7 +163,7 @@ export function ToolsView() {
   };
 
   return (
-    <div className="flex h-full min-h-0">
+    <SidebarProvider className="min-h-0 h-full">
       {/* Sidebar */}
       <ToolsFilterSidebar
         filters={filters}
@@ -173,14 +173,13 @@ export function ToolsView() {
         onSearchChange={setSearch}
         totalCount={tools.length}
         filteredCount={filteredTools.length}
-        collapsed={sidebarCollapsed}
-        onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
+        banner={banner}
       />
 
       {/* Main content */}
-      <div className="flex-1 min-w-0 flex flex-col">
+      <SidebarInset className="flex flex-col">
         {/* Hero */}
         <div className="shrink-0 border-b border-border px-6 py-5">
           <h2 className="text-sm font-semibold mb-1">Curated Tools for Agent Harnesses</h2>
@@ -236,8 +235,8 @@ export function ToolsView() {
             </span>
           )}
         </div>
-      </div>
-    </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
 

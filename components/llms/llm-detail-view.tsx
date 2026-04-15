@@ -191,7 +191,7 @@ export function LlmDetailView() {
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="/llms">LLMs</Link>
+              <Link href="/cloud">Cloud</Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />

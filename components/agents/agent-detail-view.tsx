@@ -49,7 +49,7 @@ export function AgentDetailView() {
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="/agents">Agents</Link>
+              <Link href="/cloud">Cloud</Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />

@@ -8,7 +8,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 BitRouter is an open-source LLM gateway purpose-built for AI agent runtimes. It's a high-performance Rust proxy that gives agents like [OpenClaw](https://openclaw.ai), [Claude Code](https://claude.ai/claude-code), [OpenCode](https://opencode.ai), [Codex CLI](https://github.com/openai/codex), and [Kilo Code](https://github.com/Kilo-Org/kilocode) unified access to models from OpenAI, Anthropic, Google, and custom providers — through a single OpenAI-compatible endpoint.
 
-Ship a single binary with zero infrastructure dependencies. Agents discover and route to LLMs, tools, and sub-agents at runtime — with built-in guardrails, MCP and A2A gateway support, and full observability via CLI + TUI. For teams that don't want to self-host, BitRouter also offers a hosted option with agent-native payments via x402/Solana — no KYC, no geo-restrictions.
+Ship a single binary with zero infrastructure dependencies. Agents discover and route to LLMs, tools, and sub-agents at runtime — with built-in guardrails, MCP and ACP gateway support, and full observability via CLI + TUI. For teams that don't want to self-host, BitRouter also offers a hosted option with agent-native payments via x402/Solana — no KYC, no geo-restrictions.
 
 ## Why BitRouter?
 
@@ -16,7 +16,7 @@ Ship a single binary with zero infrastructure dependencies. Agents discover and 
 - **Zero-Ops Deployment** — Single Rust binary. No Postgres, no Redis, no Docker orchestration required. `cargo install bitrouter && bitrouter` launches an interactive setup wizard and starts the server.
 - **Smart Routing** — Multi-provider routing with cost and performance optimization. Cross-protocol routing (e.g. OpenAI format → Anthropic provider) with automatic fallbacks. Sub-10ms routing overhead.
 - **Agent Firewall** — Inspect, warn, redact, or block risky content at the proxy layer. Built-in guardrails protect agents from unsafe outputs without application-level changes.
-- **MCP & A2A Gateway** — Proxy for MCP servers so agents can discover and call tools across hosts. A2A v0.3.0 support for agent identity, discovery, and task dispatch.
+- **MCP & ACP Gateway** — Proxy for MCP servers so agents can discover and call tools across hosts. [ACP (Agent Communication Protocol)](https://github.com/zed-industries/acp) support by Zed Industries for agent identity, discovery, and task dispatch.
 - **Skills Registry** — Track and expose agent skills following the [agentskills.io](https://agentskills.io) standard, enabling agents to register on the BitRouter network and serve requests.
 - **Agent-Native Payments** — 402/MPP payment handling for LLMs, tools, and APIs. Pay-per-use on the hosted service — no credit cards, no prepaid credits, no invoices.
 - **CLI + TUI Observability** — Monitor and control agent sessions in real time from the terminal, with per-request spend tracking and metrics.
@@ -30,7 +30,7 @@ Ship a single binary with zero infrastructure dependencies. Agents discover and 
 | **Routing overhead** | Sub-10ms | ~25–40ms | ~0.5ms median (GIL limits throughput at scale) | N/A |
 | **Payments** | Agent-native 402/MPP pay-per-use | Credit card, crypto top-up, AliPay | BYOK only — no payment handling | Separate billing per provider |
 | **Access** | Permissionless — no KYC or geo-restrictions | Account creation required | Self-host | Per-provider accounts |
-| **Agent features** | Agent firewall, MCP gateway, A2A gateway, skills registry, CLI/TUI observability | Tool calling, standard API keys | MCP gateway, A2A protocol gateway | None |
+| **Agent features** | Agent firewall, MCP gateway, ACP gateway, skills registry, CLI/TUI observability | Tool calling, standard API keys | MCP gateway, ACP protocol gateway | None |
 | **Routing** | Cross-protocol routing with fallbacks and escalation | Auto router (via NotDiamond), provider routing | Load balancing, fallbacks, cooldowns | Manual model selection |
 | **Observability** | CLI + TUI, per-request spend tracking, built-in metrics | — | Admin dashboard, OpenTelemetry, Prometheus | Per-provider dashboards |
 | **API** | OpenAI-compatible | OpenAI-compatible | OpenAI-compatible | Provider-specific |
@@ -82,7 +82,7 @@ Any agent runtime that can target a custom OpenAI or Anthropic base URL works wi
       [Agent Skills](https://github.com/bitrouter/agent-skills) give your AI agent the knowledge to register on the BitRouter network, configure services, and start serving requests. Install them with `npx skills add BitRouterAI/agent-skills` in any agent runtime that supports skills (Claude Code, Copilot, Cursor, Codex, etc.).
   </Accordion>
   <Accordion title="What protocols does BitRouter support?">
-      BitRouter supports OpenAI Chat Completions API, OpenAI Responses API, Anthropic Messages API, and Google Generative AI API. It also acts as an MCP gateway for tool discovery and an A2A gateway (v0.3.0) for agent-to-agent communication, identity, and task dispatch.
+      BitRouter supports OpenAI Chat Completions API, OpenAI Responses API, Anthropic Messages API, and Google Generative AI API. It also acts as an MCP gateway for tool discovery and an ACP gateway for agent-to-agent communication, identity, and task dispatch.
   </Accordion>
   <Accordion title="I'm a model provider — how do I onboard to BitRouter?">
       We welcome provider integrations. If you're a provider interested in listing your models on BitRouter, [open an issue](https://github.com/bitrouter/bitrouter/issues) or join our [Discord](https://discord.gg/G3zVrZDa5C) and let us know about your service.

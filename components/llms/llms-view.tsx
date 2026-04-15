@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect, type ComponentType, type SVGProps } from 
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import {
   ModelsFilterSidebar,
   EMPTY_FILTERS,
@@ -189,12 +190,11 @@ function useModels() {
 
 // ── Component ────────────────────────────────────────────
 
-export function LlmsView() {
+export function LlmsView({ banner }: { banner?: React.ReactNode } = {}) {
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("model");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
   const [filters, setFilters] = useState<ModelFilters>(EMPTY_FILTERS);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("table");
 
   const { models, loading: modelsLoading, error: modelsError } = useModels();
@@ -245,7 +245,7 @@ export function LlmsView() {
   };
 
   return (
-    <div className="flex h-full min-h-0">
+    <SidebarProvider className="min-h-0 h-full">
       {/* Sidebar */}
       <ModelsFilterSidebar
         filters={filters}
@@ -256,14 +256,13 @@ export function LlmsView() {
         onSearchChange={setSearch}
         totalCount={models.length}
         filteredCount={filteredModels.length}
-        collapsed={sidebarCollapsed}
-        onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
+        banner={banner}
       />
 
       {/* Main content */}
-      <div className="flex-1 min-w-0 flex flex-col">
+      <SidebarInset className="flex flex-col">
         {/* Hero */}
         <div className="shrink-0 border-b border-border px-6 py-5">
           <h2 className="text-sm font-semibold mb-1">Curated LLMs for Agent Harnesses</h2>
@@ -342,8 +341,8 @@ export function LlmsView() {
             </div>
           </>
         )}
-      </div>
-    </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
 

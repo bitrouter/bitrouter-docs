@@ -2,7 +2,9 @@
 title: 模型、工具与 Agent
 ---
 
-与常见的 LLM 聚合器仅统一模型不同，BitRouter 聚合了模型、工具和 Agent，使服务可以以高度灵活、Agent 原生的方式进行组合和集成。
+import { Callout } from 'fumadocs-ui/components/callout';
+
+与常见的 LLM 聚合器仅统一模型不同，BitRouter 聚合了**模型**、**工具**和 **Agent**，使服务可以以高度灵活、Agent 原生的方式进行组合和集成。
 
 ## 服务原语
 
@@ -12,7 +14,7 @@ title: 模型、工具与 Agent
 
 ### 模型
 
-模型服务通过 OpenAI 兼容的 Chat/Completion 端点提供 LLM 推理能力。
+模型服务通过 OpenAI/Anthropic/Google 兼容的端点提供 LLM 推理能力（默认为 openai-chat/completion）。
 
 ```json
 // Request
@@ -44,70 +46,218 @@ POST /v1/chat/completions
 
 访问 [Marketplace](https://bitrouter.ai/marketplace) 查找支持所需模态的模型。
 
-### 工具
+### 工具（MCP）
 
-工具服务遵循 [MCP (Model Context Protocol)](https://modelcontextprotocol.io) 标准，通过 JSON-RPC 2.0 暴露功能。
+工具服务遵循 [MCP (Model Context Protocol)](https://modelcontextprotocol.io) 标准，通过 JSON-RPC 2.0 暴露功能。BitRouter 作为 MCP 代理，通过单一网关将你的 Agent 连接到 MCP 工具服务器。
 
 ```json
-// Discover available tools
+// 发现可用工具
 { "jsonrpc": "2.0", "id": 1, "method": "tools/list" }
 
-// Response
-{
-  "jsonrpc": "2.0", "id": 1,
-  "result": {
-    "tools": [{
-      "name": "web_search",
-      "description": "Search the web for information",
-      "inputSchema": {
-        "type": "object",
-        "properties": { "query": { "type": "string" } },
-        "required": ["query"]
-      }
-    }]
-  }
-}
-
-// Invoke a tool
+// 调用工具
 { "jsonrpc": "2.0", "id": 2, "method": "tools/call",
   "params": { "name": "web_search", "arguments": { "query": "latest AI news" } } }
-
-// Response
-{
-  "jsonrpc": "2.0", "id": 2,
-  "result": { "content": [{ "type": "text", "text": "Top results: ..." }] }
-}
 ```
 
-### Agent
+#### 配置 MCP 服务器
 
-Agent 服务遵循 [A2A (Agent2Agent)](https://a2a-protocol.org) 标准，通过基于 HTTP 的 JSON-RPC 2.0 实现自主的 Agent 间通信。
+```yaml
+mcp_servers:
+  - name: "github"
+    transport:
+      type: stdio
+      command: "npx"
+      args: ["-y", "@modelcontextprotocol/server-github"]
+      env:
+        GITHUB_TOKEN: "${GITHUB_TOKEN}"
+
+  - name: "remote-tools"
+    transport:
+      type: http
+      url: "http://localhost:3000/mcp"
+      headers:
+        Authorization: "Bearer ${TOOLS_TOKEN}"
+```
+
+| 传输类型 | 描述 |
+|----------|------|
+| `stdio` | 启动本地进程，通过 stdin/stdout 通信 |
+| `http` | 通过 HTTP+SSE 连接远程 MCP 服务器 |
+
+#### 工具过滤
+
+限制 MCP 服务器暴露的工具：
+
+```yaml
+mcp_servers:
+  - name: "github"
+    transport:
+      type: stdio
+      command: "npx"
+      args: ["-y", "@modelcontextprotocol/server-github"]
+    tool_filter:
+      allow: ["search_repositories", "get_file_contents"]
+```
+
+#### 服务器分组
+
+将 MCP 服务器组织为命名分组以进行访问控制：
+
+```yaml
+mcp_groups:
+  dev_tools: ["github", "jira"]
+  comms: ["slack", "email"]
+```
+
+#### 支持的 MCP 方法
+
+| 方法 | 描述 |
+|------|------|
+| `initialize` | 初始化 MCP 会话 |
+| `ping` | 健康检查 |
+| `tools/list` | 列出可用工具 |
+| `tools/call` | 调用工具 |
+| `resources/list` | 列出资源 |
+| `resources/read` | 读取资源 |
+| `resources/templates/list` | 列出资源模板 |
+| `resources/subscribe` | 订阅资源更新 |
+| `resources/unsubscribe` | 取消订阅更新 |
+| `prompts/list` | 列出可用提示 |
+| `prompts/get` | 获取特定提示 |
+| `logging/setLevel` | 设置服务器日志级别 |
+| `completion/complete` | 请求补全 |
+
+**端点：** `POST /mcp`（JSON-RPC）和 `GET /mcp/sse`（服务器推送事件流）。
+
+<Callout type="info">
+尚未支持：`tasks/*`、`sampling/createMessage`、`roots/list`、`elicitation/create` 和 Streamable HTTP 传输。这些在路线图中。
+</Callout>
+
+### Agent（ACP）
+
+Agent 服务遵循 Zed Industries 的 [ACP（Agent Communication Protocol）](https://github.com/zed-industries/acp)协议，通过基于 HTTP 的 JSON-RPC 2.0 实现自主的 Agent 间通信。
+
+#### 配置上游 Agent
+
+```yaml
+acp_agents:
+  - name: "research-agent"
+    url: "https://research.example.com"
+    headers:
+      Authorization: "Bearer ${RESEARCH_TOKEN}"
+
+  - name: "search-agent"
+    url: "https://search.example.com"
+    card_path: "/custom/card.json"  # 默认为 /.well-known/agent-card.json
+```
+
+#### 支持的 ACP 方法
+
+**JSON-RPC（POST /acp）：**
+
+| 方法 | 描述 |
+|------|------|
+| `message/send` | 向 Agent 发送消息 |
+| `message/stream` | 流式消息响应（SSE） |
+| `tasks/get` | 获取任务状态和历史 |
+| `tasks/list` | 列出任务 |
+| `tasks/cancel` | 取消正在运行的任务 |
+| `tasks/resubscribe` | 重新订阅任务更新（SSE） |
+| `agent/getAuthenticatedExtendedCard` | 获取已认证的 Agent 卡片 |
+
+**REST 端点：**
+
+| 方法 | 路径 | 描述 |
+|------|------|------|
+| `GET` | `/.well-known/agent-card.json` | 标准 Agent 卡片发现 |
+| `POST` | `/message:send` | 发送消息 |
+| `POST` | `/message:stream` | 流式消息（SSE） |
+| `GET` | `/tasks/{id}` | 获取特定任务 |
+| `GET` | `/tasks` | 列出所有任务 |
+| `POST` | `/tasks/{id}:cancel` | 取消任务 |
+
+#### 示例：发送消息
+
+```bash
+curl -X POST http://localhost:8787/acp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "message/send",
+    "params": {
+      "message": {
+        "role": "user",
+        "parts": [{"kind": "text", "text": "总结最近的机器学习论文"}]
+      }
+    }
+  }'
+```
+
+<Callout type="info">
+传输协议为 HTTP（JSON-RPC + REST）并支持 SSE 流式传输。目前不支持 gRPC。
+</Callout>
+
+### Agent Skills
+
+BitRouter 支持 [Agent Skills](https://agentskills.io) 开放标准，用于注册 Agent 可以发现和使用的提示级知识。技能是 `SKILL.md` 文件——注入到 LLM 上下文中的结构化提示——与提供运行时工具连接的 MCP 工具不同。
+
+| | 技能 | MCP 工具 |
+|---|------|----------|
+| **内容** | 提示级知识（SKILL.md） | 运行时工具调用（JSON-RPC） |
+| **时机** | 推理前注入到 LLM 上下文 | 推理期间由 LLM 调用 |
+| **发现** | `GET /v1/tools`（统一） | `GET /v1/tools`（统一） |
+
+#### 配置技能
+
+```yaml
+skills:
+  - name: "code-review"
+    description: "审查代码质量、安全问题和最佳实践"
+    source: "https://github.com/anthropics/skills"
+    required_apis:
+      - provider: anthropic
+
+  - name: "translate"
+    description: "使用 LLM 驱动的翻译在语言之间翻译文本"
+```
+
+技能也可以通过 CLI 安装：
+
+```bash
+npx skills add BitRouterAI/agent-skills
+```
+
+#### 技能 API
+
+| 方法 | 路径 | 描述 |
+|------|------|------|
+| `POST` | `/v1/skills` | 注册新技能 |
+| `GET` | `/v1/skills` | 列出所有已注册技能 |
+| `GET` | `/v1/skills/:name` | 获取特定技能 |
+| `DELETE` | `/v1/skills/:name` | 删除技能 |
+
+### 统一工具发现
+
+所有 MCP 工具和技能通过单一端点可发现：
+
+```bash
+curl http://localhost:8787/v1/tools
+```
 
 ```json
-// Agent Card (capability discovery at /.well-known/agent.json)
-{
-  "name": "ResearchAgent",
-  "description": "Performs deep research and summarization",
-  "skills": [{ "id": "research_topic", "name": "Research Topic" }],
-  "protocolVersion": "0.3"
-}
-
-// Send task to agent
-POST /a2a
-{
-  "message": {
-    "messageId": "msg-123",
-    "role": "user",
-    "parts": [{ "text": "Research the latest advances in transformer architectures" }]
+[
+  {
+    "name": "code-review",
+    "type": "skill",
+    "description": "审查代码质量、安全问题和最佳实践"
+  },
+  {
+    "name": "github:search_repositories",
+    "type": "mcp_tool",
+    "description": "搜索 GitHub 仓库"
   }
-}
-
-// Task response
-{
-  "id": "task-456",
-  "status": { "state": "completed" },
-  "artifacts": [{ "parts": [{ "text": "Summary: Recent advances include..." }] }]
-}
+]
 ```
 
 ## 最佳实践
@@ -120,4 +270,4 @@ POST /a2a
 |----------|----------------------|----------|
 | 前端应用的后端 | 模型 | Chat/Completion |
 | 供其他 Agent 调用的工具 | 工具 | MCP |
-| 自主的 Agent 间交互 | Agent | A2A |
+| 自主的 Agent 间交互 | Agent | ACP |

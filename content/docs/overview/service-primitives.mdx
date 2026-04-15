@@ -2,7 +2,9 @@
 title: Models, Tools, & Agents
 ---
 
-Unlike common LLM aggregators that only unify models, BitRouter aggregates **models**, **tools**, and **agents (coming soon)**, allowing services to be composed and integrated in a highly flexible, agent-native manner.
+import { Callout } from 'fumadocs-ui/components/callout';
+
+Unlike common LLM aggregators that only unify models, BitRouter aggregates **models**, **tools**, and **agents**, allowing services to be composed and integrated in a highly flexible, agent-native manner.
 
 ## Service Primitives
 
@@ -44,44 +46,219 @@ Multimodal inputs use the same `/v1/chat/completions` endpoint. Images can be pr
 
 Visit the [Marketplace](https://bitrouter.ai/marketplace) to find models that support your desired modalities.
 
-### Tools
+### Tools (MCP)
 
-Tool services expose functionality following the [MCP (Model Context Protocol)](https://modelcontextprotocol.io) standard via JSON-RPC 2.0.
+Tool services expose functionality following the [MCP (Model Context Protocol)](https://modelcontextprotocol.io) standard via JSON-RPC 2.0. BitRouter acts as an MCP proxy, connecting your agents to MCP tool servers through a single gateway.
 
 ```json
 // Discover available tools
 { "jsonrpc": "2.0", "id": 1, "method": "tools/list" }
 
-// Response
-{
-  "jsonrpc": "2.0", "id": 1,
-  "result": {
-    "tools": [{
-      "name": "web_search",
-      "description": "Search the web for information",
-      "inputSchema": {
-        "type": "object",
-        "properties": { "query": { "type": "string" } },
-        "required": ["query"]
-      }
-    }]
-  }
-}
-
 // Invoke a tool
 { "jsonrpc": "2.0", "id": 2, "method": "tools/call",
   "params": { "name": "web_search", "arguments": { "query": "latest AI news" } } }
-
-// Response
-{
-  "jsonrpc": "2.0", "id": 2,
-  "result": { "content": [{ "type": "text", "text": "Top results: ..." }] }
-}
 ```
 
-### Agents (coming soon)
+#### Configure MCP Servers
 
-Agent services enable autonomous agent-to-agent communication following standards like the [A2A (Agent2Agent)](https://a2a-protocol.org) via JSON-RPC 2.0 over HTTP.
+```yaml
+mcp_servers:
+  - name: "github"
+    transport:
+      type: stdio
+      command: "npx"
+      args: ["-y", "@modelcontextprotocol/server-github"]
+      env:
+        GITHUB_TOKEN: "${GITHUB_TOKEN}"
+
+  - name: "remote-tools"
+    transport:
+      type: http
+      url: "http://localhost:3000/mcp"
+      headers:
+        Authorization: "Bearer ${TOOLS_TOKEN}"
+```
+
+| Transport | Description |
+|-----------|-------------|
+| `stdio` | Launch a local process and communicate over stdin/stdout |
+| `http` | Connect to a remote MCP server via HTTP+SSE |
+
+#### Tool Filtering
+
+Restrict which tools are exposed from an MCP server:
+
+```yaml
+mcp_servers:
+  - name: "github"
+    transport:
+      type: stdio
+      command: "npx"
+      args: ["-y", "@modelcontextprotocol/server-github"]
+    tool_filter:
+      allow: ["search_repositories", "get_file_contents"]
+```
+
+#### Server Groups
+
+Organize MCP servers into named groups for access control:
+
+```yaml
+mcp_groups:
+  dev_tools: ["github", "jira"]
+  comms: ["slack", "email"]
+```
+
+#### Supported MCP Methods
+
+| Method | Description |
+|--------|-------------|
+| `initialize` | Initialize the MCP session |
+| `ping` | Health check |
+| `tools/list` | List available tools |
+| `tools/call` | Invoke a tool |
+| `resources/list` | List resources |
+| `resources/read` | Read a resource |
+| `resources/templates/list` | List resource templates |
+| `resources/subscribe` | Subscribe to resource updates |
+| `resources/unsubscribe` | Unsubscribe from updates |
+| `prompts/list` | List available prompts |
+| `prompts/get` | Get a specific prompt |
+| `logging/setLevel` | Set server log level |
+| `completion/complete` | Request completions |
+
+**Endpoints:** `POST /mcp` (JSON-RPC) and `GET /mcp/sse` (Server-sent events stream).
+
+<Callout type="info">
+Not yet supported: `tasks/*`, `sampling/createMessage`, `roots/list`, `elicitation/create`, and Streamable HTTP transport. These are on the roadmap.
+</Callout>
+
+### Agents (ACP)
+
+Agent services enable autonomous agent-to-agent communication following the [ACP (Agent Communication Protocol)](https://github.com/zed-industries/acp) by Zed Industries via JSON-RPC 2.0 over HTTP.
+
+#### Configure Upstream Agents
+
+```yaml
+acp_agents:
+  - name: "research-agent"
+    url: "https://research.example.com"
+    headers:
+      Authorization: "Bearer ${RESEARCH_TOKEN}"
+
+  - name: "search-agent"
+    url: "https://search.example.com"
+    card_path: "/custom/card.json"  # defaults to /.well-known/agent-card.json
+```
+
+#### Supported ACP Methods
+
+**JSON-RPC (POST /acp):**
+
+| Method | Description |
+|--------|-------------|
+| `message/send` | Send a message to an agent |
+| `message/stream` | Stream a message response (SSE) |
+| `tasks/get` | Get task status and history |
+| `tasks/list` | List tasks |
+| `tasks/cancel` | Cancel a running task |
+| `tasks/resubscribe` | Resubscribe to task updates (SSE) |
+| `agent/getAuthenticatedExtendedCard` | Get the authenticated agent card |
+
+**REST endpoints:**
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/.well-known/agent-card.json` | Standard agent card discovery |
+| `POST` | `/message:send` | Send a message |
+| `POST` | `/message:stream` | Stream a message (SSE) |
+| `GET` | `/tasks/{id}` | Get a specific task |
+| `GET` | `/tasks` | List all tasks |
+| `POST` | `/tasks/{id}:cancel` | Cancel a task |
+
+#### Example: Send a Message
+
+```bash
+curl -X POST http://localhost:8787/acp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "message/send",
+    "params": {
+      "message": {
+        "role": "user",
+        "parts": [{"kind": "text", "text": "Summarize recent ML papers"}]
+      }
+    }
+  }'
+```
+
+<Callout type="info">
+Transport is HTTP (JSON-RPC + REST) with SSE for streaming. gRPC is not currently supported.
+</Callout>
+
+### Agent Skills
+
+BitRouter supports the [Agent Skills](https://agentskills.io) open standard for registering prompt-level knowledge that agents can discover and use. Skills are `SKILL.md` files — structured prompts injected into LLM context — distinct from MCP tools which provide runtime tool connectivity.
+
+| | Skills | MCP Tools |
+|---|--------|-----------|
+| **What** | Prompt-level knowledge (SKILL.md) | Runtime tool calls (JSON-RPC) |
+| **When** | Injected into LLM context before inference | Called by the LLM during inference |
+| **Discovery** | `GET /v1/tools` (unified) | `GET /v1/tools` (unified) |
+
+#### Configure Skills
+
+```yaml
+skills:
+  - name: "code-review"
+    description: "Reviews code for quality, security issues, and best practices"
+    source: "https://github.com/anthropics/skills"
+    required_apis:
+      - provider: anthropic
+
+  - name: "translate"
+    description: "Translates text between languages using LLM-powered translation"
+```
+
+Skills can also be installed via CLI:
+
+```bash
+npx skills add BitRouterAI/agent-skills
+```
+
+#### Skills API
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/v1/skills` | Register a new skill |
+| `GET` | `/v1/skills` | List all registered skills |
+| `GET` | `/v1/skills/:name` | Get a specific skill |
+| `DELETE` | `/v1/skills/:name` | Delete a skill |
+
+### Unified Tool Discovery
+
+All MCP tools and Skills are discoverable through a single endpoint:
+
+```bash
+curl http://localhost:8787/v1/tools
+```
+
+```json
+[
+  {
+    "name": "code-review",
+    "type": "skill",
+    "description": "Reviews code for quality, security issues, and best practices"
+  },
+  {
+    "name": "github:search_repositories",
+    "type": "mcp_tool",
+    "description": "Search GitHub repositories"
+  }
+]
+```
 
 ## Best Practices
 
@@ -93,4 +270,4 @@ A single service can expose different primitives depending on the use case. Choo
 |----------|----------------------|----------|
 | Backend for a frontend application | Model | Chat/Completion |
 | Tool for other agents to invoke | Tool | MCP |
-| Autonomous agent-to-agent interaction | Agent | A2A |
+| Autonomous agent-to-agent interaction | Agent | ACP |

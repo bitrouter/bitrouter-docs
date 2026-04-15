@@ -6,15 +6,15 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Fonts — Geist Mono everywhere
+ * Fonts — Geist (sans) for body, Geist Mono for code.
  * Color tokens — defined once in :root / .dark below.
  * fumadocs-ui/css/shadcn.css maps these to --color-fd-* automatically.
  * The @theme block exposes them to Tailwind v4 utilities (bg-background, etc.).
  */
 @theme inline {
-  --font-sans: var(--font-geist-mono), ui-monospace, monospace;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --radius: 0.5rem;
+  --radius: 0rem;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -34,59 +34,223 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
+  --animate-fade-in: fade-in 0.3s ease-out;
+  --animate-fade-in-up: fade-in-up 0.4s ease-out;
+  --animate-slide-in-left: slide-in-left 0.3s ease-out;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
 }
 
-/* Light mode — neutral palette (opencode-inspired) */
+/* ─── Light mode ─── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --card: #ffffff;
-  --card-foreground: #171717;
-  --popover: #ffffff;
-  --popover-foreground: #171717;
-  --primary: #171717;
-  --primary-foreground: #ffffff;
-  --secondary: #f5f5f5;
-  --secondary-foreground: #262626;
-  --muted: #f5f5f5;
-  --muted-foreground: #737373;
-  --accent: #737373;
-  --accent-foreground: #ffffff;
-  --destructive: #dc2626;
-  --destructive-foreground: #fef2f2;
-  --border: #e5e5e5;
-  --input: #e5e5e5;
-  --ring: #a3a3a3;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.147 0.004 49.25);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.147 0.004 49.25);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.147 0.004 49.25);
+  --primary: oklch(0.216 0.006 56.043);
+  --primary-foreground: oklch(0.985 0.001 106.423);
+  --secondary: oklch(0.97 0.001 106.424);
+  --secondary-foreground: oklch(0.216 0.006 56.043);
+  --muted: oklch(0.97 0.001 106.424);
+  --muted-foreground: oklch(0.553 0.013 58.071);
+  --accent: oklch(0.97 0.001 106.424);
+  --accent-foreground: oklch(0.216 0.006 56.043);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0.001 106.423);
+  --border: oklch(0.923 0.003 48.717);
+  --input: oklch(0.923 0.003 48.717);
+  --ring: oklch(0.709 0.01 56.259);
+  --sidebar: var(--background);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--accent-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
 }
 
-/* Dark mode — neutral palette (opencode-inspired) */
+/* ─── Dark mode ─── */
 .dark {
-  --background: #0a0a0a;
-  --foreground: #fafafa;
-  --card: #141414;
-  --card-foreground: #fafafa;
-  --popover: #1c1c1c;
-  --popover-foreground: #fafafa;
-  --primary: #fafafa;
-  --primary-foreground: #0a0a0a;
-  --secondary: #1c1c1c;
-  --secondary-foreground: #fafafa;
-  --muted: #1c1c1c;
-  --muted-foreground: #a3a3a3;
-  --accent: #a3a3a3;
-  --accent-foreground: #0a0a0a;
-  --destructive: #f87171;
-  --destructive-foreground: #1c1c1c;
-  --border: #262626;
-  --input: #404040;
-  --ring: #a3a3a3;
+  --background: oklch(0 0 0);
+  --foreground: oklch(0.985 0.001 106.423);
+  --card: oklch(0.092 0.004 49.25);
+  --card-foreground: oklch(0.985 0.001 106.423);
+  --popover: oklch(0.112 0.004 49.25);
+  --popover-foreground: oklch(0.985 0.001 106.423);
+  --primary: oklch(0.985 0.001 106.423);
+  --primary-foreground: oklch(0.147 0.004 49.25);
+  --secondary: oklch(0.147 0.004 49.25);
+  --secondary-foreground: oklch(0.985 0.001 106.423);
+  --muted: oklch(0.147 0.004 49.25);
+  --muted-foreground: oklch(0.632 0.014 56.942);
+  --accent: oklch(0.147 0.004 49.25);
+  --accent-foreground: oklch(0.985 0.001 106.423);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.147 0.004 49.25);
+  --border: oklch(0.268 0.007 34.298);
+  --input: oklch(0.335 0.009 38.694);
+  --ring: oklch(0.553 0.013 58.071);
+  --sidebar: var(--background);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--accent-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
 }
 
+/* ─── Base layer ─── */
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground flex min-h-screen flex-col;
+  }
+}
+
+/* ─── Sharp edges everywhere ─── */
+pre:has(code),
+[data-rehype-pretty-code-figure],
+[data-rehype-pretty-code-figure] pre,
+.nd-codeblock,
+figure[class*="code"] {
+  border-radius: 0 !important;
+}
+
+.dark pre:has(code) {
+  background: #050505 !important;
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+/* ─── Fumadocs sidebar overrides ─── */
+/* Sharp corners, left-border active state, consistent typography */
+
+/* Remove rounded corners from sidebar items, folders, triggers */
+#nd-sidebar a,
+#nd-sidebar button {
+  border-radius: 0 !important;
+}
+
+/* Sidebar container — sharp corners */
+#nd-sidebar {
+  border-radius: 0 !important;
+}
+
+/* Active sidebar item — left border instead of background pill */
+#nd-sidebar a[data-active="true"] {
+  background: var(--muted) !important;
+  color: var(--foreground) !important;
+  border-left: 2px solid var(--foreground);
+  padding-inline-start: calc(var(--spacing) * 2 - 2px) !important;
+}
+
+/* Remove the ::before indicator line on active items (fumadocs default) */
+#nd-sidebar a[data-active="true"]::before {
+  display: none !important;
+}
+
+/* Separator labels — uppercase mono */
+#nd-sidebar p:not(:empty) {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Sidebar collapse panel — sharp corners */
+[data-sidebar-panel] {
+  border-radius: 0 !important;
+}
+
+/* Root selector dropdown — sharp corners */
+#nd-sidebar select,
+#nd-sidebar [role="combobox"] {
+  border-radius: 0 !important;
+}
+
+/* ─── Keyframe animations ─── */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    translate: -12px 0;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -6px;
   }
 }

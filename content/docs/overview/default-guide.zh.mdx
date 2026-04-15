@@ -9,8 +9,33 @@ BitRouter Cloud 是访问 200+ LLM Agent 运行时的最快方式。无需管理
 
 ## 安装 & 启动
 
+<Tabs items={['curl', 'npm', 'Homebrew']}>
+<Tab value="curl">
+
 ```bash
-cargo install bitrouter
+curl -fsSL https://install.bitrouter.ai | sh
+```
+
+</Tab>
+<Tab value="npm">
+
+```bash
+npm install -g bitrouter
+```
+
+</Tab>
+<Tab value="Homebrew">
+
+```bash
+brew install bitrouter/tap/bitrouter
+```
+
+</Tab>
+</Tabs>
+
+然后启动代理：
+
+```bash
 bitrouter
 ```
 
@@ -97,7 +122,7 @@ bitrouter swig derive-agent \
 ## 发起你的第一个请求
 
 <Callout type="info">
-以下示例使用 Chat Completions 端点。工具（MCP）和 Agent（A2A）支持即将推出。
+以下示例使用 Chat Completions 端点。工具（MCP）和 Agent（ACP）支持即将推出。
 </Callout>
 
 ### 基本示例
@@ -116,7 +141,7 @@ curl -X POST "https://api.bitrouter.ai/v1/chat/completions" \
 ```
 
 <Callout type="info">
-使用 `bitrouter keygen --exp 30d --scope api --name default` 生成 JWT。详见[认证管理](/docs/guide/auth-management)。
+使用 `bitrouter keygen --exp 30d --scope api --name default` 生成 JWT。详见 [Agent 身份与支付](/docs/overview/agent-wallet)。
 </Callout>
 
 ### 代码示例
@@ -299,7 +324,7 @@ bitrouter keys --list
 </Callout>
 
 <Callout type="info">
-有关完整的认证管理详情，包括预算控制、模型白名单和令牌作用域，请参阅[认证管理](/docs/guide/auth-management)指南。
+有关完整的认证管理详情，包括预算控制、模型白名单和令牌作用域，请参阅 [Agent 身份与支付](/docs/overview/agent-wallet)指南。
 </Callout>
 
 ## 用量与计费

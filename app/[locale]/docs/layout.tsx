@@ -3,14 +3,6 @@ import { DocsLayout } from "fumadocs-ui/layouts/docs";
 import { docsOptions } from "@/lib/layout.shared";
 import { SidebarFooterControls } from "@/components/sidebar-footer-controls";
 import { setRequestLocale } from "next-intl/server";
-import { Bot } from "lucide-react";
-import {
-  AISearch,
-  AISearchPanel,
-  AISearchTrigger,
-} from "@/components/search";
-import { buttonVariants } from "fumadocs-ui/components/ui/button";
-import { cn } from "@/lib/cn";
 
 type Props = {
   children: React.ReactNode;
@@ -22,27 +14,16 @@ export default async function Layout({ children, params }: Props) {
   setRequestLocale(locale);
 
   return (
-    <AISearch>
-      <DocsLayout
-        tree={source.getPageTree(locale)}
-        {...docsOptions()}
-        themeSwitch={{ component: <SidebarFooterControls /> }}
-      >
-        {children}
-        <AISearchPanel />
-        <AISearchTrigger
-          position="float"
-          className={cn(
-            buttonVariants({
-              color: "primary",
-              size: "icon",
-            }),
-            "rounded-full",
-          )}
-        >
-          <Bot className="size-5" />
-        </AISearchTrigger>
-      </DocsLayout>
-    </AISearch>
+    <DocsLayout
+      tree={source.getPageTree(locale)}
+      {...docsOptions()}
+      sidebar={{
+        defaultOpenLevel: 1,
+        footer: <SidebarFooterControls />,
+      }}
+      themeSwitch={{ enabled: false }}
+    >
+      {children}
+    </DocsLayout>
   );
 }

@@ -124,6 +124,33 @@ bitrouter key sign \
 
 服务器验证 JWT 的 `iss` 与配置的操作者钱包匹配。Agent 无法伪造或修改令牌——加密签名确保防篡改授权。
 
+### 支持的签名算法
+
+| 算法 | 链 | 身份格式 |
+|------|------|----------|
+| `SOL_EDDSA` | Solana | `solana:<chain-ref>:<base58-pubkey>` |
+| `EIP191K` | EVM（Base、Ethereum 等） | `eip155:<chain-id>:<hex-address>` |
+
+算法根据 `--chain` 标志自动选择（默认：`solana`）。
+
+### 预算控制
+
+| 字段 | 描述 |
+|------|------|
+| `--budget` | 微美元限额（1,000,000 = $1.00） |
+| `--budget-scope` | `session`（每个聊天会话）或 `account`（所有会话） |
+| `--budget-range` | `rounds:<N>`（接下来 N 轮对话）或 `duration:<seconds>s`（时间窗口） |
+
+### 模型允许列表
+
+`--models` 标志接受逗号分隔的通配符模式：
+
+```bash
+--models "openai:gpt-4o,anthropic:*"
+```
+
+省略时，令牌可以访问服务器上配置的所有模型。
+
 <Callout type="info">
   如需高级配置，如策略和细粒度支出规则，请参阅 [OWS
   文档](https://openwallet.sh)。
@@ -134,11 +161,72 @@ bitrouter key sign \
 BitRouter 原生支持稳定币支付用于 Agent 操作：
 
 - **USDC**（Solana）
-- **USDT**（Solana）
+- **USDC**（Tempo）
 
 Agent 和开发者使用熟悉的美元金额。稳定币实现即时、低成本、无需许可的结算——没有传统支付处理器的摩擦。
 
+### 机器支付协议（MPP）
+
+BitRouter 使用 MPP 实现基于 HTTP 402 的支付，支持将 LLM 推理、MCP 工具和 ACP 代理的访问货币化。MPP 的 charge intent 兼容 x402-exact 规范。
+
+支持两个支付网络：**Tempo**（EVM）和 **Solana**。
+
+#### 工作原理
+
+1. 调用者发起不带支付凭证的请求
+2. BitRouter 返回 `402 Payment Required`，附带描述可接受支付方式和成本的质询
+3. 调用者提交支付证明（签名交易、凭证或通道状态）
+4. BitRouter 验证支付并将请求代理到上游
+5. 成本通过可观测性层计量和记录
+
+<Callout type="info">
+对于 LLM 推理，token 级别的成本在请求完成后计算。对于 MCP 工具和 ACP 代理，固定的每次调用成本预先收取。
+</Callout>
+
+#### MPP 配置
+
+```yaml
+mpp:
+  enabled: true
+  realm: "bitrouter.example.com"       # 如省略则自动检测
+  secret_key: "${MPP_SECRET_KEY}"       # 用于无状态质询验证的 HMAC
+
+  networks:
+    tempo:
+      recipient: "0xYourAddress"
+      escrow_contract: "0xEscrowAddr"
+      rpc_url: "https://rpc.tempo.xyz"
+      currency: "0xTokenAddress"         # TIP-20 代币
+      fee_payer: true                    # 赞助 gas 费用
+
+    solana:                              # 需要 mpp-solana 功能
+      recipient: "SolanaBase58Pubkey"
+      channel_program: "ProgramAddr"
+      network: "mainnet-beta"            # 或 "devnet"
+
+solana_rpc_url: "https://api.mainnet-beta.solana.com"
+```
+
+#### 计价配置
+
+可以为 MCP 工具和 ACP 代理设置计价。LLM 成本使用提供商的 token 价格目录自动计算。
+
+```yaml
+mcp_server_pricing:
+  github:
+    default_cost_per_call: 0.001
+    tools:
+      search_repositories: 0.005
+
+acp_agent_pricing:
+  research-agent:
+    default_cost_per_call: 0.01
+    methods:
+      "message/send": 0.05
+      "tasks/get": 0.01
+```
+
 <Callout type="info">
   **法币支持即将推出。**
-  我们正在构建法币出入金支持，让团队可以直接使用传统货币为 Agent 钱包充值。
+  Stripe 法币出入金集成正在开发中，届时团队可以直接使用传统货币为 Agent 钱包充值。
 </Callout>

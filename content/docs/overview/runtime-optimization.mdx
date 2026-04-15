@@ -31,25 +31,127 @@ BitRouter optimizes your LLM runtime across cost, performance, and security — 
 
 ### Observability & Metrics
 
-- Per-route and per-endpoint metrics: request counts, error rates, token usage
-- Latency tracking with p50/p99 percentiles and time-to-stream-start
-- Full request context audit: route, provider, model, account, agent, latency
-- Structured tracing via the `tracing` crate
+BitRouter tracks every request that flows through the proxy. All observability flows through the `ObserveCallback` trait, which fires after every request with full context.
+
+Each request event includes:
+
+| Field | Description |
+|-------|-------------|
+| `route` | The virtual model name (e.g. `default`, `fast`) |
+| `provider` | The upstream provider that handled the request |
+| `model` | The upstream model ID |
+| `account_id` | The caller's account (from JWT) |
+| `latency_ms` | End-to-end request latency |
+| `input_tokens` | Input token count |
+| `output_tokens` | Output token count |
+| `success` | Whether the request succeeded |
+| `error_type` | Error category on failure (e.g. `Transport`, `Provider`, `AccessDenied`) |
+
+BitRouter collects in-memory per-route metrics with per-endpoint breakdowns:
+
+- **Request count** — total requests and errors per route and endpoint
+- **Error rate** — errors / total requests
+- **Latency percentiles** — p50 and p99 (bounded sampling, up to 10k samples per route)
+- **Average token usage** — avg input and output tokens (non-streaming requests only)
+- **Last used** — timestamp of the most recent request
+
+Query metrics via the admin API:
+
+```bash
+curl http://localhost:8787/admin/metrics
+```
+
+<Callout type="info">
+Metrics are held in memory only and reset on process restart.
+</Callout>
+
+### Spend Tracking
+
+BitRouter calculates cost for every request using the provider's token pricing and persists spend logs to the configured database.
+
+Costs are calculated per-request using granular token pricing (per million tokens):
+
+| Token category | Description |
+|----------------|-------------|
+| `input_tokens.no_cache` | Non-cached input tokens |
+| `input_tokens.cache_read` | Cache-read input tokens |
+| `input_tokens.cache_write` | Cache-write input tokens |
+| `output_tokens.text` | Text output tokens |
+| `output_tokens.reasoning` | Reasoning output tokens |
+
+Spend logs are stored in the configured database (`sqlite://`, `postgres://`, or `mysql://`). The table is created automatically via migrations.
+
+For streaming requests, only the time-to-stream-start latency and request/error counts are recorded in metrics. Token usage is not available until the stream completes.
 
 ## Security Optimization
 
 ### Runtime Guardrails
 
-- Local firewall inspecting content before upstream send and before returning to client
-- Built-in detectors for PII (emails, phone numbers, IP addresses) and credentials (API keys for OpenAI/Anthropic/AWS/GCP/GitHub/Stripe, private keys, inline passwords)
-- Custom regex patterns with direction control (upgoing, downgoing, both)
-- Per-pattern actions: warn, redact, or block
+BitRouter includes a proxy-layer firewall that inspects content flowing between agents and LLM providers. It wraps the model router transparently — your agents and providers don't need any changes.
+
+Guardrails are enabled by default. Traffic is inspected in two directions:
+
+- **Upgoing** — outbound traffic from your agent to the LLM provider (user → model)
+- **Downgoing** — inbound traffic from the LLM provider back to your agent (model → user)
+
+#### Built-in Patterns
+
+| Pattern ID | Direction | Detects |
+|-----------|-----------|---------|
+| `api_keys` | upgoing | API keys from OpenAI, Anthropic, AWS, GCP, GitHub, Stripe |
+| `private_keys` | upgoing | PEM-encoded private keys (RSA, EC, Ed25519, etc.) |
+| `credentials` | upgoing | Inline passwords, basic-auth headers, database connection strings |
+| `pii_emails` | upgoing | Email addresses |
+| `pii_phone_numbers` | upgoing | Phone numbers |
+| `ip_addresses` | upgoing | IPv4 addresses (non-localhost) |
+| `suspicious_commands` | downgoing | Dangerous shell commands (`rm -rf /`, `curl \| sh`, fork bombs, etc.) |
+
+#### Actions
+
+Each pattern can be assigned one of three actions:
+
+| Action | Behavior |
+|--------|----------|
+| `warn` | Log a warning but allow the content through (default) |
+| `redact` | Replace matched content before forwarding |
+| `block` | Reject the entire request with an error |
+
+#### Configuration
+
+```yaml
+guardrails:
+  enabled: true
+
+  disabled_patterns:
+    - ip_addresses
+
+  upgoing:
+    api_keys: redact
+    private_keys: block
+    credentials: block
+    pii_emails: warn
+
+  downgoing:
+    suspicious_commands: block
+
+  custom_patterns:
+    - name: internal_token
+      regex: "myapp_[A-Za-z0-9]{32}"
+      direction: upgoing    # upgoing | downgoing | both
+
+  custom_upgoing:
+    internal_token: redact
+
+  block_message:
+    include_details: true
+    include_help_link: true
+```
 
 ### Authentication & Agent Identity
 
 - Web3 JWT auth with Solana (Ed25519) and EVM (secp256k1) verification — zero server-side state
 - Scoped tokens (admin vs API), model allowlists, budget claims
-- A2A Agent Cards bound to CAIP-10 wallet addresses with discovery endpoints
+- ACP Agent Cards bound to CAIP-10 wallet addresses with discovery endpoints
 
 <Callout type="info">
 Advanced runtime optimization features — including analytics dashboards, team-level policy controls, and hosted guardrail management — are coming soon on BitRouter Cloud.

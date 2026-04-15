@@ -156,10 +156,9 @@ interface ModelsFilterSidebarProps {
   onSearchChange: (value: string) => void;
   totalCount: number;
   filteredCount: number;
-  collapsed: boolean;
-  onToggleCollapse: () => void;
   viewMode: ViewMode;
   onViewModeChange: (mode: ViewMode) => void;
+  banner?: React.ReactNode;
 }
 
 export function ModelsFilterSidebar({
@@ -171,10 +170,9 @@ export function ModelsFilterSidebar({
   onSearchChange,
   totalCount,
   filteredCount,
-  collapsed,
-  onToggleCollapse,
   viewMode,
   onViewModeChange,
+  banner,
 }: ModelsFilterSidebarProps) {
   const sortedProviders = useMemo(
     () =>
@@ -227,12 +225,11 @@ export function ModelsFilterSidebar({
       searchPlaceholder="Search models..."
       totalCount={totalCount}
       filteredCount={filteredCount}
-      collapsed={collapsed}
-      onToggleCollapse={onToggleCollapse}
       viewMode={viewMode}
       onViewModeChange={onViewModeChange}
       hasActiveFilters={hasActiveFilters}
       onClearFilters={() => onChange(EMPTY_FILTERS)}
+      banner={banner}
     >
       {/* Provider filter */}
       <FilterSection title="Provider">

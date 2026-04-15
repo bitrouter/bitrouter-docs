@@ -72,10 +72,9 @@ interface ToolsFilterSidebarProps {
   onSearchChange: (value: string) => void;
   totalCount: number;
   filteredCount: number;
-  collapsed: boolean;
-  onToggleCollapse: () => void;
   viewMode: ViewMode;
   onViewModeChange: (mode: ViewMode) => void;
+  banner?: React.ReactNode;
 }
 
 export function ToolsFilterSidebar({
@@ -86,10 +85,9 @@ export function ToolsFilterSidebar({
   onSearchChange,
   totalCount,
   filteredCount,
-  collapsed,
-  onToggleCollapse,
   viewMode,
   onViewModeChange,
+  banner,
 }: ToolsFilterSidebarProps) {
   const toggleCategory = (category: string) => {
     const next = new Set(filters.categories);
@@ -130,12 +128,11 @@ export function ToolsFilterSidebar({
       searchPlaceholder="Search tools..."
       totalCount={totalCount}
       filteredCount={filteredCount}
-      collapsed={collapsed}
-      onToggleCollapse={onToggleCollapse}
       viewMode={viewMode}
       onViewModeChange={onViewModeChange}
       hasActiveFilters={hasActiveFilters}
       onClearFilters={() => onChange(EMPTY_FILTERS)}
+      banner={banner}
     >
       {/* Category filter */}
       <FilterSection title="Category">

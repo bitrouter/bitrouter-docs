@@ -1,10 +1,18 @@
 "use client";
 
-import { Separator } from "@/components/ui/separator";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { PanelLeftClose, PanelLeftOpen, LayoutList, Table } from "lucide-react";
+import { LayoutList, Table } from "lucide-react";
+import {
+  Sidebar,
+  SidebarHeader,
+  SidebarContent,
+  SidebarSeparator,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 
 export type ViewMode = "table" | "list";
 
@@ -14,12 +22,12 @@ interface FilterSidebarProps {
   searchPlaceholder: string;
   totalCount: number;
   filteredCount: number;
-  collapsed: boolean;
-  onToggleCollapse: () => void;
   viewMode: ViewMode;
   onViewModeChange: (mode: ViewMode) => void;
   hasActiveFilters: boolean;
   onClearFilters: () => void;
+  /** Optional content rendered inside the sidebar header (e.g., type tabs) */
+  banner?: React.ReactNode;
   children: React.ReactNode;
 }
 
@@ -29,35 +37,27 @@ export function FilterSidebar({
   searchPlaceholder,
   totalCount,
   filteredCount,
-  collapsed,
-  onToggleCollapse,
   viewMode,
   onViewModeChange,
   hasActiveFilters,
   onClearFilters,
+  banner,
   children,
 }: FilterSidebarProps) {
-  if (collapsed) {
-    return (
-      <div className="shrink-0 border-r border-border flex flex-col items-center py-3 px-1.5 gap-3">
-        <button
-          onClick={onToggleCollapse}
-          className="text-muted-foreground hover:text-foreground transition-colors p-1"
-          title="Show filters"
-        >
-          <PanelLeftOpen className="size-4" />
-        </button>
-      </div>
-    );
-  }
-
   return (
-    <div className="w-56 shrink-0 border-r border-border flex flex-col h-full">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3">
+    <Sidebar collapsible="none">
+      {/* Banner (e.g., type tabs) */}
+      {banner && (
+        <SidebarHeader className="p-0">
+          {banner}
+        </SidebarHeader>
+      )}
+
+      {/* Filter header */}
+      <SidebarHeader className="flex-row items-center justify-between gap-2 px-4 py-3">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-foreground">Filters</span>
-          <span className="text-[10px] text-muted-foreground tabular-nums">
+          <span className="text-xs font-medium text-sidebar-foreground">Filters</span>
+          <span className="text-[10px] text-sidebar-foreground/50 tabular-nums">
             {filteredCount}/{totalCount}
           </span>
         </div>
@@ -65,67 +65,65 @@ export function FilterSidebar({
           {hasActiveFilters && (
             <button
               onClick={onClearFilters}
-              className="text-[10px] text-muted-foreground hover:text-foreground transition-colors"
+              className="text-[10px] text-sidebar-foreground/50 hover:text-sidebar-foreground transition-colors"
             >
               Clear
             </button>
           )}
-          <button
-            onClick={onToggleCollapse}
-            className="text-muted-foreground hover:text-foreground transition-colors p-0.5"
-            title="Hide filters"
-          >
-            <PanelLeftClose className="size-3.5" />
-          </button>
+          <SidebarTrigger className="size-6" />
         </div>
-      </div>
-      <Separator />
+      </SidebarHeader>
+      <SidebarSeparator className="mx-0" />
 
       {/* Search + View toggle */}
-      <div className="px-4 py-3 space-y-3">
-        <Input
-          type="text"
-          placeholder={searchPlaceholder}
-          value={search}
-          onChange={(e) => onSearchChange(e.target.value)}
-          className="h-7 text-xs"
-        />
-        <div className="flex items-center gap-1">
-          <button
-            onClick={() => onViewModeChange("table")}
-            className={cn(
-              "flex items-center gap-1.5 px-2 py-1 rounded text-[11px] transition-colors",
-              viewMode === "table"
-                ? "bg-muted text-foreground font-medium"
-                : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
-            )}
-          >
-            <Table className="size-3" />
-            Table
-          </button>
-          <button
-            onClick={() => onViewModeChange("list")}
-            className={cn(
-              "flex items-center gap-1.5 px-2 py-1 rounded text-[11px] transition-colors",
-              viewMode === "list"
-                ? "bg-muted text-foreground font-medium"
-                : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
-            )}
-          >
-            <LayoutList className="size-3" />
-            List
-          </button>
+      <SidebarGroup className="px-4 py-3">
+        <div className="space-y-3">
+          <Input
+            type="text"
+            placeholder={searchPlaceholder}
+            value={search}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className="h-7 text-xs"
+          />
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => onViewModeChange("table")}
+              className={cn(
+                "flex items-center gap-1.5 px-2 py-1 text-[11px] transition-colors",
+                viewMode === "table"
+                  ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                  : "text-sidebar-foreground/50 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground",
+              )}
+            >
+              <Table className="size-3" />
+              Table
+            </button>
+            <button
+              onClick={() => onViewModeChange("list")}
+              className={cn(
+                "flex items-center gap-1.5 px-2 py-1 text-[11px] transition-colors",
+                viewMode === "list"
+                  ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                  : "text-sidebar-foreground/50 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground",
+              )}
+            >
+              <LayoutList className="size-3" />
+              List
+            </button>
+          </div>
         </div>
-      </div>
-      <Separator />
+      </SidebarGroup>
+      <SidebarSeparator className="mx-0" />
 
       {/* Filter sections */}
-      <ScrollArea className="flex-1">
-        <div className="px-4 py-3 space-y-5">
-          {children}
-        </div>
-      </ScrollArea>
-    </div>
+      <SidebarContent>
+        <SidebarGroup className="px-4 py-3">
+          <SidebarGroupContent className="space-y-5">
+            {children}
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
   );
 }
 
@@ -138,7 +136,7 @@ export function FilterSection({
 }) {
   return (
     <div>
-      <h4 className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-2">
+      <h4 className="text-[11px] font-medium text-sidebar-foreground/50 uppercase tracking-wider mb-2">
         {title}
       </h4>
       {children}

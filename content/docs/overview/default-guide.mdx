@@ -9,8 +9,33 @@ BitRouter Cloud is the fastest way to access 200+ LLMs for your agent runtime. N
 
 ## Install & Launch
 
+<Tabs items={['curl', 'npm', 'Homebrew']}>
+<Tab value="curl">
+
 ```bash
-cargo install bitrouter
+curl -fsSL https://install.bitrouter.ai | sh
+```
+
+</Tab>
+<Tab value="npm">
+
+```bash
+npm install -g bitrouter
+```
+
+</Tab>
+<Tab value="Homebrew">
+
+```bash
+brew install bitrouter/tap/bitrouter
+```
+
+</Tab>
+</Tabs>
+
+Then start the proxy:
+
+```bash
 bitrouter
 ```
 
@@ -97,7 +122,7 @@ You can re-run the wizard at any time with `bitrouter init`.
 ## Making Your First Request
 
 <Callout type="info">
-The examples below use the chat completions endpoint. Support for tools (MCP) and agents (A2A) is coming soon.
+The examples below use the chat completions endpoint. Support for tools (MCP) and agents (ACP) is coming soon.
 </Callout>
 
 ### Basic Example
@@ -116,7 +141,7 @@ curl -X POST "https://api.bitrouter.ai/v1/chat/completions" \
 ```
 
 <Callout type="info">
-Generate a JWT with `bitrouter keygen --exp 30d --scope api --name default`. See [Auth Management](/docs/guide/auth-management) for details.
+Generate a JWT with `bitrouter keygen --exp 30d --scope api --name default`. See [Agentic Identity & Payment](/docs/overview/agent-wallet) for details.
 </Callout>
 
 ### Code Examples
@@ -299,7 +324,7 @@ Store keys securely using environment variables. Never commit them to version co
 </Callout>
 
 <Callout type="info">
-For full auth management details including budget controls, model allowlists, and token scopes, see the [Auth Management](/docs/guide/auth-management) guide.
+For full auth management details including budget controls, model allowlists, and token scopes, see the [Agentic Identity & Payment](/docs/overview/agent-wallet) guide.
 </Callout>
 
 ## Usage & Billing

@@ -6,6 +6,10 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { i18nUI } from "@/lib/fumadocs-i18n";
 import type { Metadata } from "next";
+import {
+  CommandPaletteProvider,
+  CommandPaletteDialog,
+} from "@/components/command-palette";
 
 const BASE_URL = "https://bitrouter.ai";
 
@@ -92,13 +96,17 @@ export default async function LocaleLayout({ children, params }: Props) {
     <RootProvider
       theme={{ defaultTheme: "dark", storageKey: "bitrouter-theme" }}
       i18n={i18nUI.provider(locale)}
+      search={{ enabled: false }}
     >
       <NextIntlClientProvider messages={messages}>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-        {children}
+        <CommandPaletteProvider>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          />
+          {children}
+          <CommandPaletteDialog />
+        </CommandPaletteProvider>
       </NextIntlClientProvider>
     </RootProvider>
   );

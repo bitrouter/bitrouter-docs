@@ -125,6 +125,33 @@ The `--exp` flag accepts human-readable durations (`30s`, `12h`, `7d`) or raw se
 
 The server verifies that the JWT `iss` matches the configured operator wallet. Agents cannot forge or modify tokens — the cryptographic signature ensures tamper-proof authorization.
 
+### Supported Signing Algorithms
+
+| Algorithm | Chain | Identity format |
+|-----------|-------|-----------------|
+| `SOL_EDDSA` | Solana | `solana:<chain-ref>:<base58-pubkey>` |
+| `EIP191K` | EVM (Base, Ethereum, etc.) | `eip155:<chain-id>:<hex-address>` |
+
+The algorithm is automatically selected based on the `--chain` flag (default: `solana`).
+
+### Budget Controls
+
+| Field | Description |
+|-------|-------------|
+| `--budget` | Limit in micro-USD (1,000,000 = $1.00) |
+| `--budget-scope` | `session` (per chat session) or `account` (across all sessions) |
+| `--budget-range` | `rounds:<N>` (next N conversation rounds) or `duration:<seconds>s` (time window) |
+
+### Model Allowlist
+
+The `--models` flag accepts comma-separated patterns with wildcards:
+
+```bash
+--models "openai:gpt-4o,anthropic:*"
+```
+
+When omitted, the token can access all models configured on the server.
+
 <Callout type="info">
   For advanced configurations like policies and fine-grained spending rules, see
   the [OWS documentation](https://openwallet.sh).
@@ -135,11 +162,72 @@ The server verifies that the JWT `iss` matches the configured operator wallet. A
 BitRouter natively supports stablecoin payments for agent operations:
 
 - **USDC** on Solana
-- **USDT** on Solana
+- **USDC** on Tempo
 
 Agents and developers interact with familiar USD amounts. Stablecoins enable instant, low-cost, permissionless settlement — without the friction of traditional payment processors.
 
+### Machine Payment Protocol (MPP)
+
+BitRouter uses MPP for HTTP 402-based payments, enabling monetization of LLM inference, MCP tools, and ACP agents. MPP's charge intent is compatible with the x402-exact specification.
+
+Two payment networks are supported: **Tempo** (EVM) and **Solana**.
+
+#### How it works
+
+1. A caller makes a request without payment credentials
+2. BitRouter returns `402 Payment Required` with a challenge describing the accepted payment methods and cost
+3. The caller submits payment proof (signed transaction, voucher, or channel state)
+4. BitRouter verifies the payment and proxies the request upstream
+5. Cost is metered and logged via the observability layer
+
 <Callout type="info">
-  **Fiat support coming soon.** We're building fiat on-ramp and off-ramp support
-  so teams can fund agent wallets directly with traditional currency.
+For LLM inference, token-level cost is calculated after the request completes. For MCP tools and ACP agents, the fixed per-call cost is charged upfront.
+</Callout>
+
+#### MPP Configuration
+
+```yaml
+mpp:
+  enabled: true
+  realm: "bitrouter.example.com"       # auto-detected if omitted
+  secret_key: "${MPP_SECRET_KEY}"       # HMAC for stateless challenge verification
+
+  networks:
+    tempo:
+      recipient: "0xYourAddress"
+      escrow_contract: "0xEscrowAddr"
+      rpc_url: "https://rpc.tempo.xyz"
+      currency: "0xTokenAddress"         # TIP-20 token
+      fee_payer: true                    # sponsor gas fees
+
+    solana:                              # requires mpp-solana feature
+      recipient: "SolanaBase58Pubkey"
+      channel_program: "ProgramAddr"
+      network: "mainnet-beta"            # or "devnet"
+
+solana_rpc_url: "https://api.mainnet-beta.solana.com"
+```
+
+#### Pricing Configuration
+
+Pricing can be set for MCP tools and ACP agents. LLM costs are calculated automatically using the provider's token pricing catalog.
+
+```yaml
+mcp_server_pricing:
+  github:
+    default_cost_per_call: 0.001
+    tools:
+      search_repositories: 0.005
+
+acp_agent_pricing:
+  research-agent:
+    default_cost_per_call: 0.01
+    methods:
+      "message/send": 0.05
+      "tasks/get": 0.01
+```
+
+<Callout type="info">
+  **Fiat support coming soon.** Stripe integration for fiat on-ramp and off-ramp
+  is in progress, so teams can fund agent wallets directly with traditional currency.
 </Callout>

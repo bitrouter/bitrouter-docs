@@ -50,7 +50,7 @@ export function ToolDetailView() {
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="/tools">Tools</Link>
+              <Link href="/cloud">Cloud</Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />

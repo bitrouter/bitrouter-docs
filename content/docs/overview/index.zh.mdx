@@ -4,12 +4,13 @@ description: BitRouter 入门指南
 ---
 import { Callout } from 'fumadocs-ui/components/callout';
 import { Cards, Card } from 'fumadocs-ui/components/card';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
 ## 欢迎使用 BitRouter
 
 BitRouter 是为现代 Agent 运行时打造的代理层。它是一个高性能的 Rust 代理，让 LLM Agent 自主发现并路由到语言模型、工具和其他 Agent——具备 Agent 原生控制、安全护栏，以及通过 CLI 和 TUI 界面实现的实时可观测性。
 
-多提供商路由，统一访问 OpenAI、Anthropic、Google 及自定义提供商。MCP 网关实现工具发现，A2A 网关实现 Agent 间调度，Agent 防火墙用于检查、脱敏或拦截风险内容，402/MPP 处理实现 Agent 原生支付。单一二进制文件，零基础设施依赖。
+多提供商路由，统一访问 OpenAI、Anthropic、Google 及自定义提供商。MCP 网关实现工具发现，ACP 网关实现 Agent 间调度，Agent 防火墙用于检查、脱敏或拦截风险内容，402/MPP 处理实现 Agent 原生支付。单一二进制文件，零基础设施依赖。
 
 ---
 
@@ -39,8 +40,33 @@ then configure accordingly, start the server, and verify it's working.
 
 安装并启动 BitRouter：
 
+<Tabs items={['curl', 'npm', 'Homebrew']}>
+<Tab value="curl">
+
 ```bash
-cargo install bitrouter
+curl -fsSL https://install.bitrouter.ai | sh
+```
+
+</Tab>
+<Tab value="npm">
+
+```bash
+npm install -g bitrouter
+```
+
+</Tab>
+<Tab value="Homebrew">
+
+```bash
+brew install bitrouter/tap/bitrouter
+```
+
+</Tab>
+</Tabs>
+
+然后启动代理：
+
+```bash
 bitrouter
 ```
 
@@ -70,7 +96,7 @@ openclaw
 
 <Cards>
   <Card title="默认指南" href="/docs/overview/default-guide" description="使用 BitRouter Cloud 快速上手——无需管理 API 密钥" />
-  <Card title="指南" href="/docs/guide" description="安装、配置、提供商、安全护栏等" />
+  <Card title="手动指南" href="/docs/overview/manual-guide" description="安装、配置、提供商和 CLI 参考" />
   <Card title="API 参考" href="/docs/api-reference" description="完整的端点文档" />
   <Card title="GitHub" href="https://github.com/bitrouter" description="源代码与贡献" external />
   <Card title="Discord" href="https://discord.gg/G3zVrZDa5C" description="获取帮助和社区动态" external />

@@ -15,10 +15,10 @@ export function SidebarFooterControls() {
   const value = mounted ? resolvedTheme : null;
 
   return (
-    <>
+    <div className="flex w-full items-center gap-2">
       <LanguageToggleButton />
       <button
-        className="ms-auto inline-flex items-center rounded-full border p-1 *:rounded-full"
+        className="ms-auto inline-flex items-center border p-1"
         aria-label="Toggle Theme"
         onClick={() => setTheme(value === "light" ? "dark" : "light")}
         data-theme-toggle=""
@@ -39,6 +39,6 @@ export function SidebarFooterControls() {
           />
         ))}
       </button>
-    </>
+    </div>
   );
 }

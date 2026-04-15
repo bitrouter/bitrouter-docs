@@ -45,17 +45,66 @@ Your agent will install BitRouter, detect your API keys, generate the config, st
 
 ---
 
-## Self-Host (Open Source)
+## Installation
 
-BitRouter proxy is fully open source. Run it on your own infrastructure with full control over routing and deployment.
+### Prerequisites
 
-### Install
+- [Rust toolchain](https://rustup.rs/) (stable, 1.80+)
+
+### Install from crates.io
 
 ```bash
 cargo install bitrouter
 ```
 
-### Launch
+This builds and installs the `bitrouter` binary into `~/.cargo/bin`.
+
+### Install from source
+
+```bash
+git clone https://github.com/bitrouter/bitrouter.git
+cd bitrouter
+cargo build --release
+```
+
+The binary is at `target/release/bitrouter`. Copy it to your PATH or run it directly.
+
+### Feature flags
+
+| Feature | Default | Description |
+|---------|---------|-------------|
+| `tui` | Yes | Interactive terminal UI |
+| `swig` | No | On-chain Swig wallet operations (requires Solana dependencies) |
+
+To build without the TUI:
+
+```bash
+cargo build --release --no-default-features
+```
+
+To build with Swig wallet support:
+
+```bash
+cargo build --release --features swig
+```
+
+### Verify
+
+```bash
+bitrouter status
+```
+
+### Update
+
+```bash
+cargo install bitrouter
+```
+
+BitRouter checks for new releases automatically and prints a notice when an update is available.
+
+---
+
+## Launch
 
 ```bash
 # Interactive: runs setup wizard on first run, then starts TUI + API server
@@ -84,16 +133,66 @@ bitrouter serve
 # Use "openai:gpt-4o" as the model name
 ```
 
-### Configuration
+---
 
-BitRouter resolves its home directory in this order:
+## Configuration
 
-1. `--home-dir <PATH>` if provided
-2. Current working directory, if `./bitrouter.yaml` exists
-3. `BITROUTER_HOME` environment variable
-4. `~/.bitrouter` (scaffolded automatically)
+### Home Directory
 
-#### Minimal `bitrouter.yaml`
+BitRouter resolves its working directory in this order:
+
+1. `--home-dir <PATH>` if provided on the command line
+2. The current working directory, if `./bitrouter.yaml` exists
+3. `BITROUTER_HOME` environment variable, if it points to an existing directory
+4. `~/.bitrouter` (default fallback — scaffolded automatically on first run)
+
+### Directory Layout
+
+```text
+<home>/
+├── bitrouter.yaml   # Main configuration file
+├── .env             # Environment variables (auto-loaded, git-ignored)
+├── .gitignore       # Ignores .env, logs/, run/, .keys/, bitrouter.db
+├── run/             # PID files, Unix sockets, runtime state
+├── logs/            # Server logs
+└── bitrouter.db     # SQLite database (default, auto-created)
+```
+
+### Environment Variables
+
+BitRouter loads `<home>/.env` automatically at startup. Process environment variables override `.env` values. Use `${VAR}` placeholders anywhere in `bitrouter.yaml`:
+
+```yaml
+providers:
+  openai:
+    api_key: ${OPENAI_API_KEY}
+    api_base: ${OPENAI_BASE_URL}
+```
+
+**Substitution rules:**
+
+- **Precedence:** process environment > `.env` file
+- **Syntax:** `${VAR_NAME}` in any YAML string value
+- **Missing variables:** replaced with empty string (not an error)
+- **Recursive:** works in nested objects and arrays
+
+<Callout type="warn">
+  The `.env` file may contain secrets. The scaffolded `.gitignore` excludes it
+  by default — do not commit it to version control.
+</Callout>
+
+### Key Environment Variables
+
+| Variable                 | Description                                                         |
+| ------------------------ | ------------------------------------------------------------------- |
+| `BITROUTER_HOME`         | Override the home directory                                         |
+| `BITROUTER_DATABASE_URL` | Database connection URL (overrides `database.url` in config)        |
+| `OWS_PASSPHRASE`         | Wallet decryption passphrase (prompted if missing and TTY attached) |
+| `MPP_SECRET_KEY`         | HMAC secret for MPP challenge verification                          |
+| `{PREFIX}_API_KEY`       | Provider API key (e.g. `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`)       |
+| `{PREFIX}_BASE_URL`      | Provider base URL override (e.g. `OPENAI_BASE_URL`)                 |
+
+### Minimal `bitrouter.yaml`
 
 ```yaml
 server:
@@ -111,25 +210,387 @@ models:
         model_id: gpt-4o
 ```
 
-Environment-variable references like `${OPENAI_API_KEY}` are expanded during config loading.
+BitRouter works with an empty configuration file — or even no configuration at all. All built-in providers (OpenAI, Anthropic, Google, OpenRouter, DeepSeek, and more) are available automatically when API keys are set in the environment.
 
-#### Custom Providers
+### Full Configuration Reference
 
-Any OpenAI-compatible or Anthropic-compatible service works out of the box using `derives`:
+Every section and field available in `bitrouter.yaml`:
+
+```yaml
+# ── Server ──────────────────────────────────────────────────────────
+
+server:
+  listen: "127.0.0.1:8787" # Address and port for the HTTP API server
+  log_level: info # trace | debug | info | warn | error
+  control:
+    socket: bitrouter.sock # Unix socket for daemon control
+
+# ── Database ────────────────────────────────────────────────────────
+
+database:
+  # Connection URL. Supports sqlite://, postgres://, mysql://.
+  # Resolution: --db flag > BITROUTER_DATABASE_URL env > this field > default SQLite
+  url: "sqlite://bitrouter.db?mode=rwc"
+
+# ── Provider Inheritance ────────────────────────────────────────────
+
+# Built-in providers: openai, anthropic, google, openrouter, deepseek,
+# minimax, zai, moonshot, qwen, bitrouter (300+ models aggregated).
+# Set to false to use ONLY providers declared below.
+inherit_defaults: true
+
+# ── Providers ───────────────────────────────────────────────────────
+
+providers:
+  # Override a built-in provider (only the fields you set are changed).
+  openai:
+    api_key: "${OPENAI_API_KEY}"
+
+  anthropic:
+    api_key: "${ANTHROPIC_API_KEY}"
+
+  google:
+    api_key: "${GOOGLE_API_KEY}"
+
+  # Custom provider inheriting from a built-in.
+  # `derives` copies api_protocol, api_base, model catalog, etc.
+  my-proxy:
+    derives: openai
+    api_base: "https://api.mycompany.com/v1"
+    api_key: "${MY_PROXY_API_KEY}"
+
+  # Fully custom provider (no inheritance).
+  custom-llm:
+    api_protocol: openai # openai | anthropic | google | mcp | rest
+    api_base: "https://llm.example.com/v1"
+    api_key: "${CUSTOM_LLM_KEY}"
+    env_prefix: CUSTOM_LLM # auto-reads CUSTOM_LLM_API_KEY / CUSTOM_LLM_BASE_URL
+    default_headers:
+      x-project-id: "my-project"
+    models:
+      my-model-7b:
+        name: "My Model 7B"
+        description: "Custom fine-tuned model"
+        max_input_tokens: 32768
+        max_output_tokens: 4096
+        input_modalities: [text]
+        output_modalities: [text]
+        pricing:
+          input_tokens:
+            no_cache: 0.50 # per million tokens (USD)
+            cache_read: 0.25
+            cache_write: 0.75
+          output_tokens:
+            text: 1.50
+            reasoning: 3.00
+
+  # MCP tool provider with bridge mode.
+  github-mcp:
+    api_protocol: mcp
+    api_base: "https://api.githubcopilot.com/mcp"
+    api_key: "${GITHUB_TOKEN}"
+    bridge: true # expose as POST /mcp/github-mcp
+
+  # Provider with custom header auth.
+  header-auth-provider:
+    derives: openai
+    api_base: "https://api.example.com/v1"
+    auth:
+      type: header
+      header_name: "x-api-key"
+      api_key: "${HEADER_AUTH_KEY}"
+
+  # Provider using MPP (Machine Payment Protocol) auth.
+  paid-provider:
+    derives: openai
+    api_base: "https://paid.example.com/v1"
+    auth:
+      type: mpp
+
+# ── Model Routing ───────────────────────────────────────────────────
+
+models:
+  smart:
+    strategy: priority
+    endpoints:
+      - provider: anthropic
+        service_id: claude-sonnet-4-20250514
+      - provider: openai
+        service_id: gpt-4o
+    name: "Smart"
+    max_input_tokens: 200000
+    max_output_tokens: 16384
+
+  fast:
+    strategy: load_balance
+    endpoints:
+      - provider: openai
+        service_id: gpt-4o-mini
+        api_key: "${OPENAI_KEY_POOL_A}"
+      - provider: openai
+        service_id: gpt-4o-mini
+        api_key: "${OPENAI_KEY_POOL_B}"
+
+  coding:
+    strategy: priority
+    endpoints:
+      - provider: anthropic
+        service_id: claude-sonnet-4-20250514
+      - provider: openai
+        service_id: gpt-4o
+      - provider: google
+        service_id: gemini-2.5-pro
+
+# ── Tool Routing ────────────────────────────────────────────────────
+
+tools:
+  create_issue:
+    strategy: priority
+    endpoints:
+      - provider: github-mcp
+        service_id: create_issue
+    description: "Create a GitHub issue"
+    input_schema:
+      type: object
+      properties:
+        repo: { type: string }
+        title: { type: string }
+        body: { type: string }
+      required: [repo, title]
+    skill: "github-issues"
+
+  web_search:
+    endpoints:
+      - provider: exa
+        service_id: search
+    pricing:
+      default: 0.001
+      overrides:
+        search: 0.002
+
+# ── Guardrails ──────────────────────────────────────────────────────
+
+guardrails:
+  enabled: true
+
+  disabled_patterns:
+    - ip_addresses
+    - pii_phone_numbers
+
+  custom_patterns:
+    - name: internal_token
+      regex: "myapp_[A-Za-z0-9]{32}"
+      direction: upgoing
+
+  upgoing:
+    api_keys: redact
+    private_keys: block
+    credentials: redact
+
+  downgoing:
+    suspicious_commands: block
+
+  custom_upgoing:
+    internal_token: block
+
+  block_message:
+    include_details: true
+    include_help_link: true
+
+  tools:
+    enabled: true
+    providers:
+      github-mcp:
+        filter:
+          deny: [delete_repo, delete_branch]
+        param_restrictions:
+          rules:
+            create_issue:
+              deny: [assignees]
+              action: strip
+
+# ── Wallet ──────────────────────────────────────────────────────────
+
+wallet:
+  name: "my-wallet"
+  vault_path: "~/.ows"
+  payment:
+    tempo_rpc_url: "https://rpc.moderato.tempo.xyz"
+    solana_rpc_url: "https://api.mainnet-beta.solana.com"
+    session_max_deposit: 10000000
+    session_default_deposit: 1000000
+
+# ── MPP (Machine Payment Protocol) ─────────────────────────────────
+
+mpp:
+  enabled: true
+  realm: "bitrouter.example.com"
+  secret_key: "${MPP_SECRET_KEY}"
+  networks:
+    tempo:
+      recipient: "0x1234..."
+      escrow_contract: "0xabcd..."
+      rpc_url: "${TEMPO_RPC_URL}"
+      currency: "${TEMPO_TOKEN_ADDRESS}"
+      fee_payer: false
+      default_deposit: "5000000"
+
+# ── Solana RPC ──────────────────────────────────────────────────────
+
+solana_rpc_url: "https://api.mainnet-beta.solana.com"
+```
+
+### Configuration Loading Pipeline
+
+1. **Load environment** — reads `.env` file, then process env (process env wins)
+2. **Substitute `${VAR}`** — replaces all variable references in the YAML
+3. **Parse YAML** — deserializes into the configuration structure
+4. **Merge built-in providers** — unless `inherit_defaults: false`
+5. **Resolve `derives`** — flattens provider inheritance chains
+6. **Apply `env_prefix`** — auto-reads `{PREFIX}_API_KEY` / `{PREFIX}_BASE_URL`
+
+### Hot Reload
+
+A running server can reload its configuration without downtime:
+
+```bash
+bitrouter reload
+# Or send SIGHUP to the server process
+```
+
+Hot reload re-reads the config file and updates routing tables, guardrails, and tool registries. Dynamic routes (added via `bitrouter route add`) survive reloads but not process restarts.
+
+---
+
+## Model Providers
+
+### Built-in Providers
+
+| Provider | Protocol | Env prefix | Auto-detected key |
+|----------|----------|------------|-------------------|
+| `openai` | OpenAI | `OPENAI` | `OPENAI_API_KEY` |
+| `anthropic` | Anthropic | `ANTHROPIC` | `ANTHROPIC_API_KEY` |
+| `google` | Google | `GOOGLE` | `GOOGLE_API_KEY` |
+| `openrouter` | OpenAI | `OPENROUTER` | `OPENROUTER_API_KEY` |
+
+Built-in providers include a full model catalog with metadata (context length, modalities) and token pricing. You only need to supply an API key.
+
+### Custom Providers
+
+Any OpenAI-compatible or Anthropic-compatible API works with the `derives` field:
 
 ```yaml
 providers:
-  openrouter:
+  my-company:
     derives: openai
-    api_base: "https://openrouter.ai/api/v1"
-    api_key: "${OPENROUTER_API_KEY}"
-  moonshot-anthropic:
+    api_base: "https://api.mycompany.com/v1"
+    api_key: "${MY_COMPANY_API_KEY}"
+
+  moonshot:
     derives: anthropic
     api_base: "https://api.moonshot.ai/anthropic"
     api_key: "${MOONSHOT_API_KEY}"
 ```
 
-### CLI Reference
+### Provider Fields
+
+| Field | Description |
+|-------|-------------|
+| `derives` | Inherit from another provider definition |
+| `api_protocol` | `openai`, `anthropic`, or `google` |
+| `api_base` | Base URL for the upstream API |
+| `api_key` | Default API key |
+| `env_prefix` | Auto-load `{PREFIX}_API_KEY` and `{PREFIX}_BASE_URL` from environment |
+| `default_headers` | Extra HTTP headers sent with every request |
+| `auth` | Authentication method override |
+| `models` | Per-model metadata and pricing catalog |
+| `bridge` | MCP only: expose as `POST /mcp/{name}` |
+
+### Auth Modes
+
+```yaml
+# Default: Bearer token (used automatically when api_key is set)
+providers:
+  example-bearer:
+    api_key: "sk-..."
+
+# Custom header (e.g. x-api-key)
+providers:
+  example-header:
+    auth:
+      type: header
+      header_name: "x-api-key"
+      api_key: "key-..."
+
+# Custom auth (e.g. for x402 or SIWx)
+providers:
+  example-custom:
+    auth:
+      type: custom
+      method: siwx
+      params:
+        chain_id: 1
+```
+
+### Model Routing
+
+Define virtual model names that route to one or more provider endpoints:
+
+```yaml
+models:
+  default:
+    strategy: priority
+    endpoints:
+      - provider: openai
+        model_id: gpt-4o
+      - provider: anthropic
+        model_id: claude-sonnet-4-20250514
+
+  fast:
+    strategy: load_balance
+    endpoints:
+      - provider: openai
+        model_id: gpt-4o-mini
+        api_key: "sk-key-a"
+      - provider: openai
+        model_id: gpt-4o-mini
+        api_key: "sk-key-b"
+```
+
+| Strategy | Behavior |
+|----------|----------|
+| `priority` | Try endpoints in order; failover to the next on error |
+| `load_balance` | Distribute requests evenly via round-robin |
+
+Each endpoint can override `api_key` and `api_base` independently, useful for spreading load across multiple API keys.
+
+### Direct Routing
+
+Skip the `models` section and use `provider:model_id` syntax directly:
+
+```bash
+curl http://localhost:8787/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{"model": "openai:gpt-4o", "messages": [{"role": "user", "content": "Hello"}]}'
+```
+
+### Dynamic Routes
+
+Add or remove routes at runtime without restarting:
+
+```bash
+bitrouter route list
+bitrouter route add research openai:o3 anthropic:claude-sonnet-4-20250514 --strategy priority
+bitrouter route rm research
+```
+
+Dynamic routes are stored in memory and reset on restart.
+
+---
+
+## CLI Reference
+
+### Server Lifecycle
 
 | Command   | What it does                                                                  |
 | --------- | ----------------------------------------------------------------------------- |
@@ -139,24 +600,88 @@ providers:
 | `stop`    | Stop the running daemon                                                       |
 | `status`  | Print resolved paths, listen address, configured providers, and daemon status |
 | `restart` | Restart the background daemon                                                 |
+| `reload`  | Hot-reload configuration without downtime                                     |
 
-Global path options available on all subcommands:
+### Account Management
 
-- `--home-dir <PATH>` — override BitRouter home directory
-- `--config-file <PATH>` — override `<home>/bitrouter.yaml`
-- `--env-file <PATH>` — override `<home>/.env`
-- `--run-dir <PATH>` — override `<home>/run`
-- `--logs-dir <PATH>` — override `<home>/logs`
+```bash
+bitrouter account -g            # generate a new keypair
+bitrouter account -l            # list all keypairs
+bitrouter account --set <ID>    # set active account by index or pubkey prefix
+```
 
-### Supported Providers
+Each account has a Solana address, EVM address, and public key prefix. Keys are stored in `~/.bitrouter/.keys/`.
 
-| Provider  | Status | Notes                            |
-| --------- | ------ | -------------------------------- |
-| OpenAI    | ✅     | Chat Completions + Responses API |
-| Anthropic | ✅     | Messages API                     |
-| Google    | ✅     | Generative AI API                |
+### Token Generation
 
-See the [bitrouter repository](https://github.com/bitrouter/bitrouter) for full source code and documentation.
+Create JWTs signed by the active account:
+
+```bash
+bitrouter keygen --scope api --exp 30d --models "openai:*,anthropic:claude-*"
+```
+
+| Flag | Description |
+|------|-------------|
+| `--chain <CHAIN>` | Signing chain: `solana` (default) or `base` |
+| `--scope <SCOPE>` | Token scope: `api` (default) or `admin` |
+| `--exp <EXP>` | Expiration: `5m`, `1h`, `30d`, `never` |
+| `--models <MODELS>` | Comma-separated model patterns |
+| `--tools <TOOLS>` | Comma-separated tool patterns (e.g. `github/*,jira/search`) |
+| `--budget <BUDGET>` | Budget limit in micro USD |
+| `--budget-scope <SCOPE>` | `session` or `account` |
+| `--budget-range <RANGE>` | e.g. `rounds:10`, `duration:3600s` |
+| `--name <LABEL>` | Save the token locally with a label |
+
+```bash
+bitrouter keys -l              # list saved tokens
+bitrouter keys --show <ID>     # show decoded JWT claims
+bitrouter keys --rm <ID>       # remove a saved token
+```
+
+### Route Management
+
+```bash
+bitrouter route list
+bitrouter route add my-model openai:gpt-4o anthropic:claude-sonnet-4-20250514 --strategy priority
+bitrouter route rm my-model
+```
+
+### Inspect Upstreams
+
+```bash
+bitrouter tools list      # list all available MCP tools
+bitrouter tools status    # show upstream MCP server health
+bitrouter agents list     # list configured upstream agents
+bitrouter agents status   # show connection health
+```
+
+### Global Flags
+
+| Flag | Description |
+|------|-------------|
+| `--home-dir <PATH>` | Override BitRouter home directory |
+| `--config-file <PATH>` | Override `<home>/bitrouter.yaml` |
+| `--env-file <PATH>` | Override `<home>/.env` |
+| `--run-dir <PATH>` | Override `<home>/run` |
+| `--logs-dir <PATH>` | Override `<home>/logs` |
+| `--db <DATABASE_URL>` | Override database connection URL |
+
+### TUI Dashboard
+
+Running `bitrouter` with no arguments launches the interactive TUI, displaying daemon status, listen address, configured providers, and active routes. The TUI adapts its layout to terminal width.
+
+| Key | Action |
+|-----|--------|
+| `q` | Quit |
+| `Ctrl+C` | Quit |
+
+If no providers are configured, the TUI automatically launches the setup wizard.
+
+<Callout type="info">
+The TUI is an optional feature enabled by default. Build without it using `cargo build --release --no-default-features`.
+</Callout>
+
+---
 
 ## Integrations
 

@@ -4,12 +4,13 @@ description: Getting Started with BitRouter
 ---
 import { Callout } from 'fumadocs-ui/components/callout';
 import { Cards, Card } from 'fumadocs-ui/components/card';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
 ## Welcome to BitRouter
 
 BitRouter is the agentic proxy for modern agent runtimes. It's a high-performance Rust proxy that lets LLM agents autonomously discover and route to language models, tools, and other agents — with agent-native control, guardrails, and real-time observability through CLI and TUI interfaces.
 
-Multi-provider routing across OpenAI, Anthropic, Google, and custom providers. MCP gateway for tool discovery. A2A gateway for agent-to-agent dispatch. Agent firewall for inspecting, redacting, or blocking risky content. Agentic payments with 402/MPP handling. All in a single binary with zero infrastructure dependencies.
+Multi-provider routing across OpenAI, Anthropic, Google, and custom providers. MCP gateway for tool discovery. ACP gateway for agent-to-agent dispatch. Agent firewall for inspecting, redacting, or blocking risky content. Agentic payments with 402/MPP handling. All in a single binary with zero infrastructure dependencies.
 
 ---
 
@@ -39,8 +40,33 @@ That's it. Your agent will install BitRouter, detect your API keys, generate the
 
 Install and launch BitRouter:
 
+<Tabs items={['curl', 'npm', 'Homebrew']}>
+<Tab value="curl">
+
 ```bash
-cargo install bitrouter
+curl -fsSL https://install.bitrouter.ai | sh
+```
+
+</Tab>
+<Tab value="npm">
+
+```bash
+npm install -g bitrouter
+```
+
+</Tab>
+<Tab value="Homebrew">
+
+```bash
+brew install bitrouter/tap/bitrouter
+```
+
+</Tab>
+</Tabs>
+
+Then start the proxy:
+
+```bash
 bitrouter
 ```
 
@@ -70,7 +96,7 @@ Every request now flows through BitRouter's TUI — you'll see live provider rou
 
 <Cards>
   <Card title="Default Guide" href="/docs/overview/default-guide" description="Get started with BitRouter Cloud — no API keys to manage" />
-  <Card title="Guide" href="/docs/guide" description="Installation, configuration, providers, guardrails, and more" />
+  <Card title="Manual Guide" href="/docs/overview/manual-guide" description="Installation, configuration, providers, and CLI reference" />
   <Card title="API Reference" href="/docs/api-reference" description="Complete endpoint documentation" />
   <Card title="GitHub" href="https://github.com/bitrouter" description="Source code and contributions" external />
   <Card title="Discord" href="https://discord.gg/G3zVrZDa5C" description="Get help and community updates" external />

@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import {
   AgentsFilterSidebar,
   EMPTY_FILTERS,
@@ -84,12 +85,11 @@ function LicenseBadge({ license }: { license: string }) {
 
 // ── Component ───────────────────────────────────────────
 
-export function AgentsView() {
+export function AgentsView({ banner }: { banner?: React.ReactNode } = {}) {
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("name");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
   const [filters, setFilters] = useState<AgentFilters>(EMPTY_FILTERS);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("table");
 
   const agents = MOCK_AGENTS;
@@ -125,7 +125,7 @@ export function AgentsView() {
   };
 
   return (
-    <div className="flex h-full min-h-0">
+    <SidebarProvider className="min-h-0 h-full">
       {/* Sidebar */}
       <AgentsFilterSidebar
         filters={filters}
@@ -135,14 +135,13 @@ export function AgentsView() {
         onSearchChange={setSearch}
         totalCount={agents.length}
         filteredCount={filteredAgents.length}
-        collapsed={sidebarCollapsed}
-        onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
+        banner={banner}
       />
 
       {/* Main content */}
-      <div className="flex-1 min-w-0 flex flex-col">
+      <SidebarInset className="flex flex-col">
         {/* Hero */}
         <div className="shrink-0 border-b border-border px-6 py-5">
           <h2 className="text-sm font-semibold mb-1">Spawn Any Trending Agent Harness Locally</h2>
@@ -198,8 +197,8 @@ export function AgentsView() {
             </span>
           )}
         </div>
-      </div>
-    </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
 

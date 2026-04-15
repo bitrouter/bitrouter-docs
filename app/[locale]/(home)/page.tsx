@@ -1,6 +1,5 @@
 import { setRequestLocale } from "next-intl/server";
 import { Hero } from "@/components/landing/sections/Hero";
-import { Footer } from "@/components/landing/sections/Footer";
 
 export default async function Home({
   params,
@@ -11,11 +10,10 @@ export default async function Home({
   setRequestLocale(locale);
 
   return (
-    <>
-      <Hero />
-      <div className="mt-auto">
-        <Footer />
+    <div className="flex min-h-[calc(100dvh-4rem)] flex-col">
+      <div className="flex-1">
+        <Hero />
       </div>
-    </>
+    </div>
   );
 }

@@ -326,3 +326,15 @@
 - **`components/search.tsx`** and `components/sidebar/` still exist on disk but are no longer imported. Safe to delete.
 - **Recharts client bundle**: `DashboardCharts.tsx` imports recharts PieChart + AreaChart. Bundle size is moderate but adds client JS. Keep the wrapper minimal.
 - **Dotted map SVG size**: 6000 map samples generates ~2100 SVG circles. Renders server-side so no client JS, but adds to HTML payload.
+
+## What Was Done (Session 7)
+
+### Phase 16: Homepage README Section Cleanup
+
+77. **Installation tabs redesigned** (`components/landing/sections/OneLineSwitch.tsx`) — Replaced the 2-mode "For human / For agent" segmented toggle with a 4-tab underline-style switcher matching better-auth design language. Tabs: CLI (`npx auth init`), Prompt (`base_url = "https://api.bitrouter.ai/v1"`), MCP (`npx mcp add bitrouter`), Skills (`npx skills add bitrouter/agent-skills`). Active tab has bottom border indicator. Command prefix highlighted in purple. Card layout with border separator between tab bar and snippet area.
+
+78. **README section simplified** (`components/landing/sections/Hero.tsx`) — Removed `<IntegrationBar />` ("Works with any leading agent runtime") and the "Fully open-source / For enterprise" paragraph from the README section. Cleaned up unused `formatStars`, `getGitHubStars` functions, and `IntegrationBar`/`CalButton` imports.
+
+## Files Modified (Session 7)
+- `components/landing/sections/OneLineSwitch.tsx` — Full rewrite: underline tabs (CLI/Prompt/MCP/Skills), purple prefix highlighting, card layout
+- `components/landing/sections/Hero.tsx` — Removed IntegrationBar, open-source/enterprise paragraph, unused GitHub stars logic

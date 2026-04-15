@@ -6,33 +6,12 @@ import { DashboardPreview } from "./DashboardPreview";
 import { CodeConfigTabs } from "./CodeConfigTabs";
 import { FeatureGrid } from "./FeatureGrid";
 import { ProviderEcosystem } from "./ProviderEcosystem";
-import { IntegrationBar } from "./IntegrationBar";
 import { OneLineSwitch } from "./OneLineSwitch";
-import { CalButton } from "./CalButton";
-
-function formatStars(count: number): string {
-  if (count >= 1000) return `${(count / 1000).toFixed(1).replace(/\.0$/, "")}k`;
-  return count.toString();
-}
-
-async function getGitHubStars(): Promise<number | null> {
-  try {
-    const res = await fetch("https://api.github.com/repos/bitrouter/bitrouter", {
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data.stargazers_count ?? null;
-  } catch {
-    return null;
-  }
-}
 
 export async function Hero() {
-  const [t, tCode, stars] = await Promise.all([
+  const [t, tCode] = await Promise.all([
     getTranslations("Hero"),
     getTranslations("CodeConfig"),
-    getGitHubStars(),
   ]);
 
   return (
@@ -87,35 +66,6 @@ export async function Hero() {
             <div className="mt-5">
               <OneLineSwitch />
             </div>
-
-            <div className="mt-5">
-              <IntegrationBar />
-            </div>
-
-            <p className="mt-5 text-sm text-muted-foreground">
-              Fully open-source
-              {stars !== null && (
-                <>
-                  {" "}
-                  <a
-                    href="https://github.com/bitrouter/bitrouter"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 underline underline-offset-4 hover:text-foreground transition-colors"
-                  >
-                    ★ {formatStars(stars)} on GitHub
-                  </a>
-                </>
-              )}.{" "}
-              <a
-                href="/docs/overview/enterprise"
-                className="underline underline-offset-4 hover:text-foreground transition-colors"
-              >
-                For enterprise
-              </a>
-              ,{" "}
-              <CalButton>talk with us</CalButton>.
-            </p>
           </div>
 
           <DashboardPreview />

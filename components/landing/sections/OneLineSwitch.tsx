@@ -6,23 +6,39 @@ import { cn } from "@/lib/utils";
 
 const modes = [
   {
-    key: "human",
-    label: "For human",
-    snippet: 'base_url = "https://api.bitrouter.ai/v1"',
-    tag: "openai-compatible" as string | null,
+    key: "cli",
+    label: "CLI",
+    prefix: "npx",
+    body: "auth init",
+    snippet: "npx auth init",
   },
   {
-    key: "agent",
-    label: "For agent",
+    key: "prompt",
+    label: "Prompt",
+    prefix: "base_url",
+    body: ' = "https://api.bitrouter.ai/v1"',
+    snippet: 'base_url = "https://api.bitrouter.ai/v1"',
+  },
+  {
+    key: "mcp",
+    label: "MCP",
+    prefix: "npx",
+    body: "mcp add bitrouter",
+    snippet: "npx mcp add bitrouter",
+  },
+  {
+    key: "skills",
+    label: "Skills",
+    prefix: "npx",
+    body: "skills add bitrouter/agent-skills",
     snippet: "npx skills add bitrouter/agent-skills",
-    tag: "agent-skills" as string | null,
   },
 ] as const;
 
 type Mode = (typeof modes)[number]["key"];
 
 export function OneLineSwitch() {
-  const [mode, setMode] = useState<Mode>("human");
+  const [mode, setMode] = useState<Mode>("cli");
   const [copied, setCopied] = useState(false);
 
   const active = modes.find((m) => m.key === mode)!;
@@ -34,45 +50,41 @@ export function OneLineSwitch() {
   };
 
   return (
-    <div className="inline-flex flex-col items-stretch gap-1.5 rounded-md border border-border bg-card px-2 py-2 sm:flex-row sm:items-center sm:gap-3 sm:px-1.5 sm:py-1.5">
-      {/* Segmented toggle */}
-      <div className="flex gap-0.5 rounded-sm bg-muted/50 p-0.5 text-xs">
+    <div className="rounded-lg border border-border bg-card">
+      {/* Tab bar */}
+      <div className="flex border-b border-border px-4">
         {modes.map((m) => (
           <button
             key={m.key}
             onClick={() => setMode(m.key)}
             className={cn(
-              "rounded-sm px-2 py-1 transition-colors",
+              "relative px-4 py-2.5 text-sm transition-colors",
               mode === m.key
-                ? "bg-background text-foreground shadow-sm"
+                ? "text-foreground"
                 : "text-muted-foreground hover:text-foreground",
             )}
           >
             {m.label}
+            {mode === m.key && (
+              <span className="absolute inset-x-4 -bottom-px h-0.5 bg-foreground rounded-full" />
+            )}
           </button>
         ))}
       </div>
 
-      {/* Snippet + tag + copy */}
-      <div className="flex items-center gap-2 min-w-0">
-        <code className="min-w-0 break-all text-xs text-muted-foreground sm:break-normal sm:text-sm">
-          {mode === "human" ? (
-            <>base_url = &quot;https://api.bitrouter.ai/v1&quot;</>
-          ) : (
-            <>npx skills add bitrouter/agent-skills</>
-          )}
+      {/* Snippet + copy */}
+      <div className="flex items-center justify-between px-4 py-3.5">
+        <code className="text-sm">
+          <span className="text-purple-500 dark:text-purple-400">{active.prefix}</span>
+          {" "}{active.body}
         </code>
 
-        {/* Tag */}
-        {active.tag && <span className="hidden text-xs text-muted-foreground/50 sm:inline">{active.tag}</span>}
-
-        {/* Copy */}
         <button
           onClick={handleCopy}
-          className="shrink-0 text-muted-foreground/50 transition-colors hover:text-foreground"
+          className="shrink-0 ml-4 text-muted-foreground/50 transition-colors hover:text-foreground"
           aria-label="Copy snippet"
         >
-          {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
+          {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
         </button>
       </div>
     </div>

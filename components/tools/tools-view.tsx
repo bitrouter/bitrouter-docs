@@ -84,6 +84,42 @@ function PricingBadge({ pricing }: { pricing: string }) {
   );
 }
 
+// ── Endpoint cell with copy ────────────────────────────
+
+function EndpointCell({ toolId }: { toolId: string }) {
+  const [copied, setCopied] = useState(false);
+  const endpoint = `v1/tools/${toolId}`;
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(endpoint).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    });
+  };
+
+  return (
+    <span className="group/ep flex items-center gap-2">
+      <code className="text-[11px] text-muted-foreground">{endpoint}</code>
+      <button
+        onClick={(e) => { e.preventDefault(); handleCopy(); }}
+        className="shrink-0 opacity-0 group-hover/ep:opacity-100 transition-opacity text-muted-foreground hover:text-foreground"
+        title="Copy endpoint"
+      >
+        {copied ? (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        ) : (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+          </svg>
+        )}
+      </button>
+    </span>
+  );
+}
+
 // ── Component ───────────────────────────────────────────
 
 export function ToolsView() {
@@ -145,6 +181,38 @@ export function ToolsView() {
 
       {/* Main content */}
       <div className="flex-1 min-w-0 flex flex-col">
+        {/* Hero */}
+        <div className="shrink-0 border-b border-border px-6 py-5">
+          <h2 className="text-sm font-semibold mb-1">Curated Tools for Agent Harnesses</h2>
+          <p className="text-xs text-muted-foreground max-w-xl leading-relaxed">
+            We curate and test tools specifically for agent harness use cases. Try them in the console or integrate via CLI + agent skills.
+          </p>
+          <div className="flex items-center gap-3 mt-3">
+            <a
+              href="https://console.bitrouter.ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md bg-foreground text-background px-3 py-1.5 text-xs font-medium hover:bg-foreground/90 transition-colors"
+            >
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                <line x1="8" y1="21" x2="16" y2="21" />
+                <line x1="12" y1="17" x2="12" y2="21" />
+              </svg>
+              Open Console
+            </a>
+            <div className="flex items-center gap-2 rounded-md bg-muted px-3 py-1.5">
+              <svg className="w-3.5 h-3.5 text-muted-foreground shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="4 17 10 11 4 5" />
+                <line x1="12" y1="19" x2="20" y2="19" />
+              </svg>
+              <code className="text-[11px] text-muted-foreground font-mono">
+                bitrouter tools list --category agent-skill
+              </code>
+            </div>
+          </div>
+        </div>
+
         {viewMode === "table" ? (
           <ToolsTable
             tools={filteredTools}
@@ -200,7 +268,7 @@ function ToolsTable({
               onSort={onSort}
               align="left"
             />
-            <th className="px-4 py-2.5 font-medium text-left">Description</th>
+            <th className="px-4 py-2.5 font-medium text-left">Endpoint</th>
             <th className="px-4 py-2.5 font-medium text-left">Categories</th>
             <SortableHeader
               label="Provider"
@@ -236,8 +304,8 @@ function ToolsTable({
                   {entry.name}
                 </Link>
               </td>
-              <td className="px-4 py-2.5 text-muted-foreground text-xs max-w-xs truncate">
-                {entry.description}
+              <td className="px-4 py-2.5">
+                <EndpointCell toolId={entry.id} />
               </td>
               <td className="px-4 py-2.5">
                 <CategoryBadges categories={entry.categories} />
@@ -319,6 +387,11 @@ function ToolsList({ tools }: { tools: ToolEntry[] }) {
                   {PROVIDER_LABELS[entry.provider] ?? entry.provider}
                 </span>
               </div>
+
+              {/* Endpoint */}
+              <code className="text-[11px] text-muted-foreground/60 mt-1.5 block truncate">
+                v1/tools/{entry.id}
+              </code>
             </div>
 
             {/* Arrow */}

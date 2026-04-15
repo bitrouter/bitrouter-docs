@@ -196,6 +196,7 @@ export function AgentDetailView() {
   );
 }
 
+
 function CapabilityItem({
   label,
   enabled,

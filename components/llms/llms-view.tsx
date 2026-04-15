@@ -264,6 +264,38 @@ export function LlmsView() {
 
       {/* Main content */}
       <div className="flex-1 min-w-0 flex flex-col">
+        {/* Hero */}
+        <div className="shrink-0 border-b border-border px-6 py-5">
+          <h2 className="text-sm font-semibold mb-1">Curated LLMs for Agent Harnesses</h2>
+          <p className="text-xs text-muted-foreground max-w-xl leading-relaxed">
+            We curate and test LLMs specifically for agent harness use cases. Try them in the console or route via CLI + agent skills.
+          </p>
+          <div className="flex items-center gap-3 mt-3">
+            <a
+              href="https://console.bitrouter.ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md bg-foreground text-background px-3 py-1.5 text-xs font-medium hover:bg-foreground/90 transition-colors"
+            >
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                <line x1="8" y1="21" x2="16" y2="21" />
+                <line x1="12" y1="17" x2="12" y2="21" />
+              </svg>
+              Open Console
+            </a>
+            <div className="flex items-center gap-2 rounded-md bg-muted px-3 py-1.5">
+              <svg className="w-3.5 h-3.5 text-muted-foreground shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="4 17 10 11 4 5" />
+                <line x1="12" y1="19" x2="20" y2="19" />
+              </svg>
+              <code className="text-[11px] text-muted-foreground font-mono">
+                bitrouter config set default-provider openai
+              </code>
+            </div>
+          </div>
+        </div>
+
         {/* Loading */}
         {modelsLoading && (
           <div className="flex-1 flex items-center justify-center">

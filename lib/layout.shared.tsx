@@ -48,7 +48,7 @@ const sharedLinks: BaseLayoutProps["links"] = [
       >
         Agents
         <span className="rounded-full bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-medium leading-none text-amber-500">
-          BETA
+          ALPHA
         </span>
       </a>
     ),

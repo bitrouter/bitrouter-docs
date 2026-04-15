@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -116,15 +117,84 @@ export function ToolDetailView() {
         </Card>
       </div>
 
-      <Card>
+      <ToolEndpointSection toolId={tool.id} toolName={tool.name} />
+    </div>
+  );
+}
+
+function ToolEndpointSection({ toolId, toolName }: { toolId: string; toolName: string }) {
+  const [copiedEndpoint, setCopiedEndpoint] = useState(false);
+  const [copiedCurl, setCopiedCurl] = useState(false);
+
+  const endpoint = `v1/tools/${toolId}`;
+  const curlExample = `curl https://your-endpoint.com/${endpoint} \\
+  -H "Authorization: Bearer $API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "tool": "${toolId}",
+    "input": {"query": "Hello!"}
+  }'`;
+
+  const copyToClipboard = (text: string, setCopied: (v: boolean) => void) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    });
+  };
+
+  return (
+    <>
+      <Card className="mb-6">
         <CardContent className="pt-6">
-          <h2 className="text-sm font-medium mb-3">Integration</h2>
-          <p className="text-sm text-muted-foreground">
-            Detailed integration documentation will be available when this tool
-            is connected to the live API.
-          </p>
+          <h2 className="text-sm font-medium mb-3">Endpoint</h2>
+          <div className="flex items-center gap-2 bg-muted rounded-md px-3 py-2">
+            <code className="flex-1 text-sm font-mono truncate">{endpoint}</code>
+            <button
+              onClick={() => copyToClipboard(endpoint, setCopiedEndpoint)}
+              className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+              title="Copy endpoint"
+            >
+              {copiedEndpoint ? (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <polyline points="20 6 9 17 4 12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2" strokeWidth="2" />
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" strokeWidth="2" />
+                </svg>
+              )}
+            </button>
+          </div>
         </CardContent>
       </Card>
-    </div>
+
+      <Card>
+        <CardContent className="pt-6">
+          <h2 className="text-sm font-medium mb-3">cURL Example</h2>
+          <div className="relative">
+            <pre className="bg-muted rounded-md px-3 py-3 text-xs font-mono overflow-x-auto whitespace-pre-wrap break-all">
+              {curlExample}
+            </pre>
+            <button
+              onClick={() => copyToClipboard(curlExample, setCopiedCurl)}
+              className="absolute top-2 right-2 text-muted-foreground hover:text-foreground transition-colors bg-muted-foreground/10 hover:bg-muted-foreground/20 rounded p-1"
+              title="Copy cURL"
+            >
+              {copiedCurl ? (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <polyline points="20 6 9 17 4 12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2" strokeWidth="2" />
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" strokeWidth="2" />
+                </svg>
+              )}
+            </button>
+          </div>
+        </CardContent>
+      </Card>
+    </>
   );
 }

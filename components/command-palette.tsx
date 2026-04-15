@@ -49,7 +49,7 @@ interface CommandPaletteContext {
 
 const Context = createContext<CommandPaletteContext | null>(null);
 
-function useCommandPalette() {
+export function useCommandPalette() {
   return use(Context)!;
 }
 

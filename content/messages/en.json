@@ -54,6 +54,38 @@
       "benefit": "Single binary. Zero dependencies.",
       "description": "One Rust binary — no Postgres, no Redis, no Docker orchestration. cargo install bitrouter && bitrouter start. Self-host or use the managed service."
     },
+    "multiProvider": {
+      "title": "Multi-Provider",
+      "description": "Route across OpenAI, Anthropic, Google, Mistral, and more through a single endpoint. Add providers in config — no code changes."
+    },
+    "costOptimization": {
+      "title": "Cost Optimization",
+      "description": "Automatically route to the cheapest capable model. Track savings per session, per agent, per team."
+    },
+    "fallbackRetry": {
+      "title": "Fallback & Retry",
+      "description": "Automatic retries with exponential backoff. Cross-provider failover when a provider goes down."
+    },
+    "usageAnalytics": {
+      "title": "Usage Analytics",
+      "description": "Per-agent, per-model usage dashboards. Token counts, latency percentiles, cost breakdowns."
+    },
+    "agentSdk": {
+      "title": "Agent SDK",
+      "description": "First-class TypeScript and Python SDKs. KYA identity, payment delegation, and skill discovery built in."
+    },
+    "rateLimiting": {
+      "title": "Rate Limiting",
+      "description": "Per-agent and per-model rate limits. Quota management across teams with automatic queuing."
+    },
+    "caching": {
+      "title": "Semantic Caching",
+      "description": "Cache identical and semantically similar requests. Reduce costs and latency for repeated patterns."
+    },
+    "security": {
+      "title": "Security & Guardrails",
+      "description": "Content filtering, PII redaction, and audit logging. Policy-as-code for agent behavior boundaries."
+    },
     "docsLink": "Read the docs"
   },
   "Timeline": {
@@ -81,6 +113,31 @@
       "toolCalling": "Tool calling",
       "multiProvider": "Multi-provider"
     }
+  },
+  "Dashboard": {
+    "sectionLabel": "DASHBOARD",
+    "networkRequests": "Requests routed",
+    "networkAgents": "Agents connected",
+    "networkSaved": "Saved this month",
+    "modelUsageTitle": "Model distribution",
+    "recentRoutesTitle": "Recent routing decisions",
+    "costTrendTitle": "7-day cost trend",
+    "colTime": "Time",
+    "colRoute": "Route",
+    "colReason": "Reason",
+    "colSaved": "Saved"
+  },
+  "CodeConfig": {
+    "sectionLabel": "CONFIGURATION",
+    "tabConfig": "bitrouter.yaml",
+    "tabClient": "client.ts",
+    "caption": "Two files. Full routing intelligence."
+  },
+  "Ecosystem": {
+    "sectionLabel": "ECOSYSTEM",
+    "llmProviders": "LLM Providers",
+    "agentFrameworks": "Agent Frameworks",
+    "infrastructure": "Infrastructure"
   },
   "Footer": {
     "ctaHeading": "Start routing smarter.",

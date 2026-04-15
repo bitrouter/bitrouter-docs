@@ -2,6 +2,7 @@ import { source } from "@/lib/source";
 import { DocsLayout } from "fumadocs-ui/layouts/docs";
 import { docsOptions } from "@/lib/layout.shared";
 import { SidebarFooterControls } from "@/components/sidebar-footer-controls";
+import { SidebarSearch } from "@/components/sidebar-search";
 import { setRequestLocale } from "next-intl/server";
 
 type Props = {
@@ -19,6 +20,7 @@ export default async function Layout({ children, params }: Props) {
       {...docsOptions()}
       sidebar={{
         defaultOpenLevel: 1,
+        banner: <SidebarSearch />,
         footer: <SidebarFooterControls />,
       }}
       themeSwitch={{ enabled: false }}

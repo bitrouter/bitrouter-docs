@@ -105,23 +105,113 @@
 - `components/agents/agent-detail-view.tsx` — Breadcrumb → /cloud
 - `lib/layout.shared.tsx` — Cleaned up, both options use CustomNav
 
+## What Was Done (Session 3)
+
+### Phase 7: Better-Auth Header Tab Bar
+
+29. **Header rewritten as tab bar** (`components/landing/custom-nav.tsx`) — Replaced text-link nav with better-auth-style bordered tab cells. Logo in its own left pane (`w-[180px]`) with border-r divider. Each nav tab is a full-height cell with `border-r border-foreground/[0.06]` dividers. Active tab has `border-b-2 bg-foreground/50` indicator. Sign-In tab has inverted styling (bg-foreground, text-background). Removed Popover/Radix dependency — replaced with native dropdown components.
+
+30. **Header fixed positioning** — Changed from `sticky top-0` to `fixed inset-x-0 top-0 z-50` so header spans full viewport width over the sidebar on docs pages. Added `body { padding-top: 48px }` in globals.css to offset content. Logo stays at absolute top-left on all pages regardless of sidebar state.
+
+31. **Header height reduced** — From 56px to 48px (`h-12`, `--fd-nav-height: 48px`) to match better-auth.
+
+32. **Simplified nav structure** — Removed Products and Resources dropdown menus. Nav is now flat tabs: `Readme | Docs | Proxy ↗ | Cloud | Enterprise | Blog`. Proxy is an external link tab with arrow icon. Social links removed from header (already in footer).
+
+33. **Mobile menu simplified** — Flat link list: Readme, Docs, Cloud, Enterprise, Blog + Proxy (external). Social links + Sign In in footer row.
+
+### Phase 8: Docs Sidebar Refinements
+
+34. **Sidebar CSS overrides refined** (`app/globals.css`) — Active item: transparent background with left border only (no heavy dark block). Hover: ultra-subtle `oklch(foreground / 0.04)`. Section labels: `font-mono`, 10px, uppercase, `tracking: 0.08em`. Sidebar right edge: subtle border separator. Item font size unified to 13px.
+
+35. **Sidebar search bar** (`components/sidebar-search.tsx`) — New component: search button at top of docs sidebar that triggers command palette. Shows search icon + "Search..." text + ⌘K kbd hint. Wired via `sidebar.banner` prop in docs layout.
+
+36. **useCommandPalette exported** (`components/command-palette.tsx`) — Exported the `useCommandPalette` hook so the sidebar search component can trigger the command palette.
+
+### Phase 9: Unified Docs Sidebar
+
+37. **API Reference merged into sidebar** — Removed `"root": true` from `content/docs/api-reference/meta.json` and `meta.zh.json`. Renamed title from "API Reference" to "Reference" (Chinese: "参考"). Result: single unified sidebar with Overview (collapsible) and Reference (collapsible) sections instead of two separate sidebar contexts.
+
+38. **Overview root removed** — Removed `"root": true` from `content/docs/overview/meta.json` and `meta.zh.json`. Also removed the `"---Introduction---"` separator from overview pages (the "Overview" folder title serves as the grouping). Both overview and api-reference are now regular folders in one sidebar.
+
+## Files Created (Session 3)
+- `components/sidebar-search.tsx` — Sidebar search button triggering command palette
+
+## Files Modified (Session 3)
+- `components/landing/custom-nav.tsx` — Full rewrite: tab bar with flat nav, fixed positioning, no dropdowns
+- `app/globals.css` — Fixed header body offset, refined sidebar active/hover states, sidebar border
+- `app/[locale]/docs/layout.tsx` — Added sidebar search banner
+- `components/command-palette.tsx` — Exported `useCommandPalette` hook
+- `content/docs/overview/meta.json` — Removed `root: true`, removed `---Introduction---` separator
+- `content/docs/overview/meta.zh.json` — Removed `root: true`
+- `content/docs/api-reference/meta.json` — Removed `root: true`, renamed to "Reference"
+- `content/docs/api-reference/meta.zh.json` — Removed `root: true`, renamed to "参考"
+
+## What Was Done (Session 4)
+
+### Phase 10: Homepage Right Pane — Content Sections
+
+39. **Dashboard Preview** (`components/landing/sections/DashboardPreview.tsx`) — New server component replacing RoutingTimeline. Shows 3 metric boxes (1.2M requests, 3,400+ agents, $2.4M saved), model usage donut chart (Sonnet 55%, Haiku 20%, Opus 15%, GPT-4o 10%), 7-day cost sparkline, and recent routing decisions table (5 rows with time, route, reason, savings).
+
+40. **Dashboard Charts** (`components/landing/sections/DashboardCharts.tsx`) — New `"use client"` component wrapping recharts `PieChart` (model distribution) and `AreaChart` (cost sparkline). Data passed as props from server parent.
+
+41. **Code Config Tabs** (`components/landing/sections/CodeConfigTabs.tsx`) — New `"use client"` component. Tabbed code examples using shadcn `Tabs` component: `bitrouter.yaml` (providers, routing rules, cache config) and `client.ts` (BitRouter SDK init + chat.completions.create). Plain `<pre><code>` blocks, no Shiki bundle. `RuledSectionLabel label="CONFIGURATION"` header.
+
+42. **Feature Grid expanded** (`components/landing/sections/FeatureGrid.tsx`) — Expanded from 3 to 9 features (3x3 grid): Multi-Provider, Smart Routing, Cost Optimization, Fallback & Retry, Usage Analytics, Agent SDK, Rate Limiting, Caching, Security. Added `sm:grid-cols-2` breakpoint for tablets.
+
+43. **Provider Ecosystem Grid** (`components/landing/sections/ProviderEcosystem.tsx`) — New server component. Categorized provider logo grids using `@lobehub/icons`: 8 LLM Providers (OpenAI, Anthropic, Google, Mistral, DeepSeek, Meta, Groq, Cohere), 4 Agent Frameworks (Claude Code, OpenClaw, OpenCode, Cursor), 5 Infrastructure (AWS, Azure, Google Cloud, Cloudflare, Ollama). Same `gap-px border bg-border` grid pattern as FeatureGrid.
+
+44. **i18n expanded** — Added `Dashboard`, `CodeConfig`, `Ecosystem` namespaces to `en.json` and `zh.json`. Added 6 new feature keys to `Features` namespace (costOptimization, fallbackRetry, usageAnalytics, agentSdk, rateLimiting, caching, security) with Chinese translations.
+
+45. **Right pane overflow fix** — Changed right pane from `overflow-x-hidden` to `overflow-x-clip` to prevent implicit scroll container creation. `overflow-x-hidden` was causing `overflow-y: auto` (CSS spec behavior), making the right pane scroll independently from the page.
+
+46. **RoutingTimeline deleted** — `components/landing/sections/RoutingTimeline.tsx` removed, no longer imported.
+
+### Phase 11: Homepage Left Pane — Better-Auth Layout
+
+47. **Left pane simplified** (`components/landing/sections/Hero.tsx`) — Reduced to headline + two CTA buttons only ("Get started" → `/docs`, "Sign In" → `app.bitrouter.ai`). Removed subtitle, OneLineSwitch, IntegrationBar, GitHub stars, enterprise/CalButton links from left pane.
+
+48. **Right pane README section** — Added `RuledSectionLabel label="README"` as first section of right pane. Moved subtitle/description, OneLineSwitch code block, IntegrationBar, GitHub stars + enterprise + CalButton links to right pane above Dashboard. Matches better-auth's README-first scrollable content pattern.
+
+49. **Dotted map background** — Installed `@magicui/dotted-map` via shadcn CLI (`components/ui/dotted-map.tsx` + `svg-dotted-map` dependency). Added `DottedMap` as absolute-positioned background in left pane with `opacity-50`, `pointer-events-none`. 8 pulsing markers at global cities (SF, London, Tokyo, Singapore, Sydney, Paris, Moscow, Hong Kong). Uses `currentColor` for dots/markers, `6000` map samples, `0.22` dot radius.
+
+## Files Created (Session 4)
+- `components/landing/sections/DashboardPreview.tsx` — Dashboard preview (replaces RoutingTimeline)
+- `components/landing/sections/DashboardCharts.tsx` — Client component for recharts
+- `components/landing/sections/CodeConfigTabs.tsx` — Tabbed code config examples
+- `components/landing/sections/ProviderEcosystem.tsx` — Provider logo ecosystem grid
+- `components/ui/dotted-map.tsx` — MagicUI dotted map component (installed via shadcn CLI)
+
+## Files Modified (Session 4)
+- `components/landing/sections/Hero.tsx` — Full rewrite: minimal left pane (headline + CTAs + dotted map bg), rich right pane (README + Dashboard + Config + Features + Ecosystem)
+- `components/landing/sections/FeatureGrid.tsx` — Expanded 3 → 9 features, added sm:grid-cols-2
+- `content/messages/en.json` — Added Dashboard, CodeConfig, Ecosystem namespaces + 6 new Feature keys
+- `content/messages/zh.json` — Added matching Chinese translations
+
+## Files Deleted (Session 4)
+- `components/landing/sections/RoutingTimeline.tsx` — Replaced by DashboardPreview
+
 ## Files No Longer Imported (can be deleted)
 - `components/search.tsx` — Old AI search panel, replaced by command-palette.tsx
 - `components/sidebar/` — Custom sidebar primitives, replaced by shadcn sidebar
 
 ## What Needs Visual Verification
 
-1. **Header** — README/Docs/Products/Enterprise/Resources/Sign In structure. Products dropdown shows Proxy + Cloud. Resources dropdown shows Blog, Changelog, Community + social icons.
-2. **Cloud page** (`/cloud`) — Type tabs (LLMs/Tools/Agents) in sidebar header. Filter sidebar below with search, view toggle, filter sections. Content area shows models/tools/agents.
-3. **Docs sidebar** (`/docs/overview`) — Sharp corners, left-border active states, uppercase separator labels, single theme toggle in footer (no duplicate).
-4. **Header width** — Full-width on homepage, full-width on docs, max-width on other pages.
-5. **Redirects** — `/llms`, `/tools`, `/agents` should redirect to `/cloud`.
-6. **Detail pages** — `/llms/[id]`, `/tools/[id]`, `/agents/[id]` still work, breadcrumbs link to `/cloud`.
+1. **Homepage left pane** — Headline "Open Intelligence Router for LLM Agents" + "Get started" / "Sign In" buttons. Dotted world map background with pulsing markers at 8 cities. Sticky on desktop, full viewport height.
+2. **Homepage right pane** — Scrollable sections in order: README (description, OneLineSwitch, IntegrationBar, GitHub stars), DASHBOARD (metrics, charts, routing log), CONFIGURATION (tabbed YAML/TS code), FEATURES (9-card 3x3 grid), ECOSYSTEM (provider logo grids).
+3. **Header** — Tab bar: `BITROUTER. | Readme | Docs | Proxy ↗ | Cloud | Enterprise | Blog | [spacer] | Sign-In ↗`. Fixed position, full viewport width on all pages including docs.
+4. **Cloud page** (`/cloud`) — Type tabs (LLMs/Tools/Agents) in sidebar header. Filter sidebar below with search, view toggle, filter sections. Content area shows models/tools/agents.
+5. **Docs sidebar** (`/docs/overview`) — Search bar at top (⌘K), unified sidebar with Overview + Reference collapsible folders. Left-border active state (transparent background). Uppercase mono section labels.
+6. **Redirects** — `/llms`, `/tools`, `/agents` should redirect to `/cloud`.
+7. **Detail pages** — `/llms/[id]`, `/tools/[id]`, `/agents/[id]` still work, breadcrumbs link to `/cloud`.
+8. **Dark theme** — Default theme is dark (`app/[locale]/layout.tsx` line 97).
 
 ## Potential Issues to Watch For
 
-- **Shadcn sidebar + fumadocs conflict**: The shadcn sidebar uses `fixed inset-y-0` positioning by default, which overlaps with the sticky header. Mitigated by using `collapsible="none"` (inline positioning) and `SidebarProvider className="min-h-0 h-full"` to override `min-h-svh`.
+- **Fixed header + fumadocs spacing**: The header uses `position: fixed` with `body { padding-top: 48px }` to compensate. If fumadocs changes its nav height handling, this offset may need adjustment.
+- **Shadcn sidebar + fumadocs conflict**: The shadcn sidebar uses `fixed inset-y-0` positioning by default, which overlaps with the fixed header. Mitigated by using `collapsible="none"` (inline positioning) and `SidebarProvider className="min-h-0 h-full"` to override `min-h-svh`.
 - **Fumadocs sidebar CSS specificity**: Overrides use `#nd-sidebar` + `!important` to beat fumadocs' inline styles. If fumadocs updates its class names, overrides may break.
 - **Sidebar on mobile**: The shadcn sidebar with `collapsible="none"` doesn't have a mobile drawer. The filter sidebar is hidden on small screens. May need mobile-specific handling.
 - **i18n**: Cloud page, blog, and enterprise pages have hardcoded English text. Chinese translations need to be added.
 - **`components/search.tsx`** and `components/sidebar/` still exist on disk but are no longer imported. Safe to delete.
+- **Recharts client bundle**: `DashboardCharts.tsx` imports recharts PieChart + AreaChart. Bundle size is moderate but adds client JS. Keep the wrapper minimal.
+- **Dotted map SVG size**: 6000 map samples generates ~2100 SVG circles. Renders server-side so no client JS, but adds to HTML payload.

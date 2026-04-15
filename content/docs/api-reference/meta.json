@@ -1,6 +1,5 @@
 {
-  "title": "API Reference",
-  "root": true,
+  "title": "Reference",
   "pages": [
     "index",
     "---OpenAI Compatible---",

@@ -54,6 +54,38 @@
       "benefit": "单一二进制，零依赖。",
       "description": "一个 Rust 二进制文件——无需 Postgres、Redis 或 Docker 编排。cargo install bitrouter && bitrouter start。可自托管，也可使用托管服务。"
     },
+    "multiProvider": {
+      "title": "多供应商",
+      "description": "通过单一端点路由至 OpenAI、Anthropic、Google、Mistral 等。在配置中添加供应商——无需改代码。"
+    },
+    "costOptimization": {
+      "title": "成本优化",
+      "description": "自动路由到最低成本的可用模型。按会话、Agent、团队追踪节省金额。"
+    },
+    "fallbackRetry": {
+      "title": "回退与重试",
+      "description": "指数退避自动重试。供应商宕机时跨供应商自动切换。"
+    },
+    "usageAnalytics": {
+      "title": "用量分析",
+      "description": "按 Agent、按模型的用量看板。Token 计数、延迟百分位、成本明细。"
+    },
+    "agentSdk": {
+      "title": "Agent SDK",
+      "description": "一流的 TypeScript 和 Python SDK。内置 KYA 身份验证、支付委托和技能发现。"
+    },
+    "rateLimiting": {
+      "title": "速率限制",
+      "description": "按 Agent 和按模型的速率限制。跨团队配额管理和自动排队。"
+    },
+    "caching": {
+      "title": "语义缓存",
+      "description": "缓存相同和语义相似的请求。降低重复模式的成本和延迟。"
+    },
+    "security": {
+      "title": "安全与护栏",
+      "description": "内容过滤、PII 脱敏和审计日志。策略即代码，定义 Agent 行为边界。"
+    },
     "docsLink": "阅读文档"
   },
   "Timeline": {
@@ -81,6 +113,31 @@
       "toolCalling": "工具调用",
       "multiProvider": "多供应商"
     }
+  },
+  "Dashboard": {
+    "sectionLabel": "DASHBOARD",
+    "networkRequests": "已路由请求",
+    "networkAgents": "已连接 Agent",
+    "networkSaved": "本月节省",
+    "modelUsageTitle": "模型分布",
+    "recentRoutesTitle": "近期路由决策",
+    "costTrendTitle": "7 天成本趋势",
+    "colTime": "时间",
+    "colRoute": "路由",
+    "colReason": "原因",
+    "colSaved": "节省"
+  },
+  "CodeConfig": {
+    "sectionLabel": "CONFIGURATION",
+    "tabConfig": "bitrouter.yaml",
+    "tabClient": "client.ts",
+    "caption": "两个文件，完整路由智能。"
+  },
+  "Ecosystem": {
+    "sectionLabel": "ECOSYSTEM",
+    "llmProviders": "LLM 供应商",
+    "agentFrameworks": "Agent 框架",
+    "infrastructure": "基础设施"
   },
   "Footer": {
     "ctaHeading": "开始智能路由。",

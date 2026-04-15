@@ -1,8 +1,6 @@
 {
   "title": "Overview",
-  "root": true,
   "pages": [
-    "---Introduction---",
     "index",
     "what-is-bitrouter",
     "enterprise",

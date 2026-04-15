@@ -120,6 +120,13 @@
   }
 }
 
+/* ─── Fixed header offset ─── */
+/* The header uses position:fixed to span full viewport width over the sidebar.
+   Add top padding so content isn't hidden beneath. */
+body {
+  padding-top: 48px;
+}
+
 /* ─── Sharp edges everywhere ─── */
 pre:has(code),
 [data-rehype-pretty-code-figure],
@@ -159,22 +166,32 @@ figure[class*="code"] {
 }
 
 /* ─── Fumadocs sidebar overrides ─── */
-/* Sharp corners, left-border active state, consistent typography */
+/* Sharp corners, left-border active state, better-auth typography */
 
-/* Remove rounded corners from sidebar items, folders, triggers */
+/* Sharp corners everywhere in sidebar */
+#nd-sidebar,
 #nd-sidebar a,
-#nd-sidebar button {
+#nd-sidebar button,
+[data-sidebar-panel],
+#nd-sidebar select,
+#nd-sidebar [role="combobox"] {
   border-radius: 0 !important;
 }
 
-/* Sidebar container — sharp corners */
-#nd-sidebar {
-  border-radius: 0 !important;
+/* Sidebar items — font refinement */
+#nd-sidebar a {
+  font-size: 13px;
+  transition: background 150ms ease, color 150ms ease;
 }
 
-/* Active sidebar item — left border instead of background pill */
+/* Hover state — ultra-subtle background like better-auth */
+#nd-sidebar a:hover {
+  background: oklch(from var(--foreground) l c h / 0.04) !important;
+}
+
+/* Active sidebar item — subtle left border, no heavy background */
 #nd-sidebar a[data-active="true"] {
-  background: var(--muted) !important;
+  background: transparent !important;
   color: var(--foreground) !important;
   border-left: 2px solid var(--foreground);
   padding-inline-start: calc(var(--spacing) * 2 - 2px) !important;
@@ -185,23 +202,25 @@ figure[class*="code"] {
   display: none !important;
 }
 
-/* Separator labels — uppercase mono */
+/* Separator / section labels — uppercase mono */
 #nd-sidebar p:not(:empty) {
-  font-size: 11px;
+  font-family: var(--font-mono);
+  font-size: 10px;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
+  color: var(--muted-foreground);
+  margin-top: 1rem;
 }
 
-/* Sidebar collapse panel — sharp corners */
-[data-sidebar-panel] {
-  border-radius: 0 !important;
+/* Folder toggle buttons — mono styling */
+#nd-sidebar button[data-open] {
+  font-size: 13px;
 }
 
-/* Root selector dropdown — sharp corners */
-#nd-sidebar select,
-#nd-sidebar [role="combobox"] {
-  border-radius: 0 !important;
+/* Sidebar border — right edge separator on docs layout */
+#nd-sidebar {
+  border-right: 1px solid oklch(from var(--foreground) l c h / 0.06) !important;
 }
 
 /* ─── Keyframe animations ─── */

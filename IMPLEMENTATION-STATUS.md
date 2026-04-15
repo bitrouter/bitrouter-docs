@@ -188,12 +188,31 @@
 
 55. **Agents ALPHA badge removed** (`components/cloud/cloud-view.tsx`) — Removed `badge: "ALPHA"` from the Agents tab in the `TABS` array.
 
+### Phase 13: Proxy Product Page
+
+56. **Proxy page** (`app/[locale]/(home)/proxy/page.tsx`) — New route at `/proxy`. 40/60 split layout matching enterprise page pattern. Left pane: Terminal icon + `PROXY` label, headline ("Single Binary. Zero Dependencies. Sub-10ms Routing."), description, Install + GitHub CTA buttons. Right pane: 6 scrollable sections with `RuledSectionLabel` headers.
+
+57. **INSTALL section** — 4 install methods (curl, npm, brew, cargo) in a 2x2 `gap-px border bg-border` grid. "No Postgres. No Redis. No Docker orchestration." tagline. Platform support note (macOS, Linux, Docker, Windows via WSL).
+
+58. **ROUTING section** — Table showing 4 smart routing examples: request model → routed model → provider → reason → overhead time. Includes "Sub-10ms overhead" and "Automatic fallback on 429/5xx" indicators with Zap/RefreshCw icons.
+
+59. **PROVIDERS section** — 8 LLM provider icons in a `grid-cols-4 sm:grid-cols-8` grid (OpenAI, Anthropic, Google, Mistral, DeepSeek, Meta, Groq, Cohere). Same pattern as homepage ProviderEcosystem.
+
+60. **AGENT FIREWALL section** — 4 feature cards in 2x2 grid: Inspect (Eye icon), Warn (ShieldAlert), Redact (Shield), Block (Ban). Each with title + description.
+
+61. **CONFIGURATION section** — Full `bitrouter.yaml` code block showing providers, routing rules (strategy + match rules + fallback), and firewall config (pii_redaction, content_filter, audit_log).
+
+62. **COMPARE section** — Comparison table: BitRouter vs OpenRouter vs LiteLLM across 8 features (open source, self-hostable, routing overhead, agent-native, zero dependencies, agent firewall, 402/MPP payments, single binary). Checkmarks for boolean values, monospace text for string values.
+
+63. **Nav updated** — Proxy changed from external GitHub link (`ExternalTabCell`) to internal `/proxy` route (`TabCell`). Mobile menu updated: added Proxy to `allLinks` array, removed separate external Proxy link.
+
 ## Files Created (Session 4)
 - `components/landing/sections/DashboardPreview.tsx` — Dashboard preview (replaces RoutingTimeline)
 - `components/landing/sections/DashboardCharts.tsx` — Client component for recharts
 - `components/landing/sections/CodeConfigTabs.tsx` — Tabbed code config examples
 - `components/landing/sections/ProviderEcosystem.tsx` — Provider logo ecosystem grid
 - `components/ui/dotted-map.tsx` — MagicUI dotted map component (installed via shadcn CLI)
+- `app/[locale]/(home)/proxy/page.tsx` — Proxy product page with 6 sections
 
 ## Files Modified (Session 4)
 - `components/landing/sections/Hero.tsx` — Full rewrite: minimal left pane (headline + CTAs + dotted map bg), rich right pane (README + Dashboard + Config + Features + Ecosystem)
@@ -208,6 +227,7 @@
 - `components/tools/tools-view.tsx` — Added search bar + view toggle to main content area
 - `components/agents/agents-filter-sidebar.tsx` — Removed search/viewMode/count props
 - `components/agents/agents-view.tsx` — Added search bar + view toggle to main content area
+- `components/landing/custom-nav.tsx` — Proxy changed from external GitHub link to internal /proxy route; mobile menu updated
 
 ## Files Deleted (Session 4)
 - `components/landing/sections/RoutingTimeline.tsx` — Replaced by DashboardPreview
@@ -216,16 +236,85 @@
 - `components/search.tsx` — Old AI search panel, replaced by command-palette.tsx
 - `components/sidebar/` — Custom sidebar primitives, replaced by shadcn sidebar
 
+## What Was Done (Session 5)
+
+### Phase 14: Enterprise Page Expansion
+
+64. **Enterprise page rewrite** (`app/[locale]/(home)/enterprise/page.tsx`) — Full content expansion inspired by OpenRouter's enterprise messaging, keeping better-auth 40/60 layout. Updated description from generic to value-prop: "Unified access to every AI provider with zero operational overhead. One API, one bill, every model."
+
+65. **Feature checklist in left pane** — Added 8-item `+` prefixed checklist (Better Auth style) to the sticky left sidebar: Multi-provider routing, Automatic failover, Zero data retention, Custom SLAs, SSO & org support, Usage analytics, Spend management, Priority support.
+
+66. **Metrics row** — 3-column stats bar at top of right pane: 1.2M+ requests routed, 3,400+ agents connected, $2.4M cost savings. Same `gap-px border bg-border` grid pattern.
+
+67. **Pain/solution table** — `RuledSectionLabel label="WHY BITROUTER"` + 6-row comparison table. Left column: enterprise pain points (RefreshCw icon, muted text). Right column: BitRouter solutions (Zap icon, brighter text). Content adapted from OpenRouter: provider management, retry logic, rate limits, model switching, data retention, compliance.
+
+68. **Capabilities grid expanded** — From 2x2 (4 cards) to 3x3 (9 cards) with lucide icons: Automatic failover, Dedicated infrastructure, Priority support, Custom routing policies, Spend management, Volume pricing, Observability, Compliance & privacy, Sovereign AI. Each card has icon + title + description.
+
+69. **Technical resources section** — `RuledSectionLabel label="RESOURCES"` + 2x2 linked card grid: Enterprise quickstart (`/docs/overview/enterprise`), API documentation (`/docs/api-reference`), Routing guide (`/docs/overview/routing`), Integration examples (`/docs/overview/quickstart`). Hover reveals ArrowUpRight icon.
+
+70. **Contact form** (`components/enterprise/enterprise-contact-form.tsx`) — New `"use client"` component. Fields: Full Name, Company Email, Company, Company Size (select dropdown: 1-10 through 501+), Message (textarea). Submit button with pending/success states. Mono uppercase labels matching site typography. Success state shows "Thanks for reaching out" confirmation.
+
+71. **Dual CTA pattern** — Contact form as primary CTA + "or" divider + Cal.com "Schedule a call" button as secondary (outline variant). Both methods preserved as requested.
+
+72. **Sticky sidebar offset fixed** — Changed left pane from `lg:top-16 lg:h-[calc(100dvh-4rem)]` to `lg:top-12 lg:h-[calc(100dvh-3rem)]` to match the 48px fixed header height.
+
+## Files Created (Session 5)
+- `components/enterprise/enterprise-contact-form.tsx` — Enterprise contact form client component
+
+## Files Modified (Session 5)
+- `app/[locale]/(home)/enterprise/page.tsx` — Full rewrite: metrics, pain/solution, 9-card capabilities, resources, contact form + Cal.com
+
+## What Was Done (Session 6)
+
+### Phase 15: Docs Sidebar Fixes & API Reference Simplification
+
+73. **Active sidebar indicator fixed** (`app/globals.css`) — Changed active item from `border-left` (which caused text to overlap the indicator line) to a `::before` pseudo-element positioned absolutely in the left gutter. The indicator now sits outside the text flow with `top: 6px` / `bottom: 6px` inset. Added `font-weight: 500` to active items to match better-auth reference style.
+
+74. **Sidebar collapse disabled** (`app/[locale]/docs/layout.tsx`) — Added `collapsible: false` to the fumadocs sidebar config. Sidebar is always visible on desktop (no collapse trigger button). Fumadocs' built-in mobile drawer still handles mobile responsiveness. Fixes the misplaced trigger button on desktop and hidden sidebar on mobile.
+
+75. **API Reference flattened** — Removed all 6 sub-folders (`openai/`, `anthropic/`, `google/`, `discovery/`, `admin/`, `observability/`) and their `meta.json` files. Moved all 11 endpoint `.mdx` files up to `content/docs/api-reference/` root. Updated `meta.json` and `meta.zh.json` to list all endpoints flat (no separator labels, no sub-folder references). Sidebar now shows a single flat list under "Reference" instead of 6 nested groups.
+
+76. **Reference collapsed by default** — Added `"defaultOpen": false` to both `content/docs/api-reference/meta.json` and `meta.zh.json`. The Reference folder now starts collapsed in the sidebar, keeping the sidebar compact.
+
+## Files Modified (Session 6)
+- `app/globals.css` — Active sidebar item: `::before` pseudo-element indicator instead of `border-left`
+- `app/[locale]/docs/layout.tsx` — Added `collapsible: false` to sidebar config
+- `content/docs/api-reference/meta.json` — Flattened pages list, added `defaultOpen: false`
+- `content/docs/api-reference/meta.zh.json` — Flattened pages list, added `defaultOpen: false`
+
+## Files Moved (Session 6)
+- `content/docs/api-reference/openai/createChatCompletion.mdx` → `content/docs/api-reference/createChatCompletion.mdx`
+- `content/docs/api-reference/openai/createResponse.mdx` → `content/docs/api-reference/createResponse.mdx`
+- `content/docs/api-reference/anthropic/createMessage.mdx` → `content/docs/api-reference/createMessage.mdx`
+- `content/docs/api-reference/google/generateContent.mdx` → `content/docs/api-reference/generateContent.mdx`
+- `content/docs/api-reference/discovery/listModels.mdx` → `content/docs/api-reference/listModels.mdx`
+- `content/docs/api-reference/discovery/listRoutes.mdx` → `content/docs/api-reference/listRoutes.mdx`
+- `content/docs/api-reference/admin/listAdminRoutes.mdx` → `content/docs/api-reference/listAdminRoutes.mdx`
+- `content/docs/api-reference/admin/createRoute.mdx` → `content/docs/api-reference/createRoute.mdx`
+- `content/docs/api-reference/admin/deleteRoute.mdx` → `content/docs/api-reference/deleteRoute.mdx`
+- `content/docs/api-reference/observability/healthCheck.mdx` → `content/docs/api-reference/healthCheck.mdx`
+- `content/docs/api-reference/observability/getMetrics.mdx` → `content/docs/api-reference/getMetrics.mdx`
+
+## Files Deleted (Session 6)
+- `content/docs/api-reference/openai/meta.json`
+- `content/docs/api-reference/anthropic/meta.json`
+- `content/docs/api-reference/google/meta.json`
+- `content/docs/api-reference/discovery/meta.json`
+- `content/docs/api-reference/admin/meta.json`
+- `content/docs/api-reference/observability/meta.json`
+
 ## What Needs Visual Verification
 
 1. **Homepage left pane** — Headline "Open Intelligence Router for LLM Agents" + "Get started" / "Sign In" buttons. Dotted world map background with pulsing markers at 8 cities. Sticky on desktop, full viewport height.
 2. **Homepage right pane** — Scrollable sections in order: README (description, OneLineSwitch, IntegrationBar, GitHub stars), DASHBOARD (metrics, charts, routing log), CONFIGURATION (tabbed YAML/TS code), FEATURES (9-card 3x3 grid), ECOSYSTEM (provider logo grids).
-3. **Header** — Tab bar: `BITROUTER. | Readme | Docs | Proxy ↗ | Cloud | Enterprise | Blog | [spacer] | Sign-In ↗`. Fixed position, full viewport width on all pages including docs.
-4. **Cloud page** (`/cloud`) — Type tabs (LLMs/Tools/Agents) in sidebar header. Filter checkboxes directly below tabs (no filters header row). Search bar + Table/List toggle in main content area between hero and data table. Sidebar always visible (no toggle).
-5. **Docs sidebar** (`/docs/overview`) — Search bar at top (⌘K), unified sidebar with Overview + Reference collapsible folders. Left-border active state (transparent background). Uppercase mono section labels.
-6. **Redirects** — `/llms`, `/tools`, `/agents` should redirect to `/cloud`.
-7. **Detail pages** — `/llms/[id]`, `/tools/[id]`, `/agents/[id]` still work, breadcrumbs link to `/cloud`.
-8. **Dark theme** — Default theme is dark (`app/[locale]/layout.tsx` line 97).
+3. **Proxy page** (`/proxy`) — Left pane: Terminal icon, headline, Install + GitHub buttons. Right pane: INSTALL (4 methods), ROUTING (table), PROVIDERS (8 icons), AGENT FIREWALL (4 cards), CONFIGURATION (yaml), COMPARE (vs OpenRouter/LiteLLM table).
+4. **Header** — Tab bar: `BITROUTER. | Readme | Docs | Proxy | Cloud | Enterprise | Blog | [spacer] | Sign-In ↗`. Proxy is now internal link (no arrow icon). Fixed position, full viewport width.
+5. **Enterprise page** (`/enterprise`) — Left pane: Enterprise label, headline, 8-item feature checklist, "View docs" link. Right pane: ENTERPRISE (metrics), WHY BITROUTER (pain/solution table), CAPABILITIES (9-card 3x3 grid), RESOURCES (4 doc links), GET IN TOUCH (contact form + "or" + Cal.com button).
+6. **Cloud page** (`/cloud`) — Type tabs (LLMs/Tools/Agents) in sidebar header. Filter checkboxes directly below tabs (no filters header row). Search bar + Table/List toggle in main content area between hero and data table. Sidebar always visible (no toggle).
+7. **Docs sidebar** (`/docs/overview`) — Search bar at top (⌘K), unified sidebar with Overview + Reference collapsible folders. Left-border active state (transparent background). Uppercase mono section labels.
+8. **Redirects** — `/llms`, `/tools`, `/agents` should redirect to `/cloud`.
+9. **Detail pages** — `/llms/[id]`, `/tools/[id]`, `/agents/[id]` still work, breadcrumbs link to `/cloud`.
+10. **Dark theme** — Default theme is dark (`app/[locale]/layout.tsx` line 97).
 
 ## Potential Issues to Watch For
 

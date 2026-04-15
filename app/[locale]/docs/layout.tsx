@@ -20,6 +20,7 @@ export default async function Layout({ children, params }: Props) {
       {...docsOptions()}
       sidebar={{
         defaultOpenLevel: 1,
+        collapsible: false,
         banner: <SidebarSearch />,
         footer: <SidebarFooterControls />,
       }}

@@ -1,4 +1,0 @@
-{
-  "title": "OpenAI Compatible",
-  "pages": ["createChatCompletion", "createResponse"]
-}

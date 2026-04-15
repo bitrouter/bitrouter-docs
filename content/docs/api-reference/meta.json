@@ -1,18 +1,18 @@
 {
   "title": "Reference",
+  "defaultOpen": false,
   "pages": [
     "index",
-    "---OpenAI Compatible---",
-    "openai",
-    "---Anthropic Compatible---",
-    "anthropic",
-    "---Google Compatible---",
-    "google",
-    "---Discovery---",
-    "discovery",
-    "---Admin---",
-    "admin",
-    "---Observability---",
-    "observability"
+    "createChatCompletion",
+    "createResponse",
+    "createMessage",
+    "generateContent",
+    "listModels",
+    "listRoutes",
+    "listAdminRoutes",
+    "createRoute",
+    "deleteRoute",
+    "healthCheck",
+    "getMetrics"
   ]
 }

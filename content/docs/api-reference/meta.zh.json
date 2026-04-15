@@ -1,18 +1,18 @@
 {
   "title": "参考",
+  "defaultOpen": false,
   "pages": [
     "index",
-    "---OpenAI 兼容---",
-    "openai",
-    "---Anthropic 兼容---",
-    "anthropic",
-    "---Google 兼容---",
-    "google",
-    "---发现---",
-    "discovery",
-    "---管理---",
-    "admin",
-    "---可观测性---",
-    "observability"
+    "createChatCompletion",
+    "createResponse",
+    "createMessage",
+    "generateContent",
+    "listModels",
+    "listRoutes",
+    "listAdminRoutes",
+    "createRoute",
+    "deleteRoute",
+    "healthCheck",
+    "getMetrics"
   ]
 }

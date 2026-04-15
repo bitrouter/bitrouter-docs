@@ -43,7 +43,7 @@ export function CustomNav() {
         <nav className="flex flex-1 items-stretch">
           <TabCell label="Readme" href="/" exact />
           <TabCell label="Docs" href="/docs/overview" matchPrefix="/docs" />
-          <ExternalTabCell label="Proxy" href="https://github.com/bitrouter/bitrouter" />
+          <TabCell label="Proxy" href="/proxy" />
           <TabCell label="Cloud" href="/cloud" />
           <TabCell label="Enterprise" href="/enterprise" />
           <TabCell label="Blog" href="/blog" />
@@ -142,6 +142,7 @@ function MobileMenu({ pathname }: { pathname: string }) {
   const allLinks = [
     { label: "Readme", href: "/", active: normalizedPath === "/" || normalizedPath === "" },
     { label: "Docs", href: "/docs/overview", active: normalizedPath.startsWith("/docs") },
+    { label: "Proxy", href: "/proxy", active: normalizedPath.startsWith("/proxy") },
     { label: "Cloud", href: "/cloud", active: normalizedPath.startsWith("/cloud") },
     { label: "Enterprise", href: "/enterprise", active: normalizedPath.startsWith("/enterprise") },
     { label: "Blog", href: "/blog", active: normalizedPath.startsWith("/blog") },
@@ -176,15 +177,6 @@ function MobileMenu({ pathname }: { pathname: string }) {
               </Link>
             ))}
 
-            <div className="my-1.5 border-t border-foreground/[0.06]" />
-            <a
-              href="https://github.com/bitrouter/bitrouter"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-3 py-2.5 font-mono text-xs uppercase tracking-wider text-muted-foreground transition-colors hover:bg-foreground/[0.03] hover:text-foreground"
-            >
-              Proxy <ArrowUpRight className="size-3 opacity-40" />
-            </a>
           </nav>
 
           {/* Social + Sign In */}

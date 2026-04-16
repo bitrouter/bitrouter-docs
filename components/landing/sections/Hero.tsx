@@ -46,9 +46,9 @@ export async function Hero() {
             <a href="/docs">
               <Button size="lg">{t("ctaPrimary")}</Button>
             </a>
-            <a href="https://app.bitrouter.ai" target="_blank" rel="noopener noreferrer">
+            {/* <a href="https://app.bitrouter.ai" target="_blank" rel="noopener noreferrer">
               <Button variant="outline" size="lg">Sign In</Button>
-            </a>
+            </a> */}
           </div>
         </div>
       </div>

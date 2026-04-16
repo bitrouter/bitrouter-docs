@@ -51,8 +51,8 @@ export function CustomNav() {
           <div className="flex-1 border-r border-foreground/[0.06]" />
         </nav>
 
-        {/* Sign In */}
-        <a
+        {/* Sign In (disabled) */}
+        {/* <a
           href="https://app.bitrouter.ai"
           target="_blank"
           rel="noopener noreferrer"
@@ -60,7 +60,7 @@ export function CustomNav() {
         >
           Sign-In
           <ArrowUpRight className="size-3" />
-        </a>
+        </a> */}
       </div>
 
       {/* Mobile */}
@@ -193,7 +193,7 @@ function MobileMenu({ pathname }: { pathname: string }) {
                 <Icon className="size-4" />
               </a>
             ))}
-            <div className="flex-1" />
+            {/* <div className="flex-1" />
             <a
               href="https://app.bitrouter.ai"
               target="_blank"
@@ -201,7 +201,7 @@ function MobileMenu({ pathname }: { pathname: string }) {
               className="inline-flex items-center gap-1 border border-foreground bg-foreground px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-wider text-background"
             >
               Sign In <ArrowUpRight className="size-2.5" />
-            </a>
+            </a> */}
           </div>
         </div>
       )}

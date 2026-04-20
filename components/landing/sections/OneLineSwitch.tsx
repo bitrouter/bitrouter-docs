@@ -8,30 +8,24 @@ const modes = [
   {
     key: "cli",
     label: "CLI",
-    prefix: "npx",
-    body: "auth init",
-    snippet: "npx auth init",
+    prefix: "curl",
+    body: "-fsSL https://install.bitrouter.ai | sh",
+    snippet: "curl -fsSL https://install.bitrouter.ai | sh",
   },
   {
     key: "prompt",
     label: "Prompt",
-    prefix: "base_url",
-    body: ' = "https://api.bitrouter.ai/v1"',
-    snippet: 'base_url = "https://api.bitrouter.ai/v1"',
-  },
-  {
-    key: "mcp",
-    label: "MCP",
-    prefix: "npx",
-    body: "mcp add bitrouter",
-    snippet: "npx mcp add bitrouter",
+    prefix: "@agent",
+    body: "route all LLM calls through BitRouter at http://localhost:8787/v1",
+    snippet:
+      "@agent route all LLM calls through BitRouter at http://localhost:8787/v1",
   },
   {
     key: "skills",
     label: "Skills",
     prefix: "npx",
-    body: "skills add bitrouter/agent-skills",
-    snippet: "npx skills add bitrouter/agent-skills",
+    body: "skills add BitRouterAI/agent-skills",
+    snippet: "npx skills add BitRouterAI/agent-skills",
   },
 ] as const;
 
@@ -73,15 +67,15 @@ export function OneLineSwitch() {
       </div>
 
       {/* Snippet + copy */}
-      <div className="flex items-center justify-between px-4 py-3.5">
-        <code className="text-sm">
+      <div className="flex items-center justify-between gap-3 px-4 py-3.5">
+        <code className="min-w-0 flex-1 overflow-x-auto whitespace-nowrap font-mono text-xs sm:text-sm">
           <span className="text-purple-500 dark:text-purple-400">{active.prefix}</span>
           {" "}{active.body}
         </code>
 
         <button
           onClick={handleCopy}
-          className="shrink-0 ml-4 text-muted-foreground/50 transition-colors hover:text-foreground"
+          className="shrink-0 text-muted-foreground/50 transition-colors hover:text-foreground"
           aria-label="Copy snippet"
         >
           {copied ? <Check className="size-4" /> : <Copy className="size-4" />}

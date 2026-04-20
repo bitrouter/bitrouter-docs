@@ -1,77 +1,90 @@
 import { setRequestLocale } from "next-intl/server";
-import { Terminal, ArrowUpRight, Copy, Shield, Zap, RefreshCw, Ban, Eye, ShieldAlert, Check } from "lucide-react";
+import { Terminal, ArrowUpRight, Shield, Zap, RefreshCw, Ban, Eye, ShieldAlert, Check, ArrowRight, ArrowLeft, Sparkles } from "lucide-react";
 import { RuledSectionLabel } from "@/components/ruled-section-label";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { ProxyInstallTabs } from "@/components/landing/sections/ProxyInstallTabs";
 import type { Metadata } from "next";
 
 import OpenAI from "@lobehub/icons/es/OpenAI";
 import Anthropic from "@lobehub/icons/es/Anthropic";
 import Google from "@lobehub/icons/es/Google";
-import Mistral from "@lobehub/icons/es/Mistral";
+import OpenRouter from "@lobehub/icons/es/OpenRouter";
 import DeepSeek from "@lobehub/icons/es/DeepSeek";
-import Meta from "@lobehub/icons/es/Meta";
-import Groq from "@lobehub/icons/es/Groq";
-import Cohere from "@lobehub/icons/es/Cohere";
+import Minimax from "@lobehub/icons/es/Minimax";
+import Moonshot from "@lobehub/icons/es/Moonshot";
+import Qwen from "@lobehub/icons/es/Qwen";
 import type { ComponentType } from "react";
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
 
-const installMethods = [
-  { label: "curl", command: "curl -fsSL https://get.bitrouter.ai | sh" },
-  { label: "npm", command: "npx bitrouter@latest" },
-  { label: "brew", command: "brew install bitrouter/tap/bitrouter" },
-  { label: "cargo", command: "cargo install bitrouter" },
-];
-
 const routingRows = [
-  { from: "gpt-4o", to: "claude-sonnet-4", provider: "Anthropic", reason: "Cost optimization", latency: "8ms" },
-  { from: "claude-opus", to: "claude-haiku", provider: "Anthropic", reason: "Low complexity", latency: "6ms" },
-  { from: "gpt-4o", to: "gemini-2.5-pro", provider: "Google", reason: "Fallback (429)", latency: "9ms" },
-  { from: "any", to: "deepseek-r1", provider: "DeepSeek", reason: "Reasoning task", latency: "7ms" },
+  { from: "smart", to: "claude-sonnet-4", provider: "Anthropic", reason: "priority (primary)", latency: "8ms" },
+  { from: "smart", to: "gpt-4o", provider: "OpenAI", reason: "priority (fallback on 429)", latency: "9ms" },
+  { from: "fast", to: "gpt-4o-mini", provider: "OpenAI", reason: "load_balance (pool A)", latency: "6ms" },
+  { from: "coding", to: "gemini-2.5-pro", provider: "Google", reason: "priority (tertiary)", latency: "9ms" },
 ];
 
-const firewallFeatures = [
-  { icon: Eye, title: "Inspect", description: "Monitor all requests and responses in real time. Full token-level visibility." },
-  { icon: ShieldAlert, title: "Warn", description: "Flag risky content patterns and log alerts without blocking the request." },
-  { icon: Shield, title: "Redact", description: "Strip PII, credentials, and sensitive data before it reaches the provider." },
-  { icon: Ban, title: "Block", description: "Hard-stop requests that violate policy. Content filtering at the proxy layer." },
+const upgoingPatterns = [
+  { id: "api_keys", description: "OpenAI / Anthropic / AWS / GCP / GitHub / Stripe keys" },
+  { id: "private_keys", description: "PEM-encoded RSA, EC, Ed25519 keys" },
+  { id: "credentials", description: "Inline passwords, basic-auth, DB connection strings" },
+  { id: "pii_emails", description: "Email addresses" },
+  { id: "pii_phone_numbers", description: "Phone numbers" },
+  { id: "ip_addresses", description: "Non-localhost IPv4 addresses" },
+];
+
+const downgoingPatterns = [
+  { id: "suspicious_commands", description: "rm -rf /, curl | sh, fork bombs, and similar" },
 ];
 
 const configCode = `# bitrouter.yaml
+server:
+  listen: 127.0.0.1:8787
+
 providers:
-  - name: anthropic
-    api_key: \${ANTHROPIC_API_KEY}
-  - name: openai
+  openai:
     api_key: \${OPENAI_API_KEY}
-  - name: google
+  anthropic:
+    api_key: \${ANTHROPIC_API_KEY}
+  google:
     api_key: \${GOOGLE_API_KEY}
 
-routing:
-  strategy: cost-optimized
-  rules:
-    - match: { complexity: high }
-      model: claude-opus-4
-    - match: { task: code-gen }
-      model: claude-sonnet-4
-    - fallback: claude-haiku
+models:
+  smart:
+    strategy: priority
+    endpoints:
+      - provider: anthropic
+        service_id: claude-sonnet-4-20250514
+      - provider: openai
+        service_id: gpt-4o
 
-firewall:
-  pii_redaction: true
-  content_filter: warn
-  audit_log: true`;
+  fast:
+    strategy: load_balance
+    endpoints:
+      - provider: openai
+        service_id: gpt-4o-mini
+
+guardrails:
+  enabled: true
+  upgoing:
+    api_keys: redact
+    private_keys: block
+    credentials: block
+    pii_emails: warn
+  downgoing:
+    suspicious_commands: block`;
 
 const providers: { name: string; icon: ComponentType<{ size?: number }> }[] = [
   { name: "OpenAI", icon: OpenAI },
   { name: "Anthropic", icon: Anthropic },
   { name: "Google", icon: Google },
-  { name: "Mistral", icon: Mistral },
+  { name: "OpenRouter", icon: OpenRouter },
   { name: "DeepSeek", icon: DeepSeek },
-  { name: "Meta", icon: Meta },
-  { name: "Groq", icon: Groq },
-  { name: "Cohere", icon: Cohere },
+  { name: "MiniMax", icon: Minimax },
+  { name: "Moonshot", icon: Moonshot },
+  { name: "Qwen", icon: Qwen },
 ];
 
 const comparison = [
@@ -122,7 +135,7 @@ export default async function ProxyPage({ params }: Props) {
           </p>
 
           <div className="mt-6 flex items-center gap-3">
-            <a href="/docs/overview/quickstart">
+            <a href="/docs/overview/manual-guide">
               <Button size="lg">Install</Button>
             </a>
             <a
@@ -135,6 +148,19 @@ export default async function ProxyPage({ params }: Props) {
               </Button>
             </a>
           </div>
+
+          <div className="mt-6 border border-border/60 bg-muted/20 px-3 py-2.5">
+            <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+              <Sparkles className="size-3" />
+              Drop-in endpoint
+            </div>
+            <code className="mt-1 block font-mono text-xs text-foreground/90 break-all">
+              http://localhost:8787/v1
+            </code>
+            <p className="mt-1.5 text-[11px] leading-relaxed text-muted-foreground">
+              OpenAI-compatible. Point any agent runtime at this URL.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -142,24 +168,27 @@ export default async function ProxyPage({ params }: Props) {
       <div className="flex-1 overflow-x-clip px-4 py-6 sm:px-6 sm:py-8 space-y-12">
         {/* ── INSTALL ── */}
         <div>
-          <RuledSectionLabel label="INSTALL" />
+          <RuledSectionLabel label="INSTALL" counter="01" />
           <p className="mt-4 text-sm text-muted-foreground">
             No Postgres. No Redis. No Docker orchestration. One command to start routing.
           </p>
-          <div className="mt-4 grid grid-cols-1 gap-px border border-border bg-border sm:grid-cols-2">
-            {installMethods.map((m) => (
-              <div key={m.label} className="bg-background p-4">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
-                  {m.label}
-                </span>
-                <div className="mt-2 flex items-center gap-2">
-                  <code className="text-xs font-mono text-foreground/80 break-all">
-                    {m.command}
-                  </code>
-                </div>
-              </div>
-            ))}
+          <div className="mt-4">
+            <ProxyInstallTabs />
           </div>
+
+          <div className="mt-4 border border-dashed border-border bg-muted/10 p-4">
+            <div className="flex items-center gap-2">
+              <Zap className="size-3.5 text-foreground" />
+              <h3 className="text-xs font-mono uppercase tracking-widest">Zero-config mode</h3>
+            </div>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+              Export provider keys (<code className="font-mono text-foreground/80">OPENAI_API_KEY</code>,{" "}
+              <code className="font-mono text-foreground/80">ANTHROPIC_API_KEY</code>, …) and run{" "}
+              <code className="font-mono text-foreground/80">bitrouter serve</code>. No config file required —
+              300+ models across built-in providers are routable immediately.
+            </p>
+          </div>
+
           <p className="mt-3 text-xs text-muted-foreground/60">
             Runs on macOS, Linux, and Docker. Windows via WSL.
           </p>
@@ -167,7 +196,7 @@ export default async function ProxyPage({ params }: Props) {
 
         {/* ── ROUTING ── */}
         <div>
-          <RuledSectionLabel label="ROUTING" />
+          <RuledSectionLabel label="ROUTING" counter="02" />
           <p className="mt-4 text-sm text-muted-foreground">
             Requests arrive in OpenAI format. BitRouter selects the optimal provider and model based on task type, cost, and availability — then translates the protocol automatically.
           </p>
@@ -175,10 +204,10 @@ export default async function ProxyPage({ params }: Props) {
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border text-left text-muted-foreground">
-                  <th className="px-3 py-2 font-medium">Request</th>
+                  <th className="px-3 py-2 font-medium">Alias</th>
                   <th className="px-3 py-2 font-medium">Routed to</th>
                   <th className="px-3 py-2 font-medium hidden sm:table-cell">Provider</th>
-                  <th className="px-3 py-2 font-medium">Reason</th>
+                  <th className="px-3 py-2 font-medium">Strategy</th>
                   <th className="px-3 py-2 font-medium text-right">Overhead</th>
                 </tr>
               </thead>
@@ -195,7 +224,7 @@ export default async function ProxyPage({ params }: Props) {
               </tbody>
             </table>
           </div>
-          <div className="mt-4 flex items-center gap-6">
+          <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2">
             <div className="flex items-center gap-2">
               <Zap className="size-3 text-muted-foreground" />
               <span className="text-xs text-muted-foreground">Sub-10ms overhead</span>
@@ -204,12 +233,16 @@ export default async function ProxyPage({ params }: Props) {
               <RefreshCw className="size-3 text-muted-foreground" />
               <span className="text-xs text-muted-foreground">Automatic fallback on 429/5xx</span>
             </div>
+            <div className="flex items-center gap-2">
+              <ArrowRight className="size-3 text-muted-foreground" />
+              <span className="text-xs text-muted-foreground">Cross-protocol (OpenAI ↔ Anthropic ↔ Google)</span>
+            </div>
           </div>
         </div>
 
         {/* ── PROVIDERS ── */}
         <div>
-          <RuledSectionLabel label="PROVIDERS" />
+          <RuledSectionLabel label="PROVIDERS" counter="03" />
           <p className="mt-4 text-sm text-muted-foreground">
             Route to any major LLM provider through a single endpoint. Cross-protocol translation handled automatically.
           </p>
@@ -230,47 +263,136 @@ export default async function ProxyPage({ params }: Props) {
 
         {/* ── AGENT FIREWALL ── */}
         <div>
-          <RuledSectionLabel label="AGENT FIREWALL" />
+          <RuledSectionLabel label="AGENT FIREWALL" counter="04" />
           <p className="mt-4 text-sm text-muted-foreground">
-            Inspect, filter, and control agent traffic at the proxy layer. No application-level changes required.
+            Proxy-layer guardrails inspect traffic in both directions. Each pattern is assigned one action — warn, redact, or block. Enabled by default, no application changes.
           </p>
-          <div className="mt-4 grid grid-cols-1 gap-px border border-border bg-border sm:grid-cols-2">
-            {firewallFeatures.map((f) => {
-              const Icon = f.icon;
-              return (
-                <div key={f.title} className="bg-background p-5">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Icon className="size-3.5 text-muted-foreground" />
-                    <h3 className="text-sm font-semibold">{f.title}</h3>
-                  </div>
-                  <p className="text-xs leading-relaxed text-muted-foreground">
-                    {f.description}
-                  </p>
+
+          {/* Bidirectional flow diagram: Agent ↔ Guardrails ↔ Provider */}
+          <div className="mt-5 border border-border bg-background p-4 sm:p-6">
+            <div className="flex items-center gap-3 overflow-x-auto">
+              <div className="shrink-0 min-w-[92px] border border-foreground bg-background px-3 py-2 text-center font-mono text-[11px]">
+                <div className="text-[9px] uppercase tracking-widest text-muted-foreground">Source</div>
+                <div className="mt-0.5">Agent</div>
+              </div>
+
+              <div className="flex min-w-[60px] flex-1 flex-col items-center justify-center gap-1">
+                <div className="relative h-px w-full bg-foreground/60">
+                  <ArrowRight className="absolute -right-1 top-1/2 size-3 -translate-y-1/2 text-foreground" strokeWidth={2} />
                 </div>
-              );
-            })}
+                <span className="text-[9px] font-mono uppercase tracking-widest text-muted-foreground">upgoing</span>
+                <div className="relative h-px w-full bg-foreground/60">
+                  <ArrowLeft className="absolute -left-1 top-1/2 size-3 -translate-y-1/2 text-foreground" strokeWidth={2} />
+                </div>
+                <span className="text-[9px] font-mono uppercase tracking-widest text-muted-foreground">downgoing</span>
+              </div>
+
+              <div className="shrink-0 min-w-[120px] border-2 border-foreground bg-background px-3 py-3 text-center font-mono text-[11px]">
+                <div className="flex items-center justify-center gap-1 text-[9px] uppercase tracking-widest text-muted-foreground">
+                  <Eye className="size-3" />
+                  Guardrails
+                </div>
+                <div className="mt-1 flex items-center justify-center gap-2">
+                  <div className="flex items-center gap-1">
+                    <ShieldAlert className="size-3" />
+                    <span>warn</span>
+                  </div>
+                </div>
+                <div className="mt-0.5 flex items-center justify-center gap-1">
+                  <Shield className="size-3" />
+                  <span>redact</span>
+                </div>
+                <div className="mt-0.5 flex items-center justify-center gap-1">
+                  <Ban className="size-3" />
+                  <span>block</span>
+                </div>
+              </div>
+
+              <div className="flex min-w-[60px] flex-1 flex-col items-center justify-center gap-1">
+                <div className="relative h-px w-full bg-foreground/60">
+                  <ArrowRight className="absolute -right-1 top-1/2 size-3 -translate-y-1/2 text-foreground" strokeWidth={2} />
+                </div>
+                <div className="relative h-px w-full bg-foreground/60">
+                  <ArrowLeft className="absolute -left-1 top-1/2 size-3 -translate-y-1/2 text-foreground" strokeWidth={2} />
+                </div>
+              </div>
+
+              <div className="shrink-0 min-w-[92px] border border-foreground bg-foreground px-3 py-2 text-center font-mono text-[11px] text-background">
+                <div className="text-[9px] uppercase tracking-widest opacity-60">Dest</div>
+                <div className="mt-0.5">Provider</div>
+              </div>
+            </div>
           </div>
+
+          {/* Patterns grouped by direction */}
+          <div className="mt-4 grid grid-cols-1 gap-px border border-border bg-border lg:grid-cols-2">
+            {/* Upgoing */}
+            <div className="bg-background p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <ArrowRight className="size-3.5 text-foreground" />
+                <h3 className="text-xs font-mono uppercase tracking-widest">Upgoing · agent → provider</h3>
+              </div>
+              <ul className="space-y-2">
+                {upgoingPatterns.map((p) => (
+                  <li key={p.id} className="flex items-baseline gap-2 text-xs">
+                    <code className="shrink-0 font-mono text-foreground/90">{p.id}</code>
+                    <span className="text-muted-foreground leading-relaxed">— {p.description}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Downgoing */}
+            <div className="bg-background p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <ArrowLeft className="size-3.5 text-foreground" />
+                <h3 className="text-xs font-mono uppercase tracking-widest">Downgoing · provider → agent</h3>
+              </div>
+              <ul className="space-y-2">
+                {downgoingPatterns.map((p) => (
+                  <li key={p.id} className="flex items-baseline gap-2 text-xs">
+                    <code className="shrink-0 font-mono text-foreground/90">{p.id}</code>
+                    <span className="text-muted-foreground leading-relaxed">— {p.description}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-3 text-[11px] text-muted-foreground/70">
+                Custom regex patterns supported via <code className="font-mono">custom_patterns</code>.
+              </p>
+            </div>
+          </div>
+
         </div>
 
         {/* ── CONFIGURATION ── */}
         <div>
-          <RuledSectionLabel label="CONFIGURATION" />
+          <RuledSectionLabel label="CONFIGURATION" counter="05" />
           <p className="mt-4 text-sm text-muted-foreground">
-            One YAML file configures providers, routing rules, and firewall policies.
+            One YAML file configures providers, model routing, and guardrail policies. Works alongside zero-config env detection.
           </p>
           <div className="mt-4 border border-border">
-            <div className="border-b border-border px-3 py-1.5">
+            <div className="border-b border-border px-3 py-1.5 flex items-center justify-between">
               <span className="text-[10px] font-mono text-muted-foreground">bitrouter.yaml</span>
+              <span className="text-[10px] font-mono text-muted-foreground/60">YAML</span>
             </div>
             <pre className="overflow-x-auto p-4 text-xs leading-relaxed font-mono text-foreground/80">
-              <code>{configCode}</code>
+              <code>
+                {configCode.split("\n").map((line, i) => (
+                  <div key={i} className="flex">
+                    <span className="inline-block w-7 shrink-0 select-none text-muted-foreground/40 tabular-nums text-right pr-3">
+                      {i + 1}
+                    </span>
+                    <span className="whitespace-pre">{line || "\u00A0"}</span>
+                  </div>
+                ))}
+              </code>
             </pre>
           </div>
         </div>
 
         {/* ── COMPARE ── */}
         <div>
-          <RuledSectionLabel label="COMPARE" />
+          <RuledSectionLabel label="COMPARE" counter="06" />
           <p className="mt-4 text-sm text-muted-foreground">
             How BitRouter stacks up against other LLM routing solutions.
           </p>

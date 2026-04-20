@@ -1,92 +1,94 @@
-"use client";
-
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { RuledSectionLabel } from "@/components/ruled-section-label";
-
-const yamlCode = `providers:
-  - name: anthropic
-    api_key: \${ANTHROPIC_API_KEY}
-  - name: openai
-    api_key: \${OPENAI_API_KEY}
-
-routing:
-  strategy: cost-optimized
-  rules:
-    - match: { complexity: high }
-      model: claude-opus-4
-    - match: { task: code-gen }
-      model: claude-sonnet-4
-    - fallback: claude-haiku
-
-cache:
-  enabled: true
-  ttl: 3600`;
-
-const tsCode = `import { BitRouter } from "bitrouter";
-
-const router = new BitRouter({
-  config: "./bitrouter.yaml",
-});
-
-// Drop-in OpenAI-compatible
-const response = await router.chat.completions.create({
-  model: "auto", // BitRouter selects the best model
-  messages: [
-    { role: "user", content: "Plan the migration" },
-  ],
-});`;
-
-function CodeBlock({ code, language }: { code: string; language: string }) {
-  return (
-    <div className="border border-border bg-card">
-      <div className="border-b border-border px-3 py-1.5">
-        <span className="text-[10px] font-mono text-muted-foreground">{language}</span>
-      </div>
-      <pre className="overflow-x-auto p-4 text-xs leading-relaxed font-mono text-foreground/80">
-        <code>{code}</code>
-      </pre>
-    </div>
-  );
-}
+import { Terminal, AnimatedSpan, TypingAnimation } from "@/components/ui/terminal";
 
 export function CodeConfigTabs({
   sectionLabel,
-  tabConfig,
-  tabClient,
   caption,
+  counter,
 }: {
   sectionLabel: string;
-  tabConfig: string;
-  tabClient: string;
   caption: string;
+  counter?: string;
 }) {
   return (
     <div>
-      <RuledSectionLabel label={sectionLabel} />
+      <RuledSectionLabel label={sectionLabel} counter={counter} />
       <div className="mt-6">
-        <Tabs defaultValue="config">
-          <TabsList className="rounded-none bg-transparent border border-border p-0 h-auto w-full">
-            <TabsTrigger
-              value="config"
-              className="rounded-none border-r border-border px-4 py-2 text-xs font-mono data-[state=active]:bg-foreground/5 data-[state=active]:shadow-none"
-            >
-              {tabConfig}
-            </TabsTrigger>
-            <TabsTrigger
-              value="client"
-              className="rounded-none px-4 py-2 text-xs font-mono data-[state=active]:bg-foreground/5 data-[state=active]:shadow-none"
-            >
-              {tabClient}
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="config" className="mt-0">
-            <CodeBlock code={yamlCode} language="yaml" />
-          </TabsContent>
-          <TabsContent value="client" className="mt-0">
-            <CodeBlock code={tsCode} language="typescript" />
-          </TabsContent>
-        </Tabs>
-        <p className="mt-3 text-xs text-muted-foreground font-mono">{caption}</p>
+        <Terminal className="max-h-none max-w-none font-mono [&_pre]:overflow-visible [&_code]:overflow-visible">
+          <TypingAnimation className="text-foreground" duration={40}>
+            &gt; bitrouter
+          </TypingAnimation>
+
+          <AnimatedSpan className="text-muted-foreground">
+            <span>no configuration found — launching setup wizard</span>
+          </AnimatedSpan>
+
+          <AnimatedSpan className="text-foreground/80">
+            <span>? Choose a provider mode:</span>
+          </AnimatedSpan>
+          <AnimatedSpan className="text-emerald-500">
+            <span>&nbsp;&nbsp;› Default (BitRouter Cloud)</span>
+          </AnimatedSpan>
+          <AnimatedSpan className="text-muted-foreground">
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;Bring Your Own Key</span>
+          </AnimatedSpan>
+
+          <AnimatedSpan className="text-foreground/80">
+            <span>? Generate a new Ed25519 keypair?</span>
+          </AnimatedSpan>
+          <AnimatedSpan className="text-emerald-500">
+            <span>&nbsp;&nbsp;› Yes</span>
+          </AnimatedSpan>
+          <AnimatedSpan className="text-emerald-500">
+            <span>✓ master key → ~/.bitrouter/keys/master.ed25519</span>
+          </AnimatedSpan>
+          <AnimatedSpan className="text-muted-foreground">
+            <span>&nbsp;&nbsp;solana&nbsp;&nbsp;9a3f9fe8…9b712</span>
+          </AnimatedSpan>
+          <AnimatedSpan className="text-muted-foreground">
+            <span>&nbsp;&nbsp;evm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0x7c2f3e1a…8af90</span>
+          </AnimatedSpan>
+
+          <AnimatedSpan className="text-foreground/80">
+            <span>? Derive an agent authority?</span>
+          </AnimatedSpan>
+          <AnimatedSpan className="text-emerald-500">
+            <span>&nbsp;&nbsp;› label: my-coding-agent</span>
+          </AnimatedSpan>
+          <AnimatedSpan className="text-emerald-500">
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;per-tx-cap: 5_000_000 (5 USDC)</span>
+          </AnimatedSpan>
+          <AnimatedSpan className="text-emerald-500">
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;cumulative-cap: 50_000_000 (50 USDC)</span>
+          </AnimatedSpan>
+          <AnimatedSpan className="text-emerald-500">
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;expires-at: +14d</span>
+          </AnimatedSpan>
+          <AnimatedSpan className="text-emerald-500">
+            <span>✓ on-chain authority signed · tx 4Pq…zH2</span>
+          </AnimatedSpan>
+
+          <AnimatedSpan className="text-emerald-500">
+            <span>✓ config → ~/.bitrouter/bitrouter.yaml</span>
+          </AnimatedSpan>
+          <AnimatedSpan className="text-emerald-500">
+            <span>✓ api server listening on 127.0.0.1:8787</span>
+          </AnimatedSpan>
+          <AnimatedSpan className="text-emerald-500">
+            <span>✓ health check passed</span>
+          </AnimatedSpan>
+
+          <TypingAnimation
+            className="text-muted-foreground"
+            duration={30}
+            delay={300}
+          >
+            ready.
+          </TypingAnimation>
+        </Terminal>
+        <p className="mt-3 text-xs text-muted-foreground font-mono">
+          {caption}
+        </p>
       </div>
     </div>
   );

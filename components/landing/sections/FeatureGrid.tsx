@@ -13,12 +13,12 @@ const features = [
   { number: "09", category: "SECURITY", key: "security" as const },
 ];
 
-export async function FeatureGrid() {
+export async function FeatureGrid({ counter }: { counter?: string } = {}) {
   const t = await getTranslations("Features");
 
   return (
     <div className="mt-10">
-      <RuledSectionLabel label="FEATURES" />
+      <RuledSectionLabel label="FEATURES" counter={counter} />
       <div className="mt-6 grid grid-cols-1 gap-px border border-border bg-border sm:grid-cols-2 md:grid-cols-3">
         {features.map((f) => (
           <div key={f.key} className="bg-background p-5">

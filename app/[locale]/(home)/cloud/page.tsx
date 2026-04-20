@@ -1,5 +1,6 @@
-import { setRequestLocale } from "next-intl/server";
-import { CloudView } from "@/components/cloud/cloud-view";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import type { Metadata } from "next";
+import { CloudOverview } from "@/components/cloud/cloud-overview";
 
 export default async function CloudPage({
   params,
@@ -9,9 +10,18 @@ export default async function CloudPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  return (
-    <div className="h-[calc(100vh-3.5rem)] overflow-hidden">
-      <CloudView />
-    </div>
-  );
+  return <CloudOverview />;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Cloud" });
+  return {
+    title: `${t("metaTitle")} — BitRouter`,
+    description: t("metaDescription"),
+  };
 }

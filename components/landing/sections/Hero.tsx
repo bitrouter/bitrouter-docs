@@ -2,16 +2,17 @@ import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { RuledSectionLabel } from "@/components/ruled-section-label";
 import { DottedMap } from "@/components/ui/dotted-map";
-import { DashboardPreview } from "./DashboardPreview";
 import { CodeConfigTabs } from "./CodeConfigTabs";
 import { FeatureGrid } from "./FeatureGrid";
-import { ProviderEcosystem } from "./ProviderEcosystem";
 import { OneLineSwitch } from "./OneLineSwitch";
+import { RouterArchitecture } from "./RouterArchitecture";
+import { CommunitySection } from "./CommunitySection";
 
 export async function Hero() {
-  const [t, tCode] = await Promise.all([
+  const [t, tCode, tArch] = await Promise.all([
     getTranslations("Hero"),
     getTranslations("CodeConfig"),
+    getTranslations("Architecture"),
   ]);
 
   return (
@@ -46,9 +47,6 @@ export async function Hero() {
             <a href="/docs">
               <Button size="lg">{t("ctaPrimary")}</Button>
             </a>
-            {/* <a href="https://app.bitrouter.ai" target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" size="lg">Sign In</Button>
-            </a> */}
           </div>
         </div>
       </div>
@@ -56,27 +54,40 @@ export async function Hero() {
       {/* ── Right pane: scrollable content ── */}
       <div className="relative w-full lg:w-[60%] overflow-x-clip">
         <div className="px-4 py-6 sm:px-6 sm:py-8 space-y-10">
-          {/* README section */}
+          {/* 01 README */}
           <div>
-            <RuledSectionLabel label="README" />
+            <RuledSectionLabel label="README" counter="01" />
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
               {t("subtitle")}
             </p>
-
             <div className="mt-5">
               <OneLineSwitch />
             </div>
           </div>
 
-          <DashboardPreview />
+          {/* 02 ARCHITECTURE */}
+          <div>
+            <RuledSectionLabel label={tArch("sectionLabel")} counter="02" />
+            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+              {tArch("description")}
+            </p>
+            <div className="mt-5">
+              <RouterArchitecture />
+            </div>
+          </div>
+
+          {/* 03 FEATURES */}
+          <FeatureGrid counter="03" />
+
+          {/* 04 SETUP */}
           <CodeConfigTabs
+            counter="04"
             sectionLabel={tCode("sectionLabel")}
-            tabConfig={tCode("tabConfig")}
-            tabClient={tCode("tabClient")}
             caption={tCode("caption")}
           />
-          <FeatureGrid />
-          <ProviderEcosystem />
+
+          {/* 05 COMMUNITY */}
+          <CommunitySection counter="05" />
         </div>
       </div>
     </div>

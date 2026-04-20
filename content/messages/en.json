@@ -114,30 +114,82 @@
       "multiProvider": "Multi-provider"
     }
   },
-  "Dashboard": {
-    "sectionLabel": "DASHBOARD",
-    "networkRequests": "Requests routed",
-    "networkAgents": "Agents connected",
-    "networkSaved": "Saved this month",
-    "modelUsageTitle": "Model distribution",
-    "recentRoutesTitle": "Recent routing decisions",
-    "costTrendTitle": "7-day cost trend",
-    "colTime": "Time",
-    "colRoute": "Route",
-    "colReason": "Reason",
-    "colSaved": "Saved"
-  },
   "CodeConfig": {
-    "sectionLabel": "CONFIGURATION",
-    "tabConfig": "bitrouter.yaml",
-    "tabClient": "client.ts",
-    "caption": "Two files. Full routing intelligence."
+    "sectionLabel": "SETUP",
+    "caption": "One wizard. Keys, wallet, agent authority."
   },
-  "Ecosystem": {
-    "sectionLabel": "ECOSYSTEM",
-    "llmProviders": "LLM Providers",
-    "agentFrameworks": "Agent Frameworks",
-    "infrastructure": "Infrastructure"
+  "Community": {
+    "sectionLabel": "COMMUNITY",
+    "description": "BitRouter is open source. Run it, fork it, ship routing rules back.",
+    "starsLabel": "Stars",
+    "forksLabel": "Forks",
+    "contributorsLabel": "Contributors",
+    "linkGithub": "Star on GitHub",
+    "linkDiscord": "Join Discord",
+    "linkX": "Follow on X",
+    "linkChangelog": "Changelog",
+    "legalTerms": "Terms",
+    "legalPrivacy": "Privacy",
+    "legalBlog": "Blog",
+    "themeToggle": "Toggle theme",
+    "copyright": "\u00a9 2026 BitRouter"
+  },
+  "Proxy": {
+    "source": "Source",
+    "dest": "Dest",
+    "stage": "Stage"
+  },
+  "Cloud": {
+    "metaTitle": "Cloud",
+    "metaDescription": "Hosted BitRouter — agent-native LLM routing on a global edge network. No setup, no KYC, pay per request in USDC.",
+    "kicker": "Cloud",
+    "headline": "Hosted BitRouter.",
+    "headlineMuted": "No setup. No KYC.",
+    "subtitle": "All the routing, firewalling, and observability of BitRouter — hosted on a global agent-native network. Pay per request in USDC over x402.",
+    "ctaPrimary": "Get API key",
+    "ctaSecondary": "Browse catalog",
+
+    "globalMeta": "18 PoPs · Tier-1 peering",
+    "globalStatus": "All operational",
+
+    "whyLabel": "WHY HOSTED",
+    "whyIntro": "Everything self-hosting gives you — minus the ops burden. Hosted is the default path for autonomous agents.",
+    "whyZeroSetup": {
+      "title": "Zero setup",
+      "brief": "one API key, no install, no TLS",
+      "description": "Point any agent runtime at api.bitrouter.ai/v1 and start routing.",
+      "vsSelf": "vs self-hosted: cargo install, config, TLS, reverse proxy"
+    },
+    "whyGlobalEdge": {
+      "title": "Global edge",
+      "brief": "18 PoPs, sub-10ms p50",
+      "description": "18 points of presence on tier-1 peering; sub-10ms p50 to every major cloud region.",
+      "vsSelf": "vs self-hosted: one box, one region"
+    },
+    "whyPayPerReq": {
+      "title": "Pay per request",
+      "brief": "USDC over x402, no cards",
+      "description": "Agent-native USDC over x402. No cards, no prepaid credits, no invoices.",
+      "vsSelf": "vs self-hosted: BYOK + per-provider billing"
+    },
+    "whyNoKyc": {
+      "title": "No KYC",
+      "brief": "permissionless, geo-neutral",
+      "description": "Permissionless and geo-neutral. Built for agents that transact on their own.",
+      "vsSelf": "vs self-hosted: your identity, your jurisdiction"
+    },
+
+    "apiKeyLabel": "SETUP",
+    "apiKeyIntro": "Pick an onboarding. Local proxy gives you full control; hosted needs zero install.",
+
+    "catalogLabel": "CATALOG",
+    "catalogIntro": "Every model on the hosted network — pricing shown per row. One endpoint, one key, pay only for what you route."
+  },
+  "Architecture": {
+    "sectionLabel": "ARCHITECTURE",
+    "description": "One proxy between every agent runtime and every provider — cost-aware routing, protocol translation, and an agent firewall in a single hop.",
+    "proxyMeta": "sub-10ms",
+    "caps": "routing · firewall · payments"
   },
   "Footer": {
     "ctaHeading": "Start routing smarter.",

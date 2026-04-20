@@ -1,5 +1,4 @@
 import { setRequestLocale } from "next-intl/server";
-import { Footer } from "@/components/landing/sections/Footer";
 import { LlmDetailView } from "@/components/llms/llm-detail-view";
 
 export default async function LlmDetailPage({
@@ -15,9 +14,6 @@ export default async function LlmDetailPage({
       <section className="mx-auto w-full max-w-7xl flex-1 px-4 pt-6 pb-4 sm:px-6">
         <LlmDetailView />
       </section>
-      <div className="shrink-0">
-        <Footer />
-      </div>
     </div>
   );
 }

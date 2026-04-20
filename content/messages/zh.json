@@ -114,30 +114,82 @@
       "multiProvider": "多供应商"
     }
   },
-  "Dashboard": {
-    "sectionLabel": "DASHBOARD",
-    "networkRequests": "已路由请求",
-    "networkAgents": "已连接 Agent",
-    "networkSaved": "本月节省",
-    "modelUsageTitle": "模型分布",
-    "recentRoutesTitle": "近期路由决策",
-    "costTrendTitle": "7 天成本趋势",
-    "colTime": "时间",
-    "colRoute": "路由",
-    "colReason": "原因",
-    "colSaved": "节省"
-  },
   "CodeConfig": {
-    "sectionLabel": "CONFIGURATION",
-    "tabConfig": "bitrouter.yaml",
-    "tabClient": "client.ts",
-    "caption": "两个文件，完整路由智能。"
+    "sectionLabel": "SETUP",
+    "caption": "一键向导：密钥、钱包、Agent 授权。"
   },
-  "Ecosystem": {
-    "sectionLabel": "ECOSYSTEM",
-    "llmProviders": "LLM 供应商",
-    "agentFrameworks": "Agent 框架",
-    "infrastructure": "基础设施"
+  "Community": {
+    "sectionLabel": "COMMUNITY",
+    "description": "BitRouter 是开源项目。欢迎自部署、Fork、并把路由规则贡献回上游。",
+    "starsLabel": "Stars",
+    "forksLabel": "Forks",
+    "contributorsLabel": "贡献者",
+    "linkGithub": "在 GitHub 加星",
+    "linkDiscord": "加入 Discord",
+    "linkX": "在 X 关注",
+    "linkChangelog": "更新日志",
+    "legalTerms": "条款",
+    "legalPrivacy": "隐私",
+    "legalBlog": "博客",
+    "themeToggle": "切换主题",
+    "copyright": "\u00a9 2026 BitRouter"
+  },
+  "Proxy": {
+    "source": "源",
+    "dest": "目标",
+    "stage": "阶段"
+  },
+  "Cloud": {
+    "metaTitle": "云服务",
+    "metaDescription": "BitRouter 托管服务 —— 面向 Agent 的全球边缘 LLM 路由网络。零部署、无 KYC、按请求 USDC 付费。",
+    "kicker": "云服务",
+    "headline": "托管版 BitRouter。",
+    "headlineMuted": "零部署。无 KYC。",
+    "subtitle": "BitRouter 的路由、防火墙与可观测性，全部托管在 Agent 原生的全球网络上。按请求付费，x402 链上 USDC 结算。",
+    "ctaPrimary": "获取 API Key",
+    "ctaSecondary": "浏览目录",
+
+    "globalMeta": "18 节点 · 一级对等",
+    "globalStatus": "全部在线",
+
+    "whyLabel": "WHY HOSTED",
+    "whyIntro": "自托管能给你的，托管版一样给 —— 但省掉运维负担。自治 Agent 的默认路径。",
+    "whyZeroSetup": {
+      "title": "零部署",
+      "brief": "一把 API Key，免安装",
+      "description": "把任何 Agent 运行时指向 api.bitrouter.ai/v1 即可开始路由。",
+      "vsSelf": "自托管则需：cargo install、配置、TLS、反向代理"
+    },
+    "whyGlobalEdge": {
+      "title": "全球边缘",
+      "brief": "18 节点，p50 < 10ms",
+      "description": "18 个一级对等接入节点，对各大公有云区域 p50 延迟低于 10ms。",
+      "vsSelf": "自托管则仅：一台机器、一个地域"
+    },
+    "whyPayPerReq": {
+      "title": "按请求付费",
+      "brief": "USDC x402，免信用卡",
+      "description": "Agent 原生的 x402 链上 USDC。不需要信用卡、预付或月结发票。",
+      "vsSelf": "自托管则需：自备密钥，按每家供应商分别计费"
+    },
+    "whyNoKyc": {
+      "title": "无需 KYC",
+      "brief": "无许可，无地域限制",
+      "description": "无许可、无地域限制。专为能自主付款的自治 Agent 构建。",
+      "vsSelf": "自托管则：你自己的身份、你所在的辖区"
+    },
+
+    "apiKeyLabel": "SETUP",
+    "apiKeyIntro": "选择接入方式。本地代理掌握完整控制；托管版零安装。",
+
+    "catalogLabel": "CATALOG",
+    "catalogIntro": "托管网络上所有可用的模型 —— 价格在每行内显示。一个端点、一把密钥，按实际路由用量付费。"
+  },
+  "Architecture": {
+    "sectionLabel": "ARCHITECTURE",
+    "description": "一个代理连接所有 Agent 运行时与所有供应商 —— 成本感知路由、协议转换、Agent 防火墙，全部集中在一次跳转中。",
+    "proxyMeta": "10ms 以内",
+    "caps": "路由 · 防火墙 · 支付"
   },
   "Footer": {
     "ctaHeading": "开始智能路由。",

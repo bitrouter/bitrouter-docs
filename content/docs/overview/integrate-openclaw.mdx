@@ -5,7 +5,7 @@ description: Route OpenClaw agent requests through BitRouter in under 2 minutes
 import { Callout } from 'fumadocs-ui/components/callout';
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
-BitRouter plugs into OpenClaw as a native plugin. Install it, pick a provider, and every agent request routes through BitRouter automatically — with failover, load balancing, guardrails, and usage metrics out of the box.
+BitRouter plugs into OpenClaw as a native plugin. Install it, point it at your providers, and every agent request routes through a local multi-provider proxy — with failover, load balancing, and unified API access out of the box.
 
 ## Install the Plugin
 
@@ -13,75 +13,105 @@ BitRouter plugs into OpenClaw as a native plugin. Install it, pick a provider, a
 openclaw plugins install @bitrouter/openclaw-plugin
 ```
 
-## Choose Your Provider
+On install, the plugin starts a BitRouter daemon on `127.0.0.1:8787`, registers `bitrouter` as an OpenClaw provider, and begins routing eligible model requests through it.
 
-<Tabs items={['BitRouter Cloud', 'Bring Your Own Key']}>
-<Tab value="BitRouter Cloud">
+## Configure Providers
 
-Pay-per-token via an on-chain Swig wallet. No API keys to manage — BitRouter handles provider access for you.
+<Tabs items={['Zero-Config (Env Vars)', 'Interactive Auth']}>
+<Tab value="Zero-Config (Env Vars)">
 
-```bash
-openclaw bitrouter setup
-```
-
-This launches an interactive wizard that creates a Swig wallet and completes onboarding. Once finished:
-
-```bash
-openclaw gateway restart
-```
+If `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, or `GOOGLE_API_KEY` is already present in your environment, BitRouter auto-detects them on startup. No further setup is required.
 
 </Tab>
-<Tab value="Bring Your Own Key">
+<Tab value="Interactive Auth">
 
-Use your existing OpenRouter, OpenAI, or Anthropic API key.
+If no credentials are found in your environment:
 
 ```bash
 openclaw models auth login --provider bitrouter
 ```
 
-The wizard prompts you to pick an upstream provider and enter your key. Once finished:
-
-```bash
-openclaw gateway restart
-```
-
-<Callout type="info">
-**Zero-config shortcut:** If `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, or `OPENROUTER_API_KEY` is already in your environment, BitRouter auto-detects it. You can skip this step entirely.
-</Callout>
+The wizard prompts for your keys and writes them to a local `.env` file that BitRouter reads on startup.
 
 </Tab>
 </Tabs>
 
 ## Route Your Agents
 
-By default, the plugin only intercepts models with explicit routing rules. Run `switch-all` to rewrite every agent's model config so all requests flow through BitRouter:
+By default, BitRouter only intercepts models with explicit routing rules. To route every request through BitRouter — including ones without a named route — set `interceptAllModels` in your OpenClaw settings:
 
-```bash
-openclaw bitrouter switch-all
-openclaw gateway restart
+```jsonc
+{
+  "plugins": {
+    "entries": {
+      "bitrouter": {
+        "enabled": true,
+        "config": {
+          "interceptAllModels": true
+        }
+      }
+    }
+  }
+}
 ```
 
 <Callout type="info">
-To undo at any time: `openclaw bitrouter restore-models && openclaw gateway restart`
+Even without named routes, you can use `"provider:model_id"` syntax (e.g. `"openai:gpt-4o"`) and BitRouter will direct-route it.
 </Callout>
+
+### Define Virtual Models
+
+Expose aliases like `fast` or `smart` that fan out to multiple provider endpoints with a routing strategy:
+
+```jsonc
+{
+  "plugins": {
+    "entries": {
+      "bitrouter": {
+        "enabled": true,
+        "config": {
+          "models": {
+            "fast": {
+              "strategy": "load_balance",
+              "endpoints": [
+                { "provider": "openai", "modelId": "gpt-4o-mini" },
+                { "provider": "anthropic", "modelId": "claude-3.5-haiku" }
+              ]
+            },
+            "smart": {
+              "strategy": "priority",
+              "endpoints": [
+                { "provider": "anthropic", "modelId": "claude-sonnet-4-20250514" },
+                { "provider": "openai", "modelId": "gpt-4o" }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Strategies: `priority` (default — try endpoints in order, fall over on failure) and `load_balance` (round-robin).
 
 ## Verify
 
 ```bash
-openclaw bitrouter status
+bitrouter status
 ```
 
-You should see the daemon marked as **healthy**, your configured routes listed, and wallet info if you're using Cloud mode.
+You should see the daemon marked as **healthy**, its listen address, and the registered providers. Agents can call the same check at runtime via the `bitrouter_status` tool.
 
 ## What You Get
 
 - **Failover & load balancing** — priority or round-robin routing across providers. [Learn more](/docs/overview/runtime-optimization)
-- **Agentic identity & payment** — scoped on-chain spending via Swig with per-agent budgets. [Learn more](/docs/overview/agent-wallet)
-- **Guardrails** — redact or block sensitive data (API keys, PII) in transit
+- **Virtual models** — aliases like `fast` or `smart` that map to multiple provider endpoints with routing strategies
+- **Custom providers** — derive from `openai`, `anthropic`, or `google` to add providers like OpenRouter with a few lines of config
 - **Usage metrics** — per-model, per-provider request tracking
-- **Virtual models** — define aliases like `fast` or `smart` that map to multiple provider endpoints with routing strategies
+- **Agent key management** — scoped Ed25519 keypair and JWT tooling via the `bitrouter_keygen`, `bitrouter_account`, and `bitrouter_keys` agent tools
 
 ## Links
 
-- [Plugin source & advanced configuration](https://github.com/bitrouter/bitrouter-plugins/tree/main/openclaw)
+- [Plugin source & advanced configuration](https://github.com/bitrouter/bitrouter-openclaw)
 - [BitRouter GitHub](https://github.com/bitrouter/bitrouter)

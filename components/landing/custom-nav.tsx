@@ -3,17 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
-import { DiscordIcon, XIcon, GitHubIcon } from "@/components/icons";
-import { ArrowUpRight, Menu, X } from "lucide-react";
-
-// ── Social links (used in mobile menu footer) ───────────
-
-const socialLinks = [
-  { label: "Discord", href: "https://discord.gg/G3zVrZDa5C", icon: DiscordIcon },
-  { label: "Twitter/X", href: "https://x.com/BitRouterAI", icon: XIcon },
-  { label: "GitHub", href: "https://github.com/bitrouter", icon: GitHubIcon },
-];
+import { cn } from "@/lib/cn";
+import { ArrowUpRight, ChevronDown, Menu, X } from "lucide-react";
+import { SOCIAL_LINKS } from "./social-links";
+import { RESOURCE_ITEMS, ResourcesTabCell } from "./resources-menu";
 
 // ── Main export ──────────────────────────────────────────
 
@@ -46,7 +39,7 @@ export function CustomNav() {
           <TabCell label="Proxy" href="/proxy" />
           <TabCell label="Cloud" href="/cloud" />
           <TabCell label="Enterprise" href="/enterprise" />
-          <TabCell label="Blog" href="/blog" />
+          <ResourcesTabCell />
           {/* Spacer */}
           <div className="flex-1 border-r border-foreground/[0.06]" />
         </nav>
@@ -138,15 +131,19 @@ function ExternalTabCell({ label, href }: { label: string; href: string }) {
 function MobileMenu({ pathname }: { pathname: string }) {
   const normalizedPath = pathname.replace(/^\/(en|zh)/, "") || "/";
   const [open, setOpen] = useState(false);
+  const [resourcesOpen, setResourcesOpen] = useState(() =>
+    RESOURCE_ITEMS.some((i) => normalizedPath.startsWith(i.href)),
+  );
 
-  const allLinks = [
+  const primaryLinks = [
     { label: "Readme", href: "/", active: normalizedPath === "/" || normalizedPath === "" },
     { label: "Docs", href: "/docs/overview", active: normalizedPath.startsWith("/docs") },
     { label: "Proxy", href: "/proxy", active: normalizedPath.startsWith("/proxy") },
     { label: "Cloud", href: "/cloud", active: normalizedPath.startsWith("/cloud") },
     { label: "Enterprise", href: "/enterprise", active: normalizedPath.startsWith("/enterprise") },
-    { label: "Blog", href: "/blog", active: normalizedPath.startsWith("/blog") },
   ];
+
+  const resourcesActive = RESOURCE_ITEMS.some((i) => normalizedPath.startsWith(i.href));
 
   return (
     <>
@@ -161,7 +158,7 @@ function MobileMenu({ pathname }: { pathname: string }) {
       {open && (
         <div className="absolute inset-x-0 top-12 z-50 border-b border-foreground/[0.08] bg-background/95 backdrop-blur-lg">
           <nav className="flex flex-col p-3">
-            {allLinks.map((link) => (
+            {primaryLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -177,11 +174,55 @@ function MobileMenu({ pathname }: { pathname: string }) {
               </Link>
             ))}
 
+            {/* Resources disclosure */}
+            <button
+              type="button"
+              onClick={() => setResourcesOpen((v) => !v)}
+              className={cn(
+                "mt-px flex items-center justify-between px-3 py-2.5 font-mono text-xs uppercase tracking-wider transition-colors",
+                resourcesActive
+                  ? "bg-foreground/[0.04] text-foreground"
+                  : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground",
+              )}
+              aria-expanded={resourcesOpen}
+            >
+              Resources
+              <ChevronDown
+                className={cn(
+                  "size-3 opacity-50 transition-transform",
+                  resourcesOpen && "rotate-180",
+                )}
+              />
+            </button>
+            {resourcesOpen && (
+              <div className="border-l border-foreground/[0.08] ml-3">
+                {RESOURCE_ITEMS.map((item) => {
+                  const Icon = item.icon;
+                  const active = normalizedPath.startsWith(item.href);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setOpen(false)}
+                      className={cn(
+                        "flex items-center gap-2.5 px-3 py-2 font-mono text-[11px] uppercase tracking-wider transition-colors",
+                        active
+                          ? "text-foreground"
+                          : "text-muted-foreground/80 hover:text-foreground",
+                      )}
+                    >
+                      <Icon className="size-3.5 opacity-70" />
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
           </nav>
 
-          {/* Social + Sign In */}
+          {/* Socials */}
           <div className="flex items-center gap-1 border-t border-foreground/[0.06] px-4 py-3">
-            {socialLinks.map(({ label, href, icon: Icon }) => (
+            {SOCIAL_LINKS.map(({ label, href, icon: Icon }) => (
               <a
                 key={label}
                 href={href}
@@ -193,15 +234,6 @@ function MobileMenu({ pathname }: { pathname: string }) {
                 <Icon className="size-4" />
               </a>
             ))}
-            {/* <div className="flex-1" />
-            <a
-              href="https://app.bitrouter.ai"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 border border-foreground bg-foreground px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-wider text-background"
-            >
-              Sign In <ArrowUpRight className="size-2.5" />
-            </a> */}
           </div>
         </div>
       )}

@@ -8,7 +8,7 @@ const REPO_URL = "https://github.com/bitrouter/bitrouter";
 const GITHUB_API = "https://api.github.com/repos/bitrouter/bitrouter";
 const DISCORD_URL = "https://discord.gg/G3zVrZDa5C";
 const X_URL = "https://x.com/BitRouterAI";
-const CHANGELOG_URL = `${REPO_URL}/releases`;
+const CHANGELOG_URL = "/changelog";
 
 interface RepoStats {
   stars: number;
@@ -153,8 +153,8 @@ export async function CommunitySection({ counter }: { counter?: string } = {}) {
       {/* Bottom strip — legal nav + copyright + theme toggle */}
       <div className="mt-4 flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
         <nav className="flex flex-wrap items-center gap-x-4 gap-y-1">
-          <SmallLink href="/docs/overview/terms-of-service" label={t("legalTerms")} />
-          <SmallLink href="/docs/overview/privacy-policy" label={t("legalPrivacy")} />
+          <SmallLink href="/legal/terms" label={t("legalTerms")} />
+          <SmallLink href="/legal/privacy" label={t("legalPrivacy")} />
           <SmallLink href="/blog" label={t("legalBlog")} />
         </nav>
         <div className="flex items-center gap-3">

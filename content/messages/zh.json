@@ -202,6 +202,15 @@
     "github": "GitHub",
     "x": "Twitter/X",
     "discord": "Discord",
-    "copyright": "\u00a9 2026 BitRouter"
+    "copyright": "\u00a9 2026 BitRouter",
+    "themeToggle": "\u5207\u6362\u4e3b\u9898",
+    "links": {
+      "blog": "\u535a\u5ba2",
+      "changelog": "\u66f4\u65b0\u65e5\u5fd7",
+      "community": "\u793e\u533a",
+      "careers": "\u62db\u8058",
+      "brand": "\u54c1\u724c",
+      "legal": "\u6cd5\u5f8b"
+    }
   }
 }

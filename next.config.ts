@@ -12,6 +12,26 @@ const nextConfig: NextConfig = {
       { source: "/zh/docs", destination: "/zh/docs/overview", permanent: false },
       { source: "/apis", destination: "/llms", permanent: true },
       { source: "/apis/models/:id*", destination: "/llms/:id*", permanent: true },
+      {
+        source: "/docs/overview/privacy-policy",
+        destination: "/legal/privacy",
+        permanent: true,
+      },
+      {
+        source: "/zh/docs/overview/privacy-policy",
+        destination: "/zh/legal/privacy",
+        permanent: true,
+      },
+      {
+        source: "/docs/overview/terms-of-service",
+        destination: "/legal/terms",
+        permanent: true,
+      },
+      {
+        source: "/zh/docs/overview/terms-of-service",
+        destination: "/zh/legal/terms",
+        permanent: true,
+      },
     ];
   },
   async rewrites() {

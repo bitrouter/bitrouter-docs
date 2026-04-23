@@ -326,37 +326,3 @@ figure[class*="code"] {
   }
 }
 
-@keyframes proxy-bus-rtl {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(-50%, 0, 0);
-  }
-}
-
-@keyframes proxy-bus-ltr {
-  from {
-    transform: translate3d(-50%, 0, 0);
-  }
-  to {
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-@keyframes proxy-membrane-pulse {
-  0%,
-  100% {
-    opacity: 0.18;
-  }
-  50% {
-    opacity: 0.42;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  [data-proxy-bus-row],
-  [data-proxy-membrane] {
-    animation: none !important;
-  }
-}

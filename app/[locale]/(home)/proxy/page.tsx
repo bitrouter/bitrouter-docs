@@ -3,7 +3,6 @@ import { Terminal, ArrowUpRight, Shield, Zap, RefreshCw, Ban, Eye, ShieldAlert, 
 import { RuledSectionLabel } from "@/components/ruled-section-label";
 import { Button } from "@/components/ui/button";
 import { ProxyInstallTabs } from "@/components/landing/sections/ProxyInstallTabs";
-import { ProxyBackground } from "@/components/landing/sections/ProxyBackground";
 import type { Metadata } from "next";
 
 import OpenAI from "@lobehub/icons/es/OpenAI";
@@ -120,9 +119,8 @@ export default async function ProxyPage({ params }: Props) {
   return (
     <div className="flex min-h-[calc(100dvh-4rem)] flex-col lg:flex-row">
       {/* ── Left 40%: sticky sidebar ── */}
-      <div className="relative w-full border-b border-border/40 px-5 py-8 sm:px-6 lg:w-[40%] lg:sticky lg:top-12 lg:h-[calc(100dvh-4rem)] lg:border-b-0 lg:border-r lg:overflow-clip lg:flex lg:flex-col lg:justify-center">
-        <ProxyBackground />
-        <div className="relative lg:max-w-md lg:mx-auto">
+      <div className="w-full border-b border-border/40 px-5 py-8 sm:px-6 lg:w-[40%] lg:sticky lg:top-12 lg:h-[calc(100dvh-4rem)] lg:border-b-0 lg:border-r lg:overflow-clip lg:flex lg:flex-col lg:justify-center">
+        <div className="lg:max-w-md lg:mx-auto">
           <div className="flex items-center gap-2 text-muted-foreground mb-3">
             <Terminal className="size-4" />
             <span className="text-xs font-mono uppercase tracking-widest">

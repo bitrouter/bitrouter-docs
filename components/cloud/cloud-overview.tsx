@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { ArrowUpRight, Check, Cloud } from "lucide-react";
+import { ArrowUpRight, Check, Cloud, Network } from "lucide-react";
 import { RuledSectionLabel } from "@/components/ruled-section-label";
 import { Button } from "@/components/ui/button";
 import { Globe } from "@/components/ui/globe";
@@ -46,6 +46,21 @@ export async function CloudOverview() {
                 </Button>
               </a>
             </div>
+
+            <div className="mt-3 flex items-center gap-2 text-muted-foreground">
+              <Network className="size-3" />
+              <span className="font-mono text-[11px] uppercase tracking-widest">
+                {t("haveCapacity")}
+              </span>
+              <a
+                href="https://github.com/bitrouter/bitrouter-registry"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-widest text-foreground hover:opacity-70"
+              >
+                {t("registerProvider")} <ArrowUpRight className="size-3" />
+              </a>
+            </div>
           </div>
 
           {/* Globe — Magic UI container: wider than tall, clips bottom half off */}
@@ -68,7 +83,13 @@ export async function CloudOverview() {
             </div>
             <ul className="space-y-2">
               {(
-                ["whyZeroSetup", "whyGlobalEdge", "whyPayPerReq", "whyNoKyc"] as const
+                [
+                  "whyZeroSetup",
+                  "whyGlobalEdge",
+                  "whyPayPerReq",
+                  "whyNoKyc",
+                  "whyTwoSided",
+                ] as const
               ).map((key) => (
                 <li key={key} className="flex items-baseline gap-3">
                   <Check className="size-3 shrink-0 translate-y-0.5 text-emerald-500" />

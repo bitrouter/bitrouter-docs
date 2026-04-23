@@ -28,7 +28,7 @@
   },
   "Hero": {
     "headline": "面向 LLM\u00a0Agent 的开放智能路由",
-    "subtitle": "优化你的 Agent 运行时，使其更省钱、更安全、更出色。迎接运行时智能路由。",
+    "subtitle": "优化你的 Agent 运行时，使其更省钱、更安全、更出色 —— 并接入一张任何节点都能消费、也能供给的开放智能网络。迎接运行时智能路由。",
     "ctaPrimary": "开始使用",
     "timelineLabel": "实时演示 — 一个 6 次调用的 Agent 会话",
     "codeComment": "就这么简单"
@@ -178,6 +178,15 @@
       "description": "无许可、无地域限制。专为能自主付款的自治 Agent 构建。",
       "vsSelf": "自托管则：你自己的身份、你所在的辖区"
     },
+    "whyTwoSided": {
+      "title": "双向接入",
+      "brief": "消费或供给 —— 同一个二进制",
+      "description": "消费推理的节点同样可以对外提供推理。把闲置算力通过 Registry 变现。",
+      "vsSelf": "相比单向代理：一个二进制，两端都跑得起来"
+    },
+
+    "haveCapacity": "有闲置算力？",
+    "registerProvider": "注册为 Provider",
 
     "apiKeyLabel": "SETUP",
     "apiKeyIntro": "选择接入方式。本地代理掌握完整控制；托管版零安装。",
@@ -189,7 +198,7 @@
     "sectionLabel": "ARCHITECTURE",
     "description": "一个代理连接所有 Agent 运行时与所有供应商 —— 成本感知路由、协议转换、Agent 防火墙，全部集中在一次跳转中。",
     "proxyMeta": "10ms 以内",
-    "caps": "路由 · 防火墙 · 支付"
+    "caps": "路由 · 防火墙 · 支付 · 对等"
   },
   "Footer": {
     "ctaHeading": "开始智能路由。",

@@ -1,5 +1,5 @@
 import { setRequestLocale } from "next-intl/server";
-import { Terminal, ArrowUpRight, Shield, Zap, RefreshCw, Ban, Eye, ShieldAlert, Check, ArrowRight, ArrowLeft, Sparkles } from "lucide-react";
+import { Terminal, ArrowUpRight, Shield, Zap, RefreshCw, Ban, Eye, ShieldAlert, Check, ArrowRight, ArrowLeft, Sparkles, Network, Inbox, Send } from "lucide-react";
 import { RuledSectionLabel } from "@/components/ruled-section-label";
 import { Button } from "@/components/ui/button";
 import { ProxyInstallTabs } from "@/components/landing/sections/ProxyInstallTabs";
@@ -24,6 +24,8 @@ const routingRows = [
   { from: "smart", to: "gpt-4o", provider: "OpenAI", reason: "priority (fallback on 429)", latency: "9ms" },
   { from: "fast", to: "gpt-4o-mini", provider: "OpenAI", reason: "load_balance (pool A)", latency: "6ms" },
   { from: "coding", to: "gemini-2.5-pro", provider: "Google", reason: "priority (tertiary)", latency: "9ms" },
+  { from: "smart", to: "claude-sonnet-4", provider: "peer:ed25519:7f3a…b41", reason: "p2p ($2.40/Mtok)", latency: "142ms" },
+  { from: "fast", to: "qwen2.5-72b", provider: "peer:ed25519:c41b…2af0", reason: "p2p ($0.18/Mtok)", latency: "98ms" },
 ];
 
 const upgoingPatterns = [
@@ -95,6 +97,7 @@ const comparison = [
   { feature: "Zero dependencies", bitrouter: true, openrouter: "N/A", litellm: false },
   { feature: "Agent firewall", bitrouter: true, openrouter: false, litellm: false },
   { feature: "402/MPP payments", bitrouter: true, openrouter: false, litellm: false },
+  { feature: "Peer-to-peer routing", bitrouter: true, openrouter: false, litellm: false },
   { feature: "Single binary", bitrouter: true, openrouter: "N/A", litellm: false },
 ];
 
@@ -125,13 +128,13 @@ export default async function ProxyPage({ params }: Props) {
             </span>
           </div>
           <h1 className="text-2xl font-medium tracking-tight sm:text-3xl">
-            Single Binary.{" "}
+            One binary.{" "}
             <span className="text-muted-foreground">
-              Zero Dependencies. Sub‑10ms Routing.
+              Two sides of the wire.
             </span>
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            A high-performance Rust proxy that routes LLM requests across providers through a single OpenAI-compatible endpoint. Built for autonomous agents, not chatbots.
+            A high-performance Rust proxy that routes LLM requests across providers through a single OpenAI-compatible endpoint — and the same binary serves inbound traffic from the network. Built for autonomous agents, not chatbots.
           </p>
 
           <div className="mt-6 flex items-center gap-3">
@@ -212,15 +215,22 @@ export default async function ProxyPage({ params }: Props) {
                 </tr>
               </thead>
               <tbody>
-                {routingRows.map((row, i) => (
-                  <tr key={i} className="border-b border-border/30 hover:bg-muted/10 transition-colors">
-                    <td className="px-3 py-2 font-mono text-muted-foreground">{row.from}</td>
-                    <td className="px-3 py-2 font-mono font-medium">{row.to}</td>
-                    <td className="px-3 py-2 text-muted-foreground hidden sm:table-cell">{row.provider}</td>
-                    <td className="px-3 py-2 text-muted-foreground">{row.reason}</td>
-                    <td className="px-3 py-2 text-right font-mono tabular-nums">{row.latency}</td>
-                  </tr>
-                ))}
+                {routingRows.map((row, i) => {
+                  const isPeer = row.provider.startsWith("peer:");
+                  return (
+                    <tr key={i} className="border-b border-border/30 hover:bg-muted/10 transition-colors">
+                      <td className="px-3 py-2 font-mono text-muted-foreground">{row.from}</td>
+                      <td className="px-3 py-2 font-mono font-medium">{row.to}</td>
+                      <td
+                        className={`px-3 py-2 hidden sm:table-cell ${isPeer ? "font-mono text-foreground/80" : "text-muted-foreground"}`}
+                      >
+                        {row.provider}
+                      </td>
+                      <td className="px-3 py-2 text-muted-foreground">{row.reason}</td>
+                      <td className="px-3 py-2 text-right font-mono tabular-nums">{row.latency}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -236,6 +246,10 @@ export default async function ProxyPage({ params }: Props) {
             <div className="flex items-center gap-2">
               <ArrowRight className="size-3 text-muted-foreground" />
               <span className="text-xs text-muted-foreground">Cross-protocol (OpenAI ↔ Anthropic ↔ Google)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Network className="size-3 text-muted-foreground" />
+              <span className="text-xs text-muted-foreground">Local + peer candidates in one pool</span>
             </div>
           </div>
         </div>
@@ -261,9 +275,124 @@ export default async function ProxyPage({ params }: Props) {
           </div>
         </div>
 
+        {/* ── NETWORK ── */}
+        <div>
+          <RuledSectionLabel label="NETWORK" counter="04" />
+          <p className="mt-4 text-sm text-muted-foreground">
+            The same binary is symmetric. Outbound, it consumes inference from peer nodes through the registry. Inbound, it accepts QUIC requests on the <code className="font-mono text-foreground/80">bitrouter/p2p/0</code> ALPN and serves them through the same Local Router pipeline as your local agents.
+          </p>
+
+          {/* Two-column: Consumer mode | Provider mode */}
+          <div className="mt-4 grid grid-cols-1 gap-px border border-border bg-border lg:grid-cols-2">
+            <div className="bg-background p-5">
+              <div className="mb-3 flex items-center gap-2">
+                <Send className="size-3.5 text-foreground" />
+                <h3 className="text-xs font-mono uppercase tracking-widest">
+                  Consumer mode · outbound
+                </h3>
+              </div>
+              <ol className="space-y-2 text-xs leading-relaxed">
+                <li className="flex items-baseline gap-2">
+                  <span className="shrink-0 font-mono text-muted-foreground tabular-nums">01</span>
+                  <span className="text-muted-foreground">
+                    Query Registry for <code className="font-mono text-foreground/80">model + price ceiling</code>; receive permitted EndpointIDs.
+                  </span>
+                </li>
+                <li className="flex items-baseline gap-2">
+                  <span className="shrink-0 font-mono text-muted-foreground tabular-nums">02</span>
+                  <span className="text-muted-foreground">
+                    Dial peer by Ed25519 public key — iroh handles UDP hole-punching with relay fallback.
+                  </span>
+                </li>
+                <li className="flex items-baseline gap-2">
+                  <span className="shrink-0 font-mono text-muted-foreground tabular-nums">03</span>
+                  <span className="text-muted-foreground">
+                    Send request + payment intent (MPP / x402). Settle on response trailer.
+                  </span>
+                </li>
+              </ol>
+            </div>
+
+            <div className="bg-background p-5">
+              <div className="mb-3 flex items-center gap-2">
+                <Inbox className="size-3.5 text-foreground" />
+                <h3 className="text-xs font-mono uppercase tracking-widest">
+                  Provider mode · inbound
+                </h3>
+              </div>
+              <ol className="space-y-2 text-xs leading-relaxed">
+                <li className="flex items-baseline gap-2">
+                  <span className="shrink-0 font-mono text-muted-foreground tabular-nums">01</span>
+                  <span className="text-muted-foreground">
+                    Accept QUIC on ALPN <code className="font-mono text-foreground/80">bitrouter/p2p/0</code> — no public IP or DNS needed.
+                  </span>
+                </li>
+                <li className="flex items-baseline gap-2">
+                  <span className="shrink-0 font-mono text-muted-foreground tabular-nums">02</span>
+                  <span className="text-muted-foreground">
+                    Verify payment, then hand request to your local router — same pipeline as local agents.
+                  </span>
+                </li>
+                <li className="flex items-baseline gap-2">
+                  <span className="shrink-0 font-mono text-muted-foreground tabular-nums">03</span>
+                  <span className="text-muted-foreground">
+                    Stream tokens back; settle in MPP / x402 on stream close.
+                  </span>
+                </li>
+              </ol>
+            </div>
+          </div>
+
+          {/* Identity + enable snippet */}
+          <div className="mt-4 grid grid-cols-1 gap-px border border-border bg-border md:grid-cols-[1fr_auto]">
+            <div className="bg-background p-4">
+              <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                EndpointID · Ed25519 public key
+              </div>
+              <code className="mt-1 block break-all font-mono text-xs text-foreground/90">
+                ed25519:7f3ac1d2a98b…b41e
+              </code>
+              <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+                Generated on first run. Decoupled from IP, port, and hostname — your node keeps its identity wherever it runs.
+              </p>
+            </div>
+            <div className="bg-background p-4">
+              <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                Enable network · bitrouter.yaml
+              </div>
+              <pre className="mt-1 overflow-x-auto font-mono text-xs leading-relaxed text-foreground/80">
+{`network:
+  enabled: true
+  registry: https://registry.bitrouter.ai
+  serve_inbound: true   # become a Provider`}
+              </pre>
+            </div>
+          </div>
+
+          {/* Footer link to registry */}
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border border-dashed border-border bg-muted/10 p-4">
+            <div className="flex items-start gap-3">
+              <Network className="size-3.5 shrink-0 translate-y-0.5 text-foreground" />
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                v0 is permissioned: the Registry is a single git repository.
+                Provider entries are reviewed PRs — no self-announce, no DHT,
+                no chain.
+              </p>
+            </div>
+            <a
+              href="https://github.com/bitrouter/bitrouter-registry"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex shrink-0 items-center gap-1 font-mono text-[11px] uppercase tracking-widest text-foreground hover:opacity-70"
+            >
+              bitrouter-registry <ArrowUpRight className="size-3" />
+            </a>
+          </div>
+        </div>
+
         {/* ── AGENT FIREWALL ── */}
         <div>
-          <RuledSectionLabel label="AGENT FIREWALL" counter="04" />
+          <RuledSectionLabel label="AGENT FIREWALL" counter="05" />
           <p className="mt-4 text-sm text-muted-foreground">
             Proxy-layer guardrails inspect traffic in both directions. Each pattern is assigned one action — warn, redact, or block. Enabled by default, no application changes.
           </p>
@@ -366,7 +495,7 @@ export default async function ProxyPage({ params }: Props) {
 
         {/* ── CONFIGURATION ── */}
         <div>
-          <RuledSectionLabel label="CONFIGURATION" counter="05" />
+          <RuledSectionLabel label="CONFIGURATION" counter="06" />
           <p className="mt-4 text-sm text-muted-foreground">
             One YAML file configures providers, model routing, and guardrail policies. Works alongside zero-config env detection.
           </p>
@@ -392,7 +521,7 @@ export default async function ProxyPage({ params }: Props) {
 
         {/* ── COMPARE ── */}
         <div>
-          <RuledSectionLabel label="COMPARE" counter="06" />
+          <RuledSectionLabel label="COMPARE" counter="07" />
           <p className="mt-4 text-sm text-muted-foreground">
             How BitRouter stacks up against other LLM routing solutions.
           </p>

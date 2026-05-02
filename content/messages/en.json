@@ -28,7 +28,7 @@
   },
   "Hero": {
     "headline": "Open Intelligence Router for LLM\u00a0Agents",
-    "subtitle": "Optimize your agent runtime to perform cheaper, safer, and better. Meet Runtime Routing Intelligence",
+    "subtitle": "Optimize your agent runtime to perform cheaper, safer, and better — and join an open intelligence network that any node can serve or consume from. Meet Runtime Routing Intelligence.",
     "ctaPrimary": "Get started",
     "timelineLabel": "See it in action — a 6-call agent session, routed in real time",
     "codeComment": "that's it"
@@ -178,6 +178,15 @@
       "description": "Permissionless and geo-neutral. Built for agents that transact on their own.",
       "vsSelf": "vs self-hosted: your identity, your jurisdiction"
     },
+    "whyTwoSided": {
+      "title": "Two-sided",
+      "brief": "consume or produce — same binary",
+      "description": "The same node that consumes inference can also serve it. Earn on idle capacity through the registry.",
+      "vsSelf": "vs single-purpose proxies: one binary, both sides"
+    },
+
+    "haveCapacity": "Have spare capacity?",
+    "registerProvider": "Register as Provider",
 
     "apiKeyLabel": "SETUP",
     "apiKeyIntro": "Pick an onboarding. Local proxy gives you full control; hosted needs zero install.",
@@ -189,7 +198,7 @@
     "sectionLabel": "ARCHITECTURE",
     "description": "One proxy between every agent runtime and every provider — cost-aware routing, protocol translation, and an agent firewall in a single hop.",
     "proxyMeta": "sub-10ms",
-    "caps": "routing · firewall · payments"
+    "caps": "routing · firewall · payments · peering"
   },
   "Footer": {
     "ctaHeading": "Start routing smarter.",

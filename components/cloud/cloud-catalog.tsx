@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { Search, X, ChevronRight, ArrowUpRight } from "lucide-react";
+import { Search, X, ChevronRight, ArrowUpRight, Box, Network } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
@@ -99,15 +99,143 @@ function formatCtx(n: number): string {
   return String(n);
 }
 
+// ── Curated Providers (v0 static; mirrors bitrouter-registry git repo) ──
+
+interface ProviderEntry {
+  operator: string;
+  endpointId: string;
+  serviceCount: number;
+  status: "active" | "suspended" | "retired";
+}
+
+const PROVIDERS: ProviderEntry[] = [
+  {
+    operator: "BitRouter Labs",
+    endpointId: "ed25519:7f3ac1d2…b41e",
+    serviceCount: 18,
+    status: "active",
+  },
+  {
+    operator: "Tempo Foundation",
+    endpointId: "ed25519:c41b8e09…2af0",
+    serviceCount: 12,
+    status: "active",
+  },
+  {
+    operator: "Cascade GPU Co-op",
+    endpointId: "ed25519:9a07f5bc…1e3d",
+    serviceCount: 6,
+    status: "active",
+  },
+  {
+    operator: "Edge Inference HK",
+    endpointId: "ed25519:2d4eaf18…77c1",
+    serviceCount: 9,
+    status: "active",
+  },
+  {
+    operator: "Helios Compute",
+    endpointId: "ed25519:51b7d0fa…a83e",
+    serviceCount: 4,
+    status: "suspended",
+  },
+];
+
+const REGISTRY_REPO_URL = "https://github.com/bitrouter/bitrouter-registry";
+
 // ── Component ────────────────────────────────────────────
 
+type CatalogTab = "services" | "providers";
+
 export function CloudCatalog() {
+  const [tab, setTab] = useState<CatalogTab>("services");
   const [search, setSearch] = useState("");
   const [providerFilter, setProviderFilter] = useState<Set<string>>(new Set());
   const [modalityFilter, setModalityFilter] = useState<Set<string>>(new Set());
 
   const { models, loading: llmLoading } = useLlms();
 
+  return (
+    <div>
+      {/* Tab strip — Services | Providers */}
+      <div className="flex border-b border-border">
+        {(
+          [
+            { key: "services" as const, label: "Services", icon: Box, count: models.length },
+            { key: "providers" as const, label: "Providers", icon: Network, count: PROVIDERS.length },
+          ]
+        ).map(({ key, label, icon: Icon, count }) => {
+          const active = tab === key;
+          return (
+            <button
+              key={key}
+              onClick={() => setTab(key)}
+              className={cn(
+                "relative inline-flex flex-1 items-center justify-center gap-2 px-4 py-2.5 font-mono text-[11px] uppercase tracking-widest transition-colors",
+                active
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <Icon className="size-3" />
+              {label}
+              {count > 0 && (
+                <span
+                  className={cn(
+                    "tabular-nums",
+                    active ? "text-foreground/60" : "text-muted-foreground/60",
+                  )}
+                >
+                  {count}
+                </span>
+              )}
+              {active && (
+                <span className="absolute inset-x-0 -bottom-px h-[2px] bg-foreground" />
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {tab === "services" ? (
+        <ServicesPane
+          models={models}
+          loading={llmLoading}
+          search={search}
+          setSearch={setSearch}
+          providerFilter={providerFilter}
+          setProviderFilter={setProviderFilter}
+          modalityFilter={modalityFilter}
+          setModalityFilter={setModalityFilter}
+        />
+      ) : (
+        <ProvidersPane providers={PROVIDERS} />
+      )}
+    </div>
+  );
+}
+
+// ── Services pane ────────────────────────────────────────
+
+function ServicesPane({
+  models,
+  loading,
+  search,
+  setSearch,
+  providerFilter,
+  setProviderFilter,
+  modalityFilter,
+  setModalityFilter,
+}: {
+  models: LlmEntry[];
+  loading: boolean;
+  search: string;
+  setSearch: (v: string) => void;
+  providerFilter: Set<string>;
+  setProviderFilter: (v: Set<string>) => void;
+  modalityFilter: Set<string>;
+  setModalityFilter: (v: Set<string>) => void;
+}) {
   return (
     <div>
       {/* Filter bar */}
@@ -182,18 +310,14 @@ export function CloudCatalog() {
         </div>
       )}
 
-      {/* Table body — flows with page */}
-      <div>
-        <LlmTable
-          models={models}
-          loading={llmLoading}
-          search={search}
-          providerFilter={providerFilter}
-          modalityFilter={modalityFilter}
-        />
-      </div>
+      <LlmTable
+        models={models}
+        loading={loading}
+        search={search}
+        providerFilter={providerFilter}
+        modalityFilter={modalityFilter}
+      />
 
-      {/* Footer CTA */}
       <div className="flex items-center justify-between border-t border-border px-3 py-2">
         <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
           Curated models for agent runtimes
@@ -206,6 +330,104 @@ export function CloudCatalog() {
         </Link>
       </div>
     </div>
+  );
+}
+
+// ── Providers pane ───────────────────────────────────────
+
+function ProvidersPane({ providers }: { providers: ProviderEntry[] }) {
+  return (
+    <div>
+      {/* Note strip — explains the registry */}
+      <div className="border-b border-border bg-muted/20 px-3 py-2">
+        <p className="text-[11px] leading-relaxed text-muted-foreground">
+          Permissioned in v0. Each provider is an independent BitRouter node
+          serving its capacity through the network. Listings sourced from{" "}
+          <a
+            href={REGISTRY_REPO_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-mono text-foreground hover:opacity-70"
+          >
+            bitrouter-registry
+          </a>
+          .
+        </p>
+      </div>
+
+      <ProviderTable providers={providers} />
+
+      <div className="flex items-center justify-between border-t border-border px-3 py-2">
+        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+          {providers.length} active operators · permissioned (v0)
+        </span>
+        <a
+          href={REGISTRY_REPO_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-widest text-foreground hover:opacity-70"
+        >
+          Open registry <ArrowUpRight className="size-3" />
+        </a>
+      </div>
+    </div>
+  );
+}
+
+function ProviderTable({ providers }: { providers: ProviderEntry[] }) {
+  return (
+    <table className="w-full text-xs">
+      <thead className="sticky top-12 z-10 bg-background">
+        <tr className="border-b border-border text-left font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+          <th className="px-3 py-2 font-medium">Operator</th>
+          <th className="px-3 py-2 font-medium">Endpoint</th>
+          <th className="px-3 py-2 font-medium text-right">Services</th>
+          <th className="px-3 py-2 font-medium text-right">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {providers.map((p) => (
+          <tr key={p.endpointId} className="border-b border-border/40">
+            <td className="px-3 py-2 text-foreground">{p.operator}</td>
+            <td className="px-3 py-2 font-mono text-muted-foreground">
+              {p.endpointId}
+            </td>
+            <td className="px-3 py-2 text-right font-mono tabular-nums text-muted-foreground">
+              {p.serviceCount}
+            </td>
+            <td className="px-3 py-2 text-right">
+              <StatusPill status={p.status} />
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+function StatusPill({ status }: { status: ProviderEntry["status"] }) {
+  const tone =
+    status === "active"
+      ? "text-emerald-600 dark:text-emerald-500"
+      : status === "suspended"
+        ? "text-amber-600 dark:text-amber-500"
+        : "text-muted-foreground";
+  const dot =
+    status === "active"
+      ? "bg-emerald-500"
+      : status === "suspended"
+        ? "bg-amber-500"
+        : "bg-muted-foreground/40";
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest",
+        tone,
+      )}
+    >
+      <span className={cn("inline-block size-1.5 rounded-full", dot)} />
+      {status}
+    </span>
   );
 }
 

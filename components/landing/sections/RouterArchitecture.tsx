@@ -46,15 +46,30 @@ const tools: LogoEntry[] = [
   { name: "Vercel", icon: Vercel },
 ];
 
+function PeerGlyph({ size = 14 }: { size?: number }) {
+  return (
+    <span
+      aria-hidden
+      className="inline-flex items-center justify-center font-mono text-foreground/70"
+      style={{ width: size, height: size, fontSize: size - 2, lineHeight: 1 }}
+    >
+      ◆
+    </span>
+  );
+}
+
 const providers: LogoEntry[] = [
   { name: "OpenAI", icon: OpenAI },
   { name: "Anthropic", icon: Anthropic },
   { name: "Google", icon: Google },
+  { name: "peer:7f3a…b41", icon: PeerGlyph },
   { name: "Mistral", icon: Mistral.Color },
   { name: "DeepSeek", icon: DeepSeek.Color },
+  { name: "peer:c41b…2af0", icon: PeerGlyph },
   { name: "Meta", icon: Meta.Color },
   { name: "Groq", icon: Groq },
   { name: "Cohere", icon: Cohere.Color },
+  { name: "peer:9a07…1e3d", icon: PeerGlyph },
 ];
 
 function LogoTile({ entry }: { entry: LogoEntry }) {
@@ -104,7 +119,7 @@ function LogoColumn({
 }
 
 function CenterNode({ metaLabel }: { metaLabel: string }) {
-  const layers = ["PROTOCOL", "ROUTING", "FIREWALL", "WALLET"];
+  const layers = ["PROTOCOL", "ROUTING", "FIREWALL", "WALLET", "NETWORK"];
   return (
     <div className="relative flex flex-col items-center">
       {/* Active-layer pulse ring */}
@@ -204,7 +219,7 @@ export async function RouterArchitecture() {
       <div className="grid grid-cols-[1fr_auto_1fr_1fr] items-center gap-2 px-3 pt-3 sm:gap-3 sm:px-4">
         <div className="text-center"><ColumnLabel>agents</ColumnLabel></div>
         <div className="min-w-[136px] text-center"><ColumnLabel>proxy</ColumnLabel></div>
-        <div className="text-center"><ColumnLabel>models</ColumnLabel></div>
+        <div className="text-center"><ColumnLabel>models · peers</ColumnLabel></div>
         <div className="text-center"><ColumnLabel>tools</ColumnLabel></div>
       </div>
 

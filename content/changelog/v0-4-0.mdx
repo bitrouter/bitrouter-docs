@@ -1,0 +1,13 @@
+---
+title: "v0.4.0 — Fable 5 on the balanced route"
+description: "Added Anthropic Fable 5 to the balanced route and cut cold-start latency."
+date: "2026-06-20"
+version: "v0.4.0"
+tags: ["models", "routing"]
+---
+
+We added **Fable 5** to the `bitrouter-balanced` route. Routine calls keep going to
+open models; Fable 5 now handles the harder calls that earn frontier pricing.
+
+- Faster cold starts on first request after idle.
+- No harness changes required.

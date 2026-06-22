@@ -36,6 +36,21 @@ export const blog = defineDocs({
   },
 });
 
+export const changelog = defineDocs({
+  dir: "content/changelog",
+  docs: {
+    schema: frontmatterSchema.extend({
+      date: z.string(), // ISO YYYY-MM-DD (required)
+      version: z.string().optional(),
+      tags: z.array(z.string()).optional(),
+      breaking: z.boolean().optional(),
+    }),
+  },
+  meta: {
+    schema: metaSchema,
+  },
+});
+
 export const legal = defineDocs({
   dir: "content/legal",
   docs: {

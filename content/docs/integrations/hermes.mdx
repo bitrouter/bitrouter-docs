@@ -1,0 +1,295 @@
+---
+title: Hermes
+description: Connect Nous Research's self-improving agent to BitRouter
+---
+
+# Hermes Integration
+
+## Quick Start
+
+```bash
+# 1. Start BitRouter with memory support
+bitrouter acp --enable-memory
+
+# 2. Configure Hermes
+hermes config set backend bitrouter
+hermes config set bitrouter.url http://127.0.0.1:4356
+
+# 3. Launch with persistent memory
+hermes start --memory persistent
+```
+
+## What You Get
+
+- ✅ **Persistent memory** - Learning that survives restarts
+- ✅ **Multi-provider learning** - Diverse model experiences
+- ✅ **Cost-optimized sessions** - Smart routing for long runs
+- ✅ **Learning trajectories** - Track improvement over time
+- ✅ **Research-ready** - Batch processing and exports
+
+## Installation
+
+### Prerequisites
+```bash
+# Install Hermes
+curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash
+
+# Verify 64k+ context models available
+bitrouter models list --min-context 64000
+```
+
+### Connect to BitRouter
+
+Choose your backend:
+
+#### Option 1: ACP Integration (Recommended)
+```bash
+hermes config set backend bitrouter
+hermes config set protocol acp
+hermes config set bitrouter.url http://127.0.0.1:4356
+hermes start --memory persistent
+```
+
+#### Option 2: Direct API
+```bash
+export HERMES_API_BASE=http://127.0.0.1:4356
+hermes start --provider custom
+```
+
+#### Option 3: Multi-Backend
+```bash
+hermes config set backends.primary bitrouter
+hermes config set backends.primary.url http://127.0.0.1:4356
+hermes start --multi-backend
+```
+
+## Essential Configuration
+
+### Memory-Optimized Routing
+
+```yaml
+# ~/.bitrouter/config.yaml
+routes:
+  # Learning operations - large context
+  - match: "hermes/learn/*"
+    provider: anthropic
+    model: claude-3-5-sonnet-latest
+    options:
+      max_tokens: 200000
+      
+  # Memory recall - fast access
+  - match: "hermes/recall/*"
+    provider: openai
+    model: gpt-4o
+    cache:
+      enabled: true
+      ttl: 3600
+      
+  # Self-improvement cycles
+  - match: "hermes/improve/*"
+    provider: anthropic
+    model: claude-3-5-sonnet-latest
+    options:
+      temperature: 0.9
+```
+
+### Persistent Memory Setup
+
+```yaml
+memory:
+  hermes:
+    type: persistent
+    backend: bitrouter
+    storage:
+      path: ~/.hermes/memory
+      encryption: true
+    sync:
+      enabled: true
+      interval: 300s
+    namespaces:
+      - name: general
+        max_size: 10MB
+      - name: code
+        max_size: 50MB
+```
+
+### Learning Cycles
+
+```yaml
+learning:
+  cycles:
+    - name: "daily_review"
+      schedule: "0 0 * * *"
+      route: "hermes/learn/review"
+      model: claude-3-5-sonnet-latest
+      
+    - name: "skill_improvement"
+      trigger: performance_threshold
+      route: "hermes/learn/skills"
+```
+
+## Common Recipes
+
+### Recipe: Research Mode
+```yaml
+research:
+  enabled: true
+  trajectory_export: true
+  batch_processing: true
+  routing:
+    control: "hermes/research/control"
+    treatment: "hermes/research/treatment"
+```
+
+### Recipe: Multi-Platform Memory
+```yaml
+platforms:
+  telegram:
+    route: "hermes/telegram/*"
+    memory_namespace: "telegram"
+  discord:
+    route: "hermes/discord/*"
+    memory_namespace: "discord"
+```
+
+### Recipe: Context Optimization
+```yaml
+context:
+  hermes:
+    strategy: sliding_window
+    window_sizes:
+      small: 8192
+      medium: 32768
+      large: 128000
+    auto_adjust: true
+```
+
+## Backend Options
+
+### Local Backend
+```bash
+# Docker backend
+hermes backend start --type docker \
+  --routing http://127.0.0.1:4356
+```
+
+### SSH Backend
+```bash
+# Remote compute
+hermes backend start --type ssh \
+  --host compute.example.com \
+  --tunnel 4356:4356
+```
+
+### Cloud Backends
+```bash
+# Modal backend
+hermes backend start --type modal \
+  --app hermes-agent
+
+# Singularity backend
+hermes backend start --type singularity \
+  --image hermes.sif
+```
+
+## Monitoring
+
+### Memory Analytics
+```bash
+# Memory usage
+bitrouter memory stats --agent hermes
+
+# Memory patterns
+bitrouter memory analyze --agent hermes --period week
+
+# Export snapshot
+bitrouter memory export --agent hermes --format json
+```
+
+### Learning Progress
+```bash
+# Track metrics
+bitrouter learning progress --agent hermes
+
+# View improvement
+bitrouter learning chart --agent hermes --metric accuracy
+
+# Export data
+bitrouter learning export --agent hermes --format csv
+```
+
+## Troubleshooting
+
+### 🔴 Memory Not Persisting
+```bash
+# Check memory backend
+hermes memory status
+
+# Verify BitRouter support
+bitrouter features list | grep memory
+
+# Test memory ops
+hermes memory test --verbose
+```
+
+### 🟡 Context Window Errors
+```bash
+# Check model capabilities
+bitrouter models list --min-context 64000
+
+# Adjust context
+hermes config set max_context 128000
+
+# Enable compression
+bitrouter config set compression.enabled true
+```
+
+### 🔵 Learning Loop Failures
+```bash
+# Check learning status
+hermes learning status
+
+# View error logs
+bitrouter logs --filter "hermes/learn"
+
+# Reset learning state
+hermes learning reset --confirm
+```
+
+## Advanced Features
+
+### Multi-Model Ensemble
+```yaml
+ensemble:
+  hermes:
+    models:
+      - provider: anthropic
+        model: claude-3-5-sonnet-latest
+        weight: 0.4
+      - provider: openai
+        model: gpt-4o
+        weight: 0.3
+      - provider: google
+        model: gemini-1.5-pro
+        weight: 0.3
+```
+
+### Skills Integration
+```yaml
+skills:
+  source: agentskills.io
+  routing:
+    - skill: "code-generation"
+      route: "hermes/skills/code"
+      model: deepseek-coder
+    - skill: "research"
+      route: "hermes/skills/research"
+      model: gpt-4o
+```
+
+## Learn More
+
+- 📚 [Hermes Documentation](https://github.com/NousResearch/hermes-agent)
+- 🧠 [Memory Guide](https://bitrouter.ai/docs/memory)
+- 🔬 [Research Examples](https://github.com/bitrouter/examples/hermes)
+- 💬 [Discord Community](https://discord.gg/G3zVrZDa5C)

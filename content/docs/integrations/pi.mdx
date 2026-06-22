@@ -1,0 +1,314 @@
+---
+title: Pi Agent
+description: Connect Pi's minimal terminal coding harness to BitRouter
+---
+
+# Pi Agent Integration
+
+## Quick Start
+
+```bash
+# 1. Start BitRouter
+bitrouter serve
+
+# 2. Configure Pi extension
+pi config set ai.provider custom
+pi config set ai.baseUrl http://127.0.0.1:4356
+
+# 3. Launch Pi
+pi
+```
+
+## What You Get
+
+- ✅ **Minimal & extensible** - Terminal-first with BitRouter routing
+- ✅ **Extension system** - Custom tools and workflows through BitRouter
+- ✅ **Session persistence** - Tree-structured JSONL sessions
+- ✅ **Smart compaction** - Context management with cheaper models
+- ✅ **Skills system** - On-demand capabilities via BitRouter
+
+## Installation
+
+### Prerequisites
+```bash
+# Install Pi (choose one)
+npm install -g @mariozechner/pi-coding-agent
+# Clone from GitHub: github.com/earendil-works/pi
+```
+
+### Connect to BitRouter
+
+Choose your method:
+
+#### Option 1: Extension-Based
+```typescript
+// pi-bitrouter-extension.ts
+import { Extension } from '@earendil-works/pi-coding-agent';
+
+export class BitRouterExtension extends Extension {
+  name = 'bitrouter';
+  
+  async initialize(pi) {
+    pi.config.set('ai.provider', 'custom');
+    pi.config.set('ai.baseUrl', 'http://127.0.0.1:4356');
+  }
+}
+```
+
+#### Option 2: Configuration File
+```javascript
+// ~/.pi/config.js
+module.exports = {
+  ai: {
+    provider: 'custom',
+    baseUrl: 'http://127.0.0.1:4356',
+    model: 'auto', // Let BitRouter handle routing
+  },
+  extensions: ['@pi/bitrouter-extension']
+};
+```
+
+#### Option 3: Environment Variables
+```bash
+export PI_AI_PROVIDER=custom
+export PI_AI_BASE_URL=http://127.0.0.1:4356
+pi
+```
+
+## Essential Configuration
+
+### Smart Task Routing
+
+```yaml
+# ~/.bitrouter/config.yaml
+routes:
+  # Main coding operations
+  - match: "pi/code/*"
+    provider: anthropic
+    model: claude-3-5-sonnet-latest
+    
+  # Quick operations
+  - match: "pi/quick/*"
+    provider: openai
+    model: gpt-4o-mini
+    
+  # Complex tasks
+  - match: "pi/complex/*"
+    provider: openai
+    model: o1-preview
+    
+  # Context compaction
+  - match: "pi/compaction/*"
+    provider: anthropic
+    model: claude-3-5-haiku-latest
+```
+
+### Compaction & Context
+
+```yaml
+compaction:
+  pi:
+    enabled: true
+    strategy:
+      type: custom
+      route: "pi/compaction/*"
+      model: claude-3-5-haiku-latest
+    thresholds:
+      context_usage: 0.8
+      message_count: 50
+    preserve:
+      - code_blocks
+      - error_messages
+      - user_instructions
+```
+
+### Session Management
+
+```yaml
+sessions:
+  pi:
+    structure: tree
+    persistence: jsonl
+    routing:
+      main: "pi/session/main/*"
+      branches: "pi/session/branch/*"
+    features:
+      auto_branch: true
+      session_replay: true
+    storage:
+      path: ~/.pi/sessions/
+      compression: true
+```
+
+## Common Recipes
+
+### Recipe: Extension Development
+```typescript
+// Enhanced BitRouter extension
+export class BitRouterEnhanced extends Extension {
+  name = 'bitrouter-enhanced';
+  
+  tools = [
+    {
+      name: 'route_optimize',
+      description: 'Optimize routing for task',
+      execute: async ({ task_type }) => {
+        const route = `pi/${task_type}/*`;
+        await this.pi.config.set('bitrouter.route', route);
+        return `Routing optimized for ${task_type}`;
+      }
+    }
+  ];
+}
+```
+
+### Recipe: Skills Integration
+```yaml
+# skill.yaml
+name: bitrouter-coding
+description: Enhanced coding with BitRouter
+instructions: |
+  Use BitRouter's intelligent routing:
+  - Complex algorithms: route through 'pi/complex'
+  - Quick edits: route through 'pi/quick'
+  - Documentation: route through 'pi/docs'
+tools: [file_operations, bitrouter_routing]
+```
+
+### Recipe: Package Distribution
+```json
+// package.json
+{
+  "name": "@custom/pi-bitrouter",
+  "version": "1.0.0",
+  "pi": {
+    "extensions": ["./dist/extension.js"],
+    "skills": ["./skills"],
+    "themes": ["./themes/bitrouter.json"]
+  }
+}
+```
+
+## Theme Customization
+
+### BitRouter Status Theme
+```typescript
+export const bitrouterTheme = {
+  name: 'bitrouter-status',
+  statusBar: {
+    left: ['mode', 'model'],
+    right: ['cost', 'latency', 'provider']
+  },
+  colors: {
+    primary: '#00A67E',
+    success: '#10B981',
+    warning: '#F59E0B'
+  },
+  indicators: {
+    routing: '🔀',
+    cached: '💾',
+    fallback: '🔄'
+  }
+};
+```
+
+## Monitoring
+
+### Session Analytics
+```bash
+# Monitor Pi sessions
+bitrouter sessions list --agent pi
+
+# Real-time metrics
+bitrouter monitor --agent pi --live
+
+# Export analytics
+bitrouter export analytics --agent pi --format csv
+```
+
+### Cost Tracking
+```bash
+# Pi agent costs
+bitrouter costs breakdown --agent pi
+
+# Set limits
+bitrouter budget set --agent pi --daily 10.00
+
+# Generate report
+bitrouter report generate --agent pi --period week
+```
+
+## Troubleshooting
+
+### 🔴 Connection Issues
+```bash
+# Check BitRouter
+curl http://127.0.0.1:4356/health
+
+# Pi configuration
+pi config show
+
+# Test connection
+pi debug connection --provider custom
+```
+
+### 🟡 Extension Problems
+```bash
+# List extensions
+pi extensions list
+
+# Reload extensions
+pi extensions reload
+
+# Debug extension
+pi debug extension bitrouter
+```
+
+### 🔵 Session Persistence
+```bash
+# Check session storage
+ls -la ~/.pi/sessions/
+
+# Validate JSONL
+pi session validate
+
+# Clear corrupted
+pi session clear --corrupted
+```
+
+## Advanced Features
+
+### Sub-Agent Orchestration
+```typescript
+export class SubAgentExtension extends Extension {
+  async createSubAgent(task) {
+    return {
+      name: `pi-sub-${task.id}`,
+      route: `pi/subagent/${task.type}/*`,
+      model: this.selectModelForTask(task)
+    };
+  }
+}
+```
+
+### Plan Mode Integration
+```yaml
+plan_mode:
+  pi:
+    enabled: true
+    route: "pi/planning/*"
+    features:
+      - auto_planning
+      - step_validation
+      - progress_tracking
+    model_selection:
+      planning: claude-3-5-sonnet-latest
+      execution: gpt-4o
+```
+
+## Learn More
+
+- 📚 [Pi Documentation](https://pi.dev/docs)
+- 🔧 [GitHub Repository](https://github.com/earendil-works/pi)
+- 📦 [Package Registry](https://npmjs.com/search?q=pi-coding-agent)
+- 💬 [Discord Community](https://discord.gg/G3zVrZDa5C)

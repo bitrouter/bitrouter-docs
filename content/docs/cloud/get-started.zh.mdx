@@ -1,0 +1,41 @@
+---
+title: Get Started
+description: 接入 BitRouter Cloud——登录、启用托管供应商，并发出第一个托管请求。
+---
+import { Callout } from 'fumadocs-ui/components/callout';
+
+这是面向**托管服务**的接入指南。要安装并运行二进制本身（自托管或云端），请先看[安装](/docs/get-started/installation)。
+
+## 1. 登录
+
+```bash
+bitrouter auth login
+```
+
+它对 BitRouter 授权服务器运行 RFC 8628 设备授权流程，打印一个批准 URL，并在本地存储令牌；令牌会自动刷新。每台机器只需登录一次。
+
+## 2. 启动代理
+
+```bash
+bitrouter start
+```
+
+登录后，**`bitrouter` 托管供应商会自动启用**——你可以调用[托管模型](/docs/cloud/managed-models)目录中的任意模型，无需任何上游供应商密钥。
+
+## 3. 你的第一个托管请求
+
+把 agent 指向本地代理（默认 `http://127.0.0.1:4356`），调用一个托管模型：
+
+```bash
+curl http://127.0.0.1:4356/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{"model":"moonshotai/kimi-k2.6","messages":[{"role":"user","content":"Hello"}]}'
+```
+
+## 计费
+
+按[托管模型](/docs/cloud/managed-models)中显示的价格**按请求计费**——一个钱包，无需逐个供应商注册。**失败的请求不计费。** 可在[控制台](https://cloud.bitrouter.ai)或 `bitrouter cloud …` 管理密钥、用量与账单。
+
+<Callout type="info">
+更想用自己的供应商账户，或想完全自己运行？都可以——参见 [BYOK](/docs/features/byok)、[本地与私有模型](/docs/features/local-models) 以及[自托管 vs 云](/docs/get-started/self-host-vs-cloud)。Cloud 账户是可选的，并能与上述任意方式组合。
+</Callout>

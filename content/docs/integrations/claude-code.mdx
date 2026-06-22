@@ -1,0 +1,274 @@
+---
+title: Claude Code
+description: Connect Anthropic's Claude Code to BitRouter for multi-provider routing
+---
+
+# Claude Code Integration
+
+## Quick Start
+
+```bash
+# 1. Start BitRouter
+bitrouter serve
+
+# 2. Configure Claude Code
+export ANTHROPIC_API_BASE=http://127.0.0.1:4356
+
+# 3. Launch Claude Code
+claude
+```
+
+## What You Get
+
+- ✅ **Multi-provider access** - Route to OpenAI, Google, DeepSeek beyond Anthropic
+- ✅ **Cost optimization** - Automatically use cheaper models for simple tasks
+- ✅ **Fallback providers** - Never get blocked by API outages
+- ✅ **Session tracking** - Monitor all Claude Code sessions in one place
+- ✅ **MCP gateway** - Access all MCP tools through BitRouter
+
+## Installation
+
+### Prerequisites
+```bash
+# Install Claude Code (choose one)
+winget install Anthropic.ClaudeCode  # Windows
+code --install-extension claude-code  # VS Code
+```
+
+### Connect to BitRouter
+
+Choose your integration method:
+
+#### Option 1: Simple API Proxy
+```bash
+export ANTHROPIC_API_BASE=http://127.0.0.1:4356
+claude
+```
+
+#### Option 2: ACP Protocol (Advanced)
+```bash
+# Terminal 1: Start BitRouter with ACP
+bitrouter acp
+
+# Terminal 2: Connect Claude Code
+claude --api-base http://127.0.0.1:4356 --protocol acp
+```
+
+#### Option 3: Skills Integration
+```bash
+# Auto-configure with skills
+npx skills add bitrouter/bitrouter
+claude
+```
+
+## Essential Configuration
+
+### Smart Task Routing
+
+```yaml
+# ~/.bitrouter/config.yaml
+routes:
+  # Heavy refactoring → Most capable model
+  - match: "claude-code/refactor/*"
+    provider: anthropic
+    model: claude-3-5-sonnet-latest
+    
+  # Test generation → Specialized model
+  - match: "claude-code/test/*"
+    provider: deepseek
+    model: deepseek-coder
+    
+  # Quick fixes → Fast & cheap model
+  - match: "claude-code/quick/*"
+    provider: openai
+    model: gpt-4o-mini
+    
+  # Documentation → Optimized model
+  - match: "claude-code/docs/*"
+    provider: anthropic
+    model: claude-3-5-haiku-latest
+```
+
+### High Availability Setup
+
+```yaml
+routes:
+  - match: "claude-code/*"
+    provider: anthropic
+    model: claude-3-5-sonnet-latest
+    fallback:
+      - provider: openai
+        model: gpt-4o
+      - provider: google
+        model: gemini-2.0-flash-exp
+```
+
+### Budget Controls
+
+```yaml
+budget:
+  claude-code:
+    limits:
+      hourly: 5.00
+      daily: 50.00
+    alerts:
+      - at: 80%
+        action: notify
+      - at: 100%
+        action: block
+```
+
+## Common Recipes
+
+### Recipe: Cost-Optimized Development
+```yaml
+# Route by task complexity
+routes:
+  - match: "claude-code/*"
+    rules:
+      - if: complexity == "simple"
+        model: gpt-4o-mini
+      - if: complexity == "moderate"
+        model: claude-3-5-haiku-latest
+      - if: complexity == "complex"
+        model: claude-3-5-sonnet-latest
+```
+
+### Recipe: Team Collaboration
+```bash
+# Export team config
+bitrouter config export > team-config.yaml
+
+# Team members import
+bitrouter config import team-config.yaml
+```
+
+### Recipe: MCP Tools Access
+```yaml
+mcp_servers:
+  - name: github
+    command: npx @modelcontextprotocol/server-github
+    
+  - name: filesystem
+    command: npx @modelcontextprotocol/server-filesystem
+    args: ["--root", "/code"]
+
+routes:
+  - match: "claude-code/*"
+    mcp_access: [github, filesystem]
+```
+
+## CLAUDE.md Configuration
+
+Enhance Claude Code's behavior with a project-specific config:
+
+```markdown
+<!-- CLAUDE.md in your project root -->
+# Project Configuration
+
+## BitRouter Settings
+- Use `claude-code/test/*` route for test generation
+- Use `claude-code/docs/*` route for documentation
+- Use `claude-code/refactor/*` route for major refactoring
+
+## Coding Standards
+- Follow existing code style
+- Write comprehensive tests
+- Document complex logic
+```
+
+## Monitoring
+
+### Real-time Session Tracking
+```bash
+# View active sessions
+bitrouter sessions list --agent claude-code
+
+# Monitor live session
+bitrouter monitor --agent claude-code --live
+
+# Export session data
+bitrouter sessions export <session-id> --format json
+```
+
+### Cost Analytics
+```bash
+# Current spending
+bitrouter costs show --agent claude-code
+
+# Daily breakdown
+bitrouter costs breakdown --agent claude-code --by day
+
+# Set spending alert
+bitrouter budget alert --agent claude-code --at 80%
+```
+
+## Troubleshooting
+
+### 🔴 Connection Issues
+```bash
+# Verify BitRouter is running
+curl http://127.0.0.1:4356/health
+
+# Check Claude Code config
+claude config show
+
+# Test with debug mode
+RUST_LOG=debug bitrouter serve
+claude --verbose
+```
+
+### 🟡 Performance Problems
+```bash
+# Benchmark providers
+bitrouter providers benchmark
+
+# Enable caching
+bitrouter config set cache.enabled true
+
+# Optimize routing
+bitrouter routes optimize --agent claude-code
+```
+
+### 🔵 Authentication Errors
+```bash
+# Validate all API keys
+bitrouter config validate
+
+# Test specific provider
+bitrouter providers test anthropic
+
+# Re-authenticate
+claude auth refresh
+```
+
+## Advanced Features
+
+### Context Window Management
+```yaml
+routes:
+  - match: "claude-code/*"
+    options:
+      max_tokens: 8192
+      compress_context: true
+      cache_enabled: true
+```
+
+### Custom Hooks
+```yaml
+hooks:
+  pre_request:
+    - name: security_scan
+      command: ./scan_request.sh
+      
+  post_response:
+    - name: log_activity
+      command: ./log_activity.sh
+```
+
+## Learn More
+
+- 📚 [Claude Code Documentation](https://docs.anthropic.com/claude-code)
+- 🎯 [BitRouter Skills](https://github.com/bitrouter/claude-code-skills)
+- 💡 [Example Configs](https://github.com/bitrouter/examples/claude-code)
+- 💬 [Discord Community](https://discord.gg/G3zVrZDa5C)

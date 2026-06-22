@@ -1,0 +1,6 @@
+{
+  "title": "Guides",
+  "icon": "Map",
+  "defaultOpen": false,
+  "pages": ["build-a-plugin", "self-host", "register-as-a-provider", "migrate-from-litellm", "migrate-from-openrouter"]
+}

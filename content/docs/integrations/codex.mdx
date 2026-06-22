@@ -1,0 +1,261 @@
+---
+title: Codex
+description: Connect OpenAI's Codex cloud engineering agent to BitRouter
+---
+
+# Codex Integration
+
+## Quick Start
+
+```bash
+# 1. Start BitRouter
+bitrouter serve
+
+# 2. Configure Codex CLI
+codex config set api.base http://127.0.0.1:4356
+
+# 3. Launch Codex
+codex init
+```
+
+## What You Get
+
+- ✅ **Multi-provider routing** - Beyond OpenAI models to Anthropic, Google, etc.
+- ✅ **Local control** - Manage cloud operations from your proxy
+- ✅ **Cost tracking** - Monitor parallel execution spending
+- ✅ **Fallback providers** - Never blocked by OpenAI limits
+- ✅ **Enhanced security** - Guardrails at the proxy layer
+
+## Installation
+
+### Prerequisites
+```bash
+# Install Codex CLI
+npm i -g @openai/codex
+
+# Or use desktop app
+# Download from chatgpt.com/codex
+```
+
+### Connect to BitRouter
+
+Choose your setup:
+
+#### Option 1: CLI Configuration
+```bash
+codex config set api.base http://127.0.0.1:4356
+codex config set api.protocol openai
+codex init
+```
+
+#### Option 2: Desktop App
+```bash
+export OPENAI_API_BASE=http://127.0.0.1:4356
+codex-app
+```
+
+#### Option 3: Browser Extension
+```javascript
+// In browser console
+localStorage.setItem('codex_api_base', 'http://127.0.0.1:4356');
+```
+
+## Essential Configuration
+
+### Smart Routing by Task
+
+```yaml
+# ~/.bitrouter/config.yaml
+routes:
+  # Main Codex operations
+  - match: "codex/main/*"
+    provider: openai
+    model: codex-1
+    
+  # Code review & analysis
+  - match: "codex/review/*"
+    provider: anthropic
+    model: claude-3-5-sonnet-latest
+    
+  # Test generation
+  - match: "codex/test/*"
+    provider: deepseek
+    model: deepseek-coder
+    
+  # Documentation
+  - match: "codex/docs/*"
+    provider: google
+    model: gemini-2.0-flash-exp
+```
+
+### Parallel Execution Support
+
+```yaml
+routes:
+  - match: "codex/parallel/*"
+    provider: openai
+    model: codex-1
+    options:
+      max_parallel: 5
+      timeout: 300s
+    load_balancing:
+      strategy: round_robin
+```
+
+### Automation Workflows
+
+```yaml
+automations:
+  issue_triage:
+    route: "codex/automation/triage"
+    provider: openai
+    model: gpt-4o
+    schedule: "*/15 * * * *"
+    
+  ci_monitoring:
+    route: "codex/automation/ci"
+    provider: anthropic
+    model: claude-3-5-haiku-latest
+    trigger: webhook
+```
+
+## Common Recipes
+
+### Recipe: High Availability
+```yaml
+routes:
+  - match: "codex/*"
+    provider: openai
+    model: codex-1
+    fallback:
+      - provider: anthropic
+        model: claude-3-5-sonnet-latest
+      - provider: google
+        model: gemini-2.0-flash-exp
+```
+
+### Recipe: Cost Optimization
+```yaml
+cloud_resources:
+  cost_limits:
+    hourly: 50.00
+    daily: 500.00
+  auto_scale:
+    enabled: true
+    min_instances: 2
+    max_instances: 20
+```
+
+### Recipe: Skills Integration
+```yaml
+skills:
+  routing:
+    - skill: "code-understanding"
+      provider: openai
+      model: codex-1
+    - skill: "prototyping"
+      provider: anthropic
+      model: claude-3-5-sonnet-latest
+```
+
+## Monitoring
+
+### Session Tracking
+```bash
+# List Codex sessions
+bitrouter sessions list --agent codex
+
+# View parallel execution
+bitrouter codex status --show-parallel
+
+# Export metrics
+bitrouter sessions export --agent codex --format csv
+```
+
+### Cost Analytics
+```bash
+# Spending breakdown
+bitrouter costs breakdown --agent codex
+
+# Set budget alert
+bitrouter budget set --agent codex --daily 100
+
+# Generate report
+bitrouter report generate --agent codex --period month
+```
+
+## Troubleshooting
+
+### 🔴 Connection Failed
+```bash
+# Check BitRouter
+curl http://127.0.0.1:4356/health
+
+# Verify Codex config
+codex config list
+
+# Reset API base
+codex config set api.base http://127.0.0.1:4356
+```
+
+### 🟡 Cloud Environment Issues
+```bash
+# Test connectivity
+bitrouter providers test openai
+
+# Check credentials
+codex auth status
+
+# Restart Codex
+codex restart
+```
+
+### 🔵 Performance Problems
+```bash
+# Analyze routing
+bitrouter performance analyze --agent codex
+
+# Optimize routes
+bitrouter routes optimize --agent codex
+
+# Clear cache
+bitrouter cache clear --agent codex
+```
+
+## Advanced Features
+
+### Environment Routing
+```yaml
+environments:
+  development:
+    route: "codex/dev/*"
+    provider: openai
+    model: gpt-4o
+    
+  production:
+    route: "codex/prod/*"
+    provider: openai
+    model: codex-1
+    guardrails:
+      - approval_required
+      - audit_log
+```
+
+### Security Guardrails
+```yaml
+guardrails:
+  codex:
+    - type: secret_detection
+      action: redact
+    - type: pii_protection
+      action: block
+    - type: code_security
+      scan_for: [sql_injection, xss]
+```
+
+## Learn More
+
+- 📚 [Codex Documentation](https://platform.openai.com/docs/guides/codex)
+- 🔧 [BitRouter Codex Skills](https://github.com/bitrouter/codex-skills)
+- 💡 [Cloud Integration Examples](https://github.com/bitrouter/examples/codex)
+- 💬 [Discord Community](https://discord.gg/G3zVrZDa5C)

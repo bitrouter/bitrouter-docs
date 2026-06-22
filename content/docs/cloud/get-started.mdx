@@ -1,0 +1,41 @@
+---
+title: Get Started
+description: Onboard to BitRouter Cloud — sign in, enable the managed provider, and make your first managed request.
+---
+import { Callout } from 'fumadocs-ui/components/callout';
+
+This is onboarding for the **hosted service**. To install and run the binary itself (self-hosted or Cloud), see [Installation](/docs/get-started/installation) first.
+
+## 1. Sign in
+
+```bash
+bitrouter auth login
+```
+
+This runs the RFC 8628 device-authorization flow against the BitRouter authorization server, prints an approval URL, and stores your tokens locally; they refresh automatically. You sign in once per machine.
+
+## 2. Start the proxy
+
+```bash
+bitrouter start
+```
+
+Once you're signed in, the **`bitrouter` managed provider auto-enables** — you can call any model in the [Managed Models](/docs/cloud/managed-models) catalog with no upstream provider keys.
+
+## 3. Your first managed request
+
+Point your agent at the local proxy (default `http://127.0.0.1:4356`) and call a managed model:
+
+```bash
+curl http://127.0.0.1:4356/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{"model":"moonshotai/kimi-k2.6","messages":[{"role":"user","content":"Hello"}]}'
+```
+
+## Billing
+
+You're billed **per request** at the prices shown in [Managed Models](/docs/cloud/managed-models) — one wallet, no per-provider signups. **Failed requests aren't billed.** Manage keys, usage, and billing from the [console](https://cloud.bitrouter.ai) or `bitrouter cloud …`.
+
+<Callout type="info">
+Prefer your own provider accounts, or want to run everything yourself? You can — see [BYOK](/docs/features/byok), [local & private models](/docs/features/local-models), and [Self-host vs Cloud](/docs/get-started/self-host-vs-cloud). A Cloud account is optional and composes with any of them.
+</Callout>

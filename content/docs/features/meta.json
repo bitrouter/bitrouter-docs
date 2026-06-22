@@ -1,0 +1,6 @@
+{
+  "title": "Features",
+  "icon": "Boxes",
+  "defaultOpen": false,
+  "pages": ["provider-selection", "model-fallback", "model-variants", "presets", "structured-outputs", "byok", "local-models", "guardrails", "observability", "mcp", "acp", "agentskills"]
+}

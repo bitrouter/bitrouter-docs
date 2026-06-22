@@ -1,0 +1,377 @@
+{
+  "Metadata": {
+    "title": "BitRouter — Agent-native LLM Router",
+    "description": "Agent-native LLM router that optimizes your agent with every run. Zero harness changes — every model call reliable, traceable, secure, and cost-effective. Open-sourced, Cloud opt-in."
+  },
+  "Header": {
+    "search": "Search",
+    "searchPlaceholder": "Type a command or search...",
+    "signIn": "Sign In / Sign Up",
+    "dashboard": "Dashboard",
+    "pagesHeading": "Pages",
+    "accountHeading": "Account",
+    "keys": "Keys",
+    "usage": "Usage",
+    "balance": "Balance",
+    "themeHeading": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "languageHeading": "Language",
+    "noResults": "No results found.",
+    "searchDescription": "Search pages and actions",
+    "themeToggle": "Toggle theme"
+  },
+  "Hero": {
+    "headline": "Agent-native LLM router that optimizes your agent with every run.",
+    "headlineRich": "Agent-native LLM router that optimizes your agent with <accent>every run</accent>.",
+    "subhead": "Zero harness changes — every model call reliable, traceable, secure, and cost-effective. Open-sourced, Cloud opt-in.",
+    "ctaPrimary": "Get API key"
+  },
+  "UseCases": {
+    "label": "USE CASES",
+    "dek": "Coding agents run into these first. Every autonomous agent runs into them eventually.",
+    "longRuns": {
+      "tab": "Long runs",
+      "name": "agent · run_8x2k",
+      "tagline": "Your coding agent is 140 files into a refactor when a provider rate-limits it, and the run dies. Every long agent loop breaks the same way — one blip, back to step zero.",
+      "points": [
+        {
+          "title": "Overnight jobs that finish",
+          "description": "Failover keeps long autonomous sessions alive when a single provider blips or throttles."
+        },
+        {
+          "title": "No babysitting rate limits",
+          "description": "A 429 or 503 reroutes to another provider instead of ending the run."
+        },
+        {
+          "title": "The agent never sees the failure",
+          "description": "Retries and reroutes happen inside the router — the agent loop just keeps going."
+        }
+      ]
+    },
+    "observability": {
+      "tab": "What it did",
+      "name": "billing · october",
+      "tagline": "Your coding agent ran all week and the bill is a single number. Which task, which step, which model burned it? Every agent fleet is the same black box.",
+      "points": [
+        {
+          "title": "Cost attributed per run",
+          "description": "See what a single run cost, rolled up from every call inside it."
+        },
+        {
+          "title": "Every hop, every model, traced",
+          "description": "The full call chain — each agent, model, and step — instead of one opaque total."
+        },
+        {
+          "title": "No more black-box bills",
+          "description": "Find the expensive step in a run instead of guessing from a monthly invoice."
+        }
+      ]
+    },
+    "security": {
+      "tab": "Acting unsupervised",
+      "name": "issue #4127",
+      "tagline": "A coding agent reads an issue, a README, a dependency — and any one can smuggle in an instruction you never wrote. Any agent reading the open web or a tool result faces the same, with no human watching.",
+      "points": [
+        {
+          "title": "Injection caught at the router",
+          "description": "Prompt-injection detection runs on every call, before the agent acts on it."
+        },
+        {
+          "title": "Secrets filtered from output",
+          "description": "Output filtering strips keys and secrets so an agent can't leak them downstream."
+        },
+        {
+          "title": "One policy for every agent",
+          "description": "Set guardrails once at the router — every agent on it inherits them."
+        }
+      ]
+    },
+    "efficiency": {
+      "tab": "Token spend",
+      "name": "receipt · run_8x2k",
+      "tagline": "A coding agent fires hundreds of calls a run, most of them trivial. Send every one to your strongest model and the bill is mostly waste — the same for any agent that loops.",
+      "points": [
+        {
+          "title": "Right model per step",
+          "description": "Cheap models for boilerplate, your strongest for the hard diffs — chosen automatically."
+        },
+        {
+          "title": "Up to −90% per run",
+          "description": "Routing by task complexity cuts the bill against an always-top-model baseline."
+        },
+        {
+          "title": "Savings that compound",
+          "description": "Every pipeline gets the same routing — the gain repeats across every run."
+        }
+      ]
+    }
+  },
+  "Footer": {
+    "ctaHeading": "Start routing smarter.",
+    "ctaPrimary": "Get started free",
+    "ctaSecondary": "Talk to us",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "brandKit": "Brand Kit",
+    "contact": "Contact",
+    "github": "GitHub",
+    "x": "Twitter/X",
+    "discord": "Discord",
+    "copyright": "© 2026 BitRouter",
+    "themeToggle": "Toggle theme",
+    "links": {
+      "blog": "Blog",
+      "providers": "Providers",
+      "enterprise": "Enterprise",
+      "changelog": "Changelog",
+      "careers": "About",
+      "brand": "Brand",
+      "privacy": "Privacy",
+      "terms": "Terms"
+    }
+  },
+  "Models": {
+    "metaTitle": "Models — BitRouter",
+    "metaDescription": "One API for the most performant, reliable models for LLM agents — across OpenAI, Anthropic, Google, Mistral, and more.",
+    "counterLabel": "Catalog",
+    "counterSuffix": "Models",
+    "headlineLead": "One API.",
+    "headlineTrail": "The most performant, reliable models for LLM agents.",
+    "subtitle": "Every model routable through BitRouter — filter by context window or price band, then copy the model ID into your client. Want to know which provider actually serves each model? <link>See the provider registry</link>.",
+    "ctaApiKey": "Get API key",
+    "ctaApiDocs": "API docs",
+    "ctaProviders": "Providers",
+    "statModels": "Models",
+    "statProviders": "Providers",
+    "endpointLabel": "Base URL",
+    "searchPlaceholder": "Search models…",
+    "loading": "Loading",
+    "modelsCount": "{filtered} / {total} models",
+    "reset": "Reset",
+    "emptyTitle": "No matching models",
+    "emptyBody": "Try removing a filter or clearing the search.",
+    "errorTitle": "Couldn’t load models",
+    "tableHeaderModel": "Model",
+    "tableHeaderContext": "Max Input",
+    "tableHeaderMaxOutput": "Max Output",
+    "tableHeaderInput": "Input / 1M",
+    "tableHeaderOutput": "Output / 1M",
+    "tableHeaderIntelligence": "Intelligence",
+    "tableHeaderCoding": "Coding",
+    "tableHeaderSpeed": "Speed",
+    "filtersTitle": "Filters",
+    "filtersTrigger": "Filters",
+    "filtersClearAll": "Clear all",
+    "filtersClearGroup": "Clear",
+    "filterProvider": "Provider",
+    "filterCapabilities": "Capabilities",
+    "filterContext": "Context window",
+    "filterPrice": "Input price",
+    "filterCache": "Caching",
+    "viewLabel": "View",
+    "viewTable": "Table view",
+    "viewList": "List view"
+  },
+  "ModelDetail": {
+    "back": "Back to catalog",
+    "ctaApiKey": "Get API key",
+    "overviewLabel": "Overview",
+    "statContext": "Context",
+    "statInput": "Input / 1M",
+    "statOutput": "Output / 1M",
+    "statModalities": "Modalities",
+    "quickstartLabel": "Quickstart",
+    "quickstartBody": "Drop the model ID into either endpoint — BitRouter speaks the OpenAI and Anthropic wire formats natively.",
+    "snippetOpenAI": "OpenAI-compatible",
+    "snippetAnthropic": "Anthropic-compatible",
+    "notFound": "Model not found — BitRouter",
+    "metaDescription": "Route {id} through BitRouter. {input} input, {output} output, {context} context."
+  },
+  "Providers": {
+    "metaTitle": "Providers — BitRouter",
+    "metaDescription": "The permissionless provider registry behind BitRouter. Browse every provider currently routing inference through the network, or PR your own.",
+    "counterLabel": "Registry",
+    "counterSuffix": "Providers",
+    "heroHeadlineLead": "Permissionless by default.",
+    "heroHeadlineTrail": "Every provider here is one YAML in a public repo — anyone can PR a new one.",
+    "heroBody": "These are the providers currently listed in <link>bitrouter/provider-registry</link>. There’s no gatekeeper, no application, no review queue — the proxy reads the registry, and BitRouter routes to whichever listed provider serves a given model fastest and cheapest.",
+    "ctaListProvider": "List your provider",
+    "ctaBrowseModels": "Browse models",
+    "ctaDocs": "Docs",
+    "heroStatProviders": "Providers",
+    "heroStatListings": "Listings",
+    "heroStatProtocols": "Protocols",
+    "howLabel": "How it works",
+    "howStep": "Step",
+    "howATitle": "Open a PR",
+    "howABody": "Add providers/yours.yaml — name, base URL, the models you serve, and your prices.",
+    "howBTitle": "Auto-merge & deploy",
+    "howBBody": "The schema check runs in CI. Once green, BitRouter picks up your listing on the next refresh.",
+    "howCTitle": "Get routed",
+    "howCBody": "When an agent calls a model you serve, BitRouter weighs price, latency, and your declared weight to decide.",
+    "listingsLabel": "Listings",
+    "emptyTitle": "Couldn’t load the registry",
+    "emptyBody": "The bitrouter/provider-registry repository returned no listings. Try again in a moment, or browse the registry directly on GitHub.",
+    "emptyCta": "Open registry",
+    "tableHeaderProvider": "Provider",
+    "rowModels": "Models",
+    "rowProtocols": "Protocols",
+    "rowRate": "Rate limit",
+    "rowFrom": "From",
+    "rowFromHint": "input / 1M",
+    "searchPlaceholder": "Search providers…",
+    "providersCount": "{filtered} / {total} providers",
+    "reset": "Reset",
+    "noMatchTitle": "No matching providers",
+    "noMatchBody": "Try a different search or clear the filter.",
+    "filtersTitle": "Filters",
+    "filtersTrigger": "Filters",
+    "filtersClearAll": "Clear all",
+    "filtersClearGroup": "Clear",
+    "filterStatus": "Status",
+    "filterProtocol": "Protocol",
+    "viewLabel": "View",
+    "viewTable": "Table view",
+    "viewList": "List view",
+    "contributeKicker": "Contribute",
+    "contributeHeadline": "Serve your capacity. Earn on every routed call.",
+    "contributeBody": "Whether you’re a frontier lab, a regional GPU host, or a hobbyist with a homelab — one PR makes you addressable from every BitRouter client on the network.",
+    "contributeCtaPr": "Open a PR",
+    "contributeCtaRegistry": "View registry"
+  },
+  "ProviderDetail": {
+    "back": "Back to providers",
+    "kickerLead": "Provider",
+    "kickerListed": "Listed {date}",
+    "body": "Listed in the BitRouter provider registry — rendered straight from the source YAML so what you see here is exactly what the proxy reads when it routes.",
+    "ctaYamlSource": "YAML source",
+    "ctaApiKey": "Get API key",
+    "overviewLabel": "Overview",
+    "statModels": "Models",
+    "statProtocols": "Protocols",
+    "statCheapest": "Cheapest input",
+    "statCheapestHint": "/ 1M tokens",
+    "statWeight": "Routing weight",
+    "statWeightHint": "higher = preferred",
+    "rateSectionLabel": "Rate limits & routing",
+    "rateLimitsHeading": "Limits",
+    "noRateLimits": "No rate limits declared in the YAML.",
+    "scopeLabel": "scope",
+    "protocolMappingHeading": "Protocol mapping",
+    "noProtocolMapping": "No protocol mapping declared.",
+    "modelListingsLabel": "Model listings",
+    "modelListingsBody": "The exact set of models {name} serves through BitRouter, with prices straight from the registry. Click any row to view the model in the catalog.",
+    "noModels": "No models listed in this provider’s YAML.",
+    "tableModelId": "Model ID",
+    "tableUpstreamSlug": "Upstream slug",
+    "tableInput": "Input",
+    "tableCacheRead": "Cache read",
+    "tableOutput": "Output",
+    "cheapestOutputCaption": "Cheapest output: {value} / 1M tokens. Prices in USD per million tokens.",
+    "notFound": "Provider not found — BitRouter",
+    "metaDescription": "{name} routes {count, plural, =0 {no models} =1 {one model} other {# models}} through BitRouter. Live from the open provider registry."
+  },
+  "FAQ": {
+    "label": "FAQ",
+    "supportingCopy": "Common questions about pricing, routing, and data handling. If yours isn’t here, <docs>check the docs</docs> or <call>talk to us</call> — we usually reply within a day.",
+    "title": "Questions before you ship.",
+    "subtitle": "Common questions about pricing, routing, and data handling.",
+    "questions": [
+      {
+        "q": "How is BitRouter different from OpenRouter?",
+        "a": "OpenRouter is a closed-source hosted gateway — no self-host option, no agent-native primitives, no permissionless registry. BitRouter is Apache 2.0: fork the binary and run it anywhere, or use the hosted edge if you don’t want to operate it. The provider registry is open — anyone can publish a provider via PR, no review queue."
+      },
+      {
+        "q": "How is BitRouter different from LiteLLM?",
+        "a": "LiteLLM is an open-source Python library you embed in your app. BitRouter is a standalone binary with auth, billing, observability, guardrails, and an MCP/ACP/Skills gateway built in. Drop it in front of any runtime — Claude Code, Cursor, your own agent — without wiring it into every service."
+      },
+      {
+        "q": "How does BitRouter guarantee service reliability?",
+        "a": "Every routing alias retries with exponential backoff and fails over cross-provider on 429s or upstream errors — a single provider outage doesn’t kill an agent run. Per-provider health and incident history are visible in the console. Failed requests aren’t billed."
+      },
+      {
+        "q": "How is the markup fee calculated?",
+        "a": "Added on top of the upstream provider’s published rate — 2% with USDC/USDT over x402/MPP, 5% with card (Stripe’s 3% fee absorbed). No token markup, no minimums, no monthly fee. Self-host has no platform fee at all."
+      },
+      {
+        "q": "How do I register as a provider on BitRouter?",
+        "a": "Open a PR against `bitrouter/provider-registry` with a YAML listing your name, base URL, the models you serve, prices, and routing weight. CI runs schema checks; once green, BitRouter picks up your listing on the next refresh and starts routing agent traffic. No application, no gatekeeper."
+      },
+      {
+        "q": "How do I self-host BitRouter?",
+        "a": "Pull the Apache 2.0 binary from `github.com/bitrouter/bitrouter` — single binary, no daemon, no GUI, no infrastructure dependencies. Drops into any container or CI step. You get the same routing, guardrails, MCP/ACP/Skills gateway, and observability as the hosted edge — without the platform fee."
+      }
+    ]
+  },
+  "Features": {
+    "label": "BUILT FOR AGENTS",
+    "dek": "Four mechanisms, built into the router — not bolted on per agent.",
+    "poweredLabel": "Powered by",
+    "reliability": {
+      "tab": "Reliability",
+      "body": "Reroutes across providers mid-run, transparently — your agent never sees the failed call.",
+      "powered": [
+        "Intent-aware routing",
+        "Multi-provider failover"
+      ]
+    },
+    "observability": {
+      "tab": "Observability",
+      "body": "Full call-chain visibility: every agent, every model, every step, with cost attributed per run.",
+      "powered": [
+        "Per-run cost attribution",
+        "Full call-chain traces"
+      ]
+    },
+    "security": {
+      "tab": "Security",
+      "body": "Prompt-injection detection, output filtering, and rate limits — enforced at the router, once, for every agent.",
+      "powered": [
+        "Router-level guardrails",
+        "Per-agent identity"
+      ]
+    },
+    "efficiency": {
+      "tab": "Efficiency",
+      "body": "Matches each call to the right model by task complexity — savings that compound across every run.",
+      "powered": [
+        "Model-per-task routing",
+        "Price-aware model selection"
+      ]
+    }
+  },
+  "CTA": {
+    "headlineLead": "Start routing in ",
+    "headlineAccent": "under a minute",
+    "headlineTrail": ".",
+    "dek": "One API key, every model. No monthly fees, no lock-in. Self-host or use the hosted edge.",
+    "ctaPrimary": "Get API key",
+    "pricing": "2% on usage · no platform fee under $10/mo",
+    "trustAvailability": "All systems operational",
+    "trustClients": "Claude Code · Cursor · Codex",
+    "trustMit": "Apache 2.0 · self-host the binary"
+  },
+  "LandingFooter": {
+    "tagline": "Open-source gateway for agent runtimes. Route to any model, any provider — one API.",
+    "statusPill": "all systems operational",
+    "baseline": "Built in the open · Apache 2.0",
+    "colProduct": "Product",
+    "colResources": "Resources",
+    "colCompany": "Company",
+    "models": "Models",
+    "providers": "Providers",
+    "pricing": "Pricing",
+    "enterprise": "Enterprise",
+    "status": "Status",
+    "docs": "Docs",
+    "quickstart": "Quickstart",
+    "apiReference": "API reference",
+    "changelog": "Changelog",
+    "blog": "Blog",
+    "brand": "Brand",
+    "careers": "About",
+    "terms": "Terms",
+    "privacy": "Privacy"
+  }
+}

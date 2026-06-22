@@ -1,0 +1,7 @@
+{
+  "title": "Health",
+  "description": "Liveness check.",
+  "pages": [
+    "ping"
+  ]
+}

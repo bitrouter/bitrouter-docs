@@ -1,0 +1,24 @@
+{
+  "Metadata": {
+    "title": "BitRouter — Agent 原生 LLM 路由",
+    "description": "Agent 原生 LLM 路由，随每次调用持续优化你的 Agent。无需修改现有 Harness — 每次模型调用都可靠、可追溯、安全且高效。开源，云端可选。"
+  },
+  "Header": {
+    "search": "搜索",
+    "searchPlaceholder": "输入命令或搜索...",
+    "signIn": "登录 / 注册",
+    "dashboard": "控制台",
+    "pagesHeading": "页面",
+    "accountHeading": "账户",
+    "keys": "密钥",
+    "usage": "用量",
+    "balance": "余额",
+    "themeHeading": "主题",
+    "light": "浅色",
+    "dark": "深色",
+    "languageHeading": "语言",
+    "noResults": "未找到结果。",
+    "searchDescription": "搜索页面和操作",
+    "themeToggle": "切换主题"
+  }
+}

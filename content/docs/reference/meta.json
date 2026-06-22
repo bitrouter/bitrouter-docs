@@ -1,0 +1,6 @@
+{
+  "title": "Reference",
+  "icon": "Library",
+  "defaultOpen": false,
+  "pages": ["cli", "api-reference"]
+}

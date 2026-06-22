@@ -1,0 +1,42 @@
+---
+title: Self-host vs Cloud
+description: BitRouter's core is identical whether you self-host or use the hosted service. Cloud adds SLA, team seats, support, billing, and the managed provider network.
+---
+
+BitRouter's core is **identical** whether you self-host the binary or use the hosted service. Every routing, fallback, model-variant, BYOK, local-model, guardrail, observability, MCP, ACP, and structured-output capability works exactly the same either way. The open-source binary is Apache 2.0 and free — bring your own keys or run a local model and you owe nothing beyond your own providers.
+
+A Cloud account is not a different product. It's an account and a provider network you can attach to **any** binary — including a self-hosted one — with `bitrouter auth login`. What it adds is operational and commercial, not gated inference features.
+
+## What a Cloud account adds
+
+- **SLA** — an uptime commitment on the hosted endpoint.
+- **Team seats & roles** — shared workspaces with per-member access control.
+- **Priority support** — direct support channels.
+- **Managed billing** — one wallet, billed per request; failed requests aren't billed.
+- **Hosted provider network** — the [managed provider](/docs/cloud/managed-models) (one account, no upstream keys), [discounted models](/docs/cloud/managed-models) (25% off open models), and [agentic payment](/docs/cloud/payment) (x402/MPP pay-per-use marketplace).
+
+None of these gate the core. You can run the open-source binary self-hosted and attach a Cloud account to it whenever you want the hosted network — the binary doesn't change.
+
+## Comparison
+
+| Capability | Self-hosted | Cloud |
+| --- | --- | --- |
+| Universal API + cross-protocol routing | ✅ | ✅ |
+| BYOK (bring your own provider keys) | ✅ | ✅ |
+| Local / private model serving | ✅ | ✅ |
+| Model fallback & provider selection | ✅ | ✅ |
+| Model variants & presets | ✅ | ✅ |
+| Guardrails | ✅ | ✅ |
+| Observability (CLI/TUI, OTLP export) | ✅ | ✅ |
+| MCP & ACP gateways | ✅ | ✅ |
+| Structured outputs | ✅ | ✅ |
+| SLA | — | ✅ |
+| Team seats & roles | — | ✅ |
+| Priority support | — | ✅ |
+| Managed billing | — | ✅ |
+| Hosted provider network & discounts | — | ✅ |
+| Agentic payment marketplace | — | ✅ |
+
+The `—` rows are commercial and network features, not core inference capabilities — those are all `✅`/`✅`.
+
+Ready to run it? See [Installation](/docs/get-started/installation).

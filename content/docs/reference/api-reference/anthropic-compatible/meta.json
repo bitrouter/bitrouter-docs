@@ -1,0 +1,7 @@
+{
+  "title": "Anthropic Compatible",
+  "description": "Anthropic-format endpoints. Drop-in compatible with the Anthropic Messages API.",
+  "pages": [
+    "createMessage"
+  ]
+}

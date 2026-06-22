@@ -1,0 +1,7 @@
+{
+  "title": "Open A I Compatible",
+  "description": "OpenAI Chat Completions format. Drop-in compatible with the OpenAI Chat Completions API — accepts the same request schema and returns the same response format.",
+  "pages": [
+    "createChatCompletion"
+  ]
+}

@@ -1,0 +1,154 @@
+---
+title: Local model servers
+description: Connect Ollama, vLLM, LM Studio, or llama.cpp to BitRouter — free, local, OpenAI-compatible.
+---
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+
+# Local model servers
+
+Run a model on your own machine and route it through BitRouter. Ollama, vLLM, LM Studio, and llama.cpp all expose an OpenAI-compatible API, so each one is a one-block addition to `bitrouter.yaml`. Everything stays on localhost — no cloud account, no per-token fee.
+
+## 1. Scaffold a config
+
+Generate a starter `bitrouter.yaml` (defaults to `./bitrouter.yaml`):
+
+```bash
+bitrouter init
+```
+
+This writes a commented config with `skip_auth: true`, ready for you to add a provider. Use `-c <path>` to write it elsewhere.
+
+## 2. Add your local server
+
+Pick your runtime. Each tab shows the provider block to drop into `bitrouter.yaml`, the command to start the server, and how to route to the model. `providers` is a map keyed by an id you choose; `api_base` is the server's OpenAI-compatible base URL; `api_protocol` is the upstream wire format (`chat_completions` for every OpenAI-compatible server — it's also the inferred default, so you may omit the block); each `models` entry is a model id the server serves.
+
+<Tabs items={['Ollama', 'vLLM', 'LM Studio', 'llama.cpp']}>
+<Tab value="Ollama">
+
+```yaml
+# bitrouter.yaml
+providers:
+  ollama:
+    api_base: http://localhost:11434/v1
+    api_protocol:
+      - "*": chat_completions
+    models:
+      - id: llama3.1
+```
+
+```bash
+# Start Ollama and pull the model (default port 11434)
+ollama serve &
+ollama pull llama3.1
+```
+
+Route to it by provider-qualified id (`provider:model`) or by the bare model name:
+
+```bash
+bitrouter route ollama:llama3.1
+```
+
+</Tab>
+<Tab value="vLLM">
+
+```yaml
+# bitrouter.yaml
+providers:
+  vllm:
+    api_base: http://localhost:8000/v1
+    api_protocol:
+      - "*": chat_completions
+    models:
+      - id: meta-llama/Llama-3.1-8B-Instruct
+```
+
+```bash
+# Start vLLM's OpenAI-compatible server (default port 8000)
+vllm serve meta-llama/Llama-3.1-8B-Instruct
+```
+
+```bash
+bitrouter route vllm:meta-llama/Llama-3.1-8B-Instruct
+```
+
+</Tab>
+<Tab value="LM Studio">
+
+```yaml
+# bitrouter.yaml
+providers:
+  lmstudio:
+    api_base: http://localhost:1234/v1
+    api_protocol:
+      - "*": chat_completions
+    models:
+      - id: llama-3.1-8b-instruct
+```
+
+```bash
+# Start LM Studio's local server (default port 1234)
+lms server start
+lms load llama-3.1-8b-instruct
+```
+
+```bash
+bitrouter route lmstudio:llama-3.1-8b-instruct
+```
+
+</Tab>
+<Tab value="llama.cpp">
+
+```yaml
+# bitrouter.yaml
+providers:
+  llamacpp:
+    api_base: http://localhost:8080/v1
+    api_protocol:
+      - "*": chat_completions
+    models:
+      - id: llama-3.1-8b-instruct
+```
+
+```bash
+# Start llama.cpp's OpenAI-compatible server (default port 8080)
+llama-server -m ./models/llama-3.1-8b-instruct.gguf
+```
+
+```bash
+bitrouter route llamacpp:llama-3.1-8b-instruct
+```
+
+</Tab>
+</Tabs>
+
+<Callout type="info">
+**No API key needed.** Local servers accept anonymous requests on loopback by default, so the provider block has no `api_key`. Add `api_key: ${MY_LOCAL_KEY}` only if you've put auth in front of your server — it resolves from the environment at load time.
+</Callout>
+
+## 3. Start BitRouter and send a request
+
+Start the proxy — it listens on `127.0.0.1:4356` by default:
+
+```bash
+bitrouter
+```
+
+Then hit the OpenAI-compatible endpoint with the model id from your config (swap in your provider id / model where shown):
+
+```bash
+curl http://localhost:4356/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "ollama:llama3.1",
+    "messages": [{"role": "user", "content": "Hello from a local model"}]
+  }'
+```
+
+The bare model name (`llama3.1`) also works — BitRouter auto-cascades it to whichever active provider declares it. The provider-qualified `ollama:llama3.1` form pins the request to that exact provider.
+
+<Callout type="info">
+**Mix local and hosted.** Declare a [virtual model](/docs/features/model-fallback) whose endpoints list your local provider first and a hosted one second: requests run on local hardware for free and fail over to the hosted model on error or overload — one model name, automatic failover.
+</Callout>
+
+For the concepts behind this — why front a local server, and the registry-detection alternative — see [Local & private models](/docs/features/local-models).

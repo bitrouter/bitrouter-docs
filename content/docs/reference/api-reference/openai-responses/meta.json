@@ -1,0 +1,7 @@
+{
+  "title": "Open A I Responses",
+  "description": "OpenAI Responses API format. Newer stateful-conversation surface; distinct request/response shape from `/v1/chat/completions`.",
+  "pages": [
+    "createResponse"
+  ]
+}

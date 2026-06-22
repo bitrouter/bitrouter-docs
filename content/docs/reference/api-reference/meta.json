@@ -1,0 +1,16 @@
+{
+  "title": "API Reference",
+  "defaultOpen": false,
+  "pages": [
+    "index",
+    "health",
+    "discovery",
+    "byok",
+    "observability",
+    "management",
+    "openai-compatible",
+    "openai-responses",
+    "anthropic-compatible",
+    "google-compatible"
+  ]
+}

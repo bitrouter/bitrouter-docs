@@ -1,0 +1,7 @@
+{
+  "title": "Google Compatible",
+  "description": "Google Generative Language API format. The URL encodes the model and streaming verb in a single segment (`models/{model}:generateContent` or `:streamGenerateContent`) — same convention as Google's own API.",
+  "pages": [
+    "googleGenerateContent"
+  ]
+}

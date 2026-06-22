@@ -1,0 +1,309 @@
+---
+title: KiloCode
+description: Connect KiloCode's multi-agent system to BitRouter for enhanced routing
+---
+
+# KiloCode Integration
+
+## Quick Start
+
+```bash
+# 1. Start BitRouter
+bitrouter serve
+
+# 2. Configure KiloCode CLI
+kilocode config set api.base http://127.0.0.1:4356
+
+# 3. Launch KiloCode
+kilocode start --router bitrouter
+```
+
+## What You Get
+
+- ✅ **Multi-agent routing** - Route Architect, Coder, Debugger, Analyst separately
+- ✅ **Budget dashboard** - Enhanced expense tracking with BitRouter
+- ✅ **500+ model support** - All through BitRouter's unified interface
+- ✅ **Smart loop breaking** - Prevent infinite loops across providers
+- ✅ **Role-based optimization** - Optimal models per agent specialization
+
+## Installation
+
+### Prerequisites
+```bash
+# Install KiloCode (choose one)
+code --install-extension kilocode  # VS Code
+npm install -g @kilocode/cli       # CLI
+# Download desktop app from kilocode.ai
+```
+
+### Connect to BitRouter
+
+Choose your setup:
+
+#### Option 1: VS Code Extension
+```json
+// .vscode/settings.json
+{
+  "kilocode.apiBase": "http://127.0.0.1:4356",
+  "kilocode.routing": "bitrouter"
+}
+```
+
+#### Option 2: CLI Configuration
+```bash
+kilocode config set api.base http://127.0.0.1:4356
+kilocode config set routing.enabled true
+kilocode start --router bitrouter
+```
+
+#### Option 3: Desktop App
+```bash
+export KILOCODE_API_BASE=http://127.0.0.1:4356
+kilocode-app
+```
+
+## Essential Configuration
+
+### Role-Based Agent Routing
+
+```yaml
+# ~/.bitrouter/config.yaml
+routes:
+  # Architect - planning & design
+  - match: "kilocode/architect/*"
+    provider: anthropic
+    model: claude-3-5-sonnet-latest
+    options:
+      temperature: 0.3
+    
+  # Coder - implementation
+  - match: "kilocode/coder/*"
+    provider: openai
+    model: gpt-4o
+    options:
+      temperature: 0.2
+    
+  # Debugger - fixing issues
+  - match: "kilocode/debugger/*"
+    provider: deepseek
+    model: deepseek-coder
+    options:
+      temperature: 0.1
+    
+  # Analyst - analysis & questions
+  - match: "kilocode/analyst/*"
+    provider: google
+    model: gemini-2.0-flash-exp
+    options:
+      temperature: 0.5
+```
+
+### Budget Management
+
+```yaml
+budget:
+  kilocode:
+    limits:
+      hourly: 10.00
+      daily: 100.00
+      monthly: 2000.00
+    per_agent_limits:
+      architect: 30.00/day
+      coder: 40.00/day
+      debugger: 20.00/day
+      analyst: 10.00/day
+    alerts:
+      - threshold: 80%
+        action: notify
+      - threshold: 100%
+        action: block
+```
+
+### Loop Breaking & Safety
+
+```yaml
+loop_breaker:
+  kilocode:
+    enabled: true
+    detection:
+      max_iterations: 10
+      similarity_threshold: 0.9
+      time_limit: 300s
+    actions:
+      - detect: infinite_loop
+        action: terminate
+      - detect: repetitive_output
+        action: switch_model
+      - detect: cost_spiral
+        action: pause
+```
+
+## Common Recipes
+
+### Recipe: Development Phase Modes
+```yaml
+modes:
+  kilocode:
+    planning:
+      primary_agent: architect
+      route: "kilocode/mode/planning/*"
+      model: claude-3-5-sonnet-latest
+    implementation:
+      primary_agent: coder
+      route: "kilocode/mode/coding/*"
+      model: gpt-4o
+    debugging:
+      primary_agent: debugger
+      route: "kilocode/mode/debug/*"
+      model: deepseek-coder
+```
+
+### Recipe: Cost Dashboard
+```yaml
+dashboard:
+  kilocode:
+    metrics:
+      - total_cost
+      - cost_per_agent
+      - cost_per_model
+      - tokens_used
+    export:
+      format: csv
+      schedule: daily
+```
+
+### Recipe: Multi-IDE Support
+```yaml
+ide_support:
+  vscode:
+    route_prefix: "kilocode/vscode"
+    features: [inline_completions, sidebar_chat, diff_view]
+  jetbrains:
+    route_prefix: "kilocode/jetbrains"
+    features: [code_inspections, refactoring, quick_fixes]
+  windsurf:
+    route_prefix: "kilocode/windsurf"
+    features: [cascade_mode, parallel_edits]
+```
+
+## Browser Automation
+
+### Web Development Support
+```yaml
+browser:
+  kilocode:
+    enabled: true
+    automation:
+      route: "kilocode/browser/*"
+      provider: openai
+      model: gpt-4o-vision
+    capabilities:
+      - dom_manipulation
+      - form_filling
+      - screenshot_analysis
+    safety:
+      sandbox_mode: true
+      max_actions_per_session: 50
+```
+
+## Monitoring
+
+### Agent Performance
+```bash
+# Monitor agents
+bitrouter agents monitor --name kilocode
+
+# Per-agent stats
+bitrouter agents stats --breakdown-by-role
+
+# Export performance
+bitrouter agents export --name kilocode --format json
+```
+
+### Budget Analytics
+```bash
+# Current spending
+kilocode budget status
+
+# Spending breakdown
+bitrouter costs breakdown --agent kilocode --group-by role
+
+# Set alerts
+bitrouter budget alert --agent kilocode --threshold 80%
+```
+
+## Troubleshooting
+
+### 🔴 Agent Not Responding
+```bash
+# Check agent status
+kilocode agents status
+
+# Verify BitRouter
+curl http://127.0.0.1:4356/health
+
+# Restart specific agent
+kilocode agent restart --name architect
+```
+
+### 🟡 Budget Exceeded
+```bash
+# Check usage
+kilocode budget usage
+
+# Adjust limits
+bitrouter budget set --agent kilocode --daily 150
+
+# Reset counter
+kilocode budget reset --confirm
+```
+
+### 🔵 Loop Detection Triggering
+```bash
+# View logs
+bitrouter logs --filter "loop_detection"
+
+# Adjust sensitivity
+kilocode config set loop_detection.sensitivity medium
+
+# Disable for debugging
+kilocode config set loop_detection.enabled false
+```
+
+## Advanced Features
+
+### Custom Agent Roles
+```yaml
+custom_agents:
+  kilocode:
+    - name: "security-auditor"
+      route: "kilocode/custom/security/*"
+      model: claude-3-5-sonnet-latest
+      capabilities: [vulnerability_scanning, code_audit]
+    - name: "performance-optimizer"
+      route: "kilocode/custom/performance/*"
+      model: gpt-4o
+      capabilities: [profiling, optimization]
+```
+
+### File Protection
+```yaml
+security:
+  kilocode:
+    file_freezing:
+      enabled: true
+      protected_patterns:
+        - "*.env"
+        - "**/secrets/*"
+        - "**/config/production/*"
+      freeze_on:
+        - production_branch
+        - sensitive_files
+```
+
+## Learn More
+
+- 📚 [KiloCode Documentation](https://docs.kilocode.ai)
+- 🎯 [Agent Roles Guide](https://kilocode.ai/best-practices)
+- 💡 [Integration Examples](https://github.com/bitrouter/kilocode-integration)
+- 💬 [Discord Community](https://discord.gg/G3zVrZDa5C)

@@ -1,0 +1,722 @@
+@import "tailwindcss";
+@import "fumadocs-ui/css/shadcn.css";
+@import "fumadocs-ui/css/preset.css";
+@import "fumadocs-openapi/css/preset.css";
+@import "../theme.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Website global styles — "mono" redesign brand, globalized.
+ * The redesign brand (previously scoped to .br-mono landing surfaces) is now
+ * the site default for every surface incl. docs + blog: Geist sans as the
+ * default UI face, a purple accent (--accent-brand #a779ff) for focus rings +
+ * content links, and a soft 7px radius scale. Semantic status stays ANSI
+ * (green/amber/red). Mono (JetBrains) is retained for the celled header/nav
+ * and terminals via --font-mono.
+ *
+ * Token chain:
+ *   --bp-* + shadcn semantic tokens   ← @repo/theme/theme.css (imported above)
+ *   brand overrides (font-sans, radius, ring, --color-fd-primary) ← this file,
+ *     placed after the import so they win for docs/blog/chrome too.
+ *   Landing-only component CSS stays scoped under .br-mono in mono.css.
+ */
+@theme inline {
+  /* Web-only accent + animations (keyframes are defined later in this file). */
+  --color-violet: var(--bp-violet);
+  --animate-fade-in: fade-in 0.3s ease-out;
+  --animate-fade-in-up: fade-in-up 0.4s ease-out;
+  --animate-slide-in-left: slide-in-left 0.3s ease-out;
+  --animate-marquee: marquee var(--duration) linear infinite;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+  /* ── Mono redesign brand: Geist sans default, soft 7px radius ── */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --radius: 0.4375rem; /* 7px */
+  --radius-sm: 0.25rem; /* 4px */
+  --radius-md: 0.375rem; /* 6px */
+  --radius-lg: 0.4375rem; /* 7px */
+  --radius-xl: 0.625rem; /* 10px */
+  --radius-2xl: 0.875rem; /* 14px */
+  --radius-3xl: 1.25rem; /* 20px */
+}
+
+/* ─── Web-only token: violet (decorative, used by some landing visuals) ─── */
+:root,
+.dark {
+  --bp-violet: #b4b4b4;
+
+  /* ── Mono redesign brand (globalized from .br-mono) ── */
+  --accent-brand: #a779ff;
+  --accent-brand-dim: rgba(167, 121, 255, 0.12); /* active sidebar pill fill */
+  /* Purple focus ring everywhere (overrides @repo/theme --ring = ink). */
+  --ring: var(--accent-brand);
+  --sidebar-ring: var(--accent-brand);
+  /* fumadocs link/accent token → brand purple (docs + blog). */
+  --color-fd-primary: var(--accent-brand);
+}
+
+/* ─── Docs: mono accent (no purple) ───
+   Keep the docs surface monochrome — content links, the fumadocs accent token,
+   the active-sidebar pill, and focus rings all resolve to ink instead of the
+   brand purple. Scoped to `#nd-notebook-layout` (the docs root) so the landing
+   / terminal brand purple is untouched. We re-declare the fumadocs tokens here
+   (not just `--accent-brand`) because `--color-fd-primary`/`--ring` were
+   already substituted to purple at :root and inherit as computed values. */
+#nd-notebook-layout {
+  --accent-brand: var(--foreground);
+  --accent-brand-dim: oklch(from var(--foreground) l c h / 0.1);
+  --color-fd-primary: var(--foreground);
+  --ring: var(--foreground);
+  --sidebar-ring: var(--foreground);
+}
+
+/* ─── Base layer ─── */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground flex min-h-screen flex-col;
+    /* Geist stylistic alternates — parity with the console body rendering. */
+    font-feature-settings: "ss01", "cv11";
+  }
+}
+
+/* ─── Fixed header offset ─── */
+/* CustomNav (id="nd-nav") is position:fixed, so it doesn't take up space in
+   the document flow. Layouts that mount it (HomeLayout / BlogLayout) need
+   body padding so content isn't hidden beneath. The docs layout uses a
+   sticky DocsHeader (id="nd-subnav") instead — sticky participates in flow,
+   no offset needed. */
+body:has(#nd-nav) {
+  padding-top: 48px;
+}
+
+/* ─── Sharp edges everywhere ─── */
+pre:has(code),
+[data-rehype-pretty-code-figure],
+[data-rehype-pretty-code-figure] pre,
+.nd-codeblock,
+figure[class*="code"] {
+  border-radius: 0 !important;
+}
+
+/* Inset code wells use the deepest paper tone in either mode */
+pre:has(code) {
+  background: var(--bp-paper-dark) !important;
+}
+
+/* ─── Drafting-board typography ───
+   Plain CSS classes (in @layer components so Tailwind utilities can override).
+   Spec sheet 03 — see design-system.html. */
+@layer components {
+  .h-display {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 80px;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+  }
+  .h-section {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 38px;
+    line-height: 1.05;
+    letter-spacing: -0.018em;
+  }
+  .h-card {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+  .body-prose {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--bp-ink-mid);
+  }
+  .body-prose-sm {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--bp-ink-mid);
+  }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--bp-amber);
+  }
+  .hud {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--bp-ink);
+  }
+  .meta-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--bp-ink-dim);
+  }
+
+  /* Marker — amber underline for one phrase per headline */
+  .marker {
+    position: relative;
+    display: inline-block;
+  }
+  .marker::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -6px;
+    height: 4px;
+    background: var(--bp-amber);
+  }
+
+  /* Highlight — amber wash for inline emphasis in section headlines */
+  .highlight {
+    background: var(--bp-amber-soft);
+    padding: 0 6px;
+    box-shadow: inset 0 -2px 0 var(--bp-amber);
+  }
+
+  /* Instrument-Serif italic accent — paired with display headlines for the
+     one-word italic emphasis used across landing section h2s.
+     Sized to optically match its sans neighbour at -1px tracking. */
+  .accent-italic {
+    font-family: var(--font-display-italic);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--bp-amber);
+    letter-spacing: -0.02em;
+  }
+
+  /* Drafting paper grid — decorative bg behind hero illustrations only */
+  .bp-grid {
+    background-color: var(--bp-paper);
+    background-image:
+      linear-gradient(to right, var(--bp-rule-soft) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--bp-rule-soft) 1px, transparent 1px),
+      linear-gradient(to right, var(--bp-rule) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--bp-rule) 1px, transparent 1px);
+    background-size:
+      20px 20px,
+      20px 20px,
+      100px 100px,
+      100px 100px;
+  }
+}
+
+/* ─── Content links ───
+   Scoped to long-form bodies only. fumadocs DocsBody renders `.prose`
+   (docs + blog) and the docs article lives under `#nd-page`; both `.prose a`
+   and `#nd-page a` cover them. Deliberately NOT `article a` — that would
+   recolor styled back-nav links on the provider/model detail pages.
+   `:not([data-card])` excludes fumadocs heading permalink anchors (which wrap
+   the heading text) and Card blocks. Color is `--accent-brand`, which is brand
+   purple on blog but re-mapped to ink inside `#nd-notebook-layout` (docs). */
+.prose a:not([data-card]),
+#nd-page a:not([data-card]) {
+  color: var(--accent-brand);
+  text-underline-offset: 3px;
+}
+/* Docs links are mono ink, so underline carries the affordance the color used
+   to. Scoped to `#nd-page` (docs article) — blog links keep purple, no rule. */
+#nd-page a:not([data-card]) {
+  text-decoration-line: underline;
+  text-decoration-color: oklch(from var(--foreground) l c h / 0.4);
+}
+.prose a:not([data-card]):hover,
+#nd-page a:not([data-card]):hover {
+  opacity: 0.85;
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+/* ─── Fumadocs sidebar overrides ─── */
+/* Soft 7px corners (brand), soft purple filled-pill active state, mono labels.
+   Radius is left to fumadocs defaults (rounded-lg → --radius-lg = 7px) — we no
+   longer force sharp 0px. */
+
+/* Sidebar items — font refinement */
+#nd-sidebar a {
+  font-size: 13px;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+/* Hover state — ultra-subtle background */
+#nd-sidebar a:hover {
+  background: oklch(from var(--foreground) l c h / 0.04) !important;
+}
+
+/* Active sidebar item — soft neutral filled pill (mono in docs via
+   `--accent-brand-dim`), ink text, medium weight. */
+#nd-sidebar a[data-active="true"] {
+  background: var(--accent-brand-dim) !important;
+  color: var(--foreground) !important;
+  font-weight: 500;
+}
+
+/* Separator / section labels — uppercase mono */
+#nd-sidebar p:not(:empty) {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted-foreground);
+  margin-top: 1rem;
+}
+
+/* Folder toggle buttons — mono styling */
+#nd-sidebar button[data-open] {
+  font-size: 13px;
+}
+
+/* Sidebar border — right edge separator on docs layout */
+#nd-sidebar {
+  border-right: 1px solid oklch(from var(--foreground) l c h / 0.06) !important;
+}
+
+/* ─── Docs layout: viewport-locked / app-shell scroll ───
+   The docs route (anything rendering `#nd-subnav`) locks the page to
+   viewport height and scrolls only inside `#nd-page` (the article in
+   `[grid-area:main]`). Effect: the header, sidebar, and TOC are fixed by
+   the grid and never move; only article body scrolls. Scoped via
+   `body:has(#nd-subnav)` so home/blog keep normal document scroll.
+
+   `min-height: 0` on the article is required: grid items default to
+   `min-height: auto` (= min-content), which would let the article push
+   row 3 past the viewport and break the lock. */
+body:has(#nd-subnav) {
+  overflow: hidden;
+  height: 100dvh;
+}
+
+body:has(#nd-subnav) #nd-notebook-layout {
+  height: 100dvh;
+  min-height: 0;
+}
+
+body:has(#nd-subnav) #nd-page {
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* TOC popover bleed-through fix kept as a defense-in-depth; it's effectively
+   inert under the app-shell scroll model (nothing scrolls under the popover
+   anymore), but harmless and protects against future layout regressions. */
+[data-toc-popover] > header.bg-fd-background\/80 {
+  background-color: var(--background) !important;
+}
+
+/* ─── Keyframe animations ─── */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    translate: -12px 0;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -6px;
+  }
+}
+
+@keyframes bitrouter-dash {
+  to {
+    stroke-dashoffset: -200;
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-100% - var(--gap)));
+  }
+}
+
+@keyframes marquee-vertical {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(calc(-100% - var(--gap)));
+  }
+}
+
+@keyframes bitrouter-beam {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+@keyframes bitrouter-beam-reverse {
+  0% {
+    transform: translateX(200%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* ─── Feature card mini-animations ───
+   Single signal — amber. Same timings/meaning as before, just the one color. */
+@keyframes feat-route-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 transparent;
+    border-color: var(--border);
+  }
+  15%, 30% {
+    box-shadow: 0 0 0 2px var(--bp-amber-soft);
+    border-color: var(--bp-amber);
+  }
+}
+
+@keyframes feat-shimmer {
+  0% {
+    background-position: -150% 0;
+  }
+  100% {
+    background-position: 250% 0;
+  }
+}
+
+@keyframes feat-blink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
+}
+
+@keyframes feat-tab-slide {
+  0%, 25% {
+    transform: translateX(0%);
+  }
+  33%, 58% {
+    transform: translateX(100%);
+  }
+  66%, 91% {
+    transform: translateX(200%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+@keyframes feat-travel {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(calc(100% - 0.5rem));
+    opacity: 0;
+  }
+}
+
+@keyframes feat-spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes feat-pill-pulse {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    filter: brightness(1);
+  }
+  20%, 35% {
+    transform: translateY(-1px) scale(1.04);
+    filter: brightness(1.15);
+  }
+}
+
+@keyframes feat-fade-cycle {
+  0%, 60%, 100% {
+    opacity: 0.25;
+  }
+  75%, 90% {
+    opacity: 1;
+  }
+}
+
+@keyframes feat-node-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+
+@keyframes feat-spark-draw {
+  0% {
+    stroke-dashoffset: 240;
+  }
+  60%, 100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes feat-arrow-slide {
+  0%, 100% {
+    transform: translateX(0);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translateX(2px);
+    opacity: 1;
+  }
+}
+
+@keyframes feat-matrix-flash {
+  0% {
+    opacity: 1;
+  }
+  18%, 100% {
+    opacity: 0;
+  }
+}
+
+@keyframes feat-trace-span {
+  0% {
+    transform: scaleX(0);
+    opacity: 0.35;
+  }
+  18% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  78% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  92% {
+    opacity: 0.25;
+  }
+  100% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+}
+
+/* ─── Landing-section animations ───
+   Shared by Hero, UseCases, Scenarios, CTA. */
+@keyframes ls-cyclefade {
+  0% {
+    opacity: 0;
+    translate: 0 -4px;
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    translate: 0 0;
+    filter: blur(0);
+  }
+}
+
+@keyframes ls-pillpulse {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes ls-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes ls-arrowslide {
+  0%, 100% {
+    transform: translateX(0);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translateX(3px);
+    opacity: 1;
+  }
+}
+
+@keyframes ls-matrixflash {
+  0%, 4% { opacity: 0; }
+  7% { opacity: 1; }
+  14% { opacity: 0.5; }
+  22%, 100% { opacity: 0; }
+}
+
+@keyframes ls-marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes ls-tracespan {
+  0% { transform: scaleX(0); opacity: 0.4; }
+  30% { transform: scaleX(1); opacity: 0.95; }
+  80% { opacity: 0.8; }
+  100% { transform: scaleX(1); opacity: 0.3; }
+}
+
+/* ─── Glass morphism feature animations ─── */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideRight {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes flowRight {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(200%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-feat-anim],
+  [data-feat-anim] *,
+  [data-ls-anim],
+  [data-ls-anim] * {
+    animation: none !important;
+  }
+}
+
+/* ─── Docs sidebar footer controls ───
+   The fumadocs notebook layout hard-hides the sidebar footer on desktop
+   (its controls are meant for the mobile drawer / navbar). We want the
+   language + theme controls at the bottom of the docs sidebar on desktop,
+   so un-hide just that one row on large screens. */
+@media (min-width: 1024px) {
+  div:has(> [data-sidebar-footer-controls]) {
+    display: flex !important;
+  }
+}
+

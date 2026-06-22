@@ -1,0 +1,7 @@
+{
+  "title": "Observability",
+  "description": "Operational metrics for scrapers. Not intended for human callers — Prometheus-format text exposition.",
+  "pages": [
+    "getMetrics"
+  ]
+}

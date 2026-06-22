@@ -1,0 +1,24 @@
+---
+title: Tools
+description: Tools are MCP servers — BitRouter's gateway proxies discovery and calls across many hosts through one endpoint.
+---
+
+On BitRouter, an agent's **tools** are [MCP](https://modelcontextprotocol.io) servers. Each MCP server exposes a set of callable tools — a search API, a database, a file system, a payment rail — that an agent can discover at runtime and invoke as part of a task.
+
+The catch is that those servers live in many places, each with its own address, its own auth, and its own way of being reached. An agent that wants to use ten tool servers normally has to know about ten endpoints.
+
+## Why a gateway
+
+BitRouter's **MCP gateway** sits in front of those servers and proxies them. Your agent connects to one BitRouter endpoint; behind it, the gateway forwards **tool discovery** and **tool calls** to the right upstream host and relays the responses back. One connection, many tool servers.
+
+Routing tools through a single gateway buys you three things you'd otherwise rebuild per agent:
+
+- **Uniform auth** — the agent authenticates once to BitRouter, instead of carrying credentials for every upstream tool server.
+- **Discovery** — tools across hosts are surfaced through one place, so an agent can find what's available without being pre-wired to each server.
+- **Policy** — because every tool call passes through the gateway, it's the natural place to enforce rules consistently rather than trusting each agent to behave.
+
+This mirrors how BitRouter treats models: instead of pointing your agent at many providers, you point it at one router that reaches all of them.
+
+## Learn how to
+
+- [MCP gateway](/docs/features/mcp) — proxy MCP servers so agents discover and call tools across hosts through one endpoint.

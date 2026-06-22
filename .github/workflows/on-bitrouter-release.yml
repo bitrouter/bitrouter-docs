@@ -1,0 +1,58 @@
+name: On BitRouter Release
+
+on:
+  repository_dispatch:
+    types: [bitrouter-release]
+
+jobs:
+  update-docs:
+    name: Update docs for new release
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - uses: anomalyco/opencode/github@latest
+        env:
+          BITROUTER_API_KEY: ${{ secrets.BITROUTER_API_KEY }}
+        with:
+          model: bitrouter/kimi-k2.5
+          prompt: |
+            BitRouter ${{ github.event.client_payload.tag }} was just released.
+
+            Fetch the release notes by running:
+              gh release view ${{ github.event.client_payload.tag }} --repo bitrouter/bitrouter --json body --jq '.body'
+
+            Based on the release notes, update the documentation in this repo.
+            The docs live under `content/docs/`.
+
+            1. Guides (content/docs/guides/):
+               - overview/  — what BitRouter is, quickstart and install steps, provider list, comparisons
+               - features/  — one page per feature: guardrails, observability, mcp, acp, agentskills, byok, cli, payment, presets, structured-outputs, workspaces
+               - routing/   — routing behaviour: model fallback, model and router variants, provider selection
+               Update the relevant EXISTING page(s) under these directories — match each
+               release note to the closest existing file. Do not invent new pages or paths.
+
+            2. Cookbook (content/docs/cookbook/):
+               - Update an integration/ or migration/ recipe if a release changes how
+                 users integrate with or migrate to BitRouter.
+
+            3. Chinese translations:
+               - For every .mdx file you modify, also update its .zh.mdx counterpart with the equivalent changes translated to Chinese
+
+            4. If there are breaking changes (feat!: or BREAKING CHANGE in the notes):
+               - Add a migration section to the relevant guide page
+
+            Do NOT touch the API reference (content/docs/reference/api-reference/) or
+            openapi.yaml: those are generated deterministically from the cloud's
+            OpenAPI spec and must not be hand-edited.
+
+            Only modify files where the release notes indicate actual changes. Do not make speculative edits.
+            Open a PR to main with branch chore/docs-${{ github.event.client_payload.tag }}.

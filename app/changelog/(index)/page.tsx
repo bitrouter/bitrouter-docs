@@ -61,6 +61,16 @@ export function generateMetadata(): Metadata {
   return {
     title: "Changelog - BitRouter",
     description: "Product updates and release notes for BitRouter.",
-    alternates: { canonical: "https://bitrouter.ai/changelog" },
+    alternates: {
+      canonical: "https://bitrouter.ai/changelog",
+      types: {
+        "application/rss+xml": [
+          { url: "/changelog/rss.xml", title: "BitRouter Changelog" },
+        ],
+        "application/atom+xml": [
+          { url: "/changelog/atom.xml", title: "BitRouter Changelog" },
+        ],
+      },
+    },
   };
 }

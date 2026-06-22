@@ -89,6 +89,16 @@ export const metadata: Metadata = {
   },
   description:
     "An open-source LLM router that sends routine calls to open models and pays frontier prices only for the calls that earn them. Zero harness changes. Open-sourced, Cloud opt-in.",
+  alternates: {
+    types: {
+      "application/rss+xml": [
+        { url: "/changelog/rss.xml", title: "BitRouter Changelog" },
+      ],
+      "application/atom+xml": [
+        { url: "/changelog/atom.xml", title: "BitRouter Changelog" },
+      ],
+    },
+  },
   openGraph: {
     type: "website",
     siteName: "BitRouter",

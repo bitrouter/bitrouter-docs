@@ -29,6 +29,7 @@ const NAV_ITEMS: NavItem[] = [
   { key: "enterprise", label: "Enterprise", webPath: "/enterprise" },
   { key: "pricing", label: "Pricing", webPath: "/pricing", hideWhenAuthed: true },
   { key: "blog", label: "Blog", webPath: "/blog" },
+  { key: "changelog", label: "Changelog", webPath: "/changelog" },
   { key: "docs", label: "Docs", webPath: "/docs" },
   { key: "download", label: "Download", webPath: "/docs/get-started/installation" },
 ];

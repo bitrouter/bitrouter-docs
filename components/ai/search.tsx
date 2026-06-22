@@ -28,7 +28,8 @@ export type ChatUIMessage = UIMessage<
   }
 >;
 
-export type SearchTool = Tool<{ query: string; limit: number }>;
+export type SearchSource = { url: string; title: string; content: string };
+export type SearchTool = Tool<{ query: string; locale?: string }, SearchSource[]>;
 
 const Context = createContext<{
   open: boolean;
@@ -264,6 +265,19 @@ const roleName: Record<string, string> = {
   assistant: 'bitrouter',
 };
 
+// Collapse heading/text hits down to unique pages (strip the #anchor) so the
+// citation list shows each source page once.
+function dedupeSources(sources: SearchSource[]): { url: string; title: string }[] {
+  const byPage = new Map<string, { url: string; title: string }>();
+  for (const s of sources) {
+    const pageUrl = s.url.split("#")[0];
+    if (!byPage.has(pageUrl)) {
+      byPage.set(pageUrl, { url: pageUrl, title: s.title });
+    }
+  }
+  return [...byPage.values()];
+}
+
 function Message({ message, ...props }: { message: ChatUIMessage } & ComponentProps<'div'>) {
   let markdown = '';
   const searchCalls: UIToolInvocation<SearchTool>[] = [];
@@ -298,17 +312,50 @@ function Message({ message, ...props }: { message: ChatUIMessage } & ComponentPr
       </div>
 
       {searchCalls.map((call) => {
+        if (call.state === "output-error" || call.state === "output-denied") {
+          return (
+            <div
+              key={call.toolCallId}
+              className="flex flex-row gap-2 items-center mt-3 rounded-lg border bg-fd-secondary text-fd-muted-foreground text-xs p-2"
+            >
+              <SearchIcon className="size-4" />
+              <p className="text-fd-error">{call.errorText ?? "Failed to search"}</p>
+            </div>
+          );
+        }
+
+        if (!call.output) {
+          return (
+            <div
+              key={call.toolCallId}
+              className="flex flex-row gap-2 items-center mt-3 rounded-lg border bg-fd-secondary text-fd-muted-foreground text-xs p-2"
+            >
+              <SearchIcon className="size-4" />
+              <p>Searching…</p>
+            </div>
+          );
+        }
+
+        const sources = dedupeSources(call.output);
+        if (sources.length === 0) return null;
+
         return (
-          <div
-            key={call.toolCallId}
-            className="flex flex-row gap-2 items-center mt-3 rounded-lg border bg-fd-secondary text-fd-muted-foreground text-xs p-2"
-          >
-            <SearchIcon className="size-4" />
-            {call.state === 'output-error' || call.state === 'output-denied' ? (
-              <p className="text-fd-error">{call.errorText ?? 'Failed to search'}</p>
-            ) : (
-              <p>{!call.output ? 'Searching…' : `${call.output.length} search results`}</p>
-            )}
+          <div key={call.toolCallId} className="mt-3">
+            <p className="mb-1.5 flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest text-fd-muted-foreground">
+              <SearchIcon className="size-3.5" />
+              Sources
+            </p>
+            <div className="flex flex-col gap-1">
+              {sources.map((s) => (
+                <a
+                  key={s.url}
+                  href={s.url}
+                  className="truncate text-xs text-fd-muted-foreground transition-colors hover:text-fd-primary"
+                >
+                  {s.title}
+                </a>
+              ))}
+            </div>
           </div>
         );
       })}

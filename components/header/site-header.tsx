@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { navItemsFor, resolveHref, type HeaderConfig } from "./nav-config";
+import { useChangelogUnseen } from "@/components/changelog/use-changelog-unseen";
 
 /**
  * Auth-aware site header for the marketing/docs website.
@@ -89,6 +90,7 @@ export function SiteHeaderBody({
 }: SiteHeaderProps): React.ReactElement {
   const isAuthed = Boolean(session);
   const items = navItemsFor(isAuthed);
+  const changelogUnseen = useChangelogUnseen();
   return (
     <div className="flex h-12 w-full items-center gap-1 px-3 sm:px-4">
       {leadingSlot ? <div className="flex items-center pr-1">{leadingSlot}</div> : null}
@@ -122,6 +124,9 @@ export function SiteHeaderBody({
               )}
             >
               {item.label}
+              {item.key === "changelog" && changelogUnseen && (
+                <span className="ml-1.5 inline-block size-1.5 rounded-full bg-primary align-middle" aria-label="New" />
+              )}
             </a>
           );
         })}
@@ -325,6 +330,7 @@ function MobileMenu({
   const [open, setOpen] = React.useState(false);
   const isAuthed = Boolean(session);
   const items = navItemsFor(isAuthed);
+  const changelogUnseen = useChangelogUnseen();
 
   return (
     <div className="flex items-center lg:hidden">
@@ -364,6 +370,9 @@ function MobileMenu({
                 className="rounded-[9px] px-3 py-2.5 font-mono text-[13px] lowercase tracking-tight text-muted-foreground transition-colors hover:bg-foreground/[0.05] hover:text-foreground"
               >
                 {item.label}
+                {item.key === "changelog" && changelogUnseen && (
+                  <span className="ml-1.5 inline-block size-1.5 rounded-full bg-primary align-middle" aria-label="New" />
+                )}
               </a>
             ))}
             <div className="mt-2 flex items-center gap-2">

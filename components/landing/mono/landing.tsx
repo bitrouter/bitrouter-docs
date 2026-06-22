@@ -1394,7 +1394,7 @@ export function MonoFooter() {
         ["Docs", "/docs"],
         ["Quickstart", "/docs/get-started/quickstart"],
         ["API reference", "/docs/reference/api-reference"],
-        ["Changelog", "/docs/reference/changelog"],
+        ["Changelog", "/changelog"],
         ["Blog", "/blog"],
       ],
     },

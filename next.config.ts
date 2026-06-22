@@ -101,11 +101,6 @@ const nextConfig: NextConfig = {
       { source: "/zh/blog", destination: "/blog", permanent: true },
       { source: "/zh/blog/:slug", destination: "/blog/:slug", permanent: true },
 
-
-      { source: "/changelog", destination: "/docs/reference/changelog", permanent: true },
-      { source: "/zh/changelog", destination: "/zh/docs/reference/changelog", permanent: true },
-      { source: "/changelog/:slug", destination: "/docs/reference/changelog/:slug", permanent: true },
-      { source: "/zh/changelog/:slug", destination: "/zh/docs/reference/changelog/:slug", permanent: true },
       {
         source: "/docs/overview/privacy-policy",
         destination: "/legal/privacy",

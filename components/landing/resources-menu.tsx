@@ -31,7 +31,7 @@ type ResourceItem = {
 export const RESOURCE_ITEMS: ResourceItem[] = [
   { label: "Blog", description: "Engineering, product, and updates", href: "/blog", icon: FileText },
   { label: "Enterprise", description: "Dedicated infra, residency, SLAs", href: "/enterprise", icon: Building2 },
-  { label: "Changelog", description: "Latest releases and improvements", href: "/docs/reference/changelog", icon: GitBranch },
+  { label: "Changelog", description: "Latest releases and improvements", href: "/changelog", icon: GitBranch },
   { label: "About", description: "Who we are", href: "/about", icon: Users },
   { label: "Brand", description: "Logos and guidelines", href: "/brand", icon: Palette },
   { label: "Privacy", description: "Privacy policy", href: "/legal/privacy", icon: Scale },

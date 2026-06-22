@@ -30,8 +30,9 @@ export function ChangelogFeed({ items }: { items: ChangelogItem[] }) {
 
   return (
     <div>
+      {/* Tag filter */}
       {tags.length > 0 && (
-        <div className="mb-8 flex flex-wrap gap-2">
+        <div className="mt-6 flex flex-wrap gap-2">
           <TagChip
             label="All"
             active={activeTag === null}
@@ -49,43 +50,54 @@ export function ChangelogFeed({ items }: { items: ChangelogItem[] }) {
       )}
 
       {groups.map((group) => (
-        <section key={group.label} className="mb-10">
-          <h2 className="mb-4 font-mono text-xs uppercase tracking-widest text-muted-foreground">
-            {group.label}
-          </h2>
+        <section key={group.label} className="mt-10 first:mt-8">
+          {/* Month divider: "── JUNE 2026 ──────────────" */}
+          <div className="mb-2 flex items-center gap-3">
+            <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
+              {group.label}
+            </span>
+            <span className="h-px flex-1 bg-border" />
+          </div>
+
           <div className="flex flex-col">
             {group.items.map((entry) => (
               <a
                 key={entry.url}
                 href={entry.url}
-                className="group flex items-start gap-5 border-b border-border py-6 transition-colors first:pt-0 last:border-b-0"
+                className="group block border-b border-border/60 py-5 last:border-b-0"
               >
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="text-base font-medium tracking-tight transition-colors group-hover:text-foreground">
-                      {entry.title}
-                    </h3>
-                    {entry.breaking && (
-                      <span className="rounded border border-red-500/40 px-1.5 py-0.5 font-mono text-[10px] uppercase text-red-500">
-                        Breaking
-                      </span>
-                    )}
-                  </div>
-                  {entry.description && (
-                    <p className="mt-1.5 line-clamp-2 text-sm text-muted-foreground">
-                      {entry.description}
-                    </p>
+                {/* Meta line: date · version · BREAKING · tags */}
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-xs text-muted-foreground/70">
+                  <time>{entry.date.replaceAll("-", "·")}</time>
+                  {entry.version && (
+                    <span className="text-muted-foreground">
+                      {entry.version}
+                    </span>
                   )}
-                  <div className="mt-3 flex flex-wrap items-center gap-2 font-mono text-xs text-muted-foreground/60">
-                    {entry.version && <span>{entry.version}</span>}
-                    {entry.tags.map((tag) => (
-                      <span key={tag} className="rounded bg-muted/40 px-1.5 py-0.5">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
+                  {entry.breaking && (
+                    <span className="rounded border border-red-500/40 px-1.5 py-0.5 text-[10px] uppercase text-red-500">
+                      Breaking
+                    </span>
+                  )}
+                  {entry.tags.map((tag) => (
+                    <span key={tag} className="rounded bg-muted/40 px-1.5 py-0.5">
+                      {tag}
+                    </span>
+                  ))}
                 </div>
-                <ArrowRight className="mt-1 hidden size-4 shrink-0 text-muted-foreground/30 transition-all group-hover:translate-x-0.5 group-hover:text-foreground sm:block" />
+
+                {/* Title */}
+                <h3 className="mt-2 flex items-center gap-2 text-base font-medium tracking-tight transition-colors group-hover:text-foreground">
+                  {entry.title}
+                  <ArrowRight className="size-4 shrink-0 text-muted-foreground/30 opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100" />
+                </h3>
+
+                {/* Description */}
+                {entry.description && (
+                  <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+                    {entry.description}
+                  </p>
+                )}
               </a>
             ))}
           </div>

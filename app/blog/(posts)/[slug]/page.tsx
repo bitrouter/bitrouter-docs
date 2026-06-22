@@ -1,11 +1,8 @@
 import { blogSource } from "@/lib/source";
-import {
-  DocsBody,
-  DocsDescription,
-  DocsPage,
-  DocsTitle,
-} from "fumadocs-ui/layouts/flux/page";
+import { DocsBody } from "fumadocs-ui/page";
 import { notFound } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { getMDXComponents } from "@/mdx-components";
 import { setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
@@ -22,15 +19,44 @@ export default async function BlogPostPage({ params }: Props) {
   if (!page) notFound();
 
   const MDX = page.data.body;
+  const date = page.data.lastModified
+    ? new Date(page.data.lastModified).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        timeZone: "UTC",
+      })
+    : null;
 
   return (
-    <DocsPage toc={page.data.toc} full={page.data.full}>
-      <DocsTitle>{page.data.title}</DocsTitle>
-      <DocsDescription>{page.data.description}</DocsDescription>
-      <DocsBody>
+    <main className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6">
+      <Link
+        href="/blog"
+        className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <ArrowLeft className="size-3.5" />
+        Blog
+      </Link>
+
+      {date && (
+        <div className="mt-6 font-mono text-xs text-muted-foreground">
+          <time>{date}</time>
+        </div>
+      )}
+
+      <h1 className="mt-3 text-3xl font-medium tracking-tight">
+        {page.data.title}
+      </h1>
+      {page.data.description && (
+        <p className="mt-2 text-base leading-relaxed text-muted-foreground">
+          {page.data.description}
+        </p>
+      )}
+
+      <DocsBody className="mt-8">
         <MDX components={getMDXComponents({})} />
       </DocsBody>
-    </DocsPage>
+    </main>
   );
 }
 

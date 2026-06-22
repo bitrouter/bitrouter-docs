@@ -29,7 +29,7 @@ export async function SiteFooter() {
             <FooterLink href="/blog" label={t("links.blog")} />
             <FooterLink href="/providers" label={t("links.providers")} />
             <FooterLink href="/enterprise" label={t("links.enterprise")} />
-            <FooterLink href="/docs/reference/changelog" label={t("links.changelog")} />
+            <FooterLink href="/changelog" label={t("links.changelog")} />
             <FooterLink href="/about" label={t("links.careers")} />
             <FooterLink href="/brand" label={t("links.brand")} />
             <FooterLink href="/legal/privacy" label={t("links.privacy")} />

@@ -19,6 +19,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/cn";
+import { useChangelogUnseen } from "@/components/changelog/use-changelog-unseen";
 import { SOCIAL_LINKS } from "./social-links";
 
 type ResourceItem = {
@@ -31,7 +32,7 @@ type ResourceItem = {
 export const RESOURCE_ITEMS: ResourceItem[] = [
   { label: "Blog", description: "Engineering, product, and updates", href: "/blog", icon: FileText },
   { label: "Enterprise", description: "Dedicated infra, residency, SLAs", href: "/enterprise", icon: Building2 },
-  { label: "Changelog", description: "Latest releases and improvements", href: "/docs/reference/changelog", icon: GitBranch },
+  { label: "Changelog", description: "Latest releases and improvements", href: "/changelog", icon: GitBranch },
   { label: "About", description: "Who we are", href: "/about", icon: Users },
   { label: "Brand", description: "Logos and guidelines", href: "/brand", icon: Palette },
   { label: "Privacy", description: "Privacy policy", href: "/legal/privacy", icon: Scale },
@@ -50,6 +51,7 @@ export function ResourcesTabCell() {
   const pathname = usePathname();
   const normalizedPath = pathname.replace(/^\/(en|zh)/, "") || "/";
   const isActive = RESOURCE_PREFIXES.some((p) => normalizedPath.startsWith(p));
+  const changelogUnseen = useChangelogUnseen();
 
   const [featuredA, featuredB, ...secondary] = RESOURCE_ITEMS;
 
@@ -105,6 +107,9 @@ export function ResourcesTabCell() {
         {isActive && (
           <span className="absolute inset-x-0 bottom-0 h-[2px] bg-foreground/50" />
         )}
+        {changelogUnseen && (
+          <span className="absolute right-2 top-2.5 size-1.5 rounded-full bg-foreground" />
+        )}
       </PopoverTrigger>
       <PopoverContent
         align="end"
@@ -122,7 +127,11 @@ export function ResourcesTabCell() {
         {/* Secondary row — 4 cells */}
         <div className="grid grid-cols-4 divide-x divide-border border-t border-border">
           {secondary.map((item) => (
-            <SecondaryCell key={item.href} item={item} />
+            <SecondaryCell
+              key={item.href}
+              item={item}
+              showDot={item.href === "/changelog" && changelogUnseen}
+            />
           ))}
         </div>
 
@@ -164,7 +173,13 @@ function FeaturedCard({ item }: { item: ResourceItem }) {
   );
 }
 
-function SecondaryCell({ item }: { item: ResourceItem }) {
+function SecondaryCell({
+  item,
+  showDot = false,
+}: {
+  item: ResourceItem;
+  showDot?: boolean;
+}) {
   const Icon = item.icon;
   return (
     <Link
@@ -173,6 +188,9 @@ function SecondaryCell({ item }: { item: ResourceItem }) {
     >
       <Icon className="size-3.5 text-muted-foreground transition-colors group-hover:text-foreground" />
       <span className="text-xs font-medium text-foreground">{item.label}</span>
+      {showDot && (
+        <span className="size-1.5 rounded-full bg-foreground" aria-label="New" />
+      )}
     </Link>
   );
 }

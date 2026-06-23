@@ -1,10 +1,10 @@
 ---
 title: 本地与私有模型
-description: 让 BitRouter 指向你自己的本地或私有模型服务 —— Ollama、vLLM、LM Studio、llama.cpp，或任何 OpenAI 兼容端点。本地模式 100% 免费。
+description: 让 BitRouter 指向你自己的本地或私有模型服务 —— Ollama、vLLM、LM Studio、Unsloth，或任何 OpenAI 兼容端点。本地模式 100% 免费。
 ---
 import { Callout } from 'fumadocs-ui/components/callout';
 
-让开源的 `bitrouter` 二进制对接运行在你自己机器上的模型服务 —— Ollama、vLLM、LM Studio、llama.cpp，或任何 OpenAI 兼容端点 —— 整条链路都留在 localhost。无需云账户，无按 token 计费，密钥也不会离开你的机器。这就是**本地模式**，完全免费。
+让开源的 `bitrouter` 二进制对接运行在你自己机器上的模型服务 —— Ollama、vLLM、LM Studio、Unsloth，或任何 OpenAI 兼容端点 —— 整条链路都留在 localhost。无需云账户，无按 token 计费，密钥也不会离开你的机器。这就是**本地模式**，完全免费。
 
 ## 为什么要让本地模型走 BitRouter
 
@@ -18,7 +18,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ### 1. 通过配置文件接入 OpenAI 兼容端点
 
-大多数本地服务（Ollama、vLLM、LM Studio、llama.cpp）都暴露一个 OpenAI 兼容的 `/v1` API。在 `bitrouter.yaml` 中把它们声明为一个 provider，`api_base` 指向本地 URL：
+大多数本地服务（Ollama、vLLM、LM Studio、Unsloth）都暴露一个 OpenAI 兼容的 `/v1` API。在 `bitrouter.yaml` 中把它们声明为一个 provider，`api_base` 指向本地 URL：
 
 ```yaml
 providers:
@@ -32,14 +32,14 @@ providers:
 
 `providers` 是一个以你自选的 provider id 为键的映射（这里是 `ollama`）。`api_base` 是服务的基础 URL；`api_protocol` 是 BitRouter 对上游使用的线格式 —— 任何 OpenAI 兼容服务都用 `chat_completions`。BitRouter 对任何非 Anthropic、非 Google 的主机已默认推断为 `chat_completions`，因此 `api_protocol` 块是可选的，但写明能让意图更清晰。`models` 下每一项是该服务提供的模型 id。
 
-完整的分步流程 —— 含 Ollama、vLLM、LM Studio 与 llama.cpp 的变体及确切启动命令 —— 见[本地模型服务食谱](/docs/integrations/local-models)。
+完整的分步流程 —— 含 Ollama、vLLM、LM Studio 与 Unsloth 的变体及确切启动命令 —— 见[本地模型服务食谱](/docs/integrations/local-models)。
 
 ### 2. 注册表中列出的 provider，从环境变量自动检测
 
 如果你的私有端点是[注册表](/docs/guides/register-as-a-provider)中已列出的 provider，你完全不需要配置文件。将其密钥设为 `BITROUTER_<PROVIDER_ID>_API_KEY`，BitRouter 会在启动时检测到它 —— 完整的环境变量约定见 [BYOK](/docs/features/byok)。这条路径适用于附带注册表清单的私有托管部署，而非裸的 localhost 服务。
 
 <Callout type="info">
-**本地服务通常无需 API 密钥。** Ollama、vLLM、LM Studio 与 llama.cpp 默认在回环地址上接受匿名请求，因此你可以在 provider 条目中省略 `api_key`。仅当你在服务前置了鉴权时才需要添加 —— `api_key: ${MY_LOCAL_KEY}` 会在加载时从环境变量解析。
+**本地服务通常无需 API 密钥。** Ollama、vLLM 与 LM Studio 默认在回环地址上接受匿名请求，因此你可以在 provider 条目中省略 `api_key`。仅当你在服务前置了鉴权时才需要添加 —— `api_key: ${MY_LOCAL_KEY}` 会在加载时从环境变量解析。（Unsloth Studio 例外：它会生成 `sk-unsloth-…` 密钥并要求带上。）
 </Callout>
 
 ## 免费，无需云账户

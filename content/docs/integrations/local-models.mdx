@@ -1,15 +1,41 @@
 ---
-title: Local model servers
-description: Connect Ollama, vLLM, LM Studio, or llama.cpp to BitRouter — free, local, OpenAI-compatible.
+title: Overview
+description: Route Ollama, vLLM, LM Studio, or an Unsloth fine-tune through BitRouter — free, local, OpenAI-compatible.
 ---
+import { Cards, Card } from 'fumadocs-ui/components/card';
 import { Callout } from 'fumadocs-ui/components/callout';
-import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
-# Local model servers
+Run a model on your own machine and route it through BitRouter. Each of these servers exposes an OpenAI-compatible API, so adding one is a single provider block in `bitrouter.yaml` — and everything stays on localhost: no cloud account, no per-token fee.
 
-Run a model on your own machine and route it through BitRouter. Ollama, vLLM, LM Studio, and llama.cpp all expose an OpenAI-compatible API, so each one is a one-block addition to `bitrouter.yaml`. Everything stays on localhost — no cloud account, no per-token fee.
+<Cards>
+  <Card title="Ollama" href="/docs/integrations/ollama" description="Easiest local start · :11434 · no key" />
+  <Card title="vLLM" href="/docs/integrations/vllm" description="High-throughput GPU serving · :8000" />
+  <Card title="LM Studio" href="/docs/integrations/lm-studio" description="Desktop GUI runner · :1234 · no key" />
+  <Card title="Unsloth" href="/docs/integrations/unsloth" description="Serve your fine-tune via Unsloth Studio · :8000" />
+</Cards>
 
-## 1. Scaffold a config
+## How it works
+
+Every server below speaks the OpenAI wire format, so the integration is always the same shape — a provider entry in `bitrouter.yaml`:
+
+```yaml
+# bitrouter.yaml
+providers:
+  ollama:                              # an id you choose
+    api_base: http://localhost:11434/v1  # the server's OpenAI-compatible base URL
+    api_protocol:
+      - "*": chat_completions          # upstream wire format; inferred for any OpenAI-compatible host
+    models:
+      - id: llama3.1                   # a model id the server serves
+```
+
+`providers` is a map keyed by an id you pick; `api_base` is the server's base URL; `api_protocol` is the upstream wire format (`chat_completions` for every OpenAI-compatible server — also the inferred default, so the block is optional); each `models` entry is a model the server serves.
+
+<Callout type="info">
+**Most local servers need no API key.** Ollama, vLLM, and LM Studio accept anonymous loopback requests, so the block has no `api_key`. The exception is **Unsloth Studio**, which mints an `sk-unsloth-…` key and requires it on every request — its page covers the `api_key` field.
+</Callout>
+
+## Scaffold a config
 
 Generate a starter `bitrouter.yaml` (defaults to `./bitrouter.yaml`):
 
@@ -17,124 +43,17 @@ Generate a starter `bitrouter.yaml` (defaults to `./bitrouter.yaml`):
 bitrouter init
 ```
 
-This writes a commented config with `skip_auth: true`, ready for you to add a provider. Use `-c <path>` to write it elsewhere.
+This writes a commented config with `skip_auth: true`, ready for a provider block. Use `-c <path>` to write it elsewhere. Then follow your server's page to fill in the block.
 
-## 2. Add your local server
+## Start BitRouter and send a request
 
-Pick your runtime. Each tab shows the provider block to drop into `bitrouter.yaml`, the command to start the server, and how to route to the model. `providers` is a map keyed by an id you choose; `api_base` is the server's OpenAI-compatible base URL; `api_protocol` is the upstream wire format (`chat_completions` for every OpenAI-compatible server — it's also the inferred default, so you may omit the block); each `models` entry is a model id the server serves.
-
-<Tabs items={['Ollama', 'vLLM', 'LM Studio', 'llama.cpp']}>
-<Tab value="Ollama">
-
-```yaml
-# bitrouter.yaml
-providers:
-  ollama:
-    api_base: http://localhost:11434/v1
-    api_protocol:
-      - "*": chat_completions
-    models:
-      - id: llama3.1
-```
-
-```bash
-# Start Ollama and pull the model (default port 11434)
-ollama serve &
-ollama pull llama3.1
-```
-
-Route to it by provider-qualified id (`provider:model`) or by the bare model name:
-
-```bash
-bitrouter route ollama:llama3.1
-```
-
-</Tab>
-<Tab value="vLLM">
-
-```yaml
-# bitrouter.yaml
-providers:
-  vllm:
-    api_base: http://localhost:8000/v1
-    api_protocol:
-      - "*": chat_completions
-    models:
-      - id: meta-llama/Llama-3.1-8B-Instruct
-```
-
-```bash
-# Start vLLM's OpenAI-compatible server (default port 8000)
-vllm serve meta-llama/Llama-3.1-8B-Instruct
-```
-
-```bash
-bitrouter route vllm:meta-llama/Llama-3.1-8B-Instruct
-```
-
-</Tab>
-<Tab value="LM Studio">
-
-```yaml
-# bitrouter.yaml
-providers:
-  lmstudio:
-    api_base: http://localhost:1234/v1
-    api_protocol:
-      - "*": chat_completions
-    models:
-      - id: llama-3.1-8b-instruct
-```
-
-```bash
-# Start LM Studio's local server (default port 1234)
-lms server start
-lms load llama-3.1-8b-instruct
-```
-
-```bash
-bitrouter route lmstudio:llama-3.1-8b-instruct
-```
-
-</Tab>
-<Tab value="llama.cpp">
-
-```yaml
-# bitrouter.yaml
-providers:
-  llamacpp:
-    api_base: http://localhost:8080/v1
-    api_protocol:
-      - "*": chat_completions
-    models:
-      - id: llama-3.1-8b-instruct
-```
-
-```bash
-# Start llama.cpp's OpenAI-compatible server (default port 8080)
-llama-server -m ./models/llama-3.1-8b-instruct.gguf
-```
-
-```bash
-bitrouter route llamacpp:llama-3.1-8b-instruct
-```
-
-</Tab>
-</Tabs>
-
-<Callout type="info">
-**No API key needed.** Local servers accept anonymous requests on loopback by default, so the provider block has no `api_key`. Add `api_key: ${MY_LOCAL_KEY}` only if you've put auth in front of your server — it resolves from the environment at load time.
-</Callout>
-
-## 3. Start BitRouter and send a request
-
-Start the proxy — it listens on `127.0.0.1:4356` by default:
+Once your provider block is in place, start the proxy — it listens on `127.0.0.1:4356` by default:
 
 ```bash
 bitrouter
 ```
 
-Then hit the OpenAI-compatible endpoint with the model id from your config (swap in your provider id / model where shown):
+Then hit the OpenAI-compatible endpoint with the model id from your config (swap in your provider id / model):
 
 ```bash
 curl http://localhost:4356/v1/chat/completions \

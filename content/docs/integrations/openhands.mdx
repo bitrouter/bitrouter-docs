@@ -1,0 +1,65 @@
+---
+title: OpenHands
+description: Route OpenHands through BitRouter via its LiteLLM-backed custom LLM provider.
+---
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+
+OpenHands talks to models through LiteLLM, which has a generic OpenAI-compatible passthrough. Configure that passthrough to hit BitRouter and OpenHands routes across the whole [registry](/docs/concepts/models).
+
+## Prerequisites
+
+- BitRouter running — local proxy at `http://127.0.0.1:4356`, or [BitRouter Cloud](/docs/get-started/quickstart) at `https://api.bitrouter.ai`.
+- OpenHands installed:
+
+  ```bash
+  pip install openhands-ai
+  ```
+
+<Callout type="warn">
+**Mind the double `openai/` prefix.** LiteLLM uses a leading `openai/` to mean "this is an OpenAI-compatible endpoint", and sends everything after it as the model name. Because BitRouter ids already carry a provider prefix, the model string becomes `openai/` + `openai/gpt-4o` → **`openai/openai/gpt-4o`**. The first segment is for LiteLLM; the rest is the registry id BitRouter receives.
+</Callout>
+
+## Point OpenHands at BitRouter
+
+<Tabs items={['Settings UI', 'config.toml']}>
+<Tab value="Settings UI">
+
+In OpenHands, open **Settings → LLM → Advanced** and set:
+
+- **Custom Model** — `openai/openai/gpt-4o`
+- **Base URL** — `http://127.0.0.1:4356/v1`
+- **API Key** — any value for the local proxy; your BitRouter key for Cloud
+
+</Tab>
+<Tab value="config.toml">
+
+Add an `[llm]` section to `config.toml` in your working directory:
+
+```toml
+[llm]
+model = "openai/openai/gpt-4o"
+base_url = "http://127.0.0.1:4356/v1"
+api_key = "local-placeholder"   # any value for the local proxy
+```
+
+</Tab>
+</Tabs>
+
+<Callout type="info">
+For **Cloud**, set the base URL to `https://api.bitrouter.ai/v1` and use your BitRouter key (from `bitrouter auth login` or the dashboard) as the API key.
+</Callout>
+
+## Pick a model
+
+After the leading `openai/`, use any registry id in `provider/model` form — `openai/openai/gpt-4o`, `openai/anthropic/claude-sonnet-4-6`, `openai/google/gemini-2.5-pro` — optionally with a `:cost` or `:latency` variant on the registry id. See [Models](/docs/concepts/models).
+
+## Verify
+
+Run a task in OpenHands and confirm a response. BitRouter's `bitrouter-served-by` response header tells you which provider actually answered.
+
+## Learn more
+
+- [OpenHands — LLM configuration](https://docs.openhands.dev/openhands/usage/llms/openai-llms)
+- [LiteLLM — OpenAI-compatible endpoints](https://docs.litellm.ai/docs/providers/openai_compatible)
+- [Model fallback](/docs/features/model-fallback) · [Provider selection](/docs/features/provider-selection)

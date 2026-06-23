@@ -1,0 +1,49 @@
+---
+title: LM Studio
+description: Register a local LM Studio server as a BitRouter provider — OpenAI-compatible, GUI-driven, runs on localhost.
+---
+import { Callout } from 'fumadocs-ui/components/callout';
+
+[LM Studio](https://lmstudio.ai) is a desktop app for running models locally. Its built-in server exposes an OpenAI-compatible API at `http://localhost:1234/v1`, which BitRouter fronts as one provider block.
+
+## Prerequisites
+
+- BitRouter installed, with a `bitrouter.yaml` ([scaffold one](/docs/integrations/local-models#scaffold-a-config) with `bitrouter init`).
+- LM Studio's server running with a model loaded — from the app's **Developer** tab, or the CLI:
+
+  ```bash
+  lms server start                       # default port 1234
+  lms load llama-3.1-8b-instruct
+  ```
+
+## Add LM Studio to BitRouter
+
+```yaml
+# bitrouter.yaml
+providers:
+  lmstudio:
+    api_base: http://localhost:1234/v1
+    api_protocol:
+      - "*": chat_completions
+    models:
+      - id: llama-3.1-8b-instruct
+```
+
+The `models` id is the model identifier LM Studio shows for the loaded model. Confirm it with `lms ps` or by hitting `http://localhost:1234/v1/models`.
+
+<Callout type="info">
+**No API key.** LM Studio's local server accepts anonymous loopback requests, so the block has no `api_key`.
+</Callout>
+
+## Route to it
+
+```bash
+bitrouter route lmstudio:llama-3.1-8b-instruct
+```
+
+Then [start BitRouter and send a request](/docs/integrations/local-models#start-bitrouter-and-send-a-request).
+
+## Learn more
+
+- [LM Studio — OpenAI-compatible API](https://lmstudio.ai/docs/app/api/endpoints/openai)
+- [Model fallback](/docs/features/model-fallback) — fail over from LM Studio to a hosted model.

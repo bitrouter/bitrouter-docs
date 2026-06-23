@@ -1,0 +1,66 @@
+name: Sync Changelog
+
+# Generates draft changelog entries from bitrouter/bitrouter GitHub Releases and
+# opens a PR for curation (the "curated, PR-assisted" flow). Three triggers:
+#   • repository_dispatch (bitrouter-release) — fired by the source repo's
+#     release workflow; near-instant per release.
+#   • workflow_dispatch — manual run, optionally for one tag or a backfill.
+#   • schedule — daily safety net in case a dispatch is missed.
+on:
+  repository_dispatch:
+    types: [bitrouter-release]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Single release tag to sync (blank = backfill recent)"
+        required: false
+        default: ""
+  schedule:
+    - cron: "17 6 * * *"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    name: Generate changelog draft + PR
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Generate changelog entries
+        id: gen
+        env:
+          # repository_dispatch sends client_payload.tag; workflow_dispatch sends
+          # inputs.tag; schedule sends neither (backfill).
+          CHANGELOG_TAG: ${{ github.event.client_payload.tag || github.event.inputs.tag }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/sync-changelog.mjs
+
+      - name: Open pull request
+        if: steps.gen.outputs.count != '0'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: changelog/sync
+          base: main
+          title: "docs(changelog): sync new release entries"
+          commit-message: "docs(changelog): add draft entries from bitrouter releases"
+          labels: changelog
+          body: |
+            Auto-generated **draft** changelog entries from `bitrouter/bitrouter` releases.
+
+            Each new file under `content/changelog/` is a draft — curate the
+            `title`, `description`, and prose, then merge. Re-running the sync
+            will not overwrite an existing entry.
+
+            Newly added:
+            ```
+            ${{ steps.gen.outputs.created }}
+            ```

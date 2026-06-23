@@ -5,7 +5,7 @@ description: Install the open-source BitRouter binary and run it locally, or sig
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 import { Cards, Card } from 'fumadocs-ui/components/card';
 
-BitRouter has two front doors, and both run the **same open-source core**. Self-host the binary with your own keys, or sign in to BitRouter Cloud — the routing engine is identical. See [Self-host vs Cloud](/docs/get-started/self-host-vs-cloud) for what the hosted account adds on top.
+BitRouter has two front doors, and both run the **same open-source core**. Self-host the binary with your own keys, or sign in to BitRouter Cloud — the routing engine is identical. See [Self-host vs Cloud](/docs/cloud/overview) for what the hosted account adds on top.
 
 ## Self-host the binary
 
@@ -68,7 +68,7 @@ bitrouter auth login    # RFC 8628 device flow against api.bitrouter.ai
 bitrouter start         # the `bitrouter` provider auto-enables once signed in
 ```
 
-You can also point an agent straight at the hosted endpoint without running a local binary. Either way the core is the same — a Cloud account is an account and network, not a separate deployment. See [Self-host vs Cloud](/docs/get-started/self-host-vs-cloud) for the full breakdown, and the [managed provider](/docs/cloud/managed-models) for the model catalog and pricing.
+You can also point an agent straight at the hosted endpoint without running a local binary. Either way the core is the same — a Cloud account is an account and network, not a separate deployment. See [Self-host vs Cloud](/docs/cloud/overview) for the full breakdown, and the [managed provider](/docs/cloud/managed-models) for the model catalog and pricing.
 
 ## Point your agent at the proxy
 
@@ -76,5 +76,5 @@ However you start it, BitRouter is a drop-in proxy. Point your agent runtime at 
 
 <Cards>
   <Card title="Quick Start" href="/docs/get-started/quickstart" description="Get an agent routing through BitRouter in under a minute" />
-  <Card title="Self-host vs Cloud" href="/docs/get-started/self-host-vs-cloud" description="Identical core; what a Cloud account adds on top" />
+  <Card title="Self-host vs Cloud" href="/docs/cloud/overview" description="Identical core; what a Cloud account adds on top" />
 </Cards>

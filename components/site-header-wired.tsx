@@ -11,8 +11,8 @@ const config = {
     process.env.NEXT_PUBLIC_CONSOLE_URL ?? "https://cloud.bitrouter.ai",
 };
 
-// ── web-specific slot content. Install pill removed (the nav "Download" item
-//    and the hero install bar already cover CLI install). No header search slot:
+// ── web-specific slot content. Install pill removed (the hero install bar and
+//    docs Installation page already cover CLI install). No header search slot:
 //    docs search lives in the sidebar banner; ⌘K opens the native dialog anywhere. ───
 const utilitySlot = <GitHubStarsBadge />;
 const searchSlot = undefined;

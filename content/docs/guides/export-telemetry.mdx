@@ -1,0 +1,178 @@
+---
+title: Export traces to your OTel backend
+description: Wire BitRouter's OpenTelemetry export to a Collector, Honeycomb, Grafana, or Datadog — with sampling, content capture, and verification.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Cards, Card } from 'fumadocs-ui/components/card';
+
+# Export traces to your OTel backend
+
+BitRouter pushes traces and metrics over OTLP via the `bitrouter-observe` plugin.
+This guide is the hands-on version of [Observability](/docs/features/observability):
+how to point that export at the backend you already run, tune sampling and
+content capture, and confirm it's working. Everything here runs on your own
+infrastructure — there's no BitRouter telemetry endpoint in the middle.
+
+<Callout type="info">
+The OTLP **transport** is selected when the binary is built: `otel-http`
+(OTLP/HTTP + protobuf, the default) or `otel-grpc` (OTLP/gRPC). The
+configuration below is identical for both — you only care about the transport if
+your backend speaks one and not the other.
+</Callout>
+
+## 1. The minimal config
+
+Add an `otel` block under the plugin and give it an endpoint. That alone turns
+export on:
+
+```yaml
+plugins:
+  bitrouter-observe:
+    otel:
+      endpoint: "http://localhost:4318"
+      service_name: "bitrouter"
+```
+
+Keep secrets out of the committed file — use `${VAR}` references for any auth
+headers, resolved from the environment at load time:
+
+```yaml
+plugins:
+  bitrouter-observe:
+    otel:
+      endpoint: "https://api.honeycomb.io"
+      headers:
+        x-honeycomb-team: "${HONEYCOMB_API_KEY}"
+```
+
+Prefer env vars in containers? Every field has an override — you can run with no
+`otel` block at all:
+
+```bash
+export OTEL_EXPORTER_OTLP_ENDPOINT=http://collector:4318
+export OTEL_EXPORTER_OTLP_HEADERS="x-honeycomb-team=$HONEYCOMB_API_KEY"
+export OTEL_SERVICE_NAME=bitrouter
+```
+
+## 2. Backend recipes
+
+Each block is the `plugins.bitrouter-observe.otel` config for a common backend.
+
+### OpenTelemetry Collector
+
+Send everything to a local or in-cluster Collector and let it fan out to your
+real backends (this is also the path to a Prometheus-based stack — the Collector's
+Prometheus exporter bridges the gap, since BitRouter has no scrape endpoint):
+
+```yaml
+otel:
+  endpoint: "http://otel-collector:4318"
+  service_name: "bitrouter"
+  resource_attributes:
+    deployment.environment: "prod"
+```
+
+### Honeycomb
+
+```yaml
+otel:
+  endpoint: "https://api.honeycomb.io"
+  service_name: "bitrouter"
+  headers:
+    x-honeycomb-team: "${HONEYCOMB_API_KEY}"
+```
+
+### Grafana Cloud / Tempo
+
+Grafana Cloud's OTLP gateway uses basic auth (instance ID + API token, base64
+encoded). For self-hosted Tempo, point at its OTLP port and drop the header.
+
+```yaml
+otel:
+  endpoint: "https://otlp-gateway-<region>.grafana.net/otlp"
+  service_name: "bitrouter"
+  headers:
+    Authorization: "Basic ${GRAFANA_OTLP_TOKEN}"
+```
+
+### Datadog
+
+Datadog ingests OTLP through the Datadog Agent rather than a public OTLP URL —
+run the Agent with OTLP receiving enabled and point BitRouter at it:
+
+```yaml
+otel:
+  endpoint: "http://datadog-agent:4318"
+  service_name: "bitrouter"
+  resource_attributes:
+    deployment.environment: "prod"
+```
+
+## 3. Tune sampling
+
+By default BitRouter respects the inbound trace decision and otherwise samples
+everything (`parentbased_always_on`). On high throughput, sample a fraction
+instead:
+
+```yaml
+otel:
+  endpoint: "http://otel-collector:4318"
+  sampler: "parentbased_traceidratio"
+  sampler_arg: 0.1                       # keep 10% of root traces
+```
+
+| `sampler` | Behavior |
+| --- | --- |
+| `always_on` | Sample every trace |
+| `always_off` | Sample nothing |
+| `traceidratio` | Sample a fraction (`sampler_arg`), ignoring parent |
+| `parentbased_always_on` | Follow parent; sample if no parent *(default)* |
+| `parentbased_always_off` | Follow parent; drop if no parent |
+| `parentbased_traceidratio` | Follow parent; otherwise sample `sampler_arg` |
+
+`parentbased_*` variants honor the upstream decision, so a trace your agent
+started won't be half-sampled at the router. The metrics export interval and the
+trace batch queue are tunable separately under `metrics` and `traces.batch` if
+you need to trade freshness for overhead.
+
+## 4. Decide on content capture
+
+Message content is **excluded by default**. Turn it on only when you need prompt
+and response bodies on the spans for debugging:
+
+```yaml
+otel:
+  content_capture: "full"   # off (default) | full
+```
+
+<Callout type="warn">
+`full` writes user prompts and model responses into your telemetry backend.
+That content then inherits the backend's access controls and retention. For
+shared or regulated environments, leave it `off` and capture content only in a
+scoped, short-lived debugging session.
+</Callout>
+
+## 5. Verify
+
+Reload (or restart) the router, then ask the running daemon what it's doing:
+
+```bash
+bitrouter reload                  # pick up config changes without dropping connections
+bitrouter observe status          # endpoint, sampler, cardinality, in-flight spans
+bitrouter observe status --json
+```
+
+If it reports `stopped`, the exporter isn't wired — check that the `otel` block
+has an `endpoint` (or that `OTEL_EXPORTER_OTLP_ENDPOINT` is set) and that the
+binary was built with an OTLP transport feature. Then send a request through the
+router and confirm the trace lands in your backend; you should see one inbound
+`chat` span per request with a `CLIENT` child for each upstream attempt.
+
+## Next steps
+
+<Cards>
+  <Card title="Observability" href="/docs/features/observability" description="The span model, metrics, and attributes in depth." />
+  <Card title="Self-host BitRouter" href="/docs/guides/self-host" description="Run the router in production end to end." />
+  <Card title="Model fallback" href="/docs/features/model-fallback" description="The failover chains your traces will show." />
+</Cards>

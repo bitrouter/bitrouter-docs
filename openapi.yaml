@@ -19,7 +19,7 @@ info:
     - `x-api-key: <api-key>` — Anthropic-compatible header.
     - `Authorization: Bearer <api-key | JWT>` — issued via the BitRouter console or minted from a wallet (CAIP-10 issuer).
 
-    Discovery endpoints (`/v1/models`, `/v1/providers`, `/v1/byok/encryption-pubkey`), the healthcheck, and the scraper-facing `/metrics` are public.
+    Discovery endpoints (`/v1/models`, `/v1/providers`, `/v1/byok/encryption-pubkey`) and the healthcheck are public.
 
     ## Multi-Protocol Routing
 
@@ -602,26 +602,6 @@ paths:
                 - public_key
         '304':
           description: Cached `kek_id` still matches — body is empty.
-  /metrics:
-    get:
-      tags:
-      - Observability
-      summary: Prometheus metrics scrape
-      description: |-
-        Returns Prometheus-format metrics for ingestion by a scraper. Not intended for human callers — point Prometheus, Grafana Agent, or any OpenMetrics-compatible collector at this endpoint.
-
-        Responds `404 Not Found` when the node was built or configured without a metrics renderer; scrapers can use that as a feature probe.
-      operationId: getMetrics
-      responses:
-        '200':
-          description: Prometheus-format metrics — counters, gauges, and histograms covering routing decisions, upstream latency, and credit settlement.
-          content:
-            text/plain:
-              schema:
-                description: Prometheus text-exposition format (version 0.0.4).
-                type: string
-        '404':
-          description: Metrics renderer is not configured on this node — scrapers can use the 404 to probe whether `/metrics` is enabled.
   /v1/namespaces:
     get:
       tags:
@@ -10516,8 +10496,6 @@ tags:
   description: Public read-only endpoints for inspecting the router's configuration — what models and providers it knows about.
 - name: BYOK
   description: Bring-Your-Own-Key endpoints. Returns the node's sealed-box public key so the console can encrypt provider keys client-side; the node never sees plaintext on the write path.
-- name: Observability
-  description: Operational metrics for scrapers. Not intended for human callers — Prometheus-format text exposition.
 - name: Health
   description: Liveness check.
 - name: Management

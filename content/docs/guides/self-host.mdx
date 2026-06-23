@@ -160,26 +160,32 @@ EnvironmentFile=/etc/bitrouter/bitrouter.env
 Restart=on-failure
 ```
 
-## 4. Expose metrics
+## 4. Export telemetry
 
-BitRouter exports observability per request and to standard backends. Self-hosted
-metrics flow through two surfaces:
+BitRouter is OpenTelemetry-native: the `bitrouter-observe` plugin pushes traces
+and metrics over **OTLP** (HTTP or gRPC) to any OpenTelemetry backend. Point it
+at your collector with an `otel` block (or the matching env vars):
 
-- A `GET /metrics` endpoint, served when a Prometheus-style metrics renderer is
-  wired into the router (the observability plugin wires one). Point Prometheus at
-  it like any scrape target.
-- **OTLP export** of traces and metrics to any OpenTelemetry backend, provided by
-  the `bitrouter-observe` plugin (OTLP/HTTP or OTLP/gRPC).
+```yaml
+plugins:
+  bitrouter-observe:
+    otel:
+      endpoint: "http://otel-collector:4318"
+      service_name: "bitrouter"
+```
 
-You can also query spend straight from the CLI without standing up a dashboard,
-and trace how a model name resolves before it hits an upstream:
+There is no Prometheus scrape endpoint — metrics are pushed via OTLP only. For a
+Prometheus-based stack, ingest through an OpenTelemetry Collector. Confirm the
+exporter is live with `bitrouter observe status`. You can also trace how a model
+name resolves before it ever hits an upstream:
 
 ```bash
 bitrouter route gpt-4o     # print the full fallback chain for a model
 ```
 
-See [Observability](/docs/features/observability) for the full export and
-attribution model.
+See [Observability](/docs/features/observability) for the span model and
+attribution, and [Export traces to your OTel backend](/docs/guides/export-telemetry)
+for per-backend configs.
 
 ## 5. Basic hardening
 
@@ -200,6 +206,6 @@ attribution model.
 <Cards>
   <Card title="Installation" href="/docs/get-started/installation" description="The 60-second local install, if you skipped it." />
   <Card title="Self-host vs Cloud" href="/docs/get-started/self-host-vs-cloud" description="Pick the deployment model that fits." />
-  <Card title="Observability" href="/docs/features/observability" description="Prometheus + OTLP export and per-request attribution." />
+  <Card title="Observability" href="/docs/features/observability" description="OTLP trace + metric export and per-request attribution." />
   <Card title="Guardrails" href="/docs/features/guardrails" description="Content firewall for requests and responses." />
 </Cards>

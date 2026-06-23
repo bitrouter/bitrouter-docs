@@ -139,22 +139,30 @@ EnvironmentFile=/etc/bitrouter/bitrouter.env
 Restart=on-failure
 ```
 
-## 4. 暴露指标
+## 4. 导出遥测
 
-BitRouter 按请求并向标准后端导出可观测性数据。自托管的指标通过两个面流出：
+BitRouter 原生支持 OpenTelemetry：`bitrouter-observe` 插件通过 **OTLP**（HTTP 或
+gRPC）将 trace 与指标推送到任意 OpenTelemetry 后端。用一个 `otel` 块（或对应的环境
+变量）把它指向你的 collector：
 
-- 一个 `GET /metrics` 端点，当路由器接入了 Prometheus 风格的指标渲染器时提供服务（可观测性插件会
-  接好一个）。像对待任意抓取目标一样让 Prometheus 指向它即可。
-- 由 `bitrouter-observe` 插件提供的 traces 与 metrics 的 **OTLP 导出**，发往任意 OpenTelemetry
-  后端（OTLP/HTTP 或 OTLP/gRPC）。
+```yaml
+plugins:
+  bitrouter-observe:
+    otel:
+      endpoint: "http://otel-collector:4318"
+      service_name: "bitrouter"
+```
 
-你也可以直接从 CLI 查询花费，无需搭建仪表盘；并在请求命中上游之前追踪某个模型名是如何解析的：
+没有 Prometheus 抓取端点——指标仅通过 OTLP 推送。基于 Prometheus 的技术栈请通过
+OpenTelemetry Collector 接入。用 `bitrouter observe status` 确认导出器已启用。你也可
+以在请求命中上游之前追踪某个模型名是如何解析的：
 
 ```bash
 bitrouter route gpt-4o     # 打印某个模型的完整回退链
 ```
 
-完整的导出与归因模型见 [可观测性](/docs/features/observability)。
+span 模型与归因见 [可观测性](/docs/features/observability)，各后端的具体配置见
+[导出 trace 到你的 OTel 后端](/docs/guides/export-telemetry)。
 
 ## 5. 基本加固
 
@@ -173,6 +181,6 @@ bitrouter route gpt-4o     # 打印某个模型的完整回退链
 <Cards>
   <Card title="安装" href="/docs/get-started/installation" description="若你跳过了：60 秒本地安装。" />
   <Card title="自托管 vs 云" href="/docs/get-started/self-host-vs-cloud" description="选择适合你的部署模型。" />
-  <Card title="可观测性" href="/docs/features/observability" description="Prometheus + OTLP 导出与按请求归因。" />
+  <Card title="可观测性" href="/docs/features/observability" description="OTLP trace + 指标导出与按请求归因。" />
   <Card title="护栏" href="/docs/features/guardrails" description="面向请求与响应的内容防火墙。" />
 </Cards>

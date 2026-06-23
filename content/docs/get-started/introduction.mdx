@@ -19,7 +19,7 @@ BitRouter reroutes across providers mid-run, transparently — your agent never 
 
 ### Observability — trace every hop, not just every request
 
-Full call-chain visibility: every agent, every model, every step, with cost attributed **per run** rather than per month. A real-time CLI + TUI monitors sessions, requests, latency, and spend, and structured logs feed downstream pipelines. See [Observability](/docs/features/observability).
+Full call-chain visibility: every agent, every model, every step, with cost attributed **per run** rather than per month. BitRouter is OpenTelemetry-native — traces and metrics export over OTLP to any backend you run, and `bitrouter observe status` reports the live exporter state. See [Observability](/docs/features/observability).
 
 ### Security — guardrails for every agent, configured once
 

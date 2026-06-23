@@ -1,10 +1,157 @@
 ---
 title: Observability
-description: Trace every agent run locally — sessions, requests, latency, and per-run cost via CLI/TUI and Prometheus/OTLP export.
+description: Trace every agent run with OpenTelemetry — full request lifecycle, per-hop failover spans, token and latency metrics, exported to any OTLP backend.
 ---
 
-{/* TODO: traces, metrics endpoints, log shipping, CLI/TUI walkthrough. */}
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Cards, Card } from 'fumadocs-ui/components/card';
+
+BitRouter is OpenTelemetry-native. The `bitrouter-observe` plugin emits traces
+and metrics for every request — the full lifecycle from ingress through routing,
+each upstream attempt (including failovers), and settlement — and pushes them to
+any OTLP-compatible backend you already run: Grafana Tempo, Honeycomb, Datadog,
+Jaeger, an OpenTelemetry Collector, anything that speaks OTLP.
+
+It is **off until you point it somewhere**, runs entirely on your
+infrastructure, and excludes message content by default.
+
+## How it works
+
+Each request produces a span tree that follows the
+[OpenTelemetry GenAI semantic conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/):
+
+```
+HTTP SERVER  POST /v1/chat/completions        (ingress)
+└─ chat      (INTERNAL, inbound — whole request lifetime)
+   ├─ route  (INTERNAL — routing decision)
+   ├─ chat   (CLIENT — upstream attempt #1, gen_ai.* attributes)
+   ├─ chat   (CLIENT — failover attempt #2)
+   └─ settle (INTERNAL — settlement summary)
+```
+
+There is **one GenAI generation per request** — the inbound `chat` span. Each
+upstream attempt is a separate `CLIENT` span, so a failover chain shows every
+provider it tried, in order, with the latency and outcome of each hop. BitRouter
+extracts inbound W3C trace context and injects an outbound `traceparent`, so
+router spans stitch into the parent trace from your agent or gateway.
+
+Key attributes on the spans:
+
+| Attribute | Description |
+| --- | --- |
+| `gen_ai.provider.name` | Upstream provider for the hop (e.g. `openai`, `anthropic`) |
+| `gen_ai.response.model` | Model that actually served the response |
+| `gen_ai.token.type` | `input` / `output`, on token measurements |
+| `outcome` | Final disposition of the request |
+| `api_key_id`, `user_id` | Caller attribution (cardinality-capped — see below) |
+| `account_label` | Logical account/tenant label |
+
+## Enable it
+
+Add an `otel` block under the plugin and point it at your collector:
+
+```yaml
+plugins:
+  bitrouter-observe:
+    otel:
+      endpoint: "http://localhost:4318"   # your OTLP endpoint
+      service_name: "bitrouter"
+      headers:                            # auth for hosted backends
+        x-honeycomb-team: "${HONEYCOMB_API_KEY}"
+```
+
+Every field has an environment-variable override, so you can configure export
+without touching the file — useful in containers:
+
+| Env var | Sets |
+| --- | --- |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | OTLP endpoint URL |
+| `OTEL_EXPORTER_OTLP_HEADERS` | Auth headers (comma-separated `k=v`) |
+| `OTEL_SERVICE_NAME` | Resource service name |
+| `OTEL_RESOURCE_ATTRIBUTES` | Extra resource attributes (comma-separated `k=v`) |
+| `OTEL_TRACES_SAMPLER` | Sampler kind |
+| `OTEL_TRACES_SAMPLER_ARG` | Sampler argument (e.g. ratio) |
+| `BITROUTER_OBSERVE_CONTENT_CAPTURE` | Content capture mode |
+
+<Callout type="info">
+The wire transport is a **compile-time** choice: `otel-http` (OTLP/HTTP +
+protobuf, the default) or `otel-grpc` (OTLP/gRPC). The YAML and env config are
+identical either way — you only choose the transport when building the binary.
+</Callout>
+
+## What you get
+
+### Traces
+
+The span tree above, exported per request. Because each upstream attempt is its
+own span, traces are where failover and routing behavior become legible: you can
+see which provider was tried first, why it fell through, and where latency went
+across the chain.
+
+### Metrics
+
+Metrics are exported over OTLP on an interval (default 60s):
+
+| Metric | Type | Measures |
+| --- | --- | --- |
+| `bitrouter.requests` | Counter | Requests processed |
+| `gen_ai.client.operation.duration` | Histogram | Request latency |
+| `gen_ai.client.token.usage` | Histogram | Token counts (by `gen_ai.token.type`) |
+| `bitrouter.errors` | Counter | Errors |
+| `bitrouter.stream_parts` | Counter | Streaming parts emitted |
+
+Dimensions include `gen_ai.provider.name`, `gen_ai.response.model`, `outcome`,
+`account_label`, and the caller identifiers. To keep metric cardinality bounded
+on shared deployments, `api_key_id` and `user_id` are capped (defaults: 1024 and
+256 distinct values); beyond the cap, values collapse to an overflow bucket.
+
+<Callout type="warn">
+There is **no Prometheus scrape endpoint**. `GET /metrics` is retired — metrics
+are pushed via OTLP only. If your stack is Prometheus-based, ingest through an
+OpenTelemetry Collector with the Prometheus exporter.
+</Callout>
+
+## Content capture
+
+Prompt and response **content is never exported by default** (`content_capture:
+off`). Set it to `full` to serialize message bodies onto spans — useful for
+debugging, but it puts user content in your telemetry backend, so weigh it
+against your privacy and retention posture.
+
+```yaml
+plugins:
+  bitrouter-observe:
+    otel:
+      content_capture: "off"   # off (default) | full
+```
+
+## Check the exporter
+
+Confirm what the running daemon is actually doing — endpoint, sampler,
+cardinality usage, in-flight spans — without leaving the terminal:
+
+```bash
+bitrouter observe status          # human-readable snapshot
+bitrouter observe status --json   # same, as JSON
+```
+
+It reports `stopped` (plus the compile-time flag) when no exporter is wired, so
+it doubles as a quick "is telemetry on?" check.
 
 ## On Cloud
 
-The CLI/TUI, Prometheus, and OTLP export above are open-source and run locally. **BitRouter Cloud** adds a hosted dashboard and an in-app request log — per-run cost, latency, and full call chains across every agent, retained server-side with no local pipeline to operate.
+The OTLP export above is open-source and runs on your own backend. **BitRouter
+Cloud** adds a hosted alternative with nothing to operate: an Activity dashboard
+with spend, request, and token KPIs, an in-app request log (model, provider,
+tokens, cost, latency, funding source, status, routing profile, and capabilities
+per request), and per-namespace usage attribution queryable via the management
+API — all retained server-side, no collector to run.
+
+## Next steps
+
+<Cards>
+  <Card title="Export to your OTel backend" href="/docs/guides/export-telemetry" description="Copy-paste configs for Honeycomb, Grafana, Datadog, and the Collector." />
+  <Card title="Self-host BitRouter" href="/docs/guides/self-host" description="Run the router in production, with telemetry wired in." />
+  <Card title="Model fallback" href="/docs/features/model-fallback" description="The failover chains you'll see in every trace." />
+  <Card title="Guardrails" href="/docs/features/guardrails" description="Content firewall for requests and responses." />
+</Cards>

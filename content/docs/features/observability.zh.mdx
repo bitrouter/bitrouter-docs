@@ -1,10 +1,150 @@
 ---
 title: 可观测性
-description: 在本地追踪每一次 agent 运行——通过 CLI/TUI 与 Prometheus/OTLP 导出查看会话、请求、延迟与每次运行的成本。
+description: 用 OpenTelemetry 追踪每一次 agent 运行——完整的请求生命周期、逐跳故障转移 span、token 与延迟指标，导出到任意 OTLP 后端。
 ---
 
-{/* TODO: 追踪、指标端点、日志投递、CLI/TUI 演示。 */}
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Cards, Card } from 'fumadocs-ui/components/card';
+
+BitRouter 原生支持 OpenTelemetry。`bitrouter-observe` 插件为每次请求发出 trace 和
+指标——覆盖从入口、路由、每一次上游尝试（包括故障转移）到结算的完整生命周期——并
+推送到任意兼容 OTLP 的后端：Grafana Tempo、Honeycomb、Datadog、Jaeger、
+OpenTelemetry Collector，任何能讲 OTLP 的系统都可以。
+
+它在**你为它指定目标之前都是关闭的**，完全运行在你自己的基础设施上，且默认不导出
+消息内容。
+
+## 工作原理
+
+每次请求产生一棵遵循
+[OpenTelemetry GenAI 语义约定](https://opentelemetry.io/docs/specs/semconv/gen-ai/)
+的 span 树：
+
+```
+HTTP SERVER  POST /v1/chat/completions        (入口)
+└─ chat      (INTERNAL, 入站 —— 整个请求生命周期)
+   ├─ route  (INTERNAL —— 路由决策)
+   ├─ chat   (CLIENT —— 上游尝试 #1，带 gen_ai.* 属性)
+   ├─ chat   (CLIENT —— 故障转移尝试 #2)
+   └─ settle (INTERNAL —— 结算汇总)
+```
+
+每次请求只有**一个 GenAI generation**——即入站的 `chat` span。每一次上游尝试都是
+独立的 `CLIENT` span，因此一条故障转移链会按顺序展示它尝试过的每个 provider，以及
+每一跳的延迟与结果。BitRouter 会提取入站的 W3C trace context 并注入出站的
+`traceparent`，让路由器的 span 接入来自你的 agent 或网关的父 trace。
+
+span 上的关键属性：
+
+| 属性 | 说明 |
+| --- | --- |
+| `gen_ai.provider.name` | 该跳的上游 provider（如 `openai`、`anthropic`） |
+| `gen_ai.response.model` | 实际服务该响应的模型 |
+| `gen_ai.token.type` | `input` / `output`，标注在 token 度量上 |
+| `outcome` | 请求的最终处置 |
+| `api_key_id`、`user_id` | 调用方归因（受基数上限约束——见下文） |
+| `account_label` | 逻辑账户/租户标签 |
+
+## 启用
+
+在插件下加一个 `otel` 块，指向你的 collector：
+
+```yaml
+plugins:
+  bitrouter-observe:
+    otel:
+      endpoint: "http://localhost:4318"   # 你的 OTLP 端点
+      service_name: "bitrouter"
+      headers:                            # 托管后端的鉴权
+        x-honeycomb-team: "${HONEYCOMB_API_KEY}"
+```
+
+每个字段都有对应的环境变量覆盖项，因此你无需修改文件即可配置导出——在容器中尤其
+方便：
+
+| 环境变量 | 设置 |
+| --- | --- |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | OTLP 端点 URL |
+| `OTEL_EXPORTER_OTLP_HEADERS` | 鉴权 header（逗号分隔的 `k=v`） |
+| `OTEL_SERVICE_NAME` | 资源 service 名称 |
+| `OTEL_RESOURCE_ATTRIBUTES` | 额外资源属性（逗号分隔的 `k=v`） |
+| `OTEL_TRACES_SAMPLER` | 采样器类型 |
+| `OTEL_TRACES_SAMPLER_ARG` | 采样器参数（如比率） |
+| `BITROUTER_OBSERVE_CONTENT_CAPTURE` | 内容捕获模式 |
+
+<Callout type="info">
+传输层是**编译期**选择：`otel-http`（OTLP/HTTP + protobuf，默认）或 `otel-grpc`
+（OTLP/gRPC）。两者的 YAML 与环境变量配置完全一致——你只在编译二进制时选择传输层。
+</Callout>
+
+## 你能得到什么
+
+### Trace
+
+上面的 span 树，按请求导出。由于每一次上游尝试都是独立的 span，trace 正是故障转移
+与路由行为变得清晰可读的地方：你能看到先尝试了哪个 provider、为何回退、以及整条链
+上延迟去了哪里。
+
+### 指标
+
+指标按间隔（默认 60 秒）通过 OTLP 导出：
+
+| 指标 | 类型 | 度量 |
+| --- | --- | --- |
+| `bitrouter.requests` | Counter | 已处理请求数 |
+| `gen_ai.client.operation.duration` | Histogram | 请求延迟 |
+| `gen_ai.client.token.usage` | Histogram | token 计数（按 `gen_ai.token.type`） |
+| `bitrouter.errors` | Counter | 错误数 |
+| `bitrouter.stream_parts` | Counter | 发出的流式分片数 |
+
+维度包括 `gen_ai.provider.name`、`gen_ai.response.model`、`outcome`、
+`account_label` 以及调用方标识。为在共享部署上控制指标基数，`api_key_id` 与
+`user_id` 设有上限（默认 1024 与 256 个不同值）；超过上限后，值会归入一个溢出桶。
+
+<Callout type="warn">
+**没有 Prometheus 抓取端点**。`GET /metrics` 已退役——指标仅通过 OTLP 推送。如果你
+的技术栈基于 Prometheus，请通过带 Prometheus exporter 的 OpenTelemetry Collector
+接入。
+</Callout>
+
+## 内容捕获
+
+prompt 与响应**内容默认从不导出**（`content_capture: off`）。设为 `full` 可将消息
+正文序列化到 span 上——对调试有用，但会把用户内容放进你的遥测后端，需要权衡你的隐私
+与保留策略。
+
+```yaml
+plugins:
+  bitrouter-observe:
+    otel:
+      content_capture: "off"   # off（默认） | full
+```
+
+## 检查导出器
+
+不离开终端即可确认运行中的守护进程到底在做什么——端点、采样器、基数使用、在途
+span：
+
+```bash
+bitrouter observe status          # 人类可读的快照
+bitrouter observe status --json   # 相同内容，JSON 格式
+```
+
+未接入导出器时它会报告 `stopped`（并附上编译期标志），因此它也是一个快速的“遥测开
+了吗？”检查。
 
 ## 在云端
 
-以上 CLI/TUI、Prometheus 及 OTLP 导出均为开源功能，在本地运行。**BitRouter Cloud** 额外提供托管仪表盘和应用内请求日志——记录每次运行的成本、延迟以及跨所有 agent 的完整调用链，由服务端保留，无需本地管道即可使用。
+上述 OTLP 导出是开源的，运行在你自己的后端上。**BitRouter Cloud** 额外提供一个无需
+运维的托管方案：一个带消费、请求与 token KPI 的 Activity 仪表盘，一个应用内请求日志
+（每请求的模型、provider、token、成本、延迟、资金来源、状态、路由档位与能力），以及
+可通过管理 API 查询的按 namespace 用量归因——全部由服务端保留，无需运行 collector。
+
+## 下一步
+
+<Cards>
+  <Card title="导出到你的 OTel 后端" href="/docs/guides/export-telemetry" description="Honeycomb、Grafana、Datadog 与 Collector 的可复制粘贴配置。" />
+  <Card title="自托管 BitRouter" href="/docs/guides/self-host" description="在生产环境运行路由器，并接好遥测。" />
+  <Card title="模型故障转移" href="/docs/features/model-fallback" description="你在每条 trace 里都会看到的故障转移链。" />
+  <Card title="Guardrails" href="/docs/features/guardrails" description="请求与响应的内容防火墙。" />
+</Cards>

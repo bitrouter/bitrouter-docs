@@ -1,0 +1,24 @@
+---
+title: CLI
+description: The single local binary that runs BitRouter — one endpoint your runtime points at, a daemon you control, and a scriptable surface for your account.
+---
+
+BitRouter ships as one **static binary**, `bitrouter`, with no dependencies to install. It plays two roles: it runs the **local router** your agent talks to, and it's the **command-line surface** for your hosted account.
+
+## The local endpoint
+
+Your agent never talks to a remote API directly — it points at the binary running locally, by default on `http://127.0.0.1:4356`. Everything else in these docs — the four model protocols, the MCP and ACP gateways — is served from that one endpoint.
+
+You run it as a daemon and control its lifecycle:
+
+- `bitrouter serve` — run the router in the foreground.
+- `bitrouter start` / `stop` / `status` — manage it as a background daemon.
+
+## Account commands
+
+The same binary manages your hosted account, so scripts and agents can do everything the console can:
+
+- `bitrouter auth login | whoami | logout` — sign in to your account (device-code OAuth) and inspect or clear local credentials.
+- `bitrouter cloud …` — manage the account itself: API keys, usage and request history, billing balance, BYOK provider keys, routing and budget policies, and OAuth clients.
+
+For the full command list, flags, and output formats, see the [CLI reference](/docs/reference/cli).

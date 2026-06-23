@@ -1,0 +1,52 @@
+---
+title: 服务端工具
+description: 让 BitRouter 在服务端替你运行工具调用循环——包括 Advisor、SubAgent 与 Fusion 这些由模型支撑的工具。
+---
+import { Callout } from 'fumadocs-ui/components/callout';
+
+通常是你的 agent 在运行工具调用循环：模型请求调用某个工具，你的 harness 执行它、追加结果，再次调用模型。**服务端工具**把这个循环搬进 BitRouter。你声明一组工具，BitRouter 把它们公布给模型；当模型调用其中之一时，BitRouter **自己执行该工具并把结果喂回**——如此循环，直到模型不再调用它们。在调用方看来，这就像一次单独的响应。
+
+## 循环如何运行
+
+BitRouter 把声明的工具注入到出站请求中，拦截模型对它们的调用、运行它们、追加结果，再重新调用上游——重复此过程，直到模型返回一个不含工具调用的答案，或触及某个上限。该循环是有界的，以防失控：
+
+| 上限 | 默认值 | 含义 |
+| --- | --- | --- |
+| `max_iterations` | 10 | 循环停止前的最大工具轮数。 |
+| `tool_timeout` | 30s | 单个工具的执行超时。 |
+| `total_budget` | 120s | 整个循环的墙钟时间预算。 |
+| `max_consecutive_errors` | 3 | 连续这么多次工具失败后停止。 |
+
+在每次调用前，一项**审批策略**会决定该工具是否可以运行。默认放行一切；被拒绝的调用会向模型返回一个"执行被拒"的结果，而不会真正运行。
+
+## 逐请求启用服务端工具
+
+你通过在请求的 `tools` 数组中声明工具来开启服务端工具——无需改动配置。BitRouter 识别三个内置的、由模型支撑的工具，并且只公布你声明了的那些：
+
+```json
+{
+  "tools": [
+    { "type": "bitrouter:advisor",  "args": { "model": "anthropic/claude-opus-4.8", "instructions": "..." } },
+    { "type": "bitrouter:subagent", "args": { "model": "openai/gpt-4o-mini", "instructions": "..." } },
+    { "type": "bitrouter:fusion",   "args": { "panel": [{ "model": "..." }], "judge": { "model": "..." } } }
+  ]
+}
+```
+
+MCP 服务器工具则改为通过配置接入——把 `server_tools.mcp_servers` 设为那些其工具应由 BitRouter 在循环内运行的服务器。
+
+## Advisor
+
+**Advisor（顾问）**让正在运行的模型**在生成途中咨询一个更强的模型**。顾问模型由你的声明固定（并回退到父模型）；调用方模型发送一个 `prompt`，得到结构化的建议。当某个困难的子问题值得做一次短暂升级、而又不必把整个请求切换到更贵的模型时，用它。
+
+## SubAgent
+
+**SubAgent（子代理）**让正在运行的模型**把一个自包含的任务委派给更便宜、更快的工作模型**。工作模型由声明固定；调用方提供 `task_name` 与 `task_description`，得到结果。用它来扇出有界的子任务，而不在其上花费前沿模型的 token。
+
+## Fusion
+
+**Fusion（融合）**让**一组模型（1–8 个）并行处理同一个 prompt**，然后由一个**裁判（judge）**模型对它们的答案进行*比较*——而非合并——形成一份结构化分析（共识、矛盾、部分覆盖、独到见解、盲点），供调用方模型据此写出最终答案。一个可选的合成器（synthesizer）可以代替它来写这个答案。在高风险问题上，当交叉核验多个模型值得这份开销时，用它。
+
+<Callout type="info">
+Advisor、SubAgent 与 Fusion 各自由嵌套在你请求内部的模型调用支撑。它们的开销等同于其底层模型调用的开销，并且会像任何其他调用一样出现在你的用量历史中。
+</Callout>

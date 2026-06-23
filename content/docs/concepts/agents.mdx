@@ -1,24 +1,18 @@
 ---
 title: Agents
-description: What agent-native means on BitRouter — ACP identity and dispatch, KYA identity for autonomous pay-per-use, and Skills that teach an agent to use BitRouter.
+description: What agent-native means on BitRouter — the ACP gateway for identity, discovery, and task dispatch, plus KYA identity for autonomous pay-per-use.
 ---
 
-BitRouter is **agent-native**: the primitives below assume the caller is an autonomous agent, not a human at a keyboard. That shows up in three places — how agents are identified and reached, how they pay, and how they learn to use the router.
+BitRouter is **agent-native**: the primitives below assume the caller is an autonomous agent, not a human at a keyboard. That shows up in two places — how agents are identified and reached, and how they pay.
 
-## Identity and dispatch — ACP
+## The ACP gateway — identity and dispatch
 
 Just as the MCP gateway lets an agent reach many tool servers, the **ACP gateway** handles the agent side: **agent identity, discovery, and task dispatch** across hosts. It's how an agent gets a place in the network, can be found, and can hand off or receive tasks — through the same single-endpoint model BitRouter uses everywhere.
 
-## Verifiable identity that can pay — KYA
+## KYA — verifiable identity that can pay
 
 An autonomous agent holding your keys is a liability unless it has an identity of its own. **KYA (Know-Your-Agent)** gives an agent a **verifiable identity**, which is what makes autonomous payment safe: with that identity, an agent can **pay per use** through the Machine Payment Protocol — x402/MPP — settling each request itself, with no credit cards, prepaid credits, or invoices in the loop.
 
-## Knowing how to use BitRouter — Skills
-
-Finally, an agent has to actually know how to drive the router. **Agent Skills** are drop-in capabilities that **teach an agent to use BitRouter** — how to install it, point a runtime at it, and call models and tools through it — so the knowledge travels with the agent instead of living in a human's setup notes.
-
 ## Learn how to
 
-- [ACP gateway](/docs/features/acp) — agent identity, discovery, and task dispatch across hosts.
-- [Agent Skills](/docs/features/agentskills) — drop-in skills that teach an agent to use BitRouter.
 - [Agentic payment](/docs/cloud/payment) — autonomous pay-per-use via MPP / x402.

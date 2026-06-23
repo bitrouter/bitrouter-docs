@@ -12,8 +12,8 @@ const finalPath = {
   "model-variants":"/docs/features/model-variants","presets":"/docs/features/presets",
   "structured-outputs":"/docs/features/structured-outputs","byok":"/docs/features/byok",
   "local-models":"/docs/features/local-models","guardrails":"/docs/features/guardrails",
-  "observability":"/docs/features/observability","mcp":"/docs/features/mcp","acp":"/docs/features/acp",
-  "agentskills":"/docs/features/agentskills",
+  "observability":"/docs/features/observability","mcp":"/docs/concepts/tools","acp":"/docs/concepts/agents",
+  "agentskills":"/docs/concepts/tools",
   // bitrouter cloud (was: infrastructure)
   "managed-provider":"/docs/cloud/managed-models","discounted-models":"/docs/cloud/managed-models",
   "payment":"/docs/cloud/payment","workspaces":"/docs/cloud/workspaces",

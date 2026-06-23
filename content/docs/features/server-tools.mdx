@@ -1,0 +1,52 @@
+---
+title: Server tools
+description: Let BitRouter run the tool-calling loop for you, server-side — including the Advisor, SubAgent, and Fusion model-backed tools.
+---
+import { Callout } from 'fumadocs-ui/components/callout';
+
+Normally your agent runs the tool-calling loop: the model asks to call a tool, your harness executes it, appends the result, and calls the model again. **Server tools** move that loop into BitRouter. You declare a set of tools, BitRouter advertises them to the model, and when the model calls one, BitRouter **executes it and feeds the result back itself** — looping until the model stops calling them. To the caller it looks like a single response.
+
+## How the loop runs
+
+BitRouter injects the declared tools into the outbound request, intercepts the model's calls to them, runs them, appends the results, and re-calls the upstream — repeating until the model returns an answer with no tool calls, or a bound is hit. The loop is bounded so it can't run away:
+
+| Bound | Default | Meaning |
+| --- | --- | --- |
+| `max_iterations` | 10 | Maximum tool rounds before the loop stops. |
+| `tool_timeout` | 30s | Per-tool execution timeout. |
+| `total_budget` | 120s | Wall-clock budget for the whole loop. |
+| `max_consecutive_errors` | 3 | Stop after this many back-to-back tool failures. |
+
+Before each call, an **approval policy** decides whether the tool may run. The default allows everything; a denied call returns an execution-denied result to the model instead of running.
+
+## Enabling server tools per request
+
+You turn server tools on by declaring them in the request's `tools` array — no config change required. BitRouter recognizes three built-in, model-backed tools and only advertises the ones you declare:
+
+```json
+{
+  "tools": [
+    { "type": "bitrouter:advisor",  "args": { "model": "anthropic/claude-opus-4.8", "instructions": "..." } },
+    { "type": "bitrouter:subagent", "args": { "model": "openai/gpt-4o-mini", "instructions": "..." } },
+    { "type": "bitrouter:fusion",   "args": { "panel": [{ "model": "..." }], "judge": { "model": "..." } } }
+  ]
+}
+```
+
+MCP-server tools are wired through configuration instead — set `server_tools.mcp_servers` to the servers whose tools BitRouter should run inside the loop.
+
+## Advisor
+
+**Advisor** lets the running model **consult a stronger model mid-generation**. The advisor model is fixed by your declaration (and falls back to the parent model); the calling model sends a `prompt` and gets back structured advice. Use it when one hard sub-question is worth a brief escalation, without switching the whole request to a pricier model.
+
+## SubAgent
+
+**SubAgent** lets the running model **delegate a self-contained task to a cheaper, faster worker model**. The worker is fixed by the declaration; the caller supplies a `task_name` and `task_description` and gets back the outcome. Use it to fan out bounded sub-tasks without spending frontier tokens on them.
+
+## Fusion
+
+**Fusion** runs a **panel of models (1–8) on the same prompt in parallel**, then a **judge** model compares — not merges — their answers into a structured analysis (consensus, contradictions, partial coverage, unique insights, blind spots), which the calling model uses to write the final answer. An optional synthesizer can write that answer instead. Use it for high-stakes questions where cross-checking several models is worth the cost.
+
+<Callout type="info">
+Advisor, SubAgent, and Fusion are each backed by model calls nested inside your request. They cost what their underlying model calls cost, and they appear in your usage history like any other call.
+</Callout>

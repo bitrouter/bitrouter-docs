@@ -2,5 +2,20 @@
   "title": "Features",
   "icon": "Boxes",
   "defaultOpen": false,
-  "pages": ["provider-selection", "model-fallback", "model-variants", "presets", "structured-outputs", "fusion", "subagent", "advisor", "byok", "local-models", "guardrails", "observability", "mcp", "acp", "agentskills"]
+  "pages": [
+    "---Models gateway---",
+    "provider-selection",
+    "model-fallback",
+    "model-variants",
+    "presets",
+    "structured-outputs",
+    "byok",
+    "local-models",
+    "---Tools gateway---",
+    "server-tools",
+    "toolsets",
+    "---Cross-cutting---",
+    "guardrails",
+    "observability"
+  ]
 }

@@ -1,0 +1,20 @@
+---
+title: Toolsets
+description: A toolset is a composable bundle of tools BitRouter advertises on a request and executes itself — MCP-backed, model-backed, or in-process.
+---
+
+A **toolset** is a bundle of tools that BitRouter advertises to the model and executes itself during the [server-tool loop](/docs/features/server-tools). It's the seam that makes router-run tools provider-agnostic: each toolset decides which tools to advertise on a given request and how to run them, and BitRouter composes several into the single set the model sees.
+
+## What a toolset does
+
+Every toolset answers two questions for a request: **which tools to advertise**, and **how to run a call** to one of them. BitRouter keeps a registry of toolsets; when the model calls a tool, the registry routes the call to the toolset that **owns** that name. Because several toolsets can be active at once, tool names are **prefixed** to avoid collisions — the `search` tool from the `demo` server is advertised as `demo__search`.
+
+## Kinds of toolset
+
+- **MCP-backed** — one per upstream MCP server; its tools are the server's tools, run through the gateway.
+- **Model-backed** — [Advisor, SubAgent, and Fusion](/docs/features/server-tools), each wrapping a nested model call.
+- **In-process** — tools implemented directly in the router.
+
+## Conditional availability
+
+A toolset doesn't have to advertise on every request. It can check what the caller **declared** and stay silent otherwise — which is how the model-backed tools work: Advisor only appears when the request declares `bitrouter:advisor`, and likewise for SubAgent and Fusion. The model only ever sees the tools that request actually opted into.

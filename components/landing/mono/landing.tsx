@@ -270,6 +270,35 @@ function ModelRotor() {
   );
 }
 
+// Harness marks cycled in the same CTA, opposite the model rotor — the old
+// trusted-by strip's job folded into the button. Slugs must all have a brand
+// mark in HarnessIcon, and the list length must stay 6 to match brm-rotor.
+const EXPLORE_HARNESSES: string[] = [
+  "claude-code",
+  "codex",
+  "github-copilot",
+  "opencode",
+  "openclaw",
+  "hermes",
+];
+
+function HarnessRotor() {
+  // duplicate the first item at the end so the loop wraps seamlessly
+  const items = [...EXPLORE_HARNESSES, EXPLORE_HARNESSES[0]];
+  return (
+    <span className="explore-rotor" aria-hidden="true">
+      {/* `.rev` runs brm-rotor in reverse — scrolls opposite the model rotor */}
+      <span className="explore-track rev">
+        {items.map((slug, i) => (
+          <span className="explore-item" key={i}>
+            <HarnessIcon name={slug} size={16} />
+          </span>
+        ))}
+      </span>
+    </span>
+  );
+}
+
 function Hero() {
   const mobile = useMobile();
   return (
@@ -293,9 +322,10 @@ function Hero() {
             <a
               href={SIGN_IN_URL}
               className="btn btn-primary explore-btn"
-              aria-label="Get an API key for every model"
+              aria-label="Get an API key for every model, from any agent harness"
               onClick={() => posthog.capture("get_api_key_clicked", { location: "hero" })}
             >
+              <HarnessRotor />
               <span>Get API key</span>
               <ModelRotor />
               <span className="explore-arrow">→</span>
@@ -313,48 +343,6 @@ function Hero() {
             className="hero-term"
             animate={!mobile}
           />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------------- TRUSTED BY ---------------- */
-// Agent harnesses with a step-by-step integration guide in the cookbook.
-// Each links to its guide; the registry works with any harness ("and more").
-const COOKBOOK_BASE = "/docs/integrations/integration";
-const HARNESSES: { name: string; slug: string }[] = [
-  { name: "Claude Code", slug: "claude-code" },
-  { name: "Codex", slug: "codex" },
-  { name: "GitHub Copilot", slug: "github-copilot" },
-  { name: "OpenCode", slug: "opencode" },
-  { name: "OpenClaw", slug: "openclaw" },
-  { name: "KiloCode", slug: "kilocode" },
-  { name: "Hermes", slug: "hermes" },
-  { name: "Pi Agent", slug: "pi" },
-];
-
-function TrustedBy() {
-  return (
-    <section className="trusted">
-      <div className="wrap">
-        <div className="trusted-label">
-          // Drop-in integration guides for the agent harnesses devs ship with
-        </div>
-        <div className="trusted-grid">
-          {HARNESSES.map((h) => (
-            <Link
-              href={`${COOKBOOK_BASE}/${h.slug}`}
-              className="trusted-item"
-              key={h.slug}
-            >
-              <HarnessIcon name={h.slug} size={15} className="trusted-ico" />
-              {h.name}
-            </Link>
-          ))}
-          <Link href={COOKBOOK_BASE} className="trusted-item trusted-more">
-            and more →
-          </Link>
         </div>
       </div>
     </section>
@@ -538,8 +526,8 @@ function SocialProof() {
 
 /* ---------------- NO LOCK-IN ---------------- */
 // Synthesis strip: the page proves each of these elsewhere (open registry,
-// harness strip, Apache-2.0). This names the three freedoms together — the
-// hardest differentiator vs closed routers and embedded libraries.
+// hero CTA harness rotor, Apache-2.0). This names the three freedoms together —
+// the hardest differentiator vs closed routers and embedded libraries.
 const LOCKIN: { k: string; v: string }[] = [
   { k: "no model lock-in", v: "swap any model, open or frontier, per call" },
   { k: "no harness lock-in", v: "Claude Code, Cursor, Codex — or your own" },
@@ -1263,7 +1251,7 @@ const FAQS = [
   },
   {
     q: "Does BitRouter work with Claude Code and other coding agents?",
-    a: "Yes — BitRouter works with any agent harness that supports a configurable base URL or API key. Claude Code, GitHub Copilot, Codex, Opencode, KiloCode, Pi Agent, Hermes, and Openclaw all connect with a two-variable override (ANTHROPIC_BASE_URL or OPENAI_BASE_URL) and zero code changes — routing, failover, cost tracking, and guardrails apply automatically from that point forward. The same pattern works for any harness not yet in the list. Step-by-step setup for each integration is in the cookbook at /docs/integrations/integration.",
+    a: "Yes — BitRouter works with any agent harness that supports a configurable base URL or API key. Claude Code, GitHub Copilot, Codex, Opencode, Pi Agent, Hermes, and Openclaw all connect with a two-variable override (ANTHROPIC_BASE_URL or OPENAI_BASE_URL) and zero code changes — routing, failover, cost tracking, and guardrails apply automatically from that point forward. The same pattern works for any harness not yet in the list. Step-by-step setup for each integration is in the cookbook at /docs/integrations.",
   },
 ];
 
@@ -1584,7 +1572,6 @@ export function MonoLanding({
     <>
       <Hero />
       <NoLockIn />
-      <TrustedBy />
       {/* Social proof temporarily hidden until we have more real tweets.
           Re-enable by uncommenting: <SocialProof /> */}
       <Problems />

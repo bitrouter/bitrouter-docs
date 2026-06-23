@@ -1,313 +1,65 @@
 ---
 title: GitHub Copilot
-description: Connect GitHub Copilot (VS Code + CLI) to BitRouter for multi-provider routing
+description: Route GitHub Copilot's chat through BitRouter via its Bring-Your-Own-Key OpenAI-compatible provider.
 ---
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
-# GitHub Copilot Integration
+Copilot's Bring-Your-Own-Key (BYOK) support lets you back its chat with any OpenAI-compatible endpoint. Point that endpoint at BitRouter and Copilot routes across the whole [registry](/docs/concepts/models).
 
-## Quick Start
+<Callout type="warn">
+**BYOK covers chat, agent, and edit — not inline code completions.** Autocomplete still runs on GitHub's own models and cannot be routed through a custom endpoint.
+</Callout>
 
-```bash
-# 1. Start BitRouter
-bitrouter serve
+## Prerequisites
 
-# 2. Add to VS Code settings.json
-# "github.copilot.advanced": {
-#   "debug.overrideProxyUrl": "http://127.0.0.1:4356"
-# }
+- BitRouter running — local proxy at `http://127.0.0.1:4356`, or [BitRouter Cloud](/docs/get-started/quickstart) at `https://api.bitrouter.ai`.
+- A BitRouter model that supports **tool calling and streaming** (a ≥128k context window is recommended) — Copilot requires these.
 
-# 3. Reload VS Code — Copilot now routes through BitRouter
-```
+## Point Copilot at BitRouter
 
-## What You Get
+<Tabs items={['Copilot CLI', 'VS Code']}>
+<Tab value="Copilot CLI">
 
-- ✅ **25+ LLM providers** - Route Copilot requests through any BitRouter provider
-- ✅ **VS Code + CLI** - Both the extension and `gh copilot` CLI are supported
-- ✅ **Cost tracking** - Monitor spending across all Copilot sessions
-- ✅ **BYOK support** - Bring your own API keys for Business/Enterprise plans
-- ✅ **Fallback routing** - Automatic failover when a provider is unavailable
-
-## Installation
-
-### Prerequisites
+The CLI configures BYOK through environment variables:
 
 ```bash
-# VS Code extension — search "GitHub Copilot" in Extensions panel
-# or install via CLI:
-code --install-extension GitHub.copilot
-
-# GitHub Copilot CLI (optional)
-gh extension install github/gh-copilot
+export COPILOT_PROVIDER_BASE_URL=http://127.0.0.1:4356
+export COPILOT_MODEL=openai/gpt-4o
+export COPILOT_PROVIDER_API_KEY=local-placeholder   # any value for the local proxy
+copilot
 ```
 
-### Connect to BitRouter
+<Callout type="info">
+If requests 404, append `/v1` to `COPILOT_PROVIDER_BASE_URL` — the CLI normally adds the route path itself.
+</Callout>
 
-Choose your approach based on your VS Code version and Copilot plan:
+</Tab>
+<Tab value="VS Code">
 
-#### Option 1: Debug Proxy Override (Stable VS Code, any plan)
+Open the model picker in Copilot Chat → **Manage Language Models** → **Add Models**, choose the **OpenAI Compatible / Custom Endpoint** provider, and enter:
 
-```json
-// .vscode/settings.json or user settings
-{
-  "github.copilot.advanced": {
-    "debug.overrideProxyUrl": "http://127.0.0.1:4356",
-    "debug.testOverrideProxyUrl": "http://127.0.0.1:4356"
-  }
-}
-```
+- **Base URL** — `http://127.0.0.1:4356/v1`
+- **API Key** — any value for the local proxy; your BitRouter key for Cloud
+- **Model** — a registry id such as `openai/gpt-4o`
 
-Reload VS Code after saving. This routes all Copilot completions and chat through BitRouter.
+<Callout type="warn">
+The native OpenAI-compatible provider is currently **VS Code Insiders** only. On stable VS Code, use a community "OpenAI-compatible provider" extension.
+</Callout>
 
-#### Option 2: BYOK Custom Endpoint (VS Code Insiders, Business/Enterprise)
+</Tab>
+</Tabs>
 
-```json
-// chatLanguageModels.json (Command Palette: "Chat: Manage Language Models")
-[
-  {
-    "name": "BitRouter",
-    "vendor": "customendpoint",
-    "apiKey": "your-bitrouter-key",
-    "apiType": "chat-completions",
-    "models": [
-      {
-        "id": "claude-3-5-sonnet-latest",
-        "name": "BitRouter → Claude 3.5 Sonnet",
-        "url": "http://127.0.0.1:4356/v1/chat/completions",
-        "toolCalling": true,
-        "vision": false,
-        "maxInputTokens": 200000,
-        "maxOutputTokens": 8192
-      },
-      {
-        "id": "gpt-4o",
-        "name": "BitRouter → GPT-4o",
-        "url": "http://127.0.0.1:4356/v1/chat/completions",
-        "toolCalling": true,
-        "vision": true,
-        "maxInputTokens": 128000,
-        "maxOutputTokens": 4096
-      }
-    ]
-  }
-]
-```
+<Callout type="info">
+For **Cloud**, swap the base URL to `https://api.bitrouter.ai` (CLI) or `https://api.bitrouter.ai/v1` (VS Code) and use your BitRouter key.
+</Callout>
 
-#### Option 3: Copilot CLI (gh copilot)
+## Pick a model
 
-```bash
-export COPILOT_PROVIDER_BASE_URL="http://127.0.0.1:4356/v1"
-export COPILOT_MODEL="claude-3-5-sonnet-latest"
-export COPILOT_PROVIDER_API_KEY="your-bitrouter-key"
-export COPILOT_OFFLINE="true"   # prevent silent fallback to GitHub-hosted models
+Use any registry id in `provider/model` form — `openai/gpt-4o`, `anthropic/claude-sonnet-4-6`, `google/gemini-2.5-pro`, optionally with a `:cost` / `:latency` variant. See [Models](/docs/concepts/models).
 
-gh copilot suggest "create a docker-compose for a postgres + redis stack"
-gh copilot explain "$(cat main.go)"
-```
+## Learn more
 
-## Essential Configuration
-
-### Multi-Provider Routing
-
-```yaml
-# ~/.bitrouter/config.yaml
-routes:
-  # Copilot completions — fast, cheap model
-  - match: "copilot/completions/*"
-    provider: openai
-    model: gpt-4o-mini
-
-  # Copilot Chat — more capable model
-  - match: "copilot/chat/*"
-    provider: anthropic
-    model: claude-3-5-sonnet-latest
-
-  # Complex refactoring tasks
-  - match: "copilot/chat/refactor/*"
-    provider: openai
-    model: o1-preview
-
-  # Local models via Ollama
-  - match: "copilot/local/*"
-    provider: ollama
-    model: codellama:34b
-    endpoint: http://localhost:11434
-```
-
-### HTTP Proxy (Network-Level)
-
-For corporate environments that need all traffic routed through a proxy:
-
-```json
-{
-  "http.proxy": "http://127.0.0.1:4356",
-  "http.proxySupport": "on",
-  "http.proxyStrictSSL": false
-}
-```
-
-```bash
-# Or via environment variables
-export HTTPS_PROXY=http://127.0.0.1:4356
-export HTTP_PROXY=http://127.0.0.1:4356
-```
-
-### Cost Budgets
-
-```yaml
-budgets:
-  copilot:
-    daily: 10.00
-    per_session: 2.00
-    alert_threshold: 0.80   # alert at 80% of budget
-```
-
-## Common Recipes
-
-### Recipe: Inline Completions vs Chat Routing
-```yaml
-routes:
-  # Fast, low-latency for inline completions
-  - match: "copilot/completions/*"
-    provider: openai
-    model: gpt-4o-mini
-    max_latency_ms: 800
-
-  # Full-context chat with Claude
-  - match: "copilot/chat/*"
-    provider: anthropic
-    model: claude-3-5-sonnet-latest
-```
-
-### Recipe: Fallback Chain
-```yaml
-routes:
-  - match: "copilot/*"
-    provider: anthropic
-    model: claude-3-5-sonnet-latest
-    fallback:
-      - provider: openai
-        model: gpt-4o
-      - provider: deepseek
-        model: deepseek-coder
-```
-
-### Recipe: Cost-Optimized Setup
-```yaml
-routes:
-  - match: "copilot/*"
-    rules:
-      - if: context_tokens < 4000
-        provider: openai
-        model: gpt-4o-mini
-      - if: context_tokens >= 4000
-        provider: deepseek
-        model: deepseek-coder
-```
-
-## Monitoring
-
-### Usage Dashboard
-```bash
-# Copilot session summary
-bitrouter sessions list --agent copilot
-
-# Token usage by model
-bitrouter usage breakdown --agent copilot --group-by model
-
-# Daily spend
-bitrouter costs breakdown --agent copilot --period day
-```
-
-### Latency Tracking
-```bash
-# P95 latency per route
-bitrouter stats latency --agent copilot
-
-# Provider comparison
-bitrouter providers benchmark --agent copilot
-```
-
-## Troubleshooting
-
-### 🔴 Copilot Not Using BitRouter
-```bash
-# Verify BitRouter is running
-curl http://127.0.0.1:4356/health
-
-# Check VS Code setting is saved
-code --list-extensions | grep copilot
-# Open settings.json, confirm debug.overrideProxyUrl is set
-
-# Reload VS Code window
-# Command Palette: "Developer: Reload Window"
-```
-
-### 🟡 BYOK Endpoint Not Appearing in Chat
-```bash
-# Confirm you're on VS Code Insiders with a Business/Enterprise plan
-# Open Command Palette: "Chat: Manage Language Models"
-# Re-enter the chatLanguageModels.json configuration
-
-# Test the endpoint directly
-curl http://127.0.0.1:4356/v1/models
-```
-
-### 🔵 Copilot CLI Falling Back to Cloud
-```bash
-# Ensure COPILOT_OFFLINE=true is set
-echo $COPILOT_OFFLINE
-
-# Verify base URL includes /v1
-echo $COPILOT_PROVIDER_BASE_URL   # should end with /v1
-
-# Test the endpoint
-curl http://127.0.0.1:4356/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -d '{"model":"gpt-4o","messages":[{"role":"user","content":"hello"}]}'
-```
-
-## Advanced Features
-
-### Workspace-Scoped Routing
-```json
-// .vscode/settings.json (project-level, overrides user settings)
-{
-  "github.copilot.advanced": {
-    "debug.overrideProxyUrl": "http://127.0.0.1:4356"
-  }
-}
-```
-
-Commit this to your repo so every team member routes through the shared BitRouter instance.
-
-### Enterprise Proxy with Auth
-```yaml
-# ~/.bitrouter/config.yaml
-providers:
-  copilot_enterprise:
-    type: github_copilot
-    enterprise_url: https://github.yourcompany.com
-    auth: bearer
-    route_prefix: "copilot/enterprise/*"
-```
-
-### Model Overrides by File Type
-```yaml
-routes:
-  - match: "copilot/*"
-    rules:
-      - if: file_extension in [".py", ".ipynb"]
-        model: deepseek-coder-v2
-      - if: file_extension in [".rs", ".go"]
-        model: claude-3-5-sonnet-latest
-      - default:
-        model: gpt-4o-mini
-```
-
-## Learn More
-
-- 📚 [GitHub Copilot Docs](https://docs.github.com/en/copilot)
-- 🔧 [Copilot Network Settings](https://docs.github.com/en/copilot/managing-copilot/configure-personal-settings/configuring-network-settings-for-github-copilot)
-- 🔑 [BYOK / Custom Endpoints](https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-enterprise/use-your-own-api-keys)
-- 🖥️ [Copilot CLI BYOK](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/use-byok-models)
-- 💬 [Discord Community](https://discord.gg/G3zVrZDa5C)
+- [Copilot CLI — BYOK models](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/use-byok-models)
+- [VS Code — language models (BYOK)](https://code.visualstudio.com/docs/agent-customization/language-models)
+- [Model fallback](/docs/features/model-fallback)

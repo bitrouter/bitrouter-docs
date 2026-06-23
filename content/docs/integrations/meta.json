@@ -2,5 +2,5 @@
   "title": "Integrations",
   "icon": "Blocks",
   "defaultOpen": false,
-  "pages": ["index", "claude-code", "codex", "github-copilot", "hermes", "kilocode", "openclaw", "opencode", "pi", "local-models"]
+  "pages": ["index", "claude-code", "codex", "github-copilot", "hermes", "openclaw", "opencode", "pi", "local-models"]
 }

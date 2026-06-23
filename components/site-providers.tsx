@@ -8,48 +8,16 @@ import {
 } from "@/components/ai/search";
 import { MessageCircleIcon } from "lucide-react";
 
-const BASE_URL = "https://bitrouter.ai";
-
 // Providers for the English-only site surface (landing, models, providers,
 // brand, careers, enterprise, legal, blog). next-intl is pinned to `en` so the
 // existing translated components keep working without a rewrite. No fumadocs
 // `i18n` prop on purpose — that keeps the language toggle out of the header
 // (the only i18n surface, docs, lives under [locale] with its own provider).
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      name: "BitRouter",
-      url: BASE_URL,
-      logo: `${BASE_URL}/logo.svg`,
-      description:
-        "Agent-native LLM router that optimizes your agent with every run. Zero harness changes — reliable, traceable, secure, and cost-effective.",
-      sameAs: ["https://github.com/AIMOverse", "https://x.com/AIMOverse"],
-    },
-    {
-      "@type": "WebSite",
-      name: "BitRouter",
-      url: BASE_URL,
-      description:
-        "Agent-native LLM router. Zero harness changes — every model call reliable, traceable, secure, and cost-effective. Open-sourced, Cloud opt-in.",
-      inLanguage: "en",
-    },
-    {
-      "@type": "SoftwareApplication",
-      name: "BitRouter",
-      applicationCategory: "DeveloperApplication",
-      operatingSystem: "Any",
-      url: BASE_URL,
-      offers: {
-        "@type": "Offer",
-        price: "0",
-        priceCurrency: "USD",
-        description: "Free to self-host. Cloud opt-in with pay-as-you-go pricing.",
-      },
-    },
-  ],
-};
+//
+// NOTE: the Organization/WebSite/SoftwareApplication JSON-LD graph lives once
+// in the root layout (app/layout.tsx) so it ships on every page. Do not re-emit
+// it here — a second copy created conflicting entity descriptions on the
+// (home)/blog/changelog surfaces that nest this provider inside the root layout.
 
 export async function SiteProviders({
   children,
@@ -70,10 +38,6 @@ export async function SiteProviders({
     >
       <NextIntlClientProvider locale="en" messages={messages}>
         <AISearch>
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-          />
           {children}
           <AISearchPanel />
           <AISearchTrigger

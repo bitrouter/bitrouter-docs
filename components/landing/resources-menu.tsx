@@ -34,8 +34,8 @@ export const RESOURCE_ITEMS: ResourceItem[] = [
   { label: "Changelog", description: "Latest releases and improvements", href: "/changelog", icon: GitBranch },
   { label: "About", description: "Who we are", href: "/about", icon: Users },
   { label: "Brand", description: "Logos and guidelines", href: "/brand", icon: Palette },
-  { label: "Privacy", description: "Privacy policy", href: "/legal/privacy", icon: Scale },
-  { label: "Terms", description: "Terms of service", href: "/legal/terms", icon: Scale },
+  { label: "Privacy", description: "Privacy policy", href: "/privacy-policy", icon: Scale },
+  { label: "Terms", description: "Terms of service", href: "/terms-of-service", icon: Scale },
 ];
 
 const RESOURCE_PREFIXES = RESOURCE_ITEMS.map((i) => i.href);

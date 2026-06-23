@@ -96,29 +96,37 @@ const nextConfig: NextConfig = {
       { source: "/careers", destination: "/about", permanent: true },
       { source: "/zh/careers", destination: "/about", permanent: true },
       { source: "/zh/enterprise", destination: "/enterprise", permanent: true },
-      { source: "/zh/legal", destination: "/legal", permanent: true },
-      { source: "/zh/legal/:slug", destination: "/legal/:slug", permanent: true },
       { source: "/zh/blog", destination: "/blog", permanent: true },
       { source: "/zh/blog/:slug", destination: "/blog/:slug", permanent: true },
 
+      // ── Legal pages moved off /legal to flat top-level URLs ──
+      { source: "/legal/privacy", destination: "/privacy-policy", permanent: true },
+      { source: "/legal/terms", destination: "/terms-of-service", permanent: true },
+      { source: "/zh/legal/privacy", destination: "/privacy-policy", permanent: true },
+      { source: "/zh/legal/terms", destination: "/terms-of-service", permanent: true },
+      { source: "/zh/legal", destination: "/privacy-policy", permanent: true },
+      { source: "/legal", destination: "/privacy-policy", permanent: true },
+      { source: "/zh/privacy-policy", destination: "/privacy-policy", permanent: true },
+      { source: "/zh/terms-of-service", destination: "/terms-of-service", permanent: true },
+
       {
         source: "/docs/overview/privacy-policy",
-        destination: "/legal/privacy",
+        destination: "/privacy-policy",
         permanent: true,
       },
       {
         source: "/zh/docs/overview/privacy-policy",
-        destination: "/legal/privacy",
+        destination: "/privacy-policy",
         permanent: true,
       },
       {
         source: "/docs/overview/terms-of-service",
-        destination: "/legal/terms",
+        destination: "/terms-of-service",
         permanent: true,
       },
       {
         source: "/zh/docs/overview/terms-of-service",
-        destination: "/legal/terms",
+        destination: "/terms-of-service",
         permanent: true,
       },
     ];

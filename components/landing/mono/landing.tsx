@@ -1375,6 +1375,116 @@ function FinalCta() {
   );
 }
 
+/* ---------------- CHANGELOG STRIP ---------------- */
+export type ChangelogStripItem = {
+  url: string;
+  title: string;
+  version?: string;
+  date: string; // ISO YYYY-MM-DD
+  breaking?: boolean;
+};
+
+const STRIP_MONTHS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+];
+
+// Deterministic formatter (no locale) so SSR and hydration agree.
+function fmtStripDate(iso: string) {
+  const [y, m, d] = iso.split("-").map(Number);
+  if (!y || !m || !d) return iso;
+  return `${STRIP_MONTHS[m - 1]} ${d}, ${y}`;
+}
+
+function ChangelogStrip({ items }: { items: ChangelogStripItem[] }) {
+  if (!items.length) return null;
+  return (
+    <section className="sec changelog-strip">
+      <div className="wrap">
+        <div className="sec-head">
+          <div
+            className="eyebrow sec-eyebrow"
+            style={{ ["--sec-accent" as string]: "var(--accent)" }}
+          >
+            <span className="idx">//</span> shipping log
+          </div>
+          <h2 className="h-display sec-title">Latest releases</h2>
+          <p className="sec-lead">
+            What shipped recently in the open-source core.{" "}
+            <Link href="/changelog" className="ulink">
+              Full changelog →
+            </Link>
+          </p>
+        </div>
+        <ul
+          style={{
+            listStyle: "none",
+            margin: 0,
+            padding: 0,
+            borderTop: "1px solid var(--line)",
+          }}
+        >
+          {items.map((it) => (
+            <li key={it.url} style={{ borderBottom: "1px solid var(--line)" }}>
+              <Link
+                href={it.url}
+                style={{
+                  display: "flex",
+                  gap: 16,
+                  alignItems: "baseline",
+                  padding: "16px 0",
+                  color: "var(--fg)",
+                  textDecoration: "none",
+                  flexWrap: "wrap",
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "var(--mono)",
+                    fontSize: 12,
+                    color: "var(--accent)",
+                    minWidth: 132,
+                  }}
+                >
+                  {it.version ?? ""}
+                </span>
+                <span style={{ flex: "1 1 240px", fontFamily: "var(--body)" }}>
+                  {it.title}
+                </span>
+                {it.breaking && (
+                  <span
+                    style={{
+                      fontFamily: "var(--mono)",
+                      fontSize: 11,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.06em",
+                      color: "var(--term-warn)",
+                      border: "1px solid var(--line-bright)",
+                      borderRadius: "var(--radius)",
+                      padding: "1px 6px",
+                    }}
+                  >
+                    breaking
+                  </span>
+                )}
+                <span
+                  style={{
+                    fontFamily: "var(--mono)",
+                    fontSize: 12,
+                    color: "var(--faint)",
+                  }}
+                >
+                  {fmtStripDate(it.date)}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
 /* ---------------- FOOTER ---------------- */
 export function MonoFooter() {
   const cols: { h: string; items: [string, string][] }[] = [
@@ -1411,8 +1521,8 @@ export function MonoFooter() {
       items: [
         ["About", "/about"],
         ["Brand", "/brand"],
-        ["Terms", "/legal/terms"],
-        ["Privacy", "/legal/privacy"],
+        ["Terms", "/terms-of-service"],
+        ["Privacy", "/privacy-policy"],
       ],
     },
   ];
@@ -1465,7 +1575,11 @@ export function MonoFooter() {
 }
 
 /* ---------------- PAGE ---------------- */
-export function MonoLanding() {
+export function MonoLanding({
+  changelog = [],
+}: {
+  changelog?: ChangelogStripItem[];
+}) {
   return (
     <>
       <Hero />
@@ -1475,6 +1589,7 @@ export function MonoLanding() {
           Re-enable by uncommenting: <SocialProof /> */}
       <Problems />
       <Mechanisms />
+      <ChangelogStrip items={changelog} />
       <Faq />
       <FinalCta />
       <MonoFooter />

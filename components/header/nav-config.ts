@@ -31,7 +31,6 @@ const NAV_ITEMS: NavItem[] = [
   { key: "blog", label: "Blog", webPath: "/blog" },
   { key: "changelog", label: "Changelog", webPath: "/changelog" },
   { key: "docs", label: "Docs", webPath: "/docs" },
-  { key: "download", label: "Download", webPath: "/docs/get-started/installation" },
 ];
 
 /** Nav items visible for the given auth status. */

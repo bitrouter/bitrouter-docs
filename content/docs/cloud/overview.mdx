@@ -3,7 +3,7 @@ title: Overview
 description: BitRouter Cloud — the optional hosted layer over the open-source core, with a managed provider network, SLA, team seats, support, and billing.
 ---
 
-**BitRouter Cloud** ([cloud.bitrouter.ai](https://cloud.bitrouter.ai)) is an optional hosted layer over the [open-source core](/docs/get-started/introduction). The core is identical either way — Cloud adds what needs a server you don't run yourself, and you can attach it to a **self-hosted** binary with `bitrouter auth login`. It's an account and a network, not a different product. See [Self-host vs Cloud](/docs/get-started/self-host-vs-cloud) for the decision.
+**BitRouter Cloud** ([cloud.bitrouter.ai](https://cloud.bitrouter.ai)) is an optional hosted layer over the [open-source core](/docs/get-started/introduction). The core is identical either way — Cloud adds what needs a server you don't run yourself, and you can attach it to a **self-hosted** binary with `bitrouter auth login`. It's an account and a network, not a different product. See the [capability comparison](#self-hosted-vs-cloud) below for the decision.
 
 ## What a Cloud account adds
 
@@ -11,6 +11,30 @@ description: BitRouter Cloud — the optional hosted layer over the open-source 
 - **SLA** — an uptime commitment on the hosted endpoint.
 - **[Workspaces & teams](/docs/cloud/workspaces)** — shared workspaces with per-member seats and access control.
 - **Priority support** and **managed billing** — one wallet, billed per request; failed requests aren't billed.
+
+None of these gate the core. You can run the open-source binary self-hosted and attach a Cloud account to it whenever you want the hosted network — the binary doesn't change.
+
+## Self-hosted vs Cloud
+
+The core is **identical** whether you self-host the binary or use the hosted service. Every routing, fallback, model-variant, BYOK, local-model, guardrail, observability, MCP, ACP, and structured-output capability works exactly the same either way. The `—` rows below are commercial and network features, not core inference capabilities.
+
+| Capability | Self-hosted | Cloud |
+| --- | --- | --- |
+| Universal API + cross-protocol routing | ✅ | ✅ |
+| BYOK (bring your own provider keys) | ✅ | ✅ |
+| Local / private model serving | ✅ | ✅ |
+| Model fallback & provider selection | ✅ | ✅ |
+| Model variants & presets | ✅ | ✅ |
+| Guardrails | ✅ | ✅ |
+| Observability (OTLP trace + metric export) | ✅ | ✅ |
+| MCP & ACP gateways | ✅ | ✅ |
+| Structured outputs | ✅ | ✅ |
+| SLA | — | ✅ |
+| Team seats & roles | — | ✅ |
+| Priority support | — | ✅ |
+| Managed billing | — | ✅ |
+| Hosted provider network & discounts | — | ✅ |
+| Agentic payment marketplace | — | ✅ |
 
 ## Get going
 

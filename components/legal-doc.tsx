@@ -1,15 +1,12 @@
 import { notFound } from "next/navigation";
-import { setRequestLocale } from "next-intl/server";
 import { legalSource } from "@/lib/source";
 import { SiteFooter } from "@/components/site-footer";
 import type { Metadata } from "next";
 
-type Props = { params: Promise<{ slug: string }> };
-
-export default async function LegalDocPage({ params }: Props) {
-  const { slug } = await params;
-  setRequestLocale("en");
-
+// Shared renderer for the standalone legal pages (/privacy-policy,
+// /terms-of-service). Each route is a thin wrapper that passes its slug here;
+// the MDX still lives in content/legal/{privacy,terms}.mdx.
+export function renderLegalPage(slug: string) {
   const page = legalSource.getPage([slug], "en");
   if (!page) notFound();
 
@@ -49,12 +46,7 @@ export default async function LegalDocPage({ params }: Props) {
   );
 }
 
-export function generateStaticParams() {
-  return ["privacy", "terms"].map((slug) => ({ slug }));
-}
-
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+export function legalMetadata(slug: string): Metadata {
   const page = legalSource.getPage([slug], "en");
   if (!page) notFound();
   return {

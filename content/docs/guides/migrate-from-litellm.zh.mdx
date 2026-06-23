@@ -35,8 +35,8 @@ LiteLLM 的代理需要你自己运维。BitRouter 的**托管云与本地二进
 
 LiteLLM 已在其横向 LLM 网关之上推出 MCP、A2A、Skills 与 CLI —— 同时还附带虚拟密钥、团队预算、消费仪表板、管理 UI 一整套。BitRouter 反其道而行：Agent 原语*即*产品，团队管理那一套保持极简。BitRouter 接口暴露的能力：
 
-- [MCP 网关](/docs/features/mcp) —— 代理 MCP 服务器，让 Agent 跨主机发现工具。
-- [ACP 网关](/docs/features/acp) —— 一等支持 Claude Code、Codex、OpenCode 等使用的 Agent Client Protocol。
+- [MCP 网关](/docs/concepts/tools) —— 代理 MCP 服务器，让 Agent 跨主机发现工具。
+- [ACP 网关](/docs/concepts/agents) —— 一等支持 Claude Code、Codex、OpenCode 等使用的 Agent Client Protocol。
 - [Guardrails](/docs/features/guardrails) —— 代理跳点上的 Agent 防火墙：原位检查、脱敏或拦截。
 - [Observability](/docs/features/observability) —— 内置消费与请求追踪，无需外部收集器。
 - Agent Skills 网关（即将推出）—— 按技能而非模型名称安装与路由能力。
@@ -125,9 +125,9 @@ bitrouter
 | 虚拟密钥 + 预算 + 管理 UI | Workspace 密钥（云）；环境变量密钥（本地） | [BYOK](/docs/features/byok)、[Workspaces](/docs/cloud/workspaces) |
 | Guardrails / PII / 内容过滤 | 代理跳点上的 Agent 防火墙 | [Guardrails](/docs/features/guardrails) |
 | Callbacks（Langfuse、Datadog 等） | 内置消费与请求日志；导出钩子规划中 | [Observability](/docs/features/observability) |
-| MCP Gateway | MCP 网关 | [MCP](/docs/features/mcp) |
-| A2A Agent Gateway | ACP 网关 | [ACP](/docs/features/acp) |
-| Skills Gateway / `/skills` 端点 | Skills 网关 + [agentskills.io](https://agentskills.io) 注册表 | [Agent Skills](/docs/features/agentskills) |
+| MCP Gateway | MCP 网关 | [MCP](/docs/concepts/tools) |
+| A2A Agent Gateway | ACP 网关 | [ACP](/docs/concepts/agents) |
+| Skills Gateway / `/skills` 端点 | Skills 网关 + [agentskills.io](https://agentskills.io) 注册表 | [Agent Skills](/docs/concepts/tools) |
 | LiteLLM Proxy CLI | `bitrouter` CLI / TUI | [Headless CLI](/docs/reference/cli) |
 | —（无对应） | Agent 自主支付（x402 / MPP） | [Payment](/docs/cloud/payment) |
 
@@ -158,7 +158,7 @@ bitrouter
 <Cards>
   <Card title="快速开始" href="/docs/get-started/quickstart" description="一分钟内在本地或云端运行 BitRouter" />
   <Card title="对比" href="/docs/get-started/comparison" description="与 OpenRouter、LiteLLM 及通用网关的并排对比" />
-  <Card title="Agent 功能" href="/docs/features/mcp" description="MCP、ACP、技能、Agent 防火墙、x402 支付" />
+  <Card title="Agent 功能" href="/docs/concepts/tools" description="MCP、ACP、技能、Agent 防火墙、x402 支付" />
   <Card title="API 参考" href="/docs/reference/api-reference" description="OpenAI 与 Anthropic 兼容端点" />
 </Cards>
 

@@ -31,7 +31,7 @@ Most calls in a run are trivial — a lookup, a format, a yes/no. BitRouter matc
 
 ## The foundation
 
-- **Universal LLM API** — One binary, three protocol surfaces: OpenAI Chat Completions + Responses, Anthropic Messages, and Google Generative AI. Talk to any LLM through your preferred protocol, and route cross-protocol (OpenAI ↔ Anthropic).
+- **Universal LLM API** — One binary, four protocols: OpenAI Chat Completions, OpenAI Responses, Anthropic Messages, and Google Generative AI. Talk to any LLM through your preferred protocol, and route cross-protocol (OpenAI ↔ Anthropic).
 - **Free BYOK** — Bring your own provider keys at zero cost. BitRouter auto-detects keys from environment variables — no config file required. You can also point BitRouter at your own local model (Ollama, vLLM, LM Studio) for free — see [Local & private models](/docs/features/local-models).
 - **MCP & ACP gateway** — Proxy [MCP](https://modelcontextprotocol.io) servers so agents can discover and call tools across hosts. [ACP](https://github.com/zed-industries/acp) support for agent identity, discovery, and task dispatch.
 - **Agentic auth & payment** — KYA (Know-Your-Agent) identity and x402/MPP pay-per-use on the hosted service. Agents authenticate and pay autonomously — no credit cards, no prepaid credits, no invoices.

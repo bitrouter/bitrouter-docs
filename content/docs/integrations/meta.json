@@ -2,5 +2,25 @@
   "title": "Integrations",
   "icon": "Blocks",
   "defaultOpen": false,
-  "pages": ["index", "claude-code", "codex", "github-copilot", "hermes", "openclaw", "opencode", "pi", "local-models"]
+  "pages": [
+    "index",
+    "---First-level integration---",
+    "claude-code",
+    "codex",
+    "opencode",
+    "pi",
+    "hermes",
+    "openclaw",
+    "---Second-level integration---",
+    "cline",
+    "kilocode",
+    "github-copilot",
+    "openhands",
+    "---Local model servers---",
+    "local-models",
+    "ollama",
+    "vllm",
+    "lm-studio",
+    "unsloth"
+  ]
 }

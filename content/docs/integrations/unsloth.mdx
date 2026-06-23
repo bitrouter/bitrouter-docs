@@ -1,0 +1,66 @@
+---
+title: Unsloth
+description: Serve a model with Unsloth Studio and register its OpenAI-compatible endpoint as a BitRouter provider.
+---
+import { Callout } from 'fumadocs-ui/components/callout';
+
+[Unsloth](https://unsloth.ai) is best known for fast fine-tuning, and **Unsloth Studio** also serves models locally behind an OpenAI-compatible API — handy for routing a model you just fine-tuned, or any Unsloth GGUF. The server exposes `/v1/chat/completions` (and an Anthropic `/v1/messages` surface), which BitRouter fronts as one provider block.
+
+## Prerequisites
+
+- BitRouter installed, with a `bitrouter.yaml` ([scaffold one](/docs/integrations/local-models#scaffold-a-config) with `bitrouter init`).
+- Unsloth Studio serving a model:
+
+  ```bash
+  unsloth run --model unsloth/gemma-3-27b-it-GGUF:UD-Q4_K_XL
+  ```
+
+  This starts the server, opens the Studio UI, and **prints your endpoint URL and `sk-unsloth-…` API key** — note both. The port is typically `8000` or `8888`.
+
+## Add Unsloth to BitRouter
+
+```yaml
+# bitrouter.yaml
+providers:
+  unsloth:
+    api_base: http://localhost:8000/v1     # use the port Studio printed
+    api_protocol:
+      - "*": chat_completions
+    api_key: ${UNSLOTH_API_KEY}
+    models:
+      - id: unsloth/gemma-3-27b-it-GGUF
+```
+
+<Callout type="warn">
+**Unsloth requires a key.** Unlike Ollama / vLLM / LM Studio, Unsloth Studio authenticates every request with an `Authorization: Bearer sk-unsloth-…` header. Export the key it printed and reference it in the block:
+
+```bash
+export UNSLOTH_API_KEY=sk-unsloth-xxxxxxxxxxxx
+```
+
+`api_key` resolves from the environment at load time.
+</Callout>
+
+Confirm the exact model id the server reports — it's what goes under `models`:
+
+```bash
+curl http://localhost:8000/v1/models -H "Authorization: Bearer $UNSLOTH_API_KEY"
+```
+
+<Callout type="info">
+**Port clash with vLLM.** Unsloth Studio and vLLM both default to `:8000`. If you run both, point `api_base` at whichever port Studio actually printed.
+</Callout>
+
+## Route to it
+
+```bash
+bitrouter route unsloth:unsloth/gemma-3-27b-it-GGUF
+```
+
+Then [start BitRouter and send a request](/docs/integrations/local-models#start-bitrouter-and-send-a-request).
+
+## Learn more
+
+- [Unsloth — API endpoint guide](https://unsloth.ai/docs/basics/api)
+- [Unsloth — llama-server & OpenAI endpoint](https://unsloth.ai/docs/basics/inference-and-deployment/llama-server-and-openai-endpoint)
+- [Model fallback](/docs/features/model-fallback) · [Provider selection](/docs/features/provider-selection)

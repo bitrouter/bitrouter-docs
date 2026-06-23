@@ -1,140 +1,59 @@
 ---
-title: 本地模型服务
-description: 将 Ollama、vLLM、LM Studio 或 llama.cpp 接入 BitRouter —— 免费、本地、OpenAI 兼容。
+title: 概览
+description: 将 Ollama、vLLM、LM Studio 或 Unsloth 微调模型接入 BitRouter —— 免费、本地、OpenAI 兼容。
 ---
+import { Cards, Card } from 'fumadocs-ui/components/card';
 import { Callout } from 'fumadocs-ui/components/callout';
-import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
-# 本地模型服务
+在自己的机器上跑模型，并通过 BitRouter 路由。下面这些服务都暴露 OpenAI 兼容 API，因此接入任意一个都只是 `bitrouter.yaml` 里的一段 provider 配置——而且一切都留在 localhost：无需云端账号，无每 token 费用。
 
-在自己的机器上运行模型，并让它走 BitRouter。Ollama、vLLM、LM Studio 与 llama.cpp 都暴露 OpenAI 兼容 API，因此每一个都是在 `bitrouter.yaml` 中加一个块的事。一切都留在 localhost —— 无需云账户，无按 token 计费。
+<Cards>
+  <Card title="Ollama" href="/docs/integrations/ollama" description="最易上手 · :11434 · 无需密钥" />
+  <Card title="vLLM" href="/docs/integrations/vllm" description="高吞吐 GPU 推理 · :8000" />
+  <Card title="LM Studio" href="/docs/integrations/lm-studio" description="桌面 GUI · :1234 · 无需密钥" />
+  <Card title="Unsloth" href="/docs/integrations/unsloth" description="用 Unsloth Studio 托管你的微调模型 · :8000" />
+</Cards>
 
-## 1. 生成配置
+## 工作原理
 
-生成一份起始 `bitrouter.yaml`（默认为 `./bitrouter.yaml`）：
+下面每个服务都讲 OpenAI 协议，因此接入形态始终一致——`bitrouter.yaml` 里的一段 provider 配置：
+
+```yaml
+# bitrouter.yaml
+providers:
+  ollama:                              # 你自己取的 id
+    api_base: http://localhost:11434/v1  # 服务的 OpenAI 兼容 base URL
+    api_protocol:
+      - "*": chat_completions          # 上游协议；对任意 OpenAI 兼容主机都会被自动推断
+    models:
+      - id: llama3.1                   # 该服务提供的模型 id
+```
+
+`providers` 是一个由你取 id 的映射；`api_base` 是服务的 base URL；`api_protocol` 是上游协议（任意 OpenAI 兼容服务都是 `chat_completions`，也是默认推断值，所以这段可省略）；`models` 下每一项是该服务提供的模型。
+
+<Callout type="info">
+**多数本地服务无需密钥。** Ollama、vLLM、LM Studio 在 loopback 上接受匿名请求，所以配置块里没有 `api_key`。例外是 **Unsloth Studio**——它会生成 `sk-unsloth-…` 密钥并要求每次请求都带上，详见其页面的 `api_key` 字段。
+</Callout>
+
+## 生成配置
+
+生成一份起步 `bitrouter.yaml`（默认写到 `./bitrouter.yaml`）：
 
 ```bash
 bitrouter init
 ```
 
-这会写出一份带注释、`skip_auth: true` 的配置，供你添加 provider。用 `-c <path>` 写到别处。
+它会写出一份带注释、`skip_auth: true` 的配置，随时可以加 provider。用 `-c <path>` 写到别处。然后按你所用服务的页面填好配置块。
 
-## 2. 添加你的本地服务
+## 启动 BitRouter 并发请求
 
-选择你的运行时。每个标签页展示要放进 `bitrouter.yaml` 的 provider 块、启动服务的命令，以及如何路由到该模型。`providers` 是一个以你自选 id 为键的映射；`api_base` 是服务的 OpenAI 兼容基础 URL；`api_protocol` 是上游线格式（任何 OpenAI 兼容服务都用 `chat_completions` —— 这也是推断的默认值，因此该块可省略）；`models` 下每一项是该服务提供的模型 id。
-
-<Tabs items={['Ollama', 'vLLM', 'LM Studio', 'llama.cpp']}>
-<Tab value="Ollama">
-
-```yaml
-# bitrouter.yaml
-providers:
-  ollama:
-    api_base: http://localhost:11434/v1
-    api_protocol:
-      - "*": chat_completions
-    models:
-      - id: llama3.1
-```
-
-```bash
-# 启动 Ollama 并拉取模型（默认端口 11434）
-ollama serve &
-ollama pull llama3.1
-```
-
-用 provider 限定 id（`provider:model`）或裸模型名路由：
-
-```bash
-bitrouter route ollama:llama3.1
-```
-
-</Tab>
-<Tab value="vLLM">
-
-```yaml
-# bitrouter.yaml
-providers:
-  vllm:
-    api_base: http://localhost:8000/v1
-    api_protocol:
-      - "*": chat_completions
-    models:
-      - id: meta-llama/Llama-3.1-8B-Instruct
-```
-
-```bash
-# 启动 vLLM 的 OpenAI 兼容服务（默认端口 8000）
-vllm serve meta-llama/Llama-3.1-8B-Instruct
-```
-
-```bash
-bitrouter route vllm:meta-llama/Llama-3.1-8B-Instruct
-```
-
-</Tab>
-<Tab value="LM Studio">
-
-```yaml
-# bitrouter.yaml
-providers:
-  lmstudio:
-    api_base: http://localhost:1234/v1
-    api_protocol:
-      - "*": chat_completions
-    models:
-      - id: llama-3.1-8b-instruct
-```
-
-```bash
-# 启动 LM Studio 的本地服务（默认端口 1234）
-lms server start
-lms load llama-3.1-8b-instruct
-```
-
-```bash
-bitrouter route lmstudio:llama-3.1-8b-instruct
-```
-
-</Tab>
-<Tab value="llama.cpp">
-
-```yaml
-# bitrouter.yaml
-providers:
-  llamacpp:
-    api_base: http://localhost:8080/v1
-    api_protocol:
-      - "*": chat_completions
-    models:
-      - id: llama-3.1-8b-instruct
-```
-
-```bash
-# 启动 llama.cpp 的 OpenAI 兼容服务（默认端口 8080）
-llama-server -m ./models/llama-3.1-8b-instruct.gguf
-```
-
-```bash
-bitrouter route llamacpp:llama-3.1-8b-instruct
-```
-
-</Tab>
-</Tabs>
-
-<Callout type="info">
-**无需 API 密钥。** 本地服务默认在回环地址上接受匿名请求，因此 provider 块不含 `api_key`。仅当你在服务前置了鉴权时才添加 `api_key: ${MY_LOCAL_KEY}` —— 它会在加载时从环境变量解析。
-</Callout>
-
-## 3. 启动 BitRouter 并发送请求
-
-启动代理 —— 默认监听 `127.0.0.1:4356`：
+配置块就绪后，启动代理——默认监听 `127.0.0.1:4356`：
 
 ```bash
 bitrouter
 ```
 
-然后用配置中的模型 id 访问 OpenAI 兼容端点（按需替换为你的 provider id / 模型）：
+然后用配置里的模型 id 访问 OpenAI 兼容端点（把 provider id / 模型替换成你的）：
 
 ```bash
 curl http://localhost:4356/v1/chat/completions \
@@ -145,10 +64,10 @@ curl http://localhost:4356/v1/chat/completions \
   }'
 ```
 
-裸模型名（`llama3.1`）同样有效 —— BitRouter 会将其自动级联到声明了该模型的活跃 provider。provider 限定的 `ollama:llama3.1` 形式则把请求固定到该确切 provider。
+裸模型名（`llama3.1`）也可用——BitRouter 会自动级联到声明了它的活跃 provider。`ollama:llama3.1` 这种带 provider 前缀的形式则把请求固定到该 provider。
 
 <Callout type="info">
-**混用本地与托管。** 声明一个[虚拟模型](/docs/features/model-fallback)，其 endpoints 先列你的本地 provider、再列一个托管 provider：请求在本地硬件上免费运行，并在出错或过载时回退到托管模型 —— 单一模型名，自动故障转移。
+**混用本地与托管。** 声明一个[虚拟模型](/docs/features/model-fallback)，其端点列表先放本地 provider、再放托管的：请求先免费跑在本地硬件上，出错或过载时自动回退到托管模型——一个模型名，自动切换。
 </Callout>
 
-要了解背后的概念 —— 为何前置本地服务，以及注册表检测这一替代方式 —— 见[本地与私有模型](/docs/features/local-models)。
+背后的概念——为什么要在本地服务前面套一层、以及注册表自动探测这条替代路径——见[本地与私有模型](/docs/features/local-models)。

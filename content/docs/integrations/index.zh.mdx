@@ -2,5 +2,31 @@
 title: 食谱
 description: 将 Agent 与现有方案接入 BitRouter 的实用指南。
 ---
+import { Cards, Card } from 'fumadocs-ui/components/card';
 
-浏览[集成](/docs/integrations/claude-code)接入各类 AI 编程 Agent，或[迁移](/docs/guides/migrate-from-litellm)从 LiteLLM 或 OpenRouter 切换过来，也可以搭建一个[本地模型服务](/docs/integrations/local-models)。
+下面每个指南做的都是同一件事：把运行时指向 BitRouter 的端点（本地代理 `http://127.0.0.1:4356`，或云端 `https://api.bitrouter.ai`），并用 `provider/model` 形式的模型 id 调用模型。这样即可获得完整的[模型注册表](/docs/concepts/models)、提供商优选与[失败回退](/docs/features/model-fallback)。初次使用？先看[快速开始](/docs/get-started/quickstart)。
+
+## 编程 Agent
+
+<Cards>
+  <Card title="Claude Code" href="/docs/integrations/claude-code" description="通过 ANTHROPIC_BASE_URL 走 Anthropic Messages" />
+  <Card title="Codex" href="/docs/integrations/codex" description="在 ~/.codex/config.toml 中配置自定义 provider" />
+  <Card title="GitHub Copilot" href="/docs/integrations/github-copilot" description="BYOK OpenAI 兼容 provider（聊天）" />
+  <Card title="OpenCode" href="/docs/integrations/opencode" description="在 opencode.json 中配置 provider" />
+  <Card title="Pi" href="/docs/integrations/pi" description="在 ~/.pi/agent/models.json 中配置 provider" />
+</Cards>
+
+## 网关与 Agent
+
+<Cards>
+  <Card title="OpenClaw" href="/docs/integrations/openclaw" description="跨多平台的消息网关" />
+  <Card title="Hermes" href="/docs/integrations/hermes" description="Nous Research 的自我改进 Agent" />
+</Cards>
+
+## 接入你自己的方案
+
+<Cards>
+  <Card title="本地模型服务" href="/docs/integrations/local-models" description="Ollama、vLLM、LM Studio、llama.cpp" />
+  <Card title="从 LiteLLM 迁移" href="/docs/guides/migrate-from-litellm" description="替换网关，代码不变" />
+  <Card title="从 OpenRouter 迁移" href="/docs/guides/migrate-from-openrouter" description="改 base URL 和密钥即可" />
+</Cards>

@@ -1,6 +1,6 @@
 "use client";
 
-/* Agent-harness logos for the hero / trusted-by strip, via @lobehub/icons
+/* Agent-harness logos for the hero CTA rotor, via @lobehub/icons
    (Mono variants → currentColor, so they sit right in the mono theme).
    BitRouter works with any harness; these are the recognizable ones. */
 

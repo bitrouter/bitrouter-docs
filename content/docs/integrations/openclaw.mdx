@@ -1,287 +1,55 @@
 ---
-title: Openclaw
-description: Connect Openclaw's multi-channel gateway to BitRouter for unified routing
+title: OpenClaw
+description: Route OpenClaw's messaging gateway through BitRouter as an OpenAI-compatible model provider.
 ---
+import { Callout } from 'fumadocs-ui/components/callout';
 
-# Openclaw Integration
+OpenClaw is a self-hosted gateway that bridges messaging platforms — WhatsApp, Telegram, Slack, Discord, and more — to an LLM. Configure BitRouter as its model provider and every channel routes across the whole [registry](/docs/concepts/models).
 
-## Quick Start
+## Prerequisites
+
+- BitRouter running — local proxy at `http://127.0.0.1:4356`, or [BitRouter Cloud](/docs/get-started/quickstart) at `https://api.bitrouter.ai`.
+- OpenClaw installed. See the [OpenClaw docs](https://docs.openclaw.ai/) for setup.
+
+## Point OpenClaw at BitRouter
+
+BitRouter is an OpenAI-compatible endpoint, so it goes straight into your OpenClaw config file as a provider — no plugin required. Add a `bitrouter` entry under `models.providers` and reference it as the default model:
+
+```json5
+{
+  agents: {
+    defaults: {
+      model: { primary: "bitrouter/openai/gpt-4o" },
+    },
+  },
+  models: {
+    providers: {
+      bitrouter: {
+        baseUrl: "http://127.0.0.1:4356/v1",
+        apiKey: "local-placeholder",   // any value for the local proxy
+        api: "openai-completions",
+        models: [{ id: "openai/gpt-4o", contextWindow: 128000, maxTokens: 8192 }],
+      },
+    },
+  },
+}
+```
+
+Then start the gateway:
 
 ```bash
-# 1. Start BitRouter
-bitrouter serve
-
-# 2. Install Openclaw plugin
-openclaw plugins install bitrouter
-
-# 3. Configure and launch
-openclaw config set provider bitrouter
-openclaw start --provider bitrouter
+openclaw gateway
 ```
 
-## What You Get
+<Callout type="info">
+For **Cloud**, set `baseUrl` to `https://api.bitrouter.ai/v1` and use your BitRouter key. The local proxy ignores `apiKey`, so a placeholder is fine.
+</Callout>
 
-- ✅ **20+ messaging platforms** - WhatsApp, Telegram, Slack, Discord, etc.
-- ✅ **Multi-provider routing** - Optimize models per platform
-- ✅ **Native plugin support** - Seamless BitRouter integration
-- ✅ **Isolated workspaces** - Separate contexts per channel
-- ✅ **Cost tracking** - Monitor spending across all platforms
+## Pick a model
 
-## Installation
+Each provider model `id` is a registry id in `provider/model` form (`openai/gpt-4o`, `anthropic/claude-sonnet-4-6`, …), optionally with a `:cost` / `:latency` variant. In OpenClaw's `model.primary` it's prefixed with the provider id you chose — e.g. `bitrouter/openai/gpt-4o`. See [Models](/docs/concepts/models).
 
-### Prerequisites
-```bash
-# Install Openclaw
-npm install -g openclaw@latest
+## Learn more
 
-# Quick setup
-openclaw onboard --install-daemon
-```
-
-### Connect to BitRouter
-
-Choose your method:
-
-#### Option 1: Native Plugin (Recommended)
-```bash
-openclaw plugins install bitrouter
-openclaw config set provider bitrouter
-openclaw config set bitrouter.url http://127.0.0.1:4356
-openclaw start
-```
-
-#### Option 2: ACP Integration
-```bash
-openclaw config set protocol acp
-openclaw config set acp.endpoint http://127.0.0.1:4356
-openclaw acp
-```
-
-#### Option 3: Direct API
-```bash
-openclaw config set api.base http://127.0.0.1:4356
-openclaw start
-```
-
-## Essential Configuration
-
-### Platform-Specific Routing
-
-```yaml
-# ~/.bitrouter/config.yaml
-routes:
-  # WhatsApp - conversational
-  - match: "openclaw/whatsapp/*"
-    provider: anthropic
-    model: claude-3-5-haiku-latest
-    options:
-      temperature: 0.8
-    
-  # Slack - professional
-  - match: "openclaw/slack/*"
-    provider: openai
-    model: gpt-4o
-    options:
-      temperature: 0.3
-    
-  # Discord - community
-  - match: "openclaw/discord/*"
-    provider: deepseek
-    model: deepseek-chat
-    
-  # Telegram - quick
-  - match: "openclaw/telegram/*"
-    provider: google
-    model: gemini-2.0-flash-exp
-```
-
-### Workspace Isolation
-
-```yaml
-workspaces:
-  - name: "enterprise-slack"
-    match: "openclaw/slack/enterprise/*"
-    provider: anthropic
-    model: claude-3-5-sonnet-latest
-    guardrails:
-      - data_isolation
-      - audit_logging
-    
-  - name: "public-discord"
-    match: "openclaw/discord/public/*"
-    provider: openai
-    model: gpt-4o-mini
-    rate_limits:
-      requests_per_minute: 10
-```
-
-### Skills Integration
-
-```yaml
-skills:
-  source: clawhub.ai
-  routing:
-    - skill: "code-review"
-      route: "openclaw/skills/review"
-      provider: anthropic
-      model: claude-3-5-sonnet-latest
-    
-    - skill: "debug-assistance"
-      route: "openclaw/skills/debug"
-      provider: openai
-      model: gpt-4o
-```
-
-## Common Recipes
-
-### Recipe: Multi-Channel Bot
-```yaml
-platforms:
-  whatsapp:
-    route: "openclaw/whatsapp"
-    qr_code: true
-    
-  slack:
-    route: "openclaw/slack"
-    oauth: true
-    
-  telegram:
-    route: "openclaw/telegram"
-    bot_token: true
-```
-
-### Recipe: Voice Support
-```yaml
-voice:
-  wake_word: "hey openclaw"
-  transcription:
-    route: "openclaw/voice/transcribe"
-    model: whisper-large-v3
-  synthesis:
-    route: "openclaw/voice/synthesize"
-    model: tts-1-hd
-```
-
-### Recipe: Live Canvas
-```yaml
-canvas:
-  enabled: true
-  route: "openclaw/canvas/*"
-  features:
-    - collaborative_editing
-    - real_time_sync
-    - version_control
-```
-
-## Platform Setup
-
-### WhatsApp Business
-```bash
-# Connect via QR code
-openclaw connect whatsapp
-# Scan QR code with phone
-```
-
-### Slack Integration
-```bash
-# OAuth setup
-openclaw connect slack --workspace YOUR_WORKSPACE
-# Follow OAuth flow
-```
-
-### Discord Bot
-```bash
-# Bot token setup
-openclaw connect discord --token YOUR_BOT_TOKEN
-```
-
-## Monitoring
-
-### Channel Activity
-```bash
-# View all channels
-bitrouter dashboard --agent openclaw
-
-# Channel metrics
-bitrouter metrics --agent openclaw --channel whatsapp
-
-# Export analytics
-bitrouter export analytics --agent openclaw --format csv
-```
-
-### Cost Tracking
-```bash
-# Platform breakdown
-bitrouter costs breakdown --group-by platform
-
-# Set budgets
-bitrouter budget set --platform whatsapp --daily 10
-bitrouter budget set --platform slack --daily 50
-```
-
-## Troubleshooting
-
-### 🔴 Connection Issues
-```bash
-# Check BitRouter
-curl http://127.0.0.1:4356/health
-
-# Verify Openclaw
-openclaw config show
-
-# Test connection
-openclaw test connection --provider bitrouter
-```
-
-### 🟡 Platform Failures
-```bash
-# Debug platform
-openclaw debug whatsapp
-
-# Check logs
-bitrouter logs --filter openclaw
-
-# Verify credentials
-openclaw platforms verify
-```
-
-### 🔵 Message Routing
-```bash
-# Trace message
-bitrouter trace --message-id <id>
-
-# Test route
-bitrouter routes test "openclaw/whatsapp/message"
-
-# Monitor live
-bitrouter monitor --agent openclaw --live
-```
-
-## Advanced Features
-
-### Multi-Agent Routing
-```yaml
-multi_agent:
-  - pattern: "openclaw/*/code/*"
-    agent: claude-code
-  - pattern: "openclaw/*/docs/*"
-    agent: opencode
-```
-
-### Custom Skills
-```bash
-# Add skill
-openclaw skills add custom-skill
-
-# Configure routing
-openclaw skills config custom-skill \
-  --route "openclaw/skills/custom" \
-  --provider "anthropic"
-```
-
-## Learn More
-
-- 📚 [Openclaw Documentation](https://docs.openclaw.ai)
-- 🔌 [BitRouter Plugin](https://github.com/bitrouter/bitrouter-openclaw)
-- 🛒 [ClawHub Marketplace](https://clawhub.ai)
-- 💬 [Discord Community](https://discord.gg/G3zVrZDa5C)
+- [OpenClaw — model providers](https://docs.openclaw.ai/concepts/model-providers)
+- [Model fallback](/docs/features/model-fallback)

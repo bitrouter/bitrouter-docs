@@ -8,6 +8,7 @@ import {
   truncateMarkdown,
   matchModels,
   formatModelAnswer,
+  SITE_ORIGIN,
   type DocHit,
   type ModelAnswer,
   type RawSearchResult,
@@ -16,7 +17,6 @@ import {
 const DEFAULT_LIMIT = 8;
 const MAX_LIMIT = 20;
 const DOC_CHAR_CAP = 16_000; // ~4k tokens
-const SITE_ORIGIN = "https://bitrouter.ai";
 
 export async function searchDocs(
   query: string,

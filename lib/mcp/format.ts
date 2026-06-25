@@ -3,7 +3,8 @@
 // aliases) can exercise these directly. See vitest.config.ts.
 import type { Model } from "../models-types";
 
-const SITE_ORIGIN = "https://bitrouter.ai";
+/** Canonical docs origin; shared with the I/O layer to avoid URL drift. */
+export const SITE_ORIGIN = "https://bitrouter.ai";
 const LOCALES = ["en", "zh"];
 const DEFAULT_MODEL_MATCH_LIMIT = 5;
 

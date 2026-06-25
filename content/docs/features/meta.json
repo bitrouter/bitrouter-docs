@@ -13,6 +13,7 @@
     "local-models",
     "---Tools gateway---",
     "server-tools",
+    "websearch",
     "toolsets",
     "---Cross-cutting---",
     "guardrails",

@@ -32,7 +32,7 @@ providers:
 
 `providers` is a map keyed by the provider id you choose (`ollama` here). `api_base` is the server's base URL; `api_protocol` is the wire format BitRouter speaks upstream — `chat_completions` for any OpenAI-compatible server. BitRouter already infers `chat_completions` for any non-Anthropic, non-Google host, so the `api_protocol` block is optional, but stating it keeps the intent explicit. Each entry under `models` is the model id the server serves.
 
-The full step-by-step — with Ollama, vLLM, LM Studio, and Unsloth variants and the exact start commands — is in the [local model servers recipe](/docs/integrations/local-models).
+The full step-by-step — with Ollama and vLLM variants and the exact start commands — is in the [model sources overview](/docs/integrations/models).
 
 ### 2. A registry-listed provider, auto-detected from the environment
 

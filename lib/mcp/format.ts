@@ -51,6 +51,11 @@ export function pathToSlug(input: string): string[] {
   return segs;
 }
 
+/** Strip HTML tags (fumadocs wraps search matches in `<mark>…</mark>`). */
+function stripTags(s: string): string {
+  return s.replace(/<[^>]+>/g, "");
+}
+
 /** Map fumadocs search results to compact, page-deduplicated hits. */
 export function formatSearchResults(results: RawSearchResult[], limit: number): DocHit[] {
   const hits: DocHit[] = [];
@@ -60,11 +65,12 @@ export function formatSearchResults(results: RawSearchResult[], limit: number): 
     if (seen.has(baseUrl)) continue;
     seen.add(baseUrl);
     const path = pathToSlug(baseUrl).join("/");
+    const content = stripTags(r.content);
     hits.push({
-      title: r.content || path,
+      title: content || path,
       url: baseUrl.startsWith("http") ? baseUrl : `${SITE_ORIGIN}${baseUrl}`,
       path,
-      ...(r.type !== "page" && r.content ? { snippet: r.content } : {}),
+      ...(r.type !== "page" && content ? { snippet: content } : {}),
     });
     if (hits.length >= limit) break;
   }

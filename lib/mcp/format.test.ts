@@ -54,6 +54,13 @@ describe("formatSearchResults", () => {
   it("returns one hit per distinct page", () => {
     expect(formatSearchResults(raw, 10)).toHaveLength(2);
   });
+  it("strips fumadocs <mark> highlight tags from the title", () => {
+    const hits = formatSearchResults(
+      [{ id: "1", url: "/docs/features/model-fallback", type: "page", content: "Model <mark>Fallback</mark>" }],
+      5,
+    );
+    expect(hits[0].title).toBe("Model Fallback");
+  });
 });
 
 describe("truncateMarkdown", () => {

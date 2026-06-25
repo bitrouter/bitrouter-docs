@@ -1,43 +1,13 @@
 ---
-title: Add external keys (BYOK)
-description: Bring your own provider keys — auto-detected from environment variables in local mode, or sealed-box encrypted in cloud mode.
+title: External providers (BYOK)
+description: Bring your own provider keys on BitRouter Cloud — sealed-box encrypted client-side, never stored or logged in plaintext. Local mode auto-detects keys from the environment.
 ---
 import { Callout } from 'fumadocs-ui/components/callout';
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
 **BYOK** (bring your own key) routes your requests using your own provider account, not BitRouter's. You pay the provider directly at their list price — BitRouter takes no rev share, adds no per-token fee, and never sees plaintext keys on the cloud write path.
 
-There are two deployment modes, each with a different key flow.
-
-## Local mode — env-var auto-detection
-
-Run the binary, set provider keys in the environment, you're done. No config file required.
-
-```bash
-export OPENAI_API_KEY=sk-...
-export ANTHROPIC_API_KEY=sk-ant-...
-export GOOGLE_API_KEY=AIza...
-bitrouter
-```
-
-BitRouter detects keys at startup and exposes only the providers whose keys are present. If a provider's key is missing, attempts to route to that provider return `402 Payment Required` with a structured error pointing at the missing variable.
-
-### Recognized variables
-
-| Provider | Preferred name | Passthrough fallback |
-| --- | --- | --- |
-| OpenAI | `BITROUTER_OPENAI_API_KEY` | `OPENAI_API_KEY` |
-| Anthropic | `BITROUTER_ANTHROPIC_API_KEY` | `ANTHROPIC_API_KEY` |
-| Google | `BITROUTER_GOOGLE_API_KEY` | `GOOGLE_API_KEY`, `GEMINI_API_KEY` |
-| Custom (registry-listed) | `BITROUTER_<PROVIDER_ID>_API_KEY` | — |
-
-The `BITROUTER_*` variants take precedence over the passthrough names — useful when your shell already has `OPENAI_API_KEY` set for a different tool and you want BitRouter to use a different account.
-
-For a custom provider registered as `id: my-provider` in the [registry](/docs/guides/register-as-a-provider), set `BITROUTER_MY_PROVIDER_API_KEY` (uppercased, hyphens become underscores).
-
-<Callout type="info">
-**Key rotation is live.** BitRouter watches the environment of its parent process; updating a key (re-export and `kill -HUP $(pgrep bitrouter)`) takes effect on the next request without restart.
-</Callout>
+On **BitRouter Cloud** your keys are encrypted client-side with a sealed box and stored only as ciphertext. When you self-host or run the binary locally, the same providers are configured by [local-mode env-var detection](#local-mode--env-var-auto-detection) instead — no upload, no encryption step.
 
 ## Cloud mode — sealed-box encryption
 
@@ -45,9 +15,9 @@ On `cloud.bitrouter.ai`, your provider key is encrypted **client-side** against 
 
 The flow:
 
-1. **Fetch the node's public key.** [`GET /v1/byok/encryption-pubkey`](/docs/reference/api-reference/byok/getEncryptionPubkey) returns the current X25519 public key and a `kek_id` fingerprint. Cache by fingerprint and pass it back as `If-None-Match` to short-circuit on `304 Not Modified`.
+1. **Fetch the node's public key.** [`GET /v1/byok/encryption-pubkey`](/docs/reference/byok/getEncryptionPubkey) returns the current X25519 public key and a `kek_id` fingerprint. Cache by fingerprint and pass it back as `If-None-Match` to short-circuit on `304 Not Modified`.
 2. **Encrypt the plaintext key.** Use libsodium `crypto_box_seal` (or any sealed-box implementation) against the public key.
-3. **Submit the ciphertext.** The [console](https://cloud.bitrouter.ai) does steps 1–2 in-browser when you paste a key — you never need to leave the dashboard. The same submission API is also available for scripted onboarding; see the [API reference](/docs/reference/api-reference/byok/getEncryptionPubkey).
+3. **Submit the ciphertext.** The [console](https://cloud.bitrouter.ai) does steps 1–2 in-browser when you paste a key — you never need to leave the dashboard. The same submission API is also available for scripted onboarding; see the [API reference](/docs/reference/byok/getEncryptionPubkey).
 
 ### Encryption recipe
 
@@ -125,6 +95,36 @@ Keys are scoped to your **user account** — every API key and OAuth token issue
 - **Audit** — every submission is recorded with its time and the `kek_id` used. Plaintext is never visible to anyone, including BitRouter operators.
 
 If a node's `kek_id` rotates (we re-key every 90 days), the previous key is retained in memory so already-submitted ciphertexts remain decryptable at request time. New submissions must use the current `kek_id`; re-encrypt only if you explicitly want to migrate to the new key.
+
+## Local mode — env-var auto-detection
+
+When you self-host or run the binary locally there's no upload step: set provider keys in the environment and you're done. No config file required.
+
+```bash
+export OPENAI_API_KEY=sk-...
+export ANTHROPIC_API_KEY=sk-ant-...
+export GOOGLE_API_KEY=AIza...
+bitrouter
+```
+
+BitRouter detects keys at startup and exposes only the providers whose keys are present. If a provider's key is missing, attempts to route to that provider return `402 Payment Required` with a structured error pointing at the missing variable.
+
+### Recognized variables
+
+| Provider | Preferred name | Passthrough fallback |
+| --- | --- | --- |
+| OpenAI | `BITROUTER_OPENAI_API_KEY` | `OPENAI_API_KEY` |
+| Anthropic | `BITROUTER_ANTHROPIC_API_KEY` | `ANTHROPIC_API_KEY` |
+| Google | `BITROUTER_GOOGLE_API_KEY` | `GOOGLE_API_KEY`, `GEMINI_API_KEY` |
+| Custom (registry-listed) | `BITROUTER_<PROVIDER_ID>_API_KEY` | — |
+
+The `BITROUTER_*` variants take precedence over the passthrough names — useful when your shell already has `OPENAI_API_KEY` set for a different tool and you want BitRouter to use a different account.
+
+For a custom provider registered as `id: my-provider` in the [registry](/docs/guides/register-as-a-provider), set `BITROUTER_MY_PROVIDER_API_KEY` (uppercased, hyphens become underscores).
+
+<Callout type="info">
+**Key rotation is live.** BitRouter watches the environment of its parent process; updating a key (re-export and `kill -HUP $(pgrep bitrouter)`) takes effect on the next request without restart.
+</Callout>
 
 ## Custom providers
 

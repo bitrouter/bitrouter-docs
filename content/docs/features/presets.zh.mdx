@@ -70,7 +70,7 @@ curl http://127.0.0.1:4356/v1/chat/completions \
   }'
 ```
 
-完整的 CRUD 接口——`list`、`get`、`create`、`update`、`delete`，以及 `disable`/`enable`——记录在 [管理 API](/docs/reference/api-reference/management/listRoutingPresets) 中。读取预设需要 `routing_preset:read` scope；创建或修改需要 `routing_preset:write`。
+完整的 CRUD 接口——`list`、`get`、`create`、`update`、`delete`，以及 `disable`/`enable`——记录在 [管理 API](/docs/reference/management/listRoutingPresets) 中。读取预设需要 `routing_preset:read` scope；创建或修改需要 `routing_preset:write`。
 
 <Callout type="info">
 **`name` 就是那个 `@token`。** 预设名必须匹配 `[A-Za-z0-9_-]+`（与 `@name` 语法接受的字符集一致），因此 `my-fast_v2` 可以，而 `my preset` 会在创建时被拒绝——一个永远无法被调用的名字根本不会被存下来。
@@ -85,7 +85,7 @@ curl http://127.0.0.1:4356/v1/chat/completions \
 解析发生在策略执行 *之前*，且预设只能 **收窄** 一把密钥原本就能做的事——绝不会放宽：
 
 - [护栏（Guardrail）](/docs/features/guardrails) 的模型允许/拒绝名单与 BYOK 规则判定的是 **解析后的基础模型**，因此一个把模型替换为 `openai/gpt-5` 的预设，会被当作你直接请求 `openai/gpt-5` 一样校验。预设无法绕过模型黑名单偷渡请求。
-- `routing.only` / `routing.ignore` 只能从候选集中 *移除* 供应商——绝不能添加一个请求原本无权触达的供应商。[BYOK](/docs/features/byok) 供应商仍然排在平台供应商之前。
+- `routing.only` / `routing.ignore` 只能从候选集中 *移除* 供应商——绝不能添加一个请求原本无权触达的供应商。[BYOK](/docs/cloud/byok) 供应商仍然排在平台供应商之前。
 - 计费不变——你按所选供应商对解析后基础模型的费率付费。
 
 ## 错误

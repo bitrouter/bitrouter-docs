@@ -10,16 +10,18 @@ const finalPath = {
   // features
   "provider-selection":"/docs/features/provider-selection","model-fallback":"/docs/features/model-fallback",
   "model-variants":"/docs/features/model-variants","presets":"/docs/features/presets",
-  "structured-outputs":"/docs/features/structured-outputs","byok":"/docs/features/byok",
-  "local-models":"/docs/features/local-models","guardrails":"/docs/features/guardrails",
-  "observability":"/docs/features/observability","mcp":"/docs/concepts/tools","acp":"/docs/concepts/agents",
+  "structured-outputs":"/docs/features/structured-outputs","byok":"/docs/cloud/byok",
+  "local-models":"/docs/integrations/models","guardrails":"/docs/features/guardrails",
+  "observability":"/docs/features/opentelemetry","opentelemetry":"/docs/features/opentelemetry",
+  "tracing":"/docs/cloud/tracing","telemetry":"/docs/features/opentelemetry",
+  "mcp":"/docs/concepts/tools","acp":"/docs/concepts/agents",
   "agentskills":"/docs/concepts/tools",
   // bitrouter cloud (was: infrastructure)
   "managed-provider":"/docs/cloud/managed-models","discounted-models":"/docs/cloud/managed-models",
   "payment":"/docs/cloud/payment","workspaces":"/docs/cloud/workspaces",
   "for-providers":"/docs/guides/register-as-a-provider",
   // reference
-  "cli":"/docs/reference/cli",
+  "cli":"/docs/concepts/cli",
 };
 const legacyBuckets = ["core","cloud","features","routing"]; // /docs/guides/<bucket>/<slug>
 const pairs: Array<[string, string]> = [];
@@ -42,10 +44,22 @@ pairs.push(
   ["/docs/infrastructure/workspaces", "/docs/cloud/workspaces"],
   ["/docs/infrastructure/for-providers", "/docs/guides/register-as-a-provider"],
   ["/docs/cloud", "/docs/cloud/overview"],
-  // reference wildcards
-  ["/docs/api-reference/:slug*", "/docs/reference/api-reference/:slug*"],
+  // reference wildcards (api-reference unwrapped into /docs/reference)
+  ["/docs/api-reference/:slug*", "/docs/reference/:slug*"],
+  ["/docs/reference/api-reference/:slug*", "/docs/reference/:slug*"],
   ["/docs/changelog/:slug*", "/docs/reference/changelog/:slug*"],
   ["/docs/changelog", "/docs/reference/changelog"],
+  // moved/removed pages (2026-06 refactor) → live destinations
+  ["/docs/features/byok", "/docs/cloud/byok"],
+  ["/docs/features/observability", "/docs/features/opentelemetry"],
+  ["/docs/features/tracing", "/docs/features/opentelemetry"],
+  ["/docs/features/telemetry", "/docs/features/opentelemetry"],
+  ["/docs/features/local-models", "/docs/integrations/models"],
+  ["/docs/features/toolsets", "/docs/features/server-tools"],
+  ["/docs/reference/cli", "/docs/concepts/cli"],
+  ["/docs/guides/export-telemetry", "/docs/features/opentelemetry"],
+  ["/docs/cloud/managed-tools", "/docs/cloud/overview"],
+  ["/docs/cloud/managed-agents", "/docs/cloud/overview"],
   // integrations + cookbook history
   ["/docs/integrations/harnesses/:slug*", "/docs/integrations/:slug*"],
   ["/docs/cookbook/integration/:slug*", "/docs/integrations/:slug*"],

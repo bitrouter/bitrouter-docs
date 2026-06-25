@@ -58,7 +58,7 @@ Because it pins the provider rather than re-ranking the eligible ones, `:discoun
 The profile affects provider *ranking* only. Everything else keys off the base model id:
 
 - [Guardrail](/docs/features/guardrails) model allowlists/denylists and BYOK rules judge `anthropic/claude-sonnet-4.6:cost` exactly as `anthropic/claude-sonnet-4.6` — a profile can never widen or bypass a policy.
-- [BYOK](/docs/features/byok) providers still rank ahead of platform providers; the profile orders providers *within* each tier.
+- [BYOK](/docs/cloud/byok) providers still rank ahead of platform providers; the profile orders providers *within* each tier.
 - Billing is unchanged — you pay the selected provider's rate for the base model.
 
 ## Seeing which profile a request used

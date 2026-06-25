@@ -130,7 +130,7 @@ router on `0.0.0.0` without an auth layer.
 ## 3. Run as a daemon
 
 For production you want the router running detached and supervised. The daemon
-lifecycle commands (verified against the [CLI reference](/docs/reference/cli)):
+lifecycle commands (verified against the [CLI reference](/docs/concepts/cli)):
 
 ```bash
 bitrouter start        # spawn `serve` as a detached background daemon
@@ -183,9 +183,8 @@ name resolves before it ever hits an upstream:
 bitrouter route gpt-4o     # print the full fallback chain for a model
 ```
 
-See [Observability](/docs/features/observability) for the span model and
-attribution, and [Export traces to your OTel backend](/docs/guides/export-telemetry)
-for per-backend configs.
+See [OpenTelemetry](/docs/features/opentelemetry) for the span model,
+per-request attribution, and per-backend export configs.
 
 ## 5. Basic hardening
 
@@ -206,6 +205,6 @@ for per-backend configs.
 <Cards>
   <Card title="Installation" href="/docs/get-started/installation" description="The 60-second local install, if you skipped it." />
   <Card title="Self-host vs Cloud" href="/docs/cloud/overview" description="Pick the deployment model that fits." />
-  <Card title="Observability" href="/docs/features/observability" description="OTLP trace + metric export and per-request attribution." />
+  <Card title="OpenTelemetry" href="/docs/features/opentelemetry" description="OTLP trace + metric export and per-request attribution." />
   <Card title="Guardrails" href="/docs/features/guardrails" description="Content firewall for requests and responses." />
 </Cards>

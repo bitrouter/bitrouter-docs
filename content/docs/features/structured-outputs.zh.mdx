@@ -1,14 +1,10 @@
 ---
-title: 结构化输出（测试版）
+title: 结构化输出
 description: 跨所有提供商强制执行 JSON 模式 — 自动为 OpenAI、Anthropic、Google 等进行协议转换。
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
-
-<Callout type="info">
-**测试版功能。** 结构化输出支持目前处于测试阶段。API 已稳定，但可能会根据用户反馈进行增强。请在 [GitHub](https://github.com/bitrouter/bitrouter/issues) 上报告任何问题或建议。
-</Callout>
 
 **结构化输出**确保模型响应符合您指定的 JSON 模式。BitRouter 提供统一的 API，无缝支持所有主要提供商 — 自动在各个提供商的原生格式之间进行转换。
 
@@ -368,6 +364,6 @@ response_format: {
 
 ## 另请参阅
 
-- [模型发现](/docs/reference/api-reference/discovery/listModels) — 检查哪些模型支持结构化输出
+- [模型发现](/docs/reference/discovery/listModels) — 检查哪些模型支持结构化输出
 - [提供商选择](/docs/features/provider-selection) — 路由到支持结构化输出的提供商
-- [API 参考](/docs/reference/api-reference) — 完整的 API 文档
+- [API 参考](/docs/reference) — 完整的 API 文档

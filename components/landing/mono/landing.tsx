@@ -1491,7 +1491,7 @@ export function MonoFooter() {
       items: [
         ["Docs", "/docs"],
         ["Quickstart", "/docs/get-started/quickstart"],
-        ["API reference", "/docs/reference/api-reference"],
+        ["API reference", "/docs/reference"],
         ["Changelog", "/changelog"],
         ["Blog", "/blog"],
       ],

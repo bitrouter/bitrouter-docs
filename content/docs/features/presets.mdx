@@ -70,7 +70,7 @@ curl http://127.0.0.1:4356/v1/chat/completions \
   }'
 ```
 
-The full CRUD surface — `list`, `get`, `create`, `update`, `delete`, plus `disable`/`enable` — is documented under [Management API](/docs/reference/api-reference/management/listRoutingPresets). Reading presets needs the `routing_preset:read` scope; creating or changing them needs `routing_preset:write`.
+The full CRUD surface — `list`, `get`, `create`, `update`, `delete`, plus `disable`/`enable` — is documented under [Management API](/docs/reference/management/listRoutingPresets). Reading presets needs the `routing_preset:read` scope; creating or changing them needs `routing_preset:write`.
 
 <Callout type="info">
 **`name` is the `@token`.** A preset name must match `[A-Za-z0-9_-]+` (the same character set the `@name` grammar accepts), so a name like `my-fast_v2` is fine but `my preset` is rejected at create time — a name you could never invoke is never stored.
@@ -85,7 +85,7 @@ A preset can be disabled without deleting it (`POST …/routing-presets/{id}/dis
 Resolution happens *before* policy enforcement, and a preset can only ever **narrow** what a key could already do — never widen it:
 
 - [Guardrail](/docs/features/guardrails) model allow/deny lists and BYOK rules judge the **resolved base model**, so a preset that substitutes `openai/gpt-5` is checked exactly as if you had asked for `openai/gpt-5` directly. A preset can't smuggle a request past a model denylist.
-- `routing.only` / `routing.ignore` can only *remove* providers from the eligible set — they can never add a provider the request wasn't already allowed to reach. [BYOK](/docs/features/byok) providers still rank ahead of platform ones.
+- `routing.only` / `routing.ignore` can only *remove* providers from the eligible set — they can never add a provider the request wasn't already allowed to reach. [BYOK](/docs/cloud/byok) providers still rank ahead of platform ones.
 - Billing is unchanged — you pay the selected provider's rate for the resolved base model.
 
 ## Errors

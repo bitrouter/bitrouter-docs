@@ -12,7 +12,7 @@ bitrouter auth login    # one-time device-flow sign-in
 bitrouter start         # the `bitrouter` provider auto-enables once signed in
 ```
 
-Prefer your own provider accounts? Use [BYOK](/docs/features/byok) instead — you pay providers directly at their list price. Running your own model? See [local & private models](/docs/features/local-models) (free).
+Prefer your own provider accounts? Use [BYOK](/docs/cloud/byok) instead — you pay providers directly at their list price. Running your own model? See [local & private models](/docs/integrations/models) (free).
 
 ## Supported models & pricing
 
@@ -46,7 +46,7 @@ curl http://127.0.0.1:4356/v1/chat/completions \
 The suffix rides on the `model` string — no body fields, no SDK — and works the same on the OpenAI, Anthropic, and Google surfaces (`/v1/messages`, `/v1beta/models/{model}:generateContent`). Use it to guarantee your traffic lands on the discounted self-hosted supply; it's also where any custom discount on your account applies.
 
 <Callout type="info">
-`:discount` never changes authorization. [Guardrail](/docs/features/guardrails) allowlists and [BYOK](/docs/features/byok) rules judge `moonshotai/kimi-k2.6:discount` exactly as `moonshotai/kimi-k2.6` — the suffix can't widen or bypass a policy.
+`:discount` never changes authorization. [Guardrail](/docs/features/guardrails) allowlists and [BYOK](/docs/cloud/byok) rules judge `moonshotai/kimi-k2.6:discount` exactly as `moonshotai/kimi-k2.6` — the suffix can't widen or bypass a policy.
 </Callout>
 
 ### Custom discounts up to 50% for open-source projects

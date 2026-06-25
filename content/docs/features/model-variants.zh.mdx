@@ -58,7 +58,7 @@ moonshotai/kimi-k2.6:discount     # 路由到自托管折扣供应商
 profile 只影响供应商的**排序**。其余一切都以底层模型 ID 为准：
 
 - [Guardrail](/docs/features/guardrails) 的模型白名单/黑名单与 BYOK 规则，会把 `anthropic/claude-sonnet-4.6:cost` 完全当作 `anthropic/claude-sonnet-4.6` 来判定——profile 永远无法放宽或绕过策略。
-- [BYOK](/docs/features/byok) 供应商仍然排在平台供应商之前；profile 只在每个层级**内部**排序。
+- [BYOK](/docs/cloud/byok) 供应商仍然排在平台供应商之前；profile 只在每个层级**内部**排序。
 - 计费不变——你按所选供应商对底层模型的费率付费。
 
 ## 查看某次请求用了哪个 profile

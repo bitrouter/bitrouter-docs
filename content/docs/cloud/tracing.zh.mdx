@@ -1,0 +1,64 @@
+---
+title: 追踪
+description: BitRouter Cloud 把每次请求追踪进一个托管的 Activity 视图——消费、token 与延迟 KPI，外加逐请求日志——无需运维。深度 OTel span 瀑布图则链接到你自己的 collector。
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Cards, Card } from 'fumadocs-ui/components/card';
+
+开源的 [OpenTelemetry](/docs/features/opentelemetry) 导出运行在你自己的后端上。**BitRouter Cloud** 提供托管的替代方案：每一次 `/v1` 请求都会在服务端被追踪进一个 **Activity** 视图——无 collector、无数据仓库、无需运维。内容（prompt 与响应）从不存储。
+
+## Activity 仪表盘
+
+登录 [cloud.bitrouter.ai](https://cloud.bitrouter.ai) 并打开 **Activity**。它以三张 KPI 卡片开场，覆盖你选择的时间窗口——**1 天**、**1 周**、**1 个月**或**全部时间**：
+
+| KPI | 度量 |
+| --- | --- |
+| **消费（Spend）** | 窗口内累计扣费（USD） |
+| **请求（Requests）** | 窗口内请求数 |
+| **Token** | 窗口内 prompt + completion token 数 |
+
+每个数字都作用于**当前工作区**（[namespace](/docs/cloud/workspaces)），因此仪表盘始终反映你登录所在的工作区。
+
+## 请求日志
+
+KPI 下方，请求日志按时间倒序列出每一次 `/v1` 请求。每一行都是一条逐请求的追踪记录：
+
+| 列 | 详情 |
+| --- | --- |
+| **时间** | 请求到达的时刻 |
+| **模型** | 服务该请求的模型 id，流式调用带 `stream` 标记 |
+| **Provider** | 服务它的上游 provider |
+| **Token** | prompt + completion 合计 |
+| **成本** | 最终扣费（USD） |
+| **延迟** | 端到端延迟 |
+| **来源** | 资金来源（信用余额、BYOK、MPP 会话） |
+| **状态** | 成功、错误、被拒、已取消 |
+
+每条记录还带有所用的**路由档位**（`balanced`、`cost`、`latency`、`throughput`）以及触发的受限**能力**（如 `structured_outputs`）——因此一次发生了故障转移或触及预算的请求，无需离开仪表盘即可看清。
+
+<Callout type="info">
+**只存回执，不存正文。** Cloud 存储请求的*记录*——模型、provider、token、成本、延迟、状态、路由档位——从不存储 prompt 或响应内容。
+</Callout>
+
+## 用量归因与 API
+
+仪表盘中的一切也都可通过管理 API 获取，按工作区作用域，并由 `usage:read` scope 控制：
+
+- **聚合用量**——某个 `[from, to)` 窗口内的消费、token 计数、请求数，以及按能力的细分。
+- **请求历史**——分页的请求日志，含路由档位与所用能力。
+
+它们与你从 [CLI](/docs/concepts/cli) 运行的 `bitrouter cloud usage` 和 `bitrouter cloud requests` 是同一套。`usage` 与 `requests` 端点及其字段见 [API 参考](/docs/reference)。
+
+## 深度 trace
+
+Cloud 存储的是逐请求的**回执**，而非 OpenTelemetry span 瀑布图。当你需要完整的 span 树——入口 span、路由决策、以及每次上游尝试的 `CLIENT` span——它存在于**你自己的 OTLP collector** 中。用开源的 [OpenTelemetry](/docs/features/opentelemetry) 导出接好一次，Activity 视图便会链接到它。
+
+## 下一步
+
+<Cards>
+  <Card title="OpenTelemetry" href="/docs/features/opentelemetry" description="自托管 OTLP 导出——span 模型、指标与各后端配置。" />
+  <Card title="工作区" href="/docs/cloud/workspaces" description="按工作区作用域管理密钥、用量与策略。" />
+  <Card title="CLI" href="/docs/concepts/cli" description="在终端运行 bitrouter cloud usage / requests。" />
+  <Card title="API 参考" href="/docs/reference" description="usage 与 requests 管理端点。" />
+</Cards>

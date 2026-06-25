@@ -37,18 +37,28 @@ A fourth built-in, [**Web search**](/docs/features/websearch), works the same wa
 
 MCP-server tools are wired through configuration instead — set `server_tools.mcp_servers` to the servers whose tools BitRouter should run inside the loop.
 
-## Advisor
+## Model-backed tools
 
-**Advisor** lets the running model **consult a stronger model mid-generation**. The advisor model is fixed by your declaration (and falls back to the parent model); the calling model sends a `prompt` and gets back structured advice. Use it when one hard sub-question is worth a brief escalation, without switching the whole request to a pricier model.
+Three of the built-ins wrap a **nested model call** instead of an external side effect. Each gets its own page:
 
-## SubAgent
-
-**SubAgent** lets the running model **delegate a self-contained task to a cheaper, faster worker model**. The worker is fixed by the declaration; the caller supplies a `task_name` and `task_description` and gets back the outcome. Use it to fan out bounded sub-tasks without spending frontier tokens on them.
-
-## Fusion
-
-**Fusion** runs a **panel of models (1–8) on the same prompt in parallel**, then a **judge** model compares — not merges — their answers into a structured analysis (consensus, contradictions, partial coverage, unique insights, blind spots), which the calling model uses to write the final answer. An optional synthesizer can write that answer instead. Use it for high-stakes questions where cross-checking several models is worth the cost.
+- [**Advisor**](/docs/features/advisor) — the running model consults a stronger model on one hard sub-question mid-generation, without escalating the whole request.
+- [**Sub-agent**](/docs/features/subagent) — the model delegates a self-contained task to a cheaper, faster worker that runs in isolation and returns only its result.
+- [**Fusion**](/docs/features/fusion) — a panel of models answers in parallel, a judge compares (not merges) their answers, and the calling model writes the final reply from that analysis.
 
 <Callout type="info">
-Advisor, SubAgent, and Fusion are each backed by model calls nested inside your request. They cost what their underlying model calls cost, and they appear in your usage history like any other call.
+Advisor, Sub-agent, and Fusion are each backed by model calls nested inside your request. They cost what their underlying model calls cost, and they appear in your usage history like any other call.
 </Callout>
+
+## How tools are bundled: toolsets
+
+A **toolset** is the seam that makes router-run tools provider-agnostic. Each toolset answers two questions for a request — **which tools to advertise**, and **how to run a call** to one of them — and BitRouter composes several into the single set the model sees.
+
+BitRouter keeps a registry of toolsets; when the model calls a tool, the registry routes the call to the toolset that **owns** that name. Because several toolsets can be active at once, tool names are **prefixed** to avoid collisions — the `search` tool from the `demo` server is advertised as `demo__search`.
+
+Toolsets come in three kinds:
+
+- **MCP-backed** — one per upstream MCP server; its tools are the server's tools, run through the gateway.
+- **Model-backed** — Advisor, Sub-agent, and Fusion, each wrapping a nested model call.
+- **In-process** — tools implemented directly in the router.
+
+A toolset doesn't have to advertise on every request. It can check what the caller **declared** and stay silent otherwise — which is how the model-backed tools work: Advisor only appears when the request declares `bitrouter:advisor`, and likewise for Sub-agent and Fusion. The model only ever sees the tools that request actually opted into.

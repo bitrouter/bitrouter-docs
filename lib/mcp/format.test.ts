@@ -3,6 +3,7 @@ import {
   pathToSlug,
   formatSearchResults,
   truncateMarkdown,
+  stripMdxNoise,
   matchModels,
   buildConfigSnippet,
   formatModelAnswer,
@@ -71,6 +72,21 @@ describe("truncateMarkdown", () => {
     const out = truncateMarkdown("a".repeat(50), "https://bitrouter.ai/docs/x", 10);
     expect(out.startsWith("aaaaaaaaaa")).toBe(true);
     expect(out).toContain("full page: https://bitrouter.ai/docs/x");
+  });
+});
+
+describe("stripMdxNoise", () => {
+  it("drops top-level MDX import lines and collapses blank lines", () => {
+    const md = "# Title\n\nimport { Callout } from 'fumadocs-ui/components/callout';\n\n\nBody text.";
+    expect(stripMdxNoise(md)).toBe("# Title\n\nBody text.");
+  });
+  it("keeps import lines inside fenced code blocks", () => {
+    const md = "Use it:\n\n```ts\nimport OpenAI from 'openai';\n```";
+    expect(stripMdxNoise(md)).toContain("import OpenAI from 'openai';");
+  });
+  it("does not strip prose containing the word import", () => {
+    const md = "You can import your keys from the dashboard.";
+    expect(stripMdxNoise(md)).toBe("You can import your keys from the dashboard.");
   });
 });
 

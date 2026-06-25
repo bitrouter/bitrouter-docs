@@ -77,6 +77,27 @@ export function formatSearchResults(results: RawSearchResult[], limit: number): 
   return hits;
 }
 
+/**
+ * Drop MDX `import` statement lines that fumadocs' processed text carries
+ * (e.g. `import { Callout } from '…'`) — noise for an LLM. Imports inside
+ * fenced code blocks are left intact so code examples are not corrupted.
+ */
+export function stripMdxNoise(markdown: string): string {
+  const out: string[] = [];
+  let inFence = false;
+  for (const line of markdown.split("\n")) {
+    if (/^\s*```/.test(line)) {
+      inFence = !inFence;
+      out.push(line);
+      continue;
+    }
+    if (!inFence && /^\s*import\b[^\n]*\bfrom\b\s*['"][^'"]+['"];?\s*$/.test(line)) continue;
+    if (!inFence && /^\s*import\s+['"][^'"]+['"];?\s*$/.test(line)) continue;
+    out.push(line);
+  }
+  return out.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+}
+
 /** Truncate markdown to a char cap, appending a deep-link footer when cut. */
 export function truncateMarkdown(text: string, url: string, cap: number): string {
   if (text.length <= cap) return text;
@@ -118,7 +139,7 @@ export function formatModelAnswer(query: string, matches: Model[]): ModelAnswer 
       query,
       matched: false,
       models: [],
-      note: `No routable model matches "${query}". Try a provider/model id like "anthropic/claude-sonnet-4" or a shorter name fragment.`,
+      note: `No routable model matches "${query}". Try a provider/model id like "anthropic/claude-sonnet-4.6" or a shorter name fragment.`,
     };
   }
   return {

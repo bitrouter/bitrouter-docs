@@ -66,7 +66,7 @@ const handler = createMcpHandler(
       {
         title: "Look up a routable model",
         description:
-          "Check whether a model is routable through BitRouter and get its pricing, context window, and a copy-paste config snippet. Accepts a provider/model id (e.g. 'anthropic/claude-sonnet-4') or a name fragment.",
+          "Check whether a model is routable through BitRouter and get its pricing, context window, and a copy-paste config snippet. Accepts a provider/model id (e.g. 'anthropic/claude-sonnet-4.6') or a name fragment.",
         inputSchema: {
           query: z.string().describe("provider/model id or name fragment"),
         },

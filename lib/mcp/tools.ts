@@ -6,6 +6,7 @@ import {
   formatSearchResults,
   pathToSlug,
   truncateMarkdown,
+  stripMdxNoise,
   matchModels,
   formatModelAnswer,
   SITE_ORIGIN,
@@ -42,7 +43,7 @@ export async function getDoc(path: string, locale = "en"): Promise<GetDocResult>
     };
   }
   const url = page.url.startsWith("http") ? page.url : `${SITE_ORIGIN}${page.url}`;
-  const text = await getLLMText(page);
+  const text = stripMdxNoise(await getLLMText(page));
   return { ok: true, markdown: truncateMarkdown(text, url, DOC_CHAR_CAP), url };
 }
 

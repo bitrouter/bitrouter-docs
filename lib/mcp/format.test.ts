@@ -81,6 +81,9 @@ describe("matchModels", () => {
   it("returns [] when nothing matches", () => {
     expect(matchModels(models, "llama")).toEqual([]);
   });
+  it("returns [] for a whitespace-only query", () => {
+    expect(matchModels(models, "   ")).toEqual([]);
+  });
 });
 
 describe("buildConfigSnippet", () => {

@@ -5,6 +5,7 @@ import type { Model } from "../models-types";
 
 const SITE_ORIGIN = "https://bitrouter.ai";
 const LOCALES = ["en", "zh"];
+const DEFAULT_MODEL_MATCH_LIMIT = 5;
 
 /** The fields we use from fumadocs-core's `SortedResult`. */
 export interface RawSearchResult {
@@ -89,8 +90,9 @@ export function buildConfigSnippet(id: string): string {
 }
 
 /** Match a query against the catalog: exact id wins, else id/name substring. */
-export function matchModels(models: Model[], query: string, limit = 5): Model[] {
+export function matchModels(models: Model[], query: string, limit = DEFAULT_MODEL_MATCH_LIMIT): Model[] {
   const q = query.trim().toLowerCase();
+  if (q === "") return [];
   const exact = models.find((m) => m.id.toLowerCase() === q);
   if (exact) return [exact];
   return models
@@ -98,7 +100,11 @@ export function matchModels(models: Model[], query: string, limit = 5): Model[] 
     .slice(0, limit);
 }
 
-/** Build the `lookup_model` answer from matched catalog entries. */
+/**
+ * Build the `lookup_model` answer from already-matched catalog entries.
+ * Callers pass the result of `matchModels(...)`; the two are composed in
+ * `lib/mcp/tools.ts` so both stay pure and unit-testable.
+ */
 export function formatModelAnswer(query: string, matches: Model[]): ModelAnswer {
   if (matches.length === 0) {
     return {

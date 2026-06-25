@@ -1,4 +1,4 @@
-import { createMcpHandler as createMcpRouteHandler } from "mcp-handler";
+import { createMcpHandler } from "mcp-handler";
 import { z } from "zod";
 import { searchDocs, getDoc, lookupModel } from "@/lib/mcp/tools";
 import { LLMS_TXT } from "@/lib/llms-txt";
@@ -6,7 +6,7 @@ import { LLMS_TXT } from "@/lib/llms-txt";
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-const handler = createMcpRouteHandler(
+const handler = createMcpHandler(
   (server) => {
     server.registerTool(
       "search_docs",

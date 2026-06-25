@@ -6,6 +6,10 @@ import { LLMS_TXT } from "@/lib/llms-txt";
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
+// Mounted at the top-level `/mcp` path. `basePath: ""` makes mcp-handler derive
+// its streamable endpoint as `/mcp`, matching the real request path — a Next.js
+// rewrite cannot be used here because mcp-handler inspects the *external* URL,
+// not the rewritten internal one.
 const handler = createMcpHandler(
   (server) => {
     server.registerTool(
@@ -94,7 +98,7 @@ const handler = createMcpHandler(
       "BitRouter documentation server (public, no auth). Use search_docs to find guides, get_doc to read a page, and lookup_model to check model availability and config.",
   },
   {
-    basePath: "/api",
+    basePath: "",
     maxDuration: 60,
     disableSse: true,
     verboseLogs: false,

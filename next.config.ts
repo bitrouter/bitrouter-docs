@@ -69,12 +69,6 @@ const nextConfig: NextConfig = {
   skipTrailingSlashRedirect: true,
   async rewrites() {
     return [
-      // Clean public URL for the docs MCP server; the handler lives at the
-      // mcp-handler-conventional /api/[transport] path.
-      {
-        source: "/mcp",
-        destination: "/api/mcp",
-      },
       {
         source: "/ingest/static/:path*",
         destination: "https://us-assets.i.posthog.com/static/:path*",

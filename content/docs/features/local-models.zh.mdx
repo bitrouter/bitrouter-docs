@@ -32,7 +32,7 @@ providers:
 
 `providers` 是一个以你自选的 provider id 为键的映射（这里是 `ollama`）。`api_base` 是服务的基础 URL；`api_protocol` 是 BitRouter 对上游使用的线格式 —— 任何 OpenAI 兼容服务都用 `chat_completions`。BitRouter 对任何非 Anthropic、非 Google 的主机已默认推断为 `chat_completions`，因此 `api_protocol` 块是可选的，但写明能让意图更清晰。`models` 下每一项是该服务提供的模型 id。
 
-完整的分步流程 —— 含 Ollama、vLLM、LM Studio 与 Unsloth 的变体及确切启动命令 —— 见[本地模型服务食谱](/docs/integrations/local-models)。
+完整的分步流程 —— 含 Ollama 与 vLLM 的变体及确切启动命令 —— 见[模型来源总览](/docs/integrations/models)。
 
 ### 2. 注册表中列出的 provider，从环境变量自动检测
 

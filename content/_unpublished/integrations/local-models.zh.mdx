@@ -70,4 +70,4 @@ curl http://localhost:4356/v1/chat/completions \
 **混用本地与托管。** 声明一个[虚拟模型](/docs/features/model-fallback)，其端点列表先放本地 provider、再放托管的：请求先免费跑在本地硬件上，出错或过载时自动回退到托管模型——一个模型名，自动切换。
 </Callout>
 
-背后的概念——为什么要在本地服务前面套一层、以及注册表自动探测这条替代路径——见[本地与私有模型](/docs/features/local-models)。
+背后的概念——为什么要在本地服务前面套一层、以及注册表自动探测这条替代路径——见[本地与私有模型](/docs/integrations/models)。

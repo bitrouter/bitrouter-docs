@@ -1,14 +1,10 @@
 ---
-title: Structured Outputs (Beta)
+title: Structured Outputs
 description: Enforce JSON schemas across all providers — automatic protocol translation for OpenAI, Anthropic, Google, and more.
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
-
-<Callout type="info">
-**Beta Feature.** Structured outputs support is currently in beta. The API is stable but may receive enhancements based on user feedback. Please report any issues or suggestions on [GitHub](https://github.com/bitrouter/bitrouter/issues).
-</Callout>
 
 **Structured outputs** guarantee that model responses conform to your exact JSON schema. BitRouter provides a unified API that works seamlessly across all major providers — automatically translating between each provider's native format.
 
@@ -368,6 +364,6 @@ response_format: {
 
 ## See also
 
-- [Model discovery](/docs/reference/api-reference/discovery/listModels) — Check which models support structured outputs
+- [Model discovery](/docs/reference/discovery/listModels) — Check which models support structured outputs
 - [Provider selection](/docs/features/provider-selection) — Route to providers with structured output support
-- [API Reference](/docs/reference/api-reference) — Complete API documentation
+- [API Reference](/docs/reference) — Complete API documentation

@@ -37,20 +37,21 @@ References:
 ## Features
 
 - [Workspaces](${BASE_URL}/docs/cloud/workspaces): Per-team routing tables, keys, and observability
-- [BYOK](${BASE_URL}/docs/features/byok): Bring your own provider keys at zero cost; auto-detected from env vars
-- [Observability](${BASE_URL}/docs/features/observability): Real-time CLI + TUI for sessions, requests, latency, and spend, plus structured logs
+- [BYOK](${BASE_URL}/docs/cloud/byok): Bring your own provider keys at zero cost; auto-detected from env vars
+- [OpenTelemetry](${BASE_URL}/docs/features/opentelemetry): Self-run OTLP export — traces and metrics of every request, pushed to a Collector, Honeycomb, Grafana, or Datadog
+- [Cloud Tracing](${BASE_URL}/docs/cloud/tracing): Hosted Activity view — spend, token, and latency KPIs plus a per-request log, nothing to operate
 - [Guardrails](${BASE_URL}/docs/features/guardrails): Inspect, warn, redact, or block risky content at the proxy layer
 
 ## API Reference
 
-- [API Overview](${BASE_URL}/docs/reference/api-reference): Base URL (\`https://api.bitrouter.ai\`), auth, and conventions
-- [OpenAI-Compatible](${BASE_URL}/docs/reference/api-reference/openai-compatible/createChatCompletion): \`/v1/chat/completions\` — drop-in for any OpenAI SDK
-- [Anthropic-Compatible](${BASE_URL}/docs/reference/api-reference/anthropic-compatible/createMessage): \`/v1/messages\` — drop-in for the Anthropic SDK
-- [Discovery](${BASE_URL}/docs/reference/api-reference/discovery/listModels): List models, providers, and routing tables
-- [BYOK](${BASE_URL}/docs/reference/api-reference/byok/getEncryptionPubkey): Encrypted upload of upstream provider keys
-- [Billing](${BASE_URL}/docs/reference/api-reference/billing/createCheckoutSession): Stripe checkout for prepaid credits
-- [Webhooks](${BASE_URL}/docs/reference/api-reference/webhooks/stripeWebhook): Stripe webhook receiver
-- [Health](${BASE_URL}/docs/reference/api-reference/health/ping): Liveness probe
+- [API Overview](${BASE_URL}/docs/reference): Base URL (\`https://api.bitrouter.ai\`), auth, and conventions
+- [OpenAI-Compatible](${BASE_URL}/docs/reference/openai-compatible/createChatCompletion): \`/v1/chat/completions\` — drop-in for any OpenAI SDK
+- [Anthropic-Compatible](${BASE_URL}/docs/reference/anthropic-compatible/createMessage): \`/v1/messages\` — drop-in for the Anthropic SDK
+- [Discovery](${BASE_URL}/docs/reference/discovery/listModels): List models, providers, and routing tables
+- [BYOK](${BASE_URL}/docs/reference/byok/getEncryptionPubkey): Encrypted upload of upstream provider keys
+- [Billing](${BASE_URL}/docs/reference/billing/createCheckoutSession): Stripe checkout for prepaid credits
+- [Webhooks](${BASE_URL}/docs/reference/webhooks/stripeWebhook): Stripe webhook receiver
+- [Health](${BASE_URL}/docs/reference/health/ping): Liveness probe
 
 ## Cookbook (Agent Recipes)
 

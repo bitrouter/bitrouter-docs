@@ -1,6 +1,16 @@
 {
-  "title": "Reference",
+  "title": "API References",
   "icon": "Library",
   "defaultOpen": false,
-  "pages": ["cli", "api-reference"]
+  "pages": [
+    "index",
+    "health",
+    "discovery",
+    "byok",
+    "management",
+    "openai-compatible",
+    "openai-responses",
+    "anthropic-compatible",
+    "google-compatible"
+  ]
 }

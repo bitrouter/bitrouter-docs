@@ -2,5 +2,14 @@
   "title": "Guides",
   "icon": "Map",
   "defaultOpen": false,
-  "pages": ["build-a-plugin", "self-host", "export-telemetry", "register-as-a-provider", "migrate-from-litellm", "migrate-from-openrouter"]
+  "pages": [
+    "---Development---",
+    "build-a-plugin",
+    "self-host",
+    "register-as-a-provider",
+    "---Migration---",
+    "migrate-from-litellm",
+    "migrate-from-openrouter",
+    "migrate-from-tensorzero"
+  ]
 }

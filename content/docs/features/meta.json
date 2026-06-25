@@ -9,14 +9,14 @@
     "model-variants",
     "presets",
     "structured-outputs",
-    "byok",
-    "local-models",
     "---Tools gateway---",
     "server-tools",
     "websearch",
-    "toolsets",
+    "subagent",
+    "advisor",
+    "fusion",
     "---Cross-cutting---",
     "guardrails",
-    "observability"
+    "opentelemetry"
   ]
 }

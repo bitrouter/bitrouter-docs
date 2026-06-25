@@ -2,5 +2,5 @@
   "title": "Infrastructure",
   "icon": "Server",
   "defaultOpen": false,
-  "pages": ["overview", "get-started", "managed-models", "managed-tools", "managed-agents", "workspaces"]
+  "pages": ["overview", "get-started", "managed-models", "byok", "workspaces", "tracing"]
 }

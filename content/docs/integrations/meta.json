@@ -3,7 +3,6 @@
   "icon": "Blocks",
   "defaultOpen": false,
   "pages": [
-    "index",
     "---Models---",
     "models",
     "claude-subscription",

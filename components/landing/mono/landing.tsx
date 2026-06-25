@@ -139,45 +139,52 @@ function heroProgram() {
     [
       "print",
       <span>
-        <Dim>via</Dim> <Acc>bitrouter</Acc> <Faint>·</Faint>{" "}
-        <Dim>routing alias</Dim> <span className="lbl">code/balanced</span>
+        <Dim>via</Dim> <Acc>bitrouter</Acc> <Faint>·</Faint> <Dim>loop</Dim>{" "}
+        <span className="lbl">code/balanced</span>
       </span>,
       120,
     ],
-    ["print", <span className="fnt">~/projects/payments-api</span>, 380],
+    ["print", <span className="fnt">~/projects/payments-api</span>, 360],
     [
       "type",
       "refactor the checkout flow onto the new pricing service",
-      { prefix: "❯", cps: 46, after: 520 },
+      { prefix: "❯", cps: 46, after: 460 },
     ],
-    [
-      "spin",
-      "bitrouter · classify task → model",
-      900,
-      <span>
-        <Ok>✓</Ok> <Dim>routed</Dim>{" "}
-        <span className="lbl">qwen/qwen-3.7</span>{" "}
-        <Faint>· intent: lookup · 88ms</Faint>
-      </span>,
-    ],
-    [
-      "spin",
-      "bitrouter · matching task complexity → model",
-      1200,
-      <span>
-        <Ok>✓</Ok> <Dim>routed</Dim>{" "}
-        <span className="lbl">anthropic/claude-fable-5</span>{" "}
-        <Faint>· intent: edit · 134ms</Faint>
-      </span>,
-    ],
+
+    /* ---- call 1 · routine → open model ---- */
     [
       "print",
       <span>
         <Acc>●</Acc> <span className="lbl">Read</span>{" "}
         <Dim>src/checkout/flow.ts</Dim> <Faint>(142 lines)</Faint>
       </span>,
-      280,
+      240,
     ],
+    [
+      "print",
+      <span>
+        <Faint>trace</Faint> <Dim>lookup · 1.2k tok ·</Dim> <Faint>92ms</Faint>
+      </span>,
+      200,
+    ],
+    [
+      "print",
+      <span>
+        <Faint>eval&nbsp;</Faint> <Dim>routine — an open model holds it</Dim>
+      </span>,
+      260,
+    ],
+    [
+      "spin",
+      "route → model",
+      900,
+      <span>
+        <Acc>▸</Acc> <Dim>routed</Dim> <span className="lbl">qwen/qwen-3.7</span>{" "}
+        <Faint>· $0.002 · 88ms</Faint>
+      </span>,
+    ],
+
+    /* ---- call 2 · hard → frontier ---- */
     [
       "print",
       <span>
@@ -186,7 +193,6 @@ function heroProgram() {
       </span>,
       200,
     ],
-    ["print", <span className="fnt">{"  @@ -18,6 +18,9 @@"}</span>, 120],
     [
       "print",
       <span>
@@ -201,26 +207,45 @@ function heroProgram() {
         <span className="lbl">{"  + "}</span>
         {"const price = await pricing.quote(cart)"}
       </span>,
-      120,
+      240,
     ],
     [
       "print",
       <span>
-        <span className="lbl">{"  + "}</span>
-        {"await pricing.lock(price.id)"}
+        <Faint>trace</Faint> <Dim>edit · needs reasoning</Dim>
       </span>,
-      360,
+      200,
+    ],
+    [
+      "print",
+      <span>
+        <Faint>eval&nbsp;</Faint> <Dim>hard — escalate to frontier</Dim>
+      </span>,
+      260,
     ],
     [
       "spin",
+      "route → model",
+      1000,
+      <span>
+        <Acc>▸</Acc> <Dim>routed</Dim>{" "}
+        <span className="lbl">anthropic/claude-fable-5</span>{" "}
+        <Faint>· 134ms</Faint>
+      </span>,
+    ],
+
+    /* ---- failover · transparent to the agent ---- */
+    [
+      "spin",
       "anthropic 429 rate_limited — failing over",
-      1300,
+      1200,
       <span>
         <Ok>✓</Ok> <Dim>failover</Dim>{" "}
         <span className="lbl">deepseek/deepseek-v4-pro</span>{" "}
-        <Faint>· transparent to agent · 287ms</Faint>
+        <Faint>· transparent · 287ms</Faint>
       </span>,
     ],
+
     [
       "print",
       <span>
@@ -232,7 +257,7 @@ function heroProgram() {
     [
       "print",
       <span>
-        <Bold>run_8x2k</Bold> <Faint>complete ·</Faint>{" "}
+        <Bold>run_8x2k</Bold> <Faint>·</Faint>{" "}
         <Dim>8 calls · 3 providers · </Dim>
         <span className="lbl">$0.43</span>{" "}
         <Faint>· vs $2.10 all-frontier</Faint>
@@ -305,17 +330,14 @@ function Hero() {
     <section className="hero" id="top">
       <div className="wrap hero-grid">
         <div className="hero-copy">
-          <Link href="/docs" className="chip hero-chip">
-            <span style={{ color: "var(--term-ok)" }}>●</span> Enjoy 25% off for all open-source models, zero markup <span className="explore-arrow">→</span>
-          </Link>
-          <h1 className="h-display hero-title">
-            cost-optimize your agentic workflows —{" "}
-            <span className="hero-title-code">routing as code</span>
-          </h1>
+          <span className="chip hero-chip">
+            <span style={{ color: "var(--term-ok)" }}>●</span> Open-source cost-optimization loop for AI agents
+          </span>
+          <h1 className="h-display hero-title">Agentic workflows cost too much.</h1>
           <p className="hero-sub">
-            BitRouter does the cost-optimizing — routine calls to open models,
-            frontier where it counts. You keep control: set the policy, override
-            any call, never a black box. Drops in with one env var.
+            Long autonomous runs get expensive — that&rsquo;s the workflow, not
+            your mistake. BitRouter routes every call to the cheapest model that
+            does the job, so the bill drops on its own.
           </p>
           <InstallBar />
           <div className="hero-actions">
@@ -331,7 +353,7 @@ function Hero() {
               <span className="explore-arrow">→</span>
             </a>
             <Link href="/docs" className="btn btn-ghost">
-              $ bitrouter --help
+              Documentation
             </Link>
           </div>
         </div>
@@ -736,63 +758,75 @@ const PROBLEMS = [
   },
 ];
 
-function Problems() {
-  const [active, setActive] = React.useState(0);
-  const p = PROBLEMS[active];
+function Loop() {
   return (
-    <section className="sec problems">
+    <section className="sec loop">
       <div className="wrap">
         <div className="sec-head">
-          <h2 className="h-display sec-title">Where agent runs lose cost and performance.</h2>
+          <div
+            className="eyebrow sec-eyebrow"
+            style={{ ["--sec-accent" as string]: "var(--accent)" }}
+          >
+            <span className="idx">//</span> how we optimize
+          </div>
+          <h2 className="h-display sec-title">Trace. Evaluate. Route. Repeat.</h2>
           <p className="sec-lead">
-            Four leaks in every long, autonomous run — each one fixed by a
-            mechanism below.
+            One loop, every call, in the request path — no SDK to bolt on.
+            BitRouter traces each call, evaluates what it actually needs, then
+            routes. Continuously, every run.
           </p>
         </div>
 
-        <div className="prob-tabs">
-          {PROBLEMS.map((pp, i) => (
-            <button
-              key={pp.id}
-              className={"prob-tab" + (i === active ? " on" : "")}
-              onClick={() => setActive(i)}
+        <div className="loop-track">
+          {STATIONS.map((s, i) => (
+            <div
+              className={"loop-row" + (i % 2 ? " rev" : "")}
+              key={s.pillar}
+              style={{ ["--sec-accent" as string]: s.hue }}
             >
-              <span className="prob-tab-idx">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <span className="prob-tab-name">{pp.id}</span>
-            </button>
-          ))}
-        </div>
-
-        <div className="prob-panel">
-          {/* All four problem narratives are rendered (not just the active
-              one) so the full copy reaches the server-rendered HTML for SEO /
-              LLM ingestion; inactive panels are toggled off with `hidden`. */}
-          <div className="prob-copy-stack">
-            {PROBLEMS.map((pp, i) => (
-              <div className="prob-copy" key={pp.id} hidden={i !== active}>
-                <h3 className="h-display prob-h">{pp.title}</h3>
-                <p className="prob-body">{pp.body}</p>
-                <ul className="prob-list">
-                  {pp.bullets.map((b) => (
-                    <li key={b}>
-                      <span className="prob-dot">└</span>
-                      {b}
-                    </li>
+              <div className="loop-copy">
+                <div className="loop-phase-row">
+                  <span className="loop-num">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="loop-phase">{s.phase}</span>
+                  <span className="loop-kills">
+                    ✗ kills <b>{s.prob.id}</b>
+                  </span>
+                </div>
+                <h3 className="h-display loop-quote">{s.prob.title}</h3>
+                <CollapsibleBody className="loop-body">{s.body}</CollapsibleBody>
+                <div className="loop-tags">
+                  {s.tag && <span className="loop-tag hl">{s.tag}</span>}
+                  {s.mech.powered.map((pw) => (
+                    <span className="loop-tag" key={pw}>
+                      {pw}
+                    </span>
                   ))}
-                </ul>
+                </div>
               </div>
-            ))}
-          </div>
-          <div className="prob-vis">
-            <Terminal
-              title={p.term}
-              program={p.prog as never}
-              accentPrompt={false}
-              className="prob-term"
-              key={p.id}
-            />
+              <div className="loop-vis">
+                <Terminal
+                  title={s.mech.term}
+                  program={s.mech.prog as never}
+                  accentPrompt={false}
+                  className="loop-term"
+                />
+              </div>
+            </div>
+          ))}
+
+          {/* the loop closes into the repeat → Moat */}
+          <div className="loop-repeat">
+            <span className="loop-repeat-mark" aria-hidden="true">
+              ↻
+            </span>
+            <span className="loop-repeat-text">
+              <b>repeat</b> — and every turn, the loop learns.
+            </span>
+            <span className="loop-repeat-arrow" aria-hidden="true">
+              ↓
+            </span>
           </div>
         </div>
       </div>
@@ -800,15 +834,10 @@ function Problems() {
   );
 }
 
-/* ---------------- MECHANISMS ---------------- */
-// Per-section accent hue, cycled down the four mechanism rows for chromatic
-// rhythm: green (savings) · blue (routing) · purple (brand) · yellow (frontier).
-const MECH_HUES = [
-  "var(--term-ok)",
-  "var(--term-info)",
-  "var(--accent)",
-  "var(--term-warn)",
-];
+/* ---------------- MECHANISM PROGRAMS ----------------
+   Each pillar's animated terminal + "Powered by" chips. Consumed by the Loop
+   spine (see STATIONS) — one mechanism rides each station as its trimmed,
+   supporting visual. Looked up by `kicker`, so order here is not significant. */
 const MECHS = [
   {
     n: "01",
@@ -1085,49 +1114,130 @@ const MECHS = [
   },
 ];
 
-function Mechanisms() {
+/* ---------------- LOOP STATIONS (data) ----------------
+   Each station fuses one pillar with the pain it kills, in loop order
+   (trace → evaluate → route → ↻ repeat). Pain headline + label reuse PROBLEMS;
+   the supporting terminal + chips reuse MECHS. Three phases — one verb each —
+   then the loop repeats into the Moat. */
+type Station = {
+  phase: string;
+  pillar: string;
+  hue: string;
+  body: string;
+  tag?: string; // the silent separator tag, e.g. "in the path · no SDK"
+  prob: (typeof PROBLEMS)[number];
+  mech: (typeof MECHS)[number];
+};
+
+const mechBy = (kicker: string) => MECHS.find((m) => m.kicker === kicker)!;
+const probBy = (id: string) => PROBLEMS.find((pr) => pr.id === id)!;
+
+const STATIONS: Station[] = [
+  {
+    phase: "Trace",
+    pillar: "Observability",
+    hue: "var(--term-info)",
+    tag: "in the path · no SDK",
+    body: "Every call attributed to the run — cost, model, agent, hop. In the request path, nothing to bolt on.",
+    prob: probBy("Blind spend"),
+    mech: mechBy("Observability"),
+  },
+  {
+    phase: "Evaluate",
+    pillar: "Efficiency",
+    hue: "var(--term-ok)",
+    body: "Scored by what the call actually needs, then matched to the cheapest model that holds quality. Routine → open, hard → frontier.",
+    prob: probBy("Overpay"),
+    mech: mechBy("Efficiency"),
+  },
+  {
+    phase: "Route",
+    pillar: "Reliability",
+    hue: "var(--accent)",
+    body: "Routes and fails over across providers mid-run — a blip at file 140 never re-pays for 139 files of work.",
+    prob: probBy("Pay twice"),
+    mech: mechBy("Reliability"),
+  },
+];
+
+/* ---------------- THE MOAT ----------------
+   The `repeat` curve lands here: the loop doesn't just re-run, it learns. The
+   claim is positioning, not a benchmark — the curve is an explicitly
+   conceptual figure (no axes numbers, no measured %), per the redesign
+   guardrails until /models evals ship. */
+function MoatCurve() {
   return (
-    <section className="sec mechs">
-      <div className="wrap">
-        <div className="sec-head">
-          <h2 className="h-display sec-title">Why agents run on BitRouter.</h2>
+    <figure className="moat-fig">
+      <span className="moat-legend">Fig. — cost per run over time</span>
+      <svg
+        className="moat-svg"
+        viewBox="0 0 520 300"
+        role="img"
+        aria-label="Cost per run over time: a flat static-router line versus a declining BitRouter loop that gets cheaper as it learns."
+      >
+        {/* axes */}
+        <line x1="70" y1="44" x2="70" y2="250" stroke="var(--line-2)" strokeWidth="1.5" />
+        <line x1="70" y1="250" x2="486" y2="250" stroke="var(--line-2)" strokeWidth="1.5" />
+        <path d="M70 44 l-4 9 h8 z" fill="var(--line-bright)" />
+        <path d="M486 250 l-9 -4 v8 z" fill="var(--line-bright)" />
+        <text x="64" y="32" fill="var(--faint)" fontSize="11">cost / run</text>
+        <text x="486" y="272" fill="var(--faint)" fontSize="11" textAnchor="end">time →</text>
+
+        {/* static router — decides once, stays flat (and stale) */}
+        <line className="moat-curve static" x1="74" y1="86" x2="480" y2="86" />
+        <text x="278" y="76" fill="var(--faint)" fontSize="12" textAnchor="middle">
+          static router — decides once, rots
+        </text>
+
+        {/* BitRouter — the loop keeps adapting downward */}
+        <path
+          className="moat-curve learn"
+          d="M74 86 C 150 102, 205 196, 290 214 S 420 232, 480 234"
+        />
+        <circle cx="74" cy="86" r="3.5" fill="var(--term-ok)" />
+        <text x="478" y="222" fill="var(--term-ok)" fontSize="12" textAnchor="end">
+          BitRouter — learns every run
+        </text>
+      </svg>
+    </figure>
+  );
+}
+
+function Moat() {
+  return (
+    <section className="sec moat">
+      <div className="wrap moat-grid">
+        <div className="moat-copy">
+          <div
+            className="eyebrow sec-eyebrow"
+            style={{ ["--sec-accent" as string]: "var(--accent)" }}
+          >
+            <span className="idx">//</span> why we&rsquo;re different
+          </div>
+          <h2 className="h-display sec-title">A router rots. This loop learns.</h2>
           <p className="sec-lead">
-            Four mechanisms, one for each leak above. One job: optimize every
-            agent run for cost and performance.
+            A static router hands you one decision, frozen the day prices move.
+            BitRouter&rsquo;s loop keeps adapting — it tunes which model handles
+            which call at the lowest cost that holds quality, and gets cheaper
+            over time on its own. No tuning by you.
           </p>
+          <ul className="moat-points">
+            <li>
+              <span className="moat-pt-dot">●</span> Continuously optimized, in
+              the request path
+            </li>
+            <li>
+              <span className="moat-pt-dot">●</span> Improves with every run — no
+              static rules to maintain
+            </li>
+            <li>
+              <span className="moat-pt-dot">●</span> Zero tuning by you; override
+              any call, any time
+            </li>
+          </ul>
         </div>
-        <div className="mech-rows">
-          {MECHS.map((m, i) => (
-            <div
-              className={"mech-row" + (i % 2 ? " rev" : "")}
-              key={m.n}
-              style={{ ["--sec-accent" as string]: MECH_HUES[i % MECH_HUES.length] }}
-            >
-              <div className="mech-copy">
-                <div className="eyebrow sec-eyebrow">
-                  <span className="idx">{m.n}</span> {m.kicker}
-                </div>
-                <h3 className="h-display mech-h">{m.title}</h3>
-                <CollapsibleBody className="mech-body">{m.body}</CollapsibleBody>
-                <div className="mech-powered">
-                  <span className="mech-powered-label">Powered by</span>
-                  {m.powered.map((p) => (
-                    <span className="chip mech-chip" key={p}>
-                      {p}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="mech-vis">
-                <Terminal
-                  title={m.term}
-                  program={m.prog as never}
-                  accentPrompt={false}
-                  className="mech-term"
-                />
-              </div>
-            </div>
-          ))}
+        <div className="moat-vis">
+          <MoatCurve />
         </div>
       </div>
     </section>
@@ -1344,9 +1454,9 @@ function FinalCta() {
           <div className="cta-install">
             <InstallBar />
             <div className="cta-meta">
-              <span>
-                <span style={{ color: "var(--term-ok)" }}>●</span> All systems
-                operational
+              <span className="cta-promo">
+                <span style={{ color: "var(--term-ok)" }}>●</span> 25% off all
+                open-source models · zero markup
               </span>
               <span className="fnt">·</span>
               <span>2% on usage · no platform fee &lt; $10/mo</span>
@@ -1358,116 +1468,6 @@ function FinalCta() {
         <div className="cta-fig">
           <PolicyFigure />
         </div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------------- CHANGELOG STRIP ---------------- */
-export type ChangelogStripItem = {
-  url: string;
-  title: string;
-  version?: string;
-  date: string; // ISO YYYY-MM-DD
-  breaking?: boolean;
-};
-
-const STRIP_MONTHS = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-];
-
-// Deterministic formatter (no locale) so SSR and hydration agree.
-function fmtStripDate(iso: string) {
-  const [y, m, d] = iso.split("-").map(Number);
-  if (!y || !m || !d) return iso;
-  return `${STRIP_MONTHS[m - 1]} ${d}, ${y}`;
-}
-
-function ChangelogStrip({ items }: { items: ChangelogStripItem[] }) {
-  if (!items.length) return null;
-  return (
-    <section className="sec changelog-strip">
-      <div className="wrap">
-        <div className="sec-head">
-          <div
-            className="eyebrow sec-eyebrow"
-            style={{ ["--sec-accent" as string]: "var(--accent)" }}
-          >
-            <span className="idx">//</span> shipping log
-          </div>
-          <h2 className="h-display sec-title">Latest releases</h2>
-          <p className="sec-lead">
-            What shipped recently in the open-source core.{" "}
-            <Link href="/changelog" className="ulink">
-              Full changelog →
-            </Link>
-          </p>
-        </div>
-        <ul
-          style={{
-            listStyle: "none",
-            margin: 0,
-            padding: 0,
-            borderTop: "1px solid var(--line)",
-          }}
-        >
-          {items.map((it) => (
-            <li key={it.url} style={{ borderBottom: "1px solid var(--line)" }}>
-              <Link
-                href={it.url}
-                style={{
-                  display: "flex",
-                  gap: 16,
-                  alignItems: "baseline",
-                  padding: "16px 0",
-                  color: "var(--fg)",
-                  textDecoration: "none",
-                  flexWrap: "wrap",
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: "var(--mono)",
-                    fontSize: 12,
-                    color: "var(--accent)",
-                    minWidth: 132,
-                  }}
-                >
-                  {it.version ?? ""}
-                </span>
-                <span style={{ flex: "1 1 240px", fontFamily: "var(--body)" }}>
-                  {it.title}
-                </span>
-                {it.breaking && (
-                  <span
-                    style={{
-                      fontFamily: "var(--mono)",
-                      fontSize: 11,
-                      textTransform: "uppercase",
-                      letterSpacing: "0.06em",
-                      color: "var(--term-warn)",
-                      border: "1px solid var(--line-bright)",
-                      borderRadius: "var(--radius)",
-                      padding: "1px 6px",
-                    }}
-                  >
-                    breaking
-                  </span>
-                )}
-                <span
-                  style={{
-                    fontFamily: "var(--mono)",
-                    fontSize: 12,
-                    color: "var(--faint)",
-                  }}
-                >
-                  {fmtStripDate(it.date)}
-                </span>
-              </Link>
-            </li>
-          ))}
-        </ul>
       </div>
     </section>
   );
@@ -1563,20 +1563,17 @@ export function MonoFooter() {
 }
 
 /* ---------------- PAGE ---------------- */
-export function MonoLanding({
-  changelog = [],
-}: {
-  changelog?: ChangelogStripItem[];
-}) {
+export function MonoLanding() {
   return (
     <>
       <Hero />
       <NoLockIn />
       {/* Social proof temporarily hidden until we have more real tweets.
           Re-enable by uncommenting: <SocialProof /> */}
-      <Problems />
-      <Mechanisms />
-      <ChangelogStrip items={changelog} />
+      {/* The Loop replaces the old Problems + Mechanisms sections — the pillars
+          proven once, in loop order, flowing into the Moat. */}
+      <Loop />
+      <Moat />
       <Faq />
       <FinalCta />
       <MonoFooter />

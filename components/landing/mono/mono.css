@@ -1072,6 +1072,239 @@
   }
 }
 
+/* ============================================================
+   The Loop — horizontal phase rows (replaces Problems + Mechanisms)
+   ------------------------------------------------------------
+   Three rows, copy | terminal, alternating sides. The numbered phases
+   (01 Trace → 02 Evaluate → 03 Route) and the ↻ repeat closer carry the loop;
+   the terminals carry the proof. Flows into the Moat.
+   ============================================================ */
+.br-mono .loop {
+  border-bottom: none;
+  padding-bottom: 48px;
+}
+.br-mono .loop-track {
+  display: flex;
+  flex-direction: column;
+  gap: 72px;
+}
+.br-mono .loop-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
+  align-items: center;
+}
+.br-mono .loop-row.rev .loop-copy {
+  order: 2;
+}
+.br-mono .loop-row.rev .loop-vis {
+  order: 1;
+}
+.br-mono .loop-phase-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.br-mono .loop-num {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--sec-accent);
+  opacity: 0.7;
+}
+.br-mono .loop-phase {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--sec-accent);
+}
+.br-mono .loop-kills {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--faint);
+}
+.br-mono .loop-kills b {
+  color: var(--muted);
+  font-weight: 500;
+}
+.br-mono .loop-quote {
+  font-size: clamp(20px, 2.4vw, 28px);
+  margin: 0 0 12px;
+  max-width: 18ch;
+}
+.br-mono .loop-body {
+  font-family: var(--body);
+  color: var(--fg-dim);
+  font-size: 15px;
+  letter-spacing: 0;
+  line-height: 1.6;
+  margin: 0 0 16px;
+  max-width: 42ch;
+}
+.br-mono .loop-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.br-mono .loop-tag {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--muted);
+  border: 1px solid var(--line-2);
+  border-radius: 100px;
+  padding: 3px 11px;
+}
+.br-mono .loop-tag.hl {
+  color: var(--sec-accent);
+  border-color: color-mix(in srgb, var(--sec-accent) 42%, transparent);
+}
+.br-mono .loop-vis {
+  min-width: 0;
+}
+.br-mono .loop-term {
+  height: 300px;
+}
+
+/* repeat → Moat closer */
+.br-mono .loop-repeat {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.br-mono .loop-repeat-mark {
+  font-size: 22px;
+  line-height: 1;
+  color: var(--accent);
+}
+.br-mono .loop-repeat-text {
+  font-family: var(--body);
+  font-size: 15px;
+  color: var(--fg-dim);
+  letter-spacing: 0;
+}
+.br-mono .loop-repeat-text b {
+  color: var(--fg);
+  font-weight: 600;
+}
+.br-mono .loop-repeat-arrow {
+  color: var(--faint);
+  margin-left: 4px;
+}
+@media (max-width: 880px) {
+  .br-mono .loop-track {
+    gap: 56px;
+  }
+  .br-mono .loop-row,
+  .br-mono .loop-row.rev {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .br-mono .loop-row.rev .loop-copy {
+    order: 1;
+  }
+  .br-mono .loop-row.rev .loop-vis {
+    order: 2;
+  }
+  .br-mono .loop-term {
+    height: 220px;
+  }
+}
+
+/* ============================================================
+   The Moat — RL "learns" (directly under the Loop)
+   ============================================================ */
+.br-mono .moat {
+  padding-top: 52px;
+}
+.br-mono .moat-grid {
+  display: grid;
+  grid-template-columns: 0.92fr 1.08fr;
+  gap: 56px;
+  align-items: center;
+}
+.br-mono .moat-points {
+  list-style: none;
+  padding: 0;
+  margin: 26px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+.br-mono .moat-points li {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-size: 14px;
+  color: var(--fg);
+}
+.br-mono .moat-pt-dot {
+  color: var(--term-ok);
+  font-size: 9px;
+}
+.br-mono .moat-fig {
+  position: relative;
+  margin: 0;
+  border: 1px solid var(--line-2);
+  border-radius: 14px;
+  background: linear-gradient(180deg, #070707, #020202);
+  padding: 26px 22px 18px;
+  box-shadow: 0 30px 70px -34px rgba(0, 0, 0, 0.9);
+}
+.br-mono .moat-legend {
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-style: italic;
+  font-size: 11.5px;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--line-2);
+  border-radius: 7px;
+  padding: 3px 12px;
+  white-space: nowrap;
+}
+.br-mono .moat-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.br-mono .moat-curve {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+.br-mono .moat-curve.static {
+  stroke: var(--faint);
+  stroke-dasharray: 4 6;
+}
+.br-mono .moat-curve.learn {
+  stroke: var(--term-ok);
+  stroke-dasharray: 700;
+  stroke-dashoffset: 700;
+  animation: brm-draw 1.5s cubic-bezier(0.6, 0, 0.2, 1) forwards;
+}
+@keyframes brm-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .br-mono .moat-curve.learn {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+@media (max-width: 880px) {
+  .br-mono .moat-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}
+
 /* ---------- Routing-as-code figure (code figure, not a terminal) ---------- */
 .br-mono .rcode-figure {
   position: relative;

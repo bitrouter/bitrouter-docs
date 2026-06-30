@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "prebuild": "node scripts/generate-openapi.mjs && node scripts/generate-models.mjs && node scripts/generate-changelog-latest.mjs",
+    "prebuild": "node scripts/sync-docs.mjs && node scripts/generate-openapi.mjs && node scripts/generate-models.mjs && node scripts/generate-changelog-latest.mjs",
     "start": "next start",
     "test": "vitest run",
     "postinstall": "fumadocs-mdx",

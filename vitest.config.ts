@@ -4,7 +4,7 @@ import { defineConfig } from "vitest/config";
 // path-alias resolution is needed here.
 export default defineConfig({
   test: {
-    include: ["lib/**/*.test.ts"],
+    include: ["lib/**/*.test.{ts,mjs}"],
     environment: "node",
   },
 });

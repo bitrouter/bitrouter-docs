@@ -17,7 +17,7 @@ const finalPath = {
   "mcp":"/docs/concepts/tools","acp":"/docs/concepts/agents",
   "agentskills":"/docs/concepts/tools",
   // bitrouter cloud (was: infrastructure)
-  "managed-provider":"/docs/get-started/managed-models","discounted-models":"/docs/get-started/managed-models",
+  "managed-provider":"/docs/get-started/models-and-providers","discounted-models":"/docs/get-started/models-and-providers",
   "payment":"/docs/features/payment","workspaces":"/docs/features/namespaces",
   "for-providers":"/docs/guides/register-as-a-provider",
   // reference
@@ -38,8 +38,8 @@ pairs.push(
   ["/docs/guides/overview/comparison", "/docs/get-started/comparison"],
   ["/docs/guides/overview/provider", "/docs/guides/register-as-a-provider"],
   // infrastructure → bitrouter cloud (folder renamed; pages merged/moved)
-  ["/docs/infrastructure/managed-provider", "/docs/get-started/managed-models"],
-  ["/docs/infrastructure/discounted-models", "/docs/get-started/managed-models"],
+  ["/docs/infrastructure/managed-provider", "/docs/get-started/models-and-providers"],
+  ["/docs/infrastructure/discounted-models", "/docs/get-started/models-and-providers"],
   ["/docs/infrastructure/payment", "/docs/features/payment"],
   ["/docs/infrastructure/workspaces", "/docs/features/namespaces"],
   ["/docs/infrastructure/for-providers", "/docs/guides/register-as-a-provider"],
@@ -49,7 +49,7 @@ pairs.push(
   ["/docs/cloud/get-started", "/docs/get-started/self-hosted-vs-cloud"],
   ["/docs/cloud/byok", "/docs/features/byok"],
   ["/docs/cloud/tracing", "/docs/features/opentelemetry"],
-  ["/docs/cloud/managed-models", "/docs/get-started/managed-models"],
+  ["/docs/cloud/managed-models", "/docs/get-started/models-and-providers"],
   ["/docs/cloud/workspaces", "/docs/features/namespaces"],
   ["/docs/cloud/payment", "/docs/features/payment"],
   // reference wildcards (api-reference unwrapped into /docs/reference)

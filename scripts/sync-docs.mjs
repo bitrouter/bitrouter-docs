@@ -58,18 +58,21 @@ async function acquire() {
     }));
 }
 
-// Read the published section list from docs/meta.json (root: true).
-async function publishedSections(files) {
-  const rootMeta = files.find((f) => f.path === "meta.json");
-  if (!rootMeta) throw new Error("sync-docs: docs/meta.json (root manifest) not found");
-  let manifest;
-  try {
-    manifest = JSON.parse(await rootMeta.read());
-  } catch (err) {
-    throw new Error(`sync-docs: docs/meta.json: malformed JSON: ${err.message}`);
+// Internal folders in the bitrouter repo's docs/ that are NOT published.
+const INTERNAL_DIRS = new Set(["superpowers", "awesome-submissions"]);
+
+// Sections = the top-level doc folders the bitrouter repo provides. The site
+// repo owns the root nav manifest (content/docs/meta.json) and its own sections
+// (reference, ai-resources), so we neither read nor write the root manifest here.
+function discoverSections(files) {
+  const set = new Set();
+  for (const f of files) {
+    const slash = f.path.indexOf("/");
+    if (slash === -1) continue; // top-level files (root meta.json, CONTRIBUTING) are not sections
+    const top = f.path.slice(0, slash);
+    if (!INTERNAL_DIRS.has(top)) set.add(top);
   }
-  const pages = manifest.pages ?? [];
-  return new Set(pages.filter((p) => !p.startsWith("---")));
+  return set;
 }
 
 function isDoc(p) {
@@ -87,20 +90,15 @@ function targetPath(p) {
 
 async function main() {
   const files = await acquire();
-  const sections = await publishedSections(files);
+  const sections = discoverSections(files);
   const sectionList = [...sections];
-  const inScope = (p) =>
-    p === "meta.json" ||
-    sectionList.some(
-      (s) => p === s || p === `${s}.md` || p === `${s}.mdx` || p.startsWith(`${s}/`),
-    );
+  const inScope = (p) => sectionList.some((s) => p.startsWith(`${s}/`));
 
-  // Wipe only the authored sections we manage. generate-openapi owns
-  // content/docs/reference/* via its own wipe, so never touch it here.
+  // Wipe and rewrite only the sections the bitrouter repo provides. The site
+  // repo's own sections (reference, ai-resources) and the root meta.json are
+  // never touched here; generate-openapi owns content/docs/reference/*.
   for (const s of sections) {
-    if (s === "reference") continue;
     await rm(join(SYNC_TARGET, s), { recursive: true, force: true });
-    await rm(join(SYNC_TARGET, `${s}.md`), { force: true });
   }
 
   const enBodyCache = new Map();

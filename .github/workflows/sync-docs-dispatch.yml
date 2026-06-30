@@ -1,0 +1,15 @@
+# .github/workflows/sync-docs-dispatch.yml
+# Receives a repository_dispatch from the bitrouter repo when docs change,
+# and triggers a Railway redeploy. The sender (in bitrouter CI) and the
+# RAILWAY_DEPLOY_HOOK secret are set up separately (Plan B).
+name: Rebuild docs on upstream change
+on:
+  repository_dispatch:
+    types: [docs-changed]
+permissions: {}
+jobs:
+  trigger-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Railway redeploy
+        run: curl -fsSL -X POST "${{ secrets.RAILWAY_DEPLOY_HOOK }}"

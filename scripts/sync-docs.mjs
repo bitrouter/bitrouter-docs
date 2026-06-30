@@ -61,8 +61,14 @@ async function acquire() {
 // Read the published section list from docs/meta.json (root: true).
 async function publishedSections(files) {
   const rootMeta = files.find((f) => f.path === "meta.json");
-  if (!rootMeta) throw new Error("docs/meta.json (root manifest) not found");
-  const pages = JSON.parse(await rootMeta.read()).pages ?? [];
+  if (!rootMeta) throw new Error("sync-docs: docs/meta.json (root manifest) not found");
+  let manifest;
+  try {
+    manifest = JSON.parse(await rootMeta.read());
+  } catch (err) {
+    throw new Error(`sync-docs: docs/meta.json: malformed JSON: ${err.message}`);
+  }
+  const pages = manifest.pages ?? [];
   return new Set(pages.filter((p) => !p.startsWith("---")));
 }
 
@@ -88,7 +94,7 @@ async function main() {
   // Wipe only the authored sections we manage (NOT reference/* subdirs, which
   // generate-openapi owns and writes after us).
   for (const s of sections) {
-    await rm(join(SYNC_TARGET, s), { recursive: true, force: true }).catch(() => {});
+    await rm(join(SYNC_TARGET, s), { recursive: true, force: true });
   }
 
   const enBodyCache = new Map();
@@ -106,6 +112,7 @@ async function main() {
         const dest = join(SYNC_TARGET, f.path);
         await mkdir(dirname(dest), { recursive: true });
         await writeFile(dest, await f.read(), "utf8");
+        written += 1;
       }
       continue;
     }

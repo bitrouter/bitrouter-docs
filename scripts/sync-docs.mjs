@@ -88,13 +88,19 @@ function targetPath(p) {
 async function main() {
   const files = await acquire();
   const sections = await publishedSections(files);
+  const sectionList = [...sections];
   const inScope = (p) =>
-    p === "meta.json" || [...sections].some((s) => p === `${s}` || p.startsWith(`${s}/`));
+    p === "meta.json" ||
+    sectionList.some(
+      (s) => p === s || p === `${s}.md` || p === `${s}.mdx` || p.startsWith(`${s}/`),
+    );
 
-  // Wipe only the authored sections we manage (NOT reference/* subdirs, which
-  // generate-openapi owns and writes after us).
+  // Wipe only the authored sections we manage. generate-openapi owns
+  // content/docs/reference/* via its own wipe, so never touch it here.
   for (const s of sections) {
+    if (s === "reference") continue;
     await rm(join(SYNC_TARGET, s), { recursive: true, force: true });
+    await rm(join(SYNC_TARGET, `${s}.md`), { force: true });
   }
 
   const enBodyCache = new Map();

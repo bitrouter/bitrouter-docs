@@ -9,3 +9,14 @@ next-env.d.ts
 .env.*
 !.env.example
 .env.local
+
+# generated during URL-sourced OpenAPI fetch
+.openapi.fetched.yaml
+
+# Synced from bitrouter/docs at build (scripts/sync-docs.mjs). The site repo keeps
+# content/docs/meta.json, content/docs/ai-resources/, content/docs/reference/.
+content/docs/get-started/
+content/docs/concepts/
+content/docs/features/
+content/docs/guides/
+content/docs/integrations/

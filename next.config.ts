@@ -6,19 +6,19 @@ import createNextIntlPlugin from "next-intl/plugin";
 const finalPath = {
   // get-started
   installation: "/docs/get-started/installation", quickstart: "/docs/get-started/quickstart",
-  comparison: "/docs/get-started/comparison", "self-host-vs-cloud": "/docs/get-started/self-host-vs-cloud",
+  comparison: "/docs/get-started/comparison", "self-host-vs-cloud": "/docs/get-started/self-hosted-vs-cloud",
   // features
   "provider-selection":"/docs/features/provider-selection","model-fallback":"/docs/features/model-fallback",
   "model-variants":"/docs/features/model-variants","presets":"/docs/features/presets",
-  "structured-outputs":"/docs/features/structured-outputs","byok":"/docs/cloud/byok",
+  "structured-outputs":"/docs/features/structured-outputs","byok":"/docs/features/byok",
   "local-models":"/docs/integrations/models","guardrails":"/docs/features/guardrails",
   "observability":"/docs/features/opentelemetry","opentelemetry":"/docs/features/opentelemetry",
-  "tracing":"/docs/cloud/tracing","telemetry":"/docs/features/opentelemetry",
+  "tracing":"/docs/features/opentelemetry","telemetry":"/docs/features/opentelemetry",
   "mcp":"/docs/concepts/tools","acp":"/docs/concepts/agents",
   "agentskills":"/docs/concepts/tools",
   // bitrouter cloud (was: infrastructure)
-  "managed-provider":"/docs/cloud/managed-models","discounted-models":"/docs/cloud/managed-models",
-  "payment":"/docs/cloud/payment","workspaces":"/docs/cloud/workspaces",
+  "managed-provider":"/docs/get-started/models-and-providers","discounted-models":"/docs/get-started/models-and-providers",
+  "payment":"/docs/features/payment","workspaces":"/docs/features/namespaces",
   "for-providers":"/docs/guides/register-as-a-provider",
   // reference
   "cli":"/docs/concepts/cli",
@@ -38,19 +38,26 @@ pairs.push(
   ["/docs/guides/overview/comparison", "/docs/get-started/comparison"],
   ["/docs/guides/overview/provider", "/docs/guides/register-as-a-provider"],
   // infrastructure → bitrouter cloud (folder renamed; pages merged/moved)
-  ["/docs/infrastructure/managed-provider", "/docs/cloud/managed-models"],
-  ["/docs/infrastructure/discounted-models", "/docs/cloud/managed-models"],
-  ["/docs/infrastructure/payment", "/docs/cloud/payment"],
-  ["/docs/infrastructure/workspaces", "/docs/cloud/workspaces"],
+  ["/docs/infrastructure/managed-provider", "/docs/get-started/models-and-providers"],
+  ["/docs/infrastructure/discounted-models", "/docs/get-started/models-and-providers"],
+  ["/docs/infrastructure/payment", "/docs/features/payment"],
+  ["/docs/infrastructure/workspaces", "/docs/features/namespaces"],
   ["/docs/infrastructure/for-providers", "/docs/guides/register-as-a-provider"],
-  ["/docs/cloud", "/docs/cloud/overview"],
+  // cloud/ section dissolved (2026-06 reorg) → new homes (preserve old links)
+  ["/docs/cloud", "/docs/get-started/self-hosted-vs-cloud"],
+  ["/docs/cloud/overview", "/docs/get-started/self-hosted-vs-cloud"],
+  ["/docs/cloud/get-started", "/docs/get-started/self-hosted-vs-cloud"],
+  ["/docs/cloud/byok", "/docs/features/byok"],
+  ["/docs/cloud/tracing", "/docs/features/opentelemetry"],
+  ["/docs/cloud/managed-models", "/docs/get-started/models-and-providers"],
+  ["/docs/cloud/workspaces", "/docs/features/namespaces"],
+  ["/docs/cloud/payment", "/docs/features/payment"],
   // reference wildcards (api-reference unwrapped into /docs/reference)
   ["/docs/api-reference/:slug*", "/docs/reference/:slug*"],
   ["/docs/reference/api-reference/:slug*", "/docs/reference/:slug*"],
   ["/docs/changelog/:slug*", "/docs/reference/changelog/:slug*"],
   ["/docs/changelog", "/docs/reference/changelog"],
   // moved/removed pages (2026-06 refactor) → live destinations
-  ["/docs/features/byok", "/docs/cloud/byok"],
   ["/docs/features/observability", "/docs/features/opentelemetry"],
   ["/docs/features/tracing", "/docs/features/opentelemetry"],
   ["/docs/features/telemetry", "/docs/features/opentelemetry"],
@@ -58,8 +65,8 @@ pairs.push(
   ["/docs/features/toolsets", "/docs/features/server-tools"],
   ["/docs/reference/cli", "/docs/concepts/cli"],
   ["/docs/guides/export-telemetry", "/docs/features/opentelemetry"],
-  ["/docs/cloud/managed-tools", "/docs/cloud/overview"],
-  ["/docs/cloud/managed-agents", "/docs/cloud/overview"],
+  ["/docs/cloud/managed-tools", "/docs/get-started/self-hosted-vs-cloud"],
+  ["/docs/cloud/managed-agents", "/docs/get-started/self-hosted-vs-cloud"],
   // integrations + cookbook history
   ["/docs/integrations/harnesses/:slug*", "/docs/integrations/:slug*"],
   ["/docs/cookbook/integration/:slug*", "/docs/integrations/:slug*"],

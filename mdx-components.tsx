@@ -3,6 +3,7 @@ import { APIPage } from "@/components/docs/api-page";
 import { CalButton } from "@/components/landing/sections/CalButton";
 import { CalInline } from "@/components/landing/sections/CalInline";
 import { ModelsTable } from "@/components/docs/models-table";
+import { ProvidersTable } from "@/components/docs/providers-table";
 import * as TabsComponents from "fumadocs-ui/components/tabs";
 import type { MDXComponents } from "mdx/types";
 
@@ -14,6 +15,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     CalButton,
     CalInline,
     ModelsTable,
+    ProvidersTable,
     ...components,
   };
 }

@@ -30,7 +30,7 @@ export async function POST(req: Request) {
   let searchCalls = 0;
 
   const result = streamText({
-    model: bitrouter("bitrouter-balanced"),
+    model: bitrouter("deepseek/deepseek-v4-pro"),
     system: SYSTEM_PROMPT,
     messages: await convertToModelMessages(messages),
     stopWhen: stepCountIs(4),
@@ -63,7 +63,7 @@ export async function POST(req: Request) {
       posthog.capture({
         distinctId,
         event: "ai_chat_completion",
-        properties: { model: "bitrouter-balanced", search_calls: searchCalls },
+        properties: { model: "deepseek/deepseek-v4-pro", search_calls: searchCalls },
       });
     },
   });

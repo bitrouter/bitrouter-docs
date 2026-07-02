@@ -20,3 +20,8 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
+        env:
+          # sync-docs.mjs pulls docs from bitrouter/bitrouter via the GitHub API;
+          # without a token the anonymous 60 req/hr per-IP limit (shared across
+          # Actions runners) returns 403. The token lifts it to 5,000/hr.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

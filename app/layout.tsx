@@ -8,6 +8,7 @@ import {
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { getLocale } from "next-intl/server";
+import { SOCIAL_LINKS } from "@/components/landing/social-links";
 import "./globals.css";
 
 const geist = Geist({
@@ -52,7 +53,7 @@ const siteJsonLd = {
       logo: `${BASE_URL}/logo.svg`,
       description:
         "Open-source LLM router that optimizes your agent for cost and performance with every run. Zero harness changes.",
-      sameAs: ["https://github.com/AIMOverse", "https://x.com/AIMOverse"],
+      sameAs: SOCIAL_LINKS.map((s) => s.href),
     },
     {
       "@type": "WebSite",

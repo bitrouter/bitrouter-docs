@@ -12,73 +12,92 @@ social icons, a theme toggle, and copyright. It scales poorly — every new page
 markup — and it presents no site structure to visitors, crawlers, or AI answer engines.
 
 The goal is a sitemap-style mega-footer (à la the openstatus footer used as reference) for the
-landing/marketing surface: six grouped columns of navigation, a bottom bar, and a data model that
-stays fresh and doubles as a source of truth for SEO/GEO signals.
+landing/marketing surface: a 3×3 grid of grouped navigation columns, a bottom bar, and a data model
+that stays fresh and doubles as a source of truth for SEO/GEO signals.
 
 ## Scope decision
 
 - **New component: `LandingFooter`** — used only on marketing routes (landing, `/models`,
-  `/providers`, `/pricing`, `/enterprise`, `/compare/*`, `/about`, `/brand`, blog, changelog).
-- **Docs keep the current footer.** `SiteFooter` stays as-is for docs pages, which already have
-  their own sidebar navigation. A six-column sitemap under every docs page would be visually heavy.
+  `/providers`, `/pricing`, `/enterprise`, `/compare/*`, `/about`, `/brand`, blog, changelog, and the
+  new `/integrations/*` and `/use-cases/*` routes).
+- **Docs keep the current footer.** `SiteFooter` stays as-is for docs pages, which already have their
+  own sidebar navigation. A nine-column sitemap under every docs page would be visually heavy.
 - This is a **landing/marketing footer only** — not a site-wide replacement.
 
-## Columns (6 groups, 3×2 grid)
+## Columns — final 9-column, 3×3 grid
 
-All links map to routes that exist today. Order is a suggestion; it is data and trivially
-reorderable.
+All order is data and trivially reorderable. Reading order left-to-right, top-to-bottom:
 
-| Products      | Developers   | Resources    |
-| ------------- | ------------ | ------------ |
-| Models        | API          | Docs         |
-| Providers     | CLI          | Blog         |
-| Pricing       | MCP          | Changelog    |
-| Enterprise    | Agent Skill  | AI Resources |
+| Products      | Developers    | Integrations   |
+| ------------- | ------------- | -------------- |
+| Models        | API           | Claude Code    |
+| Providers     | CLI           | Codex          |
+| Pricing       | MCP           | OpenCode       |
+| Enterprise    |               | OpenClaw       |
+|               |               | Hermes Agent   |
 
-| Compare        | Community              | Company  |
-| -------------- | ---------------------- | -------- |
-| vs OpenRouter  | GitHub                 | About    |
-| vs LiteLLM     | Discord                | Brand    |
-| vs Portkey     | Telegram               | Privacy  |
-|                | Reddit · X · LinkedIn  | Terms    |
+| Resources     | Compare        | Use Cases      |
+| ------------- | -------------- | -------------- |
+| Docs          | vs OpenRouter  | *(net-new)*    |
+| Changelog     | vs LiteLLM     |                |
+| AI Resources  | vs Portkey     |                |
 
-**Column naming note:** the "Developers" column holds *integration surfaces* (API, CLI, MCP, Agent
-Skill). A future **"Tools"** column — standalone SEO/top-of-funnel utilities like a cost-tracker — is
-explicitly **out of scope for now**. It is not created until ~2-3 real tools exist; a column with one
-"coming soon" link reads as unfinished. The data model (below) makes promoting it to its own column a
-one-line change.
+| Blog                | Community              | Company  |
+| ------------------- | ---------------------- | -------- |
+| *(latest ~5 posts)* | GitHub                 | About    |
+|                     | Discord                | Brand    |
+|                     | Telegram               | Privacy  |
+|                     | Reddit · X · LinkedIn  | Terms    |
+
+**Content status per column:**
+
+- **Full today (7):** Products, Developers, Resources, Compare, Blog, Community, Company.
+- **Net-new content (2):** **Integrations** and **Use Cases**. Both point at index routes and are
+  built via **separate content specs** (see below). The footer just links to `/integrations/<slug>`
+  and `/use-cases/<slug>`.
+
+**Column notes:**
+
+- **Developers** = BitRouter's own surfaces (API, CLI, MCP). **"Agent Skill" is merged into CLI** —
+  the CLI page covers agent-skill usage rather than being its own link.
+- **Integrations** = third-party tools you plug BitRouter into (Claude Code, Codex, OpenCode,
+  OpenClaw, Hermes Agent). One column for now.
+- **Resources** = Docs, Changelog, AI Resources. **Blog moves out** of Resources into its own column.
+- **Blog** = the latest ~5 posts, auto-pulled for freshness and zero maintenance; optionally pin 1–2
+  cornerstone posts for stable internal links.
+- **Community** = the existing `SOCIAL_LINKS` array rendered as text links (not an icon row).
 
 ## Data model — the core refactor
 
-Replace hardcoded JSX links with a single server-side config that is **column-count-agnostic**.
+Replace hardcoded JSX links with a single server-side config that is **column-count-agnostic** (so a
+future 10th column is a one-line add).
 
 ```ts
 // components/landing/footer-nav.ts
 type FooterLink = { label: string; href: string; external?: boolean };
 type FooterColumn = { title: string; links: FooterLink[] };
 
-export const FOOTER_COLUMNS: FooterColumn[] = [ /* 6 groups */ ];
+export const FOOTER_COLUMNS: FooterColumn[] = [ /* 9 groups */ ];
 ```
 
-Three columns are **generated**, not hand-maintained, so the footer cannot rot:
+Several columns are **generated**, not hand-maintained, so the footer cannot rot:
 
-- **Compare** — derived from `app/(home)/compare/*` directory names. A new comparison page
-  auto-appears.
+- **Compare** — derived from `app/(home)/compare/*` directory names.
 - **Community** — sourced from the existing `SOCIAL_LINKS` array
-  ([components/landing/social-links.ts](../../../components/landing/social-links.ts)). No
-  duplication.
-- **Resources / Blog** — static "Blog" link (latest-N-posts is possible later but not required).
+  ([components/landing/social-links.ts](../../../components/landing/social-links.ts)).
+- **Blog** — latest N posts from the blog content source (+ optional pinned slugs).
+- **Integrations / Use Cases** — generated from their respective content collections once those
+  exist (until then, curated links to the index pages).
 
-The `LandingFooter` component becomes a dumb renderer: it maps `FOOTER_COLUMNS` → a responsive grid.
-Adding a page is a data edit, never a markup edit. When "Tools" graduates, it is appended to the
-array and the grid reflows to a fourth column with no rewrite.
+The `LandingFooter` component becomes a dumb renderer: map `FOOTER_COLUMNS` → responsive grid. Adding
+a page is a data/content edit, never a markup edit.
 
 ## Rendering & layout
 
-- **Server-rendered** (async RSC, as today). Footer links must be present in the initial HTML —
-  never a client `useEffect`. This is required for crawlers and JS-less LLM fetchers.
-- **Grid:** `grid grid-cols-2 md:grid-cols-3` for the six groups — 2-up on mobile, 3-up on desktop
-  (the 3×2). Reflows to a 4th column automatically when a seventh group is added.
+- **Server-rendered** (async RSC, as today). Footer links must be present in the initial HTML — never
+  a client `useEffect`. Required for crawlers and JS-less LLM fetchers.
+- **Grid:** `grid grid-cols-2 md:grid-cols-3` for the nine groups — 2-up on mobile, 3-up on desktop
+  (the 3×3). Reflows automatically if a group is added or removed.
 - **Semantic markup**, one consistent structure the dumb component controls:
   ```html
   <footer>
@@ -86,57 +105,87 @@ array and the grid reflows to a fourth column with no rewrite.
     …
   </footer>
   ```
-  Descriptive anchor text ("BitRouter vs OpenRouter", not "Compare") for both anchor-signal SEO and
-  LLM readability.
+  Descriptive anchor text ("BitRouter vs OpenRouter", not "Compare") for anchor-signal SEO and LLM
+  readability.
 - **Bottom bar** (full-width, below the grid): `BitRouter` wordmark + `© <year>` on the left; status
   pill + theme toggle on the right.
-- **Socials move** out of the old icon row into the **Community column as text links** (better for
-  SEO than an icon row). The bottom bar keeps only status + theme.
+- **Socials move** out of the old icon row into the **Community column as text links**. The bottom
+  bar keeps only status + theme.
 - **Styling:** pure Tailwind, matching existing token conventions (`--background`, `--border`,
   `--muted-foreground`, etc.). No CSS modules / styled-components.
 
 ## SEO / GEO reuse (single source of truth)
 
-The footer config is not just for rendering — it becomes a source of truth that keeps related
-surfaces in sync:
+The footer config is a source of truth that keeps related surfaces in sync:
 
 - **`Organization` JSON-LD** with `sameAs: [<the six social URLs>]`, sourced from the same
-  `SOCIAL_LINKS` array. This is the highest-value GEO item — it lets AI engines disambiguate the
-  "BitRouter" entity via its verified social profiles.
+  `SOCIAL_LINKS` array — the highest-value GEO item; lets AI engines disambiguate the "BitRouter"
+  entity via verified social profiles.
 - **Keep in sync with** `sitemap.xml` and the existing [app/llms.txt](../../../app/llms.txt) where
   practical, so navigation, sitemap, and the LLM index don't drift.
 
 Rationale: sitewide footer links carry less ranking weight than in-content links (boilerplate is
-discounted), so the win here is **discovery / crawlability + machine-readable structure + entity
+discounted), so the win is **discovery / crawlability + machine-readable structure + entity
 signals** — exactly what GEO rewards — not raw link equity.
 
-## Optional adds from the reference (deferred / user's call)
+## Related content systems (SEPARATE specs)
 
-1. **Status pill** — the `LandingFooter.statusPill` string ("all systems operational") already exists
-   in [content/messages/en.json](../../../content/messages/en.json) but is unimplemented. Wire it up
-   as a small green-dot pill **only if** there is a status page URL to point at. Otherwise skip.
-2. **Three-way theme toggle** — reference offers light / dark / **system**; current toggle is 2-way.
-   Minor upgrade, optional.
+The footer links to two net-new content systems, each its own spec written **after** this one:
 
-Both are non-blocking and can be decided during implementation.
+1. **Integrations pages** (`/integrations/<slug>`) — one marketing page per third-party tool
+   (Claude Code, Codex, OpenCode, OpenClaw, Hermes Agent), authored as an MDX collection via
+   fumadocs with a marketing (non-docs-sidebar) layout, plus an `/integrations` index hub.
+2. **Use Cases pages** (`/use-cases/<slug>`) — intent-targeted marketing pages, same delivery
+   pattern, plus a `/use-cases` index hub.
+
+**Quality bar for both** (carried into their specs, non-negotiable):
+
+- **No doorway pages.** Integration pages especially risk being near-duplicate "point your base URL
+  at BitRouter" templates. Each page must carry genuinely tool-specific content — real config file
+  location, actual flags/env vars, tool-specific gotchas, a screenshot — or be cut. Fewer rich pages
+  beat many thin ones.
+- **Accuracy.** Use verified, canonical BitRouter integration facts — no plausible-looking guesses.
+  (This project has prior history with fabricated integration docs.)
+
+## Deferred / future evolution
+
+- **Agents / SDKs split.** The Integrations column is a candidate to later split by persona/funnel
+  into **Agents** (individual coding CLIs — self-serve/PLG) and **SDKs** (frameworks for teams
+  building production agents — Claude Agent SDK, LangChain, LlamaIndex, Vercel AI SDK, OpenAI SDK;
+  cross-linked to Enterprise). Deferred until real SDK content exists; at that point Blog may fold
+  back into Resources or the grid grows to 10. Persona insight drives page *copy/CTAs*, but column
+  *labels* stay artifact-based (`Agents` / `SDKs`) for scannability and SEO.
+- **Tools column.** Standalone free microtools (e.g. `cost-tracker`) — a future top-of-funnel column,
+  added only once ~3 exist.
+- **Status pill.** The `LandingFooter.statusPill` string ("all systems operational") already exists in
+  [content/messages/en.json](../../../content/messages/en.json) but is unimplemented. Wire up as a
+  small green-dot pill only if there is a status page URL to point at.
+- **Three-way theme toggle** — reference offers light / dark / **system**; current toggle is 2-way.
 
 ## i18n
 
-Column titles and link labels flow through the existing i18n system (`Footer.*` /
-`LandingFooter.*` keys in `content/messages/en.json`). New keys are added for the new column titles
-and any labels not already present.
+Column titles and link labels flow through the existing i18n system (`Footer.*` / `LandingFooter.*`
+keys in `content/messages/en.json`). New keys are added for the new column titles and labels.
 
 ## Out of scope
 
-- A standalone "Tools" column (deferred until real utilities exist).
+- Building the Integrations and Use Cases page content (separate specs).
 - Replacing the docs footer.
-- Latest-N-posts dynamic blog column (static link for now).
-- Building the cost-tracker or any microtool.
+- The Agents/SDKs split, a Tools column, and the cost-tracker microtool.
+
+## Open items to resolve before/at implementation
+
+- **Developers column hrefs** — API/CLI/MCP likely deep-link into `docs/reference` and `app/mcp`
+  rather than top-level routes; confirm real targets.
+- **OpenClaw / Hermes Agent** — exact names + URLs needed for the Integrations spec (not a blocker
+  for the footer structure).
+- **Status page URL** — needed to decide whether to wire up the status pill.
 
 ## Success criteria
 
-- Landing/marketing pages render a six-column server-rendered mega-footer; docs unchanged.
-- Adding a compare page or social link updates the footer with no footer-markup edit.
+- Landing/marketing pages render a nine-column (3×3) server-rendered mega-footer; docs unchanged.
+- Adding a compare page, social link, or blog post updates the footer with no footer-markup edit.
 - Footer markup is semantic (`nav[aria-label]` + heading + list) with descriptive anchors.
 - `Organization` JSON-LD with `sameAs` socials is emitted on marketing pages.
-- Grid reflows gracefully from 3 to 4 columns when a seventh group is added, with no rewrite.
+- Grid reflows gracefully when a group is added or removed, with no rewrite.
+- Integrations and Use Cases columns link to working index routes.

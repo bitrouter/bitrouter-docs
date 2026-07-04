@@ -2384,39 +2384,109 @@
   color: var(--term-dim);
 }
 
+
 /* ---------------- MEGA FOOTER (site-wide, config-driven) ----------------
-   Overrides the base 2-column brand|cols footer layout to a stacked layout
-   (brand band on top, responsive column grid below) that holds 8-9 columns. */
-.br-mono .footer-mega .footer-grid {
-  grid-template-columns: 1fr;
-  gap: 44px;
-}
-.br-mono .footer-mega .footer-brand {
-  display: flex;
-  flex-direction: column;
-}
-.br-mono .footer-mega .footer-tag {
-  max-width: 46ch;
+   Compact 3-wide column grid over an openstatus-style bottom bar (brand +
+   copyright · talk to the founders · status pill · theme switch). */
+.br-mono .footer.footer-mega {
+  padding: 44px 0 28px;
 }
 .br-mono .footer-mega .footer-cols {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 28px 32px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 30px 40px;
 }
-@media (max-width: 860px) {
-  .br-mono .footer-mega .footer-cols {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-@media (max-width: 560px) {
+@media (max-width: 760px) {
   .br-mono .footer-mega .footer-cols {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-/* Semantic nav/h2 reset so they inherit the mono column styling. */
+@media (max-width: 460px) {
+  .br-mono .footer-mega .footer-cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 26px 24px;
+  }
+}
 .br-mono .footer-mega nav.footer-col {
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
 }
 .br-mono .footer-mega .footer-col-h {
   margin: 0 0 4px;
   font-weight: 500;
+}
+
+/* bottom bar */
+.br-mono .footer-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 28px;
+  margin-top: 40px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+.br-mono .footer-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.br-mono .footer-bar .footer-copy {
+  font-size: 12px;
+  color: var(--faint);
+}
+.br-mono .footer-bar-right {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 22px;
+}
+.br-mono .footer-founders {
+  font-size: 13px;
+  color: var(--fg-dim);
+  transition: color 0.15s;
+}
+.br-mono .footer-founders:hover {
+  color: var(--accent);
+}
+.br-mono .footer-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: var(--fg-dim);
+  transition: color 0.15s;
+}
+.br-mono .footer-status:hover {
+  color: var(--fg);
+}
+.br-mono .footer-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--term-ok);
+  box-shadow: 0 0 7px var(--term-ok);
+}
+.br-mono .footer-theme {
+  display: inline-flex;
+  gap: 2px;
+}
+.br-mono .footer-theme-opt {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--faint);
+  background: none;
+  border: none;
+  padding: 2px 3px;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.br-mono .footer-theme-opt:hover {
+  color: var(--fg-dim);
+}
+.br-mono .footer-theme-opt.on {
+  color: var(--fg);
 }

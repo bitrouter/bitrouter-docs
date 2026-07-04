@@ -1,7 +1,6 @@
 import { setRequestLocale } from "next-intl/server";
 import { ArrowUpRight, Download } from "lucide-react";
 import { PageShell, Subsection, SmallLabel } from "@/components/page-shell";
-import { SiteFooter } from "@/components/site-footer";
 import { CopyButton } from "@/components/landing/copy-button";
 import type { Metadata } from "next";
 
@@ -317,7 +316,6 @@ export default function BrandPage() {
         }}
         footnote={t.footnote}
       />
-      <SiteFooter />
     </>
   );
 }

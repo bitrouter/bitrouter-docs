@@ -1,5 +1,4 @@
 import { setRequestLocale } from "next-intl/server";
-import { SiteFooter } from "@/components/site-footer";
 import { GitHubIcon, XIcon, LinkedInIcon } from "@/components/icons";
 import { Mail } from "lucide-react";
 import type { Metadata } from "next";
@@ -192,7 +191,6 @@ export default function AboutPage() {
           </div>
         </section>
       </main>
-      <SiteFooter />
     </>
   );
 }

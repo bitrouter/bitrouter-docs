@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import { legalSource } from "@/lib/source";
-import { SiteFooter } from "@/components/site-footer";
 import type { Metadata } from "next";
 
 // Shared renderer for the standalone legal pages (/privacy-policy,
@@ -41,7 +40,6 @@ export function renderLegalPage(slug: string) {
           <MDX components={{}} />
         </div>
       </article>
-      <SiteFooter />
     </>
   );
 }

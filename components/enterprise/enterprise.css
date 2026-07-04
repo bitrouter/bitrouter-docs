@@ -1,0 +1,149 @@
+/* ============================================================
+   Enterprise / outcome-based — mono additions (scoped under .br-mono).
+   Depends on tokens + shared components in landing/mono/mono.css.
+   Covers: the guarantee grid, the per-run receipt figure, and the
+   three-step "how it works" cards. Everything else reuses mono.css.
+   ============================================================ */
+
+/* ---------- guarantee grid (copy + receipt) ---------- */
+.br-mono .eguard {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 52px;
+  align-items: center;
+}
+@media (max-width: 880px) {
+  .br-mono .eguard {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}
+
+/* ---------- per-run receipt figure ---------- */
+.br-mono .receipt {
+  position: relative;
+  border: 1px solid var(--line-2);
+  border-radius: 12px;
+  background: linear-gradient(180deg, #070707, #020202);
+  padding: 26px 26px 22px;
+  box-shadow: 0 30px 70px -34px rgba(0, 0, 0, 0.9);
+  font-family: var(--mono);
+}
+.br-mono .receipt-legend {
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-style: italic;
+  font-size: 11.5px;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--line-2);
+  border-radius: 7px;
+  padding: 3px 12px;
+  white-space: nowrap;
+}
+.br-mono .receipt-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 7px 0;
+  font-size: 13px;
+}
+.br-mono .receipt-k {
+  color: var(--muted);
+}
+.br-mono .receipt-v {
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.br-mono .receipt-ok {
+  color: var(--term-ok);
+}
+.br-mono .receipt-note {
+  color: var(--term-ok);
+  font-size: 11px;
+}
+.br-mono .receipt-rule {
+  height: 1px;
+  background: var(--line);
+  margin: 8px 0;
+  border: 0;
+}
+.br-mono .receipt-total {
+  padding-top: 4px;
+}
+.br-mono .receipt-total .receipt-k {
+  color: var(--fg-dim);
+}
+.br-mono .receipt-total .receipt-v {
+  color: var(--term-ok);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* ---------- how it works (3 steps) ---------- */
+.br-mono .esteps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.br-mono .estep {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius);
+  background: var(--panel);
+  padding: 22px 22px 24px;
+}
+.br-mono .estep-n {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+.br-mono .estep-h {
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+}
+.br-mono .estep-b {
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--fg-dim);
+}
+@media (max-width: 820px) {
+  .br-mono .esteps {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- highlighted comparison rows (volume discounts · startup program) ---------- */
+.br-mono .compare-row.erow-hi .compare-feat {
+  color: var(--accent);
+}
+.br-mono .erow-star {
+  color: var(--accent);
+  font-size: 9px;
+  margin-right: 9px;
+  vertical-align: middle;
+}
+.br-mono .compare-row.erow-hi .compare-cell.br {
+  background: linear-gradient(180deg, var(--accent-dim), transparent 85%);
+  font-weight: 600;
+}
+
+/* ---------- hero actions ---------- */
+.br-mono .ehero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 26px;
+}

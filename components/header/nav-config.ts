@@ -21,13 +21,13 @@ export interface NavItem {
   hideWhenAuthed?: boolean;
 }
 
-// Marketing/docs links — they always point at the website. Providers is no
-// longer a top-level nav item (it lives in the footer). Only Pricing is hidden
-// once authed (a customer doesn't need the pricing page).
+// Marketing/docs links — they always point at the website. Providers and
+// Enterprise are no longer top-level nav items: Enterprise (the outcome-based
+// tier) is reached from the pricing page's outcome card and the footer. Pricing
+// always renders — it's the canonical money page for prospects and customers.
 const NAV_ITEMS: NavItem[] = [
   { key: "models", label: "Models", webPath: "/models" },
-  { key: "enterprise", label: "Enterprise", webPath: "/enterprise" },
-  { key: "pricing", label: "Pricing", webPath: "/pricing", hideWhenAuthed: true },
+  { key: "pricing", label: "Pricing", webPath: "/pricing" },
   { key: "blog", label: "Blog", webPath: "/blog" },
   { key: "changelog", label: "Changelog", webPath: "/changelog" },
   { key: "docs", label: "Docs", webPath: "/docs" },

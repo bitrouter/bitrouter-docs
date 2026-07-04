@@ -119,7 +119,7 @@ function modelsLsProgram() {
     ],
     [
       "print",
-      <span className="fnt">MODEL                          IN/1M   OUT/1M   DISC</span>,
+      <span className="fnt">MODEL                          IN/1M   OUT/1M</span>,
       180,
     ],
     [
@@ -127,8 +127,7 @@ function modelsLsProgram() {
       <span>
         <span className="lbl">qwen/qwen-3.7</span>{" "}
         <Faint>                </Faint>
-        <Dim>$0.07    $0.28   </Dim>
-        <span className="oss-disc">-25%</span>
+        <Dim>$0.07    $0.28</Dim>
       </span>,
       90,
     ],
@@ -137,8 +136,7 @@ function modelsLsProgram() {
       <span>
         <span className="lbl">deepseek/deepseek-v4-pro</span>{" "}
         <Faint>     </Faint>
-        <Dim>$0.20    $0.80   </Dim>
-        <span className="oss-disc">-25%</span>
+        <Dim>$0.20    $0.80</Dim>
       </span>,
       90,
     ],
@@ -147,8 +145,7 @@ function modelsLsProgram() {
       <span>
         <span className="lbl">moonshot/kimi-k2.6</span>{" "}
         <Faint>          </Faint>
-        <Dim>$0.15    $2.50   </Dim>
-        <span className="oss-disc">-25%</span>
+        <Dim>$0.15    $2.50</Dim>
       </span>,
       90,
     ],
@@ -157,16 +154,14 @@ function modelsLsProgram() {
       <span>
         <span className="lbl">anthropic/claude-opus-4.8</span>{" "}
         <Faint>    </Faint>
-        <Dim>$15.0   $75.0   </Dim>
-        <Faint>—</Faint>
+        <Dim>$15.0   $75.0</Dim>
       </span>,
       90,
     ],
     [
       "print",
       <span>
-        <Faint>… 180+ open-source · </Faint>
-        <span className="oss-disc">25% off, zero markup</span>
+        <Faint>… 180+ open-source · zero markup</Faint>
       </span>,
       360,
     ],
@@ -177,7 +172,7 @@ function modelsLsProgram() {
       <span>
         <Ok>✓</Ok> <Dim>alias →</Dim>{" "}
         <span className="lbl">deepseek/deepseek-v4-pro</span>{" "}
-        <Faint>· </Faint><span className="oss-disc">-25%</span><Faint> · 287ms</Faint>
+        <Faint>· 287ms</Faint>
       </span>,
     ],
     ["loop", 2200],
@@ -206,7 +201,7 @@ function ModelRow({
           <span className="mrow-caret">{open ? "▾" : "▸"}</span>
           <ProviderIcon provider={prov} size={15} className="mrow-ico" />
           <span className="mrow-id-text">{m.id}</span>
-          {oss && <span className="oss-badge">25% off</span>}
+          {oss && <span className="oss-badge">oss</span>}
         </span>
         <span className="mrow-ctx">{formatCtx(m.maxInputTokens)}</span>
         <span className="mrow-num">{fin}</span>
@@ -397,10 +392,9 @@ function ModelsCatalog() {
             <h1 className="h-display page-title">Models.</h1>
             <p className="page-lead">
               {models.length > 0 ? models.length : "200+"} models behind one
-              key. Open-source models at{" "}
-              <span className="oss-disc">25% off</span> — pair with your Claude
-              Code or Codex subscription to cut costs on every run without
-              changing a line of code.
+              key. Open-source models at a fraction of frontier prices — zero
+              markup — pair with your Claude Code or Codex subscription to cut
+              costs on every run without changing a line of code.
             </p>
             <div className="hero-actions">
               <a href={SIGN_IN_URL} className="btn btn-primary">
@@ -449,7 +443,7 @@ function ModelsCatalog() {
                 className={"sortsel-opt oss-toggle" + (ossOnly ? " on" : "")}
                 onClick={() => setOssOnly((v) => !v)}
               >
-                <span className="oss-disc-sm">25% off</span> open-source only
+                open-source only
               </button>
               <FilterSheetTrigger
                 {...panelProps}
@@ -497,9 +491,7 @@ function ModelsCatalog() {
               )}
             </div>
             <div className="mcat-foot">
-              {rows.length} of {models.length} shown ·{" "}
-              <span className="oss-disc">open-source: 25% off, zero markup</span>{" "}
-              · frontier: zero markup
+              {rows.length} of {models.length} shown · zero markup on every model
             </div>
           </div>
         </div>

@@ -8,10 +8,19 @@ export default function Page() {
 }
 
 export function generateMetadata(): Metadata {
+  const description =
+    "Zero markup on every model, flat-rate open-source subscriptions, or outcome-based pricing that only bills a share of what we save you.";
+  const ogTitle = "BitRouter Pricing — 0% markup, or pay only on savings";
   return {
-    title: "Pricing — BitRouter",
-    description:
-      "Simple, transparent pricing. Self-host for free, pay upstream cost with zero markup on the cloud, or get a custom plan for your team.",
+    title: "Pricing",
+    description,
     alternates: { canonical: "https://bitrouter.ai/pricing" },
+    openGraph: {
+      title: ogTitle,
+      description,
+      url: "https://bitrouter.ai/pricing",
+      type: "website",
+    },
+    twitter: { title: ogTitle, description },
   };
 }

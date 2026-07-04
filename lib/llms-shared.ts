@@ -10,7 +10,7 @@ export const LLMS_PRODUCT_SUMMARY = `> BitRouter is an open-source LLM router th
 - Zero harness changes: drop-in proxy for any runtime with a custom OpenAI or Anthropic base URL. Local proxy at http://localhost:8787; hosted API at https://api.bitrouter.ai/v1.
 - Zero-ops: single Rust binary, no Postgres/Redis/Docker, ~5ms p50 routing overhead.
 - Free BYOK auto-detected from environment variables; failed requests are never billed.
-- Pricing: 2% on usage with USDC/USDT over x402/MPP, 5% with card (Stripe fees absorbed). No token markup, no minimums, no monthly fee. Self-host has no platform fee at all.
+- Pricing: 0% markup — you pay the exact upstream provider price on every model. Flat-rate Subscription for open-source models ($20/$100/$200 per month). Outcome-based pricing for teams (enterprise): BitRouter guarantees your loop stays under the budget you set and takes 20% of the savings it delivers, only on runs that clear your quality floor, and never more than it saved you. Self-host has no platform fee; failed requests are never billed.
 - Apache 2.0, open-sourced; Cloud is opt-in.
 
 ## How BitRouter Compares

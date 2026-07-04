@@ -1,5 +1,5 @@
 import { SiteProviders } from "@/components/site-providers";
-import { LandingFooter } from "@/components/landing/landing-footer";
+import { SiteMonoFooter } from "@/components/landing/mono/site-mono-footer";
 
 // Changelog is English-only. Providers live here; the (index) and (posts)
 // route groups each add their own fumadocs layout, mirroring app/blog.
@@ -11,7 +11,7 @@ export default function ChangelogLayout({
   return (
     <SiteProviders>
       {children}
-      <LandingFooter />
+      <SiteMonoFooter />
     </SiteProviders>
   );
 }

@@ -21,7 +21,6 @@ import {
 } from "./terminal";
 import { ProviderIcon } from "../../models/provider-icon";
 import { HarnessIcon } from "./harness-icon";
-import { SOCIAL_LINKS } from "../social-links";
 
 const SIGN_IN_URL = "https://cloud.bitrouter.ai";
 
@@ -1473,94 +1472,6 @@ function FinalCta() {
   );
 }
 
-/* ---------------- FOOTER ---------------- */
-export function MonoFooter() {
-  const cols: { h: string; items: [string, string][] }[] = [
-    {
-      h: "Product",
-      items: [
-        ["Models", "/models"],
-        ["Providers", "/providers"],
-        ["Pricing", "/pricing"],
-        ["Enterprise", "/enterprise"],
-        ["Status", "https://bitrouter.openstatus.dev"],
-      ],
-    },
-    {
-      h: "Resources",
-      items: [
-        ["Docs", "/docs"],
-        ["Quickstart", "/docs/get-started/quickstart"],
-        ["API reference", "/docs/reference"],
-        ["Changelog", "/changelog"],
-        ["Blog", "/blog"],
-      ],
-    },
-    {
-      h: "Compare",
-      items: [
-        ["vs OpenRouter", "/compare/bitrouter-vs-openrouter"],
-        ["vs LiteLLM", "/compare/bitrouter-vs-litellm"],
-        ["vs Portkey", "/compare/bitrouter-vs-portkey"],
-      ],
-    },
-    {
-      h: "Company",
-      items: [
-        ["About", "/about"],
-        ["Brand", "/brand"],
-        ["Terms", "/terms-of-service"],
-        ["Privacy", "/privacy-policy"],
-      ],
-    },
-  ];
-  return (
-    <footer className="footer">
-      <div className="wrap footer-grid">
-        <div className="footer-brand">
-          <Link className="brand" href="/">
-            <img src="/logo.svg" alt="BitRouter" className="brand-logo" />
-            <span className="brand-name">
-              bitrouter<span className="brand-dot">.</span>
-            </span>
-          </Link>
-          <p className="footer-tag">The open-source router that cost-optimizes your agentic workflows — routing as code, with control you keep.</p>
-          <div className="footer-social">
-            {SOCIAL_LINKS.filter((s) => s.label !== "Reddit").map((s) => {
-              const Icon = s.icon;
-              return (
-                <a
-                  key={s.label}
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="footer-soc"
-                  title={s.label}
-                  aria-label={s.label}
-                >
-                  <Icon className="footer-soc-ico" />
-                </a>
-              );
-            })}
-          </div>
-          <div className="footer-copy">© 2026 BitRouter, Inc.</div>
-        </div>
-        <div className="footer-cols">
-          {cols.map((c) => (
-            <div key={c.h} className="footer-col">
-              <div className="footer-col-h">{c.h}</div>
-              {c.items.map(([it, href]) => (
-                <Link key={it} href={href} className="footer-link">
-                  {it}
-                </Link>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
-    </footer>
-  );
-}
 
 /* ---------------- PAGE ---------------- */
 export function MonoLanding() {
@@ -1576,7 +1487,6 @@ export function MonoLanding() {
       <Moat />
       <Faq />
       <FinalCta />
-      <MonoFooter />
     </>
   );
 }

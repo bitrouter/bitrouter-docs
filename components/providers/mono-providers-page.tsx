@@ -8,7 +8,6 @@
 import * as React from "react";
 import "../landing/mono/mono.css";
 import { Terminal, Ok, Dim, Faint, Warn } from "../landing/mono/terminal";
-import { MonoFooter } from "../landing/mono/landing";
 import { ProviderIcon } from "../models/provider-icon";
 import { formatCompactPricePerMillionTokens } from "@/lib/model-pricing";
 import type { Provider } from "@/lib/providers-types";
@@ -506,7 +505,6 @@ export function ProvidersMonoPage({
   return (
     <div className="br-mono">
       <ProvidersCatalog providers={providers} />
-      <MonoFooter />
     </div>
   );
 }

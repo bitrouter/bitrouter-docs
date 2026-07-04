@@ -39,6 +39,7 @@ const PRODUCTS: FooterLink[] = [
   { label: "Providers", href: "/providers" },
   { label: "Pricing", href: "/pricing" },
   { label: "Enterprise", href: "/enterprise" },
+  { label: "Status", href: "https://bitrouter.openstatus.dev", external: true },
 ];
 const DEVELOPERS: FooterLink[] = [
   { label: "API", href: "/docs/reference" },
@@ -47,8 +48,9 @@ const DEVELOPERS: FooterLink[] = [
 ];
 const RESOURCES: FooterLink[] = [
   { label: "Docs", href: "/docs" },
-  { label: "Changelog", href: "/changelog" },
+  { label: "Quickstart", href: "/docs/get-started/quickstart" },
   { label: "AI Resources", href: "/docs/ai-resources" },
+  { label: "Changelog", href: "/changelog" },
 ];
 const COMPANY: FooterLink[] = [
   { label: "About", href: "/about" },

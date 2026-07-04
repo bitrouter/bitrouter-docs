@@ -2383,3 +2383,40 @@
   font-size: 0.82rem;
   color: var(--term-dim);
 }
+
+/* ---------------- MEGA FOOTER (site-wide, config-driven) ----------------
+   Overrides the base 2-column brand|cols footer layout to a stacked layout
+   (brand band on top, responsive column grid below) that holds 8-9 columns. */
+.br-mono .footer-mega .footer-grid {
+  grid-template-columns: 1fr;
+  gap: 44px;
+}
+.br-mono .footer-mega .footer-brand {
+  display: flex;
+  flex-direction: column;
+}
+.br-mono .footer-mega .footer-tag {
+  max-width: 46ch;
+}
+.br-mono .footer-mega .footer-cols {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 28px 32px;
+}
+@media (max-width: 860px) {
+  .br-mono .footer-mega .footer-cols {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 560px) {
+  .br-mono .footer-mega .footer-cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+/* Semantic nav/h2 reset so they inherit the mono column styling. */
+.br-mono .footer-mega nav.footer-col {
+  margin: 0;
+}
+.br-mono .footer-mega .footer-col-h {
+  margin: 0 0 4px;
+  font-weight: 500;
+}

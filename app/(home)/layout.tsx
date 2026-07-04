@@ -1,7 +1,7 @@
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { SiteProviders } from "@/components/site-providers";
 import { baseOptions } from "@/lib/layout.shared";
-import { LandingFooter } from "@/components/landing/landing-footer";
+import { SiteMonoFooter } from "@/components/landing/mono/site-mono-footer";
 
 export default function HomeGroupLayout({
   children,
@@ -12,7 +12,7 @@ export default function HomeGroupLayout({
     <SiteProviders>
       <HomeLayout {...baseOptions()}>
         {children}
-        <LandingFooter />
+        <SiteMonoFooter />
       </HomeLayout>
     </SiteProviders>
   );

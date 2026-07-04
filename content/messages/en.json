@@ -291,8 +291,8 @@
         "a": "Every routing alias retries with exponential backoff and fails over cross-provider on 429s or upstream errors — a single provider outage doesn’t kill an agent run. Per-provider health and incident history are visible in the console. Failed requests aren’t billed."
       },
       {
-        "q": "How is the markup fee calculated?",
-        "a": "Added on top of the upstream provider’s published rate — 2% with USDC/USDT over x402/MPP, 5% with card (Stripe’s 3% fee absorbed). No token markup, no minimums, no monthly fee. Self-host has no platform fee at all."
+        "q": "Is there a markup or platform fee?",
+        "a": "No markup. On pay-as-you-go you pay the exact upstream provider rate — no token markup, no routing fee, no minimums. BitRouter earns on the flat-rate Subscription and on outcome-based pricing for teams, where it takes a share of the spend it saves you. Self-host has no platform fee at all; failed requests aren’t billed."
       },
       {
         "q": "How do I register as a provider on BitRouter?",
@@ -347,7 +347,7 @@
     "headlineTrail": ".",
     "dek": "One API key, every model. No monthly fees, no lock-in. Self-host or use the hosted edge.",
     "ctaPrimary": "Get API key",
-    "pricing": "2% on usage · no platform fee under $10/mo",
+    "pricing": "0% markup · outcome pricing for teams · Apache-2.0",
     "trustAvailability": "All systems operational",
     "trustClients": "Claude Code · Cursor · Codex",
     "trustMit": "Apache 2.0 · self-host the binary"

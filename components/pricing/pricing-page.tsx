@@ -1,384 +1,410 @@
 "use client";
 
+/* Pricing — mono/dev redesign. Ported to the `.br-mono` design language so it
+   sits alongside the landing/models/providers surfaces. Structure:
+   compact header + three pricing columns (passthrough / subscription w/ tier
+   tabs / outcome) → cost calculator (closed→open savings) → startup-credits
+   band → trimmed compare matrix → FAQ → MonoFooter.
+
+   The outcome (enterprise) column is summarized here and hands off to
+   /enterprise for the full budget-guarantee pitch. */
+
+import * as React from "react";
 import Link from "next/link";
-import { useState } from "react";
-import { Minus, Plus, Check } from "lucide-react";
 import posthog from "posthog-js";
-import { cn } from "@/lib/cn";
-import { CalButton } from "@/components/landing/sections/CalButton";
+import "../landing/mono/mono.css";
+import "./pricing.css";
+import { MonoFooter } from "../landing/mono/landing";
+import { CostCalculator } from "./cost-calculator";
 
-type FaqItem = {
-  question: string;
-  answer: React.ReactNode;
-};
+const SIGN_IN_URL = "https://cloud.bitrouter.ai";
 
-const FAQ_ITEMS: FaqItem[] = [
+/* ---------------- pricing columns (page header) ---------------- */
+type Feat = string;
+
+const PAYG_FEATS: Feat[] = [
+  "100+ models on one key",
+  "Exactly the upstream price",
+  "Failover + guardrails",
+  "Per-run observability",
+];
+
+const SUB_TIERS: { price: string; feats: Feat[] }[] = [
   {
-    question: "How is zero markup on Pay-as-you-go sustainable?",
-    answer:
-      "On Pay-as-you-go you pay the exact upstream provider rate — no token markup, no routing fee, and we absorb card-processing costs. BitRouter makes money on the Subscription and Enterprise plans, not on per-token margin, so routing your usage stays free of any BitRouter fee.",
+    price: "$20",
+    feats: ["20 req / min", "1M tokens / day", "All open-source models", "Frontier via passthrough"],
   },
   {
-    question: "Can I bring my own API keys or use OAuth?",
-    answer:
-      "Yes. External provider mode covers both BYOK (bring your own API key) and BYOO (OAuth-based access for Codex and Claude Code). There is no routing fee and no token markup — you pay the upstream provider directly and BitRouter adds nothing on top.",
+    price: "$100",
+    feats: ["60 req / min", "6M tokens / day", "All open-source models", "Frontier via passthrough"],
   },
   {
-    question: "What is included in the Subscription plan?",
-    answer:
-      "The $20/month Subscription plan covers leading SOTA open-source models — Kimi, GLM, DeepSeek, Qwen, MiniMax, StepFun, and more — with rate limits included. Pair it with your existing Codex or Claude Code subscription: BitRouter handles the routing and fallback layer so you get broader model coverage without duplicating costs.",
-  },
-  {
-    question: "Is there a first-month discount on Subscription?",
-    answer:
-      "Yes. We offer a discounted or free first month for new Subscription subscribers. Check the sign-up page for the current promotion — availability may vary.",
-  },
-  {
-    question: "What does Custom (Enterprise) look like?",
-    answer: (
-      <>
-        We scope every enterprise deployment personally — dedicated infrastructure, forward deployed engineering, SSO, zero trust security, custom SLAs, and invoicing, built around what your team actually needs. No sales team, no runbook.{" "}
-        <CalButton>Book a call with the founders</CalButton>
-        {" "}and let&apos;s figure it out together.
-      </>
-    ),
-  },
-  {
-    question: "Can I self-host BitRouter for free?",
-    answer:
-      "Yes. The full BitRouter stack is Apache-2.0 licensed. Self-host on your own infrastructure with no platform fee, no usage minimums, and no token markup. You only pay your upstream provider costs.",
-  },
-  {
-    question: "Can I switch between plans?",
-    answer:
-      "Yes. Switching between Pay-as-you-go and Subscription is automatic — no manual plan changes needed. If your Subscription usage hits its rate limits, BitRouter auto-falls back to Pay-as-you-go so your workloads keep running. For Enterprise, reach out and we'll handle the transition directly.",
+    price: "$200",
+    feats: ["150 req / min", "20M tokens / day", "All open-source models", "Priority routing"],
   },
 ];
 
-type TierKey = "payg" | "subscription" | "enterprise";
-
-type FeatureRow = {
-  label: string;
-  payg: string | React.ReactNode;
-  subscription: string | React.ReactNode;
-  enterprise: string | React.ReactNode;
-  highlight?: boolean;
-};
-
-const FEATURES: FeatureRow[] = [
-  {
-    label: "Price",
-    payg: "0% markup\nupstream cost",
-    subscription: "$20 / month",
-    enterprise: "Custom",
-  },
-  {
-    label: "Self-host",
-    payg: "—",
-    subscription: "—",
-    enterprise: "Forward deployed",
-  },
-  {
-    label: "Models",
-    payg: "100+ models",
-    subscription: "Open-source only",
-    enterprise: "Any models",
-  },
-  {
-    label: "External provider",
-    payg: "No fee",
-    subscription: "—",
-    enterprise: <Check className="size-4" />,
-  },
-  {
-    label: "Rate limits",
-    payg: "Flexible",
-    subscription: "Included",
-    enterprise: "Custom",
-  },
-  {
-    label: "Reliability",
-    payg: <Check className="size-4" />,
-    subscription: <Check className="size-4" />,
-    enterprise: "SLA guarantee",
-  },
-  {
-    label: "Observability",
-    payg: <Check className="size-4" />,
-    subscription: <Check className="size-4" />,
-    enterprise: "Built-in + SIEM",
-  },
-  {
-    label: "Security",
-    payg: <Check className="size-4" />,
-    subscription: <Check className="size-4" />,
-    enterprise: "Zero trust framework",
-  },
-  {
-    label: "Efficiency",
-    payg: <Check className="size-4" />,
-    subscription: <Check className="size-4" />,
-    enterprise: "Customized model router",
-  },
-  {
-    label: "Support",
-    payg: "Discord · Telegram · Email",
-    subscription: "Discord · Telegram · Email",
-    enterprise: "Dedicated channels",
-  },
-  {
-    label: "SSO / SAML",
-    payg: "—",
-    subscription: "—",
-    enterprise: <Check className="size-4" />,
-  },
-  {
-    label: "Volume discounts",
-    payg: "—",
-    subscription: "—",
-    enterprise: <Check className="size-4" />,
-  },
-  {
-    label: "Payment options",
-    payg: "Fiat · Stablecoin",
-    subscription: "Fiat · Stablecoin",
-    enterprise: "Fiat · Stablecoin · Invoicing",
-  },
+const OUTCOME_FEATS: Feat[] = [
+  "Budget guarantee",
+  "20% of savings — only on success",
+  "Never more than we save you",
+  "Founders + SLA",
 ];
 
-function PricingFaq({ items }: { items: FaqItem[] }) {
-  const [open, setOpen] = useState<number | null>(null);
-
+function FeatList({ items }: { items: Feat[] }) {
   return (
-    <div className="border-t border-foreground/[0.08]">
-      {items.map((item, i) => {
-        const isOpen = open === i;
-        return (
-          <div key={i} className="border-b border-foreground/[0.08]">
-            <button
-              type="button"
-              onClick={() => setOpen(isOpen ? null : i)}
-              aria-expanded={isOpen}
-              className="flex w-full items-center justify-between gap-4 py-5 text-left"
-            >
-              <span className="text-sm font-medium">{item.question}</span>
-              {isOpen ? (
-                <Minus className="size-4 shrink-0 text-muted-foreground" />
-              ) : (
-                <Plus className="size-4 shrink-0 text-muted-foreground" />
-              )}
-            </button>
-            <div
-              className={cn(
-                "grid transition-all duration-200 ease-out",
-                isOpen
-                  ? "grid-rows-[1fr] pb-5 opacity-100"
-                  : "grid-rows-[0fr] opacity-0",
-              )}
-            >
-              <div className="overflow-hidden">
-                <p className="max-w-prose text-sm leading-relaxed text-muted-foreground">
-                  {item.answer}
-                </p>
-              </div>
-            </div>
-          </div>
-        );
-      })}
-    </div>
+    <ul className="pcol-feats">
+      {items.map((f) => (
+        <li key={f}>
+          <span className="pcol-dot">▸</span> {f}
+        </li>
+      ))}
+    </ul>
   );
 }
 
-function TierCard({
-  name,
-  description,
-  price,
-  priceDetail,
-  recommended,
-  cta,
-  ctaHref,
-  ctaDisabled,
-}: {
-  name: string;
-  description: string;
-  price: string;
-  priceDetail?: string;
-  recommended?: boolean;
-  cta: string;
-  ctaHref: string;
-  ctaDisabled?: boolean;
-}) {
+function SubscriptionCol() {
+  const [t, setT] = React.useState(0);
+  const tier = SUB_TIERS[t];
   return (
-    <div
-      className={cn(
-        "flex flex-col border border-foreground/[0.08] p-6",
-        recommended && "border-foreground/25 bg-foreground/[0.02]",
-      )}
-    >
-      <div className="flex items-center gap-3">
-        <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-          {name}
-        </span>
-        {recommended && (
-          <span className="border border-foreground/20 bg-foreground/5 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-foreground/70">
-            Recommended
-          </span>
-        )}
+    <div className="pcol">
+      <span className="pcol-tier">override</span>
+      <span className="pcol-name">Subscription</span>
+      <div className="subtabs">
+        {SUB_TIERS.map((s, i) => (
+          <button
+            key={s.price}
+            type="button"
+            className={"subtab" + (i === t ? " on" : "")}
+            onClick={() => {
+              setT(i);
+              posthog.capture("subscription_tier_viewed", { tier: s.price });
+            }}
+          >
+            {s.price}
+          </button>
+        ))}
       </div>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-        {description}
+      <div className="pcol-price">
+        {tier.price} <small>/ mo</small>
+      </div>
+      <p className="pcol-desc">
+        A flat monthly rate for the open-source models that hold the routine 90%.
+        Frontier still runs at passthrough on the same key.
       </p>
-      <div className="mt-5">
-        <span className="text-3xl font-medium tracking-tight">{price}</span>
-        {priceDetail && (
-          <span className="ml-1 text-sm text-muted-foreground">{priceDetail}</span>
-        )}
-      </div>
-      <div className="mt-6 flex-1" />
-      {ctaDisabled ? (
-        <span className="flex cursor-not-allowed items-center justify-center border border-foreground/[0.05] px-4 py-2.5 font-mono text-xs uppercase tracking-wider text-muted-foreground/50">
-          Coming Soon
-        </span>
-      ) : (
-        <Link
-          href={ctaHref}
-          className={cn(
-            "flex items-center justify-center border px-4 py-2.5 font-mono text-xs uppercase tracking-wider transition-colors",
-            recommended
-              ? "border-foreground/30 bg-primary text-primary-foreground hover:bg-primary/90"
-              : "border-foreground/[0.08] text-foreground hover:bg-foreground/[0.03]",
-          )}
-          onClick={() => posthog.capture("pricing_cta_clicked", { tier: name.toLowerCase().replace(/[^a-z0-9]/g, "_"), cta_label: cta })}
-        >
-          {cta}
-        </Link>
-      )}
+      <FeatList items={tier.feats} />
+      <a
+        href={SIGN_IN_URL}
+        className="pcol-cta"
+        onClick={() => posthog.capture("pricing_layer_cta_clicked", { tier: "subscription" })}
+      >
+        Subscribe
+      </a>
     </div>
   );
 }
 
-export function PricingPage() {
+function PricingColumns() {
   return (
-    <div className="mx-auto w-full max-w-5xl px-5 py-16 sm:px-6 sm:py-24">
-      <section>
-        <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-          Pricing
-        </span>
-        <h1 className="mt-5 text-3xl font-medium tracking-tight sm:text-4xl">
-          Simple, transparent pricing
+    <section className="page-head" style={{ paddingBottom: 72 }}>
+      <div className="wrap">
+        <div className="eyebrow" style={{ marginBottom: 18 }}>
+          <span className="idx">//</span> pricing
+        </div>
+        <h1
+          className="h-display page-title"
+          style={{ maxWidth: "18ch", marginBottom: 44 }}
+        >
+          Zero markup — or pay only on savings.
         </h1>
-        <p className="mt-4 max-w-prose text-base leading-relaxed text-muted-foreground">
-          Pay upstream cost with zero markup, subscribe for a flat monthly rate,
-          or get a custom plan for your team. No hidden fees, no routing fees,
-          no minimums. Self-hosting is always free and open-source.
+
+        <div className="pcols">
+          {/* substrate */}
+          <div className="pcol">
+            <span className="pcol-tier">substrate</span>
+            <span className="pcol-name">Pay-as-you-go</span>
+            <div className="pcol-price">
+              <span className="free">0%</span> <small>markup</small>
+            </div>
+            <p className="pcol-desc">
+              Every model on one key. We charge exactly what the provider charges
+              underneath — no token markup, no routing fee.
+            </p>
+            <FeatList items={PAYG_FEATS} />
+            <a
+              href={SIGN_IN_URL}
+              className="pcol-cta primary"
+              onClick={() => posthog.capture("pricing_layer_cta_clicked", { tier: "payg" })}
+            >
+              Get API key →
+            </a>
+          </div>
+
+          {/* override */}
+          <SubscriptionCol />
+
+          {/* layer */}
+          <div className="pcol on">
+            <span className="pcol-tier">
+              <span className="lyr">layer</span>
+            </span>
+            <span className="pcol-name">Outcome-based</span>
+            <div className="pcol-price">
+              20% <small>of savings</small>
+            </div>
+            <p className="pcol-desc">
+              Run your full production loop through BitRouter. We guarantee it
+              stays under the budget you set, and bill only on runs that clear
+              your quality bar.
+            </p>
+            <FeatList items={OUTCOME_FEATS} />
+            <Link
+              href="/enterprise"
+              className="pcol-cta"
+              onClick={() => posthog.capture("pricing_layer_cta_clicked", { tier: "outcome" })}
+            >
+              Talk to the founders →
+            </Link>
+          </div>
+        </div>
+
+        <p className="pstack-note">
+          <b>Composable, not exclusive</b> — passthrough is the floor under
+          everything; subscription overrides it for open models; outcome sits on
+          top for teams running production loops at scale. Self-hosting is always
+          free and Apache-2.0.
         </p>
-      </section>
+      </div>
+    </section>
+  );
+}
 
-      <section className="mt-12 grid gap-px sm:grid-cols-3">
-        <TierCard
-          name="Pay-as-you-go"
-          description="Access leading LLMs for coding and agentic use cases — Claude, GPT, Gemini, and 100+ models on a single endpoint."
-          price="0%"
-          priceDetail="markup · upstream cost"
-          recommended
-          cta="Get API Key"
-          ctaHref="https://cloud.bitrouter.ai"
-        />
-        <TierCard
-          name="Subscription"
-          description="Flat monthly rate for open-source models. Pair with your Codex or Claude Code subscription to cover your full AI stack at lower cost."
-          price="$20"
-          priceDetail="/ month"
-          cta="Subscribe"
-          ctaHref="https://cloud.bitrouter.ai"
-          ctaDisabled
-        />
-        <TierCard
-          name="Custom"
-          description="Tell us what you're building. We'll handle the infrastructure, the SLA, and the support personally — no sales team, no runbook."
-          price="Custom"
-          cta="Contact us"
-          ctaHref="/enterprise"
-        />
-      </section>
+/* ---------------- calculator ---------------- */
+function CalculatorSection() {
+  return (
+    <section className="sec">
+      <div className="wrap">
+        <div className="sec-head">
+          <div
+            className="eyebrow sec-eyebrow"
+            style={{ ["--sec-accent" as string]: "var(--term-ok)" }}
+          >
+            <span className="idx">//</span> what you&rsquo;d save
+          </div>
+          <h2 className="h-display sec-title">
+            Swap a frontier model for an open one.
+          </h2>
+          <p className="sec-lead">
+            The routine majority of an agent&rsquo;s calls don&rsquo;t need
+            frontier prices. Here&rsquo;s the gap at official list prices — same
+            key, zero markup.
+          </p>
+        </div>
+        <CostCalculator />
+      </div>
+    </section>
+  );
+}
 
-      <section className="mt-20">
-        <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-          Compare plans
-        </span>
-        <h2 className="mt-5 text-2xl font-medium tracking-tight sm:text-3xl">
-          Feature comparison
-        </h2>
-        <div className="mt-8 overflow-x-auto">
-          <table className="w-full min-w-[600px] border-collapse text-sm">
+/* ---------------- startup credits ---------------- */
+function StartupCredits() {
+  return (
+    <section className="sec" id="startups" style={{ scrollMarginTop: 64 }}>
+      <div className="wrap">
+        <div className="credits">
+          <div className="credits-copy">
+            <span className="chip">
+              <span style={{ color: "var(--term-ok)" }}>●</span> Startup program
+            </span>
+            <span className="credits-h">Credits for early-stage teams.</span>
+            <p className="credits-p">
+              Building production agents pre-seed to Series&nbsp;B? Get free and
+              discounted credits on every open-source model — on top of zero
+              markup — to switch your loop over today.
+            </p>
+          </div>
+          <Link
+            href="/enterprise"
+            className="btn btn-primary"
+            onClick={() => posthog.capture("startup_credits_cta_clicked")}
+          >
+            Apply for credits →
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- compare matrix ---------------- */
+type Mark = "yes" | "no" | string;
+type Row = { feat: string; payg: Mark; sub: Mark; outcome: Mark; accent?: boolean };
+
+const ROWS: Row[] = [
+  { feat: "Token markup", payg: "0%", sub: "0%", outcome: "0%" },
+  { feat: "Models", payg: "100+ · all", sub: "Open-source", outcome: "All" },
+  { feat: "Frontier access", payg: "Passthrough", sub: "Passthrough", outcome: "yes" },
+  { feat: "Multi-provider failover", payg: "yes", sub: "yes", outcome: "yes" },
+  { feat: "Per-run observability", payg: "yes", sub: "yes", outcome: "yes" },
+  { feat: "Router guardrails", payg: "yes", sub: "yes", outcome: "yes" },
+  { feat: "Budget guarantee", payg: "no", sub: "no", outcome: "yes", accent: true },
+  { feat: "Priced on outcomes", payg: "no", sub: "no", outcome: "20% of savings", accent: true },
+  { feat: "Self-host (Apache-2.0)", payg: "yes", sub: "yes", outcome: "yes" },
+  { feat: "SSO · SIEM · DPA", payg: "no", sub: "no", outcome: "yes" },
+  { feat: "Support", payg: "Community", sub: "Community", outcome: "Founders + SLA" },
+];
+
+function Cell({ v, accent }: { v: Mark; accent?: boolean }) {
+  if (v === "yes")
+    return <span className="compare-mark compare-mark-yes">✓</span>;
+  if (v === "no") return <span className="compare-mark compare-mark-no">—</span>;
+  return (
+    <span style={accent ? { color: "var(--accent)" } : undefined}>{v}</span>
+  );
+}
+
+function Compare() {
+  return (
+    <section className="sec">
+      <div className="wrap">
+        <div className="sec-head">
+          <div className="eyebrow sec-eyebrow">
+            <span className="idx">//</span> compare plans
+          </div>
+          <h2 className="h-display sec-title">What each layer gives you.</h2>
+        </div>
+        <div className="compare-table-wrap">
+          <table className="compare-table">
             <thead>
-              <tr className="border-b border-foreground/[0.08]">
-                <th className="py-3 pr-4 text-left font-mono text-xs uppercase tracking-wider text-muted-foreground">
-                  Feature
-                </th>
-                <th className="px-4 py-3 text-left font-mono text-xs uppercase tracking-wider text-muted-foreground">
-                  Pay-as-you-go
-                </th>
-                <th className="px-4 py-3 text-left font-mono text-xs uppercase tracking-wider text-muted-foreground">
-                  Subscription
-                </th>
-                <th className="px-4 py-3 text-left font-mono text-xs uppercase tracking-wider text-muted-foreground">
-                  Custom
+              <tr>
+                <th className="compare-th compare-th-feat">Feature</th>
+                <th className="compare-th compare-th-prod">Pay-as-you-go</th>
+                <th className="compare-th compare-th-prod">Subscription</th>
+                <th className="compare-th compare-th-prod">
+                  <span className="compare-th-brand">Outcome</span>
                 </th>
               </tr>
             </thead>
             <tbody>
-              {FEATURES.map((row, i) => (
-                <tr
-                  key={row.label}
-                  className={cn(
-                    "border-b border-foreground/[0.06]",
-                    i % 2 === 0 && "bg-foreground/[0.01]",
-                  )}
-                >
-                  <td className="py-3 pr-4 font-medium">{row.label}</td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    <CellContent value={row.payg} />
+              {ROWS.map((r) => (
+                <tr className="compare-row" key={r.feat}>
+                  <th className="compare-feat">{r.feat}</th>
+                  <td className="compare-cell">
+                    <Cell v={r.payg} />
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    <CellContent value={row.subscription} />
+                  <td className="compare-cell">
+                    <Cell v={r.sub} />
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    <CellContent value={row.enterprise} />
+                  <td className="compare-cell br">
+                    <Cell v={r.outcome} accent={r.accent} />
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      </section>
-
-      <section className="mt-24">
-        <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-          FAQ
-        </span>
-        <h2 className="mt-5 text-2xl font-medium tracking-tight sm:text-3xl">
-          Common questions
-        </h2>
-        <div className="mt-8">
-          <PricingFaq items={FAQ_ITEMS} />
-        </div>
-      </section>
-    </div>
+      </div>
+    </section>
   );
 }
 
-function CellContent({ value }: { value: string | React.ReactNode }) {
-  if (typeof value === "string") {
-    if (value.includes("\n")) {
-      return value.split("\n").map((line, i) => (
-        <span key={i}>
-          {i > 0 && <br />}
-          {line}
-        </span>
-      ));
-    }
-    return value;
-  }
-  return <span className="flex items-center justify-center">{value}</span>;
+/* ---------------- FAQ ---------------- */
+const FAQS: { q: string; a: React.ReactNode }[] = [
+  {
+    q: "How does BitRouter make money if pay-as-you-go is 0% markup?",
+    a: "Pay-as-you-go is genuinely passthrough — you pay the exact upstream provider rate, no token markup, no routing fee. BitRouter earns on the flat-rate Subscription and on the outcome-based tier, where we take a share of the spend we actually save you. Routing your usage never carries a BitRouter fee.",
+  },
+  {
+    q: "How does outcome-based pricing work?",
+    a: "You run your full production loop through BitRouter. You set a budget and a measurable quality floor. We guarantee the loop stays under your budget, and we bill 20% of what we save you against your measured baseline — only on runs that clear your quality bar, and never more than we saved you. It's enterprise-only for now; talk to the founders to scope it.",
+  },
+  {
+    q: "Do the three plans stack?",
+    a: "Yes. Passthrough (0% markup) is the substrate under everything. Subscription overrides it with a flat rate for open-source models — frontier calls still run at passthrough. Outcome-based sits on top as an engagement layer for teams routing production loops at scale. You're not picking one wall; you're stacking layers.",
+  },
+  {
+    q: "What's included in the Subscription tiers?",
+    a: "$20, $100, and $200 per month buy progressively higher rate limits and throughput on the leading open-source models — Kimi, GLM, DeepSeek, Qwen, MiniMax, and more. Frontier models stay one alias away at passthrough. If you hit your subscription's limits, BitRouter falls back to pay-as-you-go so your workloads keep running.",
+  },
+  {
+    q: "Can I self-host for free?",
+    a: "Yes. The full stack is Apache-2.0. Self-host on your own infrastructure with no platform fee, no minimums, and no token markup — you pay only your upstream provider costs. Same routing engine, guardrails, and observability as the hosted edge.",
+  },
+];
+
+function Faq() {
+  const [open, setOpen] = React.useState<number>(0);
+  return (
+    <section className="sec faq">
+      <div className="wrap faq-grid">
+        <div className="faq-aside">
+          <h2 className="h-display sec-title">Questions before you switch.</h2>
+        </div>
+        <div className="faq-list">
+          {FAQS.map((f, i) => (
+            <div className={"faq-item" + (i === open ? " open" : "")} key={f.q}>
+              <button
+                className="faq-q"
+                onClick={() => setOpen(i === open ? -1 : i)}
+              >
+                <span className="faq-q-mark">{i === open ? "−" : "+"}</span>
+                <span>{f.q}</span>
+              </button>
+              <div className="faq-a-wrap">
+                <div className="faq-a">{f.a}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- structured data (SEO / GEO) ---------------- */
+const FAQ_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQS.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: String(f.a) },
+  })),
+};
+
+const PRODUCT_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: "BitRouter",
+  description:
+    "Open-source LLM router with 0% markup, flat-rate open-source subscriptions, and outcome-based pricing.",
+  brand: { "@type": "Brand", name: "BitRouter" },
+  offers: [
+    { "@type": "Offer", name: "Pay-as-you-go", price: "0", priceCurrency: "USD", description: "0% markup — the exact upstream provider price on every model." },
+    { "@type": "Offer", name: "Subscription — Starter", price: "20", priceCurrency: "USD", description: "Flat monthly rate for open-source models." },
+    { "@type": "Offer", name: "Subscription — Growth", price: "100", priceCurrency: "USD", description: "Higher rate limits and throughput." },
+    { "@type": "Offer", name: "Subscription — Scale", price: "200", priceCurrency: "USD", description: "Highest rate limits and priority routing." },
+  ],
+};
+
+/* ---------------- page ---------------- */
+export function PricingPage() {
+  return (
+    <div className="br-mono">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSONLD) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(PRODUCT_JSONLD) }}
+      />
+      <PricingColumns />
+      <CalculatorSection />
+      <StartupCredits />
+      <Compare />
+      <Faq />
+      <MonoFooter />
+    </div>
+  );
 }

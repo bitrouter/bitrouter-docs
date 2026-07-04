@@ -29,7 +29,9 @@ export const docs = defineDocs({
 export const blog = defineDocs({
   dir: "content/blog",
   docs: {
-    schema: frontmatterSchema,
+    schema: frontmatterSchema.extend({
+      date: z.string().optional(), // ISO YYYY-MM-DD; used for footer "latest posts" sort
+    }),
   },
   meta: {
     schema: metaSchema,

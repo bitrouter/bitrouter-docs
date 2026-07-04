@@ -62,8 +62,7 @@ export default async function LocaleLayout({ children, params }: Props) {
     <RootProvider
       theme={{
         defaultTheme: "dark",
-        forcedTheme: "dark",
-        enableSystem: false,
+        enableSystem: true,
         storageKey: "bitrouter-theme",
       }}
       i18n={i18nUI.provider(locale)}

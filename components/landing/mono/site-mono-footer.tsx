@@ -29,7 +29,7 @@ export async function SiteMonoFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <div className="br-mono">
+    <div className="br-mono br-mono-footer">
       <footer className="footer footer-mega">
         <div className="wrap">
           <div className="footer-cols">

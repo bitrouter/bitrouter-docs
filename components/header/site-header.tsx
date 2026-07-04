@@ -180,6 +180,7 @@ export function SiteHeaderBody({
 export function SiteHeader(props: SiteHeaderProps): React.ReactElement {
   return (
     <header
+      data-site-header
       className="sticky top-0 z-40 w-full border-b border-foreground/[0.07] bg-background/75 backdrop-blur-lg"
       style={{ ["--fd-nav-height" as string]: "48px" }}
     >

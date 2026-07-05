@@ -12,39 +12,10 @@
 
 /* ---------- design tokens ---------- */
 .br-mono {
-  /* surfaces — pure black base, faintly elevated panels */
-  --bg: #000000;
-  --panel: #0a0a0a;
-  --panel-2: #101010;
-  --panel-3: #161616;
-
-  /* hairlines */
-  --line: #1b1b1b;
-  --line-2: #262626;
-  --line-bright: #343434;
-
-  /* ink */
-  --fg: #f5f5f5;
-  --fg-dim: #b4b4b4;
-  --muted: #7d7d7d;
-  --faint: #565656;
-  --ghost: #3a3a3a;
-
-  /* terminal status / accent palette — ANSI-ish hues used semantically:
-     green=success/savings · blue=routing/info · purple=brand · yellow=frontier */
-  --term-ok: #46d160; /* success · savings · open-model wins */
-  --term-err: #f0533f; /* failures */
-  --term-warn: #d6a93b; /* frontier/premium calls · warnings */
-  --term-info: #5aa7ff; /* routing/info meta · provider names */
-
-  /* accent — purple brand pop on prompts, carets, links (terminal-shell vibe) */
-  --accent: #a779ff;
-  --accent-dim: rgba(167, 121, 255, 0.12);
-
-  /* type — three voices: display (headlines) / body (prose) / mono (terminals) */
-  --mono: var(--font-jetbrains-mono), ui-monospace, "SF Mono", Menlo, monospace;
-  --display: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --body: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  /* Color + type tokens (--bg, --panel*, --line*, --fg*, --muted, --faint,
+     --ghost, --term-*, --accent*, --mono/--display/--body) are defined in
+     app/globals.css (.br-mono block), aliased to the shared --bp-* palette so
+     they theme light/dark. Only layout rhythm + base styling stay here. */
 
   /* rhythm */
   --maxw: 1180px;
@@ -80,6 +51,14 @@
     transparent 60%
   );
 }
+/* Light theme: a subtle dark glow instead of the white-on-black one. */
+:root:not(.dark) .br-mono::before {
+  background: radial-gradient(
+    120% 80% at 50% -10%,
+    rgba(0, 0, 0, 0.028),
+    transparent 60%
+  );
+}
 
 .br-mono a {
   color: inherit;
@@ -87,7 +66,7 @@
 }
 .br-mono ::selection {
   background: var(--fg);
-  color: #000;
+  color: var(--bg);
 }
 
 /* thin custom scrollbars inside terminals */
@@ -427,7 +406,7 @@
 .br-mono .term {
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, #060606, #020202);
+  background: linear-gradient(180deg, var(--panel), var(--bg));
   border: 1px solid var(--line-2);
   border-radius: 10px;
   overflow: hidden;
@@ -928,7 +907,7 @@
   border-top: none;
   border-radius: 0 0 var(--radius) var(--radius);
   padding: 40px;
-  background: linear-gradient(180deg, var(--panel), #050505);
+  background: linear-gradient(180deg, var(--panel), var(--bg));
 }
 .br-mono .prob-h {
   font-size: clamp(22px, 2.6vw, 30px);
@@ -1248,7 +1227,7 @@
   margin: 0;
   border: 1px solid var(--line-2);
   border-radius: 14px;
-  background: linear-gradient(180deg, #070707, #020202);
+  background: linear-gradient(180deg, var(--panel), var(--bg));
   padding: 26px 22px 18px;
   box-shadow: 0 30px 70px -34px rgba(0, 0, 0, 0.9);
 }
@@ -1310,7 +1289,7 @@
   position: relative;
   border: 1px solid var(--line-2);
   border-radius: 14px;
-  background: linear-gradient(180deg, #070707, #020202);
+  background: linear-gradient(180deg, var(--panel), var(--bg));
   padding-top: 12px;
   overflow: hidden;
   box-shadow: 0 30px 70px -34px rgba(0, 0, 0, 0.9);
@@ -1429,7 +1408,7 @@
 .br-mono .rcode-fade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent, #020202 76%);
+  background: linear-gradient(180deg, transparent, var(--bg) 76%);
 }
 .br-mono .rcode-more {
   position: relative;
@@ -2382,4 +2361,133 @@
   font-family: var(--font-mono, monospace);
   font-size: 0.82rem;
   color: var(--term-dim);
+}
+
+
+/* ---------------- MEGA FOOTER (site-wide, config-driven) ----------------
+   Compact 3-wide column grid over an openstatus-style bottom bar (brand +
+   copyright · talk to the founders · status pill · theme switch). */
+.br-mono .footer.footer-mega {
+  padding: 44px 0 28px;
+}
+.br-mono .footer-mega .footer-cols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 30px 40px;
+}
+@media (max-width: 760px) {
+  .br-mono .footer-mega .footer-cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 460px) {
+  .br-mono .footer-mega .footer-cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 26px 24px;
+  }
+}
+.br-mono .footer-mega nav.footer-col {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.br-mono .footer-mega .footer-col-h {
+  margin: 0 0 4px;
+  font-weight: 500;
+}
+
+/* bottom bar */
+.br-mono .footer-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 28px;
+  margin-top: 40px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+.br-mono .footer-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.br-mono .footer-bar .footer-copy {
+  font-size: 12px;
+  color: var(--faint);
+}
+.br-mono .footer-bar-right {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 22px;
+}
+.br-mono .footer-founders {
+  font-size: 13px;
+  color: var(--fg-dim);
+  transition: color 0.15s;
+}
+.br-mono .footer-founders:hover {
+  color: var(--accent);
+}
+.br-mono .footer-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: var(--fg-dim);
+  transition: color 0.15s;
+}
+.br-mono .footer-status:hover {
+  color: var(--fg);
+}
+.br-mono .footer-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--term-ok);
+  box-shadow: 0 0 7px var(--term-ok);
+}
+.br-mono .footer-theme {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line-2);
+}
+.br-mono .footer-theme-opt {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 7px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+.br-mono .footer-theme-opt:not(:last-child) {
+  border-right: 1px solid var(--line);
+}
+.br-mono .footer-theme-opt:hover {
+  color: var(--fg-dim);
+}
+.br-mono .footer-theme-opt.on {
+  background: var(--panel-2);
+  color: var(--fg);
+}
+.br-mono .footer-theme-ico {
+  width: 15px;
+  height: 15px;
+}
+
+/* Light-theme footer contrast — the default subtle grays (--faint/--muted) are
+   near-invisible on the light --bg. Bump them in LIGHT ONLY; dark is unchanged. */
+:root:not(.dark) .br-mono .footer-col-h {
+  color: var(--muted);
+}
+:root:not(.dark) .br-mono .footer-link {
+  color: var(--fg-dim);
+}
+:root:not(.dark) .br-mono .footer-copy {
+  color: var(--muted);
 }

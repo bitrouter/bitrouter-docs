@@ -8,7 +8,6 @@
 import * as React from "react";
 import "../landing/mono/mono.css";
 import { Terminal, Ok, Dim, Faint } from "../landing/mono/terminal";
-import { MonoFooter } from "../landing/mono/landing";
 import { primeModelsCache, useModels, type Model } from "@/lib/models-data";
 import {
   CONTEXT_BUCKETS,
@@ -509,7 +508,6 @@ export function ModelsMonoPage({
   return (
     <div className="br-mono">
       <ModelsCatalog />
-      <MonoFooter />
     </div>
   );
 }

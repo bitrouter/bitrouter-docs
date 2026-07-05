@@ -31,8 +31,7 @@ export async function SiteProviders({
     <RootProvider
       theme={{
         defaultTheme: "dark",
-        forcedTheme: "dark",
-        enableSystem: false,
+        enableSystem: true,
         storageKey: "bitrouter-theme",
       }}
     >

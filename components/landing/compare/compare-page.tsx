@@ -5,7 +5,6 @@ import Link from "next/link";
 import posthog from "posthog-js";
 import "../mono/mono.css";
 import { Terminal } from "../mono/terminal";
-import { MonoFooter } from "../mono/landing";
 
 const SIGN_IN_URL = "https://cloud.bitrouter.ai";
 
@@ -196,7 +195,6 @@ export function ComparePageTemplate({ data }: { data: ComparePageData }) {
         </div>
       </section>
 
-      <MonoFooter />
     </>
   );
 }

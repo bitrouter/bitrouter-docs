@@ -2469,3 +2469,16 @@
 .br-mono .footer-theme-opt.on {
   color: var(--fg);
 }
+
+/* Light-theme footer contrast — the default subtle grays (--faint/--muted) are
+   near-invisible on the light --bg. Bump them in LIGHT ONLY; dark is unchanged. */
+:root:not(.dark) .br-mono .footer-col-h {
+  color: var(--muted);
+}
+:root:not(.dark) .br-mono .footer-link {
+  color: var(--fg-dim);
+}
+:root:not(.dark) .br-mono .footer-copy,
+:root:not(.dark) .br-mono .footer-theme-opt {
+  color: var(--muted);
+}

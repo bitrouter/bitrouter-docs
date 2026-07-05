@@ -398,7 +398,7 @@
 .br-mono .term {
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, #060606, #020202);
+  background: linear-gradient(180deg, var(--panel), var(--bg));
   border: 1px solid var(--line-2);
   border-radius: 10px;
   overflow: hidden;
@@ -899,7 +899,7 @@
   border-top: none;
   border-radius: 0 0 var(--radius) var(--radius);
   padding: 40px;
-  background: linear-gradient(180deg, var(--panel), #050505);
+  background: linear-gradient(180deg, var(--panel), var(--bg));
 }
 .br-mono .prob-h {
   font-size: clamp(22px, 2.6vw, 30px);
@@ -1219,7 +1219,7 @@
   margin: 0;
   border: 1px solid var(--line-2);
   border-radius: 14px;
-  background: linear-gradient(180deg, #070707, #020202);
+  background: linear-gradient(180deg, var(--panel), var(--bg));
   padding: 26px 22px 18px;
   box-shadow: 0 30px 70px -34px rgba(0, 0, 0, 0.9);
 }
@@ -1281,7 +1281,7 @@
   position: relative;
   border: 1px solid var(--line-2);
   border-radius: 14px;
-  background: linear-gradient(180deg, #070707, #020202);
+  background: linear-gradient(180deg, var(--panel), var(--bg));
   padding-top: 12px;
   overflow: hidden;
   box-shadow: 0 30px 70px -34px rgba(0, 0, 0, 0.9);
@@ -1400,7 +1400,7 @@
 .br-mono .rcode-fade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent, #020202 76%);
+  background: linear-gradient(180deg, transparent, var(--bg) 76%);
 }
 .br-mono .rcode-more {
   position: relative;
@@ -2460,40 +2460,4 @@
 }
 .br-mono .footer-theme-opt.on {
   color: var(--fg);
-}
-
-/* ------------------------------------------------------------------
-   Mono pages (landing/models/providers/compare) are always dark; the
-   shared sticky header sits outside .br-mono and would follow the theme
-   (white on black in light mode). The always-present mono FOOTER is
-   .br-mono-footer, so key off a mono *page* wrapper and force the header
-   to the dark palette. Override both --background/… and the Tailwind v4
-   --color-* aliases (bg-background resolves via --color-background). */
-body:has(.br-mono:not(.br-mono-footer)) header[data-site-header] {
-  color-scheme: dark;
-  --background: #000000;
-  --foreground: #f5f5f5;
-  --card: #0a0a0a;
-  --card-foreground: #f5f5f5;
-  --popover: #0a0a0a;
-  --popover-foreground: #f5f5f5;
-  --primary: #f5f5f5;
-  --primary-foreground: #000000;
-  --secondary: #101010;
-  --secondary-foreground: #f5f5f5;
-  --muted: #101010;
-  --muted-foreground: #7d7d7d;
-  --accent: rgba(245, 245, 245, 0.1);
-  --accent-foreground: #f5f5f5;
-  --border: #262626;
-  --input: #262626;
-  --ring: #f5f5f5;
-  --color-background: #000000;
-  --color-foreground: #f5f5f5;
-  --color-muted-foreground: #7d7d7d;
-  --color-border: #262626;
-  --color-primary: #f5f5f5;
-  --color-primary-foreground: #000000;
-  --color-accent: rgba(245, 245, 245, 0.1);
-  --color-accent-foreground: #f5f5f5;
 }

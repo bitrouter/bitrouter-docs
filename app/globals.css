@@ -199,10 +199,10 @@
  * and terminals via --font-mono.
  *
  * Token chain:
- *   --bp-* + shadcn semantic tokens   ← @repo/theme/theme.css (imported above)
+ *   --bp-* + shadcn semantic tokens   ← defined above (formerly theme.css)
  *   brand overrides (font-sans, radius, ring, --color-fd-primary) ← this file,
- *     placed after the import so they win for docs/blog/chrome too.
- *   Landing-only component CSS stays scoped under .br-mono in mono.css.
+ *     placed after the base tokens so they win for docs/blog/chrome too.
+ *   .br-mono aliases those tokens (above); its component CSS lives in mono.css.
  */
 @theme inline {
   /* Web-only accent + animations (keyframes are defined later in this file). */
@@ -231,7 +231,7 @@
   /* ── Mono redesign brand (globalized from .br-mono) ── */
   --accent-brand: #a779ff;
   --accent-brand-dim: rgba(167, 121, 255, 0.12); /* active sidebar pill fill */
-  /* Purple focus ring everywhere (overrides @repo/theme --ring = ink). */
+  /* Purple focus ring everywhere (overrides the base --ring = ink). */
   --ring: var(--accent-brand);
   --sidebar-ring: var(--accent-brand);
   /* fumadocs link/accent token → brand purple (docs + blog). */

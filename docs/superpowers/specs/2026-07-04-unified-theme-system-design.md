@@ -64,9 +64,12 @@ Illustrative mapping (final values confirmed in the plan):
 | `--accent`        | `var(--accent-brand)` (`#a779ff`; keep purple both themes) |
 | `--mono`          | `var(--font-mono)` (already themeable/constant) |
 
-**Missing tokens to add to theme.css per theme:** `--bp-info` (terminal blue), and any extra
+**Missing tokens to add (in `globals.css`, per theme):** `--bp-info` (terminal blue), and any extra
 panel/line/ink steps the terminal uses that `--bp-*` lacks (`--panel-3`, `--line-bright`, `--ghost`).
 Each gets a light and a dark value.
+
+Note: with the file consolidation (below), the aliased `.br-mono { --bg: var(--bp-bg); … }`
+definition block lives in `globals.css`, not `mono.css`.
 
 ### Hardcoded-dark component fixes (the audit)
 
@@ -78,14 +81,39 @@ mono.css assumes dark in a few non-token places that must become theme-aware:
 - The **hero mock terminal window** (the "claude-code — bitrouter" panel) — highest-stakes surface;
   needs a deliberate light-mode pass.
 
+## File organization — one token home
+
+Alongside the token unification, consolidate *where* tokens live. Today the palette is defined across
+three files with confusing double-definition (`theme.css` sets JetBrains + 0px radius, `globals.css`
+overrides to Geist + 7px). `theme.css` is **not actually shared** — this is a standalone repo (no
+workspaces, no console app), and it's imported only by `globals.css`, so its "@repo/theme, shared with
+the console" header is stale.
+
+Target layout:
+
+- **`app/globals.css` = the single home for all token & theme definitions.** Fold in `theme.css`'s
+  `--bp-*` palette (both `:root` and `.dark`), the shadcn mappings, the `@theme inline` block, the
+  brand overrides, **and** the terminal token aliases (the `.br-mono { --bg… }` definition block moved
+  here). One place defines every token, once, per theme — no override-of-override.
+- **Retire `theme.css`** — its contents move into `globals.css`; delete the file and its `@import`.
+- **`mono.css` = terminal *components* only** — the ~2,500 lines of hero / install / spinner / loop /
+  faq styles stay in their own file (one cohesive responsibility), but hold **no token definitions**;
+  they only reference tokens now defined in `globals.css`. Do **not** merge these into `globals.css`
+  (that would create a ~3,200-line mixed-concern mega-file).
+
+Rationale: file-count isn't the edge-case fix (that's the token unification above) — but collapsing
+token *definitions* into one file removes the double-definition indirection and gives a clean
+split: **`globals.css` owns tokens/theme, `mono.css` owns terminal components.**
+
 ## What gets deleted
 
 - The `body:has(.br-mono:not(.br-mono-footer)) header[data-site-header]` dark-override in mono.css
   (added this session as a stopgap).
 - The `br-mono-footer` marker class on the footer wrapper and the `data-site-header` hook — no longer
   needed once `.br-mono` themes normally.
-- The private hardcoded `--bg/--fg/...` values in `.br-mono` (replaced by aliases).
-- Stale comments claiming the site "forces `.dark`" ([theme.css:5](../../../theme.css)).
+- The private hardcoded `--bg/--fg/...` values in `.br-mono` (replaced by aliases in `globals.css`).
+- **`theme.css`** as a file — folded into `globals.css` (see File organization) — and the stale
+  "forces `.dark` / shared with the console" comments.
 
 Note: the three force-dark locks were already removed in commit `59e9bba`. This spec builds on that.
 
@@ -99,8 +127,9 @@ footer). Audit and remove/redirect the redundant `ThemeToggleIcon` (old, now unu
 
 The hero is make-or-break, so we validate it before the full sweep:
 
-1. **Unify tokens** — alias `.br-mono` tokens to `--bp-*`; add the missing `--bp-*` (info, extra
-   steps) with light + dark values in theme.css.
+1. **Unify tokens + consolidate files** — fold `theme.css` into `globals.css`; move the `.br-mono`
+   token block into `globals.css` and alias it to `--bp-*`; add the missing `--bp-*` (info, extra
+   steps) with light + dark values; retire `theme.css`. `mono.css` keeps components only.
 2. **Flip one flagship page (landing) to themeable** — remove its hardcoded dark, delete the nav
    override + footer marker, and **render the light hero for review**. ← **CHECKPOINT: eyeball the
    light landing together before proceeding.** If the light hero doesn't land, either adjust the
@@ -134,3 +163,5 @@ The hero is make-or-break, so we validate it before the full sweep:
 - The nav/footer need **no** `:has`/marker special-casing; the override, `br-mono-footer` marker, and
   `data-site-header` hook are gone.
 - One theme control; no stale "forces dark" comments.
+- **`theme.css` is gone** — all token/theme definitions live in `globals.css`; `mono.css` holds only
+  terminal component styles (no token definitions), and the site builds with the import removed.

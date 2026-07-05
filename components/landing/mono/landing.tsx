@@ -1,8 +1,8 @@
 "use client";
 
 /* Mono/dev landing — port of the Claude Design handoff (hero / problems /
-   mechanisms / faq / cta / footer). Reuses the shared fixed CustomNav, which
-   is re-skinned to mono by `body:has(.br-mono)` token overrides in mono.css. */
+   mechanisms / faq / cta). Wrapped in .br-mono, whose tokens alias the shared
+   --bp-* palette (globals.css) so the terminal skin themes light/dark. */
 
 import * as React from "react";
 import Link from "next/link";

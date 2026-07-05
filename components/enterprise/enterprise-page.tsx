@@ -12,7 +12,6 @@ import posthog from "posthog-js";
 import { getCalApi } from "@calcom/embed-react";
 import "../landing/mono/mono.css";
 import "./enterprise.css";
-import { MonoFooter } from "../landing/mono/landing";
 
 /* Cal.com founder-call CTA, styled as a mono button. */
 function FounderCTA({
@@ -367,7 +366,6 @@ export function EnterprisePage() {
       <AuditCta />
       <EnterpriseCompare />
       <Faq />
-      <MonoFooter />
     </div>
   );
 }

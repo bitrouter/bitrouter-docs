@@ -51,6 +51,14 @@
     transparent 60%
   );
 }
+/* Light theme: a subtle dark glow instead of the white-on-black one. */
+:root:not(.dark) .br-mono::before {
+  background: radial-gradient(
+    120% 80% at 50% -10%,
+    rgba(0, 0, 0, 0.028),
+    transparent 60%
+  );
+}
 
 .br-mono a {
   color: inherit;
@@ -58,7 +66,7 @@
 }
 .br-mono ::selection {
   background: var(--fg);
-  color: #000;
+  color: var(--bg);
 }
 
 /* thin custom scrollbars inside terminals */

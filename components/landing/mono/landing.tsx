@@ -1454,11 +1454,11 @@ function FinalCta() {
             <InstallBar />
             <div className="cta-meta">
               <span className="cta-promo">
-                <span style={{ color: "var(--term-ok)" }}>●</span> 25% off all
-                open-source models · zero markup
+                <span style={{ color: "var(--term-ok)" }}>●</span> 0% markup on
+                every model
               </span>
               <span className="fnt">·</span>
-              <span>2% on usage · no platform fee &lt; $10/mo</span>
+              <span>Outcome pricing — pay only on savings</span>
               <span className="fnt">·</span>
               <span>Apache-2.0</span>
             </div>

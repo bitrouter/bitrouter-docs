@@ -2,10 +2,16 @@
 
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { Sun, Moon, Monitor } from "lucide-react";
 
-const OPTIONS = ["light", "dark", "system"] as const;
+const OPTIONS = [
+  ["light", Sun],
+  ["dark", Moon],
+  ["system", Monitor],
+] as const;
 
-/** Terminal-styled 3-way theme switch: [light] [dark] [system]. */
+/** Segmented icon theme switch (light / dark / system) — matches the site's
+ *  bordered theme toggle, styled with the footer's mono tokens. */
 export function MonoThemeSwitch() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -13,7 +19,7 @@ export function MonoThemeSwitch() {
 
   return (
     <div className="footer-theme" role="group" aria-label="Theme">
-      {OPTIONS.map((opt) => {
+      {OPTIONS.map(([opt, Icon]) => {
         const active = mounted && theme === opt;
         return (
           <button
@@ -21,9 +27,10 @@ export function MonoThemeSwitch() {
             type="button"
             onClick={() => setTheme(opt)}
             className={"footer-theme-opt" + (active ? " on" : "")}
+            aria-label={opt}
             aria-pressed={active}
           >
-            [{opt}]
+            <Icon className="footer-theme-ico" />
           </button>
         );
       })}

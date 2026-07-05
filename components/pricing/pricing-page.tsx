@@ -4,7 +4,7 @@
    sits alongside the landing/models/providers surfaces. Structure:
    compact header + three pricing columns (passthrough / subscription w/ tier
    tabs / outcome) → cost calculator (closed→open savings) → startup-credits
-   band → trimmed compare matrix → FAQ → MonoFooter.
+   band → trimmed compare matrix → FAQ.
 
    The outcome (enterprise) column is summarized here and hands off to
    /enterprise for the full budget-guarantee pitch. */
@@ -14,7 +14,6 @@ import Link from "next/link";
 import posthog from "posthog-js";
 import "../landing/mono/mono.css";
 import "./pricing.css";
-import { MonoFooter } from "../landing/mono/landing";
 import { CostCalculator } from "./cost-calculator";
 
 const SIGN_IN_URL = "https://cloud.bitrouter.ai";
@@ -404,7 +403,6 @@ export function PricingPage() {
       <StartupCredits />
       <Compare />
       <Faq />
-      <MonoFooter />
     </div>
   );
 }

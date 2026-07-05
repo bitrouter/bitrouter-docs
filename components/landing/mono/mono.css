@@ -12,39 +12,10 @@
 
 /* ---------- design tokens ---------- */
 .br-mono {
-  /* surfaces — pure black base, faintly elevated panels */
-  --bg: #000000;
-  --panel: #0a0a0a;
-  --panel-2: #101010;
-  --panel-3: #161616;
-
-  /* hairlines */
-  --line: #1b1b1b;
-  --line-2: #262626;
-  --line-bright: #343434;
-
-  /* ink */
-  --fg: #f5f5f5;
-  --fg-dim: #b4b4b4;
-  --muted: #7d7d7d;
-  --faint: #565656;
-  --ghost: #3a3a3a;
-
-  /* terminal status / accent palette — ANSI-ish hues used semantically:
-     green=success/savings · blue=routing/info · purple=brand · yellow=frontier */
-  --term-ok: #46d160; /* success · savings · open-model wins */
-  --term-err: #f0533f; /* failures */
-  --term-warn: #d6a93b; /* frontier/premium calls · warnings */
-  --term-info: #5aa7ff; /* routing/info meta · provider names */
-
-  /* accent — purple brand pop on prompts, carets, links (terminal-shell vibe) */
-  --accent: #a779ff;
-  --accent-dim: rgba(167, 121, 255, 0.12);
-
-  /* type — three voices: display (headlines) / body (prose) / mono (terminals) */
-  --mono: var(--font-jetbrains-mono), ui-monospace, "SF Mono", Menlo, monospace;
-  --display: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --body: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  /* Color + type tokens (--bg, --panel*, --line*, --fg*, --muted, --faint,
+     --ghost, --term-*, --accent*, --mono/--display/--body) are defined in
+     app/globals.css (.br-mono block), aliased to the shared --bp-* palette so
+     they theme light/dark. Only layout rhythm + base styling stay here. */
 
   /* rhythm */
   --maxw: 1180px;

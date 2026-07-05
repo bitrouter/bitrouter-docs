@@ -2,7 +2,190 @@
 @import "fumadocs-ui/css/shadcn.css";
 @import "fumadocs-ui/css/preset.css";
 @import "fumadocs-openapi/css/preset.css";
-@import "../theme.css";
+/* ─────────────────────────────────────────────────────────────────────────
+ * Design tokens (formerly theme.css, now inlined — single home for the palette).
+ * One themeable system: --bp-* raw tokens defined per theme (:root light /
+ * .dark dark) → shadcn names → @theme inline Tailwind utilities. The website
+ * brand overrides (Geist --font-sans, 7px radius, purple accent) live below
+ * and intentionally win. The terminal skin (.br-mono) aliases these tokens.
+ * ───────────────────────────────────────────────────────────────────────── */
+@theme inline {
+  /* Fonts — --font-sans is set by the brand override below (Geist). */
+  --font-mono: var(--font-jetbrains-mono), var(--font-geist-mono), ui-monospace,
+    monospace;
+  --font-display-italic: var(--font-instrument-serif), ui-serif, Georgia, serif;
+
+  /* shadcn surface tokens → resolve to --bp-* via :root / .dark below. */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Drafting-board short names — bg-paper, text-ink, border-rule, … */
+  --color-bg: var(--bp-bg);
+  --color-paper: var(--bp-paper);
+  --color-paper-dark: var(--bp-paper-dark);
+  --color-ink: var(--bp-ink);
+  --color-ink-mid: var(--bp-ink-mid);
+  --color-ink-dim: var(--bp-ink-dim);
+  --color-ink-faint: var(--bp-ink-faint);
+  --color-rule: var(--bp-rule);
+  --color-rule-soft: var(--bp-rule-soft);
+  --color-amber: var(--bp-amber);
+  --color-amber-soft: var(--bp-amber-soft);
+  --color-amber-hi: var(--bp-amber-hi);
+  --color-stop: var(--bp-red);
+
+  /* Semantic status — survive the mono collapse. */
+  --color-ok: var(--bp-ok);
+  --color-ok-soft: var(--bp-ok-soft);
+  --color-warn: var(--bp-warn);
+  --color-warn-soft: var(--bp-warn-soft);
+  --color-danger: var(--bp-red);
+  --color-danger-soft: var(--bp-danger-soft);
+
+  /* Tracking presets. */
+  --tracking-eyebrow: 0.28em;
+  --tracking-hud: 0.22em;
+  --tracking-label: 0.18em;
+  --tracking-button: 0.14em;
+  --tracking-tabular: 0.04em;
+
+  /* Sidebar slots. */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/* ─── Light · true paper-white ─── */
+:root {
+  --bp-bg: #fafafa;
+  --bp-paper: #ffffff;
+  --bp-paper-dark: #f0f0f0;
+  --bp-ink: #0a0a0a;
+  --bp-ink-mid: #4a4a4a;
+  --bp-ink-dim: #7d7d7d;
+  --bp-ink-faint: #b0b0b0;
+  --bp-rule: #e2e2e2;
+  --bp-rule-soft: #ededed;
+  --bp-amber: #0a0a0a;
+  --bp-amber-soft: rgba(10, 10, 10, 0.06);
+  --bp-amber-hi: #000000;
+  --bp-red: #c4341c;
+  --bp-ok: #1f9d4d;
+  --bp-ok-soft: rgba(31, 157, 77, 0.12);
+  --bp-warn: #b07d12;
+  --bp-warn-soft: rgba(176, 125, 18, 0.12);
+  --bp-danger-soft: rgba(196, 52, 28, 0.1);
+  /* terminal-skin steps (light) — first pass, tunable in the light audit */
+  --bp-info: #2563eb;
+  --bp-panel-3: #e8e8e8;
+  --bp-line-bright: #d4d4d4;
+  --bp-ghost: #c8c8c8;
+
+  --background: var(--bp-bg);
+  --foreground: var(--bp-ink);
+  --card: var(--bp-paper);
+  --card-foreground: var(--bp-ink);
+  --popover: var(--bp-paper);
+  --popover-foreground: var(--bp-ink);
+  --primary: var(--bp-amber);
+  --primary-foreground: var(--bp-bg);
+  --secondary: var(--bp-paper-dark);
+  --secondary-foreground: var(--bp-ink);
+  --muted: var(--bp-paper-dark);
+  --muted-foreground: var(--bp-ink-dim);
+  --accent: var(--bp-amber-soft);
+  --accent-foreground: var(--bp-ink);
+  --destructive: var(--bp-red);
+  --destructive-foreground: var(--bp-bg);
+  --border: var(--bp-rule);
+  --input: var(--bp-rule);
+  --ring: var(--bp-amber);
+
+  --sidebar: var(--background);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--accent-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+}
+
+/* ─── Dark · pure black mono ─── */
+.dark {
+  --bp-bg: #000000;
+  --bp-paper: #0a0a0a;
+  --bp-paper-dark: #101010;
+  --bp-ink: #f5f5f5;
+  --bp-ink-mid: #b4b4b4;
+  --bp-ink-dim: #7d7d7d;
+  --bp-ink-faint: #565656;
+  --bp-rule: #262626;
+  --bp-rule-soft: #1b1b1b;
+  --bp-amber: #f5f5f5;
+  --bp-amber-soft: rgba(245, 245, 245, 0.1);
+  --bp-amber-hi: #ffffff;
+  --bp-red: #f0533f;
+  --bp-ok: #46d160;
+  --bp-ok-soft: rgba(70, 209, 96, 0.18);
+  --bp-warn: #d6a93b;
+  --bp-warn-soft: rgba(214, 169, 59, 0.18);
+  --bp-danger-soft: rgba(240, 83, 63, 0.18);
+  /* terminal-skin steps (dark) — match the previous .br-mono hardcodes exactly */
+  --bp-info: #5aa7ff;
+  --bp-panel-3: #161616;
+  --bp-line-bright: #343434;
+  --bp-ghost: #3a3a3a;
+}
+
+/* ─── Terminal skin tokens — alias the shared palette so .br-mono themes with
+   the site (light + dark) instead of hardcoding dark. Layout tokens (--maxw,
+   --gutter, --radius) stay in mono.css. ─── */
+.br-mono {
+  --bg: var(--bp-bg);
+  --panel: var(--bp-paper);
+  --panel-2: var(--bp-paper-dark);
+  --panel-3: var(--bp-panel-3);
+  --line: var(--bp-rule-soft);
+  --line-2: var(--bp-rule);
+  --line-bright: var(--bp-line-bright);
+  --fg: var(--bp-ink);
+  --fg-dim: var(--bp-ink-mid);
+  --muted: var(--bp-ink-dim);
+  --faint: var(--bp-ink-faint);
+  --ghost: var(--bp-ghost);
+  --term-ok: var(--bp-ok);
+  --term-err: var(--bp-red);
+  --term-warn: var(--bp-warn);
+  --term-info: var(--bp-info);
+  --accent: var(--accent-brand);
+  --accent-dim: var(--accent-brand-dim);
+  --mono: var(--font-mono);
+  --display: var(--font-sans);
+  --body: var(--font-sans);
+}
 
 @custom-variant dark (&:is(.dark *));
 

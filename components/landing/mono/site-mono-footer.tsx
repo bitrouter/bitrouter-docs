@@ -9,7 +9,7 @@ import { MonoThemeSwitch } from "./theme-switch";
 import "./mono.css";
 
 const FOUNDERS_CONTACT = "mailto:contact@bitrouter.ai";
-const STATUS_URL = "https://bitrouter.openstatus.dev";
+const STATUS_URL = "https://status.bitrouter.ai";
 
 /**
  * Site-wide mono-themed mega-footer. Config-driven (single source of truth in

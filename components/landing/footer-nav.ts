@@ -39,7 +39,7 @@ const PRODUCTS: FooterLink[] = [
   { label: "Providers", href: "/providers" },
   { label: "Pricing", href: "/pricing" },
   { label: "Enterprise", href: "/enterprise" },
-  { label: "Status", href: "https://bitrouter.openstatus.dev", external: true },
+  { label: "Status", href: "https://status.bitrouter.ai", external: true },
 ];
 const DEVELOPERS: FooterLink[] = [
   { label: "API", href: "/docs/reference" },

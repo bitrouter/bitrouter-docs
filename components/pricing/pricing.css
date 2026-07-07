@@ -114,6 +114,11 @@
 .br-mono .pcol-cta.primary:hover {
   background: #fff;
 }
+.br-mono .pcol-cta[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: default;
+  pointer-events: none;
+}
 
 /* subscription tier tabs */
 .br-mono .subtabs {

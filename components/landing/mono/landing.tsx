@@ -332,11 +332,10 @@ function Hero() {
           <span className="chip hero-chip">
             <span style={{ color: "var(--term-ok)" }}>●</span> Open-source cost-optimization loop for AI agents
           </span>
-          <h1 className="h-display hero-title">Agentic workflows cost too much.</h1>
+          <h1 className="h-display hero-title">Stop tokenmaxxing your agentic loops</h1>
           <p className="hero-sub">
-            Long autonomous runs get expensive — that&rsquo;s the workflow, not
-            your mistake. BitRouter routes every call to the cheapest model that
-            does the job, so the bill drops on its own.
+            The open-source LLM gateway &amp; router that cost-optimizes every run
+            — and stays configurable your way. Cloud opt-in.
           </p>
           <InstallBar />
           <div className="hero-actions">

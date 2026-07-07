@@ -17,7 +17,7 @@ const DEVELOPERS: FooterLink[] = [
 ];
 const RESOURCES: FooterLink[] = [
   { label: "Blog", href: "/blog" },
-  { label: "Compare", href: "/compare/bitrouter-vs-openrouter" },
+  { label: "Compare", href: "/compare" },
   { label: "Changelog", href: "/changelog" },
 ];
 const COMPANY: FooterLink[] = [

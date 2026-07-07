@@ -1729,30 +1729,31 @@
 .br-mono .brand-dot {
   color: var(--muted);
 }
+.br-mono .footer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 28px;
+  flex-wrap: wrap;
+}
 .br-mono .footer-social {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 24px;
-}
-.br-mono .footer-soc {
-  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  color: var(--muted);
-  padding: 4px;
-  transition: color 0.15s;
+  gap: 14px;
 }
-.br-mono .footer-soc:hover {
-  color: var(--fg);
+.br-mono .footer-social-link {
+  color: var(--mut, currentColor);
+  opacity: 0.7;
+  transition: opacity 0.15s ease;
 }
-.br-mono .footer-soc-ico {
-  width: 16px;
-  height: 16px;
+.br-mono .footer-social-link:hover {
+  opacity: 1;
+}
+.br-mono .footer-social-icon {
+  width: 18px;
+  height: 18px;
   display: block;
-}
-.br-mono .footer-social {
-  gap: 12px;
 }
 .br-mono .brand-logo {
   width: 22px;
@@ -2372,7 +2373,7 @@
 }
 .br-mono .footer-mega .footer-cols {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 30px 40px;
 }
 @media (max-width: 760px) {

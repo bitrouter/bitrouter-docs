@@ -44,6 +44,7 @@ export const compare = defineDocs({
     schema: frontmatterSchema.extend({
       competitor: z.string(),
       angle: z.string(),
+      metaTitle: z.string().optional(),
       migrationHref: z.string().optional(),
       migrationLabel: z.string().optional(),
     }),

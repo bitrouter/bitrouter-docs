@@ -75,7 +75,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: page.data.metaTitle ?? page.data.title,
     description: page.data.description,
     alternates: {
-      canonical: `https://bitrouter.ai/compare/${slug}`,
+      canonical: `https://bitrouter.ai${page.url}`,
     },
   };
 }

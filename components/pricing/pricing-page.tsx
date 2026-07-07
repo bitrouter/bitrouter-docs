@@ -67,12 +67,7 @@ function SubscriptionCol() {
         Frontier still runs at passthrough on the same key.
       </p>
       <FeatList items={SUB_FEATS} />
-      <span
-        className="pcol-cta"
-        aria-disabled="true"
-        data-coming-soon="true"
-        onClick={() => posthog.capture("subscription_coming_soon_viewed")}
-      >
+      <span className="pcol-cta" aria-disabled="true" data-coming-soon="true">
         Coming soon
       </span>
     </div>

@@ -1,6 +1,5 @@
 import { readFileSync } from "node:fs";
 import { createOpenAPI } from "fumadocs-openapi/server";
-// @ts-expect-error -- plain .mjs helper, no type declarations
 import { normalizeSpec } from "./docs-sync/normalize-spec.mjs";
 
 // The document id referenced by generated MDX (`<APIPage document=... />`) and

@@ -1,4 +1,5 @@
 import { openapi } from "@/lib/openapi";
+import type { OperationItem, WebhookItem } from "fumadocs-openapi/ui";
 import { OpenAPIPage } from "./api-page.client";
 
 // Generated reference MDX renders `<APIPage document="./openapi.yaml"
@@ -7,11 +8,12 @@ import { OpenAPIPage } from "./api-page.client";
 // `openapi` instance, so this server component bridges the generated props to
 // the client `OpenAPIPage`: it resolves the bundled spec here (server-side) and
 // hands it over as `payload`, mirroring the shape of the library's own
-// `getOpenAPIPageProps()`.
+// `getOpenAPIPageProps()`. `operations`/`webhooks` reuse the library's own item
+// types so `method` stays the `HttpMethods` union expected by OpenAPIPage.
 type APIPageProps = {
   document: string;
-  operations?: { path: string; method: string }[];
-  webhooks?: { name: string; method: string }[];
+  operations?: OperationItem[];
+  webhooks?: WebhookItem[];
   hasHead?: boolean;
   showDescription?: boolean;
 };

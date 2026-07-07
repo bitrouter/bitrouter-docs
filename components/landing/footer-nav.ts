@@ -1,23 +1,6 @@
 export type FooterLink = { label: string; href: string; external?: boolean };
 export type FooterColumn = { title: string; links: FooterLink[] };
 
-const BRAND_CASING: Record<string, string> = {
-  openrouter: "OpenRouter",
-  litellm: "LiteLLM",
-  portkey: "Portkey",
-};
-
-export function deriveCompareLabel(slug: string): string {
-  const competitor = slug.replace(/^bitrouter-vs-/, "");
-  const label =
-    BRAND_CASING[competitor] ??
-    competitor
-      .split("-")
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" ");
-  return `vs ${label}`;
-}
-
 const PRODUCT: FooterLink[] = [
   { label: "Models", href: "/models" },
   { label: "Providers", href: "/providers" },

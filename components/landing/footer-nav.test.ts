@@ -1,16 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { deriveCompareLabel, buildFooterColumns } from "./footer-nav";
-
-describe("deriveCompareLabel", () => {
-  it("maps known competitor slugs with correct brand casing", () => {
-    expect(deriveCompareLabel("bitrouter-vs-openrouter")).toBe("vs OpenRouter");
-    expect(deriveCompareLabel("bitrouter-vs-litellm")).toBe("vs LiteLLM");
-    expect(deriveCompareLabel("bitrouter-vs-portkey")).toBe("vs Portkey");
-  });
-  it("title-cases unknown multi-word competitors", () => {
-    expect(deriveCompareLabel("bitrouter-vs-some-tool")).toBe("vs Some Tool");
-  });
-});
+import { buildFooterColumns } from "./footer-nav";
 
 describe("buildFooterColumns", () => {
   it("returns the four condensed columns in order", () => {

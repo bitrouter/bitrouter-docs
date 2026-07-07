@@ -1743,7 +1743,7 @@
   gap: 14px;
 }
 .br-mono .footer-social-link {
-  color: var(--mut, currentColor);
+  color: var(--muted);
   opacity: 0.7;
   transition: opacity 0.15s ease;
 }
@@ -1764,11 +1764,6 @@
 .br-mono .footer-copy {
   font-size: 12px;
   color: var(--faint);
-}
-.br-mono .footer-cols {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 32px;
 }
 .br-mono .footer-col {
   display: flex;
@@ -1794,9 +1789,6 @@
   .br-mono .footer-grid {
     grid-template-columns: 1fr;
     gap: 36px;
-  }
-  .br-mono .footer-cols {
-    grid-template-columns: repeat(2, 1fr);
   }
 }
 

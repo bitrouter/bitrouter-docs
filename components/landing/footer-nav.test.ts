@@ -13,29 +13,23 @@ describe("deriveCompareLabel", () => {
 });
 
 describe("buildFooterColumns", () => {
-  const dynamic = {
-    compare: [{ label: "vs OpenRouter", href: "/compare/bitrouter-vs-openrouter" }],
-    blog: [{ label: "Blog", href: "/blog" }],
-    community: [{ label: "GitHub", href: "https://github.com/bitrouter", external: true }],
-  };
-
-  it("returns the full nine-column order when all have links", () => {
-    const cols = buildFooterColumns({ ...dynamic, includeEmpty: true });
-    expect(cols.map((c) => c.title)).toEqual([
-      "Products", "Developers", "Integrations", "Resources",
-      "Compare", "Use Cases", "Blog", "Community", "Company",
+  it("returns the four condensed columns in order", () => {
+    expect(buildFooterColumns().map((c) => c.title)).toEqual([
+      "Product", "Developers", "Resources", "Company",
     ]);
   });
-
-  it("drops columns with zero links (Use Cases is empty by default)", () => {
-    const cols = buildFooterColumns(dynamic);
-    expect(cols.map((c) => c.title)).not.toContain("Use Cases");
-    expect(cols).toHaveLength(8);
+  it("drops Community, Integrations, and Use Cases columns", () => {
+    const titles = buildFooterColumns().map((c) => c.title);
+    expect(titles).not.toContain("Community");
+    expect(titles).not.toContain("Integrations");
+    expect(titles).not.toContain("Use Cases");
   });
-
-  it("injects the dynamic Compare/Blog/Community links", () => {
-    const cols = buildFooterColumns(dynamic);
-    expect(cols.find((c) => c.title === "Compare")!.links).toEqual(dynamic.compare);
-    expect(cols.find((c) => c.title === "Community")!.links[0].external).toBe(true);
+  it("Developers merges the docs entry points", () => {
+    const dev = buildFooterColumns().find((c) => c.title === "Developers")!;
+    expect(dev.links.map((l) => l.label)).toEqual(["Docs", "Quickstart", "API", "CLI", "MCP"]);
+  });
+  it("Resources uses single static links, not expanded lists", () => {
+    const res = buildFooterColumns().find((c) => c.title === "Resources")!;
+    expect(res.links.map((l) => l.label)).toEqual(["Blog", "Compare", "Changelog"]);
   });
 });

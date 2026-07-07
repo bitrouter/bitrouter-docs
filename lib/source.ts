@@ -1,4 +1,4 @@
-import { docs, blog, legal, changelog } from "@/.source/server";
+import { docs, blog, legal, changelog, compare } from "@/.source/server";
 import { loader, type InferPageType } from "fumadocs-core/source";
 import { lucideIconsPlugin } from "fumadocs-core/source/lucide-icons";
 import { i18n } from "./fumadocs-i18n";
@@ -17,6 +17,12 @@ export const blogSource = loader({
   i18n,
 });
 
+export const compareSource = loader({
+  baseUrl: "/compare",
+  source: compare.toFumadocsSource(),
+  i18n,
+});
+
 export const legalSource = loader({
   baseUrl: "/legal",
   source: legal.toFumadocsSource(),
@@ -31,6 +37,7 @@ export const changelogSource = loader({
 
 export type DocsPage = InferPageType<typeof source>;
 export type BlogPage = InferPageType<typeof blogSource>;
+export type ComparePage = InferPageType<typeof compareSource>;
 export type LegalPage = InferPageType<typeof legalSource>;
 export type ChangelogPage = InferPageType<typeof changelogSource>;
 

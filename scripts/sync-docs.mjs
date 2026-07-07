@@ -18,10 +18,35 @@ const REPO = process.env.BITROUTER_DOCS_REPO ?? DEFAULT_REPO;
 const REF = process.env.BITROUTER_DOCS_REF ?? DEFAULT_REF;
 const LOCAL = process.env.BITROUTER_REPO ?? "../bitrouter";
 
-function ghHeaders() {
-  const h = { Accept: "application/vnd.github+json", "User-Agent": "bitrouter-docs-sync" };
+function ghHeaders(accept = "application/vnd.github+json") {
+  const h = { Accept: accept, "User-Agent": "bitrouter-docs-sync" };
   if (process.env.GITHUB_TOKEN) h.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
   return h;
+}
+
+// Fetch with backoff on GitHub rate limiting (429, or 403 with the rate-limit
+// budget exhausted). Honors Retry-After / X-RateLimit-Reset when present.
+async function ghFetch(url, { accept } = {}, attempt = 0) {
+  const res = await fetch(url, { headers: ghHeaders(accept) });
+  const limited =
+    res.status === 429 ||
+    (res.status === 403 && res.headers.get("x-ratelimit-remaining") === "0");
+  if (limited && attempt < 5) {
+    const retryAfter = Number(res.headers.get("retry-after"));
+    const reset = Number(res.headers.get("x-ratelimit-reset"));
+    let waitMs = retryAfter
+      ? retryAfter * 1000
+      : reset
+        ? reset * 1000 - Date.now()
+        : 1000 * 2 ** attempt;
+    waitMs = Math.min(Math.max(waitMs, 1000), 60000) + 250;
+    console.warn(
+      `sync-docs: ${res.status} for ${url}; retry ${attempt + 1}/5 in ${Math.round(waitMs / 1000)}s`,
+    );
+    await new Promise((r) => setTimeout(r, waitMs));
+    return ghFetch(url, { accept }, attempt + 1);
+  }
+  return res;
 }
 
 // Returns a flat list of { path (relative to DOCS_ROOT), read() }.
@@ -42,17 +67,19 @@ async function acquire() {
   }
   console.log(`sync-docs: fetching ${REPO}@${REF}:${DOCS_ROOT} via GitHub`);
   const url = `https://api.github.com/repos/${REPO}/git/trees/${REF}?recursive=1`;
-  const res = await fetch(url, { headers: ghHeaders() });
+  const res = await ghFetch(url);
   if (!res.ok) throw new Error(`GitHub trees API ${res.status}`);
   const { tree } = await res.json();
   return tree
     .filter((n) => n.type === "blob" && n.path.startsWith(`${DOCS_ROOT}/`))
     .map((n) => ({
       path: relative(DOCS_ROOT, n.path),
+      // Read via the authenticated blob API (n.url) rather than
+      // raw.githubusercontent.com: the API honors GITHUB_TOKEN for a 5000/hr
+      // budget, while raw.* is throttled per-IP and 429s on shared runners.
       read: async () => {
-        const raw = `https://raw.githubusercontent.com/${REPO}/${REF}/${n.path}`;
-        const r = await fetch(raw, { headers: ghHeaders() });
-        if (!r.ok) throw new Error(`raw ${r.status} for ${n.path}`);
+        const r = await ghFetch(n.url, { accept: "application/vnd.github.raw" });
+        if (!r.ok) throw new Error(`blob ${r.status} for ${n.path}`);
         return r.text();
       },
     }));

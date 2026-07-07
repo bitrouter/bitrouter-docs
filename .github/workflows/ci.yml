@@ -20,3 +20,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
+        env:
+          # Authenticates the docs/changelog sync fetches against GitHub
+          # (5000/hr) so they don't hit unauthenticated / raw.* rate limits.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

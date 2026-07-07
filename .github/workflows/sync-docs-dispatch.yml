@@ -1,7 +1,15 @@
 # .github/workflows/sync-docs-dispatch.yml
 # Receives a repository_dispatch from the bitrouter repo when docs change,
-# and triggers a Railway redeploy. The sender (in bitrouter CI) and the
-# RAILWAY_DEPLOY_HOOK secret are set up separately (Plan B).
+# and triggers a Railway redeploy of the docs service via the Railway API.
+#
+# Railway has no inbound "deploy hook" URL, so we call the GraphQL API's
+# serviceInstanceRedeploy mutation directly. Configure in this repo:
+#   secret RAILWAY_API_TOKEN       — Railway account/team API token
+#                                    (Account Settings -> Tokens)
+#   var    RAILWAY_SERVICE_ID      — the docs service id
+#   var    RAILWAY_ENVIRONMENT_ID  — the environment id to redeploy
+# The service/environment ids are in the Railway dashboard URL:
+#   railway.com/project/<projectId>/service/<SERVICE_ID>?environmentId=<ENVIRONMENT_ID>
 name: Rebuild docs on upstream change
 on:
   repository_dispatch:
@@ -12,4 +20,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Railway redeploy
-        run: curl -fsSL -X POST "${{ secrets.RAILWAY_DEPLOY_HOOK }}"
+        env:
+          RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
+          RAILWAY_SERVICE_ID: ${{ vars.RAILWAY_SERVICE_ID }}
+          RAILWAY_ENVIRONMENT_ID: ${{ vars.RAILWAY_ENVIRONMENT_ID }}
+        run: |
+          if [ -z "$RAILWAY_API_TOKEN" ] || [ -z "$RAILWAY_SERVICE_ID" ] || [ -z "$RAILWAY_ENVIRONMENT_ID" ]; then
+            echo "::warning::Railway redeploy not configured (need RAILWAY_API_TOKEN secret + RAILWAY_SERVICE_ID/RAILWAY_ENVIRONMENT_ID vars); skipping."
+            exit 0
+          fi
+          body="$(jq -n \
+            --arg e "$RAILWAY_ENVIRONMENT_ID" \
+            --arg s "$RAILWAY_SERVICE_ID" \
+            '{query:"mutation serviceInstanceRedeploy($environmentId: String!, $serviceId: String!) { serviceInstanceRedeploy(environmentId: $environmentId, serviceId: $serviceId) }", variables:{environmentId:$e, serviceId:$s}}')"
+          resp="$(curl -fsS -X POST https://backboard.railway.com/graphql/v2 \
+            -H "Authorization: Bearer $RAILWAY_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "$body")"
+          echo "$resp"
+          if printf '%s' "$resp" | jq -e '.errors' >/dev/null 2>&1; then
+            echo "::error::Railway API returned errors"
+            exit 1
+          fi
+          echo "Railway redeploy triggered."

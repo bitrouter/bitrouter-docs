@@ -1,7 +1,12 @@
 "use client";
-import { defineClientConfig } from "fumadocs-openapi/ui/client";
+import { createOpenAPIPage } from "fumadocs-openapi/ui";
 
-export default defineClientConfig({
+// fumadocs-openapi v11 unified the RSC/client API-page factories into a single
+// `createOpenAPIPage()` that returns a client component. It replaces the v10
+// `defineClientConfig()` + `createAPIPage(openapi, { client })` pair. The server
+// wrapper in ./api-page.tsx resolves the spec and feeds this component its
+// `payload`/`operations` props.
+export const OpenAPIPage = createOpenAPIPage({
   playground: {
     fetchOptions: {
       // Route requests through our same-origin proxy — the upstream

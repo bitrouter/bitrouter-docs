@@ -1,0 +1,49 @@
+---
+title: BitRouter vs Portkey
+metaTitle: BitRouter vs Portkey — Agent-Native Router vs Generic AI Gateway
+description: BitRouter is built for autonomous agents with MCP/ACP gateway, KYA identity, and x402 payments. Portkey is a generic AI gateway. Compare features and use cases.
+competitor: Portkey
+angle: Portkey is a governance layer for your AI stack. BitRouter is an agent-native runtime with a permissionless provider registry and autonomous payment support.
+migrationHref: /docs/get-started/comparison
+migrationLabel: Read the full comparison →
+---
+
+## Portkey manages APIs. BitRouter manages agents.
+
+_Agent-native._ Portkey is an excellent governance layer for teams sending requests to LLMs. BitRouter goes further: it gives each agent a verified identity (KYA), routes calls through an MCP/ACP gateway, and enables agents to pay for their own resources via x402 — without any human in the loop.
+
+**Powered by** KYA agent identity · MCP/ACP gateway · x402 autonomous payments
+
+<CompareTerminal slug="bitrouter-vs-portkey" step="01" />
+
+## Any provider. No gatekeeper. No application.
+
+_Permissionless registry._ Portkey's provider list is curated and maintained internally. BitRouter's provider registry is a public GitHub repo — open a PR with your YAML listing, CI runs schema checks, and your provider goes live on the next refresh. No review queue.
+
+**Powered by** PR-based provider registry · Open listing process
+
+<CompareTerminal slug="bitrouter-vs-portkey" step="02" />
+
+## 3× lower routing overhead.
+
+_Performance._ Portkey's Node.js gateway adds ~15ms of routing overhead p50. BitRouter's Rust async binary runs at ~5ms p50 — flat under any concurrency. For long agent runs making thousands of calls, the compounded difference is measurable.
+
+**Powered by** Rust async runtime · ~5ms p50 overhead
+
+<CompareTerminal slug="bitrouter-vs-portkey" step="03" />
+
+## Feature comparison
+
+BitRouter vs Portkey — side by side.
+
+<CompareTable slug="bitrouter-vs-portkey" />
+
+## When Portkey is the right call
+
+<CompareTradeoffs slug="bitrouter-vs-portkey" />
+
+## Ready to make the switch?
+
+See the full feature comparison and decide which tool fits your stack. If BitRouter is the right call, setup takes under a minute.
+
+<CompareCTA slug="bitrouter-vs-portkey" />

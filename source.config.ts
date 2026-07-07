@@ -38,6 +38,20 @@ export const blog = defineDocs({
   },
 });
 
+export const compare = defineDocs({
+  dir: "content/compare",
+  docs: {
+    schema: frontmatterSchema.extend({
+      competitor: z.string(),
+      angle: z.string(),
+      metaTitle: z.string().optional(),
+      migrationHref: z.string().optional(),
+      migrationLabel: z.string().optional(),
+    }),
+  },
+  meta: { schema: metaSchema },
+});
+
 export const changelog = defineDocs({
   dir: "content/changelog",
   docs: {

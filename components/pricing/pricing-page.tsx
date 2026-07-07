@@ -28,19 +28,11 @@ const PAYG_FEATS: Feat[] = [
   "Per-run observability",
 ];
 
-const SUB_TIERS: { price: string; feats: Feat[] }[] = [
-  {
-    price: "$20",
-    feats: ["20 req / min", "1M tokens / day", "All open-source models", "Frontier via passthrough"],
-  },
-  {
-    price: "$100",
-    feats: ["60 req / min", "6M tokens / day", "All open-source models", "Frontier via passthrough"],
-  },
-  {
-    price: "$200",
-    feats: ["150 req / min", "20M tokens / day", "All open-source models", "Priority routing"],
-  },
+const SUB_FEATS: Feat[] = [
+  "20 req / min",
+  "1M tokens / day",
+  "All open-source models",
+  "Frontier via passthrough",
 ];
 
 const OUTCOME_FEATS: Feat[] = [
@@ -63,42 +55,21 @@ function FeatList({ items }: { items: Feat[] }) {
 }
 
 function SubscriptionCol() {
-  const [t, setT] = React.useState(0);
-  const tier = SUB_TIERS[t];
   return (
     <div className="pcol">
       <span className="pcol-tier">override</span>
       <span className="pcol-name">Subscription</span>
-      <div className="subtabs">
-        {SUB_TIERS.map((s, i) => (
-          <button
-            key={s.price}
-            type="button"
-            className={"subtab" + (i === t ? " on" : "")}
-            onClick={() => {
-              setT(i);
-              posthog.capture("subscription_tier_viewed", { tier: s.price });
-            }}
-          >
-            {s.price}
-          </button>
-        ))}
-      </div>
       <div className="pcol-price">
-        {tier.price} <small>/ mo</small>
+        $20 <small>/ mo</small>
       </div>
       <p className="pcol-desc">
         A flat monthly rate for the open-source models that hold the routine 90%.
         Frontier still runs at passthrough on the same key.
       </p>
-      <FeatList items={tier.feats} />
-      <a
-        href={SIGN_IN_URL}
-        className="pcol-cta"
-        onClick={() => posthog.capture("pricing_layer_cta_clicked", { tier: "subscription" })}
-      >
-        Subscribe
-      </a>
+      <FeatList items={SUB_FEATS} />
+      <span className="pcol-cta" aria-disabled="true" data-coming-soon="true">
+        Coming soon
+      </span>
     </div>
   );
 }
@@ -322,8 +293,8 @@ const FAQS: { q: string; a: React.ReactNode }[] = [
     a: "Yes. Passthrough (0% markup) is the substrate under everything. Subscription overrides it with a flat rate for open-source models — frontier calls still run at passthrough. Outcome-based sits on top as an engagement layer for teams routing production loops at scale. You're not picking one wall; you're stacking layers.",
   },
   {
-    q: "What's included in the Subscription tiers?",
-    a: "$20, $100, and $200 per month buy progressively higher rate limits and throughput on the leading open-source models — Kimi, GLM, DeepSeek, Qwen, MiniMax, and more. Frontier models stay one alias away at passthrough. If you hit your subscription's limits, BitRouter falls back to pay-as-you-go so your workloads keep running.",
+    q: "What's included in the Subscription plan?",
+    a: "The $20/month plan buys flat-rate access to the leading open-source models — Kimi, GLM, DeepSeek, Qwen, MiniMax, and more — at 20 requests/min and 1M tokens/day. Frontier models stay one alias away at passthrough. If you hit the plan's limits, BitRouter falls back to pay-as-you-go so your workloads keep running. (Subscription billing is coming soon.)",
   },
   {
     q: "Can I self-host for free?",
@@ -380,9 +351,7 @@ const PRODUCT_JSONLD = {
   brand: { "@type": "Brand", name: "BitRouter" },
   offers: [
     { "@type": "Offer", name: "Pay-as-you-go", price: "0", priceCurrency: "USD", description: "0% markup — the exact upstream provider price on every model." },
-    { "@type": "Offer", name: "Subscription — Starter", price: "20", priceCurrency: "USD", description: "Flat monthly rate for open-source models." },
-    { "@type": "Offer", name: "Subscription — Growth", price: "100", priceCurrency: "USD", description: "Higher rate limits and throughput." },
-    { "@type": "Offer", name: "Subscription — Scale", price: "200", priceCurrency: "USD", description: "Highest rate limits and priority routing." },
+    { "@type": "Offer", name: "Subscription", price: "20", priceCurrency: "USD", description: "Flat monthly rate for open-source models." },
   ],
 };
 

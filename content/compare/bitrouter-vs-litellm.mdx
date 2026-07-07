@@ -1,0 +1,49 @@
+---
+title: BitRouter vs LiteLLM
+metaTitle: BitRouter vs LiteLLM — One Binary vs an Embedded Python Proxy
+description: BitRouter is a zero-ops open-source LLM router that optimizes agent cost and performance. LiteLLM is an embedded Python library. Compare deployment, routing, and cost efficiency.
+competitor: LiteLLM
+angle: LiteLLM is a Python library you embed in your app. BitRouter is a binary you drop in front of everything — no code changes, no infra.
+migrationHref: /docs/guides/migrate-from-litellm
+migrationLabel: Read the migration guide →
+---
+
+## One binary. No Postgres. No Redis. No Docker.
+
+_Zero-ops._ Running LiteLLM in production means managing Postgres, Redis, Docker Compose, and a proxy process. BitRouter is a single binary with no runtime dependencies — drop it in a container, a CI step, or run it from the terminal.
+
+**Powered by** Single binary · Zero infrastructure deps
+
+<CompareTerminal slug="bitrouter-vs-litellm" step="01" />
+
+## Rust async vs the Python GIL.
+
+_Performance._ LiteLLM is Python — under high concurrency, the single-process asyncio event loop saturates and tail latency climbs. BitRouter's Rust async runtime keeps latency flat at any concurrency level. At 1k req/s, that difference is material.
+
+**Powered by** Rust async runtime · Flat tail latency
+
+<CompareTerminal slug="bitrouter-vs-litellm" step="02" />
+
+## Guardrails, identity, and payments — not an SDK.
+
+_Agent runtime._ LiteLLM has no in-line guardrails, no agent identity, no MCP/ACP gateway, and no payment handling. BitRouter ships all of them at the router layer — configured once, applied to every agent.
+
+**Powered by** Router-level guardrails · MCP/ACP gateway · x402 payments
+
+<CompareTerminal slug="bitrouter-vs-litellm" step="03" />
+
+## Feature comparison
+
+BitRouter vs LiteLLM — side by side.
+
+<CompareTable slug="bitrouter-vs-litellm" />
+
+## When LiteLLM is the right call
+
+<CompareTradeoffs slug="bitrouter-vs-litellm" />
+
+## Ready to switch?
+
+Drop-in replacement — change one URL and one key. The migration guide walks you through it in under five minutes.
+
+<CompareCTA slug="bitrouter-vs-litellm" />

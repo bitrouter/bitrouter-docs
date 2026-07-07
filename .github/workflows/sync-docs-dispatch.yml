@@ -4,8 +4,10 @@
 #
 # Railway has no inbound "deploy hook" URL, so we call the GraphQL API's
 # serviceInstanceRedeploy mutation directly. Configure in this repo:
-#   secret RAILWAY_API_TOKEN       — Railway account/team API token
-#                                    (Account Settings -> Tokens)
+#   secret RAILWAY_TOKEN           — a Railway *project* token, scoped to the
+#                                    docs project+environment (Project Settings
+#                                    -> Tokens). Sent as the Project-Access-Token
+#                                    header (project tokens do NOT use Bearer).
 #   var    RAILWAY_SERVICE_ID      — the docs service id
 #   var    RAILWAY_ENVIRONMENT_ID  — the environment id to redeploy
 # The service/environment ids are in the Railway dashboard URL:
@@ -21,12 +23,12 @@ jobs:
     steps:
       - name: Trigger Railway redeploy
         env:
-          RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_SERVICE_ID: ${{ vars.RAILWAY_SERVICE_ID }}
           RAILWAY_ENVIRONMENT_ID: ${{ vars.RAILWAY_ENVIRONMENT_ID }}
         run: |
-          if [ -z "$RAILWAY_API_TOKEN" ] || [ -z "$RAILWAY_SERVICE_ID" ] || [ -z "$RAILWAY_ENVIRONMENT_ID" ]; then
-            echo "::warning::Railway redeploy not configured (need RAILWAY_API_TOKEN secret + RAILWAY_SERVICE_ID/RAILWAY_ENVIRONMENT_ID vars); skipping."
+          if [ -z "$RAILWAY_TOKEN" ] || [ -z "$RAILWAY_SERVICE_ID" ] || [ -z "$RAILWAY_ENVIRONMENT_ID" ]; then
+            echo "::warning::Railway redeploy not configured (need RAILWAY_TOKEN secret + RAILWAY_SERVICE_ID/RAILWAY_ENVIRONMENT_ID vars); skipping."
             exit 0
           fi
           body="$(jq -n \
@@ -34,7 +36,7 @@ jobs:
             --arg s "$RAILWAY_SERVICE_ID" \
             '{query:"mutation serviceInstanceRedeploy($environmentId: String!, $serviceId: String!) { serviceInstanceRedeploy(environmentId: $environmentId, serviceId: $serviceId) }", variables:{environmentId:$e, serviceId:$s}}')"
           resp="$(curl -fsS -X POST https://backboard.railway.com/graphql/v2 \
-            -H "Authorization: Bearer $RAILWAY_API_TOKEN" \
+            -H "Project-Access-Token: $RAILWAY_TOKEN" \
             -H "Content-Type: application/json" \
             -d "$body")"
           echo "$resp"

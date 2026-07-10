@@ -58,6 +58,7 @@ export const changelog = defineDocs({
     schema: frontmatterSchema.extend({
       date: z.string(), // ISO YYYY-MM-DD (required)
       version: z.string().optional(),
+      product: z.enum(["oss", "cloud"]).optional(),
       tags: z.array(z.string()).optional(),
       breaking: z.boolean().optional(),
     }),

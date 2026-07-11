@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import posthog from "posthog-js";
+import { getCalApi } from "@calcom/embed-react";
 import { navItemsFor, resolveHref, type HeaderConfig } from "./nav-config";
 import { useChangelogUnseen } from "@/components/changelog/use-changelog-unseen";
 
@@ -57,6 +59,48 @@ function cn(...parts: Array<string | false | null | undefined>): string {
 const NAV_ITEM =
   "rounded-[9px] px-3.5 py-2 font-mono text-[13px] lowercase tracking-tight transition-colors";
 
+/**
+ * "book demo" — the secondary header CTA that opens the founder-call Cal.com
+ * embed (the same `founder-call` event the enterprise page books). Always
+ * shown, for prospects and customers alike. Cal's `getCalApi("ui")` must be
+ * initialised once on the page (see `useCalFounderCall`) for the data-cal
+ * attributes to take over the click.
+ */
+function BookDemoButton({
+  className,
+  location,
+}: {
+  className: string;
+  location: string;
+}): React.ReactElement {
+  return (
+    <button
+      type="button"
+      data-cal-namespace="founder-call"
+      data-cal-link="kelsenliu/founder-call"
+      data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
+      onClick={() => posthog.capture("founder_call_booked", { location })}
+      className={className}
+    >
+      book demo
+    </button>
+  );
+}
+
+/** Initialise the Cal.com founder-call embed once for the header CTA. */
+function useCalFounderCall(): void {
+  React.useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const cal = await getCalApi({ namespace: "founder-call" });
+      if (!cancelled) cal("ui", { hideEventTypeDetails: false, layout: "month_view" });
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+}
+
 function initials(session: HeaderSession): string {
   const base = session.user.name?.trim() || session.user.email;
   const parts = base.split(/[\s@._-]+/).filter(Boolean);
@@ -91,6 +135,7 @@ export function SiteHeaderBody({
   const isAuthed = Boolean(session);
   const items = navItemsFor(isAuthed);
   const changelogUnseen = useChangelogUnseen();
+  useCalFounderCall();
   return (
     <div className="flex h-12 w-full items-center gap-1 px-3 sm:px-4">
       {leadingSlot ? <div className="flex items-center pr-1">{leadingSlot}</div> : null}
@@ -140,6 +185,12 @@ export function SiteHeaderBody({
         <div className="hidden items-center gap-2 px-1 sm:flex">{utilitySlot}</div>
       ) : null}
 
+      {/* Secondary CTA — book a founder call. Shown for all visitors. */}
+      <BookDemoButton
+        location="header"
+        className="hidden shrink-0 whitespace-nowrap rounded-[10px] border border-foreground/[0.12] px-4 py-2 font-mono text-[13px] lowercase tracking-tight text-foreground/70 transition-colors hover:border-foreground/25 hover:bg-foreground/[0.04] hover:text-foreground sm:inline-flex"
+      />
+
       {/* Auth zone */}
       {isAuthed && session ? (
         <AccountMenu
@@ -167,6 +218,7 @@ export function SiteHeaderBody({
         pathname={pathname}
         onSignOut={onSignOut}
         showSignOut={showSignOut}
+        utilitySlot={utilitySlot}
       />
     </div>
   );
@@ -320,12 +372,14 @@ function MobileMenu({
   session,
   onSignOut,
   showSignOut,
+  utilitySlot,
 }: {
   config: HeaderConfig;
   session: HeaderSession | null | undefined;
   pathname?: string;
   onSignOut?: () => void;
   showSignOut: boolean;
+  utilitySlot?: React.ReactNode;
 }) {
   const [open, setOpen] = React.useState(false);
   const isAuthed = Boolean(session);
@@ -375,6 +429,15 @@ function MobileMenu({
                 )}
               </a>
             ))}
+            {utilitySlot ? (
+              <div className="mt-1 flex items-center border-t border-foreground/[0.06] px-1 pt-2.5">
+                {utilitySlot}
+              </div>
+            ) : null}
+            <BookDemoButton
+              location="header_mobile"
+              className="mt-2 flex items-center justify-center rounded-[10px] border border-foreground/[0.12] px-4 py-2.5 font-mono text-[13px] lowercase tracking-tight text-foreground/70 transition-colors hover:bg-foreground/[0.05] hover:text-foreground"
+            />
             <div className="mt-2 flex items-center gap-2">
               {isAuthed && session ? (
                 showSignOut && onSignOut ? (

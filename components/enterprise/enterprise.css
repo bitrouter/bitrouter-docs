@@ -147,3 +147,72 @@
   flex-wrap: wrap;
   margin-top: 26px;
 }
+
+/* ---------- FinOps: the tokenmaxxing failure band ---------- */
+.br-mono .efail-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+@media (max-width: 880px) {
+  .br-mono .efail-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 520px) {
+  .br-mono .efail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.br-mono .efail {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius);
+  background: var(--panel);
+  padding: 20px 18px 16px;
+}
+.br-mono .efail-n {
+  font-family: var(--display);
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--fg);
+  line-height: 1;
+}
+.br-mono .efail-b {
+  font-family: var(--body);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--fg-dim);
+  flex: 1 1 auto;
+}
+.br-mono .efail-src {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--line-bright);
+  align-self: flex-start;
+  transition: color 0.15s;
+}
+.br-mono .efail-src:hover {
+  color: var(--fg-dim);
+}
+
+/* attribution-gap callout */
+.br-mono .egap {
+  margin-top: 20px;
+  border-left: 2px solid var(--accent);
+  padding: 8px 0 8px 16px;
+  font-family: var(--body);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--fg-dim);
+  max-width: 60ch;
+}
+.br-mono .egap strong {
+  color: var(--fg);
+  font-weight: 600;
+}

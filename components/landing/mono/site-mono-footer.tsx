@@ -6,7 +6,6 @@ import "./mono.css";
 
 const FOUNDERS_CONTACT = "mailto:contact@bitrouter.ai";
 const STATUS_URL = "https://status.bitrouter.ai";
-const INTEGRATIONS_URL = "/integrations";
 
 /**
  * Site-wide mono-themed footer (condensed, Option A). Brand + social-icon row
@@ -28,20 +27,6 @@ export function SiteMonoFooter() {
                 bitrouter<span className="brand-dot">.</span>
               </span>
             </Link>
-            <div className="footer-social" aria-label="BitRouter on social media">
-              {SOCIAL_LINKS.map(({ label, href, icon: Icon }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="footer-social-link"
-                  aria-label={label}
-                >
-                  <Icon className="footer-social-icon" aria-hidden />
-                </a>
-              ))}
-            </div>
           </div>
 
           <div className="footer-cols">
@@ -71,14 +56,31 @@ export function SiteMonoFooter() {
                 )}
               </nav>
             ))}
+
+            {/* Community — the sixth section: social links rendered as labeled
+                icon+name rows, so they read clearly instead of as tiny icons. */}
+            <nav className="footer-col" aria-label="Community">
+              <h2 className="footer-col-h">Community</h2>
+              <div className="footer-social-col">
+                {SOCIAL_LINKS.map(({ label, href, icon: Icon }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="footer-social-item"
+                  >
+                    <Icon aria-hidden />
+                    {label}
+                  </a>
+                ))}
+              </div>
+            </nav>
           </div>
 
           <div className="footer-bar">
             <div className="footer-bar-left">
               <span className="footer-copy">© {year} BitRouter, Inc.</span>
-              <Link href={INTEGRATIONS_URL} className="footer-link">
-                Integrations
-              </Link>
             </div>
             <div className="footer-bar-right">
               <a href={FOUNDERS_CONTACT} className="footer-founders">

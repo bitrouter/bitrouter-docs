@@ -1,8 +1,7 @@
 "use client";
 
 import { Suspense, useMemo, useState } from "react";
-import Link from "next/link";
-import { ArrowUpRight, Cpu, Loader2, Network } from "lucide-react";
+import { ArrowUpRight, Cpu, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
@@ -221,12 +220,6 @@ function CompactHeader({
             {API_BASE_URL}
           </code>
           <div className="flex items-center gap-2">
-            <Link href="/providers">
-              <Button variant="ghost" size="sm">
-                <Network className="mr-1 size-3" />
-                {t("ctaProviders")}
-              </Button>
-            </Link>
             <a
               href="https://cloud.bitrouter.ai"
               target="_blank"

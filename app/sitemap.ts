@@ -7,7 +7,6 @@ import {
   getChangelogItems,
 } from "@/lib/source";
 import { fetchModels } from "@/lib/models-server";
-import { fetchProviders } from "@/lib/providers-server";
 
 export const dynamic = "force-static";
 
@@ -52,18 +51,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return entries;
   });
 
-  // ── Programmatic model + provider pages (data fetched at build) ──
-  const [models, providers] = await Promise.all([
-    fetchModels(),
-    fetchProviders(),
-  ]);
+  // ── Programmatic model pages (data fetched at build) ──
+  const models = await fetchModels();
   const modelPages: Entry[] = models.map((m) => ({
     url: `${BASE_URL}/models/${m.id}`,
-    changeFrequency: "weekly",
-    priority: 0.6,
-  }));
-  const providerPages: Entry[] = providers.map((p) => ({
-    url: `${BASE_URL}/providers/${p.slug}`,
     changeFrequency: "weekly",
     priority: 0.6,
   }));
@@ -101,12 +92,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     [
       { url: BASE_URL, file: "app/(home)/page.tsx", priority: 1.0, changeFrequency: "weekly" },
       { url: `${BASE_URL}/models`, file: "app/(home)/models/page.tsx", priority: 0.9, changeFrequency: "weekly" },
-      { url: `${BASE_URL}/providers`, file: "app/(home)/providers/page.tsx", priority: 0.8, changeFrequency: "weekly" },
       { url: `${BASE_URL}/pricing`, file: "app/(home)/pricing/page.tsx", priority: 0.8, changeFrequency: "monthly" },
       { url: `${BASE_URL}/compare/bitrouter-vs-openrouter`, file: "app/(home)/compare/bitrouter-vs-openrouter/page.tsx", priority: 0.9, changeFrequency: "monthly" },
       { url: `${BASE_URL}/compare/bitrouter-vs-litellm`, file: "app/(home)/compare/bitrouter-vs-litellm/page.tsx", priority: 0.9, changeFrequency: "monthly" },
       { url: `${BASE_URL}/compare/bitrouter-vs-portkey`, file: "app/(home)/compare/bitrouter-vs-portkey/page.tsx", priority: 0.9, changeFrequency: "monthly" },
       { url: `${BASE_URL}/enterprise`, file: "app/(home)/enterprise/page.tsx", priority: 0.6, changeFrequency: "monthly" },
+      { url: `${BASE_URL}/startup`, file: "app/(home)/startup/page.tsx", priority: 0.6, changeFrequency: "monthly" },
       { url: `${BASE_URL}/about`, file: "app/(home)/about/page.tsx", priority: 0.5, changeFrequency: "monthly" },
       { url: `${BASE_URL}/brand`, file: "app/(home)/brand/page.tsx", priority: 0.4, changeFrequency: "yearly" },
       { url: `${BASE_URL}/blog`, file: "app/blog/(index)/page.tsx", priority: 0.6, changeFrequency: "weekly" },
@@ -131,7 +122,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...staticPages,
     zhLanding,
     ...modelPages,
-    ...providerPages,
     ...blogPages,
     ...changelogPages,
     ...legalPages,

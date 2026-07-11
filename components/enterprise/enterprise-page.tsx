@@ -1,8 +1,10 @@
 "use client";
 
-/* Enterprise / outcome-based — mono/dev redesign. The budget-guarantee pitch:
-   hero (the one-liner) → guarantee + per-run receipt → how it works (measure /
-   route / bill) → free-audit CTA → production-ready reassurance → FAQ → footer.
+/* Enterprise — FinOps token-cost governance for AI transformation. The pitch:
+   hero (govern token spend across the org) → the tokenmaxxing trap (cited
+   failure band) → what we govern (budgets · showback · quotas · unit econ) →
+   the guarantee + per-run receipt → how it works (measure / route / bill) →
+   free-audit CTA → self-serve vs enterprise → FAQ.
 
    "Talk to the founders" books the Cal.com founder-call embed. */
 
@@ -42,24 +44,160 @@ function Hero() {
     <section className="page-head">
       <div className="wrap">
         <div className="eyebrow" style={{ marginBottom: 18 }}>
-          <span className="idx">//</span> outcome-based · enterprise
+          <span className="idx">//</span> finops · enterprise
         </div>
-        <h1 className="h-display page-title" style={{ maxWidth: "17ch" }}>
-          We only get paid when we cut your bill.
+        <h1 className="h-display page-title" style={{ maxWidth: "18ch" }}>
+          Govern token spend across the org.
         </h1>
         <p className="page-lead">
-          Run your full production loop through BitRouter. We guarantee it stays
-          under the budget you set, and take 20% of what we save you against your
-          measured baseline — only on runs that clear the quality bar you
-          defined, and never more than we saved you.
+          FinOps for AI. BitRouter puts every team&rsquo;s token spend under one
+          budget &mdash; real-time attribution, showback and chargeback, and
+          quota governance &mdash; behind a router that holds each workload
+          under the cap. We tie our fee to what we save you, so governance pays
+          for itself.
         </p>
         <div className="ehero-actions">
           <FounderCTA location="enterprise_hero">
-            Talk to the founders →
+            Talk to the founders &rarr;
           </FounderCTA>
           <Link href="/pricing" className="btn btn-ghost">
             See all pricing
           </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- the tokenmaxxing trap (cited failure band) ---------------- */
+type Fail = { n: string; b: React.ReactNode; src: string; href: string };
+const FAILS: Fail[] = [
+  {
+    n: "15×",
+    b: "Multi-agent systems burn roughly 15× the tokens of a plain chat — and in one eval, token volume alone explained 80% of performance.",
+    src: "Anthropic Engineering, 2025",
+    href: "https://www.anthropic.com/engineering/multi-agent-research-system",
+  },
+  {
+    n: "$8.4B",
+    b: "Enterprise model-API spend more than doubled in six months — even as the per-token price kept falling. Usage, not price, is the cost driver.",
+    src: "Menlo Ventures, 2025",
+    href: "https://menlovc.com/perspective/2025-mid-year-llm-market-update/",
+  },
+  {
+    n: "~95%",
+    b: "of enterprise GenAI pilots show no measurable P&L return — spend that never converts into governed, attributable value.",
+    src: "MIT NANDA, 2025",
+    href: "https://fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo/",
+  },
+  {
+    n: "$37B",
+    b: "Enterprise GenAI spend in 2025, up from $1.7B in 2023 — growing ~3× a year, faster than any team can forecast off last quarter's run rate.",
+    src: "FinOps Foundation, 2026",
+    href: "https://www.finops.org/insights/token-economics-the-atomic-unit-of-ai-value/",
+  },
+];
+
+function FailureBand() {
+  return (
+    <section className="sec">
+      <div className="wrap">
+        <div className="sec-head">
+          <div
+            className="eyebrow sec-eyebrow"
+            style={{ ["--sec-accent" as string]: "var(--accent)" }}
+          >
+            <span className="idx">//</span> the tokenmaxxing trap
+          </div>
+          <h2 className="h-display sec-title">
+            Token spend scales faster than anyone forecasts.
+          </h2>
+          <p className="sec-lead">
+            Agentic loops re-send their whole context every turn, so cost
+            compounds with the task &mdash; not the price list. Roll that across
+            every team and the bill outruns the budget before finance sees it.
+          </p>
+        </div>
+        <div className="efail-grid">
+          {FAILS.map((f) => (
+            <div className="efail" key={f.src}>
+              <span className="efail-n">{f.n}</span>
+              <p className="efail-b">{f.b}</p>
+              <a
+                className="efail-src"
+                href={f.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {f.src}
+              </a>
+            </div>
+          ))}
+        </div>
+        <p className="egap">
+          And the deeper problem: a provider invoice shows spend by API key
+          &mdash; <strong>never</strong> by team, feature, or customer. You
+          can&rsquo;t govern what you can&rsquo;t attribute, and that
+          instrumentation layer doesn&rsquo;t exist unless someone builds it.
+          That&rsquo;s the layer we are.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- what we govern ---------------- */
+const CONTROLS: { k: string; v: string }[] = [
+  {
+    k: "Org-wide token budgets",
+    v: "Hard caps per team, app, and environment, with alerts that fire before you blow through them — not at month-end.",
+  },
+  {
+    k: "Showback & chargeback",
+    v: "Every token attributed to a team, feature, and customer — the breakdown your provider invoice never gives finance.",
+  },
+  {
+    k: "Rate & quota governance",
+    v: "Per-key and per-team quotas that stop a runaway loop before it becomes a line item.",
+  },
+  {
+    k: "Anomaly detection",
+    v: "Spend spikes and looping agents flagged in real time, so a single bad deploy can’t quietly 10× the bill.",
+  },
+  {
+    k: "Unit economics",
+    v: "Cost per request, per user, per workflow, per outcome — the numbers that tell you whether a feature pays for itself.",
+  },
+  {
+    k: "Optimizing router",
+    v: "Every call routed to the cheapest model that clears your quality bar, holding each workload under its budget automatically.",
+  },
+];
+
+function Govern() {
+  return (
+    <section className="sec">
+      <div className="wrap">
+        <div className="sec-head">
+          <div
+            className="eyebrow sec-eyebrow"
+            style={{ ["--sec-accent" as string]: "var(--term-ok)" }}
+          >
+            <span className="idx">//</span> what we govern
+          </div>
+          <h2 className="h-display sec-title">
+            The controls a token bill needs.
+          </h2>
+        </div>
+        <div className="lockin-grid">
+          {CONTROLS.map((c) => (
+            <div className="lockin-item" key={c.k}>
+              <span className="lockin-k">
+                <span className="lockin-dot">●</span> {c.k}
+              </span>
+              <span className="lockin-v">{c.v}</span>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -81,10 +219,11 @@ function Guarantee() {
           <h2 className="h-display sec-title">Guaranteed under budget.</h2>
           <p className="sec-lead">
             You set a monthly budget and a measurable quality floor. We hold your
-            loop under budget — or credit you the difference. The budget is the
-            hard promise; quality is the bar a run has to clear before we bill a
-            cent. Every run is settled on an auditable receipt, so there&rsquo;s
-            no reconciliation meeting — just the math, in the open.
+            loop under budget &mdash; or credit you the difference. The budget is
+            the hard promise; quality is the bar a run has to clear before we
+            bill a cent. Every run is settled on an auditable receipt, so
+            there&rsquo;s no reconciliation meeting &mdash; just the math, in the
+            open.
           </p>
         </div>
 
@@ -128,12 +267,12 @@ const STEPS: { n: string; h: string; b: string }[] = [
   {
     n: "01",
     h: "Measure",
-    b: "A free two-week audit runs your real traffic through BitRouter in passthrough — no markup — to measure your true cost-per-run and quality baseline. You pay nothing until we beat a number you watched us record.",
+    b: "A free two-week audit runs your real traffic through BitRouter in passthrough — no markup — to measure your true cost-per-run, quality baseline, and where spend is really going. You pay nothing until we beat a number you watched us record.",
   },
   {
     n: "02",
     h: "Route",
-    b: "We route every call to the cheapest model that clears your quality floor, keeping the loop under your budget. When quality can't be held cheaply, we fall back to protect it — on our dime, not yours.",
+    b: "We route every call to the cheapest model that clears your quality floor, keeping each workload under its budget. When quality can't be held cheaply, we fall back to protect it — on our dime, not yours.",
   },
   {
     n: "03",
@@ -185,12 +324,13 @@ function AuditCta() {
         </h2>
         <p className="sec-lead" style={{ maxWidth: "52ch" }}>
           Two weeks, metadata-only, prompts never leave your infra. You get a
-          hard number — what you&rsquo;re overpaying, and what we can give back —
-          with no commitment to continue.
+          hard number &mdash; what you&rsquo;re overpaying, where it&rsquo;s
+          going, and what we can give back &mdash; with no commitment to
+          continue.
         </p>
         <div className="ehero-actions">
           <FounderCTA location="enterprise_audit">
-            Book a founder call →
+            Book a founder call &rarr;
           </FounderCTA>
         </div>
       </div>
@@ -205,8 +345,9 @@ type ERow = { feat: string; self: Mark; ent: Mark; hi?: boolean };
 const EROWS: ERow[] = [
   { feat: "Pricing", self: "0% markup · subscription", ent: "Outcome-based" },
   { feat: "Budget guarantee", self: "no", ent: "yes" },
-  { feat: "Volume discounts", self: "no", ent: "yes", hi: true },
-  { feat: "Startup-program credits", self: "Apply", ent: "Included", hi: true },
+  { feat: "Org budgets & alerts", self: "no", ent: "yes", hi: true },
+  { feat: "Showback / chargeback", self: "no", ent: "yes", hi: true },
+  { feat: "Volume discounts", self: "no", ent: "yes" },
   { feat: "Free workload audit", self: "no", ent: "yes" },
   { feat: "Forward-deployed onboarding", self: "no", ent: "yes" },
   { feat: "Private by default", self: "yes", ent: "yes" },
@@ -239,8 +380,8 @@ function EnterpriseCompare() {
           </div>
           <h2 className="h-display sec-title">What enterprise adds.</h2>
           <p className="sec-lead">
-            Everything in self-serve, plus the budget guarantee, volume
-            discounts, startup-program credits, and hands-on onboarding to run
+            Everything in self-serve, plus the budget guarantee, org-wide budgets
+            and chargeback, volume discounts, and hands-on onboarding to run
             production loops at scale.
           </p>
         </div>
@@ -282,7 +423,11 @@ function EnterpriseCompare() {
 }
 
 /* ---------------- FAQ ---------------- */
-const FAQS: { q: string; a: React.ReactNode }[] = [
+const FAQS: { q: string; a: string }[] = [
+  {
+    q: "Can you attribute spend to specific teams or customers?",
+    a: "Yes — that's the point. Every call is tagged and rolled up into showback or chargeback by team, app, feature, and customer, so finance can bill it back internally. Your provider invoice only shows spend by API key; we rebuild the breakdown it's missing.",
+  },
   {
     q: "How do you set the baseline you bill against?",
     a: "We measure it. During the free audit we run your real traffic through BitRouter in passthrough and record your actual cost-per-run and quality pass-rate — that measured number is the agreed baseline, adjusted for volume and re-indexed as model prices move. It's your own before, not a strawman.",
@@ -341,7 +486,7 @@ const FAQ_JSONLD = {
   mainEntity: FAQS.map((f) => ({
     "@type": "Question",
     name: f.q,
-    acceptedAnswer: { "@type": "Answer", text: String(f.a) },
+    acceptedAnswer: { "@type": "Answer", text: f.a },
   })),
 };
 
@@ -361,6 +506,8 @@ export function EnterprisePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSONLD) }}
       />
       <Hero />
+      <FailureBand />
+      <Govern />
       <Guarantee />
       <HowItWorks />
       <AuditCta />

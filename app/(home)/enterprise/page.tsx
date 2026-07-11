@@ -9,10 +9,10 @@ export default function Page() {
 
 export function generateMetadata(): Metadata {
   const description =
-    "Run your agentic loop through BitRouter: we guarantee it stays under budget and bill 20% of what we save you, only on runs that meet your quality floor.";
-  const ogTitle = "BitRouter Enterprise — we only get paid when we cut your bill";
+    "FinOps for AI: govern token spend across every team with real-time budgets, showback and chargeback, and an optimizing router — with our fee tied to what we save you.";
+  const ogTitle = "BitRouter Enterprise — govern token spend across the org";
   return {
-    title: "Outcome-based pricing",
+    title: "Token cost governance",
     description,
     alternates: { canonical: "https://bitrouter.ai/enterprise" },
     openGraph: {

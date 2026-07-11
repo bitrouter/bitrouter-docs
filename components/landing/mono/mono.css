@@ -2365,8 +2365,8 @@
 }
 .br-mono .footer-mega .footer-cols {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 30px 40px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 34px 40px;
 }
 @media (max-width: 760px) {
   .br-mono .footer-mega .footer-cols {
@@ -2378,6 +2378,29 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 26px 24px;
   }
+}
+
+/* Community column — social links as labeled icon + name rows. */
+.br-mono .footer-social-col {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.br-mono .footer-social-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13.5px;
+  color: var(--muted);
+  transition: color 0.15s;
+}
+.br-mono .footer-social-item:hover {
+  color: var(--fg);
+}
+.br-mono .footer-social-item svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
 }
 .br-mono .footer-mega nav.footer-col {
   margin: 0;

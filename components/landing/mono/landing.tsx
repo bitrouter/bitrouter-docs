@@ -21,6 +21,7 @@ import {
 } from "./terminal";
 import { ProviderIcon } from "../../models/provider-icon";
 import { HarnessIcon } from "./harness-icon";
+import { Benchmark } from "./benchmark";
 
 const SIGN_IN_URL = "https://cloud.bitrouter.ai";
 
@@ -1478,6 +1479,9 @@ export function MonoLanding() {
     <>
       <Hero />
       <NoLockIn />
+      {/* Benchmark proof leads: the measured cost/score win, right under the
+          hero and before the "how we optimize" mechanism. */}
+      <Benchmark />
       {/* Social proof temporarily hidden until we have more real tweets.
           Re-enable by uncommenting: <SocialProof /> */}
       {/* The Loop replaces the old Problems + Mechanisms sections — the pillars

@@ -2507,3 +2507,600 @@
 :root:not(.dark) .br-mono .footer-copy {
   color: var(--muted);
 }
+
+/* ============================================================
+   BENCHMARK — Pareto scatter (left) + receipt table (right).
+   Reuses .moat-fig / .moat-legend for the figure card.
+   ============================================================ */
+.br-mono .bench {
+  padding-top: 40px;
+}
+
+/* --- benchmark tabs --- */
+.br-mono .bench-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 30px 0 26px;
+}
+.br-mono .bench-tab {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  letter-spacing: -0.01em;
+  color: var(--muted);
+  background: var(--panel);
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  padding: 7px 15px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.br-mono .bench-tab:hover {
+  color: var(--fg);
+  border-color: var(--line-bright);
+}
+.br-mono .bench-tab.on {
+  color: var(--bg);
+  background: var(--term-ok);
+  border-color: var(--term-ok);
+}
+.br-mono .bench-tab.pending {
+  color: var(--faint);
+  border-style: dashed;
+}
+.br-mono .bench-tab.pending.on {
+  color: var(--bg);
+  background: var(--muted);
+  border-color: var(--muted);
+}
+.br-mono .bench-tab-badge {
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--faint);
+  border: 1px solid var(--line-2);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+.br-mono .bench-tab.on .bench-tab-badge {
+  color: var(--bg);
+  border-color: rgba(0, 0, 0, 0.25);
+}
+
+/* --- two-column layout: scatter left, data table right --- */
+.br-mono .bench-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 44px;
+  align-items: start;
+}
+.br-mono .bench-bench-name {
+  font-size: 12.5px;
+  color: var(--fg-dim);
+}
+.br-mono .bench-bench-n {
+  color: var(--faint);
+}
+
+/* --- scatter chart: no card chrome, sits on the section bg --- */
+.br-mono .bench-chart {
+  position: relative;
+}
+.br-mono .bench-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.br-mono .bench-dot {
+  fill: var(--faint);
+  stroke: var(--bg);
+  stroke-width: 1.5;
+}
+.br-mono .bench-dot-lbl {
+  fill: var(--muted);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: -0.02em;
+}
+.br-mono .bench-dot.router {
+  fill: var(--term-ok);
+  stroke: var(--bg);
+  stroke-width: 2;
+}
+.br-mono .bench-dot.router.halo {
+  fill: var(--term-ok);
+  opacity: 0.16;
+  stroke: none;
+  animation: brm-pulse 2.4s ease-in-out infinite;
+}
+.br-mono .bench-dot-lbl.router {
+  fill: var(--term-ok);
+  font-size: 12px;
+  font-weight: 600;
+}
+.br-mono .bench-vector {
+  stroke: var(--term-ok);
+  stroke-width: 1.4;
+  stroke-dasharray: 3 5;
+  opacity: 0.5;
+}
+@keyframes brm-pulse {
+  0%, 100% { opacity: 0.1; r: 10; }
+  50% { opacity: 0.22; r: 13; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .br-mono .bench-dot.router.halo { animation: none; }
+}
+
+/* --- receipt table --- */
+.br-mono .bench-table {
+  font-family: var(--mono);
+  font-size: 13px;
+  border: 1px solid var(--line-2);
+  border-radius: 12px;
+  background: linear-gradient(180deg, var(--panel), var(--bg));
+  overflow: hidden;
+}
+.br-mono .bench-tr {
+  display: grid;
+  grid-template-columns: 1.7fr 0.9fr 0.9fr 0.6fr;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.br-mono .bench-tr:last-of-type {
+  border-bottom: none;
+}
+.br-mono .bench-thead {
+  background: var(--panel-2);
+  border-bottom: 1px solid var(--line-2);
+}
+.br-mono .bench-th {
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.br-mono .bench-th.num,
+.br-mono .bench-td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.br-mono .bench-td {
+  color: var(--fg-dim);
+}
+.br-mono .bench-td.setup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  color: var(--fg);
+}
+.br-mono .bench-model {
+  color: var(--fg);
+  white-space: nowrap;
+}
+.br-mono .bench-harness {
+  color: var(--muted);
+  white-space: nowrap;
+}
+.br-mono .bench-sep {
+  color: var(--faint);
+}
+.br-mono .bench-tr.router {
+  background: color-mix(in srgb, var(--term-ok) 9%, transparent);
+  border-top: 1px solid var(--term-ok);
+  box-shadow: inset 3px 0 0 var(--term-ok);
+}
+.br-mono .bench-tr.router .bench-td,
+.br-mono .bench-tr.router .bench-model {
+  color: var(--fg);
+  font-weight: 600;
+}
+.br-mono .bench-router-mark {
+  color: var(--accent);
+  font-weight: 700;
+}
+.br-mono .bench-delta {
+  font-size: 10.5px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  margin-left: 3px;
+  font-variant-numeric: tabular-nums;
+}
+.br-mono .bench-delta.up {
+  color: var(--term-ok);
+  background: color-mix(in srgb, var(--term-ok) 14%, transparent);
+}
+.br-mono .bench-delta.down {
+  color: var(--term-err);
+  background: color-mix(in srgb, var(--term-err) 14%, transparent);
+}
+.br-mono .bench-foot {
+  padding: 10px 16px;
+  font-size: 11px;
+  color: var(--faint);
+  background: var(--panel-2);
+  border-top: 1px solid var(--line-2);
+}
+.br-mono .bench-foot-base {
+  color: var(--muted);
+}
+
+/* --- pending state (non-live benchmarks) --- */
+.br-mono .bench-pending {
+  border: 1px dashed var(--line-bright);
+  border-radius: 12px;
+  background: var(--panel);
+  padding: 54px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+.br-mono .bench-pending-mark {
+  font-size: 26px;
+  color: var(--muted);
+  animation: brm-spin 3s linear infinite;
+}
+@keyframes brm-spin {
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .br-mono .bench-pending-mark { animation: none; }
+}
+.br-mono .bench-pending-title {
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--fg);
+}
+.br-mono .bench-pending-sub {
+  font-size: 13px;
+  color: var(--muted);
+  max-width: 340px;
+}
+
+/* --- mobile: scatter over table --- */
+@media (max-width: 880px) {
+  .br-mono .bench-grid {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+  .br-mono .bench-tr {
+    grid-template-columns: 1.5fr 0.8fr 0.8fr 0.6fr;
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+  .br-mono .bench-harness { display: none; }
+}
+
+/* ============================================================
+   BENCHMARK v2 — reference-grade dotted scatter + shadcn tabs
+   ============================================================ */
+.br-mono .bench-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 28px;
+  align-items: center;
+  justify-content: space-between;
+  margin: 30px 0 26px;
+}
+.br-mono .bench-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+.br-mono .bench-toolbar-label {
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+/* --- SVG scatter --- */
+.br-mono .bench-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  font-family: var(--mono);
+}
+.br-mono .bench-grid-dot {
+  fill: var(--line-bright);
+  opacity: 0.55;
+}
+.br-mono .bench-axis-title {
+  fill: var(--faint);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+}
+.br-mono .bench-tick {
+  fill: var(--faint);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.br-mono .bench-hint {
+  fill: var(--faint);
+  font-size: 10px;
+  font-style: italic;
+}
+.br-mono .bench-vector {
+  stroke: var(--accent);
+  stroke-width: 1.3;
+  stroke-dasharray: 3 5;
+  opacity: 0.5;
+}
+.br-mono .bench-dot {
+  fill: none;
+  stroke: var(--fg-dim);
+  stroke-width: 1.6;
+}
+.br-mono .bench-lbl-name {
+  fill: var(--fg-dim);
+  font-size: 11px;
+  letter-spacing: -0.01em;
+}
+.br-mono .bench-lbl-sub {
+  fill: var(--muted);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.br-mono .bench-lbl-name.brand {
+  fill: var(--accent);
+  font-weight: 600;
+}
+.br-mono .bench-lbl-sub.brand {
+  fill: var(--accent);
+  opacity: 0.85;
+}
+.br-mono .bench-square {
+  fill: var(--accent);
+}
+.br-mono .bench-halo {
+  fill: var(--accent);
+  opacity: 0.16;
+  animation: brm-halo 2.4s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@keyframes brm-halo {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.24; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .br-mono .bench-halo { animation: none; }
+}
+
+/* --- figure footer: legend + note --- */
+.br-mono .bench-figfoot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 18px;
+  margin-top: 14px;
+  padding-top: 13px;
+  border-top: 1px solid var(--line);
+}
+.br-mono .bench-legend {
+  display: flex;
+  gap: 18px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.br-mono .bench-legend .k {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.br-mono .bench-key-square {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+.br-mono .bench-key-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1.6px solid var(--fg-dim);
+}
+.br-mono .bench-note {
+  font-size: 11px;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+   BENCHMARK data table (shadcn/TanStack) — sortable + filterable
+   ============================================================ */
+.br-mono .bench-dtwrap {
+  border: 1px solid var(--line-2);
+  border-radius: 12px;
+  background: linear-gradient(180deg, var(--panel), var(--bg));
+  overflow: hidden;
+}
+.br-mono .bench-dttop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line-2);
+  background: var(--panel-2);
+}
+.br-mono .bench-filter {
+  flex: 1;
+  min-width: 0;
+  max-width: 220px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--line-2);
+  border-radius: 6px;
+  padding: 5px 9px;
+  outline: none;
+}
+.br-mono .bench-filter::placeholder {
+  color: var(--faint);
+}
+.br-mono .bench-filter:focus {
+  border-color: var(--accent);
+}
+.br-mono .bench-dtcount {
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--faint);
+  white-space: nowrap;
+}
+
+/* the table itself */
+.br-mono .bench-dt {
+  font-family: var(--mono);
+  font-size: 12.5px;
+}
+.br-mono .bench-dt-hrow {
+  border-bottom: 1px solid var(--line-2);
+}
+.br-mono .bench-dt-th {
+  height: auto;
+  padding: 9px 14px;
+  vertical-align: middle;
+}
+.br-mono .bench-dt-th.num { text-align: right; }
+.br-mono .bench-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--faint);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.12s;
+}
+.br-mono .bench-sort.right { flex-direction: row-reverse; }
+.br-mono .bench-sort:hover { color: var(--fg-dim); }
+.br-mono .bench-sort-ind {
+  font-size: 8.5px;
+  color: var(--line-bright);
+}
+.br-mono .bench-sort:hover .bench-sort-ind { color: var(--muted); }
+
+.br-mono .bench-dt-row {
+  border-bottom: 1px solid var(--line);
+  transition: background 0.12s;
+}
+.br-mono .bench-dt-row:last-child { border-bottom: none; }
+.br-mono .bench-dt-row:hover { background: var(--panel-2); }
+.br-mono .bench-dt-td {
+  padding: 10px 14px;
+  color: var(--fg-dim);
+  vertical-align: middle;
+}
+.br-mono .bench-dt-td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.br-mono .bench-num { white-space: nowrap; }
+
+/* the routed row — purple accent, sorts in with the rest */
+.br-mono .bench-dt-row.is-router {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.br-mono .bench-dt-row.is-router:hover {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+.br-mono .bench-dt-row.is-router .bench-dt-td,
+.br-mono .bench-dt-row.is-router .bench-model {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+/* ---- benchmark v5: control-vs-rounds real data ---- */
+.br-mono .bench-square.dim {
+  opacity: 0.72;
+}
+.br-mono .bench-ext {
+  color: var(--faint);
+  font-size: 11px;
+}
+.br-mono a.bench-bench-name:hover {
+  color: var(--fg);
+}
+.br-mono a.bench-bench-name:hover .bench-ext {
+  color: var(--accent);
+}
+/* round badge in the setup cell */
+.br-mono .bench-round {
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--faint);
+  border: 1px solid var(--line-2);
+  border-radius: 4px;
+  padding: 1px 5px;
+  margin-right: 2px;
+}
+.br-mono .bench-round.bit {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.br-mono .bench-kimi {
+  color: var(--muted);
+}
+/* non-hero BitRouter rows: a quiet purple left rail, no fill */
+.br-mono .bench-dt-row.is-bitrouter {
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.br-mono .bench-dt-row.is-bitrouter .bench-model {
+  color: var(--fg);
+}
+
+/* ---- benchmark v6: vals.ai field + projected optimization arrow ---- */
+.br-mono .bench-opt-arrow {
+  stroke: var(--accent);
+  stroke-width: 1.6;
+  stroke-dasharray: 4 4;
+}
+.br-mono .bench-opt-lbl {
+  fill: var(--accent);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 600;
+}
+.br-mono .bench-caveat {
+  margin: 12px 2px 0;
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: var(--faint);
+}
+.br-mono .bench-caveat b {
+  color: var(--muted);
+  font-weight: 600;
+}
+.br-mono .bench-proj {
+  color: var(--accent);
+  margin-left: 2px;
+}
+/* vals.ai-style table: harness as plain text, provider icon in model cell */
+.br-mono .bench-harness.plain {
+  color: var(--muted);
+  white-space: nowrap;
+}
+.br-mono .bench-dt-td.setup .provider-icon,
+.br-mono .bench-td.setup svg {
+  flex: none;
+  opacity: 0.85;
+}

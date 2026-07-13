@@ -2,8 +2,8 @@ import type { ComponentProps } from "react";
 import {
   DiscordIcon,
   GitHubIcon,
+  HuggingFaceIcon,
   LinkedInIcon,
-  TelegramIcon,
   XIcon,
 } from "@/components/icons";
 
@@ -16,7 +16,11 @@ export type SocialLink = {
 export const SOCIAL_LINKS: SocialLink[] = [
   { label: "GitHub", href: "https://github.com/bitrouter", icon: GitHubIcon },
   { label: "Discord", href: "https://discord.gg/G3zVrZDa5C", icon: DiscordIcon },
-  { label: "Telegram", href: "https://t.me/bitrouterai", icon: TelegramIcon },
+  {
+    label: "Hugging Face",
+    href: "https://huggingface.co/BitRouterAI",
+    icon: HuggingFaceIcon,
+  },
   { label: "Twitter/X", href: "https://x.com/BitRouterAI", icon: XIcon },
   {
     label: "LinkedIn",

@@ -1,0 +1,94 @@
+---
+title: BitRouter vs OpenRouter, LiteLLM & Portkey
+metaTitle: Compare BitRouter — vs OpenRouter, LiteLLM & Portkey
+description: How BitRouter compares to the leading LLM routers and gateways on deployment, routing overhead, agent-native features, and cost — with a side-by-side table for each.
+competitor: OpenRouter, LiteLLM & Portkey
+angle: An honest, side-by-side look at how BitRouter stacks up against the three gateways teams most often weigh it against.
+---
+
+Every LLM gateway makes the same headline promise: one API, many models, automatic
+failover. The differences that actually decide the choice show up underneath — how
+you deploy it, what it costs you in latency on every call, and whether it was built
+for chat apps or for agents.
+
+Here is where BitRouter lands in one line: an **Apache 2.0 binary you run anywhere**,
+with **~5ms p50 routing overhead**, and agent-native primitives — an MCP/ACP gateway,
+KYA agent identity, prompt-injection detection, and autonomous x402 payments — that
+are **built in, not bolted on**. Below is a straight side-by-side against the three
+gateways it's most often compared to. Each section ends with the cases where the other
+tool is genuinely the better call — because sometimes it is.
+
+## BitRouter vs OpenRouter
+
+OpenRouter is a closed-source cloud gateway with the widest model catalog on the
+market. That breadth is real, but it comes with a dependency: there is no self-host
+option, so your routing layer lives on someone else's infrastructure and adds their
+network hop to every call — roughly **~30ms of overhead per request**. BitRouter is
+the inverse trade: an Apache 2.0 binary you own and run inside your own VPC or CI, at
+**~5ms p50** — about 6× less overhead — with an open, PR-based provider registry
+instead of a curated one you can't extend.
+
+The sharper divide is what each one routes. OpenRouter routes model requests.
+BitRouter routes *agent runs*: identity per agent (KYA), an MCP/ACP tool gateway,
+injection checks, and autonomous stablecoin payments (x402) — none of which exist in
+OpenRouter.
+
+<CompareTable slug="bitrouter-vs-openrouter" />
+
+**OpenRouter is the right call when** you need the widest possible model catalog with
+zero infrastructure to operate, you're building a consumer-facing app that doesn't
+need agent-native features, or your team already runs OpenRouter and has no migration
+bandwidth right now. Switching later is a one-URL, one-key change — the
+[migration guide](/docs/guides/migrate-from-openrouter) walks it in under five minutes.
+
+## BitRouter vs LiteLLM
+
+LiteLLM is the popular MIT-licensed, Python-native option — and if you want a library
+that lives *inside* your application with SDK-level call hooks, that's exactly its
+strength. The cost shows up in operations and latency. A production LiteLLM deployment
+typically means Postgres, Redis, and Docker Compose to run the proxy, and its Python
+runtime carries the GIL: under concurrent load, tail latency climbs to **~85ms p99**.
+BitRouter is a single binary with zero dependencies (`bitrouter serve`, ready in
+~340ms) and a Rust async core that holds **~12ms p99** at 1k req/s.
+
+On agent features the gap is the same as everywhere else on this page: MCP/ACP gateway,
+KYA identity, injection detection, and x402 payments are built into BitRouter and
+absent from LiteLLM.
+
+<CompareTable slug="bitrouter-vs-litellm" />
+
+**LiteLLM is the right call when** you want a Python-native library embedded directly
+in your app code, your stack is pure Python and you rely on framework callbacks (async
+generators, middleware), or you lean on LiteLLM's extensive provider mapping for
+non-standard model endpoints. If you'd rather move the routing out of your process,
+the [migration guide](/docs/guides/migrate-from-litellm) covers it.
+
+## BitRouter vs Portkey
+
+Portkey is the closest comparison on this page, because it already does a lot right:
+automatic failover, per-run cost attribution, guardrails-based injection detection, and
+prompt management all ship today. Two structural differences remain. First, its
+open-source tier is MIT but feature-limited, and its Node.js gateway adds **~15ms p50**
+of overhead (versus BitRouter's ~5ms on a Rust binary with no GC pauses). Second,
+Portkey has no agent identity layer and no autonomous payments — so agent runs can't
+carry a verifiable KYA identity or settle x402 micro-payments on their own.
+
+Where Portkey pulls ahead is the workflow layer it's built out over time: prompt
+versioning, a guardrails marketplace, and enterprise compliance tooling.
+
+<CompareTable slug="bitrouter-vs-portkey" />
+
+**Portkey is the right call when** your team already relies on its prompt management,
+versioning, and caching workflows, you need its enterprise support tier and compliance
+certifications, or you're deeply integrated with its guardrails marketplace and
+pre-built policy templates.
+
+## Making the call
+
+If you want the largest catalog with no ops, OpenRouter. If you want a Python library
+in-process, LiteLLM. If you're standardized on prompt-management and compliance
+workflows, Portkey. If you want to **own your routing layer** — a single Apache 2.0
+binary, sub-10ms overhead, and agent-native features built in — that's BitRouter, and
+setup takes about a minute.
+
+<CompareCTA slug="bitrouter-vs-openrouter" />

@@ -120,6 +120,12 @@ const nextConfig: NextConfig = {
       { source: "/zh/blog", destination: "/blog", permanent: true },
       { source: "/zh/blog/:slug", destination: "/blog/:slug", permanent: true },
 
+      // ── Compare subpages merged into a single /compare article (2026-07) ──
+      { source: "/compare/bitrouter-vs-openrouter", destination: "/compare#bitrouter-vs-openrouter", permanent: true },
+      { source: "/compare/bitrouter-vs-litellm", destination: "/compare#bitrouter-vs-litellm", permanent: true },
+      { source: "/compare/bitrouter-vs-portkey", destination: "/compare#bitrouter-vs-portkey", permanent: true },
+      { source: "/zh/compare/:slug*", destination: "/compare", permanent: true },
+
       // ── Legal pages moved off /legal to flat top-level URLs ──
       { source: "/legal/privacy", destination: "/privacy-policy", permanent: true },
       { source: "/legal/terms", destination: "/terms-of-service", permanent: true },

@@ -9,14 +9,15 @@ const PRODUCT: FooterLink[] = [
 ];
 const DEVELOPERS: FooterLink[] = [
   { label: "Docs", href: "/docs" },
-  { label: "Integrations", href: "/integrations" },
   { label: "API", href: "/docs/reference" },
-  { label: "CLI", href: "/docs/get-started" },
-  { label: "MCP", href: "/docs/ai-resources/mcp" },
+  { label: "CLI", href: "/docs/concepts/cli" },
+  { label: "MCP", href: "/docs/concepts/mcp" },
+  { label: "Agent Skills", href: "/docs/ai-resources/skills" },
 ];
 const RESOURCES: FooterLink[] = [
   { label: "Blog", href: "/blog" },
   { label: "Changelog", href: "/changelog" },
+  { label: "Compare", href: "/compare" },
   { label: "Status", href: "https://status.bitrouter.ai", external: true },
 ];
 const COMPANY: FooterLink[] = [
@@ -26,11 +27,12 @@ const COMPANY: FooterLink[] = [
   { label: "Privacy", href: "/privacy-policy" },
   { label: "Terms", href: "/terms-of-service" },
 ];
-const COMPARE: FooterLink[] = [
-  { label: "vs OpenRouter", href: "/compare/bitrouter-vs-openrouter" },
-  { label: "vs LiteLLM", href: "/compare/bitrouter-vs-litellm" },
-  { label: "vs Portkey", href: "/compare/bitrouter-vs-portkey" },
-  { label: "All comparisons", href: "/compare" },
+const INTEGRATIONS: FooterLink[] = [
+  { label: "Claude Code", href: "/claude-code" },
+  { label: "Codex", href: "/codex" },
+  { label: "OpenClaw", href: "/openclaw" },
+  { label: "Hermes Agent", href: "/hermes-agent" },
+  { label: "OpenCode", href: "/opencode" },
 ];
 
 // Text columns only. The Community column (social links, which carry icons) is
@@ -42,6 +44,6 @@ export function buildFooterColumns(): FooterColumn[] {
     { title: "Developers", links: DEVELOPERS },
     { title: "Resources", links: RESOURCES },
     { title: "Company", links: COMPANY },
-    { title: "Compare", links: COMPARE },
+    { title: "Integrations", links: INTEGRATIONS },
   ];
 }

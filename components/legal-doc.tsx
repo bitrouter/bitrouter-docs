@@ -1,11 +1,14 @@
 import { notFound } from "next/navigation";
 import { legalSource } from "@/lib/source";
 import type { Metadata } from "next";
+import type { MDXComponents } from "mdx/types";
 
 // Shared renderer for the standalone legal pages (/privacy-policy,
-// /terms-of-service). Each route is a thin wrapper that passes its slug here;
-// the MDX still lives in content/legal/{privacy,terms}.mdx.
-export function renderLegalPage(slug: string) {
+// /terms-of-service, /subprocessors). Each route is a thin wrapper that passes
+// its slug here; the MDX still lives in content/legal/{slug}.mdx. Routes that
+// embed custom components in their MDX (e.g. the subprocessors tables) pass
+// them in via `components`.
+export function renderLegalPage(slug: string, components: MDXComponents = {}) {
   const page = legalSource.getPage([slug], "en");
   if (!page) notFound();
 
@@ -37,7 +40,7 @@ export function renderLegalPage(slug: string) {
         )}
 
         <div className="prose prose-neutral dark:prose-invert mt-10 max-w-none prose-headings:font-medium prose-headings:tracking-tight prose-a:text-foreground prose-a:underline-offset-4">
-          <MDX components={{}} />
+          <MDX components={components} />
         </div>
       </article>
     </>

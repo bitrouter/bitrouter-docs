@@ -21,7 +21,8 @@ const RESOURCES: FooterLink[] = [
 ];
 const COMPANY: FooterLink[] = [
   { label: "About", href: "/about" },
-  { label: "Brand", href: "/brand" },
+  { label: "Open Startup", href: "/open" },
+  { label: "Subprocessors", href: "/subprocessors" },
   { label: "Privacy", href: "/privacy-policy" },
   { label: "Terms", href: "/terms-of-service" },
 ];

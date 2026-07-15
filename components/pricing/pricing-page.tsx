@@ -37,7 +37,7 @@ const SUB_FEATS: Feat[] = [
 
 const OUTCOME_FEATS: Feat[] = [
   "Budget guarantee",
-  "20% of savings — only on success",
+  "Priced on savings — only on success",
   "Never more than we save you",
   "Founders + SLA",
 ];
@@ -120,12 +120,12 @@ function PricingColumns() {
             </span>
             <span className="pcol-name">Outcome-based</span>
             <div className="pcol-price">
-              20% <small>of savings</small>
+              Custom <small>on savings</small>
             </div>
             <p className="pcol-desc">
               Run your full production loop through BitRouter. We guarantee it
               stays under the budget you set, and bill only on runs that clear
-              your quality bar.
+              your quality bar — at a custom rate scoped to your workload.
             </p>
             <FeatList items={OUTCOME_FEATS} />
             <Link
@@ -218,7 +218,7 @@ const ROWS: Row[] = [
   { feat: "Per-run observability", payg: "yes", sub: "yes", outcome: "yes" },
   { feat: "Router guardrails", payg: "yes", sub: "yes", outcome: "yes" },
   { feat: "Budget guarantee", payg: "no", sub: "no", outcome: "yes", accent: true },
-  { feat: "Priced on outcomes", payg: "no", sub: "no", outcome: "20% of savings", accent: true },
+  { feat: "Priced on outcomes", payg: "no", sub: "no", outcome: "Custom", accent: true },
   { feat: "Self-host (Apache-2.0)", payg: "yes", sub: "yes", outcome: "yes" },
   { feat: "SSO · SIEM · DPA", payg: "no", sub: "no", outcome: "yes" },
   { feat: "Support", payg: "Community", sub: "Community", outcome: "Founders + SLA" },
@@ -286,7 +286,7 @@ const FAQS: { q: string; a: React.ReactNode }[] = [
   },
   {
     q: "How does outcome-based pricing work?",
-    a: "You run your full production loop through BitRouter. You set a budget and a measurable quality floor. We guarantee the loop stays under your budget, and we bill 20% of what we save you against your measured baseline — only on runs that clear your quality bar, and never more than we saved you. It's enterprise-only for now; talk to the founders to scope it.",
+    a: "You run your full production loop through BitRouter. You set a budget and a measurable quality floor. We guarantee the loop stays under your budget, and we bill a custom share of what we save you against your measured baseline — only on runs that clear your quality bar, and never more than we saved you. It's enterprise-only for now; talk to the founders to scope the rate.",
   },
   {
     q: "Do the three plans stack?",

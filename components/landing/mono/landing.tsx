@@ -28,19 +28,32 @@ function useMobile(bp = 900) {
   return mobile;
 }
 
-/* ---------------- INSTALL TABS ---------------- */
-const INSTALL: Record<string, string> = {
-  curl: "curl -fsSL https://bitrouter.ai/install.sh | sh",
-  npm: "npm install -g bitrouter",
-  brew: "brew install bitrouter/tap/bitrouter",
-  skills: "npx skills add bitrouter/bitrouter",
+/* ---------------- INSTALL TABS / QUICKSTART ----------------
+   Mirrors the hero Quickstart exactly (CLI / MCP / skills / agent). The command
+   tabs share the same commands + ↳ sub-lines; the `agent` tab replays the hero's
+   objective chat — the same prompt line (`agentObjective`) and objective chips
+   (`SUGS`) — so the two install surfaces stay in sync. */
+const INSTALL: Record<"cli" | "mcp" | "skills", { cmd: string; sub: string }> = {
+  cli: {
+    cmd: "curl -fsSL https://bitrouter.ai/install.sh | sh",
+    sub: "then  bitrouter run claude-code",
+  },
+  mcp: {
+    cmd: "npx bitrouter mcp install --client claude",
+    sub: "registers bitrouter as an MCP server",
+  },
+  skills: {
+    cmd: "npx skills add bitrouter/bitrouter",
+    sub: "drop-in skill for any agent",
+  },
 };
 
 function InstallBar() {
-  const [tab, setTab] = React.useState("curl");
+  const [tab, setTab] = React.useState<QsTab>("cli");
+  const [agentDim, setAgentDim] = React.useState<Dim>("cost");
   const [copied, setCopied] = React.useState(false);
-  const cmd = INSTALL[tab];
   const copy = () => {
+    const cmd = tab !== "agent" ? INSTALL[tab].cmd : "";
     if (navigator.clipboard) navigator.clipboard.writeText(cmd);
     setCopied(true);
     setTimeout(() => setCopied(false), 1400);
@@ -49,23 +62,47 @@ function InstallBar() {
   return (
     <div className="install">
       <div className="install-tabs">
-        {Object.keys(INSTALL).map((k) => (
+        {(["cli", "mcp", "skills", "agent"] as QsTab[]).map((k) => (
           <button
             key={k}
             className={"install-tab" + (k === tab ? " on" : "")}
             onClick={() => setTab(k)}
           >
-            {k}
+            {k === "cli" ? "CLI" : k === "mcp" ? "MCP" : k}
           </button>
         ))}
       </div>
-      <div className="install-cmd">
-        <span className="install-prompt">$</span>
-        <code>{cmd}</code>
-        <button className="install-copy" onClick={copy}>
-          {copied ? "✓ copied" : "copy"}
-        </button>
-      </div>
+      {tab !== "agent" ? (
+        <>
+          <div className="install-cmd">
+            <span className="install-prompt">$</span>
+            <code>{INSTALL[tab].cmd}</code>
+            <button className="install-copy" onClick={copy}>
+              {copied ? "✓ copied" : "copy"}
+            </button>
+          </div>
+          <div className="qs-sub">↳ {INSTALL[tab].sub}</div>
+        </>
+      ) : (
+        <>
+          <div className="qs-cmd">
+            <span className="qs-prompt acc">❯</span>
+            <code>{agentObjective(agentDim)}</code>
+            <span className="qs-cap" />
+          </div>
+          <div className="qs-examples">
+            {SUGS.map((s) => (
+              <button
+                key={s.dim}
+                className={"sug" + (agentDim === s.dim ? " on" : "")}
+                onClick={() => setAgentDim(s.dim)}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -85,7 +122,7 @@ const HERO_HEAD: Record<Dim, string> = {
   all: "Cost, quality, and speed — tuned every run.",
 };
 const HERO_SUB: Record<Dim, string> = {
-  cost: "Context-aware LLM router that optimize your agentic workflows with every run",
+  cost: "The self-improving LLM router that optimizes your agentic workflows with every run — works with any harness, any model, any loop.",
   accuracy: "Escalate the calls that need reasoning to frontier — automatically, per call.",
   latency: "Bias every hop toward the fastest model that still holds quality.",
   all: "One context-aware loop balances the three, and gets better with every run.",
@@ -166,6 +203,18 @@ const SUGS: { dim: Dim; label: string }[] = [
   { dim: "all", label: "balance all" },
 ];
 
+// The objective the user "types" at bitrouter, per dimension. Shared by the hero
+// chat pane and the final-CTA agent tab so the two stay identical.
+function agentObjective(dim: Dim): string {
+  const wf = WF.label.toLowerCase();
+  return {
+    cost: `optimize my ${wf} run — cut cost, keep quality`,
+    accuracy: `maximize quality on ${wf}, cost is secondary`,
+    latency: `make ${wf} respond as fast as possible`,
+    all: `balance cost, quality and speed for ${wf}`,
+  }[dim];
+}
+
 const fmtCost = (n: number) =>
   n >= 1 ? "$" + n.toFixed(2) : n >= 0.01 ? "$" + n.toFixed(3) : "$" + n.toFixed(4);
 const mkBar = (share: number) => {
@@ -222,12 +271,7 @@ function Hero() {
   const savePct = Math.max(0, Math.round((1 - out[0] / WF.fb) * 100));
   const models = HERO_LINE[dim].map((m) => ({ ...m, bar: mkBar(m.share) }));
   const wf = WF.label;
-  const userMsg = {
-    cost: `optimize my ${wf.toLowerCase()} run — cut cost, keep quality`,
-    accuracy: `maximize quality on ${wf.toLowerCase()}, cost is secondary`,
-    latency: `make ${wf.toLowerCase()} respond as fast as possible`,
-    all: `balance cost, quality and speed for ${wf.toLowerCase()}`,
-  }[dim];
+  const userMsg = agentObjective(dim);
   const activeAgent = QS[qsTab].agent;
   const railM = AGENTS.map((a) => ({ ...a, on: a.name === activeAgent }));
   const am = railM.find((a) => a.on) || railM[0];
@@ -487,10 +531,12 @@ function NoLockIn() {
 }
 
 /* ---------------- USE CASES ----------------
-   One switch, four objectives. Each tab reframes the same run around a target
-   (cost / accuracy / latency / balance): the painpoint it fixes, the win, and
-   the model split BitRouter routed to hit it. "Balance" swaps the before/after
-   bar for the policy knobs the user owns. */
+   One switch, told as a linear trade-off story across four tabs
+   (Cost → Speed → Quality → Balance; the data keys stay cost/latency/accuracy/
+   all). Cost and Speed are the two costs of running frontier everywhere;
+   Quality is the trap of the cheap-everywhere fix; Balance is the resolution —
+   you configure it. Each tab keeps its own scenario, win, and model split.
+   "Balance" swaps the before/after bar for the policy knobs the user owns. */
 type Case = {
   hue: string;
   objTag: string;
@@ -513,7 +559,7 @@ const CASES: Record<Dim, Case> = {
     objTag: "optimize · cost",
     scenario: "A 200-file refactor — ~2,400 model calls in one run.",
     today:
-      "Billed at frontier prices the run costs $2.10, and ~90% of those calls were trivial reads and edits.",
+      "Billed at frontier prices the run costs $2.10, and ~90% of those calls were trivial reads and edits. That's tokenmaxxing — top-tier rates for work any open model handles.",
     did: "Routed the routine 2,200 calls to open models and kept the ~200 hard edits on Opus — same diffs, tests green.",
     win: "−80%",
     winK: "cost / run",
@@ -530,10 +576,10 @@ const CASES: Record<Dim, Case> = {
   },
   accuracy: {
     hue: "var(--accent)",
-    objTag: "optimize · accuracy",
+    objTag: "optimize · quality",
     scenario: "A research agent — reads filings, reasons, answers.",
     today:
-      "Cheap-everywhere and the reasoning steps quietly get it wrong; a bad answer ships straight into a decision.",
+      "So make every call cheap instead? Now the reasoning steps quietly get it wrong — a bad answer ships straight into a decision. Cheap-everywhere trades the bill for accuracy.",
     did: "Reads and extraction stay open; the judgment calls escalate to frontier, held to a 0.92 quality floor.",
     win: "99%",
     winK: "answers rated correct",
@@ -550,10 +596,10 @@ const CASES: Record<Dim, Case> = {
   },
   latency: {
     hue: "var(--term-info)",
-    objTag: "optimize · latency",
+    objTag: "optimize · speed",
     scenario: "Live chat with tool calls — ~40 calls a session.",
     today:
-      "A slow hop makes the user wait; a 720ms median answer kills the back-and-forth of a real conversation.",
+      "And it isn't only the bill — frontier models are slower. Route every hop through a SOTA model and a 720ms median answer kills the back-and-forth of a real conversation.",
     did: "Every hop biased to the fastest model that clears the quality floor; frontier only when a case is genuinely hard.",
     win: "61ms",
     winK: "p50 answer latency",
@@ -569,11 +615,11 @@ const CASES: Record<Dim, Case> = {
     ],
   },
   all: {
-    hue: "var(--term-warn)",
+    hue: "var(--accent)",
     objTag: "optimize · your rules",
     scenario: "One router in front of a dozen agents and 40 repos.",
     today:
-      "Every team wants a different trade-off; a static router that decides once picks a fight with half of them.",
+      "Cost, speed, and quality pull against each other, and every team weights them differently — a static router that decides once picks a fight with half of them.",
     did: "Each path gets its own objective, quality floor, and spend cap — one versioned policy, override any call.",
     win: "Yours",
     winK: "objective · floor · caps · overrides",
@@ -597,18 +643,21 @@ function Cases() {
             className="eyebrow sec-eyebrow"
             style={{ ["--sec-accent" as string]: "var(--accent)" }}
           >
-            <span className="idx">//</span> where it pays off
+            <span className="idx">//</span> the trade-off
           </div>
           <h2 className="h-display sec-title">
-            One switch. Four ways it pays off.
+            Cheap, fast, right — you don&rsquo;t have to pick.
           </h2>
           <p className="sec-lead">
-            Tell BitRouter what a workflow should optimize for — it tunes the
-            routing to match. Here&rsquo;s the painpoint each target fixes.
+            Run every call on a frontier model and you&rsquo;re tokenmaxxing —
+            you overpay, and you&rsquo;re slow. Make everything cheap and the
+            hard calls get it wrong. BitRouter routes each call to the cheapest
+            model that still clears your bar — and lets you set where that bar
+            is.
           </p>
         </div>
         <div className="cases-tabs" style={{ ["--cx" as string]: c.hue }}>
-          {(["cost", "accuracy", "latency", "all"] as Dim[]).map((k) => (
+          {(["cost", "latency", "accuracy", "all"] as Dim[]).map((k) => (
             <button
               key={k}
               className={"cases-tab" + (dim === k ? " on" : "")}
@@ -616,10 +665,10 @@ function Cases() {
             >
               {k === "cost"
                 ? "Cost"
-                : k === "accuracy"
-                  ? "Accuracy"
-                  : k === "latency"
-                    ? "Latency"
+                : k === "latency"
+                  ? "Speed"
+                  : k === "accuracy"
+                    ? "Quality"
                     : "Balance"}
             </button>
           ))}
@@ -677,7 +726,7 @@ function Cases() {
                   <div className="uc-knob">
                     <span className="kk">objective</span>
                     <span className="lead" />
-                    <span className="kv warn">balanced</span>
+                    <span className="kv">balanced</span>
                   </div>
                   <div className="uc-knob">
                     <span className="kk">quality_floor</span>
@@ -697,7 +746,7 @@ function Cases() {
                   <div className="uc-knob">
                     <span className="kk">override &quot;src/checkout/**&quot;</span>
                     <span className="lead" />
-                    <span className="kv warn">opus-4.8</span>
+                    <span className="kv">opus-4.8</span>
                   </div>
                 </div>
               </div>
@@ -1317,16 +1366,17 @@ function FinalCta() {
             >
               Get API key →
             </a>
+            <Link href="/docs" className="btn btn-ghost">
+              Documentation
+            </Link>
           </div>
           <div className="cta-install">
             <InstallBar />
             <div className="cta-meta">
               <span>
-                <span style={{ color: "var(--term-ok)" }}>●</span> 0% markup on
-                every model
+                <span style={{ color: "var(--term-ok)" }}>●</span> usage-based
+                pricing — 0% markup on every model
               </span>
-              <span className="fnt">·</span>
-              <span>Outcome pricing — pay only on savings</span>
               <span className="fnt">·</span>
               <span>Apache-2.0</span>
             </div>

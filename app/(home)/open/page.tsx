@@ -10,7 +10,7 @@ import {
   ScrollText,
   ShieldCheck,
 } from "lucide-react";
-import { PageShell, Subsection, SmallLabel } from "@/components/page-shell";
+import type { ReactNode } from "react";
 import { CopyButton } from "@/components/landing/copy-button";
 import type { Metadata } from "next";
 
@@ -125,16 +125,51 @@ const COLORS = [
 
 const ATTRIBUTION_LINE = "Built with BitRouter — https://github.com/bitrouter";
 
+function SectionHeading({ label, index }: { label: string; index: number }) {
+  return (
+    <header className="flex items-baseline justify-between gap-4 border-b border-border pb-3">
+      <h2 className="text-2xl font-medium tracking-tight sm:text-3xl">{label}</h2>
+      <span className="font-mono text-xs tabular-nums text-muted-foreground">
+        {String(index).padStart(2, "0")}
+      </span>
+    </header>
+  );
+}
+
 export default function OpenPage() {
   setRequestLocale("en");
 
-  const sections = [
-    // 01 — Manifesto ------------------------------------------------
-    {
-      id: "why-open",
-      label: "Why open",
-      children: (
-        <div className="max-w-2xl space-y-5 text-sm leading-relaxed text-muted-foreground">
+  return (
+    <main className="mx-auto w-full max-w-5xl px-6 py-16 sm:px-10 lg:px-14 lg:py-24">
+      {/* Page header */}
+      <header className="mb-20 border-b border-border pb-16">
+        <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+          Open startup
+        </div>
+        <h1 className="mt-6 inline-block border-b border-foreground pb-1 text-5xl font-medium tracking-tight">
+          Open
+        </h1>
+        <p className="mt-6 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+          BitRouter is open at the core. The router is Apache-2.0 and runs on
+          your machine; the cloud is the managed version you pay for when you
+          want it. We build in the open — code, roadmap, and the numbers.
+        </p>
+        <a
+          href={CORE_REPO}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group mt-8 inline-flex items-center gap-2.5 border border-foreground bg-foreground px-5 py-3 font-mono text-xs uppercase tracking-widest text-background transition-opacity hover:opacity-90"
+        >
+          <Star className="size-3.5" />
+          Star on GitHub
+          <ArrowUpRight className="size-3.5" />
+        </a>
+      </header>
+
+      {/* 01 — Why open */}
+      <section className="mb-20">
+        <SectionHeading label="Why open" index={1} />
+        <div className="mt-8 max-w-2xl space-y-5 text-sm leading-relaxed text-muted-foreground">
           <p>
             Most AI infrastructure asks you to trust a black box. We took the
             opposite bet. BitRouter&apos;s core — the router that sits between
@@ -159,14 +194,12 @@ export default function OpenPage() {
             outside. This page is where we keep ourselves honest.
           </p>
         </div>
-      ),
-    },
-    // 02 — The model ------------------------------------------------
-    {
-      id: "the-model",
-      label: "Open core, commercial cloud",
-      children: (
-        <>
+      </section>
+
+      {/* 02 — Open core, commercial cloud */}
+      <section className="mb-20">
+        <SectionHeading label="Open core, commercial cloud" index={2} />
+        <div className="mt-8 space-y-8">
           <div className="grid gap-px border border-border bg-border md:grid-cols-2">
             <ModelCard
               icon={Terminal}
@@ -198,15 +231,13 @@ export default function OpenPage() {
             the cloud — it&apos;s the product. The cloud earns its keep by being
             the easier way to run it, not the only way.
           </p>
-        </>
-      ),
-    },
-    // 03 — Numbers --------------------------------------------------
-    {
-      id: "numbers",
-      label: "By the numbers",
-      children: (
-        <>
+        </div>
+      </section>
+
+      {/* 03 — By the numbers */}
+      <section className="mb-20">
+        <SectionHeading label="By the numbers" index={3} />
+        <div className="mt-8 space-y-4">
           <div className="grid grid-cols-2 gap-px border border-border bg-border sm:grid-cols-3">
             {STATS.map((s) => (
               <StatTile key={s.label} stat={s} />
@@ -216,39 +247,33 @@ export default function OpenPage() {
             Placeholder figures — live wiring to GitHub, product analytics, and
             status is in progress.
           </p>
-        </>
-      ),
-    },
-    // 04 — Repositories ---------------------------------------------
-    {
-      id: "repositories",
-      label: "Open repositories",
-      children: (
-        <div className="grid gap-px border border-border bg-border sm:grid-cols-2">
+        </div>
+      </section>
+
+      {/* 04 — Open repositories */}
+      <section className="mb-20">
+        <SectionHeading label="Open repositories" index={4} />
+        <div className="mt-8 grid gap-px border border-border bg-border sm:grid-cols-2">
           {REPOS.map((r) => (
             <RepoCard key={r.name} repo={r} />
           ))}
         </div>
-      ),
-    },
-    // 05 — Built in the open ----------------------------------------
-    {
-      id: "in-the-open",
-      label: "Built in the open",
-      children: (
-        <div className="grid gap-px border border-border bg-border sm:grid-cols-2">
+      </section>
+
+      {/* 05 — Built in the open */}
+      <section className="mb-20">
+        <SectionHeading label="Built in the open" index={5} />
+        <div className="mt-8 grid gap-px border border-border bg-border sm:grid-cols-2">
           {IN_THE_OPEN.map((l) => (
             <ResourceLinkCard key={l.label} link={l} />
           ))}
         </div>
-      ),
-    },
-    // 06 — Brand (folded in) ----------------------------------------
-    {
-      id: "brand",
-      label: "Brand",
-      children: (
-        <>
+      </section>
+
+      {/* 06 — Brand */}
+      <section className="mb-20">
+        <SectionHeading label="Brand" index={6} />
+        <div className="mt-8 space-y-14">
           <Subsection
             title="Wordmark"
             description="Geist Mono, two colors, one wordmark. Download the SVG/PNG logos and the full guidelines from the kit."
@@ -317,30 +342,48 @@ export default function OpenPage() {
               <CopyButton value={ATTRIBUTION_LINE} />
             </div>
           </Subsection>
-        </>
-      ),
-    },
-  ];
+        </div>
+      </section>
 
-  return (
-    <PageShell
-      overline="Open startup"
-      title="Open"
-      intro={
-        <p>
-          BitRouter is open at the core. The router is Apache-2.0 and runs on
-          your machine; the cloud is the managed version you pay for when you
-          want it. We build in the open — code, roadmap, and the numbers.
-        </p>
-      }
-      sections={sections}
-      cta={{ label: "Star on GitHub", href: CORE_REPO, external: true }}
-      footnote="bitrouter/bitrouter · Apache-2.0 · self-host or use the cloud"
-    />
+      {/* Footnote */}
+      <div className="border-t border-border pt-6 font-mono text-[11px] text-muted-foreground/60">
+        bitrouter/bitrouter · Apache-2.0 · self-host or use the cloud
+      </div>
+    </main>
   );
 }
 
 // ── Local presentational pieces ──────────────────────────────
+
+function Subsection({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <div>
+      <h3 className="text-xl font-medium tracking-tight">{title}</h3>
+      {description && (
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+          {description}
+        </p>
+      )}
+      <div className="mt-6">{children}</div>
+    </div>
+  );
+}
+
+function SmallLabel({ children }: { children: ReactNode }) {
+  return (
+    <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+      {children}
+    </div>
+  );
+}
 
 function StatTile({ stat }: { stat: Stat }) {
   return (

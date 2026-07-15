@@ -1,7 +1,6 @@
 import {
   Geist,
   Geist_Mono,
-  Instrument_Serif,
   JetBrains_Mono,
   Space_Grotesk,
 } from "next/font/google";
@@ -18,13 +17,6 @@ const geist = Geist({
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-instrument-serif",
-  weight: "400",
-  style: ["normal", "italic"],
   subsets: ["latin"],
 });
 
@@ -117,7 +109,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#000000",
+  themeColor: "#0b0c0e",
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
@@ -130,7 +122,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
         />
       </head>
-      <body className={`${geist.variable} ${geistMono.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable} ${spaceGrotesk.variable} font-sans antialiased`}>
+      <body className={`${geist.variable} ${geistMono.variable} ${jetbrainsMono.variable} ${spaceGrotesk.variable} font-sans antialiased`}>
         {children}
       </body>
     </html>

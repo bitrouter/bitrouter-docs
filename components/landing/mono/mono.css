@@ -531,15 +531,15 @@
   margin-bottom: 26px;
 }
 .br-mono .hero-title {
-  font-size: clamp(28px, 3.4vw, 44px);
-  max-width: 18ch;
+  font-size: clamp(34px, 4vw, 54px);
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+  max-width: 15ch;
 }
-/* "routing as code" rendered in a code font + brand accent — the words say
-   "as code" and the type says it too. Geist Mono pairs with the Geist Sans
-   display face; swap to var(--font-jetbrains-mono) or --font-space-grotesk to
-   taste — keep the accent color. */
+/* "routing as code" rendered in the committed mono face + accent (now ink) —
+   the words say "as code" and the type says it too. */
 .br-mono .hero-title-code {
-  font-family: var(--font-geist-mono), var(--mono);
+  font-family: var(--mono);
   font-weight: 600;
   font-size: 0.84em;
   letter-spacing: -0.01em;

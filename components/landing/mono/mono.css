@@ -1665,6 +1665,10 @@
   max-width: 44ch;
 }
 .br-mono .cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
   margin-top: 24px;
 }
 .br-mono .cta-install {
@@ -3195,6 +3199,9 @@
   .br-mono .cases-tab:hover{color:var(--fg-dim);}
   .br-mono .cases-tab.on{color:var(--fg);border-bottom-color:var(--cx,var(--accent));}
   .br-mono .uc-card{margin-top:30px;display:grid;grid-template-columns:1.08fr .92fr;gap:46px;align-items:center;border:1px solid var(--line-2);border-left:2px solid var(--cx,var(--accent));border-radius:12px;background:linear-gradient(180deg,var(--panel),var(--bg));padding:38px 40px;}
+  /* Reserve the tallest tab's height (Balance's policy knobs) so switching tabs
+     doesn't jump the card. Desktop only — mobile stacks and reflows freely. */
+  @media (min-width:881px){.br-mono .uc-card{min-height:604px;}}
   .br-mono .uc-obj{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--cx,var(--accent));border:1px solid color-mix(in srgb,var(--cx,var(--accent)) 40%,transparent);border-radius:100px;padding:4px 11px;margin-bottom:18px;}
   .br-mono .uc-obj .dot{width:6px;height:6px;border-radius:50%;background:var(--cx,var(--accent));}
   .br-mono .uc-scenario{font-size:clamp(22px,2.6vw,27px);line-height:1.2;max-width:20ch;}

@@ -249,7 +249,7 @@ function Guarantee() {
             <span className="receipt-v">$1.72</span>
           </div>
           <div className="receipt-row">
-            <span className="receipt-k">our share (20%)</span>
+            <span className="receipt-k">our share</span>
             <span className="receipt-v">$0.34</span>
           </div>
           <div className="receipt-row receipt-total">
@@ -277,7 +277,7 @@ const STEPS: { n: string; h: string; b: string }[] = [
   {
     n: "03",
     h: "Bill",
-    b: "20% of the savings we actually delivered, only on runs that met your budget and quality bar — never more than we saved you. Each run's baseline, cost, and quality check are itemized on the receipt.",
+    b: "A custom share of the savings we actually delivered, only on runs that met your budget and quality bar — never more than we saved you. Each run's baseline, cost, and quality check are itemized on the receipt.",
   },
 ];
 

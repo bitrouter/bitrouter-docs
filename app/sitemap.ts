@@ -78,14 +78,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // ── Legal pages (English-only) ──
-  const legalPages: Entry[] = legalSource.getPages("en").map((page) => ({
-    url: `${BASE_URL}${page.url}`,
-    lastModified: page.data.lastModified
-      ? new Date(page.data.lastModified)
-      : undefined,
-    changeFrequency: "yearly",
-    priority: 0.3,
-  }));
+  // The legal MDX source has baseUrl "/legal", but each page is served at its
+  // own top-level route, so map slugs to their real URLs.
+  const LEGAL_ROUTES: Record<string, string> = {
+    privacy: "/privacy-policy",
+    terms: "/terms-of-service",
+    subprocessors: "/subprocessors",
+  };
+  const legalPages: Entry[] = legalSource.getPages("en").map((page) => {
+    const slug = page.slugs[page.slugs.length - 1] ?? "";
+    return {
+      url: `${BASE_URL}${LEGAL_ROUTES[slug] ?? page.url}`,
+      lastModified: page.data.lastModified
+        ? new Date(page.data.lastModified)
+        : undefined,
+      changeFrequency: slug === "subprocessors" ? "monthly" : "yearly",
+      priority: 0.3,
+    };
+  });
 
   // ── Static marketing/index pages, git-dated by their source file ──
   const staticPages: Entry[] = (
@@ -99,7 +109,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       { url: `${BASE_URL}/enterprise`, file: "app/(home)/enterprise/page.tsx", priority: 0.6, changeFrequency: "monthly" },
       { url: `${BASE_URL}/startup`, file: "app/(home)/startup/page.tsx", priority: 0.6, changeFrequency: "monthly" },
       { url: `${BASE_URL}/about`, file: "app/(home)/about/page.tsx", priority: 0.5, changeFrequency: "monthly" },
-      { url: `${BASE_URL}/brand`, file: "app/(home)/brand/page.tsx", priority: 0.4, changeFrequency: "yearly" },
+      { url: `${BASE_URL}/open`, file: "app/(home)/open/page.tsx", priority: 0.5, changeFrequency: "monthly" },
       { url: `${BASE_URL}/blog`, file: "app/blog/(index)/page.tsx", priority: 0.6, changeFrequency: "weekly" },
       { url: `${BASE_URL}/changelog`, file: "app/changelog/(index)/page.tsx", priority: 0.6, changeFrequency: "weekly" },
     ] as const

@@ -1,0 +1,26 @@
+---
+title: Subprocessors
+description: The third-party subprocessors BitRouter uses to deliver its service — core infrastructure vendors and the AI model providers we route to.
+---
+
+To operate BitRouter, we engage a small set of third-party companies — subprocessors — that process data on our behalf. We disclose them here so you can evaluate exactly how and where your data is handled. This page is the source of truth; we update it whenever the list changes.
+
+## Infrastructure & platform
+
+These vendors power our hosting, authentication, billing, communications, analytics, and status monitoring. They handle operational and account data — never the content of your model requests.
+
+<SubprocessorInfraTable />
+
+## AI model & inference providers
+
+BitRouter is a router. When you send a request, your prompt and the model's response are transmitted to the destination provider you (or your routing policy) select, and are processed under that provider's own terms. We don't retain request or response content. When you bring your own key (BYOK), your relationship with the provider is governed directly by your agreement with them.
+
+<SubprocessorProviderTable />
+
+This lists the distinct upstream companies in our routing network. The complete, machine-readable and continuously-updated set of integrated providers is maintained in our public [provider registry](https://github.com/bitrouter/provider-registry).
+
+## Changes & compliance
+
+We treat transparency as the foundation of trust. We publish this subprocessor list alongside our [Privacy Policy](/privacy-policy) and [Terms of Service](/terms-of-service) so you can assess our data handling in full.
+
+We update this page when we add or remove a subprocessor. If you have questions, want advance notice of changes, or need a data-processing agreement, reach out at [contact@bitrouter.ai](mailto:contact@bitrouter.ai).

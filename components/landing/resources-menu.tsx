@@ -8,7 +8,7 @@ import {
   ChevronDown,
   FileText,
   GitBranch,
-  Palette,
+  Unlock,
   Scale,
   Users,
   type LucideIcon,
@@ -33,7 +33,7 @@ export const RESOURCE_ITEMS: ResourceItem[] = [
   { label: "Enterprise", description: "Dedicated infra, residency, SLAs", href: "/enterprise", icon: Building2 },
   { label: "Changelog", description: "Latest releases and improvements", href: "/changelog", icon: GitBranch },
   { label: "About", description: "Who we are", href: "/about", icon: Users },
-  { label: "Brand", description: "Logos and guidelines", href: "/brand", icon: Palette },
+  { label: "Open", description: "Open source, metrics & brand", href: "/open", icon: Unlock },
   { label: "Privacy", description: "Privacy policy", href: "/privacy-policy", icon: Scale },
   { label: "Terms", description: "Terms of service", href: "/terms-of-service", icon: Scale },
 ];

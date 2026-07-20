@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "prebuild": "node scripts/sync-docs.mjs && node scripts/generate-openapi.mjs && node scripts/generate-models.mjs && node scripts/generate-changelog-latest.mjs",
+    "prebuild": "node scripts/generate-openapi.mjs && node scripts/generate-models.mjs && node scripts/generate-changelog-latest.mjs && node scripts/check-docs.mjs",
     "start": "next start",
     "test": "vitest run",
     "postinstall": "fumadocs-mdx",
@@ -13,7 +13,7 @@
     "generate:models": "node scripts/generate-models.mjs",
     "generate:changelog": "node scripts/generate-changelog-latest.mjs",
     "sync:changelog": "node scripts/sync-changelog.mjs",
-    "sync:docs": "node scripts/sync-docs.mjs"
+    "lint:docs": "node scripts/check-docs.mjs --verbose"
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^2.0.35",

@@ -25,6 +25,16 @@ import { COMPONENT_WHITELIST } from "../lib/docs-sync/constants.mjs";
 const SECTIONS = ["get-started", "concepts", "features", "guides", "integrations"];
 const ROOT = "content/docs";
 
+// Registry-generated pages (owned by scripts/generate-registry-tables.mjs): still
+// whitelist/import-checked, but translation-staleness tracking is meaningless for
+// them — the tables are regenerated data, not hand-translated prose.
+const GENERATED = new Set([
+  "get-started/supported-models.md",
+  "get-started/supported-models.zh.md",
+  "get-started/supported-providers.md",
+  "get-started/supported-providers.zh.md",
+]);
+
 async function walk(dir) {
   const out = [];
   for (const e of await readdir(dir, { withFileTypes: true })) {
@@ -82,6 +92,8 @@ async function main() {
 
     const h = bodyHash(normalized);
     const recorded = readFrontmatterField(frontmatter, "sourceHash");
+    if (!isZh(abs)) enBodyHash.set(rel, h);
+    if (GENERATED.has(rel)) continue; // skip staleness tracking for generated pages
     if (isZh(abs)) {
       const expected = enBodyHash.get(enOf(rel));
       if (expected == null) {
@@ -89,11 +101,8 @@ async function main() {
       } else if (recorded !== expected) {
         warnings.push(`${rel}  stale translation (sourceHash != current English body)`);
       }
-    } else {
-      enBodyHash.set(rel, h);
-      if (recorded != null && recorded !== h) {
-        warnings.push(`${rel}  English sourceHash is stale (frontmatter != body hash)`);
-      }
+    } else if (recorded != null && recorded !== h) {
+      warnings.push(`${rel}  English sourceHash is stale (frontmatter != body hash)`);
     }
   }
 

@@ -1,58 +1,160 @@
-name: On BitRouter Release
+name: On BitRouter Release — update docs
+
+# When a BitRouter release is published, a headless pi coding-agent reads the
+# release notes (+ the linked PR diffs) and edits the affected docs pages, then
+# peter-evans/create-pull-request opens a PR for human review.
+#
+# The `bitrouter-release` dispatch is already fired by bitrouter/bitrouter's
+# .github/workflows/notify-release.yml — no change needed on the source side.
+# This flow is complementary to sync-changelog.yml (which records WHAT changed);
+# this one updates the HOW-TO pages. They never edit each other's files.
+#
+# Requires repo secret BITROUTER_API_KEY (a BitRouter Cloud key) for pi's model
+# calls. pi routes through BitRouter Cloud — the docs pipeline dogfoods the product.
 
 on:
   repository_dispatch:
     types: [bitrouter-release]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag, e.g. v1.0.0-alpha.26 (blank = latest release)"
+        required: false
+        default: ""
+  schedule:
+    - cron: "37 6 * * *" # daily safety net in case a dispatch is missed
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: docs-release-${{ github.event.client_payload.tag || github.event.inputs.tag || 'latest' }}
+  cancel-in-progress: false
+
+env:
+  TAG: ${{ github.event.client_payload.tag || github.event.inputs.tag }}
 
 jobs:
   update-docs:
-    name: Update docs for new release
+    name: Draft docs update for a release
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: write
-      pull-requests: write
-      issues: write
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 1
           persist-credentials: false
 
-      - uses: anomalyco/opencode/github@latest
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Resolve release tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${TAG}"
+          if [ -z "$TAG" ]; then
+            TAG="$(gh release view --repo bitrouter/bitrouter --json tagName --jq .tagName)"
+          fi
+          if [ -z "$TAG" ]; then
+            echo "::error::could not resolve a release tag"; exit 1
+          fi
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+          echo "Resolved release tag: $TAG"
+
+      - name: Install pi
+        run: npm install -g --ignore-scripts @earendil-works/pi-coding-agent
+
+      - name: Point pi at BitRouter Cloud
+        run: |
+          mkdir -p ~/.pi/agent
+          cat > ~/.pi/agent/models.json <<'JSON'
+          {
+            "providers": {
+              "bitrouter": {
+                "baseUrl": "https://api.bitrouter.ai/v1",
+                "api": "openai-completions",
+                "apiKey": "$BITROUTER_API_KEY",
+                "authHeader": true,
+                "models": [
+                  { "id": "moonshotai/kimi-k2.5", "name": "Kimi K2.5 via BitRouter" }
+                ]
+              }
+            }
+          }
+          JSON
+
+      - name: Run pi to update docs
         env:
           BITROUTER_API_KEY: ${{ secrets.BITROUTER_API_KEY }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # gh reads public bitrouter release/PR data
+          PI_OFFLINE: "1"
+        run: |
+          # Build the prompt with a literal heredoc, then inject the tag — avoids
+          # any shell expansion of backticks / $ inside the prompt body.
+          PROMPT="$(cat <<'PROMPT'
+          BitRouter __TAG__ was just released. Update this repository's documentation to
+          match what changed, then stop.
+
+          GATHER CONTEXT before editing (a one-line changelog entry is rarely enough to
+          document accurately):
+            1. Read the release notes:
+                 gh release view __TAG__ --repo bitrouter/bitrouter --json body --jq '.body'
+            2. For each note that looks documentation-relevant, open its linked PR:
+                 gh pr view <N> --repo bitrouter/bitrouter --json title,body
+                 gh pr diff <N> --repo bitrouter/bitrouter
+
+          SCOPE — edit ONLY existing pages under these directories:
+            content/docs/get-started/  content/docs/concepts/  content/docs/features/
+            content/docs/guides/       content/docs/integrations/
+          Match each release note to the closest existing page. Do NOT create new pages
+          or paths, and do NOT restructure navigation (the meta.json files).
+
+          RULES:
+            - Bilingual lockstep: for every X.md you edit, make the equivalent edit to its
+              X.zh.md sibling — translate prose to Simplified Chinese, but keep code blocks,
+              component tags (<Callout>, <Tabs>, <Cards>, ...), headings and link targets
+              identical.
+            - Do NOT edit the `sourceHash:` frontmatter field — the build recomputes it.
+            - Docs are import-free and may only use these components: Callout, Tabs, Tab,
+              Cards, Card, ModelsTable, ProvidersTable, CalInline.
+            - Breaking changes (feat!: or BREAKING CHANGE in the notes): add a short
+              migration note to the most relevant existing page.
+            - Only change pages where the notes indicate a real, documentable change. No
+              speculative edits, no drive-by rewrites.
+
+          NEVER TOUCH — generated or owned by other automation:
+            - content/docs/get-started/supported-models*.md, supported-providers*.md
+              (registry-generated tables)
+            - content/docs/reference/**      (generated from the OpenAPI spec)
+            - content/docs/ai-resources/**   (site-owned)
+            - content/changelog/**           (handled by the changelog sync)
+
+          If nothing in the release notes warrants a docs change, make no edits and exit.
+          PROMPT
+          )"
+          PROMPT="${PROMPT//__TAG__/$TAG}"
+          # Print mode is headless: no per-tool approval gate; -a trusts project-local
+          # config. Bump --model here if doc-prose quality lags.
+          pi -p -a --provider bitrouter --model "moonshotai/kimi-k2.5" "$PROMPT"
+
+      - name: Open PR
+        uses: peter-evans/create-pull-request@v7
         with:
-          model: bitrouter/kimi-k2.5
-          prompt: |
-            BitRouter ${{ github.event.client_payload.tag }} was just released.
+          # Default GITHUB_TOKEN opens the PR but will not trigger `on: pull_request`
+          # CI (a GitHub safeguard). Swap in a PAT/app token here if the agent's PR
+          # must run CI. sync-changelog.yml accepts the same tradeoff.
+          branch: chore/docs-${{ env.TAG }}
+          base: main
+          title: "docs: update for BitRouter ${{ env.TAG }}"
+          commit-message: "docs: update for BitRouter ${{ env.TAG }}"
+          labels: docs, automated
+          body: |
+            Agent-drafted docs update for **${{ env.TAG }}**, from the release notes and
+            the linked PR diffs.
 
-            Fetch the release notes by running:
-              gh release view ${{ github.event.client_payload.tag }} --repo bitrouter/bitrouter --json body --jq '.body'
-
-            Based on the release notes, update the documentation in this repo.
-            The docs live under `content/docs/`.
-
-            1. Guides (content/docs/guides/):
-               - overview/  — what BitRouter is, quickstart and install steps, provider list, comparisons
-               - features/  — one page per feature: guardrails, observability, mcp, acp, agentskills, byok, cli, payment, presets, structured-outputs, workspaces
-               - routing/   — routing behaviour: model fallback, model and router variants, provider selection
-               Update the relevant EXISTING page(s) under these directories — match each
-               release note to the closest existing file. Do not invent new pages or paths.
-
-            2. Cookbook (content/docs/cookbook/):
-               - Update an integration/ or migration/ recipe if a release changes how
-                 users integrate with or migrate to BitRouter.
-
-            3. Chinese translations:
-               - For every .mdx file you modify, also update its .zh.mdx counterpart with the equivalent changes translated to Chinese
-
-            4. If there are breaking changes (feat!: or BREAKING CHANGE in the notes):
-               - Add a migration section to the relevant guide page
-
-            Do NOT touch the API reference (content/docs/reference/api-reference/) or
-            openapi.yaml: those are generated deterministically from the cloud's
-            OpenAPI spec and must not be hand-edited.
-
-            Only modify files where the release notes indicate actual changes. Do not make speculative edits.
-            Open a PR to main with branch chore/docs-${{ github.event.client_payload.tag }}.
+            Draft — review prose accuracy, bilingual (en/zh) parity, and that only the
+            genuinely-affected pages changed before merging. Generated pages
+            (supported-models/providers, reference/**) and the changelog are out of scope
+            for this job by design.

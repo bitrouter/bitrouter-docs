@@ -1,0 +1,2 @@
+# Idempotency sidecars: one <slug>.json per created X Article draft, committed
+# back to main so re-runs never create duplicate drafts. Managed by scripts/blog-to-x.mjs.

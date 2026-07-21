@@ -1,0 +1,69 @@
+# When a new blog post is merged to main, create an UNPUBLISHED X Article draft
+# on the post author's personal account (routed by the `author` frontmatter).
+# Fully deterministic (no LLM). Draft-only — never publishes. See
+# docs/x-article-automation.md for the one-time credential setup, and
+# docs/blog-to-x-article-automation-plan.md for the design.
+name: Blog → X Article draft
+
+on:
+  push:
+    branches: [main]
+    paths: ["content/blog/**"]
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: "Blog slug to draft (blank = detect newly added posts)"
+        required: false
+        default: ""
+      dry_run:
+        description: "Encode and print only; do not call X"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write # commit the .x-drafts idempotency sidecar back to main
+
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2 # need before..after to diff the merge
+          persist-credentials: true # needed to push the sidecar commit
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Install xurl
+        run: npm i -g @xdevplatform/xurl
+
+      - name: Create X Article draft(s)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.sha }}
+          SLUG: ${{ github.event.inputs.slug }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+          # OAuth 1.0a creds per author; the script picks by frontmatter `author`.
+          X_KELSEN_CONSUMER_KEY: ${{ secrets.X_KELSEN_CONSUMER_KEY }}
+          X_KELSEN_CONSUMER_SECRET: ${{ secrets.X_KELSEN_CONSUMER_SECRET }}
+          X_KELSEN_ACCESS_TOKEN: ${{ secrets.X_KELSEN_ACCESS_TOKEN }}
+          X_KELSEN_TOKEN_SECRET: ${{ secrets.X_KELSEN_TOKEN_SECRET }}
+          X_ARCHER_CONSUMER_KEY: ${{ secrets.X_ARCHER_CONSUMER_KEY }}
+          X_ARCHER_CONSUMER_SECRET: ${{ secrets.X_ARCHER_CONSUMER_SECRET }}
+          X_ARCHER_ACCESS_TOKEN: ${{ secrets.X_ARCHER_ACCESS_TOKEN }}
+          X_ARCHER_TOKEN_SECRET: ${{ secrets.X_ARCHER_TOKEN_SECRET }}
+        run: |
+          git config user.name "bitrouter-bot"
+          git config user.email "bot@bitrouter.ai"
+          args=()
+          [ -n "$SLUG" ] && args+=(--slug "$SLUG")
+          [ "$DRY_RUN" = "true" ] && args+=(--dry-run)
+          node scripts/blog-to-x.mjs "${args[@]}"

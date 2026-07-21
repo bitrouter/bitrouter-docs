@@ -31,6 +31,10 @@ export const blog = defineDocs({
   docs: {
     schema: frontmatterSchema.extend({
       date: z.string().optional(), // ISO YYYY-MM-DD; used for footer "latest posts" sort
+      // Routes the auto-generated X Article draft to the post author's account
+      // (see scripts/blog-to-x.mjs). Optional so a missing value never breaks the
+      // site build — the automation just skips posts without a known author.
+      author: z.enum(["kelsen", "archer"]).optional(),
     }),
   },
   meta: {

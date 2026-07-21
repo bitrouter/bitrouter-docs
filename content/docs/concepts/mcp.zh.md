@@ -20,6 +20,19 @@ bitrouter mcp install --client claude  # 打印可粘贴的 mcpServers 配置块
 
 追加 `--transport http` 可改为对接多租户云后端，而非本地守护进程。
 
+### 后端变体
+
+`--backend` 标志选择服务器暴露的工具表面：
+
+| 后端 | 工具 | 使用场景 |
+|------|------|----------|
+| `local` *（默认）* | `complete`、`list_models`、`status` | 从任意 MCP 客户端驱动本地守护进程 |
+| `cloud` | `complete`、`list_models`、`status` | 通过 HTTP 驱动 BitRouter Cloud |
+| `fleet` | 编排器配置——补全工具外加子代理 spawn/manage、成本、路由预览和人机桥接工具 | TUI 编排器委托给代理 |
+| `skills` | `skills_search`、`skills_get` | 基于已安装技能的源 AgentSkills 服务器 |
+
+`skills` 后端是 **AgentSkills 网关**——它将已安装的技能作为独立服务器暴露，以便运行时可以发现和加载它们。在 `bitrouter tui` 下运行时，此服务器会与 MCP 网关一起自动注入到每个启动的运行时中。
+
 ## 并非 MCP 网关
 
 请把 BitRouter 与 MCP 的两种角色区分开：

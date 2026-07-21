@@ -25,6 +25,10 @@ Routing tools through one gateway buys you three things you'd otherwise rebuild 
 
 The gateway exposes a single aggregate endpoint that **fans out** across every configured server. A list call queries each server and returns the merged catalog; a tool call routes to the owning server. To keep names from colliding, each server's tools are **namespaced with a prefix** — the `search` tool on the `demo` server is advertised as `demo__search`. A server can **opt out** of the aggregate to stay reachable only on its own route, and cheap list calls are **cached** briefly so discovery stays fast. The prefix and cache settings are configurable per server.
 
+### Gateway injection for harnesses
+
+When you launch an agent harness through `bitrouter tui`, the MCP gateway is automatically injected as `bitrouter_tools` — a streamable-HTTP MCP server pointing at the daemon's aggregate `/mcp` endpoint. This means orchestrators and subagents spawned by the TUI inherit your configured tool surface without additional setup. The same injection happens for the AgentSkills gateway (`bitrouter_skills`), giving every TUI-launched harness access to both tools and skills.
+
 ## Agent Skills
 
 The second capability an agent acquires is **know-how**. **Agent Skills** are drop-in capabilities an agent loads on demand — a packaged procedure, a set of instructions, a workflow — discovered and pulled in the same way tools are, through the gateway. Where an MCP tool is something the agent *calls*, a Skill is something the agent *learns*: the knowledge travels with the agent instead of living in a human's setup notes. One common Skill simply teaches an agent how to drive BitRouter itself.

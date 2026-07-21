@@ -67,7 +67,7 @@ LiteLLM is an open-source Python proxy that's BYOK-only and infra-heavy (Postgre
 
 ### How is BitRouter different from Portkey, Bifrost, and other generic gateways?
 
-Generic gateways treat LLMs as just another upstream API — logging, caching, rate limiting, failover, BYOK billing. They lack agent identity and runtime model discovery, autonomous payment protocols (x402/MPP), MCP/ACP gateways, a skills registry, and sub-10ms native deployment — the agent surface BitRouter is built around.
+Generic gateways treat LLMs as just another upstream API — logging, caching, rate limiting, failover, BYOK billing. They lack agent identity, autonomous payment protocols (x402/MPP), MCP/ACP gateways, a skills registry, and sub-10ms native deployment — the agent surface BitRouter is built around.
 
 ### How is BitRouter different from TensorZero?
 

@@ -32,7 +32,7 @@ BitRouter 被设计为一个面向推理的**开放市场**。任何运行 OpenA
 
 ## 提供商清单（Manifest）
 
-清单声明端点元数据、支付方式，以及 BitRouter 用于轮询的模型目录 URL。
+清单声明端点元数据、支付方式，以及注册表同步时使用的模型目录 URL。
 
 ```yaml
 id: example-provider
@@ -49,7 +49,7 @@ support: https://example.ai/support
 
 ## 模型端点
 
-BitRouter 会周期性地轮询你的 `models_url`，并按以下 schema 解析所有可用模型：
+注册表构建过程可能会使用你的 `models_url` 来同步模型目录。该端点应按以下 schema 返回所有可用模型列表：
 
 ```json
 {

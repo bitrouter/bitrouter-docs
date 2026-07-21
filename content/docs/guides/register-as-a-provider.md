@@ -32,7 +32,7 @@ You apply by opening a pull request that adds your provider manifest. Once merge
 
 ## Provider Manifest
 
-A manifest declares your endpoint metadata, payment modes, and the model-catalog URL that BitRouter polls.
+A manifest declares your endpoint metadata, payment modes, and the model-catalog URL used during registry sync.
 
 ```yaml
 id: example-provider
@@ -49,7 +49,7 @@ support: https://example.ai/support
 
 ## Models Endpoint
 
-BitRouter periodically polls your `models_url` and expects a list of all available models in the following schema.
+The registry build process may use your `models_url` to sync the model catalog. The endpoint should return a list of all available models in the following schema.
 
 ```json
 {

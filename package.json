@@ -5,13 +5,14 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "prebuild": "node scripts/generate-openapi.mjs && node scripts/generate-models.mjs && node scripts/generate-changelog-latest.mjs && node scripts/check-docs.mjs",
+    "prebuild": "node scripts/generate-openapi.mjs && node scripts/generate-models.mjs && node scripts/generate-registry-tables.mjs && node scripts/generate-changelog-latest.mjs && node scripts/check-docs.mjs",
     "start": "next start",
     "test": "vitest run",
     "postinstall": "fumadocs-mdx",
     "generate:openapi": "node scripts/generate-openapi.mjs",
     "generate:models": "node scripts/generate-models.mjs",
     "generate:changelog": "node scripts/generate-changelog-latest.mjs",
+    "generate:tables": "node scripts/generate-registry-tables.mjs",
     "sync:changelog": "node scripts/sync-changelog.mjs",
     "lint:docs": "node scripts/check-docs.mjs --verbose"
   },

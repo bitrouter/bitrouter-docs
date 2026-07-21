@@ -21,6 +21,19 @@ bitrouter mcp install --client claude  # print the mcpServers config block to pa
 
 Add `--transport http` to target the multi-tenant cloud backend instead of the local daemon.
 
+### Backend variants
+
+The `--backend` flag selects which tool surface the server exposes:
+
+| Backend | Tools | Use case |
+|---------|-------|----------|
+| `local` *(default)* | `complete`, `list_models`, `status` | Drive the local daemon from any MCP client |
+| `cloud` | `complete`, `list_models`, `status` | Drive BitRouter Cloud over HTTP |
+| `fleet` | Orchestrator profile — completion tools plus subagent spawn/manage, cost, routing preview, and human-bridge tools | TUI orchestrator delegated to an agent |
+| `skills` | `skills_search`, `skills_get` | Origin AgentSkills server over installed skills |
+
+The `skills` backend is the **AgentSkills gateway** — it exposes installed skills as a standalone server so harnesses can discover and load them. When running under `bitrouter tui`, this server is automatically injected into every launched harness alongside the MCP gateway.
+
 ## Not the MCP gateway
 
 Keep two BitRouter-and-MCP roles distinct:

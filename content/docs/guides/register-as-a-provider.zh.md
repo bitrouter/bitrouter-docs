@@ -32,20 +32,53 @@ BitRouter 被设计为一个面向推理的**开放市场**。任何运行 OpenA
 
 ## 提供商清单（Manifest）
 
-清单声明端点元数据、支付方式，以及 BitRouter 用于轮询的模型目录 URL。
+清单声明端点元数据、支付方式和模型目录。
 
 ```yaml
-id: example-provider
-name: Example AI
-endpoint: https://api.example.ai/v1
-protocol: openai      # openai | anthropic
-models_url: https://api.example.ai/v1/models
-payment:
-  modes: [byok, x402]
-  x402_address: "0x..."          # 可选，用于托管模式下的 Agent 支付
-homepage: https://example.ai
-support: https://example.ai/support
+name: example-provider
+display_name: Example AI
+metadata:
+  headquarters: US
+  datacenters:
+    - US
+  name: Example AI
+  slug: example-ai
+  privacy_policy_url: https://example.ai/privacy
+  terms_of_service_url: https://example.ai/terms
+api_base: https://api.example.ai/v1
+protocol_endpoints:
+  anthropic: https://api.example.ai/anthropic/v1
+api_protocol:
+  - "*": [openai, responses]
+rate_limits:
+  - "*":
+      requests_per_minute: 60
+billing: usage_token
+auth_scheme: bearer
+models:
+  - id: example/model-1
+    provider_model_id: model-1
+    pricing:
+      input_tokens:
+        no_cache: 1.0
+      output_tokens:
+        text: 2.0
+status: active
 ```
+
+### 关键字段
+
+- **`name`** — 用于配置和模型前缀的提供商 ID。
+- **`display_name`** — 在 UI 中显示的人类可读名称。
+- **`api_base`** — 上游基础 URL（可选；如需用户通过 `required_config` 提供自己的端点，则省略此字段）。
+- **`protocol_endpoints`** — 按协议覆盖的基础 URL（例如，将 Anthropic 协议路由到不同路径）。
+- **`api_protocol`** — 将模型前缀映射到支持协议的 glob 模式。
+- **`rate_limits`** — 每个模型或通配符的请求限制。
+- **`billing`** — `usage_token`（按量付费）或 `subscription`（固定费率套餐）。
+- **`auth_scheme`** — `bearer`、`x-api-key` 或其他支持的认证方案。
+- **`required_config`** — 所需的用户配置数组：`api_key`、`base_url`、`local_oauth`、`local_pkce`。当提供商需要用户提供端点（例如工作空间专属 URL）时使用此字段。
+- **`metadata.datacenters`** — 提供商运营区域的代码列表（如 `US`、`CN`、`SG`、`EU`）。
+- **`models`** — 该提供商服务的模型列表。模型也可以在单独的 `registry/models/<owner>/<model>.yaml` 文件中定义。
 
 ## 模型端点
 

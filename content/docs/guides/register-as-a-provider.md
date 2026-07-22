@@ -32,20 +32,53 @@ You apply by opening a pull request that adds your provider manifest. Once merge
 
 ## Provider Manifest
 
-A manifest declares your endpoint metadata, payment modes, and the model-catalog URL that BitRouter polls.
+A manifest declares your endpoint metadata, payment modes, and the model catalog.
 
 ```yaml
-id: example-provider
-name: Example AI
-endpoint: https://api.example.ai/v1
-protocol: openai      # openai | anthropic
-models_url: https://api.example.ai/v1/models
-payment:
-  modes: [byok, x402]
-  x402_address: "0x..."          # optional, for hosted agent payments
-homepage: https://example.ai
-support: https://example.ai/support
+name: example-provider
+display_name: Example AI
+metadata:
+  headquarters: US
+  datacenters:
+    - US
+  name: Example AI
+  slug: example-ai
+  privacy_policy_url: https://example.ai/privacy
+  terms_of_service_url: https://example.ai/terms
+api_base: https://api.example.ai/v1
+protocol_endpoints:
+  anthropic: https://api.example.ai/anthropic/v1
+api_protocol:
+  - "*": [openai, responses]
+rate_limits:
+  - "*":
+      requests_per_minute: 60
+billing: usage_token
+auth_scheme: bearer
+models:
+  - id: example/model-1
+    provider_model_id: model-1
+    pricing:
+      input_tokens:
+        no_cache: 1.0
+      output_tokens:
+        text: 2.0
+status: active
 ```
+
+### Key fields
+
+- **`name`** — provider id used in configs and model prefixes.
+- **`display_name`** — human-readable name shown in UIs.
+- **`api_base`** — upstream base URL (optional; omit if you require users to supply their own endpoint via `required_config`).
+- **`protocol_endpoints`** — per-protocol base URL overrides (e.g., route Anthropic protocol to a different path).
+- **`api_protocol`** — glob patterns mapping model prefixes to supported protocols.
+- **`rate_limits`** — per-model or wildcard request limits.
+- **`billing`** — `usage_token` (pay-per-use) or `subscription` (flat-rate plan).
+- **`auth_scheme`** — `bearer`, `x-api-key`, or other supported schemes.
+- **`required_config`** — array of required user configuration: `api_key`, `base_url`, `local_oauth`, `local_pkce`. Use this when the provider needs a user-supplied endpoint (e.g., workspace-specific URLs).
+- **`metadata.datacenters`** — list of region codes where the provider operates (e.g., `US`, `CN`, `SG`, `EU`).
+- **`models`** — list of models served by this provider. Models can also be defined in separate files under `registry/models/<owner>/<model>.yaml`.
 
 ## Models Endpoint
 

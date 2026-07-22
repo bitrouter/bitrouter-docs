@@ -29,7 +29,7 @@ function decorate(m: ModelRow) {
     outW: barW(m.out, maxOut),
     inColor: pColor(m.in, maxIn),
     outColor: pColor(m.out, maxOut),
-    tag: m.oss ? "-25%" : "proprietary",
+    tag: m.oss ? "" : "proprietary",
     tagColor: m.oss ? "#6b9bff" : "#e0a955",
     tagBorder: m.oss ? "#2a3550" : "#3d3320",
   };
@@ -286,7 +286,7 @@ function TableView({ rows }: { rows: DecoratedRow[] }) {
             <div style={{ padding: "12px 16px", display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
               <BrandIcon name={r.p} size={15} color={r.dot} />
               <span style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--z-ink-2)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.id}</span>
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.06em", textTransform: "uppercase", color: r.tagColor, border: `1px solid ${r.tagBorder}`, borderRadius: 4, padding: "2px 5px", flex: "0 0 auto" }}>{r.tag}</span>
+              {r.tag && <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.06em", textTransform: "uppercase", color: r.tagColor, border: `1px solid ${r.tagBorder}`, borderRadius: 4, padding: "2px 5px", flex: "0 0 auto" }}>{r.tag}</span>}
             </div>
             <div style={{ padding: "12px 10px", fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--z-ink-5)" }}>{r.ctx}</div>
             <PriceCell txt={r.inTxt} w={r.inW} color={r.inColor} />
@@ -325,7 +325,7 @@ function CardView({ rows }: { rows: DecoratedRow[] }) {
           <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
             <BrandIcon name={r.p} size={16} color={r.dot} />
             <span style={{ fontFamily: "var(--font-sans)", fontSize: 11.5, color: "var(--z-ink-5)" }}>{r.p}</span>
-            <span style={{ marginLeft: "auto", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.06em", textTransform: "uppercase", color: r.tagColor, border: `1px solid ${r.tagBorder}`, borderRadius: 4, padding: "2px 6px" }}>{r.tag}</span>
+            {r.tag && <span style={{ marginLeft: "auto", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.06em", textTransform: "uppercase", color: r.tagColor, border: `1px solid ${r.tagBorder}`, borderRadius: 4, padding: "2px 6px" }}>{r.tag}</span>}
           </div>
           <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--z-ink)", marginTop: 10, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.id}</div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginTop: 16 }}>

@@ -13,10 +13,15 @@ import {
 import type { ReactNode } from "react";
 import { CopyButton } from "@/components/landing/copy-button";
 import type { Metadata } from "next";
+import "@/components/landing/zed/zed.css";
+import { Kicker } from "@/components/landing/zed/primitives";
 
 const CORE_REPO = "https://github.com/bitrouter/bitrouter";
 const BRAND_KIT_REPO = "https://github.com/bitrouter/brand-kit";
 const STATUS_URL = "https://status.bitrouter.ai";
+
+const RULE = "1px solid var(--z-rule)";
+const MONO = "var(--font-mono)";
 
 // ─────────────────────────────────────────────────────────────
 // NOTE: The figures below are PLACEHOLDERS for design review.
@@ -119,17 +124,31 @@ const IN_THE_OPEN: ResourceLink[] = [
 ];
 
 const COLORS = [
-  { role: "Foreground", hex: "#000000", token: "--foreground" },
-  { role: "Background", hex: "#FFFFFF", token: "--background" },
+  { role: "Ink", hex: "#0C0D10", token: "--z-bg" },
+  { role: "Signal blue", hex: "#6B9BFF", token: "--z-blue" },
 ];
 
 const ATTRIBUTION_LINE = "Built with BitRouter — https://github.com/bitrouter";
 
 function SectionHeading({ label, index }: { label: string; index: number }) {
   return (
-    <header className="flex items-baseline justify-between gap-4 border-b border-border pb-3">
-      <h2 className="text-2xl font-medium tracking-tight sm:text-3xl">{label}</h2>
-      <span className="font-mono text-xs tabular-nums text-muted-foreground">
+    <header
+      style={{
+        display: "flex",
+        alignItems: "baseline",
+        justifyContent: "space-between",
+        gap: 16,
+        borderBottom: RULE,
+        paddingBottom: 14,
+      }}
+    >
+      <h2
+        className="zed-display"
+        style={{ fontSize: "clamp(23px, 3.2vw, 30px)", lineHeight: 1.1, margin: 0 }}
+      >
+        {label}
+      </h2>
+      <span style={{ fontFamily: MONO, fontSize: 12, color: "var(--z-ink-6)" }}>
         {String(index).padStart(2, "0")}
       </span>
     </header>
@@ -140,216 +159,379 @@ export default function OpenPage() {
   setRequestLocale("en");
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-6 py-16 sm:px-10 lg:px-14 lg:py-24">
-      {/* Page header */}
-      <header className="mb-20 border-b border-border pb-16">
-        <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-          Open startup
-        </div>
-        <h1 className="mt-6 inline-block border-b border-foreground pb-1 text-5xl font-medium tracking-tight">
-          Open
-        </h1>
-        <p className="mt-6 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-          BitRouter is open at the core. The router is Apache-2.0 and runs on
-          your machine; the cloud is the managed version you pay for when you
-          want it. We build in the open — code, roadmap, and the numbers.
-        </p>
-        <a
-          href={CORE_REPO}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group mt-8 inline-flex items-center gap-2.5 border border-foreground bg-foreground px-5 py-3 font-mono text-xs uppercase tracking-widest text-background transition-opacity hover:opacity-90"
-        >
-          <Star className="size-3.5" />
-          Star on GitHub
-          <ArrowUpRight className="size-3.5" />
-        </a>
-      </header>
+    <div className="zed-bg">
+      <section style={{ position: "relative" }}>
+        <div className="zed-glow" />
+        <main className="zed-wrap" style={{ maxWidth: 1040, padding: "72px 34px 96px" }}>
+          {/* Page header */}
+          <header style={{ marginBottom: 72, borderBottom: RULE, paddingBottom: 56 }}>
+            <Kicker>// open startup</Kicker>
+            <h1
+              className="zed-display"
+              style={{
+                fontSize: "clamp(40px, 6vw, 60px)",
+                lineHeight: 1.0,
+                margin: "16px 0 0",
+              }}
+            >
+              Open <span style={{ color: "var(--z-blue)" }}>at the core.</span>
+            </h1>
+            <p
+              style={{
+                marginTop: 22,
+                maxWidth: "62ch",
+                fontFamily: MONO,
+                fontSize: 15,
+                lineHeight: 1.7,
+                color: "var(--z-ink-4)",
+              }}
+            >
+              BitRouter is open at the core. The router is Apache-2.0 and runs on
+              your machine; the cloud is the managed version you pay for when you
+              want it. We build in the open — code, roadmap, and the numbers.
+            </p>
+            <a
+              href={CORE_REPO}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                marginTop: 28,
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 10,
+                padding: "11px 20px",
+                borderRadius: 8,
+                background: "var(--z-cta)",
+                color: "#fff",
+                fontFamily: MONO,
+                fontSize: 13,
+                fontWeight: 500,
+              }}
+            >
+              <Star className="size-3.5" />
+              Star on GitHub
+              <ArrowUpRight className="size-3.5" />
+            </a>
+          </header>
 
-      {/* 01 — Why open */}
-      <section className="mb-20">
-        <SectionHeading label="Why open" index={1} />
-        <div className="mt-8 max-w-2xl space-y-5 text-sm leading-relaxed text-muted-foreground">
-          <p>
-            Most AI infrastructure asks you to trust a black box. We took the
-            opposite bet. BitRouter&apos;s core — the router that sits between
-            your agents and every model — is open source, Apache-2.0, and runs
-            on your machine. You can read it, fork it, and run it with your own
-            keys without ever talking to us.
-          </p>
-          <p>
-            The cloud is the managed version: the same router, hosted, with
-            billing, pooled keys, and a dashboard. You pay for the operational
-            load we take off your plate — never for access to the software. If
-            the cloud ever stops earning that, the way out is one{" "}
-            <code className="font-mono text-[13px] text-foreground">
-              bitrouter serve
-            </code>{" "}
-            away. No lock-in is a feature we can&apos;t remove.
-          </p>
-          <p>
-            Open-core is only half of it. We build in the open — the roadmap,
-            the changelog, the provider registry, the subprocessors we rely on,
-            and the numbers below. An open company should be legible from the
-            outside. This page is where we keep ourselves honest.
-          </p>
-        </div>
-      </section>
+          {/* 01 — Why open */}
+          <section style={{ marginBottom: 72 }}>
+            <SectionHeading label="Why open" index={1} />
+            <div
+              style={{
+                marginTop: 32,
+                maxWidth: "66ch",
+                display: "flex",
+                flexDirection: "column",
+                gap: 18,
+                fontFamily: MONO,
+                fontSize: 14,
+                lineHeight: 1.75,
+                color: "var(--z-ink-4)",
+              }}
+            >
+              <p style={{ margin: 0 }}>
+                Most AI infrastructure asks you to trust a black box. We took the
+                opposite bet. BitRouter&apos;s core — the router that sits between
+                your agents and every model — is open source, Apache-2.0, and runs
+                on your machine. You can read it, fork it, and run it with your own
+                keys without ever talking to us.
+              </p>
+              <p style={{ margin: 0 }}>
+                The cloud is the managed version: the same router, hosted, with
+                billing, pooled keys, and a dashboard. You pay for the operational
+                load we take off your plate — never for access to the software. If
+                the cloud ever stops earning that, the way out is one{" "}
+                <code
+                  style={{
+                    fontFamily: MONO,
+                    fontSize: 13,
+                    color: "var(--z-code)",
+                    background: "#1a1e24",
+                    border: "1px solid var(--z-rule-code)",
+                    borderRadius: 5,
+                    padding: "1px 6px",
+                  }}
+                >
+                  bitrouter serve
+                </code>{" "}
+                away. No lock-in is a feature we can&apos;t remove.
+              </p>
+              <p style={{ margin: 0 }}>
+                Open-core is only half of it. We build in the open — the roadmap,
+                the changelog, the provider registry, the subprocessors we rely on,
+                and the numbers below. An open company should be legible from the
+                outside. This page is where we keep ourselves honest.
+              </p>
+            </div>
+          </section>
 
-      {/* 02 — Open core, commercial cloud */}
-      <section className="mb-20">
-        <SectionHeading label="Open core, commercial cloud" index={2} />
-        <div className="mt-8 space-y-8">
-          <div className="grid gap-px border border-border bg-border md:grid-cols-2">
-            <ModelCard
-              icon={Terminal}
-              kind="Open source"
-              title="The router"
-              body="Runs locally as a proxy behind a single env var. Bring your own keys. Self-host forever, free."
-              points={[
-                "Apache-2.0 — permissive, no strings",
-                "Install via Homebrew, npm, or Cargo",
-                "Any model, any harness, any loop",
-              ]}
-              cta={{ label: "Read the code", href: CORE_REPO }}
-            />
-            <ModelCard
-              icon={Cloud}
-              kind="Commercial"
-              title="The cloud"
-              body="The same router, hosted at api.bitrouter.ai — so you don't run or scale anything."
-              points={[
-                "Pooled keys, billing, usage dashboard",
-                "Higher limits, BYOK, and support",
-                "OAuth or API key to get started",
-              ]}
-              cta={{ label: "See pricing", href: "/pricing", external: false }}
-            />
-          </div>
-          <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
-            That&apos;s the whole deal. The open router is not a crippled demo of
-            the cloud — it&apos;s the product. The cloud earns its keep by being
-            the easier way to run it, not the only way.
-          </p>
-        </div>
-      </section>
-
-      {/* 03 — By the numbers */}
-      <section className="mb-20">
-        <SectionHeading label="By the numbers" index={3} />
-        <div className="mt-8 space-y-4">
-          <div className="grid grid-cols-2 gap-px border border-border bg-border sm:grid-cols-3">
-            {STATS.map((s) => (
-              <StatTile key={s.label} stat={s} />
-            ))}
-          </div>
-          <p className="font-mono text-[11px] text-muted-foreground/60">
-            Placeholder figures — live wiring to GitHub, product analytics, and
-            status is in progress.
-          </p>
-        </div>
-      </section>
-
-      {/* 04 — Open repositories */}
-      <section className="mb-20">
-        <SectionHeading label="Open repositories" index={4} />
-        <div className="mt-8 grid gap-px border border-border bg-border sm:grid-cols-2">
-          {REPOS.map((r) => (
-            <RepoCard key={r.name} repo={r} />
-          ))}
-        </div>
-      </section>
-
-      {/* 05 — Built in the open */}
-      <section className="mb-20">
-        <SectionHeading label="Built in the open" index={5} />
-        <div className="mt-8 grid gap-px border border-border bg-border sm:grid-cols-2">
-          {IN_THE_OPEN.map((l) => (
-            <ResourceLinkCard key={l.label} link={l} />
-          ))}
-        </div>
-      </section>
-
-      {/* 06 — Brand */}
-      <section className="mb-20">
-        <SectionHeading label="Brand" index={6} />
-        <div className="mt-8 space-y-14">
-          <Subsection
-            title="Wordmark"
-            description="Geist Mono, two colors, one wordmark. Download the SVG/PNG logos and the full guidelines from the kit."
-          >
-            <div className="border border-border bg-background">
-              <div className="flex items-center justify-center p-12">
-                <img
-                  src="/logo.svg"
-                  alt="BitRouter"
-                  className="h-14 w-auto dark:invert"
+          {/* 02 — Open core, commercial cloud */}
+          <section style={{ marginBottom: 72 }}>
+            <SectionHeading label="Open core, commercial cloud" index={2} />
+            <div style={{ marginTop: 32, display: "flex", flexDirection: "column", gap: 24 }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                  gap: 1,
+                  background: "var(--z-rule)",
+                  border: RULE,
+                }}
+              >
+                <ModelCard
+                  icon={Terminal}
+                  kind="Open source"
+                  title="The router"
+                  body="Runs locally as a proxy behind a single env var. Bring your own keys. Self-host forever, free."
+                  points={[
+                    "Apache-2.0 — permissive, no strings",
+                    "Install via Homebrew, npm, or Cargo",
+                    "Any model, any harness, any loop",
+                  ]}
+                  cta={{ label: "Read the code", href: CORE_REPO }}
+                />
+                <ModelCard
+                  icon={Cloud}
+                  kind="Commercial"
+                  title="The cloud"
+                  body="The same router, hosted at api.bitrouter.ai — so you don't run or scale anything."
+                  points={[
+                    "Pooled keys, billing, usage dashboard",
+                    "Higher limits, BYOK, and support",
+                    "OAuth or API key to get started",
+                  ]}
+                  cta={{ label: "See pricing", href: "/pricing", external: false }}
                 />
               </div>
-              <div className="border-t border-border p-4">
-                <a
-                  href={BRAND_KIT_REPO}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  <Download className="size-3" />
-                  Download brand kit
-                  <ArrowUpRight className="size-3" />
-                </a>
-              </div>
+              <p
+                style={{
+                  margin: 0,
+                  maxWidth: "64ch",
+                  fontFamily: MONO,
+                  fontSize: 14,
+                  lineHeight: 1.7,
+                  color: "var(--z-ink-4)",
+                }}
+              >
+                That&apos;s the whole deal. The open router is not a crippled demo of
+                the cloud — it&apos;s the product. The cloud earns its keep by being
+                the easier way to run it, not the only way.
+              </p>
             </div>
-          </Subsection>
+          </section>
 
-          <Subsection
-            title="Color"
-            description="Black and white by default. Accent tokens live in product, not on marketing surfaces."
-          >
-            <div className="grid gap-px border border-border bg-border sm:grid-cols-2">
-              {COLORS.map((c) => (
-                <div key={c.hex} className="bg-background">
-                  <div
-                    className="h-24 border-b border-border"
-                    style={{ backgroundColor: c.hex }}
-                  />
-                  <div className="flex items-center justify-between gap-3 p-4">
-                    <div>
-                      <div className="font-medium">{c.role}</div>
-                      <div className="mt-0.5 font-mono text-xs text-muted-foreground">
-                        {c.token}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs tabular-nums text-muted-foreground">
-                        {c.hex}
-                      </span>
-                      <CopyButton value={c.hex} label="Copy hex" />
-                    </div>
-                  </div>
-                </div>
+          {/* 03 — By the numbers */}
+          <section style={{ marginBottom: 72 }}>
+            <SectionHeading label="By the numbers" index={3} />
+            <div style={{ marginTop: 32, display: "flex", flexDirection: "column", gap: 16 }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+                  gap: 1,
+                  background: "var(--z-rule)",
+                  border: RULE,
+                }}
+              >
+                {STATS.map((s) => (
+                  <StatTile key={s.label} stat={s} />
+                ))}
+              </div>
+              <p style={{ margin: 0, fontFamily: MONO, fontSize: 11.5, color: "var(--z-ink-7)" }}>
+                Placeholder figures — live wiring to GitHub, product analytics, and
+                status is in progress.
+              </p>
+            </div>
+          </section>
+
+          {/* 04 — Open repositories */}
+          <section style={{ marginBottom: 72 }}>
+            <SectionHeading label="Open repositories" index={4} />
+            <div
+              style={{
+                marginTop: 32,
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: 1,
+                background: "var(--z-rule)",
+                border: RULE,
+              }}
+            >
+              {REPOS.map((r) => (
+                <RepoCard key={r.name} repo={r} />
               ))}
             </div>
-          </Subsection>
+          </section>
 
-          <Subsection
-            title="Attribution"
-            description="Using BitRouter in third-party materials? Include this line."
-          >
-            <div className="flex items-center justify-between gap-3 border border-border bg-background px-4 py-3">
-              <code className="truncate font-mono text-[13px] text-foreground">
-                {ATTRIBUTION_LINE}
-              </code>
-              <CopyButton value={ATTRIBUTION_LINE} />
+          {/* 05 — Built in the open */}
+          <section style={{ marginBottom: 72 }}>
+            <SectionHeading label="Built in the open" index={5} />
+            <div
+              style={{
+                marginTop: 32,
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: 1,
+                background: "var(--z-rule)",
+                border: RULE,
+              }}
+            >
+              {IN_THE_OPEN.map((l) => (
+                <ResourceLinkCard key={l.label} link={l} />
+              ))}
             </div>
-          </Subsection>
-        </div>
+          </section>
+
+          {/* 06 — Brand */}
+          <section style={{ marginBottom: 72 }}>
+            <SectionHeading label="Brand" index={6} />
+            <div style={{ marginTop: 32, display: "flex", flexDirection: "column", gap: 56 }}>
+              <Subsection
+                title="Mark"
+                description="One routing mark, one wordmark. Download the SVG/PNG logos and the full guidelines from the kit."
+              >
+                <div style={{ border: RULE, borderRadius: 11, overflow: "hidden" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: "52px 24px",
+                      background: "var(--z-inset)",
+                    }}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/bitrouter-mark.png"
+                      alt="BitRouter"
+                      style={{ height: 56, width: "auto" }}
+                    />
+                  </div>
+                  <div style={{ borderTop: RULE, padding: "14px 18px" }}>
+                    <a
+                      href={BRAND_KIT_REPO}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="zed-open-link"
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 7,
+                        fontFamily: MONO,
+                        fontSize: 11,
+                        letterSpacing: "0.14em",
+                        textTransform: "uppercase",
+                        color: "var(--z-ink-5)",
+                      }}
+                    >
+                      <Download className="size-3" />
+                      Download brand kit
+                      <ArrowUpRight className="size-3" />
+                    </a>
+                  </div>
+                </div>
+              </Subsection>
+
+              <Subsection
+                title="Color"
+                description="Ink and a single signal blue. The mark stays monochrome; blue is the one accent."
+              >
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+                    gap: 1,
+                    background: "var(--z-rule)",
+                    border: RULE,
+                  }}
+                >
+                  {COLORS.map((c) => (
+                    <div key={c.hex} style={{ background: "var(--z-bg)" }}>
+                      <div style={{ height: 96, borderBottom: RULE, backgroundColor: c.hex }} />
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          gap: 12,
+                          padding: "14px 16px",
+                        }}
+                      >
+                        <div>
+                          <div style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 600, color: "var(--z-ink)" }}>
+                            {c.role}
+                          </div>
+                          <div style={{ marginTop: 2, fontFamily: MONO, fontSize: 12, color: "var(--z-ink-5)" }}>
+                            {c.token}
+                          </div>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          <span style={{ fontFamily: MONO, fontSize: 12, color: "var(--z-ink-5)" }}>{c.hex}</span>
+                          <CopyButton value={c.hex} label="Copy hex" />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Subsection>
+
+              <Subsection
+                title="Attribution"
+                description="Using BitRouter in third-party materials? Include this line."
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 12,
+                    border: RULE,
+                    borderRadius: 8,
+                    background: "var(--z-inset)",
+                    padding: "12px 16px",
+                  }}
+                >
+                  <code
+                    style={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      fontFamily: MONO,
+                      fontSize: 13,
+                      color: "var(--z-ink-2)",
+                    }}
+                  >
+                    {ATTRIBUTION_LINE}
+                  </code>
+                  <CopyButton value={ATTRIBUTION_LINE} />
+                </div>
+              </Subsection>
+            </div>
+          </section>
+
+          {/* Footnote */}
+          <div
+            style={{
+              borderTop: RULE,
+              paddingTop: 24,
+              fontFamily: MONO,
+              fontSize: 11.5,
+              color: "var(--z-ink-7)",
+            }}
+          >
+            bitrouter/bitrouter · Apache-2.0 · self-host or use the cloud
+          </div>
+        </main>
       </section>
 
-      {/* Footnote */}
-      <div className="border-t border-border pt-6 font-mono text-[11px] text-muted-foreground/60">
-        bitrouter/bitrouter · Apache-2.0 · self-host or use the cloud
-      </div>
-    </main>
+      <style>{`
+        .zed-open-hover{transition:background .15s ease}
+        .zed-open-hover:hover{background:#101216}
+        .zed-open-link{transition:color .15s ease}
+        .zed-open-link:hover{color:var(--z-ink)}
+      `}</style>
+    </div>
   );
 }
 
@@ -366,20 +548,39 @@ function Subsection({
 }) {
   return (
     <div>
-      <h3 className="text-xl font-medium tracking-tight">{title}</h3>
+      <h3 style={{ fontFamily: "var(--font-sans)", fontSize: 19, fontWeight: 600, color: "var(--z-ink)", margin: 0 }}>
+        {title}
+      </h3>
       {description && (
-        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+        <p
+          style={{
+            margin: "8px 0 0",
+            maxWidth: "64ch",
+            fontFamily: MONO,
+            fontSize: 13.5,
+            lineHeight: 1.7,
+            color: "var(--z-ink-4)",
+          }}
+        >
           {description}
         </p>
       )}
-      <div className="mt-6">{children}</div>
+      <div style={{ marginTop: 24 }}>{children}</div>
     </div>
   );
 }
 
 function SmallLabel({ children }: { children: ReactNode }) {
   return (
-    <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+    <div
+      style={{
+        fontFamily: MONO,
+        fontSize: 10,
+        letterSpacing: "0.16em",
+        textTransform: "uppercase",
+        color: "var(--z-ink-6)",
+      }}
+    >
       {children}
     </div>
   );
@@ -387,12 +588,26 @@ function SmallLabel({ children }: { children: ReactNode }) {
 
 function StatTile({ stat }: { stat: Stat }) {
   return (
-    <div className="bg-background p-5">
-      <div className="text-3xl font-medium tabular-nums tracking-tight">
+    <div style={{ background: "var(--z-bg)", padding: "22px 22px" }}>
+      <div
+        className="zed-display"
+        style={{ fontSize: 32, fontStyle: "italic", lineHeight: 1, color: "var(--z-ink)" }}
+      >
         {stat.value}
       </div>
-      <div className="mt-2 text-sm text-muted-foreground">{stat.label}</div>
-      <div className="mt-3 font-mono text-[10px] uppercase tracking-widest text-muted-foreground/50">
+      <div style={{ marginTop: 10, fontFamily: MONO, fontSize: 13, color: "var(--z-ink-4)" }}>
+        {stat.label}
+      </div>
+      <div
+        style={{
+          marginTop: 12,
+          fontFamily: MONO,
+          fontSize: 10,
+          letterSpacing: "0.14em",
+          textTransform: "uppercase",
+          color: "var(--z-ink-7)",
+        }}
+      >
         {stat.source}
       </div>
     </div>
@@ -416,19 +631,21 @@ function ModelCard({
 }) {
   const external = cta.external ?? true;
   return (
-    <div className="flex flex-col bg-background p-6 lg:p-8">
-      <div className="flex items-center gap-2 text-muted-foreground">
+    <div style={{ display: "flex", flexDirection: "column", background: "var(--z-bg)", padding: "26px 28px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--z-ink-5)" }}>
         <Icon className="size-4" />
         <SmallLabel>{kind}</SmallLabel>
       </div>
-      <h3 className="mt-4 text-xl font-medium tracking-tight">{title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+      <h3 style={{ marginTop: 16, fontFamily: "var(--font-sans)", fontSize: 19, fontWeight: 600, color: "var(--z-ink)" }}>
+        {title}
+      </h3>
+      <p style={{ margin: "8px 0 0", fontFamily: MONO, fontSize: 13.5, lineHeight: 1.65, color: "var(--z-ink-4)" }}>
         {body}
       </p>
-      <ul className="mt-5 space-y-2.5">
+      <ul style={{ margin: "20px 0 0", padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
         {points.map((p) => (
-          <li key={p} className="flex gap-2 text-sm text-muted-foreground">
-            <span className="mt-1.5 inline-block size-1 shrink-0 rounded-full bg-foreground" />
+          <li key={p} style={{ display: "flex", gap: 9, fontFamily: MONO, fontSize: 13, color: "var(--z-ink-4)" }}>
+            <span style={{ color: "var(--z-blue)" }}>▸</span>
             {p}
           </li>
         ))}
@@ -437,10 +654,21 @@ function ModelCard({
         href={cta.href}
         target={external ? "_blank" : undefined}
         rel={external ? "noopener noreferrer" : undefined}
-        className="group mt-6 inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-widest text-foreground transition-colors"
+        className="zed-open-link"
+        style={{
+          marginTop: 24,
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 7,
+          fontFamily: MONO,
+          fontSize: 11,
+          letterSpacing: "0.12em",
+          textTransform: "uppercase",
+          color: "var(--z-ink-2)",
+        }}
       >
         {cta.label}
-        <ArrowUpRight className="size-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+        <ArrowUpRight className="size-3" />
       </a>
     </div>
   );
@@ -452,18 +680,34 @@ function RepoCard({ repo }: { repo: Repo }) {
       href={repo.href}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex flex-col bg-background p-5 transition-colors hover:bg-foreground/[0.02]"
+      className="zed-open-hover"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        background: "var(--z-bg)",
+        padding: "20px 22px",
+        textDecoration: "none",
+      }}
     >
-      <div className="flex items-center justify-between gap-2">
-        <span className="font-mono text-sm font-medium text-foreground">
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+        <span style={{ fontFamily: MONO, fontSize: 14, fontWeight: 500, color: "var(--z-ink)" }}>
           {repo.name}
         </span>
-        <ArrowUpRight className="size-3.5 text-muted-foreground/50 transition-colors group-hover:text-foreground" />
+        <ArrowUpRight className="size-3.5" style={{ color: "var(--z-ink-6)" }} />
       </div>
-      <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
+      <p style={{ margin: "10px 0 0", flex: 1, fontFamily: MONO, fontSize: 13, lineHeight: 1.6, color: "var(--z-ink-4)" }}>
         {repo.blurb}
       </p>
-      <div className="mt-4 font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60">
+      <div
+        style={{
+          marginTop: 16,
+          fontFamily: MONO,
+          fontSize: 10,
+          letterSpacing: "0.12em",
+          textTransform: "uppercase",
+          color: "var(--z-ink-7)",
+        }}
+      >
         {repo.meta}
       </div>
     </a>
@@ -477,17 +721,23 @@ function ResourceLinkCard({ link }: { link: ResourceLink }) {
       href={link.href}
       target={link.external ? "_blank" : undefined}
       rel={link.external ? "noopener noreferrer" : undefined}
-      className="group flex items-start gap-3 bg-background p-5 transition-colors hover:bg-foreground/[0.02]"
+      className="zed-open-hover"
+      style={{
+        display: "flex",
+        alignItems: "flex-start",
+        gap: 12,
+        background: "var(--z-bg)",
+        padding: "20px 22px",
+        textDecoration: "none",
+      }}
     >
-      <Icon className="mt-0.5 size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" />
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-1.5 text-sm font-medium text-foreground">
+      <Icon className="size-4" style={{ marginTop: 2, flex: "0 0 auto", color: "var(--z-ink-5)" }} />
+      <div style={{ minWidth: 0, flex: 1 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 7, fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 600, color: "var(--z-ink)" }}>
           {link.label}
-          {link.external && (
-            <ArrowUpRight className="size-3 text-muted-foreground/50 transition-colors group-hover:text-foreground" />
-          )}
+          {link.external && <ArrowUpRight className="size-3" style={{ color: "var(--z-ink-6)" }} />}
         </div>
-        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+        <p style={{ margin: "5px 0 0", fontFamily: MONO, fontSize: 13, lineHeight: 1.6, color: "var(--z-ink-4)" }}>
           {link.blurb}
         </p>
       </div>

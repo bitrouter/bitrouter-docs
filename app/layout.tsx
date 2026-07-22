@@ -1,36 +1,34 @@
-import {
-  Geist,
-  Geist_Mono,
-  JetBrains_Mono,
-  Space_Grotesk,
-} from "next/font/google";
+import { IBM_Plex_Sans, IBM_Plex_Mono, Newsreader } from "next/font/google";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { getLocale } from "next-intl/server";
 import { SOCIAL_LINKS } from "@/components/landing/social-links";
 import "./globals.css";
 
-const geist = Geist({
-  variable: "--font-geist-sans",
+// ── "Zed dark" design system typefaces (single global theme) ──
+//   IBM Plex Sans  → UI + body      (--font-sans)
+//   IBM Plex Mono  → mono / labels / code / most copy   (--font-mono)
+//   Newsreader     → display headings, italic  (--font-display)
+const ibmPlexSans = IBM_Plex_Sans({
+  variable: "--font-ibm-plex-sans",
+  weight: ["400", "500", "600"],
   subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const ibmPlexMono = IBM_Plex_Mono({
+  variable: "--font-ibm-plex-mono",
+  weight: ["400", "500", "600"],
   subsets: ["latin"],
+  display: "swap",
 });
 
-// Mono/dev redesign typefaces (used by the `.br-mono` surfaces).
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
-  weight: ["400", "500", "600", "700"],
+const newsreader = Newsreader({
+  variable: "--font-newsreader",
+  weight: ["400", "500"],
+  style: ["normal", "italic"],
   subsets: ["latin"],
-});
-
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
-  weight: ["500", "600", "700"],
-  subsets: ["latin"],
+  display: "swap",
 });
 
 const BASE_URL = "https://bitrouter.ai";
@@ -109,7 +107,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0b0c0e",
+  themeColor: "#0C0D10",
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
@@ -122,7 +120,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
         />
       </head>
-      <body className={`${geist.variable} ${geistMono.variable} ${jetbrainsMono.variable} ${spaceGrotesk.variable} font-sans antialiased`}>
+      <body className={`${ibmPlexSans.variable} ${ibmPlexMono.variable} ${newsreader.variable} font-sans antialiased`}>
         {children}
       </body>
     </html>

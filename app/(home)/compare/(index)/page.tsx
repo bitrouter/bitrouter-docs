@@ -1,10 +1,10 @@
 import { compareSource } from "@/lib/source";
-import { DocsBody } from "fumadocs-ui/page";
 import { notFound } from "next/navigation";
 import { getMDXComponents } from "@/mdx-components";
 import { setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
-import "@/components/landing/mono/mono.css";
+import "@/components/landing/zed/zed.css";
+import { Kicker } from "@/components/landing/zed/primitives";
 
 // The compare collection now holds a single merged article (content/compare/index.mdx).
 // Resolve it robustly regardless of how fumadocs slugs the index file.
@@ -27,19 +27,22 @@ export default async function CompareIndexPage() {
   const MDX = page.data.body;
 
   return (
-    <div className="br-mono">
-      <section className="cmpg-hero">
-        <div className="wrap">
-          <h1 className="h-display cmpg-title">Compare BitRouter</h1>
-          <p className="cmpg-angle">{page.data.angle}</p>
+    <div className="zed-bg">
+      <section style={{ position: "relative" }}>
+        <div className="zed-glow" />
+        <div className="zed-wrap" style={{ maxWidth: 900, padding: "56px 34px 30px", borderBottom: "1px solid var(--z-rule)" }}>
+          <Kicker>// compare</Kicker>
+          <h1 className="zed-display" style={{ fontSize: "clamp(38px,6vw,56px)", lineHeight: 1.0, margin: "16px 0 0" }}>
+            Compare <span style={{ color: "var(--z-blue)" }}>BitRouter.</span>
+          </h1>
+          <p style={{ fontFamily: "var(--font-mono)", fontSize: 15, lineHeight: 1.6, color: "var(--z-ink-4)", margin: "16px 0 0", maxWidth: "62ch" }}>
+            {page.data.angle}
+          </p>
         </div>
-      </section>
-
-      <section className="sec">
-        <div className="wrap">
-          <DocsBody>
+        <div className="zed-wrap" style={{ maxWidth: 900, padding: "36px 34px 80px" }}>
+          <div className="zed-article">
             <MDX components={getMDXComponents({})} />
-          </DocsBody>
+          </div>
         </div>
       </section>
     </div>

@@ -1,0 +1,553 @@
+/* ============================================================================
+ * Zed dark — design-system primitives
+ * Shared by the landing, nav and footer. Colour tokens (--z-*) live globally in
+ * app/globals.css; this file owns structure, typography helpers, terminal
+ * chrome, buttons and keyframes. Plain CSS (no @apply) so it can be imported by
+ * any client/server component.
+ * ========================================================================== */
+
+/* ── Page backdrop: 44px grid + left-edge ruler ── */
+.zed-bg {
+  position: relative;
+  background-color: var(--z-bg);
+  background-image: linear-gradient(rgba(255, 255, 255, 0.014) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.014) 1px, transparent 1px);
+  background-size: 44px 44px;
+  color: var(--z-ink);
+  width: 100%;
+  overflow-x: hidden;
+  font-family: var(--font-mono);
+}
+.zed-bg::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 16px;
+  pointer-events: none;
+  z-index: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.09) 0 1px,
+    transparent 1px 12px
+  );
+}
+
+/* ── Layout ── */
+.zed-wrap {
+  position: relative;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 34px;
+}
+.zed-section {
+  border-top: 1px solid var(--z-rule);
+}
+.zed-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    64% 40% at 50% 0%,
+    rgba(107, 155, 255, 0.07),
+    transparent 60%
+  );
+}
+
+/* ── Typography helpers ── */
+.zed-display {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--z-ink);
+  margin: 0;
+}
+.zed-kicker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--z-blue);
+}
+.zed-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--z-ink-7);
+}
+.zed-mono {
+  font-family: var(--font-mono);
+}
+.zed-link {
+  color: var(--z-blue);
+  text-decoration: none;
+}
+.zed-link:hover {
+  color: var(--z-blue-hi);
+}
+
+/* ── Corner ticks (L-shaped brackets) ── */
+.zed-tick {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  pointer-events: none;
+}
+.zed-tick.tl {
+  top: 12px;
+  left: 12px;
+  border-top: 1px solid var(--z-rule-2);
+  border-left: 1px solid var(--z-rule-2);
+}
+.zed-tick.tr {
+  top: 12px;
+  right: 12px;
+  border-top: 1px solid var(--z-rule-2);
+  border-right: 1px solid var(--z-rule-2);
+}
+.zed-tick.bl {
+  bottom: 12px;
+  left: 12px;
+  border-bottom: 1px solid var(--z-rule-2);
+  border-left: 1px solid var(--z-rule-2);
+}
+.zed-tick.br {
+  bottom: 12px;
+  right: 12px;
+  border-bottom: 1px solid var(--z-rule-2);
+  border-right: 1px solid var(--z-rule-2);
+}
+
+/* ── Terminal / One-Dark panel chrome ── */
+.zed-term {
+  background: var(--z-panel);
+  border: 1px solid var(--z-rule);
+  border-radius: 11px;
+  overflow: hidden;
+  box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.7);
+}
+.zed-term-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 13px;
+  background: var(--z-panel-header);
+  border-bottom: 1px solid var(--z-rule);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--z-ink-6);
+}
+.zed-lights {
+  display: flex;
+  gap: 5px;
+}
+.zed-lights span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.zed-lights .r {
+  background: var(--z-red);
+}
+.zed-lights .y {
+  background: var(--z-yellow);
+}
+.zed-lights .g {
+  background: var(--z-green-dot);
+}
+
+/* ── Buttons ── */
+.zed-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  text-decoration: none;
+}
+.zed-btn-primary {
+  background: var(--z-cta);
+  color: #fff;
+  border: 1px solid var(--z-cta);
+}
+.zed-btn-primary:hover {
+  background: #1a56f0;
+  color: #fff;
+}
+.zed-btn-ghost {
+  background: transparent;
+  color: var(--z-ink);
+  border: 1px solid var(--z-rule);
+}
+.zed-btn-ghost:hover {
+  color: var(--z-ink);
+  border-color: var(--z-rule-2);
+  background: rgba(255, 255, 255, 0.02);
+}
+.zed-key {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  border-radius: 4px;
+  padding: 1px 6px;
+  line-height: 1.4;
+}
+.zed-key.on-primary {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+.zed-key.on-ghost {
+  border: 1px solid var(--z-rule-2);
+  color: var(--z-ink-3);
+}
+
+/* ── Animated terminal (compare page) ── */
+.zterm {
+  background: var(--z-panel);
+  border: 1px solid var(--z-rule);
+  border-radius: 11px;
+  overflow: hidden;
+  font-family: var(--font-mono);
+  box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.7);
+}
+.zterm-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  background: var(--z-panel-header);
+  border-bottom: 1px solid var(--z-rule);
+  font-size: 11px;
+  color: var(--z-ink-6);
+}
+.zterm-dots {
+  display: flex;
+  gap: 5px;
+}
+.zterm-dots i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.zterm-dots i:nth-child(1) {
+  background: var(--z-red);
+}
+.zterm-dots i:nth-child(2) {
+  background: var(--z-yellow);
+}
+.zterm-dots i:nth-child(3) {
+  background: var(--z-green-dot);
+}
+.zterm-body {
+  padding: 14px 16px;
+  font-size: 12.5px;
+  line-height: 1.85;
+  min-height: 150px;
+  color: var(--z-ink-2);
+}
+.zterm-line {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.zterm .mut {
+  color: var(--z-ink-5);
+}
+.zterm .lbl {
+  color: var(--z-ink-2);
+}
+.zterm .ind {
+  color: var(--z-ink-4);
+}
+.zterm .fnt {
+  color: var(--z-ink-7);
+}
+.zterm .caret {
+  display: inline-block;
+  width: 0.5em;
+  height: 1.05em;
+  transform: translateY(0.16em);
+  background: var(--z-blue);
+  animation: zed-blink 1.05s steps(1) infinite;
+}
+
+/* ── Blinking cursor ── */
+.zed-ck {
+  display: inline-block;
+  width: 0.5em;
+  height: 1.05em;
+  transform: translateY(0.16em);
+  background: var(--z-blue);
+  animation: zed-blink 1.05s steps(1) infinite;
+}
+@keyframes zed-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ── Marquee (bring-your-own logo strips) ── */
+.zed-marq-mask {
+  position: relative;
+  overflow: hidden;
+  margin-top: 16px;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 12%,
+    #000 88%,
+    transparent
+  );
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+.zed-marq-track {
+  display: inline-flex;
+  gap: 26px;
+  padding-right: 26px;
+  animation: zed-marq 22s linear infinite;
+  white-space: nowrap;
+}
+.zed-marq-logo {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--z-ink-5);
+  white-space: nowrap;
+}
+@keyframes zed-marq {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .zed-marq-track {
+    animation: none;
+  }
+  .zed-ck {
+    animation: none;
+  }
+}
+
+/* ── FAQ accordion ── */
+.zed-faq-ans {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.28s ease;
+}
+.zed-faq-ans.open {
+  grid-template-rows: 1fr;
+}
+.zed-faq-ans > div {
+  overflow: hidden;
+}
+
+/* ── Prose (blog/long-form reuse later) ── */
+.zed-prose p {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--z-ink-3);
+  margin: 0 0 18px;
+}
+.zed-prose strong {
+  color: var(--z-ink-bright);
+  font-weight: 600;
+}
+.zed-prose code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: #1a1e24;
+  border: 1px solid var(--z-rule-code);
+  border-radius: 5px;
+  padding: 1px 6px;
+  color: var(--z-code);
+}
+
+/* ── Article body (blog / changelog MDX via fumadocs DocsBody) ──
+   Layered over fumadocs prose: Newsreader italic headings, IBM Plex Mono body,
+   blue links, purple inline code, blue-rule blockquotes. */
+.zed-article {
+  font-family: var(--font-mono) !important;
+  color: var(--z-ink-3);
+}
+.zed-article :is(h1, h2, h3, h4) {
+  font-family: var(--font-display) !important;
+  font-style: italic;
+  font-weight: 500;
+  color: var(--z-ink);
+  letter-spacing: -0.01em;
+}
+.zed-article h2 {
+  font-size: 28px;
+  line-height: 1.15;
+  margin: 38px 0 16px;
+}
+.zed-article h3 {
+  font-size: 22px;
+  margin: 30px 0 12px;
+}
+.zed-article p,
+.zed-article li {
+  font-family: var(--font-mono) !important;
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--z-ink-3);
+}
+.zed-article p {
+  margin: 0 0 18px;
+}
+.zed-article ul,
+.zed-article ol {
+  margin: 0 0 18px;
+  padding-left: 1.4em;
+}
+.zed-article li {
+  margin: 0 0 7px;
+}
+.zed-article li::marker {
+  color: var(--z-ink-7);
+}
+.zed-article img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 9px;
+  border: 1px solid var(--z-rule);
+}
+.zed-article strong {
+  color: var(--z-ink-bright);
+  font-weight: 600;
+}
+.zed-article a {
+  color: var(--z-blue);
+  text-decoration: none;
+  border-bottom: 1px solid #2a3550;
+}
+.zed-article a:hover {
+  color: var(--z-blue-hi);
+}
+.zed-article :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: #1a1e24;
+  border: 1px solid var(--z-rule-code);
+  border-radius: 5px;
+  padding: 1px 6px;
+  color: var(--z-code);
+}
+.zed-article pre {
+  border: 1px solid var(--z-rule);
+  border-radius: 9px;
+  /* background comes from the One-Dark Shiki theme (#282c34). */
+}
+.zed-article blockquote {
+  border-left: 2px solid var(--z-blue);
+  background: var(--z-inset);
+  border-radius: 8px;
+  padding: 2px 20px;
+  color: var(--z-ink-3);
+}
+.zed-article hr {
+  border: none;
+  border-top: 1px solid var(--z-rule);
+  margin: 32px 0;
+}
+
+/* ── Docs (fumadocs DocsBody / DocsTitle / DocsDescription) ──
+   Zed prose on the fumadocs surface: Newsreader italic headings + IBM Plex Mono
+   body. Code blocks + callouts + cards stay fumadocs-styled (already dark/blue),
+   with the One-Dark Shiki theme. */
+.zed-doc-title {
+  font-family: var(--font-display) !important;
+  font-style: italic !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.01em;
+}
+.zed-doc-desc {
+  font-family: var(--font-mono) !important;
+  color: var(--z-ink-4) !important;
+}
+.zed-docs :is(h1, h2, h3, h4) {
+  font-family: var(--font-display) !important;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.zed-docs :is(p, li) {
+  font-family: var(--font-mono) !important;
+}
+.zed-docs :not(pre) > code {
+  font-family: var(--font-mono);
+  color: var(--z-code);
+}
+
+/* Meta-rail row (blog posts, changelog releases): 180px rail + content. */
+.zed-metagrid {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 44px;
+}
+.zed-post-row,
+.zed-release-row {
+  transition: background 0.15s ease;
+}
+.zed-post-row:hover,
+.zed-release-row:hover,
+.zed-row-hover:hover {
+  background: #101216;
+}
+/* Models registry: rail + main → single column on small screens. */
+@media (max-width: 900px) {
+  .zed-models-body {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .zed-wrap {
+    padding: 0 20px;
+  }
+  .zed-grid-3,
+  .zed-grid-2 {
+    grid-template-columns: 1fr !important;
+  }
+  .zed-hide-sm {
+    display: none !important;
+  }
+}
+@media (max-width: 700px) {
+  .zed-metagrid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+/* 4-up grid (pricing tiers, bundle) → 2-up, then 1-up. */
+@media (max-width: 980px) {
+  .zed-grid-4 {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+@media (max-width: 560px) {
+  .zed-grid-4 {
+    grid-template-columns: 1fr !important;
+  }
+}

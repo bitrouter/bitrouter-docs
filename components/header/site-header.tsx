@@ -9,17 +9,11 @@ import { useChangelogUnseen } from "@/components/changelog/use-changelog-unseen"
 /**
  * Auth-aware site header for the marketing/docs website.
  *
- * Design language: a softened "drafting-board" bar. The original celled
- * control-panel (full-height cells + a hairline between every cell, UPPERCASE
- * wide-tracked micro-type, sharp 0px edges) is relaxed to better fit the
- * landing: lowercase JetBrains Mono nav, rounded hover pills and CTA, the cell
- * dividers dropped in favour of spacing, and the brand `primary` (amber) used
- * for the active state. Wordmark is the lowercase `bitrouter.` with an accent
- * dot, matching the footer. The avatar is the one `rounded-full` exception.
- *
- * NOTE: `primary` is amber (the global site brand). The landing's purple accent
- * is scoped to `.br-mono` only — this header renders on every web page (blog,
- * pricing, docs), so it follows the global theme, not the landing's.
+ * Design language: the "Zed dark" nav. A blue-bordered ≋ mark + IBM Plex Sans
+ * `bitrouter.` wordmark, IBM Plex Sans nav links (muted → ink on hover), and two
+ * IBM Plex Mono CTAs — a bordered "book demo" and the blue "get api key →". The
+ * shell is sticky + translucent (`rgba(12,13,16,0.85)`) with a `--z-rule` hairline.
+ * All colours come from the global Zed tokens (`--z-*`), so it matches every page.
  *
  * Takes `session`, `pathname`, and `onSignOut` as props supplied by the web
  * app, plus slots for app-specific content. Imports nothing app-local.
@@ -55,9 +49,8 @@ function cn(...parts: Array<string | false | null | undefined>): string {
   return parts.filter(Boolean).join(" ");
 }
 
-// Shared nav-item base: rounded hover pill, lowercase mono micro-type.
-const NAV_ITEM =
-  "rounded-[9px] px-3.5 py-2 font-mono text-[13px] lowercase tracking-tight transition-colors";
+// Shared nav-item base: IBM Plex Sans, muted → ink on hover (Zed nav).
+const NAV_ITEM = "px-3 py-2 font-sans text-sm transition-colors";
 
 /**
  * "book demo" — the secondary header CTA that opens the founder-call Cal.com
@@ -137,18 +130,33 @@ export function SiteHeaderBody({
   const changelogUnseen = useChangelogUnseen();
   useCalFounderCall();
   return (
-    <div className="flex h-12 w-full items-center gap-1 px-3 sm:px-4">
+    <div className="flex h-12 w-full items-center gap-1 px-4 sm:px-6 lg:px-[34px]">
       {leadingSlot ? <div className="flex items-center pr-1">{leadingSlot}</div> : null}
 
-      {/* Logo */}
+      {/* Logo — official routing mark in a blue-bordered box + IBM Plex Sans wordmark */}
       <a
         href={config.webBaseUrl}
-        className="flex shrink-0 items-center gap-2.5 rounded-[9px] px-2.5 py-1.5 text-foreground transition-colors hover:bg-foreground/[0.04]"
+        aria-label="BitRouter home"
+        className="flex shrink-0 items-center gap-2.5 py-1.5 pr-2.5 transition-opacity hover:opacity-90"
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.svg" alt="BitRouter" className="size-6 shrink-0 dark:invert" />
-        <span className="font-mono text-sm font-semibold lowercase tracking-tight">
-          bitrouter<span className="text-primary">.</span>
+        <span className="flex size-[26px] shrink-0 items-center justify-center rounded-md border border-[var(--z-blue)] text-[var(--z-blue)]">
+          <span
+            aria-hidden
+            className="block size-4 bg-current"
+            style={{
+              WebkitMaskImage: "url(/bitrouter-mark.png)",
+              maskImage: "url(/bitrouter-mark.png)",
+              WebkitMaskRepeat: "no-repeat",
+              maskRepeat: "no-repeat",
+              WebkitMaskPosition: "center",
+              maskPosition: "center",
+              WebkitMaskSize: "contain",
+              maskSize: "contain",
+            }}
+          />
+        </span>
+        <span className="font-sans text-[17px] font-semibold tracking-[-0.01em] text-[var(--z-ink)]">
+          bitrouter.
         </span>
       </a>
 
@@ -164,13 +172,13 @@ export function SiteHeaderBody({
               className={cn(
                 NAV_ITEM,
                 active
-                  ? "bg-primary/10 text-foreground"
-                  : "text-foreground/55 hover:bg-foreground/[0.05] hover:text-foreground",
+                  ? "text-[var(--z-ink)]"
+                  : "text-[var(--z-ink-3)] hover:text-[var(--z-ink)]",
               )}
             >
               {item.label}
               {item.key === "changelog" && changelogUnseen && (
-                <span className="ml-1.5 inline-block size-1.5 rounded-full bg-primary align-middle" aria-label="New" />
+                <span className="ml-1.5 inline-block size-1.5 rounded-full bg-[var(--z-blue)] align-middle" aria-label="New" />
               )}
             </a>
           );
@@ -188,7 +196,7 @@ export function SiteHeaderBody({
       {/* Secondary CTA — book a founder call. Shown for all visitors. */}
       <BookDemoButton
         location="header"
-        className="hidden shrink-0 whitespace-nowrap rounded-[10px] border border-foreground/[0.12] px-4 py-2 font-mono text-[13px] lowercase tracking-tight text-foreground/70 transition-colors hover:border-foreground/25 hover:bg-foreground/[0.04] hover:text-foreground sm:inline-flex"
+        className="hidden shrink-0 whitespace-nowrap rounded-[7px] border border-[var(--z-rule-2)] px-3.5 py-2 font-mono text-[13px] lowercase text-[var(--z-ink)] transition-colors hover:border-[var(--z-ink-6)] hover:bg-white/[0.03] sm:inline-flex"
       />
 
       {/* Auth zone */}
@@ -204,7 +212,7 @@ export function SiteHeaderBody({
         // (social sign-in auto-creates the account, so it is sign-in/sign-up).
         <a
           href={`${config.consoleBaseUrl}/sign-in`}
-          className="ml-1 inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[10px] bg-primary px-4 py-2 font-mono text-[13px] lowercase tracking-tight text-primary-foreground transition-colors hover:bg-primary/90"
+          className="ml-1 inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-[7px] bg-[var(--z-cta)] px-3.5 py-2 font-mono text-[13px] font-medium lowercase text-white transition-colors hover:bg-[#1a56f0]"
         >
           get api key
           <span aria-hidden>→</span>
@@ -232,7 +240,7 @@ export function SiteHeaderBody({
 export function SiteHeader(props: SiteHeaderProps): React.ReactElement {
   return (
     <header
-      className="sticky top-0 z-40 w-full border-b border-foreground/[0.07] bg-background/75 backdrop-blur-lg"
+      className="sticky top-0 z-40 w-full border-b border-[var(--z-rule)] bg-[rgba(12,13,16,0.85)] backdrop-blur-lg"
       style={{ ["--fd-nav-height" as string]: "48px" }}
     >
       <SiteHeaderBody {...props} />
@@ -273,7 +281,7 @@ function AccountMenu({
   }, [open]);
 
   const item =
-    "block rounded-[7px] px-3 py-2 font-mono text-xs lowercase tracking-tight text-foreground/70 transition-colors hover:bg-foreground/[0.05] hover:text-foreground";
+    "block rounded-[7px] px-3 py-2 font-mono text-xs lowercase tracking-tight text-[var(--z-ink-3)] transition-colors hover:bg-white/[0.05] hover:text-[var(--z-ink)]";
 
   return (
     <div ref={ref} className="relative ml-1 flex shrink-0 items-center">
@@ -283,9 +291,9 @@ function AccountMenu({
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
         title={session.user.email}
-        className="flex items-center gap-2 rounded-[10px] px-2 py-1.5 transition-colors hover:bg-foreground/[0.04]"
+        className="flex items-center gap-2 rounded-[10px] px-2 py-1.5 transition-colors hover:bg-white/[0.04]"
       >
-        <span className="flex size-7 items-center justify-center overflow-hidden rounded-full bg-foreground/[0.06] font-mono text-[10px] font-semibold uppercase tracking-wide text-foreground/80">
+        <span className="flex size-7 items-center justify-center overflow-hidden rounded-full border border-[var(--z-rule-2)] bg-white/[0.06] font-mono text-[10px] font-semibold uppercase tracking-wide text-[var(--z-ink-2)]">
           {session.user.image ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={session.user.image} alt="" className="size-7 rounded-full object-cover" />
@@ -299,7 +307,7 @@ function AccountMenu({
           viewBox="0 0 10 10"
           aria-hidden
           className={cn(
-            "hidden text-foreground/40 transition-transform sm:block",
+            "hidden text-[var(--z-ink-6)] transition-transform sm:block",
             open && "rotate-180",
           )}
         >
@@ -316,13 +324,13 @@ function AccountMenu({
       {open ? (
         <div
           role="menu"
-          className="absolute right-0 top-full z-50 mt-1.5 w-60 origin-top-right rounded-[12px] border border-foreground/[0.1] bg-background p-1.5 shadow-[0_12px_32px_-14px_rgba(0,0,0,0.5)]"
+          className="absolute right-0 top-full z-50 mt-1.5 w-60 origin-top-right rounded-[12px] border border-[var(--z-rule-2)] bg-[var(--z-bg)] p-1.5 shadow-[0_12px_32px_-14px_rgba(0,0,0,0.7)]"
         >
-          <div className="border-b border-foreground/[0.06] px-3 py-2.5">
-            <div className="truncate font-mono text-xs text-foreground">
+          <div className="border-b border-[var(--z-rule)] px-3 py-2.5">
+            <div className="truncate font-mono text-xs text-[var(--z-ink)]">
               {session.user.name || "Account"}
             </div>
-            <div className="truncate font-mono text-[11px] text-muted-foreground">
+            <div className="truncate font-mono text-[11px] text-[var(--z-ink-5)]">
               {session.user.email}
             </div>
           </div>
@@ -345,7 +353,7 @@ function AccountMenu({
             </a>
           </div>
           {showSignOut && onSignOut ? (
-            <div className="border-t border-foreground/[0.06] pt-1">
+            <div className="border-t border-[var(--z-rule)] pt-1">
               <button
                 role="menuitem"
                 type="button"
@@ -392,7 +400,7 @@ function MobileMenu({
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-label="Toggle menu"
-        className="ml-1 flex items-center rounded-[9px] px-3 py-2 text-foreground/60 transition-colors hover:bg-foreground/[0.05] hover:text-foreground"
+        className="ml-1 flex items-center rounded-[9px] px-3 py-2 text-[var(--z-ink-4)] transition-colors hover:bg-white/[0.05] hover:text-[var(--z-ink)]"
       >
         <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden>
           {open ? (
@@ -414,29 +422,29 @@ function MobileMenu({
       </button>
 
       {open ? (
-        <div className="absolute inset-x-0 top-12 z-50 border-b border-foreground/[0.07] bg-background/95 p-3 backdrop-blur-lg">
+        <div className="absolute inset-x-0 top-12 z-50 border-b border-[var(--z-rule)] bg-[rgba(12,13,16,0.95)] p-3 backdrop-blur-lg">
           <nav className="flex flex-col gap-0.5">
             {items.map((item) => (
               <a
                 key={item.key}
                 href={resolveHref(item, config)}
                 onClick={() => setOpen(false)}
-                className="rounded-[9px] px-3 py-2.5 font-mono text-[13px] lowercase tracking-tight text-muted-foreground transition-colors hover:bg-foreground/[0.05] hover:text-foreground"
+                className="rounded-[9px] px-3 py-2.5 font-sans text-sm text-[var(--z-ink-3)] transition-colors hover:bg-white/[0.04] hover:text-[var(--z-ink)]"
               >
                 {item.label}
                 {item.key === "changelog" && changelogUnseen && (
-                  <span className="ml-1.5 inline-block size-1.5 rounded-full bg-primary align-middle" aria-label="New" />
+                  <span className="ml-1.5 inline-block size-1.5 rounded-full bg-[var(--z-blue)] align-middle" aria-label="New" />
                 )}
               </a>
             ))}
             {utilitySlot ? (
-              <div className="mt-1 flex items-center border-t border-foreground/[0.06] px-1 pt-2.5">
+              <div className="mt-1 flex items-center border-t border-[var(--z-rule)] px-1 pt-2.5">
                 {utilitySlot}
               </div>
             ) : null}
             <BookDemoButton
               location="header_mobile"
-              className="mt-2 flex items-center justify-center rounded-[10px] border border-foreground/[0.12] px-4 py-2.5 font-mono text-[13px] lowercase tracking-tight text-foreground/70 transition-colors hover:bg-foreground/[0.05] hover:text-foreground"
+              className="mt-2 flex items-center justify-center rounded-[7px] border border-[var(--z-rule-2)] px-4 py-2.5 font-mono text-[13px] lowercase text-[var(--z-ink)] transition-colors hover:bg-white/[0.04]"
             />
             <div className="mt-2 flex items-center gap-2">
               {isAuthed && session ? (
@@ -447,7 +455,7 @@ function MobileMenu({
                       setOpen(false);
                       onSignOut();
                     }}
-                    className="flex flex-1 items-center justify-center rounded-[10px] border border-foreground/[0.1] px-4 py-2.5 font-mono text-[13px] lowercase tracking-tight text-foreground/70 transition-colors hover:bg-foreground/[0.05]"
+                    className="flex flex-1 items-center justify-center rounded-[10px] border border-[var(--z-rule-2)] px-4 py-2.5 font-mono text-[13px] lowercase tracking-tight text-[var(--z-ink-3)] transition-colors hover:bg-white/[0.05]"
                   >
                     Sign out
                   </button>
@@ -455,7 +463,7 @@ function MobileMenu({
               ) : (
                 <a
                   href={`${config.consoleBaseUrl}/sign-in`}
-                  className="flex flex-1 items-center justify-center gap-1.5 rounded-[10px] bg-primary px-4 py-2.5 font-mono text-[13px] lowercase tracking-tight text-primary-foreground transition-colors hover:bg-primary/90"
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-[7px] bg-[var(--z-cta)] px-4 py-2.5 font-mono text-[13px] lowercase text-white transition-colors hover:bg-[#1a56f0]"
                 >
                   get api key
                   <span aria-hidden>→</span>

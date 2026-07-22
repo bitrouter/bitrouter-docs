@@ -32,7 +32,7 @@ export function DocsHeader() {
       id="nd-subnav"
       className={cn(
         "sticky [grid-area:header] flex flex-col top-(--fd-docs-row-1) z-10",
-        "border-b border-foreground/[0.08] bg-background",
+        "border-b border-[var(--z-rule)] bg-background",
         // The `layout:` variant sets the var on the layout container so the
         // sidebar/TOC siblings (which read `--fd-docs-row-2`) get the right
         // offset. Setting it directly on the header would only scope it here.
@@ -43,7 +43,7 @@ export function DocsHeader() {
       <WebHeaderBody />
 
       {showTabs && (
-        <div className="flex h-10 flex-row items-end gap-6 overflow-x-auto border-t border-foreground/[0.06] px-6 max-lg:hidden">
+        <div className="flex h-10 flex-row items-end gap-6 overflow-x-auto border-t border-[var(--z-rule)] px-6 max-lg:hidden">
           {tabs.map((tab, i) => {
             const isSelected = selectedIdx === i;
             return (

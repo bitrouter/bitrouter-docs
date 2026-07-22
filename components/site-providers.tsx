@@ -1,12 +1,7 @@
 import { RootProvider } from "fumadocs-ui/provider/next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
-import {
-  AISearch,
-  AISearchPanel,
-  AISearchTrigger,
-} from "@/components/ai/search";
-import { MessageCircleIcon } from "lucide-react";
+import { AISearch, AISearchPanel } from "@/components/ai/search";
 
 // Providers for the English-only site surface (landing, models, providers,
 // brand, careers, enterprise, legal, blog). next-intl is pinned to `en` so the
@@ -30,8 +25,9 @@ export async function SiteProviders({
   return (
     <RootProvider
       theme={{
+        forcedTheme: "dark",
         defaultTheme: "dark",
-        enableSystem: true,
+        enableSystem: false,
         storageKey: "bitrouter-theme",
       }}
     >
@@ -39,13 +35,6 @@ export async function SiteProviders({
         <AISearch>
           {children}
           <AISearchPanel />
-          <AISearchTrigger
-            position="float"
-            className="flex w-auto items-center justify-center rounded-full bg-primary px-4 py-2.5 font-mono text-[13px] lowercase tracking-tight text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            <MessageCircleIcon className="size-4 shrink-0" />
-            Ask AI
-          </AISearchTrigger>
         </AISearch>
       </NextIntlClientProvider>
     </RootProvider>

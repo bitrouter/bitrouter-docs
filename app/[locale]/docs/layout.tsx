@@ -1,3 +1,4 @@
+import "@/components/landing/zed/zed.css";
 import { source } from "@/lib/source";
 import { DocsLayout } from "fumadocs-ui/layouts/notebook";
 import { FullSearchTrigger } from "fumadocs-ui/layouts/shared/slots/search-trigger";

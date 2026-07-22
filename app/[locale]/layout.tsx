@@ -6,12 +6,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { i18nUI } from "@/lib/fumadocs-i18n";
 import type { Metadata } from "next";
-import {
-  AISearch,
-  AISearchPanel,
-  AISearchTrigger,
-} from "@/components/ai/search";
-import { MessageCircleIcon } from "lucide-react";
+import { AISearch, AISearchPanel } from "@/components/ai/search";
 
 const BASE_URL = "https://bitrouter.ai";
 
@@ -61,8 +56,9 @@ export default async function LocaleLayout({ children, params }: Props) {
   return (
     <RootProvider
       theme={{
+        forcedTheme: "dark",
         defaultTheme: "dark",
-        enableSystem: true,
+        enableSystem: false,
         storageKey: "bitrouter-theme",
       }}
       i18n={i18nUI.provider(locale)}
@@ -71,13 +67,6 @@ export default async function LocaleLayout({ children, params }: Props) {
         <AISearch>
           {children}
           <AISearchPanel />
-          <AISearchTrigger
-            position="float"
-            className="flex w-auto items-center justify-center rounded-full bg-primary px-4 py-2.5 font-mono text-[13px] lowercase tracking-tight text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            <MessageCircleIcon className="size-4 shrink-0" />
-            Ask AI
-          </AISearchTrigger>
         </AISearch>
       </NextIntlClientProvider>
     </RootProvider>

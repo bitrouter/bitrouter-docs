@@ -75,9 +75,9 @@ export default async function Page({ params }: Props) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
         />
       )}
-      <DocsTitle>{page.data.title}</DocsTitle>
-      <DocsDescription>{page.data.description}</DocsDescription>
-      <DocsBody>
+      <DocsTitle className="zed-doc-title">{page.data.title}</DocsTitle>
+      <DocsDescription className="zed-doc-desc">{page.data.description}</DocsDescription>
+      <DocsBody className="zed-docs">
         <MDX
           components={getMDXComponents({
             a: createRelativeLink(source, page),

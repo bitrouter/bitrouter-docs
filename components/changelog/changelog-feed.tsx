@@ -1,19 +1,28 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { ArrowRight } from "lucide-react";
-import { allTags, groupByMonth, type ChangelogItem } from "@/lib/changelog";
+import { useEffect } from "react";
+import Link from "next/link";
+import { sortByDateDesc, type ChangelogItem } from "@/lib/changelog";
 import {
   CHANGELOG_SEEN_EVENT,
   CHANGELOG_SEEN_KEY,
 } from "@/components/changelog/use-changelog-unseen";
-import { cn } from "@/lib/cn";
 
+function fmtDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+/**
+ * "Zed dark" changelog feed — a release list with a sticky version+date rail and
+ * a Newsreader title per release. Preserves the localStorage "seen" side-effect
+ * that clears the nav's changelog dot.
+ */
 export function ChangelogFeed({ items }: { items: ChangelogItem[] }) {
-  const [activeTag, setActiveTag] = useState<string | null>(null);
-  const tags = useMemo(() => allTags(items), [items]);
-
-  // Visiting the changelog clears the nav "new" dot.
   useEffect(() => {
     try {
       localStorage.setItem(CHANGELOG_SEEN_KEY, new Date().toISOString());
@@ -23,111 +32,89 @@ export function ChangelogFeed({ items }: { items: ChangelogItem[] }) {
     }
   }, []);
 
-  const filtered = activeTag
-    ? items.filter((i) => i.tags.includes(activeTag))
-    : items;
-  const groups = useMemo(() => groupByMonth(filtered), [filtered]);
+  const releases = sortByDateDesc(items);
 
   return (
     <div>
-      {/* Tag filter */}
-      {tags.length > 0 && (
-        <div className="mt-6 flex flex-wrap gap-2">
-          <TagChip
-            label="All"
-            active={activeTag === null}
-            onClick={() => setActiveTag(null)}
-          />
-          {tags.map((tag) => (
-            <TagChip
-              key={tag}
-              label={tag}
-              active={activeTag === tag}
-              onClick={() => setActiveTag(tag)}
-            />
-          ))}
-        </div>
-      )}
-
-      {groups.map((group) => (
-        <section key={group.label} className="mt-10 first:mt-8">
-          {/* Month divider: "── JUNE 2026 ──────────────" */}
-          <div className="mb-2 flex items-center gap-3">
-            <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-              {group.label}
-            </span>
-            <span className="h-px flex-1 bg-border" />
-          </div>
-
-          <div className="flex flex-col">
-            {group.items.map((entry) => (
-              <a
-                key={entry.url}
-                href={entry.url}
-                className="group block border-b border-border/60 py-5 last:border-b-0"
+      {releases.map((r, i) => (
+        <Link
+          key={r.url}
+          href={r.url}
+          className="zed-metagrid zed-release-row"
+          style={{ borderBottom: "1px solid var(--z-rule)", padding: "44px 8px" }}
+        >
+          <div style={{ position: "relative" }}>
+            <div style={{ position: "sticky", top: 96 }}>
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  fontFamily: "var(--font-mono)",
+                  fontSize: 15,
+                  fontWeight: 500,
+                  color: "var(--z-ink)",
+                }}
               >
-                {/* Meta line: date · version · BREAKING · tags */}
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-xs text-muted-foreground/70">
-                  <time>{entry.date.replaceAll("-", "·")}</time>
-                  {entry.version && (
-                    <span className="text-muted-foreground">
-                      {entry.version}
-                    </span>
-                  )}
-                  {entry.breaking && (
-                    <span className="rounded border border-red-500/40 px-1.5 py-0.5 text-[10px] uppercase text-red-500">
-                      Breaking
-                    </span>
-                  )}
-                  {entry.tags.map((tag) => (
-                    <span key={tag} className="rounded bg-muted/40 px-1.5 py-0.5">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Title */}
-                <h3 className="mt-2 flex items-center gap-2 text-base font-medium tracking-tight transition-colors group-hover:text-foreground">
-                  {entry.title}
-                  <ArrowRight className="size-4 shrink-0 text-muted-foreground/30 opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100" />
-                </h3>
-
-                {/* Description */}
-                {entry.description && (
-                  <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
-                    {entry.description}
-                  </p>
+                {r.version ?? fmtDate(r.date)}
+                {i === 0 && (
+                  <span
+                    style={{
+                      fontSize: 9.5,
+                      letterSpacing: "0.1em",
+                      textTransform: "uppercase",
+                      color: "var(--z-blue)",
+                      border: "1px solid #2a3550",
+                      borderRadius: 5,
+                      padding: "2px 6px",
+                    }}
+                  >
+                    latest
+                  </span>
                 )}
-              </a>
-            ))}
+              </div>
+              {r.version && (
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--z-ink-6)", marginTop: 8 }}>
+                  {fmtDate(r.date)}
+                </div>
+              )}
+            </div>
           </div>
-        </section>
+
+          <div>
+            {/* Changelog titles are the version string (shown in the rail);
+                the human-readable summary is the description — use it as the
+                headline, falling back to the title only when absent. */}
+            <h2
+              style={{
+                fontFamily: "var(--font-display)",
+                fontStyle: "italic",
+                fontWeight: 500,
+                fontSize: 26,
+                lineHeight: 1.18,
+                color: "var(--z-ink)",
+                margin: "0 0 16px",
+                maxWidth: "40ch",
+              }}
+            >
+              {r.description ?? r.title}
+            </h2>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8, fontFamily: "var(--font-mono)", fontSize: 11.5 }}>
+              {r.breaking && (
+                <span style={{ color: "var(--z-red)", border: "1px solid rgba(224,108,108,0.35)", borderRadius: 5, padding: "2px 7px", textTransform: "uppercase", letterSpacing: "0.06em", fontSize: 10 }}>
+                  Breaking
+                </span>
+              )}
+              {r.tags.map((tag) => (
+                <span key={tag} style={{ color: "var(--z-ink-4)", border: "1px solid var(--z-rule)", borderRadius: 5, padding: "2px 8px" }}>
+                  {tag}
+                </span>
+              ))}
+              <span style={{ marginLeft: "auto", color: "var(--z-blue)" }}>Read →</span>
+            </div>
+          </div>
+        </Link>
       ))}
     </div>
-  );
-}
-
-function TagChip({
-  label,
-  active,
-  onClick,
-}: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "rounded-full border px-3 py-1 font-mono text-xs uppercase tracking-wider transition-colors",
-        active
-          ? "border-foreground/40 bg-foreground/[0.06] text-foreground"
-          : "border-border text-muted-foreground hover:text-foreground",
-      )}
-    >
-      {label}
-    </button>
   );
 }

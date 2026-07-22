@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { SiteHeader, SiteHeaderBody, type HeaderSession } from "@/components/header";
 import { authClient } from "@/lib/auth-client";
 import { GitHubStarsBadge } from "@/components/landing/github-stars-badge";
+import { AISearchBar } from "@/components/ai/search";
 
 const config = {
   webBaseUrl: process.env.NEXT_PUBLIC_WEB_URL ?? "https://bitrouter.ai",
@@ -12,10 +13,11 @@ const config = {
 };
 
 // ── web-specific slot content. Install pill removed (the hero install bar and
-//    docs Installation page already cover CLI install). No header search slot:
-//    docs search lives in the sidebar banner; ⌘K opens the native dialog anywhere. ───
+//    docs Installation page already cover CLI install). The search slot holds the
+//    "Ask AI" bar (opens the AI chat panel) — replaces the old floating trigger;
+//    every SiteHeader renders inside an <AISearch> provider. ───
 const utilitySlot = <GitHubStarsBadge />;
-const searchSlot = undefined;
+const searchSlot = <AISearchBar />;
 
 // ── shared prop plumbing ──────────────────────────────────────────────
 

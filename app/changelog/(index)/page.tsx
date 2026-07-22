@@ -1,7 +1,8 @@
+import "@/components/landing/zed/zed.css";
 import { getChangelogItems } from "@/lib/source";
 import { setRequestLocale } from "next-intl/server";
-import { GitBranch } from "lucide-react";
 import { ChangelogFeed } from "@/components/changelog/changelog-feed";
+import { Kicker } from "@/components/landing/zed/primitives";
 import type { Metadata } from "next";
 
 export default async function ChangelogIndexPage() {
@@ -10,50 +11,70 @@ export default async function ChangelogIndexPage() {
   const items = getChangelogItems("en");
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 py-12 sm:px-6">
-      {/* ── Compact header ── */}
-      <div className="flex items-center gap-2 text-muted-foreground">
-        <GitBranch className="size-4" />
-        <span className="font-mono text-xs uppercase tracking-widest">
-          Changelog
-        </span>
-      </div>
-      <h1 className="mt-3 text-2xl font-medium tracking-tight sm:text-3xl">
-        Product updates &amp; releases
-      </h1>
-      <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
-        New providers, models, routing improvements, and breaking changes — as
-        they ship.
-      </p>
-      <div className="mt-4 flex items-center gap-4 font-mono text-xs text-muted-foreground/70">
-        <a
-          href="/changelog/rss.xml"
-          className="transition-colors hover:text-foreground"
-        >
-          RSS
-        </a>
-        <a
-          href="/changelog/atom.xml"
-          className="transition-colors hover:text-foreground"
-        >
-          Atom
-        </a>
-        <span className="ml-auto uppercase tracking-widest">
-          {items.length} {items.length === 1 ? "entry" : "entries"}
-        </span>
-      </div>
+    <div className="zed-bg">
+      <section style={{ position: "relative" }}>
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            pointerEvents: "none",
+            background: "radial-gradient(60% 36% at 50% 0%, rgba(107,155,255,0.06), transparent 60%)",
+          }}
+        />
+        <div className="zed-wrap" style={{ maxWidth: 1000 }}>
+          <div
+            style={{
+              padding: "56px 0 30px",
+              borderBottom: "1px solid var(--z-rule)",
+              display: "flex",
+              alignItems: "flex-end",
+              gap: 20,
+              flexWrap: "wrap",
+            }}
+          >
+            <div>
+              <Kicker>// changelog</Kicker>
+              <h1
+                className="zed-display"
+                style={{ fontSize: "clamp(38px, 6vw, 56px)", lineHeight: 1.0, margin: "16px 0 0" }}
+              >
+                What&apos;s <span style={{ color: "var(--z-blue)" }}>new.</span>
+              </h1>
+              <p style={{ fontFamily: "var(--font-mono)", fontSize: 15, lineHeight: 1.6, color: "var(--z-ink-4)", margin: "16px 0 0", maxWidth: "52ch" }}>
+                Every release, with the routing, tracing and policy changes that shipped in it.
+              </p>
+            </div>
+            <a
+              href="/changelog/rss.xml"
+              style={{
+                marginLeft: "auto",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                fontFamily: "var(--font-mono)",
+                fontSize: 13,
+                color: "var(--z-ink)",
+                padding: "8px 14px",
+                borderRadius: 7,
+                border: "1px solid var(--z-rule-2)",
+                whiteSpace: "nowrap",
+              }}
+            >
+              <span style={{ color: "var(--z-amber)" }}>◈</span> RSS
+            </a>
+          </div>
 
-      <div className="mt-6 h-px bg-border" />
-
-      {/* ── Feed ── */}
-      {items.length === 0 ? (
-        <p className="py-16 text-center text-sm text-muted-foreground">
-          No entries yet. Check back soon.
-        </p>
-      ) : (
-        <ChangelogFeed items={items} />
-      )}
-    </main>
+          {items.length === 0 ? (
+            <p style={{ padding: "64px 0", textAlign: "center", fontFamily: "var(--font-mono)", color: "var(--z-ink-5)" }}>
+              No entries yet. Check back soon.
+            </p>
+          ) : (
+            <ChangelogFeed items={items} />
+          )}
+          <div style={{ height: 60 }} />
+        </div>
+      </section>
+    </div>
   );
 }
 
@@ -64,12 +85,8 @@ export function generateMetadata(): Metadata {
     alternates: {
       canonical: "https://bitrouter.ai/changelog",
       types: {
-        "application/rss+xml": [
-          { url: "/changelog/rss.xml", title: "BitRouter Changelog" },
-        ],
-        "application/atom+xml": [
-          { url: "/changelog/atom.xml", title: "BitRouter Changelog" },
-        ],
+        "application/rss+xml": [{ url: "/changelog/rss.xml", title: "BitRouter Changelog" }],
+        "application/atom+xml": [{ url: "/changelog/atom.xml", title: "BitRouter Changelog" }],
       },
     },
   };

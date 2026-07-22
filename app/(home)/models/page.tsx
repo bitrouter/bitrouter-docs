@@ -1,14 +1,10 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
-import { ModelsMonoPage } from "@/components/models/mono-models-page";
-import { fetchModels } from "@/lib/models-server";
+import { ZedModelsPage } from "@/components/landing/zed/models-page";
 
-export default async function Page() {
+export default function Page() {
   setRequestLocale("en");
-
-  const initialModels = await fetchModels();
-
-  return <ModelsMonoPage initialModels={initialModels} />;
+  return <ZedModelsPage />;
 }
 
 export async function generateMetadata(): Promise<Metadata> {

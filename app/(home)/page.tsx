@@ -1,6 +1,6 @@
 import { setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
-import { MonoLanding } from "@/components/landing/mono/landing";
+import { ZedLanding } from "@/components/landing/zed/landing";
 
 export const metadata: Metadata = {
   alternates: {
@@ -11,9 +11,5 @@ export const metadata: Metadata = {
 export default function Home() {
   setRequestLocale("en");
 
-  return (
-    <div className="br-mono">
-      <MonoLanding />
-    </div>
-  );
+  return <ZedLanding />;
 }

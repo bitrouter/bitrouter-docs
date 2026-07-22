@@ -2,6 +2,8 @@ import { setRequestLocale } from "next-intl/server";
 import { GitHubIcon, XIcon, LinkedInIcon } from "@/components/icons";
 import { Mail } from "lucide-react";
 import type { Metadata } from "next";
+import "@/components/landing/zed/zed.css";
+import { Kicker } from "@/components/landing/zed/primitives";
 
 const CONTACT_EMAIL = "contact@bitrouter.ai";
 
@@ -39,11 +41,28 @@ const VALUES = [
   },
 ];
 
+const RULE = "1px solid var(--z-rule)";
+const MONO = "var(--font-mono)";
+
 function SectionHeading({ label, index }: { label: string; index: number }) {
   return (
-    <header className="flex items-baseline justify-between gap-4 border-b border-border pb-3">
-      <h2 className="text-2xl font-medium tracking-tight sm:text-3xl">{label}</h2>
-      <span className="font-mono text-xs tabular-nums text-muted-foreground">
+    <header
+      style={{
+        display: "flex",
+        alignItems: "baseline",
+        justifyContent: "space-between",
+        gap: 16,
+        borderBottom: RULE,
+        paddingBottom: 14,
+      }}
+    >
+      <h2
+        className="zed-display"
+        style={{ fontSize: "clamp(23px, 3.2vw, 30px)", lineHeight: 1.1, margin: 0 }}
+      >
+        {label}
+      </h2>
+      <span style={{ fontFamily: MONO, fontSize: 12, color: "var(--z-ink-6)" }}>
         {String(index).padStart(2, "0")}
       </span>
     </header>
@@ -51,47 +70,49 @@ function SectionHeading({ label, index }: { label: string; index: number }) {
 }
 
 function TeamCard({ member }: { member: (typeof TEAM)[number] }) {
+  const links = [
+    { href: member.x, label: "X / Twitter", Icon: XIcon },
+    { href: member.github, label: "GitHub", Icon: GitHubIcon },
+    { href: member.linkedin, label: "LinkedIn", Icon: LinkedInIcon },
+    { href: `mailto:${member.email}`, label: "Email", Icon: Mail },
+  ];
   return (
-    <div className="bg-background p-6 lg:p-8">
-      <div className="text-base font-medium">{member.name}</div>
-      <div className="mt-1 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+    <div style={{ background: "var(--z-bg)", padding: "26px 28px" }}>
+      <div
+        style={{
+          fontFamily: "var(--font-sans)",
+          fontSize: 16,
+          fontWeight: 600,
+          color: "var(--z-ink)",
+        }}
+      >
+        {member.name}
+      </div>
+      <div
+        style={{
+          marginTop: 5,
+          fontFamily: MONO,
+          fontSize: 11,
+          letterSpacing: "0.14em",
+          textTransform: "uppercase",
+          color: "var(--z-ink-6)",
+        }}
+      >
         {member.role}
       </div>
-      <div className="mt-5 flex items-center gap-3">
-        <a
-          href={member.x}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="X / Twitter"
-          className="text-muted-foreground/60 transition-colors hover:text-foreground"
-        >
-          <XIcon className="size-4" />
-        </a>
-        <a
-          href={member.github}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="GitHub"
-          className="text-muted-foreground/60 transition-colors hover:text-foreground"
-        >
-          <GitHubIcon className="size-4" />
-        </a>
-        <a
-          href={member.linkedin}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="LinkedIn"
-          className="text-muted-foreground/60 transition-colors hover:text-foreground"
-        >
-          <LinkedInIcon className="size-4" />
-        </a>
-        <a
-          href={`mailto:${member.email}`}
-          aria-label="Email"
-          className="text-muted-foreground/60 transition-colors hover:text-foreground"
-        >
-          <Mail className="size-4" />
-        </a>
+      <div style={{ marginTop: 20, display: "flex", alignItems: "center", gap: 14 }}>
+        {links.map(({ href, label, Icon }) => (
+          <a
+            key={label}
+            href={href}
+            target={href.startsWith("http") ? "_blank" : undefined}
+            rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+            aria-label={label}
+            className="zed-about-social"
+          >
+            <Icon className="size-4" />
+          </a>
+        ))}
       </div>
     </div>
   );
@@ -101,97 +122,197 @@ export default function AboutPage() {
   setRequestLocale("en");
 
   return (
-    <>
-      <main className="mx-auto w-full max-w-5xl px-6 py-16 sm:px-10 lg:px-14 lg:py-24">
-        {/* Page header */}
-        <header className="mb-20 border-b border-border pb-16">
-          <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-            Who we are
-          </div>
-          <h1 className="mt-6 inline-block border-b border-foreground pb-1 text-5xl font-medium tracking-tight">
-            About
-          </h1>
-          <p className="mt-6 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-            We're building the routing layer for the AI era — open, model-agnostic, and grounded
-            in the belief that intelligence should be accessible to everyone, not rationed by
-            whoever runs the largest data center.
-          </p>
-        </header>
-
-        {/* The team */}
-        <section className="mb-20">
-          <SectionHeading label="The team" index={1} />
-          <div className="mt-8 grid gap-px border border-border bg-border sm:grid-cols-2">
-            {TEAM.map((member) => (
-              <TeamCard key={member.name} member={member} />
-            ))}
-          </div>
-        </section>
-
-        {/* Our story */}
-        <section className="mb-20">
-          <SectionHeading label="Our story" index={2} />
-          <div className="mt-8 max-w-2xl space-y-5 text-sm leading-relaxed text-muted-foreground">
-            <p>
-              We met at twenty, both convinced that AI was about to become infrastructure in the
-              same way electricity did — not just a product, but the substrate everything else runs
-              on. The question that wouldn't leave us alone: who owns the pipes?
-            </p>
-            <p>
-              We started building at the intersection of AI and blockchain because we believe the
-              answer has to be decentralized. AI is the commodification of intelligence, and like
-              every commodification in history, how it gets routed and distributed will determine
-              whether it belongs to everyone or just a few.
-            </p>
-            <p>
-              BitRouter is our answer. We build it in the open — the code, the roadmap, the
-              reasoning. We're committed to that. And if you believe in the same future, we'd
-              genuinely like to hear from you.
-            </p>
-          </div>
-        </section>
-
-        {/* How we work */}
-        <section className="mb-20">
-          <SectionHeading label="How we work" index={3} />
-          <div className="mt-8 grid gap-px border border-border bg-border sm:grid-cols-3">
-            {VALUES.map((v, i) => (
-              <div key={v.label} className="bg-background p-5">
-                <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                  {String(i + 1).padStart(2, "0")}
-                </div>
-                <div className="mt-3 text-sm font-medium">{v.label}</div>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{v.body}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Say hi */}
-        <section>
-          <SectionHeading label="Say hi" index={4} />
-          <div className="mt-8 space-y-6">
-            <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
-              We're not hiring today. But we're always interested in people who are thinking about
-              the same problems — the infrastructure, the sovereignty, the long game. If something
-              here resonates, reach out. Just a note. No résumé, no deck.
-            </p>
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="group inline-flex items-center gap-2.5 border border-foreground bg-foreground px-5 py-3 font-mono text-xs uppercase tracking-widest text-background transition-opacity hover:opacity-90"
+    <div className="zed-bg">
+      <style>{`.zed-about-social{color:var(--z-ink-6);transition:color .15s ease}.zed-about-social:hover{color:var(--z-ink)}`}</style>
+      <section style={{ position: "relative" }}>
+        <div className="zed-glow" />
+        <main className="zed-wrap" style={{ maxWidth: 960, padding: "72px 34px 96px" }}>
+          {/* Page header */}
+          <header style={{ marginBottom: 72, borderBottom: RULE, paddingBottom: 56 }}>
+            <Kicker>// who we are</Kicker>
+            <h1
+              className="zed-display"
+              style={{
+                fontSize: "clamp(40px, 6vw, 60px)",
+                lineHeight: 1.0,
+                margin: "16px 0 0",
+              }}
             >
-              Email us
-              <span className="font-mono text-[11px] normal-case tracking-normal opacity-80">
-                {CONTACT_EMAIL}
-              </span>
-            </a>
-            <div className="font-mono text-[11px] text-muted-foreground/60">
-              We read every message. Most get a reply.
+              About
+            </h1>
+            <p
+              style={{
+                marginTop: 22,
+                maxWidth: "60ch",
+                fontFamily: MONO,
+                fontSize: 15,
+                lineHeight: 1.7,
+                color: "var(--z-ink-4)",
+              }}
+            >
+              We&apos;re building the routing layer for the AI era — open,
+              model-agnostic, and grounded in the belief that intelligence should
+              be accessible to everyone, not rationed by whoever runs the largest
+              data center.
+            </p>
+          </header>
+
+          {/* The team */}
+          <section style={{ marginBottom: 72 }}>
+            <SectionHeading label="The team" index={1} />
+            <div
+              style={{
+                marginTop: 32,
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+                gap: 1,
+                background: "var(--z-rule)",
+                border: RULE,
+              }}
+            >
+              {TEAM.map((member) => (
+                <TeamCard key={member.name} member={member} />
+              ))}
             </div>
-          </div>
-        </section>
-      </main>
-    </>
+          </section>
+
+          {/* Our story */}
+          <section style={{ marginBottom: 72 }}>
+            <SectionHeading label="Our story" index={2} />
+            <div
+              style={{
+                marginTop: 32,
+                maxWidth: "64ch",
+                display: "flex",
+                flexDirection: "column",
+                gap: 18,
+                fontFamily: MONO,
+                fontSize: 14,
+                lineHeight: 1.75,
+                color: "var(--z-ink-4)",
+              }}
+            >
+              <p style={{ margin: 0 }}>
+                We met at twenty, both convinced that AI was about to become
+                infrastructure in the same way electricity did — not just a
+                product, but the substrate everything else runs on. The question
+                that wouldn&apos;t leave us alone: who owns the pipes?
+              </p>
+              <p style={{ margin: 0 }}>
+                We started building at the intersection of AI and blockchain
+                because we believe the answer has to be decentralized. AI is the
+                commodification of intelligence, and like every commodification in
+                history, how it gets routed and distributed will determine whether
+                it belongs to everyone or just a few.
+              </p>
+              <p style={{ margin: 0 }}>
+                BitRouter is our answer. We build it in the open — the code, the
+                roadmap, the reasoning. We&apos;re committed to that. And if you
+                believe in the same future, we&apos;d genuinely like to hear from
+                you.
+              </p>
+            </div>
+          </section>
+
+          {/* How we work */}
+          <section style={{ marginBottom: 72 }}>
+            <SectionHeading label="How we work" index={3} />
+            <div
+              style={{
+                marginTop: 32,
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                gap: 1,
+                background: "var(--z-rule)",
+                border: RULE,
+              }}
+            >
+              {VALUES.map((v, i) => (
+                <div key={v.label} style={{ background: "var(--z-bg)", padding: "22px 24px" }}>
+                  <div
+                    style={{
+                      fontFamily: MONO,
+                      fontSize: 10,
+                      letterSpacing: "0.16em",
+                      textTransform: "uppercase",
+                      color: "var(--z-blue)",
+                    }}
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </div>
+                  <div
+                    style={{
+                      marginTop: 12,
+                      fontFamily: "var(--font-sans)",
+                      fontSize: 15,
+                      fontWeight: 600,
+                      color: "var(--z-ink)",
+                    }}
+                  >
+                    {v.label}
+                  </div>
+                  <p
+                    style={{
+                      margin: "8px 0 0",
+                      fontFamily: MONO,
+                      fontSize: 13,
+                      lineHeight: 1.65,
+                      color: "var(--z-ink-4)",
+                    }}
+                  >
+                    {v.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Say hi */}
+          <section>
+            <SectionHeading label="Say hi" index={4} />
+            <div style={{ marginTop: 32, display: "flex", flexDirection: "column", gap: 24 }}>
+              <p
+                style={{
+                  margin: 0,
+                  maxWidth: "62ch",
+                  fontFamily: MONO,
+                  fontSize: 14,
+                  lineHeight: 1.75,
+                  color: "var(--z-ink-4)",
+                }}
+              >
+                We&apos;re not hiring today. But we&apos;re always interested in
+                people who are thinking about the same problems — the
+                infrastructure, the sovereignty, the long game. If something here
+                resonates, reach out. Just a note. No résumé, no deck.
+              </p>
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                style={{
+                  alignSelf: "flex-start",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 12,
+                  padding: "11px 20px",
+                  borderRadius: 8,
+                  background: "var(--z-cta)",
+                  color: "#fff",
+                  fontFamily: MONO,
+                  fontSize: 13,
+                  fontWeight: 500,
+                }}
+              >
+                Email us
+                <span style={{ opacity: 0.8, fontWeight: 400 }}>{CONTACT_EMAIL}</span>
+              </a>
+              <div style={{ fontFamily: MONO, fontSize: 11.5, color: "var(--z-ink-7)" }}>
+                We read every message. Most get a reply.
+              </div>
+            </div>
+          </section>
+        </main>
+      </section>
+    </div>
   );
 }
 

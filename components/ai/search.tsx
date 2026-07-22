@@ -402,6 +402,38 @@ export function AISearchTrigger({
   );
 }
 
+/**
+ * Header "Ask AI" search bar — opens the AI chat panel. Styled as a Zed search
+ * input (magnifier + placeholder + ⌘/ hint) to live in the site header's search
+ * slot, replacing the floating bottom-right trigger. Responsive: a compact
+ * icon-only button below `sm`, a full bar on wider screens. Must render inside
+ * an <AISearch> provider (every SiteHeader instance already does).
+ */
+export function AISearchBar({ className }: { className?: string }) {
+  const { setOpen } = useAISearchContext();
+
+  return (
+    <button
+      type="button"
+      aria-label="Ask AI"
+      onClick={() => setOpen(true)}
+      className={cn(
+        'group flex h-9 items-center gap-2.5 rounded-[9px] border border-[var(--z-rule)] bg-[var(--z-inset)] px-2.5 text-[var(--z-ink-5)] transition-colors hover:border-[var(--z-rule-2)] hover:text-[var(--z-ink-3)]',
+        'sm:w-full sm:max-w-[360px] sm:px-3',
+        className,
+      )}
+    >
+      <SearchIcon className="size-4 shrink-0 text-[var(--z-ink-6)] transition-colors group-hover:text-[var(--z-ink-4)]" />
+      <span className="hidden flex-1 truncate text-left font-mono text-[13px] sm:inline">
+        Ask AI…
+      </span>
+      <kbd className="ml-auto hidden shrink-0 items-center gap-0.5 rounded-[5px] border border-[var(--z-rule-2)] px-1.5 py-px font-mono text-[11px] leading-none text-[var(--z-ink-6)] md:inline-flex">
+        <span className="text-[13px] leading-none">⌘</span>/
+      </kbd>
+    </button>
+  );
+}
+
 export function AISearchPanel() {
   const { open, setOpen } = useAISearchContext();
   useHotKey();

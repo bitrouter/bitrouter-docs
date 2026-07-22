@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Ok, Err, Dim, Faint } from "../mono/terminal";
+import { Ok, Err, Dim, Faint } from "../zed/terminal";
 
 export type TermStep = { term: string; prog: () => unknown[] };
 export type CompareRow = { feat: string; them: string; br: string };

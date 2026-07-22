@@ -2,25 +2,22 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Terminal } from "../mono/terminal";
+import "@/components/landing/zed/zed.css";
+import { Terminal } from "../zed/terminal";
 import { COMPARE_REGISTRY } from "./compare-programs";
-
-const SIGN_IN_URL = "https://cloud.bitrouter.ai";
+import { ZED_LINKS } from "../zed/primitives";
 
 function CompareCell({ text }: { text: string }) {
   const m = text.match(/^([✓✗⚠—])\s*(.*)$/);
-  if (!m) return <span className="compare-mark-text">{text}</span>;
+  if (!m) return <span style={{ color: "var(--z-ink-2)" }}>{text}</span>;
   const mark = m[1];
   const rest = m[2];
-  const cls =
-    mark === "✓" ? "compare-mark-yes"
-    : mark === "✗" ? "compare-mark-no"
-    : mark === "⚠" ? "compare-mark-partial"
-    : "compare-mark-na";
+  const color =
+    mark === "✓" ? "var(--z-blue)" : mark === "✗" ? "var(--z-ink-8)" : mark === "⚠" ? "var(--z-amber)" : "var(--z-ink-8)";
   return (
     <>
-      <span className={`compare-mark ${cls}`}>{mark}</span>
-      {rest && <span className="compare-mark-text">{rest}</span>}
+      <span style={{ color, marginRight: rest ? 6 : 0 }}>{mark}</span>
+      {rest && <span style={{ color: "var(--z-ink-4)" }}>{rest}</span>}
     </>
   );
 }
@@ -29,8 +26,8 @@ export function CompareTerminal({ slug, step }: { slug: string; step: string }) 
   const t = COMPARE_REGISTRY[slug]?.terminals[step];
   if (!t) return null;
   return (
-    <div className="mech-vis">
-      <Terminal title={t.term} program={t.prog as never} accentPrompt={false} className="mech-term" />
+    <div style={{ margin: "22px 0" }}>
+      <Terminal title={t.term} program={t.prog as never} accentPrompt={false} />
     </div>
   );
 }
@@ -38,33 +35,28 @@ export function CompareTerminal({ slug, step }: { slug: string; step: string }) 
 export function CompareTable({ slug }: { slug: string }) {
   const entry = COMPARE_REGISTRY[slug];
   if (!entry) return null;
+  const COLS = "1.6fr 1.1fr 1.1fr";
   return (
-    <div className="compare-table-wrap">
-      <table className="compare-table">
-        <thead>
-          <tr>
-            <th className="compare-th compare-th-feat">Feature</th>
-            <th className="compare-th compare-th-prod">{entry.competitor}</th>
-            <th className="compare-th compare-th-prod">
-              <span className="compare-th-brand">BitRouter</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {entry.rows.map((r) => (
-            <tr className="compare-row" key={r.feat}>
-              <th className="compare-feat" scope="row">{r.feat}</th>
-              <td className="compare-cell"><CompareCell text={r.them} /></td>
-              <td className="compare-cell br"><CompareCell text={r.br} /></td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className="compare-legend">
-        <span><span className="compare-mark compare-mark-yes">✓</span> yes</span>
-        <span><span className="compare-mark compare-mark-no">✗</span> no</span>
-        <span><span className="compare-mark compare-mark-partial">⚠</span> partial</span>
-        <span><span className="compare-mark compare-mark-na">—</span> n/a</span>
+    <div style={{ margin: "22px 0", overflowX: "auto" }}>
+      <div style={{ minWidth: 620, border: "1px solid var(--z-rule)", borderRadius: 11, overflow: "hidden" }}>
+        <div style={{ display: "grid", gridTemplateColumns: COLS, background: "var(--z-inset)", borderBottom: "1px solid var(--z-rule)", fontFamily: "var(--font-mono)", fontSize: 11.5 }}>
+          <div style={{ padding: "13px 18px", color: "var(--z-ink-6)" }}>Feature</div>
+          <div style={{ padding: "13px 14px", color: "var(--z-ink-2)" }}>{entry.competitor}</div>
+          <div style={{ padding: "13px 14px", color: "var(--z-blue)" }}>BitRouter</div>
+        </div>
+        {entry.rows.map((r) => (
+          <div key={r.feat} style={{ display: "grid", gridTemplateColumns: COLS, borderBottom: "1px solid var(--z-rule-faint)" }}>
+            <div style={{ padding: "12px 18px", fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--z-ink-4)" }}>{r.feat}</div>
+            <div style={{ padding: "12px 14px", fontFamily: "var(--font-mono)", fontSize: 12.5 }}><CompareCell text={r.them} /></div>
+            <div style={{ padding: "12px 14px", fontFamily: "var(--font-mono)", fontSize: 12.5, borderLeft: "1px solid var(--z-rule-faint)" }}><CompareCell text={r.br} /></div>
+          </div>
+        ))}
+      </div>
+      <div style={{ display: "flex", gap: 16, marginTop: 12, fontFamily: "var(--font-mono)", fontSize: 11.5, color: "var(--z-ink-6)", flexWrap: "wrap" }}>
+        <span><span style={{ color: "var(--z-blue)" }}>✓</span> yes</span>
+        <span><span style={{ color: "var(--z-ink-8)" }}>✗</span> no</span>
+        <span><span style={{ color: "var(--z-amber)" }}>⚠</span> partial</span>
+        <span><span style={{ color: "var(--z-ink-8)" }}>—</span> n/a</span>
       </div>
     </div>
   );
@@ -74,9 +66,12 @@ export function CompareTradeoffs({ slug }: { slug: string }) {
   const entry = COMPARE_REGISTRY[slug];
   if (!entry) return null;
   return (
-    <ul className="cmpg-tradeoffs-list">
+    <ul style={{ listStyle: "none", padding: 0, margin: "18px 0" }}>
       {entry.tradeoffs.map((t) => (
-        <li key={t} className="cmpg-tradeoff-item"><span className="prob-dot">└</span>{t}</li>
+        <li key={t} style={{ display: "flex", gap: 10, fontFamily: "var(--font-mono)", fontSize: 13.5, lineHeight: 1.6, color: "var(--z-ink-3)", marginBottom: 10 }}>
+          <span style={{ color: "var(--z-ink-7)", flex: "0 0 auto" }}>└</span>
+          <span>{t}</span>
+        </li>
       ))}
     </ul>
   );
@@ -92,9 +87,9 @@ export function CompareCTA({ slug }: { slug: string }) {
   const href = COMPARE_MIGRATION[slug]?.href ?? "/docs";
   const label = COMPARE_MIGRATION[slug]?.label ?? "Read the docs →";
   return (
-    <div className="cta-actions">
-      <a href={SIGN_IN_URL} className="btn btn-primary">Get API key →</a>
-      <Link href={href} className="btn btn-ghost">{label}</Link>
+    <div style={{ display: "flex", gap: 14, margin: "22px 0", flexWrap: "wrap" }}>
+      <a href={ZED_LINKS.apiKey} className="zed-btn zed-btn-primary">Get API key →</a>
+      <Link href={href} className="zed-btn zed-btn-ghost">{label}</Link>
     </div>
   );
 }

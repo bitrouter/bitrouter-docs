@@ -1,10 +1,10 @@
 import { setRequestLocale } from "next-intl/server";
-import { PricingPage } from "@/components/pricing/pricing-page";
+import { ZedPricingPage } from "@/components/landing/zed/pricing-page";
 import type { Metadata } from "next";
 
 export default function Page() {
   setRequestLocale("en");
-  return <PricingPage />;
+  return <ZedPricingPage />;
 }
 
 export function generateMetadata(): Metadata {

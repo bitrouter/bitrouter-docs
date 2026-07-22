@@ -1,20 +1,15 @@
 "use client";
 
-/* Terminal — BitRouter TUI primitive, ported from the design handoff.
-   Plays a "program" of instructions on a loop, gated until in view:
-     ['type', text, {cls, prefix, cps, after}]  type a line char-by-char
-     ['print', node, holdMs]                     append a finished node
-     ['spin', label, ms, resultNode]             spinner for ms → resultNode
-     ['wait', ms]                                pause
-     ['loop', ms]                                hold ms, then clear + restart
-   When `animate` is false it renders the resolved final frame statically. */
+/* Terminal — animated TUI primitive on the Zed design system (ported from the
+   mono terminal). Plays a "program" on a loop, gated until in view. Line ops:
+     ['type', text, {cls, prefix, cps, after}]  ['print', node, holdMs]
+     ['spin', label, ms, resultNode]  ['wait', ms]  ['loop', ms]
+   `animate=false` renders the resolved static frame. */
 
 import * as React from "react";
 
 const SPIN = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 
-// Instruction tuples are authored as loose arrays in the page programs, so we
-// keep the program signature permissive and narrow per-op inside the engine.
 type Instruction = unknown[];
 type ProgramFn = () => Instruction[];
 
@@ -26,7 +21,6 @@ interface Line {
   pfx?: string | null;
 }
 
-/* ---- in-view gate: poll geometry, latch once seen ---- */
 function useInView() {
   const ref = React.useRef<HTMLDivElement>(null);
   const [seen, setSeen] = React.useState(false);
@@ -52,7 +46,6 @@ function useInView() {
   return [ref, seen] as const;
 }
 
-/* ---- live braille spinner glyph ---- */
 function Spin({ on = true }: { on?: boolean }) {
   const [i, setI] = React.useState(0);
   React.useEffect(() => {
@@ -60,73 +53,42 @@ function Spin({ on = true }: { on?: boolean }) {
     const id = setInterval(() => setI((x) => (x + 1) % SPIN.length), 80);
     return () => clearInterval(id);
   }, [on]);
-  return <span style={{ color: "var(--fg-dim)" }}>{SPIN[on ? i : 0]}</span>;
+  return <span style={{ color: "var(--z-ink-5)" }}>{SPIN[on ? i : 0]}</span>;
 }
 
-/* ---- line label helpers (used inside 'print' nodes) ---- */
-export const Ok = ({ children }: { children: React.ReactNode }) => (
-  <span style={{ color: "var(--term-ok)" }}>{children}</span>
-);
-export const Err = ({ children }: { children: React.ReactNode }) => (
-  <span style={{ color: "var(--term-err)" }}>{children}</span>
-);
-export const Warn = ({ children }: { children: React.ReactNode }) => (
-  <span style={{ color: "var(--term-warn)" }}>{children}</span>
-);
-export const Dim = ({ children }: { children: React.ReactNode }) => (
-  <span style={{ color: "var(--muted)" }}>{children}</span>
-);
-export const Faint = ({ children }: { children: React.ReactNode }) => (
-  <span style={{ color: "var(--faint)" }}>{children}</span>
-);
-export const Acc = ({ children }: { children: React.ReactNode }) => (
-  <span style={{ color: "var(--accent)" }}>{children}</span>
-);
-export const Bold = ({ children }: { children: React.ReactNode }) => (
-  <span style={{ color: "var(--fg)", fontWeight: 600 }}>{children}</span>
-);
+// ── line colour helpers (used inside program nodes) ──
+export const Ok = ({ children }: { children: React.ReactNode }) => <span style={{ color: "var(--z-green)" }}>{children}</span>;
+export const Err = ({ children }: { children: React.ReactNode }) => <span style={{ color: "var(--z-red)" }}>{children}</span>;
+export const Warn = ({ children }: { children: React.ReactNode }) => <span style={{ color: "var(--z-amber)" }}>{children}</span>;
+export const Dim = ({ children }: { children: React.ReactNode }) => <span style={{ color: "var(--z-ink-5)" }}>{children}</span>;
+export const Faint = ({ children }: { children: React.ReactNode }) => <span style={{ color: "var(--z-ink-7)" }}>{children}</span>;
+export const Acc = ({ children }: { children: React.ReactNode }) => <span style={{ color: "var(--z-blue)" }}>{children}</span>;
+export const Bold = ({ children }: { children: React.ReactNode }) => <span style={{ color: "var(--z-ink)", fontWeight: 600 }}>{children}</span>;
 
-/* compute the resolved static frame for a program (animations off) */
 function staticFrame(prog: Instruction[]): Line[] {
   const out: Line[] = [];
   let key = 0;
   for (const ins of prog) {
-    const [op, a, b, c] = ins;
+    const [op, a, , c] = ins;
     if (op === "type") {
-      const opts = (b ?? {}) as { cls?: string; prefix?: string };
+      const opts = (ins[2] ?? {}) as { cls?: string; prefix?: string };
       out.push({ id: key++, text: a as string, cls: opts.cls, pfx: opts.prefix });
     } else if (op === "print") {
       out.push({ id: key++, node: a as React.ReactNode });
     } else if (op === "spin") {
       if (c) out.push({ id: key++, node: c as React.ReactNode });
-      else
-        out.push({
-          id: key++,
-          node: (
-            <span>
-              <Dim>{SPIN[0]}</Dim> {a as React.ReactNode}
-            </span>
-          ),
-        });
+      else out.push({ id: key++, node: <span><Dim>{SPIN[0]}</Dim> {a as React.ReactNode}</span> });
     }
   }
   return out;
 }
 
-function useTerminalEngine(
-  buildProg: ProgramFn,
-  { animate, enabled }: { animate: boolean; enabled: boolean },
-) {
+function useTerminalEngine(buildProg: ProgramFn, { animate, enabled }: { animate: boolean; enabled: boolean }) {
   const [lines, setLines] = React.useState<Line[]>([]);
-  const [typing, setTyping] = React.useState<{
-    text: string;
-    cls: string;
-    pfx: string | null;
-  } | null>(null);
+  const [typing, setTyping] = React.useState<{ text: string; cls: string; pfx: string | null } | null>(null);
   const timers = React.useRef<ReturnType<typeof setTimeout>[]>([]);
   const alive = React.useRef(false);
 
-  // static mode: resolve once
   React.useEffect(() => {
     if (animate) return;
     setLines(staticFrame(buildProg()));
@@ -135,8 +97,7 @@ function useTerminalEngine(
   }, [animate]);
 
   React.useEffect(() => {
-    if (!animate) return;
-    if (!enabled) return;
+    if (!animate || !enabled) return;
     alive.current = true;
     const clearTimers = () => {
       timers.current.forEach(clearTimeout);
@@ -170,12 +131,7 @@ function useTerminalEngine(
             commit();
             await wait((b as number) || 90);
           } else if (op === "type") {
-            const opts = (b ?? {}) as {
-              cls?: string;
-              prefix?: string;
-              cps?: number;
-              after?: number;
-            };
+            const opts = (b ?? {}) as { cls?: string; prefix?: string; cps?: number; after?: number };
             const cls = opts.cls || "";
             const pfx = opts.prefix || null;
             const cps = opts.cps || 42;
@@ -192,21 +148,11 @@ function useTerminalEngine(
             await wait(opts.after != null ? opts.after : 120);
           } else if (op === "spin") {
             const spinId = kid++;
-            committed.push({
-              id: spinId,
-              node: (
-                <span>
-                  <Spin /> <Dim>{a as React.ReactNode}</Dim>
-                </span>
-              ),
-            });
+            committed.push({ id: spinId, node: <span><Spin /> <Dim>{a as React.ReactNode}</Dim></span> });
             commit();
             await wait((b as number) || 1100);
             if (!alive.current) return;
-            if (c)
-              committed = committed.map((l) =>
-                l.id === spinId ? { id: spinId, node: c as React.ReactNode } : l,
-              );
+            if (c) committed = committed.map((l) => (l.id === spinId ? { id: spinId, node: c as React.ReactNode } : l));
             else committed = committed.filter((l) => l.id !== spinId);
             commit();
             await wait(120);
@@ -237,80 +183,49 @@ export interface TerminalProps {
   animate?: boolean;
   accentPrompt?: boolean;
   className?: string;
-  minimalTitle?: string;
 }
 
-export function Terminal({
-  title,
-  sub,
-  chrome = "dots",
-  program,
-  animate = true,
-  accentPrompt = true,
-  className = "",
-  minimalTitle,
-}: TerminalProps) {
+export function Terminal({ title, sub, chrome = "dots", program, animate = true, accentPrompt = true, className = "" }: TerminalProps) {
   const [ref, seen] = useInView();
   const { lines, typing } = useTerminalEngine(program, { animate, enabled: seen });
 
-  // Resolved final frame, used as a fallback so the panel is never blank —
-  // before it scrolls into view, and during the brief clear between loops.
   const staticFallback = React.useMemo(() => staticFrame(program()), [program]);
   const showFallback = animate && !typing && lines.length === 0;
   const visibleLines = showFallback ? staticFallback : lines;
-
-  const promptColor = accentPrompt ? "var(--accent)" : "var(--fg)";
+  const promptColor = accentPrompt ? "var(--z-blue)" : "var(--z-ink-2)";
 
   const renderLine = (l: Line) => {
     if (l.node) return l.node;
-    const pfx = l.pfx ? (
-      <span style={{ color: promptColor, marginRight: 8 }}>{l.pfx}</span>
-    ) : null;
-    return (
-      <span className={l.cls}>
-        {pfx}
-        {l.text}
-      </span>
-    );
+    const pfx = l.pfx ? <span style={{ color: promptColor, marginRight: 8 }}>{l.pfx}</span> : null;
+    return <span className={l.cls}>{pfx}{l.text}</span>;
   };
 
   return (
-    <div ref={ref} className={"term " + className}>
+    <div ref={ref} className={"zterm " + className}>
       {chrome !== "bare" && (
-        <div className="term-bar">
+        <div className="zterm-bar">
           {chrome === "dots" && (
-            <div className="term-dots" aria-hidden="true">
-              <i></i>
-              <i></i>
-              <i></i>
-            </div>
+            <div className="zterm-dots" aria-hidden="true"><i /><i /><i /></div>
           )}
-          <div className="term-title">{title}</div>
-          {sub && <div className="term-sub">{sub}</div>}
+          <span style={{ color: "var(--z-ink-2)" }}>{title}</span>
+          {sub && <span style={{ marginLeft: "auto", color: "var(--z-ink-7)" }}>{sub}</span>}
         </div>
       )}
-      <div className="term-body scrollthin">
-        {minimalTitle && <div className="term-mintitle">{minimalTitle}</div>}
+      <div className="zterm-body">
         {visibleLines.map((l) => (
-          <div className="term-line" key={l.id}>
-            {renderLine(l)}
-          </div>
+          <div className="zterm-line" key={l.id}>{renderLine(l)}</div>
         ))}
         {typing && (
-          <div className="term-line">
-            {typing.pfx ? (
-              <span style={{ color: promptColor, marginRight: 8 }}>
-                {typing.pfx}
-              </span>
-            ) : null}
+          <div className="zterm-line">
+            {typing.pfx ? <span style={{ color: promptColor, marginRight: 8 }}>{typing.pfx}</span> : null}
             <span className={typing.cls}>{typing.text}</span>
-            <span className="caret accent" />
+            <span className="caret" />
           </div>
         )}
         {!typing && animate && !showFallback && (
-          <div className="term-line">
+          <div className="zterm-line">
             <span style={{ color: promptColor, marginRight: 8 }}>❯</span>
-            <span className="caret accent" />
+            <span className="caret" />
           </div>
         )}
       </div>

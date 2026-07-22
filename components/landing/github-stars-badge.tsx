@@ -38,7 +38,7 @@ export function GitHubStarsBadge({ className }: { className?: string }) {
           : "BitRouter on GitHub"
       }
       className={cn(
-        "inline-flex items-center gap-1.5 px-2 text-muted-foreground transition-colors hover:text-foreground",
+        "inline-flex items-center gap-1.5 px-2 text-[var(--z-ink-4)] transition-colors hover:text-[var(--z-ink)]",
         className,
       )}
     >

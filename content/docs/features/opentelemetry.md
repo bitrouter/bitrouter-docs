@@ -41,6 +41,17 @@ latency went across the chain.
 | `api_key_id`, `user_id` | Caller attribution (cardinality-capped) |
 | `account_label` | Logical account/tenant label |
 
+### Timing metrics
+
+Request timing is recorded on settlement spans with millisecond precision:
+
+| Attribute | Description |
+| --- | --- |
+| `bitrouter.request_duration_ms` | Full pipeline lifecycle from request ingress to final response |
+| `bitrouter.upstream_duration_ms` | Time spent waiting for the upstream provider (omitted if not applicable) |
+| `bitrouter.ttft_ms` | Time to first token (first semantic streaming delta) |
+| `bitrouter.generation_duration_ms` | First-to-last semantic output duration (streaming only) |
+
 ## Enable export
 
 Add an `otel` block under the `bitrouter-observe` plugin and give it an endpoint.

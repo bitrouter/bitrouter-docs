@@ -41,6 +41,16 @@ jobs:
           # repository_dispatch sends client_payload.tag; workflow_dispatch sends
           # inputs.tag; schedule sends neither (backfill).
           CHANGELOG_TAG: ${{ github.event.client_payload.tag || github.event.inputs.tag }}
+          # product/source come from the dispatch (oss omits them → defaults).
+          # cloud sends its notes inline (body/name/date) since the private repo
+          # can't be fetched here.
+          PRODUCT: ${{ github.event.client_payload.product }}
+          SOURCE_REPO: ${{ github.event.client_payload.source_repo }}
+          CHANGELOG_BODY: ${{ github.event.client_payload.body }}
+          CHANGELOG_NAME: ${{ github.event.client_payload.name }}
+          CHANGELOG_DATE: ${{ github.event.client_payload.date }}
+          # Enables the BitRouter refine pass (dogfood). Absent → deterministic draft.
+          BITROUTER_API_KEY: ${{ secrets.BITROUTER_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/sync-changelog.mjs
 

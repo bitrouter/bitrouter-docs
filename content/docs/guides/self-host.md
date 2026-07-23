@@ -58,6 +58,11 @@ providers:
       - "*": messages
     models:
       - id: claude-sonnet-4-6
+        # Compatibility switches for strict Chat targets
+        compatibility:
+          chat_completions:
+            supports_store: true
+            supports_stream_options: true
 
 # A virtual model that fails over from one provider to another in declared
 # order (the default `priority` strategy).
@@ -77,6 +82,9 @@ models:
   entry takes `api_base` (upstream base URL), `api_key` (usually a `${VAR}`
   reference), an optional `api_protocol` pattern list, and a `models` list whose
   entries each require an `id`.
+- Per-model Chat compatibility switches (`supports_store`, `supports_stream_options`)
+  can be set under `compatibility.chat_completions` when a provider is strict about
+  which Chat fields it accepts.
 - `api_protocol` selects the outbound wire protocol per provider — e.g.
   `messages` for Anthropic. Known values include `chat_completions`, `messages`,
   `generate_content`, and `responses`.

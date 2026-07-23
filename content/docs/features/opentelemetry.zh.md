@@ -39,6 +39,17 @@ provider、为何回退、以及整条链上延迟去了哪里。
 | `api_key_id`、`user_id` | 调用方归因（受基数上限约束） |
 | `account_label` | 逻辑账户/租户标签 |
 
+### 时延指标
+
+请求时延以毫秒精度记录在结算 span 上：
+
+| 属性 | 说明 |
+| --- | --- |
+| `bitrouter.request_duration_ms` | 从请求进入到最终响应的完整流水线生命周期 |
+| `bitrouter.upstream_duration_ms` | 等待上游 provider 的时间（如不适用的则无此字段） |
+| `bitrouter.ttft_ms` | 首 token 时间（首个语义流式分片） |
+| `bitrouter.generation_duration_ms` | 首个到末个语义输出的耗时（仅流式） |
+
 ## 开启导出
 
 在 `bitrouter-observe` 插件下加一个 `otel` 块并给它一个端点，仅此即可开启导出：

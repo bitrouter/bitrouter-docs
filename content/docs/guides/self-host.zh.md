@@ -51,6 +51,11 @@ providers:
       - "*": messages
     models:
       - id: claude-sonnet-4-6
+        # 针对严格 Chat 目标的兼容性开关
+        compatibility:
+          chat_completions:
+            supports_store: true
+            supports_stream_options: true
 
 # 一个虚拟模型，按声明顺序从一个提供商回退到另一个（默认 `priority` 策略）。
 models:
@@ -68,6 +73,8 @@ models:
 - `providers` 是一个 **以提供商 id 为键的映射**（`openai`、`anthropic`……）。每个条目接受
   `api_base`（上游基础 URL）、`api_key`（通常是 `${VAR}` 引用）、可选的 `api_protocol` 模式列表，
   以及一个 `models` 列表，其每个条目都必须有 `id`。
+- 当 provider 对可接受的 Chat 字段较严格时，可在 `compatibility.chat_completions` 下
+  设置 per-model 的 Chat 兼容性开关（`supports_store`、`supports_stream_options`）。
 - `api_protocol` 按提供商选择出站传输协议 —— 例如 Anthropic 用 `messages`。已知取值包括
   `chat_completions`、`messages`、`generate_content` 和 `responses`。
 - `models` 声明 **虚拟模型**：带 `strategy`（默认 `priority`）的命名别名，以及一个有序的

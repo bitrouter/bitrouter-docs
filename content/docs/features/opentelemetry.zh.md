@@ -48,7 +48,7 @@ provider、为何回退、以及整条链上延迟去了哪里。
 | `bitrouter.request_duration_ms` | 从请求进入到最终响应的完整流水线生命周期 |
 | `bitrouter.upstream_duration_ms` | 等待上游 provider 的时间（如不适用的则无此字段） |
 | `bitrouter.ttft_ms` | 首 token 时间（首个语义流式分片） |
-| `bitrouter.generation_duration_ms` | 首个到末个语义输出的耗时（仅流式） |
+| `bitrouter.generation_duration_ms` | 首个到末个语义输出的耗时，从首个非空流式分片到末个非空分片测量（仅流式） |
 
 ## 开启导出
 

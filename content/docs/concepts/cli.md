@@ -138,6 +138,58 @@ bitrouter cloud byok delete <provider>
 
 Ciphertext must be sealed against the cloud's current X25519 public key before submission — the server only stores already-encrypted bytes. Fetch the current public key from `GET /v1/byok/encryption-pubkey` before sealing.
 
+## TUI: `bitrouter tui`
+
+The TUI is a control-tower interface for orchestrating agent sessions. Launch an interactive orchestrator (Claude Code, Codex, etc.) in a PTY pane alongside a monitor rail for subagents:
+
+```bash
+bitrouter tui --agent claude    # or codex, opencode, hermes
+```
+
+### Leader key
+
+The TUI uses a **one-shot leader key** (default `Ctrl-Space`) to prefix navigation commands. Press the leader, then:
+
+| Key | Action |
+|-----|--------|
+| `1-9` | Focus session by number |
+| `Tab` | Focus next actionable pane |
+| `n` | New session |
+| `p` | Open palette |
+| `c` | Close focused pane |
+| `a` | Toggle autonomy |
+| `t` | Attach to subagent (resume in harness) |
+| `?` | Show key help |
+
+The leader key is configurable under `tui.leader` in your config file. Unlike previous versions, `Ctrl-A` and `Ctrl-B` pass through to the child process as readline keys.
+
+### Scrollback and mouse
+
+PTY panes support host-owned scrollback:
+
+- **Mouse wheel** / **PgUp/PgDn** — Page the scrollback history (main screen apps)
+- **Typing** — Snaps view back to live tail
+- **Scrollback hint** — A `↑ SCROLLBACK` indicator appears when scrolled
+
+For alternate-screen apps with mouse reporting enabled (e.g., `claude` in its native TUI), mouse events forward directly to the application for native scrolling and selection.
+
+### Subagent worktrees
+
+Each picker-spawned subagent receives an isolated worktree under `.bitrouter/worktrees/<agent>-<record16>` on a dedicated branch. Worktrees persist after close for review and debugging.
+
+### Review queue
+
+When a subagent produces changes, a review item appears at the rail head. From the queue:
+
+- `y` — Approve and batch-advance the top pending decision
+- `a` — Approve with auto-apply
+- `n` — Request changes (sends `changes_requested` verdict to orchestrator)
+- `D/m/p/r` — Review the focused monitor (diff, metadata, prompt, result)
+
+### Non-blocking spawn
+
+Fleet subagent spawn and prompt operations are non-blocking. The `spawn_subagent` and `prompt_subagent` tools return immediately with a `working` status; poll `subagent_status` to retrieve the completed result. This prevents timeouts on long-running agent tasks.
+
 ## Other ways to drive BitRouter
 
 The CLI isn't the only surface onto the daemon. An agent can also drive BitRouter over [MCP](/docs/concepts/mcp) — the origin server exposing `complete`, `list_models`, and `status` as tools — or via the shipped [`/bitrouter` Agent Skill](/docs/concepts/agent-skill), which teaches a coding agent to install and operate BitRouter on its own.

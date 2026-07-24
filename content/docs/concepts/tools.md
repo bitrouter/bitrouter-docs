@@ -27,7 +27,12 @@ The gateway exposes a single aggregate endpoint that **fans out** across every c
 
 ### Gateway injection for harnesses
 
-When you launch an agent harness through `bitrouter tui`, the MCP gateway is automatically injected as `bitrouter_tools` — a streamable-HTTP MCP server pointing at the daemon's aggregate `/mcp` endpoint. This means orchestrators and subagents spawned by the TUI inherit your configured tool surface without additional setup. The same injection happens for the AgentSkills gateway (`bitrouter_skills`), giving every TUI-launched harness access to both tools and skills.
+When you launch an agent harness through `bitrouter tui`, both gateways are automatically injected into the harness:
+
+- **`bitrouter_tools`** — The MCP gateway, exposed as a streamable-HTTP MCP server pointing at the daemon's aggregate `/mcp` endpoint. Tools from all configured upstream MCP servers are prefixed with `{server}__` and available to the harness.
+- **`bitrouter_skills`** — The AgentSkills gateway, exposed via `mcp serve --backend skills` over stdio, serving `skills_search` and `skills_get` over the installed skills root.
+
+This applies to both the interactive orchestrator (PTY) and ACP subagents spawned by the TUI — they all inherit the same tool and skill surface without additional setup. The MCP gateway reaches the daemon directly; the skills gateway runs as a stdio child of the harness.
 
 ## Agent Skills
 

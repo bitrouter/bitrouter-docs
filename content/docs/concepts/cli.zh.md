@@ -146,6 +146,58 @@ bitrouter cloud byok set --provider anthropic \
 bitrouter cloud byok delete <provider>
 ```
 
+## TUI: `bitrouter tui`
+
+TUI 是一个用于编排智能体会话的控制塔界面。在 PTY 窗格中启动交互式编排器（Claude Code、Codex 等），并在旁边显示子代理的监视器栏：
+
+```bash
+bitrouter tui --agent claude    # 或 codex、opencode、hermes
+```
+
+### Leader 键
+
+TUI 使用**单次 leader 键**（默认 `Ctrl-Space`）作为导航命令的前缀。按下 leader 键，然后：
+
+| 键 | 动作 |
+|-----|--------|
+| `1-9` | 按编号聚焦会话 |
+| `Tab` | 聚焦下一个可操作窗格 |
+| `n` | 新建会话 |
+| `p` | 打开调色板 |
+| `c` | 关闭聚焦的窗格 |
+| `a` | 切换自主模式 |
+| `t` | 附加到子代理（在 harness 中恢复） |
+| `?` | 显示按键帮助 |
+
+leader 键可在配置文件的 `tui.leader` 下自定义。与早期版本不同，`Ctrl-A` 和 `Ctrl-B` 会透传给子进程作为 readline 按键。
+
+### 滚动回溯与鼠标
+
+PTY 窗格支持主机拥有的滚动回溯：
+
+- **鼠标滚轮** / **PgUp/PgDn** —— 翻页浏览回溯历史（主屏幕应用）
+- **输入** —— 将视图切回实时尾部
+- **回溯提示** —— 滚动时显示 `↑ SCROLLBACK` 指示器
+
+对于启用了鼠标报告的替代屏幕应用（例如其原生 TUI 中的 `claude`），鼠标事件直接转发给应用程序，以实现原生滚动和选择。
+
+### 子代理工作区
+
+每个通过调色板生成的子代理都会在 `.bitrouter/worktrees/<agent>-<record16>` 下获得一个隔离的工作区，位于专用分支上。工作区在关闭后仍然保留，供审查和调试使用。
+
+### 审查队列
+
+当子代理产生变更时，审查项会出现在轨道头部。在队列中：
+
+- `y` —— 批准并批量推进顶部待处理决策
+- `a` —— 批准并自动应用
+- `n` —— 请求变更（向编排器发送 `changes_requested` 裁决）
+- `D/m/p/r` —— 审查聚焦的监视器（差异、元数据、提示、结果）
+
+### 非阻塞 spawn
+
+Fleet 子代理的 spawn 和 prompt 操作是非阻塞的。`spawn_subagent` 和 `prompt_subagent` 工具立即返回 `working` 状态；轮询 `subagent_status` 以获取完成的结果。这可以防止长时间运行的代理任务超时。
+
 ## 驱动 BitRouter 的其他方式
 
 CLI 并非通往守护进程的唯一界面。智能体也可以经 [MCP](/docs/concepts/mcp) 驱动 BitRouter——即公布 `complete`、`list_models` 与 `status` 作为工具的源服务器——或经所附带的 [`/bitrouter` Agent Skill](/docs/concepts/agent-skill)，它会教一个编码智能体自行安装并操作 BitRouter。

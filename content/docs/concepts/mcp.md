@@ -32,7 +32,7 @@ The `--backend` flag selects which tool surface the server exposes:
 | `fleet` | Orchestrator profile — completion tools plus subagent spawn/manage, cost, routing preview, and human-bridge tools | TUI orchestrator delegated to an agent |
 | `skills` | `skills_search`, `skills_get` | Origin AgentSkills server over installed skills |
 
-The `skills` backend is the **AgentSkills gateway** — it exposes installed skills as a standalone server so harnesses can discover and load them. When running under `bitrouter tui`, this server is automatically injected into every launched harness alongside the MCP gateway.
+The `skills` backend is the **AgentSkills gateway** — it exposes installed skills as a standalone server so harnesses can discover and load them. When running under `bitrouter tui`, this server is automatically injected into every launched harness alongside the MCP gateway, giving orchestrators and subagents access to the same skills surface.
 
 ## Not the MCP gateway
 

@@ -50,7 +50,7 @@ Request timing is recorded on settlement spans with millisecond precision:
 | `bitrouter.request_duration_ms` | Full pipeline lifecycle from request ingress to final response |
 | `bitrouter.upstream_duration_ms` | Time spent waiting for the upstream provider (omitted if not applicable) |
 | `bitrouter.ttft_ms` | Time to first token (first semantic streaming delta) |
-| `bitrouter.generation_duration_ms` | First-to-last semantic output duration (streaming only) |
+| `bitrouter.generation_duration_ms` | First-to-last semantic output duration, measured from first to last non-empty streaming delta (streaming only) |
 
 ## Enable export
 

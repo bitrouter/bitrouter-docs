@@ -1,0 +1,12 @@
+{
+  "title": "Overview",
+  "icon": "Telescope",
+  "defaultOpen": true,
+  "pages": [
+    "what-is-bitrouter",
+    "supported-models",
+    "supported-providers",
+    "bitrouter-vs-openrouter",
+    "bitrouter-vs-litellm"
+  ]
+}

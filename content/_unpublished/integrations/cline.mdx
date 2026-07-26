@@ -4,7 +4,7 @@ description: Route Cline through BitRouter via its OpenAI-compatible provider �
 ---
 import { Callout } from 'fumadocs-ui/components/callout';
 
-Cline (VS Code / JetBrains) has an **OpenAI Compatible** provider that takes a base URL, an API key, and a model id. Point it at BitRouter and Cline routes across the whole [registry](/docs/concepts/models) instead of a single vendor.
+Cline (VS Code / JetBrains) has an **OpenAI Compatible** provider that takes a base URL, an API key, and a model id. Point it at BitRouter and Cline routes across the whole [registry](/docs/models-and-routing/models) instead of a single vendor.
 
 ## Prerequisites
 
@@ -33,7 +33,7 @@ For **Cloud**, set the base URL to `https://api.bitrouter.ai/v1` and use your Bi
 
 ## Pick a model
 
-The Model ID takes any registry id in `provider/model` form — `openai/gpt-4o`, `anthropic/claude-sonnet-4-6`, `google/gemini-2.5-pro` — optionally with a `:cost` or `:latency` variant. See [Models](/docs/concepts/models).
+The Model ID takes any registry id in `provider/model` form — `openai/gpt-4o`, `anthropic/claude-sonnet-4-6`, `google/gemini-2.5-pro` — optionally with a `:cost` or `:latency` variant. See [Models](/docs/models-and-routing/models).
 
 ## Verify
 
@@ -42,4 +42,4 @@ Send a message in Cline and confirm a response. BitRouter's `bitrouter-served-by
 ## Learn more
 
 - [Cline — OpenAI-compatible provider](https://docs.cline.bot/provider-config/openai-compatible)
-- [Model fallback](/docs/features/model-fallback) · [Provider selection](/docs/features/provider-selection)
+- [Model fallback](/docs/models-and-routing/model-fallback) · [Provider selection](/docs/models-and-routing/provider-selection)

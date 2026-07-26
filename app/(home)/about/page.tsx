@@ -1,4 +1,3 @@
-import { setRequestLocale } from "next-intl/server";
 import { GitHubIcon, XIcon, LinkedInIcon } from "@/components/icons";
 import { Mail } from "lucide-react";
 import type { Metadata } from "next";
@@ -119,8 +118,6 @@ function TeamCard({ member }: { member: (typeof TEAM)[number] }) {
 }
 
 export default function AboutPage() {
-  setRequestLocale("en");
-
   return (
     <div className="zed-bg">
       <style>{`.zed-about-social{color:var(--z-ink-6);transition:color .15s ease}.zed-about-social:hover{color:var(--z-ink)}`}</style>

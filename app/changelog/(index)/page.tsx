@@ -1,14 +1,11 @@
 import "@/components/landing/zed/zed.css";
 import { getChangelogItems } from "@/lib/source";
-import { setRequestLocale } from "next-intl/server";
 import { ChangelogFeed } from "@/components/changelog/changelog-feed";
 import { Kicker } from "@/components/landing/zed/primitives";
 import type { Metadata } from "next";
 
 export default async function ChangelogIndexPage() {
-  setRequestLocale("en");
-
-  const items = getChangelogItems("en");
+  const items = getChangelogItems();
 
   return (
     <div className="zed-bg">

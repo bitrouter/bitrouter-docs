@@ -3,16 +3,14 @@ import { changelogSource } from "@/lib/source";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getMDXComponents } from "@/mdx-components";
-import { setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export default async function ChangelogEntryPage({ params }: Props) {
   const { slug } = await params;
-  setRequestLocale("en");
 
-  const page = changelogSource.getPage([slug], "en");
+  const page = changelogSource.getPage([slug]);
   if (!page) notFound();
 
   const MDX = page.data.body;
@@ -78,7 +76,7 @@ export default async function ChangelogEntryPage({ params }: Props) {
 export function generateStaticParams() {
   const seen = new Set<string>();
   return changelogSource
-    .getPages("en")
+    .getPages()
     .map((page) => page.slugs[page.slugs.length - 1])
     .filter((s): s is string => Boolean(s) && !seen.has(s) && (seen.add(s), true))
     .map((slug) => ({ slug }));
@@ -86,7 +84,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const page = changelogSource.getPage([slug], "en");
+  const page = changelogSource.getPage([slug]);
   if (!page) notFound();
   return {
     title: page.data.title,

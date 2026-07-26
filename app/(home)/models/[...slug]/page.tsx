@@ -1,4 +1,3 @@
-import { getTranslations, setRequestLocale } from "next-intl/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
@@ -51,9 +50,6 @@ function anthropicSnippet(modelId: string): string {
 
 export default async function ModelDetailPage({ params }: Props) {
   const { slug } = await params;
-  setRequestLocale("en");
-  const t = await getTranslations("ModelDetail");
-
   const modelId = slug.join("/");
   const model = await fetchModelById(modelId);
   if (!model) notFound();
@@ -70,7 +66,7 @@ export default async function ModelDetailPage({ params }: Props) {
         className="mb-8 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft className="size-3" />
-        {t("back")}
+        Back to catalog
       </Link>
 
       {/* ── Header ─────────────────────────────────────── */}
@@ -100,29 +96,29 @@ export default async function ModelDetailPage({ params }: Props) {
           className="shrink-0"
         >
           <Button size="sm">
-            {t("ctaApiKey")} <ArrowUpRight className="ml-1 size-3" />
+            Get API key <ArrowUpRight className="ml-1 size-3" />
           </Button>
         </a>
       </div>
 
       {/* ── Overview ───────────────────────────────────── */}
       <section className="mt-10">
-        <RuledSectionLabel label={t("overviewLabel")} counter="01" />
+        <RuledSectionLabel label="Overview" counter="01" />
         <div className="mt-4 grid grid-cols-2 gap-px border border-border bg-border sm:grid-cols-4">
           <Stat
-            label={t("statContext")}
+            label="Context"
             value={formatTokens(model.maxInputTokens)}
           />
           <Stat
-            label={t("statInput")}
+            label="Input / 1M"
             value={formatPricePerMillionTokens(model.pricing.input)}
           />
           <Stat
-            label={t("statOutput")}
+            label="Output / 1M"
             value={formatPricePerMillionTokens(model.pricing.output)}
           />
           <Stat
-            label={t("statModalities")}
+            label="Modalities"
             value={model.modalities.join(", ") || "text"}
           />
         </div>
@@ -130,19 +126,19 @@ export default async function ModelDetailPage({ params }: Props) {
 
       {/* ── Quickstart ─────────────────────────────────── */}
       <section className="mt-12">
-        <RuledSectionLabel label={t("quickstartLabel")} counter="02" />
+        <RuledSectionLabel label="Quickstart" counter="02" />
         <p className="mt-3 text-sm text-muted-foreground">
-          {t("quickstartBody")}
+          Drop the model ID into either endpoint — BitRouter speaks the OpenAI and Anthropic wire formats natively.
         </p>
 
         <div className="mt-5 space-y-4">
           <SnippetCard
-            label={t("snippetOpenAI")}
+            label="OpenAI-compatible"
             endpoint={OPENAI_CHAT_COMPLETIONS_URL}
             code={openaiSnippet(model.id)}
           />
           <SnippetCard
-            label={t("snippetAnthropic")}
+            label="Anthropic-compatible"
             endpoint={ANTHROPIC_MESSAGES_URL}
             code={anthropicSnippet(model.id)}
           />
@@ -196,22 +192,16 @@ function SnippetCard({
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const t = await getTranslations({ locale: "en", namespace: "ModelDetail" });
   const modelId = slug.join("/");
   const model = await fetchModelById(modelId);
   if (!model) {
-    return { title: t("notFound") };
+    return { title: "Model not found — BitRouter" };
   }
   const friendlyName = model.name && model.name !== model.id
     ? model.name
     : modelDisplayName(model);
   return {
     title: `${friendlyName} — BitRouter`,
-    description: t("metaDescription", {
-      id: model.id,
-      input: formatPricePerMillionTokens(model.pricing.input),
-      output: formatPricePerMillionTokens(model.pricing.output),
-      context: formatTokens(model.maxInputTokens),
-    }),
+    description: `Route ${model.id} through BitRouter. ${formatPricePerMillionTokens(model.pricing.input)} input, ${formatPricePerMillionTokens(model.pricing.output)} output, ${formatTokens(model.maxInputTokens)} context.`,
   };
 }

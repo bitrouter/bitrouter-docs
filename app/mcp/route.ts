@@ -27,14 +27,10 @@ const handler = createMcpHandler(
             .max(20)
             .optional()
             .describe("Max hits (default 8)"),
-          locale: z
-            .enum(["en", "zh"])
-            .optional()
-            .describe("Docs locale; defaults to en"),
         },
       },
-      async ({ query, limit, locale }) => {
-        const hits = await searchDocs(query, { limit, locale });
+      async ({ query, limit }) => {
+        const hits = await searchDocs(query, { limit });
         return { content: [{ type: "text", text: JSON.stringify(hits, null, 2) }] };
       },
     );
@@ -47,14 +43,10 @@ const handler = createMcpHandler(
           "Fetch one documentation page as Markdown. Pass the `path` (or full URL) returned by search_docs, e.g. 'guides/routing/model-fallback'.",
         inputSchema: {
           path: z.string().describe("Doc slug path or full URL"),
-          locale: z
-            .enum(["en", "zh"])
-            .optional()
-            .describe("Docs locale; defaults to en"),
         },
       },
-      async ({ path, locale }) => {
-        const res = await getDoc(path, locale ?? "en");
+      async ({ path }) => {
+        const res = await getDoc(path);
         if (!res.ok)
           return { content: [{ type: "text", text: res.error }], isError: true };
         return { content: [{ type: "text", text: res.markdown }] };

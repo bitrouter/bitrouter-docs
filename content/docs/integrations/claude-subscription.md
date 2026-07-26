@@ -1,7 +1,6 @@
 ---
 title: Claude subscription
 description: Route your Claude Pro or Max plan through BitRouter — OAuth, no Anthropic API key, no per-token bill.
-sourceHash: d213f48604eb576fc5ca29a5f31a705c4192ff5ed1a20d7048d8cd9bcf2e27a1
 ---
 
 Already paying for Claude Pro or Max? Use that plan as a model source. `bitrouter providers login claude-code` adopts the live Claude Code session, stores a refreshing credential, and attaches it to requests routed to the `claude-code` provider — so your subscription's usage covers the tokens and there's no `ANTHROPIC_API_KEY` to manage.
@@ -87,5 +86,5 @@ Genuine Claude Code traffic — recognised by its `anthropic-beta: claude-code-*
 ## Learn more
 
 - [Claude Code](/docs/integrations/claude-code) — point the Claude Code CLI at BitRouter (a harness), distinct from using your plan as a model source above.
-- [Models](/docs/concepts/models) — the full `provider/model` id scheme.
-- [Model fallback](/docs/features/model-fallback) — fail over from your subscription to a hosted model on overload.
+- [Models](/docs/models-and-routing/models) — the full `provider/model` id scheme.
+- [Model fallback](/docs/models-and-routing/model-fallback) — fail over from your subscription to a hosted model on overload.

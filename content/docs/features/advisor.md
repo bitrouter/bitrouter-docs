@@ -1,7 +1,6 @@
 ---
 title: Advisor
 description: Consult a stronger model mid-task — the calling model asks a self-contained question and gets back advice to act on, without handing off the whole job.
-sourceHash: 1654b07a58e9e24b42977f9f0ba02d4fa5a60097ad0862b2195f09c13dfac363
 ---
 
 **Advisor** is a server tool: BitRouter runs it mid-generation instead of handing the call back to your client. When the calling model hits something it's unsure about, it asks a stronger advisor model a self-contained question and gets back advice to act on — without delegating the whole task. Use it to let a fast, cheap main model escalate just the hard sub-questions to a stronger model.
@@ -94,4 +93,4 @@ Advisor is enabled and managed on **BitRouter Cloud**, with per-run cost for the
 
 - [Sub-agent](/docs/features/subagent) — delegate a self-contained task instead of asking a question
 - [Fusion](/docs/features/fusion) — deliberate across a panel of models on one prompt
-- [Model variants](/docs/features/model-variants) — address a stronger variant of a model as the advisor
+- [Model variants](/docs/models-and-routing/model-variants) — address a stronger variant of a model as the advisor

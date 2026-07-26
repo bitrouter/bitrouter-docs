@@ -1,7 +1,6 @@
 ---
 title: OpenTelemetry
 description: BitRouter is OpenTelemetry-native — traces and metrics for every request, exported over OTLP to any backend you run. Everything here is open-source and runs on your own infrastructure.
-sourceHash: bdb0ade9182ea76246cb218b8b1d126497ab54b4ab6cd22ed66cdb606e6f8d1a
 ---
 
 BitRouter is **OpenTelemetry-native**. Every request you send through the router becomes a **trace** — the full lifecycle from ingress through routing, each upstream attempt (including failovers), and settlement — plus a set of **metrics**, all following the [OpenTelemetry GenAI semantic conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/) and pushed over OTLP to any backend you already run.
@@ -241,7 +240,7 @@ router and confirm the trace lands in your backend; you should see one inbound
 <Cards>
   <Card title="Cloud Tracing" href="/docs/features/opentelemetry#cloud-activity-hosted" description="Hosted request view — spend, tokens, and a per-request log, nothing to operate." />
   <Card title="Self-host BitRouter" href="/docs/guides/self-host" description="Run the router in production, with telemetry wired in." />
-  <Card title="Model fallback" href="/docs/features/model-fallback" description="The failover chains you'll see in every trace." />
+  <Card title="Model fallback" href="/docs/models-and-routing/model-fallback" description="The failover chains you'll see in every trace." />
   <Card title="Guardrails" href="/docs/features/guardrails" description="Content firewall for requests and responses." />
 </Cards>
 
@@ -289,7 +288,7 @@ Everything in the dashboard is also available over the management API, scoped pe
 - **Aggregate usage** — spend, token counts, request count, and a per-capability breakdown over a `[from, to)` window.
 - **Request history** — the paginated request log, including routing profile and capabilities used.
 
-These are the same `bitrouter cloud usage` and `bitrouter cloud requests` commands you run from the [CLI](/docs/concepts/cli). See the [API Reference](/docs/reference) for the `usage` and `requests` endpoints and their fields.
+These are the same `bitrouter cloud usage` and `bitrouter cloud requests` commands you run from the [CLI](/docs/reference/cli). See the [API Reference](/docs/reference) for the `usage` and `requests` endpoints and their fields.
 
 ### Deep traces
 
@@ -300,6 +299,6 @@ Cloud stores per-request **receipts**, not OpenTelemetry span waterfalls. When y
 <Cards>
   <Card title="OpenTelemetry" href="/docs/features/opentelemetry" description="Self-run OTLP export — the span model, metrics, and backend recipes." />
   <Card title="Workspaces" href="/docs/features/namespaces" description="Per-workspace scoping for keys, usage, and policy." />
-  <Card title="CLI" href="/docs/concepts/cli" description="bitrouter cloud usage / requests from the terminal." />
+  <Card title="CLI" href="/docs/reference/cli" description="bitrouter cloud usage / requests from the terminal." />
   <Card title="API Reference" href="/docs/reference" description="The usage and requests management endpoints." />
 </Cards>

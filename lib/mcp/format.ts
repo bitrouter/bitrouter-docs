@@ -5,7 +5,6 @@ import type { Model } from "../models-types";
 
 /** Canonical docs origin; shared with the I/O layer to avoid URL drift. */
 export const SITE_ORIGIN = "https://bitrouter.ai";
-const LOCALES = ["en", "zh"];
 const DEFAULT_MODEL_MATCH_LIMIT = 5;
 
 /** The fields we use from fumadocs-core's `SortedResult`. */
@@ -40,13 +39,12 @@ export interface ModelAnswer {
   note?: string;
 }
 
-/** Reduce a doc URL or path to fumadocs slug segments (no locale, no "docs"). */
+/** Reduce a doc URL or path to fumadocs slug segments (no "docs" base). */
 export function pathToSlug(input: string): string[] {
   let p = input.trim();
   p = p.replace(/^https?:\/\/[^/]+/i, ""); // drop scheme://host
   p = p.split(/[?#]/)[0]; // drop query/hash
   const segs = p.split("/").filter(Boolean);
-  if (segs.length && LOCALES.includes(segs[0])) segs.shift(); // drop leading locale
   if (segs.length && segs[0] === "docs") segs.shift(); // drop the /docs base
   return segs;
 }

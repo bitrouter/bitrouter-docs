@@ -12,7 +12,7 @@ import { Kicker } from "@/components/landing/zed/primitives";
 // them in via `components`. Rendered on the "Zed dark" system — the MDX body
 // reuses `.zed-article` (Newsreader headings + mono body + blue links).
 export function renderLegalPage(slug: string, components: MDXComponents = {}) {
-  const page = legalSource.getPage([slug], "en");
+  const page = legalSource.getPage([slug]);
   if (!page) notFound();
 
   const MDX = page.data.body;
@@ -83,7 +83,7 @@ export function renderLegalPage(slug: string, components: MDXComponents = {}) {
 }
 
 export function legalMetadata(slug: string): Metadata {
-  const page = legalSource.getPage([slug], "en");
+  const page = legalSource.getPage([slug]);
   if (!page) notFound();
   return {
     title: `${page.data.title} — BitRouter`,

@@ -1,10 +1,9 @@
 ---
 title: OpenRouter
 description: Bring your OpenRouter key into BitRouter — one aggregator key, hundreds of models, behind the registry.
-sourceHash: 568a2770667957ab5626f2c06b39cf4ec6d5ddefc3e1d109f5512badd9c34cec
 ---
 
-[OpenRouter](https://openrouter.ai) is an OpenAI-compatible aggregator that fronts hundreds of models behind one key. BitRouter's registry includes an `openrouter` provider, so bringing your key in is a single block in `bitrouter.yaml` — and from there OpenRouter's catalog joins the rest of your [registry](/docs/concepts/models), with selection and fallback on top.
+[OpenRouter](https://openrouter.ai) is an OpenAI-compatible aggregator that fronts hundreds of models behind one key. BitRouter's registry includes an `openrouter` provider, so bringing your key in is a single block in `bitrouter.yaml` — and from there OpenRouter's catalog joins the rest of your [registry](/docs/models-and-routing/models), with selection and fallback on top.
 
 <Callout type="info">
 **Migrating off OpenRouter entirely?** If you want to *replace* OpenRouter rather than route through it, see [Migrate from OpenRouter](/docs/guides/migrate-from-openrouter) — it's a base-URL-and-key swap.
@@ -47,4 +46,4 @@ Then [start BitRouter and send a request](/docs/integrations/models#start-bitrou
 ## Learn more
 
 - [OpenRouter — API reference](https://openrouter.ai/docs/api-reference/overview)
-- [Provider selection](/docs/features/provider-selection) · [Model fallback](/docs/features/model-fallback)
+- [Provider selection](/docs/models-and-routing/provider-selection) · [Model fallback](/docs/models-and-routing/model-fallback)

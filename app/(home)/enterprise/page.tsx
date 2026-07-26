@@ -1,9 +1,7 @@
-import { setRequestLocale } from "next-intl/server";
 import { EnterprisePage } from "@/components/enterprise/enterprise-page";
 import type { Metadata } from "next";
 
 export default function Page() {
-  setRequestLocale("en");
   return <EnterprisePage />;
 }
 

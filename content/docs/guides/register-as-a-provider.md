@@ -1,7 +1,6 @@
 ---
 title: Register as a provider
 description: Permissionless provider registration on BitRouter via the open registry.
-sourceHash: f7d9bafaeea0e922cdbed6d80845f6b7250e4ee7687585de6a390c41a2fe1883
 ---
 
 <Callout type="warn">

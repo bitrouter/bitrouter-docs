@@ -1,27 +1,26 @@
 import type { NextConfig } from "next";
 import { createMDX } from "fumadocs-mdx/next";
-import createNextIntlPlugin from "next-intl/plugin";
 
 // page slug → final nested path
 const finalPath = {
   // get-started
   installation: "/docs/get-started/installation", quickstart: "/docs/get-started/quickstart",
-  comparison: "/docs/get-started/comparison", "self-host-vs-cloud": "/docs/get-started/self-hosted-vs-cloud",
-  // features
-  "provider-selection":"/docs/features/provider-selection","model-fallback":"/docs/features/model-fallback",
-  "model-variants":"/docs/features/model-variants","presets":"/docs/features/presets",
-  "structured-outputs":"/docs/features/structured-outputs","byok":"/docs/features/byok",
+  comparison: "/docs/get-started/comparison", "self-host-vs-cloud": "/docs/get-started/onboarding#self-host-or-cloud",
+  // models & routing (was: features)
+  "provider-selection":"/docs/models-and-routing/provider-selection","model-fallback":"/docs/models-and-routing/model-fallback",
+  "model-variants":"/docs/models-and-routing/model-variants","presets":"/docs/models-and-routing/presets",
+  "structured-outputs":"/docs/models-and-routing/structured-outputs","byok":"/docs/models-and-routing/byok",
   "local-models":"/docs/integrations/models","guardrails":"/docs/features/guardrails",
   "observability":"/docs/features/opentelemetry","opentelemetry":"/docs/features/opentelemetry",
   "tracing":"/docs/features/opentelemetry","telemetry":"/docs/features/opentelemetry",
-  "mcp":"/docs/concepts/tools","acp":"/docs/concepts/agents",
-  "agentskills":"/docs/concepts/tools",
+  "mcp":"/docs/features/tools","acp":"/docs/features/agents",
+  "agentskills":"/docs/features/tools",
   // bitrouter cloud (was: infrastructure)
-  "managed-provider":"/docs/get-started/models-and-providers","discounted-models":"/docs/get-started/models-and-providers",
+  "managed-provider":"/docs/overview/supported-models","discounted-models":"/docs/overview/supported-models",
   "payment":"/docs/features/payment","workspaces":"/docs/features/namespaces",
   "for-providers":"/docs/guides/register-as-a-provider",
   // reference
-  "cli":"/docs/concepts/cli",
+  "cli":"/docs/reference/cli",
 };
 const legacyBuckets = ["core","cloud","features","routing"]; // /docs/guides/<bucket>/<slug>
 const pairs: Array<[string, string]> = [];
@@ -31,25 +30,53 @@ for (const [slug, dest] of Object.entries(finalPath)) {
 }
 // overview + root + special
 pairs.push(
-  ["/docs", "/docs/get-started/introduction"],
-  ["/docs/guides", "/docs/get-started/introduction"],
-  ["/docs/guides/overview", "/docs/get-started/introduction"],
+  ["/docs", "/docs/overview/what-is-bitrouter"],
+  ["/docs/guides", "/docs/overview/what-is-bitrouter"],
+  ["/docs/guides/overview", "/docs/overview/what-is-bitrouter"],
   ["/docs/guides/overview/quickstart", "/docs/get-started/quickstart"],
   ["/docs/guides/overview/comparison", "/docs/get-started/comparison"],
   ["/docs/guides/overview/provider", "/docs/guides/register-as-a-provider"],
+  // intro page renamed (2026-07): recursive-self-improvement → what-is-bitrouter
+  ["/docs/overview/recursive-self-improvement", "/docs/overview/what-is-bitrouter"],
+  // overview/get-started split + features→models-and-routing (2026-07 reorg)
+  ["/docs/get-started/introduction", "/docs/overview/what-is-bitrouter"],
+  ["/docs/get-started/supported-models", "/docs/overview/supported-models"],
+  ["/docs/get-started/supported-providers", "/docs/overview/supported-providers"],
+  ["/docs/features/provider-selection", "/docs/models-and-routing/provider-selection"],
+  ["/docs/features/model-fallback", "/docs/models-and-routing/model-fallback"],
+  ["/docs/features/model-variants", "/docs/models-and-routing/model-variants"],
+  ["/docs/features/presets", "/docs/models-and-routing/presets"],
+  ["/docs/features/structured-outputs", "/docs/models-and-routing/structured-outputs"],
+  ["/docs/features/byok", "/docs/models-and-routing/byok"],
+  // concepts/ section dissolved (2026-07 reorg) → pages land next to their features
+  ["/docs/concepts", "/docs/overview/what-is-bitrouter"],
+  ["/docs/concepts/models", "/docs/models-and-routing/models"],
+  ["/docs/concepts/policy", "/docs/models-and-routing/policy"],
+  ["/docs/concepts/tools", "/docs/features/tools"],
+  ["/docs/concepts/agents", "/docs/features/agents"],
+  ["/docs/concepts/cli", "/docs/reference/cli"],
+  ["/docs/concepts/mcp", "/docs/reference/mcp"],
+  ["/docs/concepts/agent-skill", "/docs/get-started/onboarding"],
+  // get-started consolidation (2026-07): onboarding merge, FAQs dissolved, cli/mcp → reference
+  ["/docs/get-started/configuration", "/docs/get-started/onboarding"],
+  ["/docs/get-started/wizard", "/docs/get-started/onboarding"],
+  ["/docs/get-started/agent-skill", "/docs/get-started/onboarding"],
+  ["/docs/get-started/faqs", "/docs/get-started/onboarding"],
+  ["/docs/get-started/cli", "/docs/reference/cli"],
+  ["/docs/get-started/mcp", "/docs/reference/mcp"],
   // infrastructure → bitrouter cloud (folder renamed; pages merged/moved)
-  ["/docs/infrastructure/managed-provider", "/docs/get-started/models-and-providers"],
-  ["/docs/infrastructure/discounted-models", "/docs/get-started/models-and-providers"],
+  ["/docs/infrastructure/managed-provider", "/docs/overview/supported-models"],
+  ["/docs/infrastructure/discounted-models", "/docs/overview/supported-models"],
   ["/docs/infrastructure/payment", "/docs/features/payment"],
   ["/docs/infrastructure/workspaces", "/docs/features/namespaces"],
   ["/docs/infrastructure/for-providers", "/docs/guides/register-as-a-provider"],
   // cloud/ section dissolved (2026-06 reorg) → new homes (preserve old links)
-  ["/docs/cloud", "/docs/get-started/self-hosted-vs-cloud"],
-  ["/docs/cloud/overview", "/docs/get-started/self-hosted-vs-cloud"],
-  ["/docs/cloud/get-started", "/docs/get-started/self-hosted-vs-cloud"],
-  ["/docs/cloud/byok", "/docs/features/byok"],
+  ["/docs/cloud", "/docs/get-started/onboarding#self-host-or-cloud"],
+  ["/docs/cloud/overview", "/docs/get-started/onboarding#self-host-or-cloud"],
+  ["/docs/cloud/get-started", "/docs/get-started/onboarding#self-host-or-cloud"],
+  ["/docs/cloud/byok", "/docs/models-and-routing/byok"],
   ["/docs/cloud/tracing", "/docs/features/opentelemetry"],
-  ["/docs/cloud/managed-models", "/docs/get-started/models-and-providers"],
+  ["/docs/cloud/managed-models", "/docs/overview/supported-models"],
   ["/docs/cloud/workspaces", "/docs/features/namespaces"],
   ["/docs/cloud/payment", "/docs/features/payment"],
   // reference wildcards (api-reference unwrapped into /docs/reference)
@@ -63,10 +90,9 @@ pairs.push(
   ["/docs/features/telemetry", "/docs/features/opentelemetry"],
   ["/docs/features/local-models", "/docs/integrations/models"],
   ["/docs/features/toolsets", "/docs/features/server-tools"],
-  ["/docs/reference/cli", "/docs/concepts/cli"],
   ["/docs/guides/export-telemetry", "/docs/features/opentelemetry"],
-  ["/docs/cloud/managed-tools", "/docs/get-started/self-hosted-vs-cloud"],
-  ["/docs/cloud/managed-agents", "/docs/get-started/self-hosted-vs-cloud"],
+  ["/docs/cloud/managed-tools", "/docs/get-started/onboarding#self-host-or-cloud"],
+  ["/docs/cloud/managed-agents", "/docs/get-started/onboarding#self-host-or-cloud"],
   // integrations + cookbook history
   ["/docs/integrations/harnesses/:slug*", "/docs/integrations/:slug*"],
   ["/docs/cookbook/integration/:slug*", "/docs/integrations/:slug*"],
@@ -80,7 +106,8 @@ pairs.push(
 );
 const docsRedirects = pairs.flatMap(([source, destination]) => [
   { source, destination, permanent: true },
-  { source: `/zh${source}`, destination: `/zh${destination}`, permanent: true },
+  // Legacy /zh docs URLs fold straight to the English destination (one hop).
+  { source: `/zh${source}`, destination, permanent: true },
 ]);
 
 const nextConfig: NextConfig = {
@@ -120,11 +147,12 @@ const nextConfig: NextConfig = {
       { source: "/zh/blog", destination: "/blog", permanent: true },
       { source: "/zh/blog/:slug", destination: "/blog/:slug", permanent: true },
 
-      // ── Compare subpages merged into a single /compare article (2026-07) ──
-      { source: "/compare/bitrouter-vs-openrouter", destination: "/compare#bitrouter-vs-openrouter", permanent: true },
-      { source: "/compare/bitrouter-vs-litellm", destination: "/compare#bitrouter-vs-litellm", permanent: true },
-      { source: "/compare/bitrouter-vs-portkey", destination: "/compare#bitrouter-vs-portkey", permanent: true },
-      { source: "/zh/compare/:slug*", destination: "/compare", permanent: true },
+      // ── /compare article retired; comparisons live in docs → overview (2026-07) ──
+      { source: "/compare/bitrouter-vs-openrouter", destination: "/docs/overview/bitrouter-vs-openrouter", permanent: true },
+      { source: "/compare/bitrouter-vs-litellm", destination: "/docs/overview/bitrouter-vs-litellm", permanent: true },
+      { source: "/compare/bitrouter-vs-portkey", destination: "/docs/overview/bitrouter-vs-openrouter", permanent: true },
+      { source: "/compare", destination: "/docs/overview/bitrouter-vs-openrouter", permanent: true },
+      { source: "/zh/compare/:slug*", destination: "/docs/overview/bitrouter-vs-openrouter", permanent: true },
 
       // ── Legal pages moved off /legal to flat top-level URLs ──
       { source: "/legal/privacy", destination: "/privacy-policy", permanent: true },
@@ -156,11 +184,13 @@ const nextConfig: NextConfig = {
         destination: "/terms-of-service",
         permanent: true,
       },
+
+      // ── Chinese locale removed: any remaining /zh/docs/* URL folds to en ──
+      { source: "/zh/docs/:path*", destination: "/docs/:path*", permanent: true },
     ];
   },
 };
 
 const withMDX = createMDX();
-const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
-export default withNextIntl(withMDX(nextConfig));
+export default withMDX(nextConfig);

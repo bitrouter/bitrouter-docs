@@ -112,11 +112,7 @@ jobs:
           or paths, and do NOT restructure navigation (the meta.json files).
 
           RULES:
-            - Bilingual lockstep: for every X.md you edit, make the equivalent edit to its
-              X.zh.md sibling — translate prose to Simplified Chinese, but keep code blocks,
-              component tags (<Callout>, <Tabs>, <Cards>, ...), headings and link targets
-              identical.
-            - Do NOT edit the `sourceHash:` frontmatter field — the build recomputes it.
+            - Docs are English-only.
             - Docs are import-free and may only use these components: Callout, Tabs, Tab,
               Cards, Card, ModelsTable, ProvidersTable, CalInline.
             - Breaking changes (feat!: or BREAKING CHANGE in the notes): add a short
@@ -154,7 +150,6 @@ jobs:
             Agent-drafted docs update for **${{ env.TAG }}**, from the release notes and
             the linked PR diffs.
 
-            Draft — review prose accuracy, bilingual (en/zh) parity, and that only the
-            genuinely-affected pages changed before merging. Generated pages
-            (supported-models/providers, reference/**) and the changelog are out of scope
-            for this job by design.
+            Draft — review prose accuracy and that only the genuinely-affected pages
+            changed before merging. Generated pages (supported-models/providers,
+            reference/**) and the changelog are out of scope for this job by design.

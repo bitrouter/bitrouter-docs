@@ -1,0 +1,16 @@
+{
+  "title": "CLI",
+  "pages": [
+    "index",
+    "daemon",
+    "init",
+    "route",
+    "providers",
+    "policy",
+    "cloud",
+    "tools",
+    "skills",
+    "harnesses",
+    "misc"
+  ]
+}

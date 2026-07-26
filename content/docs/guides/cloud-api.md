@@ -1,7 +1,6 @@
 ---
 title: Call BitRouter Cloud APIs from the CLI
 description: Use a gh api-style command for models, Chat Completions, Messages, Responses, and Google Generative AI with OAuth or API-key login.
-sourceHash: 7569eca98ec95b29d989295398b7c0f2b39d0863305732bf3ba65719c750ed12
 ---
 
 `bitrouter cloud api` sends authenticated requests directly to BitRouter Cloud. It reuses the credential from `bitrouter cloud login`, so scripts do not need to move secrets between separate config files or start the local daemon.
@@ -174,4 +173,4 @@ The first release intentionally omits GitHub-specific `gh api` features: GraphQL
 - `POST /v1beta/models/{model}:generateContent`
 - `POST /v1beta/models/{model}:streamGenerateContent`
 
-For the complete flag reference, see the [CLI reference](/docs/concepts/cli).
+For the complete flag reference, see the [CLI reference](/docs/reference/cli).

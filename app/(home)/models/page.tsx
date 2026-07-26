@@ -1,17 +1,13 @@
-import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
 import { ZedModelsPage } from "@/components/landing/zed/models-page";
 
 export default function Page() {
-  setRequestLocale("en");
   return <ZedModelsPage />;
 }
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations({ locale: "en", namespace: "Models" });
-  return {
-    title: t("metaTitle"),
-    description: t("metaDescription"),
-    alternates: { canonical: "https://bitrouter.ai/models" },
-  };
-}
+export const metadata: Metadata = {
+  title: "Models — BitRouter",
+  description:
+    "One API for the most performant, reliable models for LLM agents — across OpenAI, Anthropic, Google, Mistral, and more.",
+  alternates: { canonical: "https://bitrouter.ai/models" },
+};

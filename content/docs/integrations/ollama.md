@@ -1,7 +1,6 @@
 ---
 title: Ollama
 description: Register a local Ollama server as a BitRouter provider — OpenAI-compatible, no key, runs on localhost.
-sourceHash: a32a5ae4c339a293eeb7a50f97e3569db8c0a1a58a384bf5e51ac377425db224
 ---
 
 [Ollama](https://ollama.com) is the easiest way to run open models locally. It serves an OpenAI-compatible API at `http://localhost:11434/v1`, so it drops into `bitrouter.yaml` as one provider block.
@@ -46,4 +45,4 @@ Then [start BitRouter and send a request](/docs/integrations/models#start-bitrou
 ## Learn more
 
 - [Ollama — OpenAI compatibility](https://docs.ollama.com/api/openai-compatibility)
-- [Model fallback](/docs/features/model-fallback) — fail over from local Ollama to a hosted model.
+- [Model fallback](/docs/models-and-routing/model-fallback) — fail over from local Ollama to a hosted model.

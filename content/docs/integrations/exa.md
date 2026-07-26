@@ -1,7 +1,6 @@
 ---
 title: Exa
 description: Use Exa's neural web search as a BitRouter web_search backend — bring an Exa key and any routed model can search the web.
-sourceHash: f81429ec53dee3892ed80ab99b434242f84e4a6e69e68e0a09c6414f17aa4152
 ---
 
 [Exa](https://exa.ai) is a neural, embeddings-based search API — it finds pages by meaning rather than keywords and returns ranked results with highlights and relevance scores. BitRouter speaks it natively as a backend for the built-in [web search](/docs/features/websearch) tool, so bringing it in is one line plus a key.

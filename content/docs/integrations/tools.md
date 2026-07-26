@@ -1,10 +1,9 @@
 ---
 title: Overview
 description: Connect external tools — web search and retrieval providers — that the models you route through BitRouter can call.
-sourceHash: f48f72bbf3764a48ba71d6bcc60266c6b16b6b88b3e7d259339d714e0af4433f
 ---
 
-A **tool** is a capability a model picks up at runtime to get work done (see [concepts: tools](/docs/concepts/tools)). The integrations here are the **web-search and retrieval providers** that back BitRouter's built-in [web search](/docs/features/websearch): bring a key for any of them and *every* model you route through BitRouter gains a web search — even a model with no native search of its own.
+A **tool** is a capability a model picks up at runtime to get work done (see [concepts: tools](/docs/features/tools)). The integrations here are the **web-search and retrieval providers** that back BitRouter's built-in [web search](/docs/features/websearch): bring a key for any of them and *every* model you route through BitRouter gains a web search — even a model with no native search of its own.
 
 <Cards>
   <Card title="Exa" href="/docs/integrations/exa" description="Neural / semantic web search · EXA_API_KEY" />
@@ -27,5 +26,5 @@ server_tools:
 ```
 
 <Callout type="info">
-**Need an arbitrary tool, not web search?** Any [MCP](https://modelcontextprotocol.io) server — a database, a file system, your own API — plugs into BitRouter's [MCP gateway](/docs/concepts/tools#the-mcp-gateway). The pages here cover the built-in search backends specifically.
+**Need an arbitrary tool, not web search?** Any [MCP](https://modelcontextprotocol.io) server — a database, a file system, your own API — plugs into BitRouter's [MCP gateway](/docs/features/tools#the-mcp-gateway). The pages here cover the built-in search backends specifically.
 </Callout>

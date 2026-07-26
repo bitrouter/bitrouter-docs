@@ -1,7 +1,6 @@
 ---
 title: Migrate from TensorZero
 description: Move a TensorZero gateway setup to BitRouter — drop the ClickHouse-backed LLMOps stack for a single agent-native binary, local or hosted.
-sourceHash: be0cdd1e2720f11dc3d24b9e2ac8503fa670d7072b11fd191615ddb9ebf711e8
 ---
 
 # Migrating from TensorZero to BitRouter
@@ -33,9 +32,9 @@ BitRouter deliberately stops at the gateway. There's no `tensorzero.toml` to mai
 
 ### 2. Agent-native, and cloud/local share one surface
 
-TensorZero's gateway is provider-facing — it unifies the upstreams. BitRouter adds the **agent-facing** half: an [MCP gateway](/docs/concepts/tools) for tools, an [ACP gateway](/docs/concepts/agents) for agent identity and dispatch, a [server-tool loop](/docs/features/server-tools), and [agentic payment](/docs/features/payment) so an agent can pay per request without you provisioning a key for it.
+TensorZero's gateway is provider-facing — it unifies the upstreams. BitRouter adds the **agent-facing** half: an [MCP gateway](/docs/features/tools) for tools, an [ACP gateway](/docs/features/agents) for agent identity and dispatch, a [server-tool loop](/docs/features/server-tools), and [agentic payment](/docs/features/payment) so an agent can pay per request without you provisioning a key for it.
 
-And **the hosted cloud and local binary expose the same OpenAI-compatible endpoint** — start local during development, point at `api.bitrouter.ai` for production (or vice versa) without changing client code. See the [Quick Start](/docs/get-started/configuration) for both flows.
+And **the hosted cloud and local binary expose the same OpenAI-compatible endpoint** — start local during development, point at `api.bitrouter.ai` for production (or vice versa) without changing client code. See the [Quick Start](/docs/get-started/onboarding) for both flows.
 
 ## Migration paths
 
@@ -64,7 +63,7 @@ response = client.chat.completions.create(
 ```python
 import openai
 
-# Local: `bitrouter` (BYOK via env vars) — see /docs/get-started/configuration
+# Local: `bitrouter` (BYOK via env vars) — see /docs/get-started/onboarding
 # Cloud: base_url="https://api.bitrouter.ai/v1", api_key=$BITROUTER_API_KEY
 client = openai.OpenAI(
     base_url="http://127.0.0.1:4356/v1",
@@ -79,7 +78,7 @@ response = client.chat.completions.create(
 </Tab>
 </Tabs>
 
-A TensorZero **function** (a named prompt template + schema with one or more variants) has no single equivalent — the routing half maps to BitRouter, the templating/variant half stays in your app or moves to a [preset](/docs/features/presets). See the [feature mapping](#feature-mapping) below.
+A TensorZero **function** (a named prompt template + schema with one or more variants) has no single equivalent — the routing half maps to BitRouter, the templating/variant half stays in your app or moves to a [preset](/docs/models-and-routing/presets). See the [feature mapping](#feature-mapping) below.
 
 ### From the gateway + ClickHouse stack
 
@@ -116,17 +115,17 @@ To skip the local proxy entirely, point clients at `https://api.bitrouter.ai/v1`
 
 | TensorZero concept | BitRouter equivalent | Docs |
 |---|---|---|
-| `[models.*]` + `[models.*.providers.*]` in `tensorzero.toml` | Provider keys (auto-detected) + the model registry | [BYOK](/docs/features/byok), [Models](/docs/concepts/models) |
-| `[functions.*]` (named prompt + schema) | App-side, or a routing [preset](/docs/features/presets) | [Presets](/docs/features/presets) |
-| `[functions.*.variants.*]` (per-variant model) | Routing preset variants / model ids | [Presets](/docs/features/presets) |
-| `routing` / `retries` / `fallbacks` | Model fallback rules | [Model fallback](/docs/features/model-fallback) |
-| `load_balancing` across providers | Provider selection | [Provider selection](/docs/features/provider-selection) |
+| `[models.*]` + `[models.*.providers.*]` in `tensorzero.toml` | Provider keys (auto-detected) + the model registry | [BYOK](/docs/models-and-routing/byok), [Models](/docs/models-and-routing/models) |
+| `[functions.*]` (named prompt + schema) | App-side, or a routing [preset](/docs/models-and-routing/presets) | [Presets](/docs/models-and-routing/presets) |
+| `[functions.*.variants.*]` (per-variant model) | Routing preset variants / model ids | [Presets](/docs/models-and-routing/presets) |
+| `routing` / `retries` / `fallbacks` | Model fallback rules | [Model fallback](/docs/models-and-routing/model-fallback) |
+| `load_balancing` across providers | Provider selection | [Provider selection](/docs/models-and-routing/provider-selection) |
 | OpenAI-compatible `/openai/v1` endpoint | OpenAI-compatible `/v1` endpoint | [API Reference](/docs/reference/openai-compatible/createChatCompletion) |
 | Native `POST /inference` endpoint | OpenAI-, Anthropic-, and Google-compatible protocols | [API Reference](/docs/reference) |
 | ClickHouse observability + UI | OTLP traces & metrics to your own backend, or hosted Activity on Cloud | [OpenTelemetry](/docs/features/opentelemetry), [Cloud Tracing](/docs/features/opentelemetry#cloud-activity-hosted) |
 | OpenTelemetry (OTLP) export | OpenTelemetry (OTLP) export | [OpenTelemetry](/docs/features/opentelemetry) |
-| Embedded structured outputs (JSON functions) | Structured outputs across all providers | [Structured outputs](/docs/features/structured-outputs) |
-| — (no equivalent) | MCP / ACP / Skills agent gateways | [Tools](/docs/concepts/tools), [Agents](/docs/concepts/agents) |
+| Embedded structured outputs (JSON functions) | Structured outputs across all providers | [Structured outputs](/docs/models-and-routing/structured-outputs) |
+| — (no equivalent) | MCP / ACP / Skills agent gateways | [Tools](/docs/features/tools), [Agents](/docs/features/agents) |
 | — (no equivalent) | Autonomous agent payment (x402 / MPP) | [Payment](/docs/features/payment) |
 
 ## What BitRouter intentionally doesn't ship
@@ -141,13 +140,13 @@ If your workflow depends on that closed feedback loop — collect inferences and
 **Before migration**
 - [ ] List the providers and models you actually route through TensorZero (skip the rest)
 - [ ] Separate gateway use from platform use — are you using evals / optimization / experimentation, or just routing?
-- [ ] Note where `[functions.*]` templates and schemas live; plan to keep them app-side or move them to a [preset](/docs/features/presets)
+- [ ] Note where `[functions.*]` templates and schemas live; plan to keep them app-side or move them to a [preset](/docs/models-and-routing/presets)
 - [ ] Decide cloud vs. local (or both — they share the endpoint)
 </Callout>
 
 <Callout type="success">
 **Migration**
-- [ ] Install the BitRouter CLI ([Quick Start](/docs/get-started/configuration))
+- [ ] Install the BitRouter CLI ([Quick Start](/docs/get-started/onboarding))
 - [ ] Export provider keys, or paste them into the cloud dashboard (sealed-box encrypted)
 - [ ] Update client `base_url` to `http://127.0.0.1:4356/v1` (local) or `https://api.bitrouter.ai/v1` (cloud)
 - [ ] Replace `tensorzero::…` model strings with `provider/model` ids
@@ -159,9 +158,9 @@ If your workflow depends on that closed feedback loop — collect inferences and
 ## Next steps
 
 <Cards>
-  <Card title="Quick Start" href="/docs/get-started/configuration" description="Run BitRouter locally or in the cloud in under a minute" />
-  <Card title="Comparison" href="/docs/get-started/faqs" description="Side-by-side with OpenRouter, LiteLLM, and generic gateways" />
-  <Card title="Agent features" href="/docs/concepts/tools" description="MCP, ACP, skills, agent firewall, x402 payment" />
+  <Card title="Quick Start" href="/docs/get-started/onboarding" description="Run BitRouter locally or in the cloud in under a minute" />
+  <Card title="Comparison" href="/docs/get-started/onboarding" description="Side-by-side with OpenRouter, LiteLLM, and generic gateways" />
+  <Card title="Agent features" href="/docs/features/tools" description="MCP, ACP, skills, agent firewall, x402 payment" />
   <Card title="API Reference" href="/docs/reference" description="OpenAI- and Anthropic-compatible endpoints" />
 </Cards>
 

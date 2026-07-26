@@ -1,7 +1,6 @@
 ---
 title: Tavily
 description: Use Tavily's search API as a BitRouter web_search backend — bring a Tavily key and any routed model can search the web.
-sourceHash: 0937cc028632af1aa505d332aad2f3a693e328e99359f7e8d72fd768043c8757
 ---
 
 [Tavily](https://tavily.com) is a search API built for agents and RAG — it returns ranked results with a relevant content snippet and a score per hit. BitRouter speaks it natively as a backend for the built-in [web search](/docs/features/websearch) tool.

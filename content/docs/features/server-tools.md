@@ -1,7 +1,6 @@
 ---
 title: Server tools
 description: Let BitRouter run the tool-calling loop for you, server-side — including the Advisor, SubAgent, and Fusion model-backed tools.
-sourceHash: eec188b7a7133f68c626926b2b04f36ad6224c08b2fb866a0ab6a8e5beabe58b
 ---
 
 Normally your agent runs the tool-calling loop: the model asks to call a tool, your harness executes it, appends the result, and calls the model again. **Server tools** move that loop into BitRouter. You declare a set of tools, BitRouter advertises them to the model, and when the model calls one, BitRouter **executes it and feeds the result back itself** — looping until the model stops calling them. To the caller it looks like a single response.

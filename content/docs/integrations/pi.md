@@ -1,14 +1,13 @@
 ---
 title: Pi
 description: Route Pi, the minimal terminal coding harness, through BitRouter as an OpenAI-compatible provider.
-sourceHash: fad130036d7771ff6807dfe0aa582a15ba69fef5fe3074f162f3df9a94d3293b
 ---
 
-Pi is a minimal terminal coding harness that defines model providers in `~/.pi/agent/models.json`. Add BitRouter as an OpenAI-compatible provider and Pi routes across the whole [registry](/docs/concepts/models).
+Pi is a minimal terminal coding harness that defines model providers in `~/.pi/agent/models.json`. Add BitRouter as an OpenAI-compatible provider and Pi routes across the whole [registry](/docs/models-and-routing/models).
 
 ## Prerequisites
 
-- BitRouter running — local proxy at `http://127.0.0.1:4356`, or [BitRouter Cloud](/docs/get-started/configuration) at `https://api.bitrouter.ai`.
+- BitRouter running — local proxy at `http://127.0.0.1:4356`, or [BitRouter Cloud](/docs/get-started/onboarding) at `https://api.bitrouter.ai`.
 - Pi installed:
 
   ```bash
@@ -43,9 +42,9 @@ Then pick the model with `/model` in the TUI.
 
 ## Pick a model
 
-Each `models[].id` is a registry id in `provider/model` form, optionally with a `:cost` / `:latency` variant. See [Models](/docs/concepts/models).
+Each `models[].id` is a registry id in `provider/model` form, optionally with a `:cost` / `:latency` variant. See [Models](/docs/models-and-routing/models).
 
 ## Learn more
 
 - [Pi — custom providers](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/models.md)
-- [Model fallback](/docs/features/model-fallback)
+- [Model fallback](/docs/models-and-routing/model-fallback)

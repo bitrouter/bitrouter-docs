@@ -1,9 +1,13 @@
 {
-  "title": "API References",
+  "title": "Reference",
   "icon": "Library",
   "defaultOpen": false,
   "pages": [
     "index",
+    "---Interfaces---",
+    "cli",
+    "mcp",
+    "---Cloud API---",
     "health",
     "discovery",
     "byok",

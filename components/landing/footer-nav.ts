@@ -3,6 +3,7 @@ export type FooterColumn = { title: string; links: FooterLink[] };
 
 const PRODUCT: FooterLink[] = [
   { label: "Models", href: "/models" },
+  { label: "Recipes", href: "/recipes" },
   { label: "Pricing", href: "/pricing" },
   { label: "Enterprise", href: "/enterprise" },
   { label: "Startup", href: "/startup" },

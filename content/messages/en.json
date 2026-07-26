@@ -173,6 +173,10 @@
     "viewTable": "Table view",
     "viewList": "List view"
   },
+  "Recipes": {
+    "metaTitle": "Recipes — ready-made routing policies for agentic workflows",
+    "metaDescription": "Drop-in bitrouter.yaml policy specs for common agentic workflows, each published with the measured run behind its claim."
+  },
   "ModelDetail": {
     "back": "Back to catalog",
     "ctaApiKey": "Get API key",

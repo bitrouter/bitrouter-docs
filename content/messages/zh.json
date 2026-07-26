@@ -20,5 +20,9 @@
     "noResults": "未找到结果。",
     "searchDescription": "搜索页面和操作",
     "themeToggle": "切换主题"
+  },
+  "Recipes": {
+    "metaTitle": "配方 — 面向智能体工作流的开箱即用路由策略",
+    "metaDescription": "可直接使用的 bitrouter.yaml 策略配置，覆盖常见智能体工作流；每个配方都附带其结论背后的实测数据。"
   }
 }

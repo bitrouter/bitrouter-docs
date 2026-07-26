@@ -27,6 +27,7 @@ export interface NavItem {
 // always renders — it's the canonical money page for prospects and customers.
 const NAV_ITEMS: NavItem[] = [
   { key: "models", label: "Models", webPath: "/models" },
+  { key: "recipes", label: "Recipes", webPath: "/recipes" },
   { key: "pricing", label: "Pricing", webPath: "/pricing" },
   { key: "blog", label: "Blog", webPath: "/blog" },
   { key: "changelog", label: "Changelog", webPath: "/changelog" },

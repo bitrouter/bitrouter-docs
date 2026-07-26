@@ -45,6 +45,13 @@ describe("buildFooterColumns", () => {
     expect(labels).toContain("Startup");
     expect(labels).not.toContain("Providers");
   });
+  it("Product puts Recipes next to Models — both are catalog pages", () => {
+    const product = buildFooterColumns().find((c) => c.title === "Product")!;
+    expect(product.links.map((l) => l.label)).toEqual([
+      "Models", "Recipes", "Pricing", "Enterprise", "Startup",
+    ]);
+    expect(product.links.find((l) => l.label === "Recipes")!.href).toBe("/recipes");
+  });
   it("Resources folds in Compare alongside its static links", () => {
     const res = buildFooterColumns().find((c) => c.title === "Resources")!;
     expect(res.links.map((l) => l.label)).toEqual([

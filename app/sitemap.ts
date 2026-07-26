@@ -7,7 +7,6 @@ import {
   getChangelogItems,
 } from "@/lib/source";
 import { fetchModels } from "@/lib/models-server";
-import { fetchRecipes } from "@/lib/recipes-server";
 
 export const dynamic = "force-static";
 
@@ -43,15 +42,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const modelPages: Entry[] = models.map((m) => ({
     url: `${BASE_URL}/models/${m.id}`,
     changeFrequency: "weekly",
-    priority: 0.6,
-  }));
-
-  // ── Recipe pages (catalog fetched from the OSS repo at build) ──
-  const recipes = await fetchRecipes();
-  const recipePages: Entry[] = recipes.map((recipe) => ({
-    url: `${BASE_URL}/recipes/${recipe.slug}`,
-    lastModified: recipe.updatedAt ? new Date(recipe.updatedAt) : undefined,
-    changeFrequency: "monthly",
     priority: 0.6,
   }));
 
@@ -98,7 +88,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     [
       { url: BASE_URL, file: "app/(home)/page.tsx", priority: 1.0, changeFrequency: "weekly" },
       { url: `${BASE_URL}/models`, file: "app/(home)/models/page.tsx", priority: 0.9, changeFrequency: "weekly" },
-      { url: `${BASE_URL}/recipes`, file: "app/(home)/recipes/page.tsx", priority: 0.8, changeFrequency: "weekly" },
       { url: `${BASE_URL}/pricing`, file: "app/(home)/pricing/page.tsx", priority: 0.8, changeFrequency: "monthly" },
       { url: `${BASE_URL}/enterprise`, file: "app/(home)/enterprise/page.tsx", priority: 0.6, changeFrequency: "monthly" },
       { url: `${BASE_URL}/startup`, file: "app/(home)/startup/page.tsx", priority: 0.6, changeFrequency: "monthly" },
@@ -122,7 +111,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...staticPages,
     ...modelPages,
-    ...recipePages,
     ...blogPages,
     ...changelogPages,
     ...legalPages,

@@ -1,7 +1,7 @@
 ---
 title: Configuration
 description: Install BitRouter and wire it into your agent in under a minute — via Agent Skills or the CLI/TUI, self-hosted with your own keys or attached to BitRouter Cloud.
-sourceHash: d24ff171dfeee4abf06a586d298a9aa1f8f2bcef6e3c289515d4336ec1614eff
+sourceHash: 16661fff1237419c16863882e39ed5cbd542234923b10526f230123866d7083b
 ---
 
 This page gets BitRouter routing for your agent in under a minute, then covers every way to configure it. There are two deployment modes, and two ways to onboard either one.
@@ -127,7 +127,7 @@ Point any OpenAI-compatible runtime at `http://127.0.0.1:4356/v1` to route throu
 
 <Cards>
   <Card title="Integrations" href="/docs/integrations" description="Step-by-step guides for every supported agent runtime" />
-  <Card title="Supported Models" href="/docs/get-started/supported-models" description="The full catalog, pricing, and open-model discounts" />
+  <Card title="Supported Models" href="/docs/get-started/supported-models" description="The full catalog and pricing" />
   <Card title="FAQs" href="/docs/get-started/faqs" description="Self-host vs Cloud, what Cloud adds, and how BitRouter compares" />
   <Card title="For Providers" href="/docs/guides/register-as-a-provider" description="List your models on the BitRouter Registry" />
 </Cards>

@@ -126,7 +126,7 @@ curl http://127.0.0.1:4356/v1/chat/completions \
 
 <Cards>
   <Card title="集成" href="/docs/integrations" description="覆盖每个 Agent 运行时的分步接入指南" />
-  <Card title="Supported Models" href="/docs/get-started/supported-models" description="完整目录、定价与开放模型折扣" />
+  <Card title="Supported Models" href="/docs/get-started/supported-models" description="完整目录与定价" />
   <Card title="FAQs" href="/docs/get-started/faqs" description="自托管 vs Cloud、Cloud 的增量，以及 BitRouter 的对比" />
   <Card title="提供商接入" href="/docs/guides/register-as-a-provider" description="将你的模型列入 BitRouter Registry" />
 </Cards>

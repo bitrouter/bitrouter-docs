@@ -63,7 +63,3 @@ description: BitRouter 网络上已注册的每个供应商——由任何人都
 ## 注册你自己的供应商
 
 BitRouter 是一个无许可网络：任何暴露 OpenAI 或 Anthropic 兼容端点的供应商都可以加入，并被网络上的每个 agent 发现。注册即是向开源注册表提交一个 pull request——完整流程见[注册为供应商](/docs/guides/register-as-a-provider)。
-
-## 折扣开放模型
-
-BitRouter 还运营自己的**自托管供应商**，默认以**官方价低 25%** 提供开放模型，并为开源项目提供最高 50% 的定制折扣。定价与 `:discount` 后缀的工作方式见[折扣开放模型](/docs/get-started/supported-models#discounted-open-models)。

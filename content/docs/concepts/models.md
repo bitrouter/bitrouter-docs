@@ -1,7 +1,7 @@
 ---
 title: Models
-description: On BitRouter a model is an aggregate served by many providers — reached through four protocols, ranked per request, with discounted open supply.
-sourceHash: fabf35d1861ae369c08c16c522ed36ae73a673cfe3b6bb24bab621bf2da14695
+description: On BitRouter a model is an aggregate served by many providers — reached through four protocols, ranked per request.
+sourceHash: 2a07d183929c2c78748a6c6989bced67e83fb4c4b961fa2835341e8bf4be6400
 ---
 
 On BitRouter a "model" is not a single endpoint. It's an **aggregate**: one logical model — say `openai/gpt-4o` or `anthropic/claude-sonnet-4.6` — that can be served by many providers at once. You address it by a stable **model id**, and BitRouter decides which underlying provider endpoint actually answers each request.
@@ -26,10 +26,6 @@ Because a model is an aggregate, requesting it kicks off a **provider selection*
 ## Variants re-rank for one request
 
 When one model has several providers, you sometimes want to bias that ranking for a single call. A **model variant** is an inline suffix on the id — `:cost`, `:latency`, `:throughput` — that re-ranks the *eligible* providers along the axis you named, for that request only. It never changes which providers are eligible, never changes authorization, and a bare id is just the balanced default.
-
-## Open models, discounted
-
-Open (non-closed-source) models carry a second property: BitRouter serves them through its own self-hosted provider at **25% below official pricing by default**, with no suffix or configuration. The `:discount` suffix pins a request to that supply explicitly, and it's where any custom account discount applies.
 
 ## Learn how to
 

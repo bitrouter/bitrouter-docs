@@ -1,7 +1,7 @@
 ---
 title: FAQs
 description: Common questions about running BitRouter — self-host vs Cloud, what Cloud adds, whether you need provider keys, and how BitRouter compares to OpenRouter, LiteLLM, Portkey, Bifrost, and TensorZero.
-sourceHash: 3e7816488bf3e3c5226fe01e4b697b935679566f8dae3442bcd748d79cd21753
+sourceHash: 145fee00bff6af2a9a4ef7d759611203608395046529aeda35a73108ce82af23
 ---
 
 ## Deployment
@@ -19,7 +19,7 @@ Neither — Cloud is **an account you attach**, not a fork. Both front doors run
 Every core capability works the same either way — Cloud only adds what needs a server you don't run.
 
 - **Self-host** if you already have provider keys, run local/private models, have data-residency rules, or are prototyping solo.
-- **Cloud** if you want no key management and per-request billing, discounted open models without provider signups, team workspaces, or an uptime SLA.
+- **Cloud** if you want no key management and per-request billing, a managed provider network without provider signups, team workspaces, or an uptime SLA.
 
 ### What does Cloud add on top of the open-source core?
 
@@ -36,7 +36,6 @@ Every core capability works the same either way — Cloud only adds what needs a
 | Structured outputs | ✅ | ✅ |
 | Namespace isolation primitive | ✅ | ✅ |
 | Managed provider network (no upstream keys needed) | — | ✅ |
-| Open-model pricing discounts | — | ✅ |
 | Team seats & per-workspace access control | — | ✅ |
 | Hosted observability console | — | ✅ |
 | Managed billing (one wallet, per-request) | — | ✅ |
@@ -44,7 +43,7 @@ Every core capability works the same either way — Cloud only adds what needs a
 | Priority support | — | ✅ |
 | Agentic payment marketplace | — | ✅ |
 
-In short, Cloud adds a managed provider network ([Managed Models](/docs/get-started/supported-models) — no upstream keys, open models discounted), team [workspaces](/docs/features/namespaces) with strictly scoped keys, a hosted observability console, managed per-request billing, and an uptime SLA. Everything else is in both.
+In short, Cloud adds a managed provider network ([Managed Models](/docs/get-started/supported-models) — no upstream keys), team [workspaces](/docs/features/namespaces) with strictly scoped keys, a hosted observability console, managed per-request billing, and an uptime SLA. Everything else is in both.
 
 ## Comparison
 

@@ -1,4 +1,3 @@
-import { setRequestLocale } from "next-intl/server";
 import {
   IntegrationStub,
   integrationMetadata,
@@ -12,6 +11,5 @@ const BLURB =
 export const metadata = integrationMetadata(NAME, SLUG, BLURB);
 
 export default function Page() {
-  setRequestLocale("en");
   return <IntegrationStub name={NAME} blurb={BLURB} />;
 }

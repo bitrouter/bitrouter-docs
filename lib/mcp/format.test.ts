@@ -27,8 +27,8 @@ describe("pathToSlug", () => {
       "guides", "routing", "model-fallback",
     ]);
   });
-  it("strips a leading locale and a #hash and a full origin", () => {
-    expect(pathToSlug("https://bitrouter.ai/zh/docs/features/advisor#usage")).toEqual([
+  it("strips a #hash and a full origin", () => {
+    expect(pathToSlug("https://bitrouter.ai/docs/features/advisor#usage")).toEqual([
       "features", "advisor",
     ]);
   });
@@ -41,7 +41,7 @@ describe("formatSearchResults", () => {
   const raw: RawSearchResult[] = [
     { id: "1", url: "/docs/guides/routing/model-fallback", type: "page", content: "Model Fallback" },
     { id: "2", url: "/docs/guides/routing/model-fallback#auto", type: "heading", content: "Automatic fallback" },
-    { id: "3", url: "/docs/features/byok", type: "page", content: "BYOK" },
+    { id: "3", url: "/docs/models-and-routing/byok", type: "page", content: "BYOK" },
   ];
   it("dedups by page and caps to the limit", () => {
     const hits = formatSearchResults(raw, 1);
@@ -57,7 +57,7 @@ describe("formatSearchResults", () => {
   });
   it("strips fumadocs <mark> highlight tags from the title", () => {
     const hits = formatSearchResults(
-      [{ id: "1", url: "/docs/features/model-fallback", type: "page", content: "Model <mark>Fallback</mark>" }],
+      [{ id: "1", url: "/docs/models-and-routing/model-fallback", type: "page", content: "Model <mark>Fallback</mark>" }],
       5,
     );
     expect(hits[0].title).toBe("Model Fallback");

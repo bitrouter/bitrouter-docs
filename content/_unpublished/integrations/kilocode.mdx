@@ -4,7 +4,7 @@ description: Route Kilo Code through BitRouter via its OpenAI-compatible provide
 ---
 import { Callout } from 'fumadocs-ui/components/callout';
 
-Kilo Code (VS Code / JetBrains) ships an **OpenAI Compatible** provider that takes a base URL, an API key, and a model id. Point it at BitRouter and the agent routes across the whole [registry](/docs/concepts/models) instead of a single vendor.
+Kilo Code (VS Code / JetBrains) ships an **OpenAI Compatible** provider that takes a base URL, an API key, and a model id. Point it at BitRouter and the agent routes across the whole [registry](/docs/models-and-routing/models) instead of a single vendor.
 
 ## Prerequisites
 
@@ -33,7 +33,7 @@ For **Cloud**, set the base URL to `https://api.bitrouter.ai/v1` and use your Bi
 
 ## Pick a model
 
-The model field takes any registry id in `provider/model` form — `openai/gpt-4o`, `anthropic/claude-sonnet-4-6`, `google/gemini-2.5-pro` — optionally with a `:cost` or `:latency` variant to bias provider selection. See [Models](/docs/concepts/models).
+The model field takes any registry id in `provider/model` form — `openai/gpt-4o`, `anthropic/claude-sonnet-4-6`, `google/gemini-2.5-pro` — optionally with a `:cost` or `:latency` variant to bias provider selection. See [Models](/docs/models-and-routing/models).
 
 ## Verify
 
@@ -42,4 +42,4 @@ Start a task in Kilo Code and confirm a response. BitRouter's `bitrouter-served-
 ## Learn more
 
 - [Kilo Code — OpenAI-compatible providers](https://kilo.ai/docs/ai-providers/openai-compatible)
-- [Model fallback](/docs/features/model-fallback) · [Provider selection](/docs/features/provider-selection)
+- [Model fallback](/docs/models-and-routing/model-fallback) · [Provider selection](/docs/models-and-routing/provider-selection)

@@ -29,7 +29,7 @@ export type ChatUIMessage = UIMessage<
 >;
 
 export type SearchSource = { url: string; title: string; content: string };
-export type SearchTool = Tool<{ query: string; locale?: string }, SearchSource[]>;
+export type SearchTool = Tool<{ query: string }, SearchSource[]>;
 
 const Context = createContext<{
   open: boolean;

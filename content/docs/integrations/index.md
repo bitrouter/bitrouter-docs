@@ -1,10 +1,9 @@
 ---
 title: Overview
 description: Plug models, tools, and agent harnesses into BitRouter.
-sourceHash: 02426872a5501bed968bfa25cdd4cb8a0625cf40e0fc5b65c69440760100f5a2
 ---
 
-Every integration is the same move: point something at BitRouter's endpoint (local proxy at `http://127.0.0.1:4356`, or Cloud at `https://api.bitrouter.ai`) and address models by their `provider/model` id. From there you get the whole [registry](/docs/concepts/models), provider selection, and [fallback](/docs/features/model-fallback) underneath. New to BitRouter? Start with the [Quick Start](/docs/get-started/configuration).
+Every integration is the same move: point something at BitRouter's endpoint (local proxy at `http://127.0.0.1:4356`, or Cloud at `https://api.bitrouter.ai`) and address models by their `provider/model` id. From there you get the whole [registry](/docs/models-and-routing/models), provider selection, and [fallback](/docs/models-and-routing/model-fallback) underneath. New to BitRouter? Start with the [Quick Start](/docs/get-started/onboarding).
 
 Integrations come in three kinds:
 

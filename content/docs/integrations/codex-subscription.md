@@ -1,7 +1,6 @@
 ---
 title: Codex subscription
 description: Route your ChatGPT plan through BitRouter via the Codex backend — OAuth, no OpenAI API key.
-sourceHash: d4795ffff16405031062eaebac53f25b14ed4267b5b4b438c942ec2cd6620b5f
 ---
 
 Have a ChatGPT Plus or Pro plan? Use it as a model source through the **Codex** backend. `bitrouter providers login openai-codex` first reuses an existing local Codex CLI session when one is present, otherwise it can run the same OAuth flow OpenAI's Codex CLI uses, stores the refreshing token, and attaches it to requests on the `openai-codex` provider — so your ChatGPT subscription covers the tokens, with no `OPENAI_API_KEY`.
@@ -56,9 +55,9 @@ No `bitrouter.yaml` block is required — `openai-codex` is a registry-backed lo
 bitrouter route openai-codex:gpt-5-codex
 ```
 
-Then [start BitRouter and send a request](/docs/integrations/models#start-bitrouter-and-send-a-request). Use the provider-qualified id `openai-codex:<model>` to pin the request to your subscription; see [Models](/docs/concepts/models) for the exact ids the Codex backend serves.
+Then [start BitRouter and send a request](/docs/integrations/models#start-bitrouter-and-send-a-request). Use the provider-qualified id `openai-codex:<model>` to pin the request to your subscription; see [Models](/docs/models-and-routing/models) for the exact ids the Codex backend serves.
 
 ## Learn more
 
 - [Codex](/docs/integrations/codex) — point the Codex *CLI* at BitRouter (a harness), distinct from using your plan as a model source here.
-- [Model fallback](/docs/features/model-fallback) — fail over from your subscription to another source on overload.
+- [Model fallback](/docs/models-and-routing/model-fallback) — fail over from your subscription to another source on overload.

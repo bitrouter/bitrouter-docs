@@ -1,7 +1,6 @@
 ---
 title: Sub-agent
 description: Delegate a self-contained task to a focused worker model mid-generation — the worker sees only what you give it and returns its final result.
-sourceHash: 2a7c24c88c1728c4c0f164738dfd58c7f424e0dbfc5d545bab0f92d71ed6cb3a
 ---
 
 **Sub-agent** is a server tool: BitRouter runs it mid-generation instead of handing the call back to your client. The calling model hands off a self-contained task — `task_name` and `task_description` — to a focused worker model (typically a cheaper or faster one), which works in isolation and returns only its final result. Use it to fan out grunt work without spending the main model's context on it.
@@ -94,4 +93,4 @@ Sub-agent is enabled and managed on **BitRouter Cloud**, with per-run cost for t
 
 - [Advisor](/docs/features/advisor) — consult a stronger model for guidance instead of delegating a task
 - [Fusion](/docs/features/fusion) — deliberate across a panel of models on one prompt
-- [Provider selection](/docs/features/provider-selection) — control which provider serves the worker model
+- [Provider selection](/docs/models-and-routing/provider-selection) — control which provider serves the worker model

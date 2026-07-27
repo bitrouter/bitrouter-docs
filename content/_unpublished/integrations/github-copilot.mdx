@@ -5,7 +5,7 @@ description: Route GitHub Copilot's chat through BitRouter via its Bring-Your-Ow
 import { Callout } from 'fumadocs-ui/components/callout';
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
-Copilot's Bring-Your-Own-Key (BYOK) support lets you back its chat with any OpenAI-compatible endpoint. Point that endpoint at BitRouter and Copilot routes across the whole [registry](/docs/concepts/models).
+Copilot's Bring-Your-Own-Key (BYOK) support lets you back its chat with any OpenAI-compatible endpoint. Point that endpoint at BitRouter and Copilot routes across the whole [registry](/docs/models-and-routing/models).
 
 <Callout type="warn">
 **BYOK covers chat, agent, and edit — not inline code completions.** Autocomplete still runs on GitHub's own models and cannot be routed through a custom endpoint.
@@ -56,10 +56,10 @@ For **Cloud**, swap the base URL to `https://api.bitrouter.ai` (CLI) or `https:/
 
 ## Pick a model
 
-Use any registry id in `provider/model` form — `openai/gpt-4o`, `anthropic/claude-sonnet-4-6`, `google/gemini-2.5-pro`, optionally with a `:cost` / `:latency` variant. See [Models](/docs/concepts/models).
+Use any registry id in `provider/model` form — `openai/gpt-4o`, `anthropic/claude-sonnet-4-6`, `google/gemini-2.5-pro`, optionally with a `:cost` / `:latency` variant. See [Models](/docs/models-and-routing/models).
 
 ## Learn more
 
 - [Copilot CLI — BYOK models](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/use-byok-models)
 - [VS Code — language models (BYOK)](https://code.visualstudio.com/docs/agent-customization/language-models)
-- [Model fallback](/docs/features/model-fallback)
+- [Model fallback](/docs/models-and-routing/model-fallback)

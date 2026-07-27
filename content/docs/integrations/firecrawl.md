@@ -1,7 +1,6 @@
 ---
 title: Firecrawl
 description: Use Firecrawl's search API as a BitRouter web_search backend — bring a Firecrawl key and any routed model can search the web.
-sourceHash: 8351f71765f9a1b1c5e0e8516f413f39066e00813eb51411461fbc92e145b5e0
 ---
 
 [Firecrawl](https://firecrawl.dev) turns the web into LLM-ready data — its search endpoint returns ranked results with a description and, when asked, the page as markdown. BitRouter speaks it natively as a backend for the built-in [web search](/docs/features/websearch) tool.

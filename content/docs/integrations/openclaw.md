@@ -1,14 +1,13 @@
 ---
 title: OpenClaw
 description: Route OpenClaw's messaging gateway through BitRouter as an OpenAI-compatible model provider.
-sourceHash: 157d42ce9b2fabbd22051335b61b9602ada75d876a7e5e4dfcf5bd47cf91d10f
 ---
 
-OpenClaw is a self-hosted gateway that bridges messaging platforms — WhatsApp, Telegram, Slack, Discord, and more — to an LLM. Configure BitRouter as its model provider and every channel routes across the whole [registry](/docs/concepts/models).
+OpenClaw is a self-hosted gateway that bridges messaging platforms — WhatsApp, Telegram, Slack, Discord, and more — to an LLM. Configure BitRouter as its model provider and every channel routes across the whole [registry](/docs/models-and-routing/models).
 
 ## Prerequisites
 
-- BitRouter running — local proxy at `http://127.0.0.1:4356`, or [BitRouter Cloud](/docs/get-started/configuration) at `https://api.bitrouter.ai`.
+- BitRouter running — local proxy at `http://127.0.0.1:4356`, or [BitRouter Cloud](/docs/get-started/onboarding) at `https://api.bitrouter.ai`.
 - OpenClaw installed. See the [OpenClaw docs](https://docs.openclaw.ai/) for setup.
 
 ## Point OpenClaw at BitRouter
@@ -47,9 +46,9 @@ For **Cloud**, set `baseUrl` to `https://api.bitrouter.ai/v1` and use your BitRo
 
 ## Pick a model
 
-Each provider model `id` is a registry id in `provider/model` form (`openai/gpt-4o`, `anthropic/claude-sonnet-4-6`, …), optionally with a `:cost` / `:latency` variant. In OpenClaw's `model.primary` it's prefixed with the provider id you chose — e.g. `bitrouter/openai/gpt-4o`. See [Models](/docs/concepts/models).
+Each provider model `id` is a registry id in `provider/model` form (`openai/gpt-4o`, `anthropic/claude-sonnet-4-6`, …), optionally with a `:cost` / `:latency` variant. In OpenClaw's `model.primary` it's prefixed with the provider id you chose — e.g. `bitrouter/openai/gpt-4o`. See [Models](/docs/models-and-routing/models).
 
 ## Learn more
 
 - [OpenClaw — model providers](https://docs.openclaw.ai/concepts/model-providers)
-- [Model fallback](/docs/features/model-fallback)
+- [Model fallback](/docs/models-and-routing/model-fallback)

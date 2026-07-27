@@ -21,10 +21,10 @@ const DOC_CHAR_CAP = 16_000; // ~4k tokens
 
 export async function searchDocs(
   query: string,
-  opts: { locale?: string; limit?: number } = {},
+  opts: { limit?: number } = {},
 ): Promise<DocHit[]> {
   const limit = Math.min(Math.max(1, opts.limit ?? DEFAULT_LIMIT), MAX_LIMIT);
-  const results = await searchServer.search(query, { locale: opts.locale ?? "en" });
+  const results = await searchServer.search(query);
   if (!Array.isArray(results)) return [];
   return formatSearchResults(results as unknown as RawSearchResult[], limit);
 }
@@ -33,9 +33,9 @@ export type GetDocResult =
   | { ok: true; markdown: string; url: string }
   | { ok: false; error: string };
 
-export async function getDoc(path: string, locale = "en"): Promise<GetDocResult> {
+export async function getDoc(path: string): Promise<GetDocResult> {
   const slug = pathToSlug(path);
-  const page = source.getPage(slug, locale);
+  const page = source.getPage(slug);
   if (!page) {
     return {
       ok: false,

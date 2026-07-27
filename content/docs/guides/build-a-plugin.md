@@ -1,7 +1,6 @@
 ---
 title: Plugins & hooks
 description: The hook pipeline and plugin model behind BitRouter, and how to write one against the trait-based Rust SDK.
-sourceHash: 1bbecb65dcf97a58f146fb28634a3ec90bdd207520cb69745f05b7b534749960
 ---
 
 # Plugins & hooks

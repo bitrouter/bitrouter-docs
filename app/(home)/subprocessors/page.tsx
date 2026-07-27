@@ -1,4 +1,3 @@
-import { setRequestLocale } from "next-intl/server";
 import { renderLegalPage, legalMetadata } from "@/components/legal-doc";
 import {
   SubprocessorInfraTable,
@@ -7,7 +6,6 @@ import {
 import type { Metadata } from "next";
 
 export default async function SubprocessorsPage() {
-  setRequestLocale("en");
   return renderLegalPage("subprocessors", {
     SubprocessorInfraTable,
     SubprocessorProviderTable,

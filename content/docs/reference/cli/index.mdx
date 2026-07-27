@@ -1,0 +1,40 @@
+---
+title: CLI reference
+description: The bitrouter binary — one local endpoint your runtime points at, a daemon you control, and a scriptable surface for routing, policy, and your Cloud account.
+---
+
+BitRouter ships as one **static binary**, `bitrouter`, with no dependencies to install. It plays two roles: it runs the **local router** your agent talks to (by default on `http://127.0.0.1:4356`), and it's the **command-line surface** for routing introspection, policy lifecycle, and your hosted account.
+
+Running it bare is always safe: `bitrouter` probes for configured credentials without touching the network, then launches the [onboarding wizard](/docs/get-started/onboarding) when nothing is configured, or prints a one-line status when it is.
+
+## Conventions
+
+- **Output is JSON by default** (agent-native). `-j/--json` forces JSON where it's optional; `--human` renders the human-readable view instead.
+- **`-c/--config <PATH>`** overrides config discovery for any command that loads a config. Discovery order: `./bitrouter.yaml` → `$BITROUTER_HOME/bitrouter.yaml` → `~/.bitrouter/bitrouter.yaml` → zero-config (in-memory defaults, auto-enabling providers from env keys).
+- **Credentials** live under `$XDG_DATA_HOME/bitrouter/account-credentials.json` (mode `0600`), written by `cloud login` or `providers login`.
+- Every command page below is **generated from the binary's own `--help`**, so the flags you see here are the flags your installed version accepts.
+
+## Environment variables
+
+| Variable | Effect |
+| --- | --- |
+| `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `OPENCODE_ZEN_API_KEY` | Zero-config BYOK — auto-enables the provider. See [BYOK](/docs/models-and-routing/byok) |
+| `BITROUTER_API_KEY` | Cloud API key; enables the managed `bitrouter` provider |
+| `BITROUTER_HOME` | Config discovery override (see above) |
+| `BITROUTER_OAUTH_AS` | Override the OAuth authorization server for self-hosted Cloud |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | Opt in to OTLP export. See [Set up tracing](/docs/get-started/set-up-tracing) |
+
+## Command map
+
+- **Run it** — [daemon lifecycle](/docs/reference/cli/daemon): `serve`, `start`, `stop`, `restart`, `reload`, `status`
+- **Onboard** — [init & config](/docs/reference/cli/init): the wizard, config validation
+- **Inspect routing** — [route, models & observe](/docs/reference/cli/route): decision preview, model catalog, OTel state
+- **Providers** — [providers](/docs/reference/cli/providers): catalog and subscription login
+- **The loop** — [policy](/docs/reference/cli/policy): init, check, evolve, lock/unlock, reload
+- **Cloud** — [cloud](/docs/reference/cli/cloud): login, keys, usage, billing, policies, BYOK
+- **Gateways** — [tools, agents & acp](/docs/reference/cli/tools): MCP introspection, agent catalog, ACP sessions
+- **Skills & MCP** — [skills & mcp](/docs/reference/cli/skills): install skills, run the origin MCP server
+- **Harnesses** — [launch, spawn & tui](/docs/reference/cli/harnesses): run agents pointed at the daemon
+- **Misc** — [key, workflow-state & update](/docs/reference/cli/misc): virtual keys, benchmark tooling, self-update
+
+Not the only surfaces: an agent can also drive BitRouter over [MCP](/docs/reference/mcp) — the origin server exposing `complete`, `list_models`, and `status` as tools — or via the shipped `/bitrouter` [Agent Skill](/docs/get-started/onboarding), which teaches a coding agent to install and operate BitRouter on its own.

@@ -1,7 +1,6 @@
 ---
 title: Fusion
 description: Multi-model deliberation — a panel of models answers in parallel, a judge compares their answers, and your model writes the final reply from structured analysis.
-sourceHash: 023a1f0a6746d2c7f985aa44b314fa09d8ec26655957ccc70147968d510a7211
 ---
 
 **Fusion** is a server tool: BitRouter runs it mid-generation instead of handing the call back to your client. A **panel** of models answers your prompt in parallel, a **judge** model compares (not merges) their answers into structured analysis, and the calling model writes the final answer grounded in that analysis. Use it for hard, high-stakes questions where one model's blind spots are worth catching.
@@ -90,4 +89,4 @@ Fusion is enabled and managed on **BitRouter Cloud** — a curated default panel
 
 - [Sub-agent](/docs/features/subagent) — delegate a self-contained task to a single worker model
 - [Advisor](/docs/features/advisor) — consult one stronger model mid-task
-- [Provider selection](/docs/features/provider-selection) — control which provider serves each panel model
+- [Provider selection](/docs/models-and-routing/provider-selection) — control which provider serves each panel model

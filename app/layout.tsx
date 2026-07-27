@@ -1,7 +1,6 @@
 import { IBM_Plex_Sans, IBM_Plex_Mono, Newsreader } from "next/font/google";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import { getLocale } from "next-intl/server";
 import { SOCIAL_LINKS } from "@/components/landing/social-links";
 import "./globals.css";
 
@@ -51,7 +50,7 @@ const siteJsonLd = {
       url: BASE_URL,
       description:
         "An open-source LLM router that sends routine calls to open models and pays frontier prices only for the calls that earn them. Zero harness changes. Open-sourced, Cloud opt-in.",
-      inLanguage: ["en", "zh"],
+      inLanguage: "en",
     },
     {
       "@type": "SoftwareApplication",
@@ -110,10 +109,9 @@ export const viewport: Viewport = {
   themeColor: "#0C0D10",
 };
 
-export default async function RootLayout({ children }: { children: ReactNode }) {
-  const locale = await getLocale();
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"

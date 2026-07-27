@@ -1,0 +1,3008 @@
+{
+  "version": "bitrouter 1.0.0-alpha.26",
+  "capturedAt": "2026-07-26",
+  "binary": "bitrouter",
+  "commands": [
+    {
+      "path": [],
+      "about": "BitRouter: an LLM API router. CLI + TUI + assembly library.",
+      "usage": "bitrouter [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "serve"
+      ],
+      "about": "Load a config, run migrations, and serve HTTP + control socket **in the foreground**",
+      "usage": "bitrouter serve [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml`. When omitted, the binary resolves in this order: `./bitrouter.yaml` → `$BITROUTER_HOME/bitrouter.yaml` → `~/.bitrouter/bitrouter.yaml` → zero-config in-memory defaults (`bitrouter init` is the explicit way to scaffold a file)"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "start"
+      ],
+      "about": "Spawn `bitrouter serve` as a detached background process",
+      "usage": "bitrouter start [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml` (passed through to the child)"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--log <LOG>",
+          "help": "Path to redirect the daemon's stdout/stderr to. Defaults to `bitrouter.log` inside the config file's directory (e.g. `~/.bitrouter/bitrouter.log`) so it lives alongside the socket and pid file rather than in the launcher's CWD"
+        }
+      ]
+    },
+    {
+      "path": [
+        "stop"
+      ],
+      "about": "Send a `stop` command to a running daemon",
+      "usage": "bitrouter stop [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml` (used to locate the control socket). Resolves via the standard chain: `./bitrouter.yaml` → `$BITROUTER_HOME/bitrouter.yaml` → `~/.bitrouter/bitrouter.yaml`"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--socket <SOCKET>",
+          "help": "Explicit control socket path. Overrides the config-derived path"
+        }
+      ]
+    },
+    {
+      "path": [
+        "restart"
+      ],
+      "about": "`stop` then `start` — config path is passed through",
+      "usage": "bitrouter restart [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml`. When omitted, the binary resolves in this order: `./bitrouter.yaml` → `$BITROUTER_HOME/bitrouter.yaml` → `~/.bitrouter/bitrouter.yaml` → zero-config in-memory defaults (`bitrouter init` is the explicit way to scaffold a file)"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--socket <SOCKET>",
+          "help": "Explicit control socket path. Overrides the config-derived path"
+        },
+        {
+          "payload": "--log <LOG>",
+          "help": "Path to redirect the new daemon's stdout/stderr to. Defaults to `bitrouter.log` next to the config file"
+        }
+      ]
+    },
+    {
+      "path": [
+        "reload"
+      ],
+      "about": "Hot-reload the running daemon's config / routing table",
+      "usage": "bitrouter reload [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml` (used to locate the control socket)"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--socket <SOCKET>",
+          "help": "Explicit control socket path. Overrides the config-derived path"
+        }
+      ]
+    },
+    {
+      "path": [
+        "status"
+      ],
+      "about": "Report a running daemon's status (pid, listen address, model count). Prints `running: no` when no daemon is reachable",
+      "usage": "bitrouter status [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml` (used to locate the control socket)"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--socket <SOCKET>",
+          "help": "Explicit control socket path. Overrides the config-derived path"
+        }
+      ]
+    },
+    {
+      "path": [
+        "route"
+      ],
+      "about": "Resolve a model name through the routing table. Uses the running daemon if reachable, otherwise loads the config and resolves locally",
+      "usage": "bitrouter route [OPTIONS] <MODEL>",
+      "args": [
+        {
+          "payload": "<MODEL>",
+          "help": "The model name to resolve"
+        }
+      ],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml` (used as the standalone fallback and to locate the control socket)"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--socket <SOCKET>",
+          "help": "Explicit control socket path. Overrides the config-derived path"
+        }
+      ]
+    },
+    {
+      "path": [
+        "init"
+      ],
+      "about": "Write a starter `bitrouter.yaml` (with `skip_auth: true`)",
+      "usage": "bitrouter init [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to write [default: bitrouter.yaml]"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "config"
+      ],
+      "about": "Configuration tooling (validation against the published schema)",
+      "usage": "bitrouter config [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "config",
+        "validate"
+      ],
+      "about": "Validate a config file: structure, provider `derives` resolution, and upstream-URL (SSRF) safety. Exits non-zero on an invalid config — safe to run in CI. Unset `${VAR}` references are substituted with a placeholder and reported as warnings, so secrets need not be present",
+      "usage": "bitrouter config validate [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml` / `bitrouter.json`. When omitted, the standard resolution chain applies (`./bitrouter.yaml` → `$BITROUTER_HOME` → `~/.bitrouter`)"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "key"
+      ],
+      "about": "Virtual-key management",
+      "usage": "bitrouter key [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "key",
+        "sign"
+      ],
+      "about": "Mint a new `brvk_` virtual key for a user. v1 does not sign a JWT — it creates a DB-backed virtual key and prints the plaintext once",
+      "usage": "bitrouter key sign [OPTIONS] --user <USER>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "-u, --user <USER>",
+          "help": "The owning user id"
+        },
+        {
+          "payload": "-d, --db <DB>",
+          "help": "Database URL — any backend sea-orm supports (`sqlite://…`, `postgres://…`, `mysql://…`) [default: sqlite://./bitrouter.db]"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--policy <POLICY>",
+          "help": "Optional policy id to bind to the key (the `policy_id` column)"
+        }
+      ]
+    },
+    {
+      "path": [
+        "models"
+      ],
+      "about": "List routable models for a config, optionally filtered by provider",
+      "usage": "bitrouter models [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml`. When omitted, the binary resolves in this order: `./bitrouter.yaml` → `$BITROUTER_HOME/bitrouter.yaml` → `~/.bitrouter/bitrouter.yaml` → zero-config in-memory defaults (`bitrouter init` is the explicit way to scaffold a file)"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "-p, --provider <PROVIDER>",
+          "help": "Show only models declared by this provider"
+        }
+      ]
+    },
+    {
+      "path": [
+        "tools"
+      ],
+      "about": "MCP server introspection — list/status/discover against the upstreams declared under `mcp_servers` in `bitrouter.yaml`. v1.0 does not maintain a global tool registry; these are one-shot queries",
+      "usage": "bitrouter tools [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "tools",
+        "list"
+      ],
+      "about": "List tools advertised by every configured MCP server",
+      "usage": "bitrouter tools list [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml`. When omitted, the binary resolves in this order: `./bitrouter.yaml` → `$BITROUTER_HOME/bitrouter.yaml` → `~/.bitrouter/bitrouter.yaml` → zero-config in-memory defaults (`bitrouter init` is the explicit way to scaffold a file)"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "tools",
+        "status"
+      ],
+      "about": "Health-check every configured MCP server with a `tools/list` round-trip",
+      "usage": "bitrouter tools status [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml`. When omitted, the binary resolves in this order: `./bitrouter.yaml` → `$BITROUTER_HOME/bitrouter.yaml` → `~/.bitrouter/bitrouter.yaml` → zero-config in-memory defaults (`bitrouter init` is the explicit way to scaffold a file)"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "tools",
+        "discover"
+      ],
+      "about": "Connect to one MCP server and print a YAML stub suitable for pasting into `mcp_servers:`",
+      "usage": "bitrouter tools discover [OPTIONS] <SERVER>",
+      "args": [
+        {
+          "payload": "<SERVER>",
+          "help": "Server id (must exist under `mcp_servers` in the config)"
+        }
+      ],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml`. When omitted, the binary resolves in this order: `./bitrouter.yaml` → `$BITROUTER_HOME/bitrouter.yaml` → `~/.bitrouter/bitrouter.yaml` → zero-config in-memory defaults (`bitrouter init` is the explicit way to scaffold a file)"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "observe"
+      ],
+      "about": "Observability inspection (OTel exporter state, cardinality usage)",
+      "usage": "bitrouter observe [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "observe",
+        "status"
+      ],
+      "about": "Report the OTel exporter's current state (endpoint, sampler, cardinality usage, in-flight spans). Queries the running daemon over the control socket; reports \"stopped\" + the compile-time `OTEL_ENABLED` flag when no daemon is reachable",
+      "usage": "bitrouter observe status [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml` (used to locate the control socket)"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--socket <SOCKET>",
+          "help": "Explicit control socket path. Overrides the config-derived path"
+        }
+      ]
+    },
+    {
+      "path": [
+        "policy"
+      ],
+      "about": "Policy management",
+      "usage": "bitrouter policy [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "policy",
+        "create"
+      ],
+      "about": "Write a starter access-control policy file to the policy dir",
+      "usage": "bitrouter policy create [OPTIONS] <ID>",
+      "args": [
+        {
+          "payload": "<ID>",
+          "help": "Policy id (becomes the file stem and the `id:` field)"
+        }
+      ],
+      "options": [
+        {
+          "payload": "--dir <DIR>",
+          "help": "Policy directory. Default matches the assembly default [default: ./policies]"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "policy",
+        "init"
+      ],
+      "about": "Create a routing policy lock and bind it to a preset",
+      "usage": "bitrouter policy init [OPTIONS] --preset <PRESET> --economy <ECONOMY> <NAME>",
+      "args": [
+        {
+          "payload": "<NAME>",
+          "help": "Policy name written under `policies:`"
+        }
+      ],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--preset <PRESET>",
+          "help": "Preset users select as `@preset` or `@preset:variant`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--strong <STRONG>",
+          "help": "Strong base model. Inferred from an existing preset when omitted"
+        },
+        {
+          "payload": "--economy <ECONOMY>",
+          "help": "Economy model explored as a replacement"
+        },
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml`"
+        }
+      ]
+    },
+    {
+      "path": [
+        "policy",
+        "check"
+      ],
+      "about": "Parse and cross-validate `bitrouter.yaml` and its policy lock",
+      "usage": "bitrouter policy check [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": ""
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "policy",
+        "status"
+      ],
+      "about": "Show policy path, digest, writeback mode, and preset bindings",
+      "usage": "bitrouter policy status [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": ""
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "policy",
+        "show"
+      ],
+      "about": "Show one named policy after validation",
+      "usage": "bitrouter policy show [OPTIONS] <NAME>",
+      "args": [
+        {
+          "payload": "<NAME>",
+          "help": ""
+        }
+      ],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": ""
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "policy",
+        "reload"
+      ],
+      "about": "Hot-reload the policy lock through the daemon control socket",
+      "usage": "bitrouter policy reload [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": ""
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--socket <SOCKET>",
+          "help": ""
+        }
+      ]
+    },
+    {
+      "path": [
+        "policy",
+        "evolve"
+      ],
+      "about": "Project qualified database evidence into a deterministic policy lock",
+      "usage": "bitrouter policy evolve [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "--apply",
+          "help": "Publish the candidate. Without this flag, print a dry-run report"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": ""
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "policy",
+        "lock"
+      ],
+      "about": "Forbid optimizer writes to `policy-lock.yaml`",
+      "usage": "bitrouter policy lock [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": ""
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "policy",
+        "unlock"
+      ],
+      "about": "Permit `policy evolve --apply` to publish `policy-lock.yaml`",
+      "usage": "bitrouter policy unlock [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": ""
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "providers"
+      ],
+      "about": "Provider management",
+      "usage": "bitrouter providers [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "providers",
+        "list"
+      ],
+      "about": "List every configured provider",
+      "usage": "bitrouter providers list [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml`. When omitted, the binary resolves in this order: `./bitrouter.yaml` → `$BITROUTER_HOME/bitrouter.yaml` → `~/.bitrouter/bitrouter.yaml` → zero-config in-memory defaults (`bitrouter init` is the explicit way to scaffold a file)"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "providers",
+        "login"
+      ],
+      "about": "Log in to an upstream provider — interactive credential setup.\nPer-provider methods are auto-derived from the catalog: `claude-code` adopts the live Claude Code session; `anthropic` accepts an API-key paste; `openai-codex` runs the ChatGPT PKCE flow; `github-copilot` the GitHub device flow; everything else accepts a pasted API key. Logging in to the built-in `bitrouter` provider runs the same cloud sign-in as `bitrouter cloud login`.",
+      "usage": "bitrouter providers login [OPTIONS] <PROVIDER>",
+      "args": [
+        {
+          "payload": "<PROVIDER>",
+          "help": "Provider id (e.g. `claude-code`, `openai-codex`, `bitrouter`)"
+        }
+      ],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "-l, --label <LABEL>",
+          "help": "Account label this credential is stored under (default `default`). Ignored for the `bitrouter` provider (it uses the cloud credential) [default: default]"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--import-existing",
+          "help": "Import an existing vendor CLI session without prompting for a browser sign-in. Currently supported by openai-codex"
+        },
+        {
+          "payload": "--no-browser",
+          "help": "Do not run a browser-based provider OAuth flow"
+        }
+      ]
+    },
+    {
+      "path": [
+        "providers",
+        "logout"
+      ],
+      "about": "Log out of an upstream provider — clears every stored credential for it. For the built-in `bitrouter` provider this is `cloud logout`",
+      "usage": "bitrouter providers logout [OPTIONS] <PROVIDER>",
+      "args": [
+        {
+          "payload": "<PROVIDER>",
+          "help": "Provider id whose stored credentials should be removed"
+        }
+      ],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "agents"
+      ],
+      "about": "ACP agent lifecycle — list the catalog, check configured agents, print install stubs",
+      "usage": "bitrouter agents [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "agents",
+        "list"
+      ],
+      "about": "Show the bundled catalog of well-known agents and which of them are present under `agents:` in the loaded config. With `--remote`, also fetch and list the official ACP agent registry",
+      "usage": "bitrouter agents list [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--remote",
+          "help": "Also fetch the ACP agent registry (cdn.agentclientprotocol.com) and list its agents"
+        },
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml`. When omitted, the binary resolves in this order: `./bitrouter.yaml` → `$BITROUTER_HOME/bitrouter.yaml` → `~/.bitrouter/bitrouter.yaml` → zero-config in-memory defaults (`bitrouter init` is the explicit way to scaffold a file)"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "agents",
+        "check"
+      ],
+      "about": "Spawn each configured agent and verify it answers `initialize`",
+      "usage": "bitrouter agents check [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml`. When omitted, the binary resolves in this order: `./bitrouter.yaml` → `$BITROUTER_HOME/bitrouter.yaml` → `~/.bitrouter/bitrouter.yaml` → zero-config in-memory defaults (`bitrouter init` is the explicit way to scaffold a file)"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "agents",
+        "install"
+      ],
+      "about": "Print a YAML stub for an agent (paste under `agents:` in `bitrouter.yaml`). Resolves from the bundled catalog first, then the ACP registry (`npx`/`uvx` distributions only)",
+      "usage": "bitrouter agents install [OPTIONS] <ID>",
+      "args": [
+        {
+          "payload": "<ID>",
+          "help": "Agent id (see `bitrouter agents list` / `list --remote`)"
+        }
+      ],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "launch"
+      ],
+      "about": "Launch a coding-agent harness (Claude Code or Codex) as an interactive native-TUI child, with its API base URL pointed at the local BitRouter daemon — no agent config files are touched. The human drives the harness's own TUI directly; this is the *main orchestrator* surface (use `bitrouter spawn` for headless ACP sub-agents). Follows `cargo run`'s separator convention: bitrouter options come before `--`, everything after `--` is forwarded to the agent verbatim, e.g. `bitrouter launch -a codex -- --model openai/gpt-5-codex`.\nThe agent authenticates to BitRouter with `BITROUTER_API_KEY` when it is set; otherwise a local placeholder is used (fine under the `skip_auth` default written by `bitrouter init`). A missing agent binary is offered for install via its official native installer.",
+      "usage": "bitrouter launch [OPTIONS] --agent <AGENT> [-- <AGENT_ARGS>...]",
+      "args": [
+        {
+          "payload": "[AGENT_ARGS]...",
+          "help": "Arguments forwarded verbatim to the agent binary. Everything after `--` lands here"
+        }
+      ],
+      "options": [
+        {
+          "payload": "-a, --agent <AGENT>",
+          "help": "Which agent harness to launch Possible values:"
+        },
+        {
+          "payload": "- claude: Anthropic's Claude Code CLI (`claude`)",
+          "help": ""
+        },
+        {
+          "payload": "- codex:",
+          "help": "OpenAI's Codex CLI (`codex`)"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml` (used to derive the daemon base URL). When omitted, the binary resolves in this order: `./bitrouter.yaml` → `$BITROUTER_HOME/bitrouter.yaml` → `~/.bitrouter/bitrouter.yaml` → zero-config in-memory defaults"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--base-url <BASE_URL>",
+          "help": "Override the agent's API base URL instead of deriving it from `server.listen` (e.g. when the daemon listens on a non-default address or a remote BitRouter)"
+        },
+        {
+          "payload": "--no-install",
+          "help": "Never offer to install a missing agent — fail with the install command instead. (Auto-implied when stdin is not a TTY.)"
+        },
+        {
+          "payload": "--no-start",
+          "help": "Never auto-start a local BitRouter daemon when none is running — just warn. (A `--base-url` or non-local target is never auto-started regardless.)"
+        },
+        {
+          "payload": "--check",
+          "help": "Check the agent binary, BitRouter base URL, and route compatibility without launching the agent"
+        }
+      ]
+    },
+    {
+      "path": [
+        "spawn"
+      ],
+      "about": "Spawn an ACP-compatible harness as a headless *sub-agent*, routed through the BitRouter daemon by default. Pick a mode: `-p \"<text>\"` streams one prompt as NDJSON then exits; `--serve` speaks ACP over stdio for a GUI/manager; `--check` preflights the route. Pass `--direct` to bypass daemon routing. (For an interactive native TUI use `bitrouter launch`.)",
+      "usage": "bitrouter spawn [OPTIONS] [AGENT] [-- <AGENT_ARGS>...]",
+      "args": [
+        {
+          "payload": "[AGENT]",
+          "help": "ACP agent id: a bundled-catalog id (`claude-acp`, `codex-acp`, `gemini-cli`, `pi-acp`) or a configured `agents:` entry. A catalog id needs no config entry"
+        },
+        {
+          "payload": "[AGENT_ARGS]...",
+          "help": "Forwarded verbatim to the interactive agent in the deprecated `--agent` path (everything after `--`)"
+        }
+      ],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "-p, --prompt <TEXT>",
+          "help": "Send one prompt, stream NDJSON to stdout, then exit"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--serve",
+          "help": "Serve the session as a vanilla ACP Agent over stdio (GUI/manager)"
+        },
+        {
+          "payload": "--check",
+          "help": "Preflight the harness + route without launching anything"
+        },
+        {
+          "payload": "--direct",
+          "help": "Do NOT route through the daemon — let the harness use its own provider auth. Routing is on by default"
+        },
+        {
+          "payload": "--model <MODEL>",
+          "help": "Pin the harness's model (via its model env var / `-c model=`)"
+        },
+        {
+          "payload": "--base-url <BASE_URL>",
+          "help": "Override the gateway base URL (else derived from `server.listen`)"
+        },
+        {
+          "payload": "--no-start",
+          "help": "Never auto-start a local daemon when none is running — fail fast"
+        },
+        {
+          "payload": "--worktree <WORKTREE>",
+          "help": "Provision (or reuse) a git worktree for the session"
+        },
+        {
+          "payload": "--rm-worktree",
+          "help": "Remove the worktree when the session ends (only one this session created). Off by default — removal discards uncommitted work"
+        },
+        {
+          "payload": "--no-transcript",
+          "help": "Disable the durable session transcript (on by default)"
+        },
+        {
+          "payload": "--turn-timeout <SECS>",
+          "help": "Per-turn deadline in seconds"
+        },
+        {
+          "payload": "--no-wait",
+          "help": "(with `-p`) Return immediately after submitting the prompt"
+        },
+        {
+          "payload": "--warm",
+          "help": "(with `--serve`) Keep the session alive for reattach after the manager disconnects. Unix-only"
+        },
+        {
+          "payload": "--idle-timeout <SECS>",
+          "help": "(with `--serve --warm`) Shut down after this many idle seconds [default: 1800]"
+        },
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml`. Resolves via the standard chain when omitted"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud"
+      ],
+      "about": "Manage your BitRouter Cloud account — sign in/out, API keys, usage, billing, policies, and BYOK. Start with `cloud login`",
+      "usage": "bitrouter cloud [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "whoami"
+      ],
+      "about": "Print the cloud identity stored on this machine alongside the `/v1/*` base URL the CLI will target",
+      "usage": "bitrouter cloud whoami [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "api"
+      ],
+      "about": "Make an authenticated request to a relative BitRouter Cloud API endpoint",
+      "usage": "bitrouter cloud api [OPTIONS] <ENDPOINT>",
+      "args": [
+        {
+          "payload": "<ENDPOINT>",
+          "help": "Relative API endpoint, for example `/v1/models`"
+        }
+      ],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "-X, --method <METHOD>",
+          "help": "HTTP method. Defaults to GET, or POST when fields/input are present"
+        },
+        {
+          "payload": "-H, --header <KEY:VALUE>",
+          "help": "Add an HTTP request header. May be repeated"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "-f, --raw-field <KEY=VALUE>",
+          "help": "Add a string field to the JSON body or query string. May be repeated"
+        },
+        {
+          "payload": "-F, --field <KEY=VALUE>",
+          "help": "Add a typed field to the JSON body or query string. May be repeated"
+        },
+        {
+          "payload": "--input <FILE>",
+          "help": "Read the exact request body from a file, or `-` for stdin"
+        },
+        {
+          "payload": "-i, --include",
+          "help": "Include the response status line and headers in stdout"
+        },
+        {
+          "payload": "--silent",
+          "help": "Suppress the response body"
+        },
+        {
+          "payload": "--verbose",
+          "help": "Print redacted request and response details to stderr"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "login"
+      ],
+      "about": "Sign in to BitRouter Cloud from this terminal.\nPrints a verification URL — open it, approve, and this CLI stores an access token it refreshes automatically. This is the same credential the built-in `bitrouter` provider uses for inference, so `providers login bitrouter` is an alias for this command.",
+      "usage": "bitrouter cloud login [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--oauth-as <URL>",
+          "help": "Authorization server URL. Defaults to <https://api.bitrouter.ai>; override only for a self-hosted deployment (env: BITROUTER_OAUTH_AS)"
+        },
+        {
+          "payload": "--client-id <ID>",
+          "help": "OAuth client id. Defaults to `bitrouter-cli`; override only for a self-hosted deployment (env: BITROUTER_OAUTH_CLIENT_ID)"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--scope <SCOPE>",
+          "help": "Permissions to request, as a space-delimited list. Defaults to a broad \"developer\" set; pass a narrower or wider list to override (env: BITROUTER_OAUTH_SCOPE)"
+        },
+        {
+          "payload": "--api-key <BRK_API_KEY>",
+          "help": "Authenticate with a BitRouter API key instead of OAuth. Intended for CI and other non-interactive environments"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "logout"
+      ],
+      "about": "Sign out: revoke the stored token at the server (best-effort) and delete the local credentials file",
+      "usage": "bitrouter cloud logout [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--oauth-as <URL>",
+          "help": "Override the authorization server URL recorded in the credentials file for the revocation call"
+        },
+        {
+          "payload": "--client-id <ID>",
+          "help": "Override the recorded OAuth client id for the revocation call"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "namespace"
+      ],
+      "about": "Inspect the namespaces you own and the one this CLI is bound to",
+      "usage": "bitrouter cloud namespace [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "namespace",
+        "list"
+      ],
+      "about": "List the namespaces you own. The one this CLI is signed in to is marked `(active)`. Switching namespaces is a re-login: `bitrouter cloud login` and pick a different namespace in the browser",
+      "usage": "bitrouter cloud namespace list [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "namespace",
+        "current"
+      ],
+      "about": "Print the namespace this CLI's credential is bound to. Offline — reads the local credential, no network call",
+      "usage": "bitrouter cloud namespace current [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "keys"
+      ],
+      "about": "Manage `brk_` API keys in your namespace",
+      "usage": "bitrouter cloud keys [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "keys",
+        "list"
+      ],
+      "about": "List API keys on your account",
+      "usage": "bitrouter cloud keys list [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "keys",
+        "mint"
+      ],
+      "about": "Mint a new API key. The plaintext is printed once",
+      "usage": "bitrouter cloud keys mint [OPTIONS] --name <NAME>",
+      "args": [],
+      "options": [
+        {
+          "payload": "--name <NAME>",
+          "help": "Operator-supplied display name"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--scope <SCOPE>",
+          "help": "Wire-format scope tokens (repeat the flag, or pass a single space-delimited list). Must be a subset of your effective scopes"
+        },
+        {
+          "payload": "--expires-at <EXPIRES_AT>",
+          "help": "Optional expiry (RFC 3339, e.g. `2026-12-31T00:00:00Z`)"
+        },
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "keys",
+        "revoke"
+      ],
+      "about": "Revoke a key by id",
+      "usage": "bitrouter cloud keys revoke [OPTIONS] <ID>",
+      "args": [
+        {
+          "payload": "<ID>",
+          "help": "The key id (e.g. `k_…`)"
+        }
+      ],
+      "options": [
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "usage"
+      ],
+      "about": "Read aggregate spend / token counts for your account",
+      "usage": "bitrouter cloud usage [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "--from <FROM>",
+          "help": "Lower bound (RFC 3339). Defaults to `to - 30 days`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--to <TO>",
+          "help": "Upper bound (RFC 3339). Defaults to now"
+        },
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "requests"
+      ],
+      "about": "Page through recent inference requests",
+      "usage": "bitrouter cloud requests [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "--limit <LIMIT>",
+          "help": "Page size (server clamps to `[1, 100]`)"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--offset <OFFSET>",
+          "help": "Offset into the result set"
+        },
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "billing"
+      ],
+      "about": "Credit balance and Stripe checkout",
+      "usage": "bitrouter cloud billing [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "billing",
+        "balance"
+      ],
+      "about": "Show the account's credit balance",
+      "usage": "bitrouter cloud billing balance [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "billing",
+        "checkout"
+      ],
+      "about": "Start a Stripe checkout session for a credit top-up. Requires the `billing:write` scope",
+      "usage": "bitrouter cloud billing checkout [OPTIONS] --amount-cents <AMOUNT_CENTS>",
+      "args": [],
+      "options": [
+        {
+          "payload": "--amount-cents <AMOUNT_CENTS>",
+          "help": "Amount in USD cents"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "policy"
+      ],
+      "about": "Generic CRUD over the typed policy registry",
+      "usage": "bitrouter cloud policy [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "policy",
+        "list"
+      ],
+      "about": "List policies on your account",
+      "usage": "bitrouter cloud policy list [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "--kind <KIND>",
+          "help": "Narrow the list to one kind [possible values: budget, rate-limit, guardrail, preset]"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "policy",
+        "get"
+      ],
+      "about": "Fetch one policy",
+      "usage": "bitrouter cloud policy get [OPTIONS] <ID>",
+      "args": [
+        {
+          "payload": "<ID>",
+          "help": "The resource id"
+        }
+      ],
+      "options": [
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "policy",
+        "create"
+      ],
+      "about": "Create a policy. Spec body is read from `--spec <file|->`",
+      "usage": "bitrouter cloud policy create [OPTIONS] --name <NAME> --kind <KIND> --spec <SPEC>",
+      "args": [],
+      "options": [
+        {
+          "payload": "--name <NAME>",
+          "help": "Operator-supplied display name"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--kind <KIND>",
+          "help": "Kind discriminator — selects which shape `--spec` must take [possible values: budget, rate-limit, guardrail, preset]"
+        },
+        {
+          "payload": "--spec <SPEC>",
+          "help": "Path to a JSON file containing the flat inner spec body, or `-` to read from stdin"
+        },
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "policy",
+        "update"
+      ],
+      "about": "Update a policy's name and / or spec",
+      "usage": "bitrouter cloud policy update [OPTIONS] <ID>",
+      "args": [
+        {
+          "payload": "<ID>",
+          "help": "The policy id"
+        }
+      ],
+      "options": [
+        {
+          "payload": "--name <NAME>",
+          "help": "New name. Omit to leave unchanged"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--spec <SPEC>",
+          "help": "New spec. Path to a JSON file or `-` for stdin. Omit to leave unchanged"
+        },
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "policy",
+        "delete"
+      ],
+      "about": "Delete a policy",
+      "usage": "bitrouter cloud policy delete [OPTIONS] <ID>",
+      "args": [
+        {
+          "payload": "<ID>",
+          "help": "The resource id"
+        }
+      ],
+      "options": [
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "policy",
+        "bind"
+      ],
+      "about": "Attach a policy to a principal",
+      "usage": "bitrouter cloud policy bind [OPTIONS] --principal-type <PRINCIPAL_TYPE> --principal-id <PRINCIPAL_ID> <ID>",
+      "args": [
+        {
+          "payload": "<ID>",
+          "help": "The policy id"
+        }
+      ],
+      "options": [
+        {
+          "payload": "--principal-type <PRINCIPAL_TYPE>",
+          "help": "Principal kind (`namespace`, `api_key`, `oauth_token`, `oauth_client`)"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--principal-id <PRINCIPAL_ID>",
+          "help": "Principal id — interpretation depends on `--principal-type`"
+        },
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "policy",
+        "unbind"
+      ],
+      "about": "Detach one binding from a policy",
+      "usage": "bitrouter cloud policy unbind [OPTIONS] <ID> <BINDING_ID>",
+      "args": [
+        {
+          "payload": "<ID>",
+          "help": "The policy id"
+        },
+        {
+          "payload": "<BINDING_ID>",
+          "help": "The binding id (from `cloud policy bindings <id>`)"
+        }
+      ],
+      "options": [
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "policy",
+        "disable"
+      ],
+      "about": "Park a policy — the engine skips it at request time",
+      "usage": "bitrouter cloud policy disable [OPTIONS] <ID>",
+      "args": [
+        {
+          "payload": "<ID>",
+          "help": "The resource id"
+        }
+      ],
+      "options": [
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "policy",
+        "enable"
+      ],
+      "about": "Re-enable a previously disabled policy",
+      "usage": "bitrouter cloud policy enable [OPTIONS] <ID>",
+      "args": [
+        {
+          "payload": "<ID>",
+          "help": "The resource id"
+        }
+      ],
+      "options": [
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "policy",
+        "bindings"
+      ],
+      "about": "List the bindings of one policy",
+      "usage": "bitrouter cloud policy bindings [OPTIONS] <ID>",
+      "args": [
+        {
+          "payload": "<ID>",
+          "help": "The resource id"
+        }
+      ],
+      "options": [
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "policy",
+        "effective"
+      ],
+      "about": "Preview the effective policy for a principal",
+      "usage": "bitrouter cloud policy effective [OPTIONS] --principal-type <PRINCIPAL_TYPE> --principal-id <PRINCIPAL_ID>",
+      "args": [],
+      "options": [
+        {
+          "payload": "--principal-type <PRINCIPAL_TYPE>",
+          "help": "Principal kind (`namespace`, `api_key`, `oauth_token`, `oauth_client`)"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--principal-id <PRINCIPAL_ID>",
+          "help": "Principal id"
+        },
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "policy",
+        "for-principal"
+      ],
+      "about": "List every policy bound to a principal",
+      "usage": "bitrouter cloud policy for-principal [OPTIONS] <PRINCIPAL_TYPE> <PRINCIPAL_ID>",
+      "args": [
+        {
+          "payload": "<PRINCIPAL_TYPE>",
+          "help": "Principal kind"
+        },
+        {
+          "payload": "<PRINCIPAL_ID>",
+          "help": "Principal id"
+        }
+      ],
+      "options": [
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "budget"
+      ],
+      "about": "Typed wrapper over budget-kind policies",
+      "usage": "bitrouter cloud budget [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "budget",
+        "list"
+      ],
+      "about": "List every budget on the account",
+      "usage": "bitrouter cloud budget list [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "budget",
+        "get"
+      ],
+      "about": "Fetch one budget",
+      "usage": "bitrouter cloud budget get [OPTIONS] <ID>",
+      "args": [
+        {
+          "payload": "<ID>",
+          "help": "The resource id"
+        }
+      ],
+      "options": [
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "budget",
+        "create"
+      ],
+      "about": "Create a budget",
+      "usage": "bitrouter cloud budget create [OPTIONS] --name <NAME> --window <WINDOW> --limit-micro-usd <LIMIT_MICRO_USD>",
+      "args": [],
+      "options": [
+        {
+          "payload": "--name <NAME>",
+          "help": "Display name"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--window <WINDOW>",
+          "help": "Rolling-spend window [possible values: day, month, total]"
+        },
+        {
+          "payload": "--limit-micro-usd <LIMIT_MICRO_USD>",
+          "help": "Spend cap in micro-USD (must be strictly positive)"
+        },
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "budget",
+        "update"
+      ],
+      "about": "Patch a budget's fields",
+      "usage": "bitrouter cloud budget update [OPTIONS] <ID>",
+      "args": [
+        {
+          "payload": "<ID>",
+          "help": "The budget id"
+        }
+      ],
+      "options": [
+        {
+          "payload": "--name <NAME>",
+          "help": "New name"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--window <WINDOW>",
+          "help": "New window [possible values: day, month, total]"
+        },
+        {
+          "payload": "--limit-micro-usd <LIMIT_MICRO_USD>",
+          "help": "New cap (must be strictly positive when supplied)"
+        },
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "budget",
+        "delete"
+      ],
+      "about": "Remove a budget",
+      "usage": "bitrouter cloud budget delete [OPTIONS] <ID>",
+      "args": [
+        {
+          "payload": "<ID>",
+          "help": "The resource id"
+        }
+      ],
+      "options": [
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "preset"
+      ],
+      "about": "Typed wrapper over preset-kind policies",
+      "usage": "bitrouter cloud preset [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "preset",
+        "list"
+      ],
+      "about": "List every preset on the account",
+      "usage": "bitrouter cloud preset list [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "preset",
+        "get"
+      ],
+      "about": "Fetch one preset",
+      "usage": "bitrouter cloud preset get [OPTIONS] <ID>",
+      "args": [
+        {
+          "payload": "<ID>",
+          "help": "The resource id"
+        }
+      ],
+      "options": [
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "preset",
+        "create"
+      ],
+      "about": "Create a preset. Each clause is supplied as a JSON file (or `-` for stdin)",
+      "usage": "bitrouter cloud preset create [OPTIONS] --name <NAME>",
+      "args": [],
+      "options": [
+        {
+          "payload": "--name <NAME>",
+          "help": "Display name"
+        },
+        {
+          "payload": "--guardrail <GUARDRAIL>",
+          "help": "Optional guardrail clause (JSON file or `-`)"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--budget <BUDGET>",
+          "help": "Optional budget clause"
+        },
+        {
+          "payload": "--rate-limit <RATE_LIMIT>",
+          "help": "Optional rate-limit clause"
+        },
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "preset",
+        "update"
+      ],
+      "about": "Patch a preset's clauses. Use `--clear-*` to drop a clause",
+      "usage": "bitrouter cloud preset update [OPTIONS] <ID>",
+      "args": [
+        {
+          "payload": "<ID>",
+          "help": "The preset id"
+        }
+      ],
+      "options": [
+        {
+          "payload": "--name <NAME>",
+          "help": "New name"
+        },
+        {
+          "payload": "--guardrail <GUARDRAIL>",
+          "help": "Replace the guardrail clause (JSON file or `-`)"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--budget <BUDGET>",
+          "help": "Replace the budget clause"
+        },
+        {
+          "payload": "--rate-limit <RATE_LIMIT>",
+          "help": "Replace the rate-limit clause"
+        },
+        {
+          "payload": "--clear-guardrail",
+          "help": "Drop the guardrail clause"
+        },
+        {
+          "payload": "--clear-budget",
+          "help": "Drop the budget clause"
+        },
+        {
+          "payload": "--clear-rate-limit",
+          "help": "Drop the rate-limit clause"
+        },
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "preset",
+        "delete"
+      ],
+      "about": "Remove a preset",
+      "usage": "bitrouter cloud preset delete [OPTIONS] <ID>",
+      "args": [
+        {
+          "payload": "<ID>",
+          "help": "The resource id"
+        }
+      ],
+      "options": [
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "byok"
+      ],
+      "about": "Bring-your-own-key provider keys",
+      "usage": "bitrouter cloud byok [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "byok",
+        "list"
+      ],
+      "about": "List every BYOK row on the account",
+      "usage": "bitrouter cloud byok list [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "byok",
+        "set"
+      ],
+      "about": "Upsert a BYOK row. Ciphertext must be sealed by the caller against the cloud's current X25519 public key",
+      "usage": "bitrouter cloud byok set [OPTIONS] --provider <PROVIDER> --ciphertext-b64 <CIPHERTEXT_B64> --kek-id <KEK_ID> --key-prefix <KEY_PREFIX>",
+      "args": [],
+      "options": [
+        {
+          "payload": "--provider <PROVIDER>",
+          "help": "Upstream provider id (e.g. `anthropic`)"
+        },
+        {
+          "payload": "--ciphertext-b64 <CIPHERTEXT_B64>",
+          "help": "Base64-encoded sealed-box ciphertext"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--kek-id <KEK_ID>",
+          "help": "KEK id used to seal `--ciphertext-b64`. Must match the cloud's current `primary_kek_id`"
+        },
+        {
+          "payload": "--key-prefix <KEY_PREFIX>",
+          "help": "Operator-visible prefix of the underlying plaintext"
+        },
+        {
+          "payload": "--api-base <API_BASE>",
+          "help": "Override API base for the provider"
+        },
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        }
+      ]
+    },
+    {
+      "path": [
+        "cloud",
+        "byok",
+        "delete"
+      ],
+      "about": "Remove a BYOK row by provider id",
+      "usage": "bitrouter cloud byok delete [OPTIONS] <PROVIDER>",
+      "args": [
+        {
+          "payload": "<PROVIDER>",
+          "help": "Provider id (the row's `provider_name`)"
+        }
+      ],
+      "options": [
+        {
+          "payload": "--json",
+          "help": "Print the response as raw JSON instead of the human-readable summary"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "skills"
+      ],
+      "about": "Install and manage Claude Code skills from GitHub, a git URL, or a BitRouter registry",
+      "usage": "bitrouter skills [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "skills",
+        "add"
+      ],
+      "about": "Install a skill from a source (GitHub `owner/repo`, a git URL, or a registry skill name)",
+      "usage": "bitrouter skills add [OPTIONS] <SOURCE>",
+      "args": [
+        {
+          "payload": "<SOURCE>",
+          "help": "Source: `owner/repo`, a full git URL, or a registry skill name"
+        }
+      ],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--skill <NAME>",
+          "help": "When the source exposes several skills, install the one with this frontmatter `name`"
+        },
+        {
+          "payload": "-g, --global",
+          "help": "Install into `~/.claude/skills/` instead of `./.claude/skills/`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "-y, --yes",
+          "help": "Overwrite an existing install of the same skill"
+        },
+        {
+          "payload": "--registry <URL>",
+          "help": "Registry base URL used when `source` is a bare skill name"
+        },
+        {
+          "payload": "-n, --namespace <NSID>",
+          "help": "Namespace id whose registry hub to query (required for registry operations)"
+        }
+      ]
+    },
+    {
+      "path": [
+        "skills",
+        "list"
+      ],
+      "about": "List installed skills",
+      "usage": "bitrouter skills list [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-g, --global",
+          "help": "Operate on the global skills directory (`~/.claude/skills/`)"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "skills",
+        "remove"
+      ],
+      "about": "Remove an installed skill by name",
+      "usage": "bitrouter skills remove [OPTIONS] <NAME>",
+      "args": [
+        {
+          "payload": "<NAME>",
+          "help": "The skill name to remove"
+        }
+      ],
+      "options": [
+        {
+          "payload": "-g, --global",
+          "help": "Remove from the global skills directory"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "skills",
+        "find"
+      ],
+      "about": "Search the configured registry for skills",
+      "usage": "bitrouter skills find [OPTIONS] <QUERY>",
+      "args": [
+        {
+          "payload": "<QUERY>",
+          "help": "Query matched against name, description, and tags"
+        }
+      ],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--registry <URL>",
+          "help": "Registry base URL to search"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "-n, --namespace <NSID>",
+          "help": "Namespace id whose registry hub to query (required for registry operations)"
+        }
+      ]
+    },
+    {
+      "path": [
+        "skills",
+        "init"
+      ],
+      "about": "Scaffold a new `SKILL.md` in the current directory",
+      "usage": "bitrouter skills init [OPTIONS] <NAME>",
+      "args": [
+        {
+          "payload": "<NAME>",
+          "help": "Skill name written into the generated frontmatter"
+        }
+      ],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "-o, --output <OUTPUT>",
+          "help": "Output path for the SKILL.md [default: SKILL.md]"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "skills",
+        "update"
+      ],
+      "about": "Re-install installed skills from the registry to their latest version",
+      "usage": "bitrouter skills update [OPTIONS] [NAME]",
+      "args": [
+        {
+          "payload": "[NAME]",
+          "help": "Update only this skill. When omitted, updates every installed skill found in the registry"
+        }
+      ],
+      "options": [
+        {
+          "payload": "-g, --global",
+          "help": "Update the global skills directory"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--registry <URL>",
+          "help": "Registry base URL to update from"
+        },
+        {
+          "payload": "-n, --namespace <NSID>",
+          "help": "Namespace id whose registry hub to query (required for registry operations)"
+        }
+      ]
+    },
+    {
+      "path": [
+        "mcp"
+      ],
+      "about": "Run or install BitRouter's origin MCP server",
+      "usage": "bitrouter mcp [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "mcp",
+        "serve"
+      ],
+      "about": "Serve the MCP server (stdio by default)",
+      "usage": "bitrouter mcp serve [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--transport <TRANSPORT>",
+          "help": "`stdio` (local daemon) or `http` (cloud) Possible values:"
+        },
+        {
+          "payload": "- stdio: Newline-delimited JSON-RPC over stdio (local clients launch this)",
+          "help": ""
+        },
+        {
+          "payload": "- http:",
+          "help": "Streamable HTTP, mounted at `/mcp-control` [default: stdio]"
+        },
+        {
+          "payload": "--backend <BACKEND>",
+          "help": "`local` or `cloud`. Defaults: stdio→local, http→cloud Possible values:"
+        },
+        {
+          "payload": "- local: The local BYOK daemon at `127.0.0.1:4356`",
+          "help": ""
+        },
+        {
+          "payload": "- cloud: BitRouter Cloud at `api.bitrouter.ai`",
+          "help": ""
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--local-url <LOCAL_URL>",
+          "help": "Local daemon root [default: http://127.0.0.1:4356]"
+        },
+        {
+          "payload": "--cloud-url <CLOUD_URL>",
+          "help": "Cloud root [default: https://api.bitrouter.ai]"
+        },
+        {
+          "payload": "--token <TOKEN>",
+          "help": "Cloud bearer token (else `BITROUTER_TOKEN`)"
+        },
+        {
+          "payload": "--bind <BIND>",
+          "help": "HTTP bind address [default: 127.0.0.1:4357]"
+        }
+      ]
+    },
+    {
+      "path": [
+        "mcp",
+        "install"
+      ],
+      "about": "Write/print the client config block",
+      "usage": "bitrouter mcp install [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "--client <CLIENT>",
+          "help": "`claude` or `cursor` [default: claude] [possible values: claude, cursor]"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--config <CONFIG>",
+          "help": "Config file to merge into; omit to print to stdout"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "workflow-state"
+      ],
+      "about": "Workflow-state trace/replay utilities",
+      "usage": "bitrouter workflow-state [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "workflow-state",
+        "harbor-outcomes"
+      ],
+      "about": "Convert a Harbor run directory into benchmark outcome JSONL",
+      "usage": "bitrouter workflow-state harbor-outcomes [OPTIONS] --harbor-run-dir <HARBOR_RUN_DIR> --output <OUTPUT>",
+      "args": [],
+      "options": [
+        {
+          "payload": "--harbor-run-dir <HARBOR_RUN_DIR>",
+          "help": "Harbor group run directory containing per-trial result.json files"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--output <OUTPUT>",
+          "help": "Output benchmark outcome JSONL path"
+        }
+      ]
+    },
+    {
+      "path": [
+        "workflow-state",
+        "bundle"
+      ],
+      "about": "Build a deterministic benchmark trace bundle",
+      "usage": "bitrouter workflow-state bundle [OPTIONS] --run-label <RUN_LABEL> --traces <TRACES> --cloud-usage <CLOUD_USAGE> --outcomes <OUTCOMES> --output-dir <OUTPUT_DIR>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--run-label <RUN_LABEL>",
+          "help": "Run label stored in `run-artifact.json`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--traces <TRACES>",
+          "help": "Daemon workflow trace JSONL"
+        },
+        {
+          "payload": "--cloud-usage <CLOUD_USAGE>",
+          "help": "BitRouter Cloud usage snapshot JSONL"
+        },
+        {
+          "payload": "--outcomes <OUTCOMES>",
+          "help": "Benchmark outcome JSONL"
+        },
+        {
+          "payload": "--policy-decisions <POLICY_DECISIONS>",
+          "help": "Optional policy routing decision JSONL from BITROUTER_POLICY_DECISION_JSONL"
+        },
+        {
+          "payload": "--output-dir <OUTPUT_DIR>",
+          "help": "Output directory for traces/cloud usage/outcomes/artifacts"
+        }
+      ]
+    },
+    {
+      "path": [
+        "workflow-state",
+        "metering-usage"
+      ],
+      "about": "Export daemon metering rows as usage JSONL for benchmark bundles",
+      "usage": "bitrouter workflow-state metering-usage [OPTIONS] --database-url <DATABASE_URL> --output <OUTPUT>",
+      "args": [],
+      "options": [
+        {
+          "payload": "--database-url <DATABASE_URL>",
+          "help": "Database URL for the daemon metering DB, for example sqlite:///path/bitrouter.db"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--output <OUTPUT>",
+          "help": "Output usage JSONL path"
+        },
+        {
+          "payload": "--impute-price <IMPUTE_PRICES>",
+          "help": "Impute zero/missing charges as provider:model=input_micro_usd,output_micro_usd"
+        },
+        {
+          "payload": "--since <SINCE>",
+          "help": "Inclusive RFC3339 lower bound. Defaults to the current UTC month"
+        },
+        {
+          "payload": "--until <UNTIL>",
+          "help": "Exclusive RFC3339 upper bound. Only used with --since; defaults to now"
+        }
+      ]
+    },
+    {
+      "path": [
+        "workflow-state",
+        "apply-reward-feedback"
+      ],
+      "about": "Apply task rewards to cheap replacement transitions before the next round",
+      "usage": "bitrouter workflow-state apply-reward-feedback [OPTIONS] --database-url <DATABASE_URL> --traces <TRACES> --outcomes <OUTCOMES> --policy-decisions <POLICY_DECISIONS>",
+      "args": [],
+      "options": [
+        {
+          "payload": "--database-url <DATABASE_URL>",
+          "help": "Database URL for the policy daemon DB, for example sqlite:///path/bitrouter.db"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--traces <TRACES>",
+          "help": "Daemon workflow trace JSONL for the just-finished benchmark group"
+        },
+        {
+          "payload": "--outcomes <OUTCOMES>",
+          "help": "Benchmark outcome JSONL for the just-finished benchmark group"
+        },
+        {
+          "payload": "--policy-decisions <POLICY_DECISIONS>",
+          "help": "Policy routing decision JSONL from BITROUTER_POLICY_DECISION_JSONL"
+        }
+      ]
+    },
+    {
+      "path": [
+        "update"
+      ],
+      "about": "Update the installed `bitrouter` binary in place to the latest release. Follows prereleases by default while pre-1.0. For Homebrew / `cargo install` installs it prints the right upgrade command instead",
+      "usage": "bitrouter update [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "--check",
+          "help": "Report whether a newer version exists, then exit without changing anything"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--tag <TAG>",
+          "help": "Update (or downgrade) to a specific release tag, e.g. `1.0.0-alpha.18`. Named `--tag` to avoid clashing with the global `--version` flag"
+        },
+        {
+          "payload": "--stable",
+          "help": "Only consider stable (non-prerelease) releases"
+        },
+        {
+          "payload": "--restart",
+          "help": "After a successful update, restart a running daemon so it serves the new binary"
+        },
+        {
+          "payload": "-y, --yes",
+          "help": "Skip the confirmation prompt"
+        }
+      ]
+    },
+    {
+      "path": [
+        "acp"
+      ],
+      "about": "Per-session ACP substrate — headless agent session management.\n`serve` exposes one agent session as a vanilla ACP Agent over stdio. `prompt` launches a session, sends one prompt, and streams NDJSON output.",
+      "usage": "bitrouter acp [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "acp",
+        "serve"
+      ],
+      "about": "Serve one agent session as a vanilla ACP Agent over **stdio** until the manager disconnects. Intended for GUIs and orchestrating agents that speak ACP directly",
+      "usage": "bitrouter acp serve [OPTIONS] --agent <AGENT>",
+      "args": [],
+      "options": [
+        {
+          "payload": "--agent <AGENT>",
+          "help": "Agent id — must exist under `agents:` in the config"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--worktree <WORKTREE>",
+          "help": "Name of a git worktree to provision inside the repo before launching (created, or reused when it already exists). When omitted the session runs in the current directory"
+        },
+        {
+          "payload": "--rm-worktree",
+          "help": "Remove the worktree when the session ends. Off by default: the worktree holds the agent's work, and removal discards anything uncommitted. Only a worktree created by this session is removed"
+        },
+        {
+          "payload": "--no-transcript",
+          "help": "Disable the durable session transcript (`.bitrouter/sessions/<id>.transcript.ndjson`, on by default)"
+        },
+        {
+          "payload": "--turn-timeout <SECS>",
+          "help": "Per-turn deadline in seconds. On elapse the agent is asked to cancel cooperatively; a turn that still doesn't finish errors"
+        },
+        {
+          "payload": "--warm",
+          "help": "Keep the session alive after the manager disconnects and accept reattach connections on `.bitrouter/sessions/<record_id>.sock` (same stdio JSON-RPC framing over a unix socket; reconnect with `bitrouter acp attach <record>` and rejoin history via `session/load`). Unix-only"
+        },
+        {
+          "payload": "--idle-timeout <SECS>",
+          "help": "Shut a warm session down after this many seconds with no manager attached [default: 1800]"
+        },
+        {
+          "payload": "--direct",
+          "help": "Do NOT route the sub-agent's LLM traffic through the daemon — let the harness use its own provider auth. Routing is on by default"
+        },
+        {
+          "payload": "--base-url <BASE_URL>",
+          "help": "Override the gateway base URL (else derived from `server.listen`)"
+        },
+        {
+          "payload": "--model <MODEL>",
+          "help": "Pin the harness's model (via its model env var / `-c model=`)"
+        },
+        {
+          "payload": "--no-start",
+          "help": "Never auto-start a local daemon when none is running — fail fast"
+        },
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml`. Resolves via the standard chain when omitted: `./bitrouter.yaml` → `$BITROUTER_HOME` → `~/.bitrouter/bitrouter.yaml` → zero-config defaults"
+        }
+      ]
+    },
+    {
+      "path": [
+        "acp",
+        "prompt"
+      ],
+      "about": "Launch a session, send one prompt, and stream NDJSON output to stdout.\nEach streamed agent update is emitted as one JSON object per line with a `type` field (e.g. `message_chunk`, `tool_call`). The final line has `type: result` with a `stop_reason` field.",
+      "usage": "bitrouter acp prompt [OPTIONS] --agent <AGENT> <TEXT>",
+      "args": [
+        {
+          "payload": "<TEXT>",
+          "help": "The prompt text to send"
+        }
+      ],
+      "options": [
+        {
+          "payload": "--agent <AGENT>",
+          "help": "Agent id — must exist under `agents:` in the config"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--worktree <WORKTREE>",
+          "help": "Name of a git worktree to provision inside the repo before launching (created, or reused when it already exists)"
+        },
+        {
+          "payload": "--rm-worktree",
+          "help": "Remove the worktree when the session ends. Off by default: the worktree holds the agent's work, and removal discards anything uncommitted. Only a worktree created by this session is removed"
+        },
+        {
+          "payload": "--no-transcript",
+          "help": "Disable the durable session transcript (`.bitrouter/sessions/<id>.transcript.ndjson`, on by default)"
+        },
+        {
+          "payload": "--turn-timeout <SECS>",
+          "help": "Per-turn deadline in seconds. On elapse the agent is asked to cancel cooperatively; a turn that still doesn't finish errors"
+        },
+        {
+          "payload": "--no-wait",
+          "help": "Return immediately after submitting the prompt (emit `{\"type\":\"submitted\"}`). The session is torn down after ack"
+        },
+        {
+          "payload": "--direct",
+          "help": "Do NOT route the sub-agent's LLM traffic through the daemon — let the harness use its own provider auth. Routing is on by default"
+        },
+        {
+          "payload": "--base-url <BASE_URL>",
+          "help": "Override the gateway base URL (else derived from `server.listen`)"
+        },
+        {
+          "payload": "--model <MODEL>",
+          "help": "Pin the harness's model (via its model env var / `-c model=`)"
+        },
+        {
+          "payload": "--no-start",
+          "help": "Never auto-start a local daemon when none is running — fail fast"
+        },
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml`. Resolves via the standard chain when omitted: `./bitrouter.yaml` → `$BITROUTER_HOME` → `~/.bitrouter/bitrouter.yaml` → zero-config defaults"
+        }
+      ]
+    },
+    {
+      "path": [
+        "acp",
+        "sessions"
+      ],
+      "about": "List the session records under the current repo's `.bitrouter/sessions/`, newest first. A `running` record whose process no longer exists is shown as `dead`",
+      "usage": "bitrouter acp sessions [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "acp",
+        "attach"
+      ],
+      "about": "Reattach to a warm session: bridge this terminal's stdio to the session's unix socket. Speak ACP as usual; `session/load` replays the conversation so far. Unix-only",
+      "usage": "bitrouter acp attach [OPTIONS] <RECORD>",
+      "args": [
+        {
+          "payload": "<RECORD>",
+          "help": "Session record id (or unique prefix) from `bitrouter acp sessions`"
+        }
+      ],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    }
+  ]
+}

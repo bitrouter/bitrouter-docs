@@ -1,9 +1,7 @@
-import { setRequestLocale } from "next-intl/server";
 import { StartupPage } from "@/components/startup/startup-page";
 import type { Metadata } from "next";
 
 export default function Page() {
-  setRequestLocale("en");
   return <StartupPage />;
 }
 

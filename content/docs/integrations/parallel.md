@@ -1,7 +1,6 @@
 ---
 title: Parallel
 description: Use Parallel's web search API as a BitRouter web_search backend — bring a Parallel key and any routed model can search the web.
-sourceHash: 017884a14bd45f94669a4cde794eb6c2ab05620d1dc3a5c87d202039bc5eb874
 ---
 
 [Parallel](https://parallel.ai) is a web search and research API built for AI agents — you give it an objective and queries, and it returns ranked results with excerpts. BitRouter speaks it natively as a backend for the built-in [web search](/docs/features/websearch) tool.

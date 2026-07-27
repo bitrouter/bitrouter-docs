@@ -6,6 +6,12 @@ import { join } from "node:path";
 
 const BASE = process.env.BITROUTER_API_URL ?? "https://api.bitrouter.ai";
 const OUT = join(process.cwd(), ".models-snapshot.json");
+// Open-weight licensing is editorial metadata owned by the registry. `/v1/models`
+// serves it, but older deployments predate that field, so the registry's own
+// published artifact is the backstop — it is the same source the API reads.
+const REGISTRY_MODELS_URL =
+  process.env.BITROUTER_REGISTRY_MODELS_URL ??
+  "https://raw.githubusercontent.com/bitrouter/bitrouter/main/dist/registry/models.json";
 
 // Pick the headline (non-cache) output price. The live catalog keys output
 // pricing under `text` (and may use `audio`/`image`/etc.), so fall back through
@@ -19,7 +25,7 @@ function outputPrice(out) {
   return first ?? null;
 }
 
-function normalize(model) {
+function normalize(model, registryOpenWeights) {
   const p = model.pricing ?? null;
   const inUsd = p?.input_tokens?.no_cache ?? null;
   const outUsd = outputPrice(p?.output_tokens);
@@ -33,16 +39,42 @@ function normalize(model) {
     providers: model.providers?.total_online ?? 0,
     inputUsdPerM: inUsd,
     outputUsdPerM: outUsd,
+    openWeights:
+      typeof model.open_weights === "boolean"
+        ? model.open_weights
+        : (registryOpenWeights.get(model.id) ?? null),
   };
+}
+
+// Licensing by model id, straight from the registry. Failure is non-fatal: the
+// API may already carry `open_weights`, and a snapshot without licensing is
+// better than no snapshot at all.
+async function fetchRegistryOpenWeights() {
+  try {
+    const res = await fetch(REGISTRY_MODELS_URL, { signal: AbortSignal.timeout(20000) });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const body = await res.json();
+    return new Map(
+      (body.data ?? [])
+        .filter((m) => typeof m.open_weights === "boolean")
+        .map((m) => [m.id, m.open_weights]),
+    );
+  } catch (err) {
+    console.warn(`[generate-models] registry licensing fetch failed (${err.message}).`);
+    return new Map();
+  }
 }
 
 async function main() {
   let models;
+  const registryOpenWeights = await fetchRegistryOpenWeights();
   try {
     const res = await fetch(`${BASE}/v1/models`, { signal: AbortSignal.timeout(20000) });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const body = await res.json();
-    models = (body.data ?? []).map(normalize).sort((a, b) => a.id.localeCompare(b.id));
+    models = (body.data ?? [])
+      .map((m) => normalize(m, registryOpenWeights))
+      .sort((a, b) => a.id.localeCompare(b.id));
   } catch (err) {
     console.warn(`[generate-models] fetch failed (${err.message}); keeping committed snapshot.`);
     if (!existsSync(OUT)) {

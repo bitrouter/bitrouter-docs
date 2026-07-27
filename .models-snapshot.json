@@ -1,5 +1,5 @@
 {
-  "count": 50,
+  "count": 49,
   "models": [
     {
       "id": "anthropic/claude-fable-5",
@@ -15,7 +15,8 @@
       "capabilities": [],
       "providers": 1,
       "inputUsdPerM": 10,
-      "outputUsdPerM": 50
+      "outputUsdPerM": 50,
+      "openWeights": false
     },
     {
       "id": "anthropic/claude-haiku-4.5",
@@ -28,34 +29,11 @@
         "text"
       ],
       "maxInputTokens": 200000,
-      "capabilities": [
-        "reasoning",
-        "structured_outputs",
-        "tools"
-      ],
+      "capabilities": [],
       "providers": 1,
       "inputUsdPerM": 1,
-      "outputUsdPerM": 5
-    },
-    {
-      "id": "anthropic/claude-opus-4.5",
-      "name": "Anthropic: Claude Opus 4.5",
-      "inputModalities": [
-        "text",
-        "image"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 200000,
-      "capabilities": [
-        "reasoning",
-        "structured_outputs",
-        "tools"
-      ],
-      "providers": 1,
-      "inputUsdPerM": 5,
-      "outputUsdPerM": 25
+      "outputUsdPerM": 5,
+      "openWeights": false
     },
     {
       "id": "anthropic/claude-opus-4.6",
@@ -75,7 +53,8 @@
       ],
       "providers": 2,
       "inputUsdPerM": 5,
-      "outputUsdPerM": 25
+      "outputUsdPerM": 25,
+      "openWeights": false
     },
     {
       "id": "anthropic/claude-opus-4.7",
@@ -94,8 +73,9 @@
         "tools"
       ],
       "providers": 2,
-      "inputUsdPerM": 5,
-      "outputUsdPerM": 25
+      "inputUsdPerM": 4.5,
+      "outputUsdPerM": 22.5,
+      "openWeights": false
     },
     {
       "id": "anthropic/claude-opus-4.8",
@@ -113,29 +93,10 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 1,
+      "providers": 2,
       "inputUsdPerM": 5,
-      "outputUsdPerM": 25
-    },
-    {
-      "id": "anthropic/claude-sonnet-4.5",
-      "name": "Anthropic: Claude Sonnet 4.5",
-      "inputModalities": [
-        "text",
-        "image"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 200000,
-      "capabilities": [
-        "reasoning",
-        "structured_outputs",
-        "tools"
-      ],
-      "providers": 1,
-      "inputUsdPerM": 3,
-      "outputUsdPerM": 15
+      "outputUsdPerM": 25,
+      "openWeights": false
     },
     {
       "id": "anthropic/claude-sonnet-4.6",
@@ -154,9 +115,32 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 3,
+      "providers": 2,
       "inputUsdPerM": 3,
-      "outputUsdPerM": 15
+      "outputUsdPerM": 15,
+      "openWeights": false
+    },
+    {
+      "id": "anthropic/claude-sonnet-5",
+      "name": "Anthropic: Claude Sonnet 5",
+      "inputModalities": [
+        "text",
+        "image"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1000000,
+      "capabilities": [
+        "image_input",
+        "reasoning",
+        "structured_outputs",
+        "tools"
+      ],
+      "providers": 1,
+      "inputUsdPerM": 2,
+      "outputUsdPerM": 10,
+      "openWeights": false
     },
     {
       "id": "deepseek/deepseek-v3.2",
@@ -173,9 +157,10 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 5,
+      "providers": 6,
       "inputUsdPerM": 0.21,
-      "outputUsdPerM": 0.315
+      "outputUsdPerM": 0.315,
+      "openWeights": true
     },
     {
       "id": "deepseek/deepseek-v4-flash",
@@ -189,12 +174,12 @@
       "maxInputTokens": 262144,
       "capabilities": [
         "reasoning",
-        "structured_outputs",
         "tools"
       ],
-      "providers": 5,
-      "inputUsdPerM": 0.105,
-      "outputUsdPerM": 0.21
+      "providers": 7,
+      "inputUsdPerM": 0.0983,
+      "outputUsdPerM": 0.1966,
+      "openWeights": true
     },
     {
       "id": "deepseek/deepseek-v4-pro",
@@ -211,69 +196,10 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 5,
+      "providers": 8,
       "inputUsdPerM": 1.305,
-      "outputUsdPerM": 2.61
-    },
-    {
-      "id": "google/gemini-2.5-pro-preview",
-      "name": "Google: Gemini 2.5 Pro Preview",
-      "inputModalities": [
-        "text",
-        "image",
-        "audio"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 1048576,
-      "capabilities": [
-        "reasoning",
-        "tools"
-      ],
-      "providers": 1,
-      "inputUsdPerM": 1.25,
-      "outputUsdPerM": 10
-    },
-    {
-      "id": "google/gemini-3-flash-preview",
-      "name": "Google: Gemini 3 Flash Preview",
-      "inputModalities": [
-        "text",
-        "image",
-        "audio"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 1048576,
-      "capabilities": [
-        "reasoning",
-        "tools"
-      ],
-      "providers": 1,
-      "inputUsdPerM": 0.5,
-      "outputUsdPerM": 3
-    },
-    {
-      "id": "google/gemini-3-pro-preview",
-      "name": "Google: Gemini 3 Pro Preview",
-      "inputModalities": [
-        "text",
-        "image",
-        "audio"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 1048576,
-      "capabilities": [
-        "reasoning",
-        "tools"
-      ],
-      "providers": 1,
-      "inputUsdPerM": 2,
-      "outputUsdPerM": 12
+      "outputUsdPerM": 2.61,
+      "openWeights": true
     },
     {
       "id": "google/gemini-3.1-flash-lite-preview",
@@ -286,14 +212,11 @@
         "text"
       ],
       "maxInputTokens": 1000000,
-      "capabilities": [
-        "reasoning",
-        "structured_outputs",
-        "tools"
-      ],
+      "capabilities": [],
       "providers": 1,
       "inputUsdPerM": 0.25,
-      "outputUsdPerM": 1.5
+      "outputUsdPerM": 1.5,
+      "openWeights": false
     },
     {
       "id": "google/gemini-3.1-pro-preview",
@@ -308,12 +231,12 @@
       "maxInputTokens": 2000000,
       "capabilities": [
         "reasoning",
-        "structured_outputs",
         "tools"
       ],
-      "providers": 2,
+      "providers": 1,
       "inputUsdPerM": 2,
-      "outputUsdPerM": 12
+      "outputUsdPerM": 12,
+      "openWeights": false
     },
     {
       "id": "google/gemini-3.5-flash",
@@ -333,7 +256,41 @@
       ],
       "providers": 1,
       "inputUsdPerM": 1.5,
-      "outputUsdPerM": 9
+      "outputUsdPerM": 9,
+      "openWeights": false
+    },
+    {
+      "id": "google/gemma-4-31b",
+      "name": "Google: Gemma 4 31B",
+      "inputModalities": [
+        "text",
+        "image"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 131072,
+      "capabilities": [],
+      "providers": 3,
+      "inputUsdPerM": 0.13,
+      "outputUsdPerM": 0.4,
+      "openWeights": true
+    },
+    {
+      "id": "meituan/longcat-2.0",
+      "name": "LongCat 2.0",
+      "inputModalities": [
+        "text"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1000000,
+      "capabilities": [],
+      "providers": 1,
+      "inputUsdPerM": 0.75,
+      "outputUsdPerM": 2.95,
+      "openWeights": true
     },
     {
       "id": "minimax/minimax-m2.5",
@@ -347,12 +304,12 @@
       "maxInputTokens": 196608,
       "capabilities": [
         "reasoning",
-        "structured_outputs",
         "tools"
       ],
       "providers": 6,
       "inputUsdPerM": 0.225,
-      "outputUsdPerM": 0.9
+      "outputUsdPerM": 0.9,
+      "openWeights": true
     },
     {
       "id": "minimax/minimax-m2.7",
@@ -370,7 +327,8 @@
       ],
       "providers": 3,
       "inputUsdPerM": 0.225,
-      "outputUsdPerM": 0.9
+      "outputUsdPerM": 0.9,
+      "openWeights": true
     },
     {
       "id": "minimax/minimax-m3",
@@ -387,9 +345,10 @@
         "reasoning",
         "tools"
       ],
-      "providers": 2,
-      "inputUsdPerM": 0.45,
-      "outputUsdPerM": 1.8
+      "providers": 4,
+      "inputUsdPerM": 0.3,
+      "outputUsdPerM": 1.2,
+      "openWeights": true
     },
     {
       "id": "moonshotai/kimi-k2.5",
@@ -407,9 +366,10 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 5,
+      "providers": 6,
       "inputUsdPerM": 0.44,
-      "outputUsdPerM": 2
+      "outputUsdPerM": 2,
+      "openWeights": true
     },
     {
       "id": "moonshotai/kimi-k2.6",
@@ -426,9 +386,10 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 8,
+      "providers": 10,
       "inputUsdPerM": 0.7125,
-      "outputUsdPerM": 3
+      "outputUsdPerM": 3,
+      "openWeights": true
     },
     {
       "id": "moonshotai/kimi-k2.7-code",
@@ -446,13 +407,14 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 1,
+      "providers": 5,
       "inputUsdPerM": 0.7125,
-      "outputUsdPerM": 3
+      "outputUsdPerM": 3,
+      "openWeights": true
     },
     {
-      "id": "openai/gpt-5.1",
-      "name": "OpenAI: GPT-5.1",
+      "id": "moonshotai/kimi-k3",
+      "name": "Kimi: K3",
       "inputModalities": [
         "text",
         "image"
@@ -460,111 +422,16 @@
       "outputModalities": [
         "text"
       ],
-      "maxInputTokens": 400000,
+      "maxInputTokens": 1048576,
       "capabilities": [
         "reasoning",
         "structured_outputs",
         "tools"
       ],
       "providers": 1,
-      "inputUsdPerM": 1.25,
-      "outputUsdPerM": 10
-    },
-    {
-      "id": "openai/gpt-5.1-codex",
-      "name": "OpenAI: GPT-5.1 Codex",
-      "inputModalities": [
-        "text",
-        "image"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 400000,
-      "capabilities": [
-        "reasoning",
-        "tools"
-      ],
-      "providers": 1,
-      "inputUsdPerM": 1.25,
-      "outputUsdPerM": 10
-    },
-    {
-      "id": "openai/gpt-5.1-codex-mini",
-      "name": "OpenAI: GPT-5.1 Codex Mini",
-      "inputModalities": [
-        "text",
-        "image"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 400000,
-      "capabilities": [
-        "reasoning",
-        "tools"
-      ],
-      "providers": 1,
-      "inputUsdPerM": 0.25,
-      "outputUsdPerM": 2
-    },
-    {
-      "id": "openai/gpt-5.2",
-      "name": "OpenAI: GPT-5.2",
-      "inputModalities": [
-        "text",
-        "image"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 400000,
-      "capabilities": [
-        "reasoning",
-        "structured_outputs",
-        "tools"
-      ],
-      "providers": 1,
-      "inputUsdPerM": 1.75,
-      "outputUsdPerM": 14
-    },
-    {
-      "id": "openai/gpt-5.2-codex",
-      "name": "OpenAI: GPT-5.2 Codex",
-      "inputModalities": [
-        "text",
-        "image"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 400000,
-      "capabilities": [
-        "reasoning",
-        "tools"
-      ],
-      "providers": 1,
-      "inputUsdPerM": 1.75,
-      "outputUsdPerM": 14
-    },
-    {
-      "id": "openai/gpt-5.3-codex",
-      "name": "OpenAI: GPT-5.3 Codex",
-      "inputModalities": [
-        "text",
-        "image"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 400000,
-      "capabilities": [
-        "reasoning",
-        "tools"
-      ],
-      "providers": 1,
-      "inputUsdPerM": 1.75,
-      "outputUsdPerM": 14
+      "inputUsdPerM": 3,
+      "outputUsdPerM": 15,
+      "openWeights": true
     },
     {
       "id": "openai/gpt-5.4",
@@ -582,9 +449,10 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 3,
+      "providers": 1,
       "inputUsdPerM": 2.5,
-      "outputUsdPerM": 15
+      "outputUsdPerM": 15,
+      "openWeights": false
     },
     {
       "id": "openai/gpt-5.4-mini",
@@ -602,29 +470,10 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 3,
-      "inputUsdPerM": 0.75,
-      "outputUsdPerM": 4.5
-    },
-    {
-      "id": "openai/gpt-5.4-nano",
-      "name": "OpenAI: GPT-5.4 Nano",
-      "inputModalities": [
-        "text",
-        "image"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 400000,
-      "capabilities": [
-        "reasoning",
-        "structured_outputs",
-        "tools"
-      ],
       "providers": 1,
-      "inputUsdPerM": 0.2,
-      "outputUsdPerM": 1.25
+      "inputUsdPerM": 0.75,
+      "outputUsdPerM": 4.5,
+      "openWeights": false
     },
     {
       "id": "openai/gpt-5.5",
@@ -642,58 +491,158 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 3,
+      "providers": 2,
       "inputUsdPerM": 5,
-      "outputUsdPerM": 30
+      "outputUsdPerM": 30,
+      "openWeights": false
     },
     {
-      "id": "openai/gpt-oss-120b",
-      "name": "OpenAI: gpt-oss-120b",
+      "id": "openai/gpt-5.6-luna",
+      "name": "OpenAI: GPT-5.6 Luna",
       "inputModalities": [
-        "text"
+        "text",
+        "image"
       ],
       "outputModalities": [
         "text"
       ],
-      "maxInputTokens": 131072,
+      "maxInputTokens": 400000,
       "capabilities": [
         "reasoning",
         "structured_outputs",
         "tools"
       ],
       "providers": 1,
+      "inputUsdPerM": 1,
+      "outputUsdPerM": 6,
+      "openWeights": false
+    },
+    {
+      "id": "openai/gpt-5.6-sol",
+      "name": "OpenAI: GPT-5.6 Sol",
+      "inputModalities": [
+        "text",
+        "image"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1000000,
+      "capabilities": [
+        "reasoning",
+        "structured_outputs",
+        "tools"
+      ],
+      "providers": 1,
+      "inputUsdPerM": 5,
+      "outputUsdPerM": 30,
+      "openWeights": false
+    },
+    {
+      "id": "openai/gpt-5.6-terra",
+      "name": "OpenAI: GPT-5.6 Terra",
+      "inputModalities": [
+        "text",
+        "image"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1000000,
+      "capabilities": [
+        "reasoning",
+        "structured_outputs",
+        "tools"
+      ],
+      "providers": 1,
+      "inputUsdPerM": 2.5,
+      "outputUsdPerM": 15,
+      "openWeights": false
+    },
+    {
+      "id": "qwen/qwen3.5-122b-a10b",
+      "name": "Qwen: Qwen3.5 122B-A10B",
+      "inputModalities": [
+        "text",
+        "image"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 262144,
+      "capabilities": [],
+      "providers": 2,
+      "inputUsdPerM": 0.26,
+      "outputUsdPerM": 2.08,
+      "openWeights": true
+    },
+    {
+      "id": "qwen/qwen3.5-27b",
+      "name": "Qwen: Qwen3.5 27B",
+      "inputModalities": [
+        "text",
+        "image"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 262144,
+      "capabilities": [],
+      "providers": 2,
       "inputUsdPerM": 0.25,
-      "outputUsdPerM": 0.69
+      "outputUsdPerM": 2,
+      "openWeights": true
+    },
+    {
+      "id": "qwen/qwen3.6-27b",
+      "name": "Qwen: Qwen3.6 27B",
+      "inputModalities": [
+        "text",
+        "image"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 262144,
+      "capabilities": [],
+      "providers": 2,
+      "inputUsdPerM": 0.3,
+      "outputUsdPerM": 3.2,
+      "openWeights": true
+    },
+    {
+      "id": "qwen/qwen3.6-35b-a3b",
+      "name": "Qwen: Qwen3.6 35B-A3B",
+      "inputModalities": [
+        "text",
+        "image"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 262144,
+      "capabilities": [],
+      "providers": 2,
+      "inputUsdPerM": 0.248,
+      "outputUsdPerM": 1.485,
+      "openWeights": true
     },
     {
       "id": "qwen/qwen3.6-flash",
       "name": "Qwen: Qwen3.6 Flash",
       "inputModalities": [
-        "text"
+        "text",
+        "image"
       ],
       "outputModalities": [
         "text"
       ],
       "maxInputTokens": 1000000,
       "capabilities": [],
-      "providers": 1,
+      "providers": 2,
       "inputUsdPerM": 0.1875,
-      "outputUsdPerM": 1.125
-    },
-    {
-      "id": "qwen/qwen3.6-plus",
-      "name": "Qwen: Qwen3.6 Plus",
-      "inputModalities": [
-        "text"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 131072,
-      "capabilities": [],
-      "providers": 4,
-      "inputUsdPerM": 0.375,
-      "outputUsdPerM": 2.25
+      "outputUsdPerM": 1.125,
+      "openWeights": false
     },
     {
       "id": "qwen/qwen3.7-max",
@@ -706,9 +655,10 @@
       ],
       "maxInputTokens": 1000000,
       "capabilities": [],
-      "providers": 3,
+      "providers": 4,
       "inputUsdPerM": 1.875,
-      "outputUsdPerM": 5.625
+      "outputUsdPerM": 5.625,
+      "openWeights": false
     },
     {
       "id": "qwen/qwen3.7-plus",
@@ -722,9 +672,10 @@
       ],
       "maxInputTokens": 1000000,
       "capabilities": [],
-      "providers": 2,
-      "inputUsdPerM": 0.375,
-      "outputUsdPerM": 2.25
+      "providers": 3,
+      "inputUsdPerM": 0.4,
+      "outputUsdPerM": 1.6,
+      "openWeights": false
     },
     {
       "id": "stepfun/step-3.5-flash",
@@ -740,9 +691,10 @@
         "reasoning",
         "tools"
       ],
-      "providers": 2,
+      "providers": 3,
       "inputUsdPerM": 0.072,
-      "outputUsdPerM": 0.216
+      "outputUsdPerM": 0.216,
+      "openWeights": true
     },
     {
       "id": "stepfun/step-3.7-flash",
@@ -758,25 +710,26 @@
       "capabilities": [
         "structured_outputs"
       ],
-      "providers": 2,
+      "providers": 3,
       "inputUsdPerM": 0.15,
-      "outputUsdPerM": 0.8625
+      "outputUsdPerM": 0.8625,
+      "openWeights": true
     },
     {
-      "id": "x-ai/grok-4.1-fast",
-      "name": "xAI: Grok 4.1 Fast",
+      "id": "tencent/hy3",
+      "name": "Hunyuan 3",
       "inputModalities": [
-        "text",
-        "image"
+        "text"
       ],
       "outputModalities": [
         "text"
       ],
-      "maxInputTokens": 131072,
+      "maxInputTokens": 256000,
       "capabilities": [],
-      "providers": 1,
-      "inputUsdPerM": 0.2,
-      "outputUsdPerM": 0.5
+      "providers": 2,
+      "inputUsdPerM": 0.066,
+      "outputUsdPerM": 0.26,
+      "openWeights": true
     },
     {
       "id": "x-ai/grok-4.20",
@@ -790,13 +743,32 @@
       ],
       "maxInputTokens": 131072,
       "capabilities": [
-        "reasoning",
-        "structured_outputs",
         "tools"
       ],
-      "providers": 2,
+      "providers": 1,
       "inputUsdPerM": 1.25,
-      "outputUsdPerM": 2.5
+      "outputUsdPerM": 2.5,
+      "openWeights": false
+    },
+    {
+      "id": "x-ai/grok-4.20-multi-agent",
+      "name": "xAI: Grok 4.20 Multi-Agent",
+      "inputModalities": [
+        "text",
+        "image"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1000000,
+      "capabilities": [
+        "reasoning",
+        "tools"
+      ],
+      "providers": 1,
+      "inputUsdPerM": 1.25,
+      "outputUsdPerM": 2.5,
+      "openWeights": false
     },
     {
       "id": "x-ai/grok-4.3",
@@ -813,65 +785,48 @@
         "reasoning",
         "tools"
       ],
-      "providers": 1,
+      "providers": 2,
       "inputUsdPerM": 1.25,
-      "outputUsdPerM": 2.5
+      "outputUsdPerM": 2.5,
+      "openWeights": false
     },
     {
-      "id": "xiaomi/mimo-v2-flash",
-      "name": "Xiaomi: MiMo V2 Flash",
-      "inputModalities": [
-        "text"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 65536,
-      "capabilities": [
-        "reasoning",
-        "tools"
-      ],
-      "providers": 3,
-      "inputUsdPerM": 0.09,
-      "outputUsdPerM": 0.29
-    },
-    {
-      "id": "xiaomi/mimo-v2-omni",
-      "name": "Xiaomi: MiMo V2 Omni",
+      "id": "x-ai/grok-4.5",
+      "name": "xAI: Grok 4.5",
       "inputModalities": [
         "text",
-        "image",
-        "audio"
+        "image"
       ],
       "outputModalities": [
         "text"
       ],
-      "maxInputTokens": 262144,
+      "maxInputTokens": 500000,
       "capabilities": [
         "reasoning",
         "tools"
       ],
-      "providers": 2,
-      "inputUsdPerM": 0.3,
-      "outputUsdPerM": 1.5
+      "providers": 1,
+      "inputUsdPerM": 2,
+      "outputUsdPerM": 6,
+      "openWeights": false
     },
     {
-      "id": "xiaomi/mimo-v2-pro",
-      "name": "Xiaomi: MiMo V2 Pro",
+      "id": "x-ai/grok-build-0.1",
+      "name": "xAI: Grok Build 0.1",
       "inputModalities": [
         "text"
       ],
       "outputModalities": [
         "text"
       ],
-      "maxInputTokens": 1048576,
+      "maxInputTokens": 256000,
       "capabilities": [
-        "reasoning",
         "tools"
       ],
-      "providers": 2,
-      "inputUsdPerM": 0.75,
-      "outputUsdPerM": 2.25
+      "providers": 1,
+      "inputUsdPerM": 1,
+      "outputUsdPerM": 2,
+      "openWeights": false
     },
     {
       "id": "xiaomi/mimo-v2.5",
@@ -887,9 +842,10 @@
         "reasoning",
         "tools"
       ],
-      "providers": 3,
+      "providers": 2,
       "inputUsdPerM": 0.3,
-      "outputUsdPerM": 1.5
+      "outputUsdPerM": 1.5,
+      "openWeights": true
     },
     {
       "id": "xiaomi/mimo-v2.5-pro",
@@ -905,9 +861,26 @@
         "reasoning",
         "tools"
       ],
-      "providers": 3,
+      "providers": 2,
       "inputUsdPerM": 0.75,
-      "outputUsdPerM": 2.25
+      "outputUsdPerM": 2.25,
+      "openWeights": true
+    },
+    {
+      "id": "z-ai/glm-4.7",
+      "name": "Zhipu: GLM-4.7",
+      "inputModalities": [
+        "text"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 200000,
+      "capabilities": [],
+      "providers": 2,
+      "inputUsdPerM": 0.6,
+      "outputUsdPerM": 2.2,
+      "openWeights": true
     },
     {
       "id": "z-ai/glm-5",
@@ -924,9 +897,10 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 6,
-      "inputUsdPerM": 0.75,
-      "outputUsdPerM": 2.4
+      "providers": 7,
+      "inputUsdPerM": 0.6,
+      "outputUsdPerM": 1.92,
+      "openWeights": true
     },
     {
       "id": "z-ai/glm-5.1",
@@ -940,12 +914,31 @@
       "maxInputTokens": 128000,
       "capabilities": [
         "reasoning",
-        "structured_outputs",
         "tools"
       ],
-      "providers": 7,
-      "inputUsdPerM": 1.05,
-      "outputUsdPerM": 3.3
+      "providers": 8,
+      "inputUsdPerM": 0.98,
+      "outputUsdPerM": 3.08,
+      "openWeights": true
+    },
+    {
+      "id": "z-ai/glm-5.2",
+      "name": "Zhipu: GLM-5.2",
+      "inputModalities": [
+        "text"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1000000,
+      "capabilities": [
+        "reasoning",
+        "tools"
+      ],
+      "providers": 8,
+      "inputUsdPerM": 0.97,
+      "outputUsdPerM": 3.07,
+      "openWeights": true
     }
   ]
 }

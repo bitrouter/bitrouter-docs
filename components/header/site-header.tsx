@@ -30,7 +30,7 @@ export interface SiteHeaderProps {
   config: HeaderConfig;
   /** Null/undefined => logged out. Passed in by each app. */
   session: HeaderSession | null | undefined;
-  /** Current pathname (locale-stripped), for active-link highlighting. */
+  /** Current pathname, for active-link highlighting. */
   pathname?: string;
   onSignOut?: () => void;
   /** Show "Sign out" in the account dropdown / mobile menu. */
@@ -104,7 +104,7 @@ function initials(session: HeaderSession): string {
 
 function isActive(pathname: string | undefined, localPath: string | undefined): boolean {
   if (!pathname || !localPath) return false;
-  const p = pathname.replace(/^\/(en|zh)(?=\/|$)/, "") || "/";
+  const p = pathname || "/";
   return localPath === "/" ? p === "/" : p.startsWith(localPath);
 }
 

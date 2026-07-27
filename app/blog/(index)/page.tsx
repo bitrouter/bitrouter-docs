@@ -1,6 +1,5 @@
 import "@/components/landing/zed/zed.css";
 import { blogSource } from "@/lib/source";
-import { setRequestLocale } from "next-intl/server";
 import Link from "next/link";
 import { Kicker } from "@/components/landing/zed/primitives";
 import { AUTHORS, blogDate, blogSortKey } from "@/components/landing/zed/blog-meta";
@@ -8,9 +7,7 @@ import type { Metadata } from "next";
 import type { BlogPage } from "@/lib/source";
 
 export default async function BlogIndexPage() {
-  setRequestLocale("en");
-
-  const pages = [...blogSource.getPages("en")].sort(
+  const pages = [...blogSource.getPages()].sort(
     (a, b) => blogSortKey(b as BlogPage) - blogSortKey(a as BlogPage),
   );
 

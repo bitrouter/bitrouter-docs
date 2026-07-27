@@ -1,7 +1,6 @@
 ---
 title: Namespaces
 description: The isolation boundary that scopes API keys, policies, and usage to a single deployment — available on any self-hosted or local BitRouter node.
-sourceHash: 436844b248424a053c39d477bf1631418483d83927b7d2b452df8ec7b67ba353
 ---
 
 A **namespace** is BitRouter's isolation primitive. API keys, policies, and usage data are all scoped to a single namespace. On a self-hosted or local node you can run multiple namespaces to separate projects, environments, or agent deployments from one another.
@@ -41,7 +40,7 @@ ns_01jabc…  production
 ns_01jdef…  staging
 ```
 
-See the [CLI reference](/docs/concepts/cli) for the full `bitrouter cloud` surface.
+See the [CLI reference](/docs/reference/cli) for the full `bitrouter cloud` surface.
 
 ## Managing keys inside a namespace
 
@@ -67,7 +66,7 @@ bitrouter cloud policy bind <policy-id> --principal-type api_key --principal-id 
 bitrouter cloud budget create --name daily-cap --window day --limit-micro-usd 5000000
 ```
 
-See [Guardrails](/docs/features/guardrails) and [Presets](/docs/features/presets) for details on authoring policies.
+See [Guardrails](/docs/features/guardrails) and [Presets](/docs/models-and-routing/presets) for details on authoring policies.
 
 ## Usage reporting
 

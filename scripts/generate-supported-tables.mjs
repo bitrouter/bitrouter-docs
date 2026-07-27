@@ -1,4 +1,4 @@
-// Regenerates the catalog tables in the four `content/docs/get-started/supported-*`
+// Regenerates the catalog tables in the two `content/docs/overview/supported-*`
 // pages from the committed snapshots. Replaces the Rust `dist-helper registry docs`
 // generator, which lived in bitrouter/bitrouter and was deleted in #742 when the
 // docs moved to this repo — leaving these tables frozen and unchecked.
@@ -88,23 +88,13 @@ function providerRows() {
 
 const TARGETS = [
   {
-    file: "content/docs/get-started/supported-models.md",
+    file: "content/docs/overview/supported-models.md",
     header: ["Model", "Name", "Context", "Modalities", "Open weights", "Input $/M", "Output $/M"],
     rows: modelRows,
   },
   {
-    file: "content/docs/get-started/supported-models.zh.md",
-    header: ["模型", "名称", "上下文", "模态", "开源权重", "输入 $/M", "输出 $/M"],
-    rows: modelRows,
-  },
-  {
-    file: "content/docs/get-started/supported-providers.md",
+    file: "content/docs/overview/supported-providers.md",
     header: ["Provider", "Name", "HQ", "Protocols", "Billing", "Models"],
-    rows: providerRows,
-  },
-  {
-    file: "content/docs/get-started/supported-providers.zh.md",
-    header: ["供应商", "名称", "总部", "协议", "计费", "模型数"],
     rows: providerRows,
   },
 ];

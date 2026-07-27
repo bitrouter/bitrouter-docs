@@ -1,7 +1,6 @@
 ---
 title: Self-host BitRouter
 description: A production walkthrough for running self-hosted BitRouter — config file, keys, daemon lifecycle, metrics, and hardening.
-sourceHash: 3cc4478f242ff49d815f4297c9373e77ca43221cfe1850a5eade74023977f807
 ---
 
 # Self-host BitRouter
@@ -9,9 +8,9 @@ sourceHash: 3cc4478f242ff49d815f4297c9373e77ca43221cfe1850a5eade74023977f807
 This is the **production** path for running BitRouter on your own infrastructure:
 a committed config file, real provider keys, the router running as a managed
 daemon, metrics export, and basic hardening. If you just want it running in 60
-seconds, start with [Configuration](/docs/get-started/configuration) — this guide
+seconds, start with [Configuration](/docs/get-started/onboarding) — this guide
 picks up where that leaves off. Deciding between self-host and the hosted product?
-See [Self-host or Cloud?](/docs/get-started/faqs#self-host-or-cloud).
+See [Self-host or Cloud?](/docs/get-started/onboarding#self-host-or-cloud).
 
 The router listens on `127.0.0.1:4356` by default — loopback only, until you
 explicitly choose otherwise.
@@ -136,7 +135,7 @@ router on `0.0.0.0` without an auth layer.
 ## 3. Run as a daemon
 
 For production you want the router running detached and supervised. The daemon
-lifecycle commands (verified against the [CLI reference](/docs/concepts/cli)):
+lifecycle commands (verified against the [CLI reference](/docs/reference/cli)):
 
 ```bash
 bitrouter start        # spawn `serve` as a detached background daemon
@@ -209,8 +208,8 @@ per-request attribution, and per-backend export configs.
 ## Next steps
 
 <Cards>
-  <Card title="Configuration" href="/docs/get-started/configuration" description="The 60-second local install, if you skipped it." />
-  <Card title="Self-host vs Cloud" href="/docs/get-started/faqs#self-host-or-cloud" description="Pick the deployment model that fits." />
+  <Card title="Configuration" href="/docs/get-started/onboarding" description="The 60-second local install, if you skipped it." />
+  <Card title="Self-host vs Cloud" href="/docs/get-started/onboarding#self-host-or-cloud" description="Pick the deployment model that fits." />
   <Card title="OpenTelemetry" href="/docs/features/opentelemetry" description="OTLP trace + metric export and per-request attribution." />
   <Card title="Guardrails" href="/docs/features/guardrails" description="Content firewall for requests and responses." />
 </Cards>

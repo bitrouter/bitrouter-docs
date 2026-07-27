@@ -1,7 +1,6 @@
 ---
 title: Web fetch
 description: A built-in web_fetch server tool — give any model routed through BitRouter a BYOK URL-content fetcher, served by an extraction backend you bring keys for.
-sourceHash: e5f001309a56d30f97aa94e382a53212af27ca3748097c078dca1380f1e0db17
 ---
 
 `web_fetch` is a built-in [server tool](/docs/features/server-tools): BitRouter runs the fetch itself, inside the tool-calling loop, and feeds the extracted page back to the model. So **any model routed through BitRouter gains a URL reader** — hand it a link and it gets clean, normalized page content — and the extraction engine behind it is one you bring a key for.

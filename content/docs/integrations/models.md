@@ -1,10 +1,9 @@
 ---
 title: Overview
 description: Bring any model source under BitRouter — a Claude or Codex subscription, an OpenRouter key, or a model you serve yourself.
-sourceHash: 775d9ea2c7987a8d85a14a5ec030732f81ba5ef56e0d4d9fa2fe0b68ff0ace42
 ---
 
-A **model source** is wherever your tokens actually come from. BitRouter puts every source behind one endpoint and one [registry](/docs/concepts/models), so an agent addresses models by their `provider/model` id and never sees the difference between a subscription, an aggregator, and a GPU in your closet.
+A **model source** is wherever your tokens actually come from. BitRouter puts every source behind one endpoint and one [registry](/docs/models-and-routing/models), so an agent addresses models by their `provider/model` id and never sees the difference between a subscription, an aggregator, and a GPU in your closet.
 
 There are three shapes of source, by how you authenticate:
 
@@ -77,7 +76,7 @@ curl http://localhost:4356/v1/chat/completions \
 The bare model name also works — BitRouter auto-cascades it to whichever active source declares it. The provider-qualified form (`openrouter:openai/gpt-4o`) pins the request to that exact source.
 
 <Callout type="info">
-**Mix sources freely.** Declare a [virtual model](/docs/features/model-fallback) whose endpoints list a local source first and a hosted one second: requests run on your own hardware for free and fail over to the hosted model on error or overload — one model name, automatic failover.
+**Mix sources freely.** Declare a [virtual model](/docs/models-and-routing/model-fallback) whose endpoints list a local source first and a hosted one second: requests run on your own hardware for free and fail over to the hosted model on error or overload — one model name, automatic failover.
 </Callout>
 
-For the concepts behind this — provider selection, fallback, and registry detection — see [Models](/docs/concepts/models). To serve models yourself, see the local-server integrations: [Ollama](/docs/integrations/ollama) and [vLLM](/docs/integrations/vllm).
+For the concepts behind this — provider selection, fallback, and registry detection — see [Models](/docs/models-and-routing/models). To serve models yourself, see the local-server integrations: [Ollama](/docs/integrations/ollama) and [vLLM](/docs/integrations/vllm).

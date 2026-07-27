@@ -1,0 +1,15 @@
+{
+  "title": "Models & Routing",
+  "icon": "Route",
+  "defaultOpen": false,
+  "pages": [
+    "models",
+    "provider-selection",
+    "model-fallback",
+    "model-variants",
+    "presets",
+    "structured-outputs",
+    "byok",
+    "policy"
+  ]
+}

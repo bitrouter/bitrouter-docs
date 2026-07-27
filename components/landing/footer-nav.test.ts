@@ -34,8 +34,8 @@ describe("buildFooterColumns", () => {
   it("CLI and MCP point at the concepts interface docs, Agent Skills at ai-resources", () => {
     const dev = buildFooterColumns().find((c) => c.title === "Developers")!;
     const byLabel = Object.fromEntries(dev.links.map((l) => [l.label, l.href]));
-    expect(byLabel["CLI"]).toBe("/docs/concepts/cli");
-    expect(byLabel["MCP"]).toBe("/docs/concepts/mcp");
+    expect(byLabel["CLI"]).toBe("/docs/reference/cli");
+    expect(byLabel["MCP"]).toBe("/docs/reference/mcp");
     expect(byLabel["Agent Skills"]).toBe("/docs/ai-resources/skills");
   });
   it("Product lists Enterprise and Startup, not Providers", () => {
@@ -50,7 +50,7 @@ describe("buildFooterColumns", () => {
     expect(res.links.map((l) => l.label)).toEqual([
       "Blog", "Changelog", "Compare", "Status",
     ]);
-    expect(res.links.find((l) => l.label === "Compare")!.href).toBe("/compare");
+    expect(res.links.find((l) => l.label === "Compare")!.href).toBe("/docs/overview/bitrouter-vs-openrouter");
   });
   it("Status lives in Resources, not Product", () => {
     const cols = buildFooterColumns();

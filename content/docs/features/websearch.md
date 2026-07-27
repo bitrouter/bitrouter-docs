@@ -1,7 +1,6 @@
 ---
 title: Web search
 description: A built-in web_search server tool — give any model routed through BitRouter a web search, served by a search backend you bring keys for.
-sourceHash: 08f1d4d084a942367630cc5e478ee7731095f7e79683137bc78ce330e1448cc8
 ---
 
 `web_search` is a built-in [server tool](/docs/features/server-tools): BitRouter runs the search itself, inside the tool-calling loop, and feeds the results back to the model. So **any model routed through BitRouter gains a web search** — even one with no native search of its own — and the engine behind it is one you bring a key for.

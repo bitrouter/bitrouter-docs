@@ -40,16 +40,10 @@ export async function POST(req: Request) {
           "Search the BitRouter documentation. Returns relevant sections, each with its page title and URL.",
         inputSchema: z.object({
           query: z.string().describe("The search query"),
-          locale: z
-            .enum(["en", "zh"])
-            .optional()
-            .describe("Docs locale to search; defaults to en"),
         }),
-        async execute({ query, locale }) {
+        async execute({ query }) {
           searchCalls++;
-          const results = await searchServer.search(query, {
-            locale: locale ?? "en",
-          });
+          const results = await searchServer.search(query);
           return results.slice(0, 8).map((r) => ({
             url: r.url,
             title: r.breadcrumbs?.length ? r.breadcrumbs.join(" › ") : r.content,

@@ -26,29 +26,15 @@ function getGitLastModified(filePath: string): Date {
 type Entry = MetadataRoute.Sitemap[number];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // ── Docs (EN + ZH), git-dated per source file ──
-  const docPages = source.getPages().flatMap((page) => {
+  // ── Docs, git-dated per source file ──
+  const docPages = source.getPages().map((page) => {
     const mdxPath = `content/docs/${page.slugs.join("/")}.mdx`;
-    const entries: Entry[] = [
-      {
-        url: `${BASE_URL}${page.url}`,
-        lastModified: getGitLastModified(mdxPath),
-        changeFrequency: "weekly",
-        priority: 0.7,
-      },
-    ];
-    const zhPage = source.getPage(page.slugs, "zh");
-    if (zhPage) {
-      entries.push({
-        url: `${BASE_URL}${zhPage.url}`,
-        lastModified: getGitLastModified(
-          `content/docs/${page.slugs.join("/")}.zh.mdx`,
-        ),
-        changeFrequency: "weekly",
-        priority: 0.5,
-      });
-    }
-    return entries;
+    return {
+      url: `${BASE_URL}${page.url}`,
+      lastModified: getGitLastModified(mdxPath),
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    };
   });
 
   // ── Programmatic model pages (data fetched at build) ──
@@ -60,7 +46,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // ── Blog posts (English-only; auto-populates as posts land) ──
-  const blogPages: Entry[] = blogSource.getPages("en").map((page) => ({
+  const blogPages: Entry[] = blogSource.getPages().map((page) => ({
     url: `${BASE_URL}${page.url}`,
     lastModified: page.data.lastModified
       ? new Date(page.data.lastModified)
@@ -70,7 +56,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // ── Changelog posts ──
-  const changelogPages: Entry[] = getChangelogItems("en").map((item) => ({
+  const changelogPages: Entry[] = getChangelogItems().map((item) => ({
     url: `${BASE_URL}${item.url}`,
     lastModified: item.date ? new Date(item.date) : undefined,
     changeFrequency: "monthly",
@@ -85,7 +71,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     terms: "/terms-of-service",
     subprocessors: "/subprocessors",
   };
-  const legalPages: Entry[] = legalSource.getPages("en").map((page) => {
+  const legalPages: Entry[] = legalSource.getPages().map((page) => {
     const slug = page.slugs[page.slugs.length - 1] ?? "";
     return {
       url: `${BASE_URL}${LEGAL_ROUTES[slug] ?? page.url}`,
@@ -103,7 +89,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       { url: BASE_URL, file: "app/(home)/page.tsx", priority: 1.0, changeFrequency: "weekly" },
       { url: `${BASE_URL}/models`, file: "app/(home)/models/page.tsx", priority: 0.9, changeFrequency: "weekly" },
       { url: `${BASE_URL}/pricing`, file: "app/(home)/pricing/page.tsx", priority: 0.8, changeFrequency: "monthly" },
-      { url: `${BASE_URL}/compare`, file: "app/(home)/compare/(index)/page.tsx", priority: 0.9, changeFrequency: "monthly" },
       { url: `${BASE_URL}/enterprise`, file: "app/(home)/enterprise/page.tsx", priority: 0.6, changeFrequency: "monthly" },
       { url: `${BASE_URL}/startup`, file: "app/(home)/startup/page.tsx", priority: 0.6, changeFrequency: "monthly" },
       { url: `${BASE_URL}/claude-code`, file: "app/(home)/claude-code/page.tsx", priority: 0.6, changeFrequency: "monthly" },
@@ -123,17 +108,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority,
   }));
 
-  // ── Chinese landing (site pages are EN-only except this entry point) ──
-  const zhLanding: Entry = {
-    url: `${BASE_URL}/zh`,
-    lastModified: getGitLastModified("app/(home)/page.tsx"),
-    changeFrequency: "monthly",
-    priority: 0.5,
-  };
-
   return [
     ...staticPages,
-    zhLanding,
     ...modelPages,
     ...blogPages,
     ...changelogPages,

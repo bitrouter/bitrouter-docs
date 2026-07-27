@@ -10,7 +10,6 @@ export function baseOptions(): BaseLayoutProps {
     nav: {
       component: <WebHeader />,
     },
-    i18n: false,
     links: [],
   };
 }
@@ -24,7 +23,6 @@ export function docsOptions(): BaseLayoutProps {
     nav: {
       component: <WebHeader />,
     },
-    i18n: false,
     links: [],
   };
 }

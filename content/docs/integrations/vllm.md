@@ -1,7 +1,6 @@
 ---
 title: vLLM
 description: Register a local vLLM server as a BitRouter provider — high-throughput GPU serving behind an OpenAI-compatible API.
-sourceHash: 0df180b6a21a047cbc136a0560b2a46035de88ae4222a18eb00b99109eaa0048
 ---
 
 [vLLM](https://docs.vllm.ai) is a high-throughput inference engine for serving models on your own GPUs. Its `vllm serve` command exposes an OpenAI-compatible API at `http://localhost:8000/v1`, which BitRouter fronts as one provider block.
@@ -49,4 +48,4 @@ Then [start BitRouter and send a request](/docs/integrations/models#start-bitrou
 ## Learn more
 
 - [vLLM — OpenAI-compatible server](https://docs.vllm.ai/en/stable/serving/openai_compatible_server/)
-- [Model fallback](/docs/features/model-fallback) · [Provider selection](/docs/features/provider-selection)
+- [Model fallback](/docs/models-and-routing/model-fallback) · [Provider selection](/docs/models-and-routing/provider-selection)

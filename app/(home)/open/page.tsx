@@ -1,4 +1,3 @@
-import { setRequestLocale } from "next-intl/server";
 import {
   Star,
   ArrowUpRight,
@@ -156,8 +155,6 @@ function SectionHeading({ label, index }: { label: string; index: number }) {
 }
 
 export default function OpenPage() {
-  setRequestLocale("en");
-
   return (
     <div className="zed-bg">
       <section style={{ position: "relative" }}>

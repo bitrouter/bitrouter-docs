@@ -1,7 +1,6 @@
 ---
 title: Migrate from LiteLLM
 description: Move a LiteLLM SDK or Proxy setup to BitRouter — local binary, hosted cloud, or both.
-sourceHash: 580e14f8ed39a712ddd5b950cc84b7075b399a533e611c6f5fc6a292399d1118
 ---
 
 # Migrating from LiteLLM to BitRouter
@@ -24,7 +23,7 @@ LiteLLM is a Python SDK and self-hosted proxy for unifying access to 100+ LLM pr
 
 ### 1. Cloud and local share the same surface
 
-With LiteLLM, the proxy is something you operate. With BitRouter, **the hosted cloud and local binary expose the same OpenAI-compatible endpoint** — you can start local during development, then point at `api.bitrouter.ai` for production (or vice versa) without changing client code. The CLI, the wizard, and Agent Skills all work in either mode; toggle with one keypress in the setup TUI. See the [Quick Start](/docs/get-started/configuration) for both flows.
+With LiteLLM, the proxy is something you operate. With BitRouter, **the hosted cloud and local binary expose the same OpenAI-compatible endpoint** — you can start local during development, then point at `api.bitrouter.ai` for production (or vice versa) without changing client code. The CLI, the wizard, and Agent Skills all work in either mode; toggle with one keypress in the setup TUI. See the [Quick Start](/docs/get-started/onboarding) for both flows.
 
 This matters when your agent should *pay per request* without you provisioning keys for it — Cloud mode supports [x402 / MPP autonomous payments](/docs/features/payment), which LiteLLM has no equivalent for.
 
@@ -32,12 +31,12 @@ This matters when your agent should *pay per request* without you provisioning k
 
 LiteLLM has shipped MCP, A2A, Skills, and a CLI alongside its horizontal LLM gateway — virtual keys, team budgets, spend dashboards, admin UI all included. BitRouter inverts that: agent primitives *are* the product, the team-admin stack is intentionally minimal. What you get on the BitRouter surface:
 
-- [MCP gateway](/docs/concepts/tools) — proxy MCP servers so agents discover tools across hosts.
-- [ACP gateway](/docs/concepts/agents) — first-class support for the Agent Client Protocol used by Claude Code, Codex, OpenCode, and others.
+- [MCP gateway](/docs/features/tools) — proxy MCP servers so agents discover tools across hosts.
+- [ACP gateway](/docs/features/agents) — first-class support for the Agent Client Protocol used by Claude Code, Codex, OpenCode, and others.
 - [Guardrails](/docs/features/guardrails) — regex rules on the proxy hop that redact or block matching content inline.
 - [Cloud Tracing](/docs/features/opentelemetry#cloud-activity-hosted) — built-in spend and request tracing, no external collector required.
 - Agent Skills gateway (coming soon) — install and route capabilities by skill, not by raw model name.
-- [Headless CLI](/docs/concepts/cli) — TUI wizard plus scriptable commands for setup and ops.
+- [Headless CLI](/docs/reference/cli) — TUI wizard plus scriptable commands for setup and ops.
 - [Agentic auth & payment](/docs/features/payment) — x402 / MPP so an agent can pay per request without you provisioning a key for it. LiteLLM has no equivalent.
 
 If you depend on LiteLLM's team-admin UI, virtual keys, and per-user budgets, LiteLLM is still the better fit. If you're building agents — especially agents that should transact autonomously — BitRouter is.
@@ -64,7 +63,7 @@ response = completion(
 ```python
 import openai
 
-# Local: `bitrouter` (BYOK via env vars) — see /docs/get-started/configuration
+# Local: `bitrouter` (BYOK via env vars) — see /docs/get-started/onboarding
 # Cloud: base_url="https://api.bitrouter.ai/v1", api_key=$BITROUTER_API_KEY
 client = openai.OpenAI(
     base_url="http://127.0.0.1:4356/v1",
@@ -79,7 +78,7 @@ response = client.chat.completions.create(
 </Tab>
 </Tabs>
 
-Fallbacks and provider selection that you'd configure with `litellm.Router` move into BitRouter's [routing presets](/docs/features/presets) and [model fallback rules](/docs/features/model-fallback) — declared once, not per call site.
+Fallbacks and provider selection that you'd configure with `litellm.Router` move into BitRouter's [routing presets](/docs/models-and-routing/presets) and [model fallback rules](/docs/models-and-routing/model-fallback) — declared once, not per call site.
 
 ### From the LiteLLM Proxy
 
@@ -115,17 +114,17 @@ To skip the local proxy entirely, point clients at `https://api.bitrouter.ai/v1`
 
 | LiteLLM concept | BitRouter equivalent | Docs |
 |---|---|---|
-| `model_list` in `config.yaml` | Provider keys + routing presets | [Presets](/docs/features/presets) |
-| `router_settings` (retries, fallback) | Model fallback rules | [Model fallback](/docs/features/model-fallback) |
-| `routing_strategy` (least-busy, latency) | Provider selection | [Provider selection](/docs/features/provider-selection) |
+| `model_list` in `config.yaml` | Provider keys + routing presets | [Presets](/docs/models-and-routing/presets) |
+| `router_settings` (retries, fallback) | Model fallback rules | [Model fallback](/docs/models-and-routing/model-fallback) |
+| `routing_strategy` (least-busy, latency) | Provider selection | [Provider selection](/docs/models-and-routing/provider-selection) |
 | `cache` (Redis/DynamoDB backed) | Not built into the proxy — handle in app/edge if needed | — |
-| Virtual keys + budgets + admin UI | Workspace keys (cloud); env-var keys (local) | [BYOK](/docs/features/byok), [Workspaces](/docs/features/namespaces) |
+| Virtual keys + budgets + admin UI | Workspace keys (cloud); env-var keys (local) | [BYOK](/docs/models-and-routing/byok), [Workspaces](/docs/features/namespaces) |
 | Guardrails / PII / content filter | Agent firewall on the proxy hop | [Guardrails](/docs/features/guardrails) |
 | Callbacks (Langfuse, Datadog, etc.) | Built-in spend + request logs; OTLP export | [OpenTelemetry](/docs/features/opentelemetry) |
-| MCP Gateway | MCP gateway | [MCP](/docs/concepts/tools) |
-| A2A Agent Gateway | ACP gateway | [ACP](/docs/concepts/agents) |
-| Skills Gateway / `/skills` endpoint | Skills gateway with [agentskills.io](https://agentskills.io) registry | [Agent Skills](/docs/concepts/tools) |
-| LiteLLM Proxy CLI | `bitrouter` CLI / TUI | [Headless CLI](/docs/concepts/cli) |
+| MCP Gateway | MCP gateway | [MCP](/docs/features/tools) |
+| A2A Agent Gateway | ACP gateway | [ACP](/docs/features/agents) |
+| Skills Gateway / `/skills` endpoint | Skills gateway with [agentskills.io](https://agentskills.io) registry | [Agent Skills](/docs/features/tools) |
+| LiteLLM Proxy CLI | `bitrouter` CLI / TUI | [Headless CLI](/docs/reference/cli) |
 | — (no equivalent) | Autonomous agent payment (x402 / MPP) | [Payment](/docs/features/payment) |
 
 ## What BitRouter intentionally doesn't ship
@@ -143,7 +142,7 @@ To set expectations honestly: BitRouter does not ship a built-in admin UI for te
 
 <Callout type="success">
 **Migration**
-- [ ] Install the BitRouter CLI ([Quick Start](/docs/get-started/configuration))
+- [ ] Install the BitRouter CLI ([Quick Start](/docs/get-started/onboarding))
 - [ ] Export provider keys, or paste them into the cloud dashboard (sealed-box encrypted)
 - [ ] Update client `base_url` to `http://127.0.0.1:4356/v1` (local) or `https://api.bitrouter.ai/v1` (cloud)
 - [ ] Verify with a sample request
@@ -153,9 +152,9 @@ To set expectations honestly: BitRouter does not ship a built-in admin UI for te
 ## Next steps
 
 <Cards>
-  <Card title="Quick Start" href="/docs/get-started/configuration" description="Run BitRouter locally or in the cloud in under a minute" />
-  <Card title="Comparison" href="/docs/get-started/faqs" description="Side-by-side with OpenRouter, LiteLLM, and generic gateways" />
-  <Card title="Agent features" href="/docs/concepts/tools" description="MCP, ACP, skills, agent firewall, x402 payment" />
+  <Card title="Quick Start" href="/docs/get-started/onboarding" description="Run BitRouter locally or in the cloud in under a minute" />
+  <Card title="Comparison" href="/docs/get-started/onboarding" description="Side-by-side with OpenRouter, LiteLLM, and generic gateways" />
+  <Card title="Agent features" href="/docs/features/tools" description="MCP, ACP, skills, agent firewall, x402 payment" />
   <Card title="API Reference" href="/docs/reference" description="OpenAI- and Anthropic-compatible endpoints" />
 </Cards>
 

@@ -48,7 +48,7 @@ const STATE_FREEZE_MS = 300;
 
 export function ResourcesTabCell() {
   const pathname = usePathname();
-  const normalizedPath = pathname.replace(/^\/(en|zh)/, "") || "/";
+  const normalizedPath = pathname || "/";
   const isActive = RESOURCE_PREFIXES.some((p) => normalizedPath.startsWith(p));
 
   const [featuredA, featuredB, ...secondary] = RESOURCE_ITEMS;

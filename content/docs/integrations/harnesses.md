@@ -1,10 +1,9 @@
 ---
 title: Overview
 description: Point a coding agent or runtime at BitRouter — Claude Code, Codex, OpenCode, Hermes, OpenClaw, Pi — and run it on any model in the registry.
-sourceHash: 8e23fe661489696ce33ef4380eac212da7ba92d097c8fdf1676e55d5ce90fa0b
 ---
 
-A **harness** is the agent runtime that drives the loop — the CLI or service that reads your prompt, calls tools, and edits files. Each one already speaks some model API; the move is always the same: point it at BitRouter's endpoint (local proxy at `http://127.0.0.1:4356`, or Cloud at `https://api.bitrouter.ai`) instead of the vendor's, and address models by their `provider/model` id. From there the same harness can run on Anthropic, OpenAI, Google, or an open model — with [provider selection](/docs/features/provider-selection) and [fallback](/docs/features/model-fallback) underneath.
+A **harness** is the agent runtime that drives the loop — the CLI or service that reads your prompt, calls tools, and edits files. Each one already speaks some model API; the move is always the same: point it at BitRouter's endpoint (local proxy at `http://127.0.0.1:4356`, or Cloud at `https://api.bitrouter.ai`) instead of the vendor's, and address models by their `provider/model` id. From there the same harness can run on Anthropic, OpenAI, Google, or an open model — with [provider selection](/docs/models-and-routing/provider-selection) and [fallback](/docs/models-and-routing/model-fallback) underneath.
 
 <Cards>
   <Card title="Claude Code" href="/docs/integrations/claude-code" description="Anthropic Messages via ANTHROPIC_BASE_URL" />
@@ -30,4 +29,4 @@ A harness is *what runs*; a model source is *where the tokens come from*. You ca
 
 ## New to BitRouter?
 
-Start with the [Quick Start](/docs/get-started/configuration) to get the proxy running, then come back and point your harness at it.
+Start with the [Quick Start](/docs/get-started/onboarding) to get the proxy running, then come back and point your harness at it.

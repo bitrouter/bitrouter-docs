@@ -190,7 +190,7 @@ export function ZedModelsPage({ models, stats }: { models: ModelRow[]; stats: Us
                 )}
 
                 <div style={{ padding: "14px 16px", fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--z-ink-6)", borderTop: "1px solid var(--z-rule)" }}>
-                  {rows.length} of {models.length} shown · open-source: 25% off, zero markup · frontier: zero markup
+                  {rows.length} of {models.length} shown · zero markup on every model
                 </div>
               </div>
             </div>

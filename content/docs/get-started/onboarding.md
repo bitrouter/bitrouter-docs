@@ -16,7 +16,7 @@ Both modes run the **same open-source core** (Apache 2.0) — the routing engine
 Every core capability works the same either way — Cloud only adds what needs a server you don't run.
 
 - **Self-host** if you already have provider keys, run local/private models, have data-residency rules, or are prototyping solo.
-- **Cloud** if you want no key management and per-request billing, discounted open models without provider signups, team workspaces, or an uptime SLA.
+- **Cloud** if you want no key management and per-request billing, a managed provider network without provider signups, team workspaces, or an uptime SLA.
 
 | Capability | Self-hosted (OSS) | Cloud |
 | --- | --- | --- |
@@ -31,7 +31,6 @@ Every core capability works the same either way — Cloud only adds what needs a
 | Structured outputs | ✅ | ✅ |
 | Namespace isolation primitive | ✅ | ✅ |
 | Managed provider network (no upstream keys needed) | — | ✅ |
-| Open-model pricing discounts | — | ✅ |
 | Team seats & per-workspace access control | — | ✅ |
 | Hosted observability console | — | ✅ |
 | Managed billing (one wallet, per-request) | — | ✅ |

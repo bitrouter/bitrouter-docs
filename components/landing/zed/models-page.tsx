@@ -1,16 +1,17 @@
 "use client";
 
 import "./zed.css";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { BrandIcon } from "./brand-icon";
 import {
-  MODELS, PDOT, MODC, PROVIDERS, maxIn, maxOut, barW, pColor, fmtUsd, ctxNum,
-  CHART_USE, CHART_TOTALS, CHART_JIT, CHART_MAX, CHART_H, CHART_STACK,
-  CHART_YTICKS, CHART_OPEN_PCT, CHART_FRONTIER_PCT,
+  PDOT, MODC, providersOf, barW, pColor, fmtUsd,
+  CHART_H, CHART_COLORS, CHART_OTHER_COLOR,
   type Modality, type ModelRow,
 } from "./models-data";
+import { formatTokens, type UsageStats } from "@/lib/usage-stats-types";
 
-type SortKey = "input" | "output" | "latency" | "name";
+type SortKey = "input" | "output" | "name";
 type View = "table" | "cards";
 
 const optStyle = (on: boolean) =>
@@ -18,10 +19,9 @@ const optStyle = (on: boolean) =>
 const segStyle = (on: boolean) =>
   on ? { background: "#12161d", color: "#8fb4ff" } : { background: "transparent", color: "var(--z-ink-5)" };
 
-function decorate(m: ModelRow) {
+function decorate(m: ModelRow, maxIn: number, maxOut: number) {
   return {
     ...m,
-    p50txt: m.p50 + "ms",
     dot: PDOT[m.p] ?? "#7f8894",
     inTxt: fmtUsd(m.in),
     outTxt: fmtUsd(m.out),
@@ -29,25 +29,15 @@ function decorate(m: ModelRow) {
     outW: barW(m.out, maxOut),
     inColor: pColor(m.in, maxIn),
     outColor: pColor(m.out, maxOut),
-    tag: m.oss ? "" : "proprietary",
-    tagColor: m.oss ? "#6b9bff" : "#e0a955",
-    tagBorder: m.oss ? "#2a3550" : "#3d3320",
+    // Open-weight rows carry no pill; unknown licensing carries none either,
+    // so an undeclared model is never mislabelled as proprietary.
+    tag: m.oss === false ? "proprietary" : "",
+    tagColor: "#e0a955",
+    tagBorder: "#3d3320",
   };
 }
 
-// Pre-compute the stacked token-usage bars (deterministic; no randomness).
-const CHART_BARS = CHART_TOTALS.map((tot, di) => ({
-  title: tot.toFixed(1) + "M tokens",
-  segs: CHART_STACK.map((k, si) => {
-    const m = CHART_USE.find((u) => u.key === k)!;
-    const sh = m.share + (m.frontier ? CHART_JIT[di] * 0.008 : -CHART_JIT[di] * 0.004);
-    const hpx = Math.max(m.frontier ? 1.5 : 3, (tot * sh) / CHART_MAX * CHART_H);
-    return { color: m.color, hpx: hpx.toFixed(1) + "px", top: si === 0 };
-  }),
-}));
-const CHART_TOTAL_TXT = CHART_TOTALS.reduce((a, b) => a + b, 0).toFixed(1) + "M tokens";
-
-export function ZedModelsPage() {
+export function ZedModelsPage({ models, stats }: { models: ModelRow[]; stats: UsageStats | null }) {
   const [license, setLicense] = useState<"all" | "open" | "prop">("all");
   const [ctxMin, setCtxMin] = useState("all");
   const [inMax, setInMax] = useState("all");
@@ -58,13 +48,16 @@ export function ZedModelsPage() {
   const [sort, setSort] = useState<SortKey>("input");
   const [view, setView] = useState<View>("table");
 
-  const cnt = (fn: (m: ModelRow) => boolean) => MODELS.filter(fn).length;
+  const maxIn = useMemo(() => Math.max(0, ...models.map((m) => m.in)), [models]);
+  const maxOut = useMemo(() => Math.max(0, ...models.map((m) => m.out)), [models]);
+  const providers = useMemo(() => providersOf(models), [models]);
+  const cnt = (fn: (m: ModelRow) => boolean) => models.filter(fn).length;
 
   const rows = useMemo(() => {
-    let ml = MODELS.filter(
+    let ml = models.filter(
       (m) =>
-        (license === "all" || (license === "open" ? m.oss : !m.oss)) &&
-        (ctxMin === "all" || ctxNum(m.ctx) >= Number(ctxMin)) &&
+        (license === "all" || (license === "open" ? m.oss === true : m.oss === false)) &&
+        (ctxMin === "all" || m.ctxTokens >= Number(ctxMin)) &&
         (inMax === "all" || m.in <= Number(inMax)) &&
         (outMax === "all" || m.out <= Number(outMax)) &&
         (!mods.length || mods.every((x) => m.mods.includes(x))) &&
@@ -73,10 +66,10 @@ export function ZedModelsPage() {
     const q = search.trim().toLowerCase();
     if (q) ml = ml.filter((m) => m.id.toLowerCase().includes(q) || m.p.toLowerCase().includes(q));
     ml = [...ml].sort((a, b) =>
-      sort === "name" ? a.id.localeCompare(b.id) : sort === "output" ? a.out - b.out : sort === "latency" ? a.p50 - b.p50 : a.in - b.in,
+      sort === "name" ? a.id.localeCompare(b.id) : sort === "output" ? a.out - b.out : a.in - b.in,
     );
-    return ml.map(decorate);
-  }, [license, ctxMin, inMax, outMax, mods, provider, search, sort]);
+    return ml.map((m) => decorate(m, maxIn, maxOut));
+  }, [models, license, ctxMin, inMax, outMax, mods, provider, search, sort, maxIn, maxOut]);
 
   const filtersActive =
     license !== "all" || ctxMin !== "all" || inMax !== "all" || outMax !== "all" || mods.length > 0 || provider !== "All" || search;
@@ -87,12 +80,12 @@ export function ZedModelsPage() {
   };
 
   const licenseOpts = [
-    { k: "all", l: "All", c: MODELS.length },
-    { k: "open", l: "Open-weight", c: cnt((m) => m.oss) },
-    { k: "prop", l: "Proprietary", c: cnt((m) => !m.oss) },
+    { k: "all", l: "All", c: models.length },
+    { k: "open", l: "Open-weight", c: cnt((m) => m.oss === true) },
+    { k: "prop", l: "Proprietary", c: cnt((m) => m.oss === false) },
   ] as const;
   const ctxOpts = [
-    { k: "all", l: "Any" }, { k: "128", l: "≥ 128K" }, { k: "256", l: "≥ 256K" }, { k: "1000", l: "1M context" },
+    { k: "all", l: "Any" }, { k: "128000", l: "≥ 128K" }, { k: "256000", l: "≥ 256K" }, { k: "1000000", l: "1M context" },
   ];
   const inOpts = [
     { k: "all", l: "Any" }, { k: "0.2", l: "≤ $0.20" }, { k: "0.5", l: "≤ $0.50" }, { k: "1", l: "≤ $1.00" }, { k: "5", l: "≤ $5.00" },
@@ -112,56 +105,7 @@ export function ZedModelsPage() {
           <div style={{ height: 44 }} />
 
           <div style={{ border: "1px solid var(--z-rule)" }}>
-            {/* ── token-usage chart ── */}
-            <div style={{ background: "var(--z-inset)", borderBottom: "1px solid var(--z-rule)" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap", padding: "16px 20px", borderBottom: "1px solid var(--z-rule)" }}>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--z-ink-6)" }}>
-                  token usage · last 14 days
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap", marginLeft: "auto" }}>
-                  {CHART_USE.map((g) => (
-                    <div key={g.key} style={{ display: "inline-flex", alignItems: "center", gap: 7, fontFamily: "var(--font-mono)", fontSize: 11.5, color: "var(--z-ink-4)" }}>
-                      <span style={{ width: 9, height: 9, borderRadius: 2, background: g.color }} />
-                      {g.name}
-                      {g.frontier && <span style={{ fontSize: 9, letterSpacing: "0.06em", textTransform: "uppercase", color: "#e0a955" }}>proprietary</span>}
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div style={{ padding: "22px 20px 16px" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "50px 1fr" }}>
-                  <div style={{ height: CHART_H, display: "flex", flexDirection: "column", justifyContent: "space-between", alignItems: "flex-end", paddingRight: 12, fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--z-ink-7)" }}>
-                    {CHART_YTICKS.map((y) => <span key={y}>{y}</span>)}
-                  </div>
-                  <div style={{ position: "relative", height: CHART_H, borderLeft: "1px solid var(--z-rule)", borderBottom: "1px solid var(--z-rule)" }}>
-                    {[0, 33.33, 66.66].map((t) => (
-                      <div key={t} style={{ position: "absolute", left: 0, right: 0, top: `${t}%`, height: 1, background: "#181c22" }} />
-                    ))}
-                    <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "flex-end", gap: 7, padding: "0 6px" }}>
-                      {CHART_BARS.map((b, i) => (
-                        <div key={i} title={b.title} style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
-                          {b.segs.map((s, si) => (
-                            <div key={si} style={{ height: s.hpx, background: s.color, borderRadius: s.top ? "3px 3px 0 0" : undefined }} />
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <div style={{ display: "grid", gridTemplateColumns: "50px 1fr" }}>
-                  <div />
-                  <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 6px 0", fontFamily: "var(--font-mono)", fontSize: 10.5, color: "var(--z-ink-7)" }}>
-                    <span>14 days ago</span><span>7 days</span><span>today</span>
-                  </div>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 14, paddingTop: 14, borderTop: "1px solid var(--z-rule)", fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--z-ink-4)", flexWrap: "wrap" }}>
-                  <span><b style={{ color: "var(--z-blue)" }}>{CHART_OPEN_PCT}</b> open-weight</span>
-                  <span style={{ color: "var(--z-ink-7)" }}>·</span>
-                  <span><b style={{ color: "#e0a955" }}>{CHART_FRONTIER_PCT}</b> proprietary</span>
-                  <span style={{ marginLeft: "auto", color: "var(--z-ink-6)" }}>{CHART_TOTAL_TXT} routed</span>
-                </div>
-              </div>
-            </div>
+            {stats && <UsageChart stats={stats} />}
 
             {/* ── registry: rail + main ── */}
             <div style={{ display: "grid", gridTemplateColumns: "212px minmax(0,1fr)" }} className="zed-models-body">
@@ -179,7 +123,7 @@ export function ZedModelsPage() {
                 </FilterGroup>
                 <FilterGroup title="context window">
                   {ctxOpts.map((o) => (
-                    <FilterBtn key={o.k} label={o.l} count={o.k === "all" ? undefined : String(cnt((m) => ctxNum(m.ctx) >= Number(o.k)))} active={ctxMin === o.k} onClick={() => setCtxMin(o.k)} />
+                    <FilterBtn key={o.k} label={o.l} count={o.k === "all" ? undefined : String(cnt((m) => m.ctxTokens >= Number(o.k)))} active={ctxMin === o.k} onClick={() => setCtxMin(o.k)} />
                   ))}
                 </FilterGroup>
                 <FilterGroup title="input $ / 1M">
@@ -202,8 +146,8 @@ export function ZedModelsPage() {
                   })}
                 </FilterGroup>
                 <FilterGroup title="provider">
-                  <FilterBtn label="All" dot="#6b9bff" count={String(MODELS.length)} active={provider === "All"} onClick={() => setProvider("All")} />
-                  {PROVIDERS.map((p) => (
+                  <FilterBtn label="All" dot="#6b9bff" count={String(models.length)} active={provider === "All"} onClick={() => setProvider("All")} />
+                  {providers.map((p) => (
                     <FilterBtn key={p} label={p} icon={p} dot={PDOT[p]} count={String(cnt((m) => m.p === p))} active={provider === p} onClick={() => setProvider(p)} />
                   ))}
                 </FilterGroup>
@@ -220,7 +164,7 @@ export function ZedModelsPage() {
                   <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
                     <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--z-ink-7)" }}>sort</span>
                     <div style={{ display: "flex", border: "1px solid var(--z-rule)", borderRadius: 7, overflow: "hidden" }}>
-                      {([["input", "input $"], ["output", "output $"], ["latency", "latency"], ["name", "name"]] as [SortKey, string][]).map(([k, l]) => (
+                      {([["input", "input $"], ["output", "output $"], ["name", "name"]] as [SortKey, string][]).map(([k, l]) => (
                         <button key={k} onClick={() => setSort(k)} style={{ cursor: "pointer", fontFamily: "var(--font-mono)", fontSize: 11.5, padding: "6px 11px", border: "none", ...segStyle(sort === k) }}>{l}</button>
                       ))}
                     </div>
@@ -235,10 +179,18 @@ export function ZedModelsPage() {
                   </div>
                 </div>
 
-                {view === "table" ? <TableView rows={rows} /> : <CardView rows={rows} />}
+                {rows.length === 0 ? (
+                  <div style={{ padding: "48px 16px", textAlign: "center", fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--z-ink-6)" }}>
+                    No models match these filters.
+                  </div>
+                ) : view === "table" ? (
+                  <TableView rows={rows} />
+                ) : (
+                  <CardView rows={rows} />
+                )}
 
                 <div style={{ padding: "14px 16px", fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--z-ink-6)", borderTop: "1px solid var(--z-rule)" }}>
-                  {rows.length} of {MODELS.length} shown · open-source: 25% off, zero markup · frontier: zero markup
+                  {rows.length} of {models.length} shown · zero markup on every model
                 </div>
               </div>
             </div>
@@ -246,6 +198,96 @@ export function ZedModelsPage() {
           <div style={{ height: 76 }} />
         </div>
       </section>
+    </div>
+  );
+}
+
+// ── usage chart ─────────────────────────────────────────────────────────
+/**
+ * Stacked daily routed-token volume from `/v1/stats/usage`. Rendered only when
+ * the server hands down real stats — there is no placeholder path.
+ */
+function UsageChart({ stats }: { stats: UsageStats }) {
+  const legend = stats.models.slice(0, CHART_COLORS.length).map((m, i) => ({
+    key: m.id,
+    color: CHART_COLORS[i],
+    proprietary: m.open_weights === false,
+  }));
+  const colorOf = new Map(legend.map((l) => [l.key, l.color]));
+  // Rendered top -> bottom. `legend` is busiest-first, so reversing it puts the
+  // busiest model at the base and leaves the thin tail (and `other`) on top.
+  const stackKeys = ["other", ...legend.map((l) => l.key).reverse()];
+
+  const max = Math.max(...stats.series.map((d) => d.total_tokens), 1);
+  const yTicks = [max, max * (2 / 3), max / 3, 0].map(formatTokens);
+  const openShare = stats.open_weight_token_share;
+  const days = stats.window.days;
+
+  return (
+    <div style={{ background: "var(--z-inset)", borderBottom: "1px solid var(--z-rule)" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap", padding: "16px 20px", borderBottom: "1px solid var(--z-rule)" }}>
+        <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--z-ink-6)" }}>
+          token usage · last {days} days
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap", marginLeft: "auto" }}>
+          {legend.map((g) => (
+            <div key={g.key} style={{ display: "inline-flex", alignItems: "center", gap: 7, fontFamily: "var(--font-mono)", fontSize: 11.5, color: "var(--z-ink-4)" }}>
+              <span style={{ width: 9, height: 9, borderRadius: 2, background: g.color }} />
+              {g.key}
+              {g.proprietary && <span style={{ fontSize: 9, letterSpacing: "0.06em", textTransform: "uppercase", color: "#e0a955" }}>proprietary</span>}
+            </div>
+          ))}
+        </div>
+      </div>
+      <div style={{ padding: "22px 20px 16px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "50px 1fr" }}>
+          <div style={{ height: CHART_H, display: "flex", flexDirection: "column", justifyContent: "space-between", alignItems: "flex-end", paddingRight: 12, fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--z-ink-7)" }}>
+            {yTicks.map((y, i) => <span key={i}>{y}</span>)}
+          </div>
+          <div style={{ position: "relative", height: CHART_H, borderLeft: "1px solid var(--z-rule)", borderBottom: "1px solid var(--z-rule)" }}>
+            {[0, 33.33, 66.66].map((t) => (
+              <div key={t} style={{ position: "absolute", left: 0, right: 0, top: `${t}%`, height: 1, background: "#181c22" }} />
+            ))}
+            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "flex-end", gap: 7, padding: "0 6px" }}>
+              {stats.series.map((day) => (
+                <div key={day.date} title={`${day.date} · ${formatTokens(day.total_tokens)} tokens`} style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+                  {stackKeys.map((key, si) => {
+                    const tokens = day.by_model[key] ?? 0;
+                    if (!tokens) return null;
+                    const hpx = Math.max(1.5, (tokens / max) * CHART_H);
+                    return (
+                      <div
+                        key={key}
+                        style={{
+                          height: `${hpx.toFixed(1)}px`,
+                          background: key === "other" ? CHART_OTHER_COLOR : (colorOf.get(key) ?? CHART_OTHER_COLOR),
+                          borderRadius: si === 0 ? "3px 3px 0 0" : undefined,
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "50px 1fr" }}>
+          <div />
+          <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 6px 0", fontFamily: "var(--font-mono)", fontSize: 10.5, color: "var(--z-ink-7)" }}>
+            <span>{days} days ago</span><span>{Math.round(days / 2)} days</span><span>today</span>
+          </div>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 14, paddingTop: 14, borderTop: "1px solid var(--z-rule)", fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--z-ink-4)", flexWrap: "wrap" }}>
+          {openShare !== null && (
+            <>
+              <span><b style={{ color: "var(--z-blue)" }}>{Math.round(openShare * 100)}%</b> open-weight</span>
+              <span style={{ color: "var(--z-ink-7)" }}>·</span>
+              <span><b style={{ color: "#e0a955" }}>{Math.round((1 - openShare) * 100)}%</b> proprietary</span>
+            </>
+          )}
+          <span style={{ marginLeft: "auto", color: "var(--z-ink-6)" }}>{formatTokens(stats.totals.total_tokens)} tokens routed</span>
+        </div>
+      </div>
     </div>
   );
 }
@@ -271,18 +313,18 @@ function FilterBtn({ label, count, dot, icon, check, active, onClick }: { label:
   );
 }
 
-const TABLE_COLS = "minmax(0,2.4fr) 0.75fr 1fr 1fr 0.7fr 0.9fr";
+const TABLE_COLS = "minmax(0,2.6fr) 0.8fr 1fr 1fr 0.9fr";
 type DecoratedRow = ReturnType<typeof decorate>;
 
 function TableView({ rows }: { rows: DecoratedRow[] }) {
   return (
     <div style={{ overflowX: "auto" }}>
-      <div style={{ minWidth: 640 }}>
+      <div style={{ minWidth: 620 }}>
         <div style={{ display: "grid", gridTemplateColumns: TABLE_COLS, background: "var(--z-inset)", borderBottom: "1px solid var(--z-rule)", fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--z-ink-7)" }}>
-          <div style={{ padding: "11px 16px" }}>model</div><div style={{ padding: "11px 10px" }}>ctx</div><div style={{ padding: "11px 10px" }}>in /1M</div><div style={{ padding: "11px 10px" }}>out /1M</div><div style={{ padding: "11px 10px" }}>p50</div><div style={{ padding: "11px 10px" }}>modality</div>
+          <div style={{ padding: "11px 16px" }}>model</div><div style={{ padding: "11px 10px" }}>ctx</div><div style={{ padding: "11px 10px" }}>in /1M</div><div style={{ padding: "11px 10px" }}>out /1M</div><div style={{ padding: "11px 10px" }}>modality</div>
         </div>
         {rows.map((r) => (
-          <div key={r.id} className="zed-row-hover" style={{ display: "grid", gridTemplateColumns: TABLE_COLS, alignItems: "center", borderBottom: "1px solid var(--z-rule-faint)" }}>
+          <Link key={r.id} href={`/models/${r.id}`} className="zed-row-hover" style={{ display: "grid", gridTemplateColumns: TABLE_COLS, alignItems: "center", borderBottom: "1px solid var(--z-rule-faint)", textDecoration: "none" }}>
             <div style={{ padding: "12px 16px", display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
               <BrandIcon name={r.p} size={15} color={r.dot} />
               <span style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--z-ink-2)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.id}</span>
@@ -291,11 +333,10 @@ function TableView({ rows }: { rows: DecoratedRow[] }) {
             <div style={{ padding: "12px 10px", fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--z-ink-5)" }}>{r.ctx}</div>
             <PriceCell txt={r.inTxt} w={r.inW} color={r.inColor} />
             <PriceCell txt={r.outTxt} w={r.outW} color={r.outColor} />
-            <div style={{ padding: "12px 10px", fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--z-ink-5)" }}>{r.p50txt}</div>
             <div style={{ padding: "12px 10px", display: "flex", gap: 5, flexWrap: "wrap" }}>
               {r.mods.map((m) => <ModTag key={m} m={m} />)}
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>
@@ -321,7 +362,7 @@ function CardView({ rows }: { rows: DecoratedRow[] }) {
   return (
     <div className="zed-grid-2" style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", padding: 16, gap: 14 }}>
       {rows.map((r) => (
-        <div key={r.id} className="zed-row-hover" style={{ border: "1px solid var(--z-rule)", borderRadius: 9, padding: "18px 18px" }}>
+        <Link key={r.id} href={`/models/${r.id}`} className="zed-row-hover" style={{ border: "1px solid var(--z-rule)", borderRadius: 9, padding: "18px 18px", textDecoration: "none", display: "block" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
             <BrandIcon name={r.p} size={16} color={r.dot} />
             <span style={{ fontFamily: "var(--font-sans)", fontSize: 11.5, color: "var(--z-ink-5)" }}>{r.p}</span>
@@ -338,10 +379,10 @@ function CardView({ rows }: { rows: DecoratedRow[] }) {
             ))}
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 16, paddingTop: 14, borderTop: "1px solid var(--z-rule)", fontFamily: "var(--font-mono)", fontSize: 11.5, color: "var(--z-ink-6)" }}>
-            <span>ctx {r.ctx}</span><span>·</span><span>p50 {r.p50txt}</span>
+            <span>ctx {r.ctx}</span>
             <span style={{ marginLeft: "auto", display: "flex", gap: 5 }}>{r.mods.map((m) => <ModTag key={m} m={m} />)}</span>
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   );

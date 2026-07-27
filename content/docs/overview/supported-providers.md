@@ -50,7 +50,7 @@ Every model in the [catalog](/docs/overview/supported-models) is served by one o
 | `supergrok` | xAI | US | openai, responses | Subscription | 5 |
 | `tencent` | Tencent Cloud | CN | anthropic, openai, responses | Per-token | 11 |
 | `tencent_cn` | Tencent Cloud | CN | anthropic, openai, responses | Per-token | 12 |
-| `tinfoil` | Tinfoil | US | openai | Per-token | 5 |
+| `tinfoil` | Tinfoil | US | openai | Per-token | 4 |
 | `vertex` | Google Cloud | US | google | Per-token | 3 |
 | `xai` | xAI | US | openai, responses | Per-token | 5 |
 | `xiaomi` | Xiaomi | CN | anthropic, openai, responses | Per-token | 5 |
@@ -63,7 +63,3 @@ Every model in the [catalog](/docs/overview/supported-models) is served by one o
 ## Register your own
 
 BitRouter is a permissionless network: any provider exposing an OpenAI- or Anthropic-compatible endpoint can join and be discovered by every agent on it. Registration is a pull request against the open-source registry — see [Register as a provider](/docs/guides/register-as-a-provider) for the full walkthrough.
-
-## Discounted open models
-
-BitRouter also runs its own **self-hosted provider** that serves open models **25% below official** rates by default, with custom discounts up to 50% for open-source projects. See [Discounted open models](/docs/overview/supported-models#discounted-open-models) for how the pricing and the `:discount` suffix work.

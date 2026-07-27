@@ -15,7 +15,8 @@
       "capabilities": [],
       "providers": 1,
       "inputUsdPerM": 10,
-      "outputUsdPerM": 50
+      "outputUsdPerM": 50,
+      "openWeights": false
     },
     {
       "id": "anthropic/claude-haiku-4.5",
@@ -31,7 +32,8 @@
       "capabilities": [],
       "providers": 1,
       "inputUsdPerM": 1,
-      "outputUsdPerM": 5
+      "outputUsdPerM": 5,
+      "openWeights": false
     },
     {
       "id": "anthropic/claude-opus-4.6",
@@ -51,7 +53,8 @@
       ],
       "providers": 2,
       "inputUsdPerM": 5,
-      "outputUsdPerM": 25
+      "outputUsdPerM": 25,
+      "openWeights": false
     },
     {
       "id": "anthropic/claude-opus-4.7",
@@ -71,7 +74,8 @@
       ],
       "providers": 2,
       "inputUsdPerM": 4.5,
-      "outputUsdPerM": 22.5
+      "outputUsdPerM": 22.5,
+      "openWeights": false
     },
     {
       "id": "anthropic/claude-opus-4.8",
@@ -91,7 +95,8 @@
       ],
       "providers": 2,
       "inputUsdPerM": 5,
-      "outputUsdPerM": 25
+      "outputUsdPerM": 25,
+      "openWeights": false
     },
     {
       "id": "anthropic/claude-sonnet-4.6",
@@ -112,7 +117,8 @@
       ],
       "providers": 2,
       "inputUsdPerM": 3,
-      "outputUsdPerM": 15
+      "outputUsdPerM": 15,
+      "openWeights": false
     },
     {
       "id": "anthropic/claude-sonnet-5",
@@ -133,7 +139,8 @@
       ],
       "providers": 1,
       "inputUsdPerM": 2,
-      "outputUsdPerM": 10
+      "outputUsdPerM": 10,
+      "openWeights": false
     },
     {
       "id": "deepseek/deepseek-v3.2",
@@ -152,7 +159,8 @@
       ],
       "providers": 6,
       "inputUsdPerM": 0.21,
-      "outputUsdPerM": 0.315
+      "outputUsdPerM": 0.315,
+      "openWeights": true
     },
     {
       "id": "deepseek/deepseek-v4-flash",
@@ -170,7 +178,8 @@
       ],
       "providers": 7,
       "inputUsdPerM": 0.0983,
-      "outputUsdPerM": 0.1966
+      "outputUsdPerM": 0.1966,
+      "openWeights": true
     },
     {
       "id": "deepseek/deepseek-v4-pro",
@@ -189,7 +198,8 @@
       ],
       "providers": 8,
       "inputUsdPerM": 1.305,
-      "outputUsdPerM": 2.61
+      "outputUsdPerM": 2.61,
+      "openWeights": true
     },
     {
       "id": "google/gemini-3.1-flash-lite-preview",
@@ -205,7 +215,8 @@
       "capabilities": [],
       "providers": 1,
       "inputUsdPerM": 0.25,
-      "outputUsdPerM": 1.5
+      "outputUsdPerM": 1.5,
+      "openWeights": false
     },
     {
       "id": "google/gemini-3.1-pro-preview",
@@ -224,7 +235,8 @@
       ],
       "providers": 1,
       "inputUsdPerM": 2,
-      "outputUsdPerM": 12
+      "outputUsdPerM": 12,
+      "openWeights": false
     },
     {
       "id": "google/gemini-3.5-flash",
@@ -244,7 +256,8 @@
       ],
       "providers": 1,
       "inputUsdPerM": 1.5,
-      "outputUsdPerM": 9
+      "outputUsdPerM": 9,
+      "openWeights": false
     },
     {
       "id": "google/gemma-4-31b",
@@ -260,7 +273,8 @@
       "capabilities": [],
       "providers": 3,
       "inputUsdPerM": 0.13,
-      "outputUsdPerM": 0.4
+      "outputUsdPerM": 0.4,
+      "openWeights": true
     },
     {
       "id": "meituan/longcat-2.0",
@@ -275,7 +289,8 @@
       "capabilities": [],
       "providers": 1,
       "inputUsdPerM": 0.75,
-      "outputUsdPerM": 2.95
+      "outputUsdPerM": 2.95,
+      "openWeights": true
     },
     {
       "id": "minimax/minimax-m2.5",
@@ -293,7 +308,8 @@
       ],
       "providers": 6,
       "inputUsdPerM": 0.225,
-      "outputUsdPerM": 0.9
+      "outputUsdPerM": 0.9,
+      "openWeights": true
     },
     {
       "id": "minimax/minimax-m2.7",
@@ -311,7 +327,8 @@
       ],
       "providers": 3,
       "inputUsdPerM": 0.225,
-      "outputUsdPerM": 0.9
+      "outputUsdPerM": 0.9,
+      "openWeights": true
     },
     {
       "id": "minimax/minimax-m3",
@@ -330,7 +347,8 @@
       ],
       "providers": 4,
       "inputUsdPerM": 0.3,
-      "outputUsdPerM": 1.2
+      "outputUsdPerM": 1.2,
+      "openWeights": true
     },
     {
       "id": "moonshotai/kimi-k2.5",
@@ -350,7 +368,8 @@
       ],
       "providers": 6,
       "inputUsdPerM": 0.44,
-      "outputUsdPerM": 2
+      "outputUsdPerM": 2,
+      "openWeights": true
     },
     {
       "id": "moonshotai/kimi-k2.6",
@@ -369,7 +388,8 @@
       ],
       "providers": 10,
       "inputUsdPerM": 0.7125,
-      "outputUsdPerM": 3
+      "outputUsdPerM": 3,
+      "openWeights": true
     },
     {
       "id": "moonshotai/kimi-k2.7-code",
@@ -389,7 +409,8 @@
       ],
       "providers": 5,
       "inputUsdPerM": 0.7125,
-      "outputUsdPerM": 3
+      "outputUsdPerM": 3,
+      "openWeights": true
     },
     {
       "id": "moonshotai/kimi-k3",
@@ -409,7 +430,8 @@
       ],
       "providers": 1,
       "inputUsdPerM": 3,
-      "outputUsdPerM": 15
+      "outputUsdPerM": 15,
+      "openWeights": true
     },
     {
       "id": "openai/gpt-5.4",
@@ -429,7 +451,8 @@
       ],
       "providers": 1,
       "inputUsdPerM": 2.5,
-      "outputUsdPerM": 15
+      "outputUsdPerM": 15,
+      "openWeights": false
     },
     {
       "id": "openai/gpt-5.4-mini",
@@ -449,7 +472,8 @@
       ],
       "providers": 1,
       "inputUsdPerM": 0.75,
-      "outputUsdPerM": 4.5
+      "outputUsdPerM": 4.5,
+      "openWeights": false
     },
     {
       "id": "openai/gpt-5.5",
@@ -469,7 +493,8 @@
       ],
       "providers": 2,
       "inputUsdPerM": 5,
-      "outputUsdPerM": 30
+      "outputUsdPerM": 30,
+      "openWeights": false
     },
     {
       "id": "openai/gpt-5.6-luna",
@@ -489,7 +514,8 @@
       ],
       "providers": 1,
       "inputUsdPerM": 1,
-      "outputUsdPerM": 6
+      "outputUsdPerM": 6,
+      "openWeights": false
     },
     {
       "id": "openai/gpt-5.6-sol",
@@ -509,7 +535,8 @@
       ],
       "providers": 1,
       "inputUsdPerM": 5,
-      "outputUsdPerM": 30
+      "outputUsdPerM": 30,
+      "openWeights": false
     },
     {
       "id": "openai/gpt-5.6-terra",
@@ -529,7 +556,8 @@
       ],
       "providers": 1,
       "inputUsdPerM": 2.5,
-      "outputUsdPerM": 15
+      "outputUsdPerM": 15,
+      "openWeights": false
     },
     {
       "id": "qwen/qwen3.5-122b-a10b",
@@ -545,7 +573,8 @@
       "capabilities": [],
       "providers": 2,
       "inputUsdPerM": 0.26,
-      "outputUsdPerM": 2.08
+      "outputUsdPerM": 2.08,
+      "openWeights": true
     },
     {
       "id": "qwen/qwen3.5-27b",
@@ -561,7 +590,8 @@
       "capabilities": [],
       "providers": 2,
       "inputUsdPerM": 0.25,
-      "outputUsdPerM": 2
+      "outputUsdPerM": 2,
+      "openWeights": true
     },
     {
       "id": "qwen/qwen3.6-27b",
@@ -577,7 +607,8 @@
       "capabilities": [],
       "providers": 2,
       "inputUsdPerM": 0.3,
-      "outputUsdPerM": 3.2
+      "outputUsdPerM": 3.2,
+      "openWeights": true
     },
     {
       "id": "qwen/qwen3.6-35b-a3b",
@@ -593,7 +624,8 @@
       "capabilities": [],
       "providers": 2,
       "inputUsdPerM": 0.248,
-      "outputUsdPerM": 1.485
+      "outputUsdPerM": 1.485,
+      "openWeights": true
     },
     {
       "id": "qwen/qwen3.6-flash",
@@ -609,7 +641,8 @@
       "capabilities": [],
       "providers": 2,
       "inputUsdPerM": 0.1875,
-      "outputUsdPerM": 1.125
+      "outputUsdPerM": 1.125,
+      "openWeights": false
     },
     {
       "id": "qwen/qwen3.7-max",
@@ -624,7 +657,8 @@
       "capabilities": [],
       "providers": 4,
       "inputUsdPerM": 1.875,
-      "outputUsdPerM": 5.625
+      "outputUsdPerM": 5.625,
+      "openWeights": false
     },
     {
       "id": "qwen/qwen3.7-plus",
@@ -640,7 +674,8 @@
       "capabilities": [],
       "providers": 3,
       "inputUsdPerM": 0.4,
-      "outputUsdPerM": 1.6
+      "outputUsdPerM": 1.6,
+      "openWeights": false
     },
     {
       "id": "stepfun/step-3.5-flash",
@@ -658,7 +693,8 @@
       ],
       "providers": 3,
       "inputUsdPerM": 0.072,
-      "outputUsdPerM": 0.216
+      "outputUsdPerM": 0.216,
+      "openWeights": true
     },
     {
       "id": "stepfun/step-3.7-flash",
@@ -676,7 +712,8 @@
       ],
       "providers": 3,
       "inputUsdPerM": 0.15,
-      "outputUsdPerM": 0.8625
+      "outputUsdPerM": 0.8625,
+      "openWeights": true
     },
     {
       "id": "tencent/hy3",
@@ -691,7 +728,8 @@
       "capabilities": [],
       "providers": 2,
       "inputUsdPerM": 0.066,
-      "outputUsdPerM": 0.26
+      "outputUsdPerM": 0.26,
+      "openWeights": true
     },
     {
       "id": "x-ai/grok-4.20",
@@ -709,7 +747,8 @@
       ],
       "providers": 1,
       "inputUsdPerM": 1.25,
-      "outputUsdPerM": 2.5
+      "outputUsdPerM": 2.5,
+      "openWeights": false
     },
     {
       "id": "x-ai/grok-4.20-multi-agent",
@@ -728,7 +767,8 @@
       ],
       "providers": 1,
       "inputUsdPerM": 1.25,
-      "outputUsdPerM": 2.5
+      "outputUsdPerM": 2.5,
+      "openWeights": false
     },
     {
       "id": "x-ai/grok-4.3",
@@ -747,7 +787,8 @@
       ],
       "providers": 2,
       "inputUsdPerM": 1.25,
-      "outputUsdPerM": 2.5
+      "outputUsdPerM": 2.5,
+      "openWeights": false
     },
     {
       "id": "x-ai/grok-4.5",
@@ -766,7 +807,8 @@
       ],
       "providers": 1,
       "inputUsdPerM": 2,
-      "outputUsdPerM": 6
+      "outputUsdPerM": 6,
+      "openWeights": false
     },
     {
       "id": "x-ai/grok-build-0.1",
@@ -783,7 +825,8 @@
       ],
       "providers": 1,
       "inputUsdPerM": 1,
-      "outputUsdPerM": 2
+      "outputUsdPerM": 2,
+      "openWeights": false
     },
     {
       "id": "xiaomi/mimo-v2.5",
@@ -801,7 +844,8 @@
       ],
       "providers": 2,
       "inputUsdPerM": 0.3,
-      "outputUsdPerM": 1.5
+      "outputUsdPerM": 1.5,
+      "openWeights": true
     },
     {
       "id": "xiaomi/mimo-v2.5-pro",
@@ -819,7 +863,8 @@
       ],
       "providers": 2,
       "inputUsdPerM": 0.75,
-      "outputUsdPerM": 2.25
+      "outputUsdPerM": 2.25,
+      "openWeights": true
     },
     {
       "id": "z-ai/glm-4.7",
@@ -834,7 +879,8 @@
       "capabilities": [],
       "providers": 2,
       "inputUsdPerM": 0.6,
-      "outputUsdPerM": 2.2
+      "outputUsdPerM": 2.2,
+      "openWeights": true
     },
     {
       "id": "z-ai/glm-5",
@@ -853,7 +899,8 @@
       ],
       "providers": 7,
       "inputUsdPerM": 0.6,
-      "outputUsdPerM": 1.92
+      "outputUsdPerM": 1.92,
+      "openWeights": true
     },
     {
       "id": "z-ai/glm-5.1",
@@ -871,7 +918,8 @@
       ],
       "providers": 8,
       "inputUsdPerM": 0.98,
-      "outputUsdPerM": 3.08
+      "outputUsdPerM": 3.08,
+      "openWeights": true
     },
     {
       "id": "z-ai/glm-5.2",
@@ -889,7 +937,8 @@
       ],
       "providers": 8,
       "inputUsdPerM": 0.97,
-      "outputUsdPerM": 3.07
+      "outputUsdPerM": 3.07,
+      "openWeights": true
     }
   ]
 }

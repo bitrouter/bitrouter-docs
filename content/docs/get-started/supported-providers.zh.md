@@ -50,7 +50,7 @@ description: BitRouter 网络上已注册的每个供应商——由任何人都
 | `supergrok` | xAI | US | openai, responses | Subscription | 5 |
 | `tencent` | Tencent Cloud | CN | anthropic, openai, responses | Per-token | 11 |
 | `tencent_cn` | Tencent Cloud | CN | anthropic, openai, responses | Per-token | 12 |
-| `tinfoil` | Tinfoil | US | openai | Per-token | 5 |
+| `tinfoil` | Tinfoil | US | openai | Per-token | 4 |
 | `vertex` | Google Cloud | US | google | Per-token | 3 |
 | `xai` | xAI | US | openai, responses | Per-token | 5 |
 | `xiaomi` | Xiaomi | CN | anthropic, openai, responses | Per-token | 5 |

@@ -1,7 +1,7 @@
 ---
 title: Supported Providers
 description: Every provider registered on the BitRouter network — served from the public, open-source registry that anyone can join.
-sourceHash: addc5d5166b0ac7150f5b570386dff87c62a0d0a7ec81319cf74f86bdc1d7a18
+sourceHash: 16b2175954032d5160a03eee8c7c76da62e96ac96d3b9d0b18230ed1f451a2bf
 ---
 
 Every model in the [catalog](/docs/get-started/supported-models) is served by one or more **registered providers**. Membership lives in the public, open-source [registry](https://github.com/bitrouter/bitrouter/tree/main/registry) — anyone can [register a provider](/docs/guides/register-as-a-provider). The directory below is generated from the current registry snapshot.
@@ -51,7 +51,7 @@ Every model in the [catalog](/docs/get-started/supported-models) is served by on
 | `supergrok` | xAI | US | openai, responses | Subscription | 5 |
 | `tencent` | Tencent Cloud | CN | anthropic, openai, responses | Per-token | 11 |
 | `tencent_cn` | Tencent Cloud | CN | anthropic, openai, responses | Per-token | 12 |
-| `tinfoil` | Tinfoil | US | openai | Per-token | 5 |
+| `tinfoil` | Tinfoil | US | openai | Per-token | 4 |
 | `vertex` | Google Cloud | US | google | Per-token | 3 |
 | `xai` | xAI | US | openai, responses | Per-token | 5 |
 | `xiaomi` | Xiaomi | CN | anthropic, openai, responses | Per-token | 5 |

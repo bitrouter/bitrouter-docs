@@ -1,7 +1,7 @@
 {
   "title": "Guides",
   "icon": "Map",
-  "defaultOpen": false,
+  "collapsible": false,
   "pages": [
     "cloud-api",
     "---Development---",

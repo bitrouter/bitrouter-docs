@@ -1,7 +1,7 @@
 {
   "title": "Get Started",
   "icon": "Rocket",
-  "defaultOpen": true,
+  "collapsible": false,
   "pages": [
     "onboarding",
     "set-up-routing",

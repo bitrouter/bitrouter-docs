@@ -6,7 +6,7 @@
  * Design tokens (formerly theme.css, now inlined — single home for the palette).
  * One themeable system: --bp-* raw tokens defined per theme (:root light /
  * .dark dark) → shadcn names → @theme inline Tailwind utilities. The website
- * brand overrides (Geist --font-sans, 7px radius, purple accent) live below
+ * brand overrides (Geist --font-sans, 7px radius, blue accent) live below
  * and intentionally win. The terminal skin (.br-mono) aliases these tokens.
  * ───────────────────────────────────────────────────────────────────────── */
 @theme inline {
@@ -170,7 +170,7 @@
  * Website global styles — "mono" redesign brand, globalized.
  * The redesign brand (previously scoped to .br-mono landing surfaces) is now
  * the site default for every surface incl. docs + blog: Geist sans as the
- * default UI face, a purple accent (--accent-brand #a779ff) for focus rings +
+ * default UI face, a blue accent (--accent-brand #6b9bff) for focus rings +
  * content links, and a soft 7px radius scale. Semantic status stays ANSI
  * (green/amber/red). Mono (JetBrains) is retained for the celled header/nav
  * and terminals via --font-mono.
@@ -249,7 +249,10 @@
   --z-amber: #e0a955; /* frontier */
   --z-cost: #bf956a;
   --z-purple: #b79bd0; /* agent tag */
-  --z-code: #d3a8ff; /* inline code in prose */
+  /* Inline code in prose. Sits one step lighter than --z-blue so it reads as
+     blue-family with the rest of the site without being mistaken for a link
+     (docs links are --accent-brand #6b9bff and underlined). */
+  --z-code: #8fb4ff;
   --z-red: #e06c6c; /* traffic light red */
   --z-yellow: #e0b45b; /* traffic light yellow */
 }
@@ -407,15 +410,15 @@ pre:has(code) {
    and `#nd-page a` cover them. Deliberately NOT `article a` — that would
    recolor styled back-nav links on the provider/model detail pages.
    `:not([data-card])` excludes fumadocs heading permalink anchors (which wrap
-   the heading text) and Card blocks. Color is `--accent-brand`, which is brand
-   purple on blog but re-mapped to ink inside `#nd-notebook-layout` (docs). */
+   the heading text) and Card blocks. Color is `--accent-brand` (brand blue)
+   on both docs and blog. */
 .prose a:not([data-card]),
 #nd-page a:not([data-card]) {
   color: var(--accent-brand);
   text-underline-offset: 3px;
 }
-/* Docs links are mono ink, so underline carries the affordance the color used
-   to. Scoped to `#nd-page` (docs article) — blog links keep purple, no rule. */
+/* Docs links add an underline so the affordance doesn't rest on colour alone.
+   Scoped to `#nd-page` (docs article) — blog links stay colour-only, no rule. */
 #nd-page a:not([data-card]) {
   text-decoration-line: underline;
   text-decoration-color: oklch(from var(--foreground) l c h / 0.4);

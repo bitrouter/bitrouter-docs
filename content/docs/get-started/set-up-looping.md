@@ -79,7 +79,6 @@ bitrouter policy lock            # forbid programmatic writes again
 ## Next steps
 
 <Cards>
-  <Card title="Policy" href="/docs/models-and-routing/policy" description="Full table semantics, the adequacy ledger, and the asymmetric evidence guarantee." />
   <Card title="Set up evaling" href="/docs/get-started/set-up-evaling" description="The signal the loop learns from." />
   <Card title="Presets" href="/docs/models-and-routing/presets" description="The opt-in boundary for adaptive routing." />
 </Cards>

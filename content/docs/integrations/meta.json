@@ -1,7 +1,7 @@
 {
   "title": "Integrations",
   "icon": "Blocks",
-  "defaultOpen": false,
+  "collapsible": false,
   "pages": [
     "---Models---",
     "models",
@@ -10,12 +10,6 @@
     "openrouter",
     "ollama",
     "vllm",
-    "---Tools---",
-    "tools",
-    "exa",
-    "parallel",
-    "firecrawl",
-    "tavily",
     "---Harnesses---",
     "harnesses",
     "claude-code",

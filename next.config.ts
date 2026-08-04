@@ -41,7 +41,7 @@ pairs.push(
   // overview/get-started split + features→models-and-routing (2026-07 reorg)
   ["/docs/get-started/introduction", "/docs/overview/what-is-bitrouter"],
   ["/docs/get-started/supported-models", "/docs/overview/supported-models"],
-  ["/docs/get-started/supported-providers", "/docs/overview/supported-providers"],
+  ["/docs/get-started/supported-providers", "/docs/overview/supported-models"],
   ["/docs/features/provider-selection", "/docs/models-and-routing/provider-selection"],
   ["/docs/features/model-fallback", "/docs/models-and-routing/model-fallback"],
   ["/docs/features/model-variants", "/docs/models-and-routing/model-variants"],
@@ -51,7 +51,7 @@ pairs.push(
   // concepts/ section dissolved (2026-07 reorg) → pages land next to their features
   ["/docs/concepts", "/docs/overview/what-is-bitrouter"],
   ["/docs/concepts/models", "/docs/models-and-routing/models"],
-  ["/docs/concepts/policy", "/docs/models-and-routing/policy"],
+  ["/docs/concepts/policy", "/docs/get-started/set-up-looping"],
   ["/docs/concepts/tools", "/docs/features/tools"],
   ["/docs/concepts/agents", "/docs/features/agents"],
   ["/docs/concepts/cli", "/docs/reference/cli"],
@@ -103,6 +103,16 @@ pairs.push(
   ["/docs/integrations/migrate/openrouter", "/docs/guides/migrate-from-openrouter"],
   ["/docs/cookbook/migration/litellm", "/docs/guides/migrate-from-litellm"],
   ["/docs/cookbook/migration/openrouter", "/docs/guides/migrate-from-openrouter"],
+  // pages retired (2026-08): provider directory folded into the model catalog,
+  // policy semantics folded into the looping walkthrough, and the search-provider
+  // integrations folded into the web search feature page.
+  ["/docs/overview/supported-providers", "/docs/overview/supported-models"],
+  ["/docs/models-and-routing/policy", "/docs/get-started/set-up-looping"],
+  ["/docs/integrations/tools", "/docs/features/websearch"],
+  ["/docs/integrations/exa", "/docs/features/websearch"],
+  ["/docs/integrations/parallel", "/docs/features/websearch"],
+  ["/docs/integrations/firecrawl", "/docs/features/websearch"],
+  ["/docs/integrations/tavily", "/docs/features/websearch"],
 );
 const docsRedirects = pairs.flatMap(([source, destination]) => [
   { source, destination, permanent: true },

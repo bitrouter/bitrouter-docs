@@ -1,7 +1,7 @@
 {
   "title": "Features",
   "icon": "Boxes",
-  "defaultOpen": false,
+  "collapsible": false,
   "pages": [
     "---Tools gateway---",
     "tools",

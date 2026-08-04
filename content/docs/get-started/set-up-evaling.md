@@ -23,7 +23,7 @@ adequacy:
   escalation_threshold: 2
 ```
 
-The full semantics — pins, cooldowns, exploration trials — are in [Policy](/docs/models-and-routing/policy); the walkthrough is in [Set up looping](/docs/get-started/set-up-looping).
+The full semantics — pins, cooldowns, exploration trials — and the walkthrough are in [Set up looping](/docs/get-started/set-up-looping).
 
 ## Cost metering (live)
 
@@ -46,6 +46,5 @@ The dedicated eval engine — scoring each *run* and routing decision against a 
 
 <Cards>
   <Card title="Set up looping" href="/docs/get-started/set-up-looping" description="Fold the adequacy signal back into the policy spec." />
-  <Card title="Policy" href="/docs/models-and-routing/policy" description="Adequacy ledger semantics — escalation, exploration, the asymmetric guarantee." />
   <Card title="Set up tracing" href="/docs/get-started/set-up-tracing" description="The observability substrate evals build on." />
 </Cards>

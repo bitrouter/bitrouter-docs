@@ -1,7 +1,7 @@
 {
   "title": "Models & Routing",
   "icon": "Route",
-  "defaultOpen": false,
+  "collapsible": false,
   "pages": [
     "models",
     "provider-selection",
@@ -9,7 +9,6 @@
     "model-variants",
     "presets",
     "structured-outputs",
-    "byok",
-    "policy"
+    "byok"
   ]
 }

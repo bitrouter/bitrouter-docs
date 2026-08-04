@@ -11,7 +11,7 @@ It runs anywhere your agent runs, with no dependencies to install, and operates 
 
 ## The idea: a second loop
 
-Our bet is simple: routing is a learning problem. BitRouter wraps your agentic loop in a **second loop**. Each loop gets its own [policy spec](/docs/models-and-routing/policy) — a config file that declares how its calls, tools, and agents should route — and against that spec BitRouter runs a continuous **act → observe → evaluate → learn** cycle. Every step is a component it already ships:
+Our bet is simple: routing is a learning problem. BitRouter wraps your agentic loop in a **second loop**. Each loop gets its own [policy spec](/docs/get-started/set-up-looping) — a config file that declares how its calls, tools, and agents should route — and against that spec BitRouter runs a continuous **act → observe → evaluate → learn** cycle. Every step is a component it already ships:
 
 - **Act — the router.** Each model, tool, and agent call is rewritten to a chosen route: policy-table routing, cross-protocol translation, multi-account failover. See [Set up routing](/docs/get-started/set-up-routing).
 - **Observe — telemetry.** Every hop is attributed with cost, tokens, latency, and outcome, exported over OTLP to any backend you run. See [Set up tracing](/docs/get-started/set-up-tracing).

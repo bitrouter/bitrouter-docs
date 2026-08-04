@@ -1,11 +1,11 @@
 ---
 title: Overview
-description: Plug models, tools, and agent harnesses into BitRouter.
+description: Plug models and agent harnesses into BitRouter.
 ---
 
 Every integration is the same move: point something at BitRouter's endpoint (local proxy at `http://127.0.0.1:4356`, or Cloud at `https://api.bitrouter.ai`) and address models by their `provider/model` id. From there you get the whole [registry](/docs/models-and-routing/models), provider selection, and [fallback](/docs/models-and-routing/model-fallback) underneath. New to BitRouter? Start with the [Quick Start](/docs/get-started/onboarding).
 
-Integrations come in three kinds:
+Integrations come in two kinds:
 
 ## Models
 
@@ -18,18 +18,6 @@ Where your tokens come from — a subscription you already pay for, an aggregato
   <Card title="OpenRouter" href="/docs/integrations/openrouter" description="Bring an OpenRouter key" />
   <Card title="Ollama" href="/docs/integrations/ollama" description="Run open models locally · :11434" />
   <Card title="vLLM" href="/docs/integrations/vllm" description="High-throughput GPU serving · :8000" />
-</Cards>
-
-## Tools
-
-Web-search and retrieval providers your models call through BitRouter's built-in [web search](/docs/features/websearch).
-
-<Cards>
-  <Card title="Tools overview" href="/docs/integrations/tools" description="How search providers back the web_search tool" />
-  <Card title="Exa" href="/docs/integrations/exa" description="Neural / semantic web search" />
-  <Card title="Parallel" href="/docs/integrations/parallel" description="Web search + research API for agents" />
-  <Card title="Firecrawl" href="/docs/integrations/firecrawl" description="Search + scrape to LLM-ready markdown" />
-  <Card title="Tavily" href="/docs/integrations/tavily" description="Search built for agents and RAG" />
 </Cards>
 
 ## Harnesses

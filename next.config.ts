@@ -3,9 +3,9 @@ import { createMDX } from "fumadocs-mdx/next";
 
 // page slug → final nested path
 const finalPath = {
-  // get-started
-  installation: "/docs/get-started/installation", quickstart: "/docs/get-started/quickstart",
-  comparison: "/docs/get-started/comparison", "self-host-vs-cloud": "/docs/get-started/onboarding#self-host-or-cloud",
+  // get-started (dissolved 2026-08 → overview/quickstart)
+  installation: "/docs/overview/quickstart", quickstart: "/docs/overview/quickstart",
+  comparison: "/docs/overview/bitrouter-vs-openrouter", "self-host-vs-cloud": "/docs/overview/quickstart#self-host-or-cloud",
   // models & routing (was: features)
   "provider-selection":"/docs/models-and-routing/provider-selection","model-fallback":"/docs/models-and-routing/model-fallback",
   "model-variants":"/docs/models-and-routing/model-variants","presets":"/docs/models-and-routing/presets",
@@ -33,8 +33,8 @@ pairs.push(
   ["/docs", "/docs/overview/what-is-bitrouter"],
   ["/docs/guides", "/docs/overview/what-is-bitrouter"],
   ["/docs/guides/overview", "/docs/overview/what-is-bitrouter"],
-  ["/docs/guides/overview/quickstart", "/docs/get-started/quickstart"],
-  ["/docs/guides/overview/comparison", "/docs/get-started/comparison"],
+  ["/docs/guides/overview/quickstart", "/docs/overview/quickstart"],
+  ["/docs/guides/overview/comparison", "/docs/overview/bitrouter-vs-openrouter"],
   ["/docs/guides/overview/provider", "/docs/guides/register-as-a-provider"],
   // intro page renamed (2026-07): recursive-self-improvement → what-is-bitrouter
   ["/docs/overview/recursive-self-improvement", "/docs/overview/what-is-bitrouter"],
@@ -56,14 +56,26 @@ pairs.push(
   ["/docs/concepts/agents", "/docs/features/agents"],
   ["/docs/concepts/cli", "/docs/reference/cli"],
   ["/docs/concepts/mcp", "/docs/reference/mcp"],
-  ["/docs/concepts/agent-skill", "/docs/get-started/onboarding"],
+  ["/docs/concepts/agent-skill", "/docs/overview/quickstart"],
   // get-started consolidation (2026-07): onboarding merge, FAQs dissolved, cli/mcp → reference
-  ["/docs/get-started/configuration", "/docs/get-started/onboarding"],
-  ["/docs/get-started/wizard", "/docs/get-started/onboarding"],
-  ["/docs/get-started/agent-skill", "/docs/get-started/onboarding"],
-  ["/docs/get-started/faqs", "/docs/get-started/onboarding"],
+  ["/docs/get-started/configuration", "/docs/overview/quickstart"],
+  ["/docs/get-started/wizard", "/docs/overview/quickstart"],
+  ["/docs/get-started/agent-skill", "/docs/overview/quickstart"],
+  ["/docs/get-started/faqs", "/docs/overview/quickstart"],
   ["/docs/get-started/cli", "/docs/reference/cli"],
   ["/docs/get-started/mcp", "/docs/reference/mcp"],
+  // get-started/ section dissolved (2026-08): onboarding → overview/quickstart,
+  // the four set-up-* walkthroughs → the reference pages that own each topic
+  ["/docs/get-started", "/docs/overview/quickstart"],
+  ["/docs/get-started/onboarding", "/docs/overview/quickstart"],
+  // slugs llms.txt advertised under get-started/ that never had a page there
+  ["/docs/get-started/quickstart", "/docs/overview/quickstart"],
+  ["/docs/get-started/installation", "/docs/overview/quickstart"],
+  ["/docs/get-started/comparison", "/docs/overview/bitrouter-vs-openrouter"],
+  ["/docs/get-started/set-up-routing", "/docs/models-and-routing/provider-selection"],
+  ["/docs/get-started/set-up-tracing", "/docs/features/opentelemetry"],
+  ["/docs/get-started/set-up-evaling", "/docs/models-and-routing/policy"],
+  ["/docs/get-started/set-up-looping", "/docs/models-and-routing/policy"],
   // infrastructure → bitrouter cloud (folder renamed; pages merged/moved)
   ["/docs/infrastructure/managed-provider", "/docs/overview/supported-models"],
   ["/docs/infrastructure/discounted-models", "/docs/overview/supported-models"],
@@ -71,9 +83,9 @@ pairs.push(
   ["/docs/infrastructure/workspaces", "/docs/features/namespaces"],
   ["/docs/infrastructure/for-providers", "/docs/guides/register-as-a-provider"],
   // cloud/ section dissolved (2026-06 reorg) → new homes (preserve old links)
-  ["/docs/cloud", "/docs/get-started/onboarding#self-host-or-cloud"],
-  ["/docs/cloud/overview", "/docs/get-started/onboarding#self-host-or-cloud"],
-  ["/docs/cloud/get-started", "/docs/get-started/onboarding#self-host-or-cloud"],
+  ["/docs/cloud", "/docs/overview/quickstart#self-host-or-cloud"],
+  ["/docs/cloud/overview", "/docs/overview/quickstart#self-host-or-cloud"],
+  ["/docs/cloud/get-started", "/docs/overview/quickstart#self-host-or-cloud"],
   ["/docs/cloud/byok", "/docs/models-and-routing/byok"],
   ["/docs/cloud/tracing", "/docs/features/opentelemetry"],
   ["/docs/cloud/managed-models", "/docs/overview/supported-models"],
@@ -91,8 +103,8 @@ pairs.push(
   ["/docs/features/local-models", "/docs/integrations/models"],
   ["/docs/features/toolsets", "/docs/features/server-tools"],
   ["/docs/guides/export-telemetry", "/docs/features/opentelemetry"],
-  ["/docs/cloud/managed-tools", "/docs/get-started/onboarding#self-host-or-cloud"],
-  ["/docs/cloud/managed-agents", "/docs/get-started/onboarding#self-host-or-cloud"],
+  ["/docs/cloud/managed-tools", "/docs/overview/quickstart#self-host-or-cloud"],
+  ["/docs/cloud/managed-agents", "/docs/overview/quickstart#self-host-or-cloud"],
   // integrations + cookbook history
   ["/docs/integrations/harnesses/:slug*", "/docs/integrations/:slug*"],
   ["/docs/cookbook/integration/:slug*", "/docs/integrations/:slug*"],

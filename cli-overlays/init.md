@@ -12,7 +12,7 @@ BitRouter discovers its config in this order — first hit wins:
 
 Any command taking `-c/--config` overrides discovery. The daemon **chdirs into the config's directory** on startup, so relative paths (`database.url`, `policy.path`) resolve there. A JSON Schema for the config lives at `dist/schema/bitrouter.config.schema.json` in the repo for IDE autocomplete.
 
-The full onboarding walkthrough — wizard steps, headless flags, recipes — is [Onboarding](/docs/get-started/onboarding).
+The full onboarding walkthrough — wizard steps, headless flags, recipes — is the [Quickstart](/docs/overview/quickstart).
 
 ## @init
 

@@ -24,5 +24,5 @@ You need the widest possible model catalog with zero infrastructure to operate, 
 <Cards>
   <Card title="Migrate from OpenRouter" href="/docs/guides/migrate-from-openrouter" description="One URL, one key — under five minutes." />
   <Card title="BitRouter vs LiteLLM" href="/docs/overview/bitrouter-vs-litellm" description="The other gateway teams most often weigh against BitRouter." />
-  <Card title="Set up routing" href="/docs/get-started/set-up-routing" description="Get adaptive routing running on your own keys." />
+  <Card title="Provider selection" href="/docs/models-and-routing/provider-selection" description="Get adaptive routing running on your own keys." />
 </Cards>

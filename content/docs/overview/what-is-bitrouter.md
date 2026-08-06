@@ -7,16 +7,16 @@ We started BitRouter out of frustration. We were running agents in production, a
 
 So we built it. BitRouter is an **open-source, adaptive LLM gateway and router** for production agent loops: a single local binary that gives any agent one endpoint for its model calls, tools, and sub-agents, and routes each one to the best path that still reaches the goal — with **zero harness changes**. Point your runtime at it and every step of every loop stops billing at frontier prices by default.
 
-It runs anywhere your agent runs, with no dependencies to install, and operates as a permissionless network where any provider can register and any agent can connect. The **Core** is **open-source under Apache 2.0 and self-hostable for free** — bring your own keys or run a local model and you owe us nothing. **Cloud** is an optional hosted layer that adds managed providers, agentic payments, and account-wide policies on top. You can [install either mode](/docs/get-started/onboarding) in under a minute, and browse the full [models & pricing](/docs/overview/supported-models) catalog.
+It runs anywhere your agent runs, with no dependencies to install, and operates as a permissionless network where any provider can register and any agent can connect. The **Core** is **open-source under Apache 2.0 and self-hostable for free** — bring your own keys or run a local model and you owe us nothing. **Cloud** is an optional hosted layer that adds managed providers, agentic payments, and account-wide policies on top. You can [install either mode](/docs/overview/quickstart) in under a minute, and browse the full [models & pricing](/docs/overview/supported-models) catalog.
 
 ## The idea: a second loop
 
 Our bet is simple: routing is a learning problem. BitRouter wraps your agentic loop in a **second loop**. Each loop gets its own [policy spec](/docs/models-and-routing/policy) — a config file that declares how its calls, tools, and agents should route — and against that spec BitRouter runs a continuous **act → observe → evaluate → learn** cycle. Every step is a component it already ships:
 
-- **Act — the router.** Each model, tool, and agent call is rewritten to a chosen route: policy-table routing, cross-protocol translation, multi-account failover. See [Set up routing](/docs/get-started/set-up-routing).
-- **Observe — telemetry.** Every hop is attributed with cost, tokens, latency, and outcome, exported over OTLP to any backend you run. See [Set up tracing](/docs/get-started/set-up-tracing).
-- **Evaluate — the adequacy signal.** Each served request is scored against the route that served it — did the cheaper path still reach the goal? — and every request is cost-metered. Run-level, objective-scored evals are the next milestone. See [Set up evaling](/docs/get-started/set-up-evaling).
-- **Learn — the policy engine.** The observed signal folds back into the policy spec: proven downgrades materialize into the table, failed ones escalate back. The next turn of the loop acts on the improved spec. See [Set up looping](/docs/get-started/set-up-looping).
+- **Act — the router.** Each model, tool, and agent call is rewritten to a chosen route: policy-table routing, cross-protocol translation, multi-account failover. See [Provider selection](/docs/models-and-routing/provider-selection).
+- **Observe — telemetry.** Every hop is attributed with cost, tokens, latency, and outcome, exported over OTLP to any backend you run. See [OpenTelemetry](/docs/features/opentelemetry).
+- **Evaluate — the adequacy signal.** Each served request is scored against the route that served it — did the cheaper path still reach the goal? — and every request is cost-metered. Run-level, objective-scored evals are the next milestone. See [Evaluation signal](/docs/models-and-routing/policy#evaluation-signal).
+- **Learn — the policy engine.** The observed signal folds back into the policy spec: proven downgrades materialize into the table, failed ones escalate back. The next turn of the loop acts on the improved spec. See [Policy](/docs/models-and-routing/policy).
 
 You choose what the loop optimizes for, and it improves the longer it runs in production. We call this recursive self-improvement applied to infrastructure: the router gets better at routing your loop every time the loop runs.
 
@@ -36,4 +36,4 @@ Optimizing a loop isn't just model selection — it's the model, the tool, *and*
 
 ## Next steps
 
-BitRouter is a drop-in proxy for any runtime that supports a custom OpenAI or Anthropic base URL. [Onboarding](/docs/get-started/onboarding) gets you routing in under a minute, and the rest of [Get Started](/docs/get-started/set-up-routing) walks the full loop — routing, tracing, evaling, and looping. Per-runtime recipes (Claude Code, OpenClaw, Codex, and more) live in [Integrations](/docs/integrations), and machine-readable docs in [AI Resources](/docs/ai-resources).
+BitRouter is a drop-in proxy for any runtime that supports a custom OpenAI or Anthropic base URL. The [Quickstart](/docs/overview/quickstart) gets you routing in under a minute; [Models & Routing](/docs/models-and-routing/provider-selection) and [Policy](/docs/models-and-routing/policy) cover the rest of the loop. Per-runtime recipes (Claude Code, OpenClaw, Codex, and more) live in [Integrations](/docs/integrations), and machine-readable docs in [AI Resources](/docs/ai-resources).

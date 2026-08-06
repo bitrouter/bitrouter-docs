@@ -16,7 +16,7 @@ If you are an AI agent setting up BitRouter, follow these steps:
 4. Verify: \`curl http://localhost:8787/v1/chat/completions -H "Content-Type: application/json" -d '{"model":"openai/gpt-4o","messages":[{"role":"user","content":"Hello!"}]}'\`
 
 References:
-- Full quickstart walkthrough: ${BASE_URL}/docs/get-started/quickstart
+- Full quickstart walkthrough: ${BASE_URL}/docs/overview/quickstart
 - Agent Skills (install/configure BitRouter from inside an agent): https://github.com/bitrouter/agent-skills
 - BitRouter CLI (proxy, setup wizard, TUI dashboard): https://github.com/bitrouter/bitrouter
 - Per-runtime setup recipes (Claude Code, Codex, OpenClaw, OpenCode, and more): ${BASE_URL}/docs/integrations
@@ -24,8 +24,8 @@ References:
 ## Getting Started
 
 - [Introduction](${BASE_URL}/docs): What BitRouter is, what's in the box, and why we're building it
-- [Quick Start](${BASE_URL}/docs/get-started/quickstart): Install via Agent Skills or the CLI and start routing in under a minute
-- [Comparison](${BASE_URL}/docs/get-started/comparison): How BitRouter differs from OpenRouter, LiteLLM, and other LLM gateways
+- [Quick Start](${BASE_URL}/docs/overview/quickstart): Install via Agent Skills or the CLI and start routing in under a minute
+- [Comparison](${BASE_URL}/docs/overview/bitrouter-vs-openrouter): How BitRouter differs from OpenRouter, LiteLLM, and other LLM gateways
 - [Agent Skills](https://github.com/bitrouter/agent-skills): Drop-in skills that teach an agent to install and use BitRouter
 - [BitRouter CLI](https://github.com/bitrouter/bitrouter): \`cargo install bitrouter\` — the Rust binary, setup wizard, and TUI dashboard
 

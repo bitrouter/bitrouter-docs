@@ -3,7 +3,7 @@ title: Supported Models
 description: The full catalog of models any BitRouter account can call — with pricing, reachable over your own keys or one hosted BitRouter Cloud account.
 ---
 
-Every model BitRouter can route to is listed below. Reach any of them over your own provider keys ([BYOK](/docs/models-and-routing/byok), paid to the providers at their list price) or one [BitRouter Cloud](/docs/get-started/onboarding) account — one sign-in, no upstream keys, billed per request with failed requests not charged. Running your own model? See [local & private models](/docs/integrations/models) (free).
+Every model BitRouter can route to is listed below. Reach any of them over your own provider keys ([BYOK](/docs/models-and-routing/byok), paid to the providers at their list price) or one [BitRouter Cloud](/docs/overview/quickstart) account — one sign-in, no upstream keys, billed per request with failed requests not charged. Running your own model? See [local & private models](/docs/integrations/models) (free).
 
 Prices are USD per **million tokens** — what a BitRouter Cloud request costs today, from the cheapest provider actually serving that model (`—` means no per-token provider is currently serving it). A provider listed in the [registry](https://github.com/bitrouter/bitrouter/tree/main/registry) but not currently reachable isn't priced here, so bringing your own key to one of them can beat these rates. Every model is served by one or more registered providers — see [Supported Providers](/docs/overview/supported-providers) for the full list and how to register your own.
 

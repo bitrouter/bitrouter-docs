@@ -3,6 +3,7 @@
   "icon": "Telescope",
   "defaultOpen": true,
   "pages": [
+    "quickstart",
     "what-is-bitrouter",
     "supported-models",
     "supported-providers",

@@ -3,7 +3,7 @@ title: policy
 description: The routing-policy lifecycle — init, check, status, show, evolve, lock/unlock, reload.
 ---
 
-Routing policies are the artifact the [self-improving loop](/docs/overview/recursive-self-improvement) learns into: `init` scaffolds `policy-lock.yaml` and binds it to a preset, live traffic teaches the adequacy ledger, and `evolve --apply` folds proven downgrades back into the file. The walkthrough is [Set up looping](/docs/get-started/set-up-looping); the table and ledger semantics are [Policy](/docs/models-and-routing/policy).
+Routing policies are the artifact the [self-improving loop](/docs/overview/recursive-self-improvement) learns into: `init` scaffolds `policy-lock.yaml` and binds it to a preset, live traffic teaches the adequacy ledger, and `evolve --apply` folds proven downgrades back into the file. The table, ledger, and evolution semantics are all on [Policy](/docs/models-and-routing/policy).
 
 <Callout type="info">
 `bitrouter policy create` + `bitrouter key sign` are a **different surface** — per-virtual-key access control (allowed models, budgets, rate limits), not routing. See [Guardrails](/docs/features/guardrails).

@@ -7,7 +7,7 @@ Codex CLI can run through BitRouter without taking over your Codex config. The q
 
 ## Prerequisites
 
-- BitRouter running — local proxy at `http://127.0.0.1:4356`, or [BitRouter Cloud](/docs/get-started/onboarding) at `https://api.bitrouter.ai`.
+- BitRouter running — local proxy at `http://127.0.0.1:4356`, or [BitRouter Cloud](/docs/overview/quickstart) at `https://api.bitrouter.ai`.
 - Codex installed:
 
   ```bash

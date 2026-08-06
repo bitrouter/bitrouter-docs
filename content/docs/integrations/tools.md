@@ -3,7 +3,7 @@ title: Overview
 description: Connect external tools — web search and retrieval providers — that the models you route through BitRouter can call.
 ---
 
-A **tool** is a capability a model picks up at runtime to get work done (see [concepts: tools](/docs/features/tools)). The integrations here are the **web-search and retrieval providers** that back BitRouter's built-in [web search](/docs/features/websearch): bring a key for any of them and *every* model you route through BitRouter gains a web search — even a model with no native search of its own.
+A **tool** is a capability a model picks up at runtime to get work done (see [Tools](/docs/features/tools)). The integrations here are the **web-search and retrieval providers** that back BitRouter's built-in [web search](/docs/features/websearch): bring a key for any of them and *every* model you route through BitRouter gains a web search — even a model with no native search of its own.
 
 <Cards>
   <Card title="Exa" href="/docs/integrations/exa" description="Neural / semantic web search · EXA_API_KEY" />

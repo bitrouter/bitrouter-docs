@@ -1,8 +1,7 @@
 ---
-title: Onboarding
+title: Quickstart
 description: Install BitRouter and get your agent routing in under a minute — pick self-host or Cloud, then onboard via the Agent Skill, the CLI wizard, or manual env keys.
 ---
-
 
 This page gets BitRouter routing for your agent in under a minute. There are two deployment modes, and three ways to onboard either one — the Agent Skill, the CLI wizard, or manual env keys.
 
@@ -25,6 +24,7 @@ Every core capability works the same either way — Cloud only adds what needs a
 | Local / private model serving | ✅ | ✅ |
 | Model fallback & provider selection | ✅ | ✅ |
 | Model variants & presets | ✅ | ✅ |
+| Adaptive routing policies | ✅ | ✅ |
 | Guardrails | ✅ | ✅ |
 | Observability (OTLP trace + metric export) | ✅ | ✅ |
 | MCP & ACP gateways | ✅ | ✅ |
@@ -105,32 +105,13 @@ Bare `bitrouter` runs a **network-free credential probe** — BYOK env keys, the
 Every step maps to a flag, so an agent (or CI) can run the whole flow without a human. `--yes` never blocks: it consumes flag-supplied credentials, reports-and-skips anything that would need interactive OAuth, and emits a JSON result envelope on stdout:
 
 ```bash
-bitrouter init --yes \
-  --provider openai --provider-api-key "sk-..." \
-  --harness claude --after serve
-```
-
-| Flag | Step | Effect |
-| --- | --- | --- |
-| `--cloud-login` | 1 | Sign in to Cloud via device-flow OAuth (skipped + reported under `--yes`) |
-| `--api-key <BRK_KEY>` | 1 | Seed the Cloud credential from a `brk_` API key (non-interactive) |
-| `--provider <ID>` | 1 | Log in to an upstream provider by id (repeatable) |
-| `--provider-api-key <KEY>` | 1 | Key for the `--provider` at the same position (repeatable) |
-| `--use-detected` | 1 | Accept the auto-detected credential(s) without prompting |
-| `--harness <claude\|codex>` | 2 | Harness to drive (repeatable) |
-| `--no-install` | 2 | Never install a missing harness |
-| `--after <launch\|serve\|exit>` | 3 | What to do at the end |
-| `-c, --config <PATH>` | — | Where to write the starter `bitrouter.yaml` |
-| `--force` | — | Allow overwriting an existing `bitrouter.yaml` |
-| `--reset` | — | Clear stored onboarding credentials before running |
-
-```bash
+bitrouter init --yes --provider openai --provider-api-key "sk-..." --harness claude --after serve
 bitrouter init --yes --use-detected --harness claude --after serve   # accept env keys, run proxy
 bitrouter init --yes --api-key "brk_..." --after exit                # Cloud key, no launch
 bitrouter init --reset                                               # clear credentials, start over
 ```
 
-The wizard never writes `bitrouter.yaml` beyond the canned starter template — your routing config stays yours to edit.
+Every flag is documented in the [`bitrouter init` reference](/docs/reference/cli/init). The wizard never writes `bitrouter.yaml` beyond the canned starter template — your routing config stays yours to edit.
 
 ## Run self-hosted
 
@@ -160,19 +141,7 @@ bitrouter cloud login   # RFC 8628 device flow against api.bitrouter.ai
 bitrouter start         # the `bitrouter` provider auto-enables once signed in
 ```
 
-You can also point an agent straight at the hosted endpoint without running a local binary. Either way the core is the same — a Cloud account is an account and network, not a separate deployment. See the [Supported Models](/docs/overview/supported-models) catalog for pricing.
-
-## Attach Cloud to a self-hosted binary
-
-Cloud is not a different binary — it's an account you attach:
-
-```bash
-bitrouter cloud login
-# Opens a browser to sign in and pick a workspace.
-# Your local binary now routes Cloud-managed models alongside your BYOK keys.
-```
-
-You can add or remove the Cloud account at any time. The binary's self-hosted capabilities are unaffected either way.
+Cloud is not a different binary — it's an account you attach. Signing in from a self-hosted binary routes Cloud-managed models alongside your BYOK keys, and you can add or remove the Cloud account at any time without affecting the binary's self-hosted capabilities. You can also point an agent straight at the hosted endpoint without running a local binary at all. See the [Supported Models](/docs/overview/supported-models) catalog for pricing.
 
 ## Point your agent at the proxy
 
@@ -191,11 +160,18 @@ curl http://127.0.0.1:4356/v1/chat/completions \
 
 Point any OpenAI-compatible runtime at `http://127.0.0.1:4356/v1` to route through BitRouter.
 
+Two commands make the routing decision itself legible:
+
+```bash
+bitrouter models                            # every model id routable right now
+bitrouter route anthropic/claude-opus-4.8   # preview the routing decision
+```
+
 ## Next steps
 
 <Cards>
-  <Card title="Set up routing" href="/docs/get-started/set-up-routing" description="Presets, fallback chains, and multi-account failover." />
-  <Card title="Integrations" href="/docs/integrations" description="Step-by-step guides for every supported agent runtime" />
+  <Card title="Provider selection" href="/docs/models-and-routing/provider-selection" description="Declare providers, rank them, and add multi-account failover." />
+  <Card title="Policy" href="/docs/models-and-routing/policy" description="Bind a policy to a preset and let routing learn from live traffic." />
+  <Card title="Integrations" href="/docs/integrations" description="Step-by-step guides for every supported agent runtime." />
   <Card title="CLI reference" href="/docs/reference/cli" description="The full command surface of the binary." />
-  <Card title="For Providers" href="/docs/guides/register-as-a-provider" description="List your models on the BitRouter Registry" />
 </Cards>

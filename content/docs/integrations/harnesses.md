@@ -29,4 +29,4 @@ A harness is *what runs*; a model source is *where the tokens come from*. You ca
 
 ## New to BitRouter?
 
-Start with the [Quick Start](/docs/get-started/onboarding) to get the proxy running, then come back and point your harness at it.
+Start with the [Quick Start](/docs/overview/quickstart) to get the proxy running, then come back and point your harness at it.

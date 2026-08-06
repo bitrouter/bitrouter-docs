@@ -7,7 +7,7 @@ Hermes is Nous Research's self-improving agent. It accepts a custom OpenAI-compa
 
 ## Prerequisites
 
-- BitRouter running — local proxy at `http://127.0.0.1:4356`, or [BitRouter Cloud](/docs/get-started/onboarding) at `https://api.bitrouter.ai`.
+- BitRouter running — local proxy at `http://127.0.0.1:4356`, or [BitRouter Cloud](/docs/overview/quickstart) at `https://api.bitrouter.ai`.
 - Hermes installed. See [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) for setup.
 
 ## Point Hermes at BitRouter

@@ -31,7 +31,7 @@ describe("buildFooterColumns", () => {
       "Docs", "API", "CLI", "MCP", "Agent Skills",
     ]);
   });
-  it("CLI and MCP point at the concepts interface docs, Agent Skills at ai-resources", () => {
+  it("CLI and MCP point at the reference interface docs, Agent Skills at ai-resources", () => {
     const dev = buildFooterColumns().find((c) => c.title === "Developers")!;
     const byLabel = Object.fromEntries(dev.links.map((l) => [l.label, l.href]));
     expect(byLabel["CLI"]).toBe("/docs/reference/cli");

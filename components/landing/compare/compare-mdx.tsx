@@ -80,7 +80,7 @@ export function CompareTradeoffs({ slug }: { slug: string }) {
 const COMPARE_MIGRATION: Record<string, { href: string; label: string }> = {
   "bitrouter-vs-litellm": { href: "/docs/guides/migrate-from-litellm", label: "Read the migration guide →" },
   "bitrouter-vs-openrouter": { href: "/docs/guides/migrate-from-openrouter", label: "Read the migration guide →" },
-  "bitrouter-vs-portkey": { href: "/docs/get-started/comparison", label: "Read the full comparison →" },
+  "bitrouter-vs-portkey": { href: "/docs/overview/bitrouter-vs-openrouter", label: "Read the full comparison →" },
 };
 
 export function CompareCTA({ slug }: { slug: string }) {

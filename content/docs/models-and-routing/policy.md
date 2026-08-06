@@ -100,6 +100,23 @@ adequacy:
 
 The evidence rule is asymmetric: negative evidence escalates immediately, while a cheaper route needs repeated request-level success and any configured semantic-success gate before it becomes effective. A failed learned route unlocks and escalates again. Both learning and exploration are opt-in, so a policy with `adequacy` off behaves exactly like its deterministic table.
 
+## Evaluation signal
+
+The ledger above is fed by the **evaluate** step of the [act → observe → evaluate → learn](/docs/overview/what-is-bitrouter) loop, which answers one question after each request: *the route BitRouter picked — did it still reach the goal?*
+
+Every request that goes through a policy-bound route is classified by outcome — success, or a hard failure with a cause (`provider transient`, `provider permanent`, `protocol`, `auth`, `client`, `semantic`) — and recorded against the request's fingerprint. There is **no LLM judge in the path**: the signal is deterministic and free, which is what makes cheap-tier downgrades safe to attempt at all. You don't configure the classifier; it runs whenever a policy has `adequacy` enabled.
+
+Alongside it, every request is **cost-metered** into the local database with an estimated charge, so *what did that run cost?* is answerable per request, per model, and per provider. Two ways to read it:
+
+- **Traces** — the settlement span carries cost attributes into your OTLP backend, so cost sits next to latency and outcome on every request. See [OpenTelemetry](/docs/features/opentelemetry).
+- **Cloud Activity** — on BitRouter Cloud, spend, tokens, and the per-request log are hosted for you; content is never stored. See [Cloud Activity](/docs/features/opentelemetry#cloud-activity-hosted).
+
+Because every hop is traced with outcome, cost, tokens, and the model that actually served, your OTLP backend doubles as an evaluation store: join spans by run, score them however you like, and you have run-level evals on your own terms today. This is the same substrate BitRouter's own benchmark harness consumes.
+
+<Callout type="info">
+The dedicated eval engine — scoring each *run* and routing decision against a declared objective (cost today, latency and accuracy next) as a first-class, user-facing feature — is **landing next**. What's described above is the live signal it will be built on; nothing here changes when it ships, it just gains a scorer on top.
+</Callout>
+
 ## Not the same as Cloud policy
 
 This page is about **routing** policy in the local router. BitRouter Cloud has a *separate* policy surface — `bitrouter cloud policy` manages budgets, rate limits, guardrails, and presets bound to an API key or workspace. See the [CLI](/docs/reference/cli) for those commands.

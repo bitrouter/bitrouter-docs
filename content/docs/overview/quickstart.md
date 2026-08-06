@@ -167,11 +167,78 @@ bitrouter models                            # every model id routable right now
 bitrouter route anthropic/claude-opus-4.8   # preview the routing decision
 ```
 
+## Adaptive routing
+
+Everything above is a static router. The adaptive half — the **learn** step of the [act → observe → evaluate → learn](/docs/overview/what-is-bitrouter) loop — is opt-in, deterministic, and adds no LLM call to the path. Its artifact is `policy-lock.yaml`, living next to `bitrouter.yaml`: **Git owns its history; the local database owns the evidence.**
+
+One command scaffolds everything:
+
+```bash
+bitrouter policy init coding --preset coding --economy moonshotai/kimi-k2.7-code
+```
+
+That writes a two-tier table (strong = your preset's model, economy = the cheap one), clamps tool-carrying requests to the strong tier so a downgrade never strands a tool call, and binds the policy to the preset in `bitrouter.yaml` with `writeback: locked`. Selecting the preset as the model is the entire opt-in boundary — bare model requests are never touched by a policy:
+
+```bash
+curl http://127.0.0.1:4356/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{"model": "@coding", "messages": [{"role": "user", "content": "..."}]}'
+```
+
+Each request is fingerprinted by loop step (`opening`, `after_<tool>`, `midstream`) and resolved fingerprint → tier → model. An unmatched fingerprint falls back to `default_tier`, and the table starts conservative: everything routes strong until evidence says otherwise.
+
+### The evaluation signal
+
+With `adequacy` enabled, every request through a policy-bound route is classified by outcome — success, or a hard failure with a cause (`provider transient`, `provider permanent`, `protocol`, `auth`, `client`, `semantic`) — and recorded against its fingerprint. There is **no LLM judge in the path**: the signal is deterministic and free, which is what makes cheap-tier downgrades safe to attempt at all. Two halves act on it:
+
+- **Escalation (the safety half)** — a downgraded fingerprint that hard-fails `escalation_threshold` consecutive times is pinned up to the strong tier. Pins decay after a cooldown.
+- **Exploration (the aggressive half)** — with `explore_enabled`, roughly 1-in-`explore_interval` candidate requests is trialed on the economy tier; `explore_threshold` consecutive adequate trials qualify that fingerprint for the cheap tier. A failed trial escalates and stops.
+
+```yaml
+# policy-lock.yaml
+adequacy:
+  enabled: true
+  escalation_tier: strong
+  escalation_threshold: 2
+  pin_cooldown_secs: 1800
+  explore_enabled: true
+  explore_tier: economy
+  explore_threshold: 3
+  explore_interval: 5
+```
+
+The evidence rule is asymmetric: negative evidence escalates immediately, while a cheaper route needs repeated success before it becomes effective. A policy with `adequacy` off behaves exactly like its deterministic table.
+
+Every request is also **cost-metered** with an estimated charge, so *what did that run cost?* is answerable per request, per model, and per provider. The settlement span carries cost attributes into your OTLP backend, so cost sits next to latency and outcome on every request — which makes your tracing backend double as an evaluation store.
+
+<Callout type="info">
+The dedicated eval engine — scoring each *run* against a declared objective (cost today, latency and accuracy next) — is **landing next**. The signal above is what it will be built on.
+</Callout>
+
+### Publishing what it learns
+
+Qualified downgrades live in the database until you publish them. The cycle is explicit and digest-checked:
+
+```bash
+bitrouter policy status          # path, digest, writeback mode, bindings
+bitrouter policy evolve          # dry-run: which routes would materialize
+bitrouter policy unlock          # permit programmatic writeback
+bitrouter policy evolve --apply  # atomically republish policy-lock.yaml
+bitrouter policy reload          # daemon picks it up — no restart
+bitrouter policy lock            # forbid programmatic writes again
+```
+
+`evolve --apply` only **adds** qualified routes — it never overwrites or removes anything you or Git wrote, and a detected intervening edit aborts the publish instead of clobbering it. Commit the result and the improved table is in Git, where a policy belongs.
+
+<Callout type="info">
+`bitrouter policy create` + `bitrouter key sign` are a **different surface** — per-key access control (allowed models, budgets, rate limits), not routing. See [Guardrails](/docs/features/guardrails).
+</Callout>
+
 ## Next steps
 
 <Cards>
   <Card title="Provider selection" href="/docs/models-and-routing/provider-selection" description="Declare providers, rank them, and add multi-account failover." />
-  <Card title="Policy" href="/docs/models-and-routing/policy" description="Bind a policy to a preset and let routing learn from live traffic." />
+  <Card title="Presets" href="/docs/models-and-routing/presets" description="Named routing profiles — the opt-in boundary for adaptive routing." />
   <Card title="Integrations" href="/docs/integrations" description="Step-by-step guides for every supported agent runtime." />
   <Card title="CLI reference" href="/docs/reference/cli" description="The full command surface of the binary." />
 </Cards>

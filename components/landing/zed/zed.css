@@ -384,7 +384,7 @@
 
 /* ── Article body (blog / changelog MDX via fumadocs DocsBody) ──
    Layered over fumadocs prose: Newsreader italic headings, IBM Plex Mono body,
-   blue links, purple inline code, blue-rule blockquotes. */
+   blue links, blue inline code, blue-rule blockquotes. */
 .zed-article {
   font-family: var(--font-mono) !important;
   color: var(--z-ink-3);

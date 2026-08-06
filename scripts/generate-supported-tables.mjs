@@ -1,5 +1,5 @@
-// Regenerates the catalog tables in the two `content/docs/overview/supported-*`
-// pages from the committed snapshots. Replaces the Rust `dist-helper registry docs`
+// Regenerates the catalog table in `content/docs/overview/supported-models.md`
+// from the committed snapshot. Replaces the Rust `dist-helper registry docs`
 // generator, which lived in bitrouter/bitrouter and was deleted in #742 when the
 // docs moved to this repo — leaving these tables frozen and unchecked.
 //
@@ -15,9 +15,6 @@
 // registry, which includes supply nobody can route to without their own key and
 // which understated 17 of 49 models. This is the same number `/models` renders,
 // so the two surfaces agree by construction.
-//
-// Provider rows stay registry-sourced: that page documents who is registered on
-// the network, BYOK-only supply included.
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -25,11 +22,6 @@ const ROOT = process.cwd();
 const CHECK = process.argv.includes("--check");
 
 const MODELS = JSON.parse(readFileSync(join(ROOT, ".models-snapshot.json"), "utf8")).models;
-const PROVIDERS = JSON.parse(
-  readFileSync(join(ROOT, ".providers-snapshot.json"), "utf8"),
-).providers;
-
-const BILLING = { usage_token: "Per-token", subscription: "Subscription" };
 
 /**
  * Context windows are quoted in whichever base divides evenly — models are
@@ -75,27 +67,11 @@ function modelRows() {
   ]);
 }
 
-function providerRows() {
-  return PROVIDERS.map((p) => [
-    `\`${p.id}\``,
-    p.name,
-    p.headquarters || "—",
-    p.protocols.join(", ") || "—",
-    BILLING[p.billing] ?? p.billing ?? "—",
-    String(p.models),
-  ]);
-}
-
 const TARGETS = [
   {
     file: "content/docs/overview/supported-models.md",
     header: ["Model", "Name", "Context", "Modalities", "Open weights", "Input $/M", "Output $/M"],
     rows: modelRows,
-  },
-  {
-    file: "content/docs/overview/supported-providers.md",
-    header: ["Provider", "Name", "HQ", "Protocols", "Billing", "Models"],
-    rows: providerRows,
   },
 ];
 

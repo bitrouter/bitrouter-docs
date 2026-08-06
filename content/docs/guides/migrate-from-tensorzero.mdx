@@ -15,7 +15,7 @@ This guide is for teams who adopted TensorZero mainly as a **gateway** — unifi
 |---|---|---|
 | **Runtime** | Rust gateway | Rust (single static binary) |
 | **Production deps** | ClickHouse (observability store) + Docker/Compose | None |
-| **Configuration** | `tensorzero.toml` — functions, variants, models, providers | Provider keys + routing presets; no schema to maintain |
+| **Configuration** | `tensorzero.toml` — functions, variants, models, providers | `bitrouter.yaml` — optional, JSON Schema published, [validates in CI](/docs/usage/configuration#validate-in-ci) |
 | **Deployment modes** | Self-hosted only | Local binary **or** hosted (`api.bitrouter.ai`) — same OpenAI-compatible endpoint |
 | **Design focus** | Full LLMOps loop: gateway + observability + evals + optimization + experimentation | Agent-first proxy: MCP / ACP / Skills, agent firewall, agentic payment |
 | **Agent protocol surface** | None (gateway is provider-facing) | MCP, ACP, Skills, CLI — the product, not an add-on |
@@ -28,7 +28,9 @@ This guide is for teams who adopted TensorZero mainly as a **gateway** — unifi
 
 TensorZero is built around a feedback loop: route inference, store every call and its metrics in ClickHouse, then evaluate, fine-tune, and A/B test against that history. That's powerful if you run that loop — and it's why TensorZero needs a database and a typed config of functions and variants.
 
-BitRouter deliberately stops at the gateway. There's no `tensorzero.toml` to maintain, no ClickHouse to operate — you set provider keys and route by `provider/model` id. [OpenTelemetry](/docs/observability/opentelemetry) gives you spans and metrics for every request (the same OTLP export TensorZero offers), but they go to a backend you already run, not a warehouse the proxy manages.
+BitRouter deliberately stops at the gateway. There's no ClickHouse to operate — [OpenTelemetry](/docs/observability/opentelemetry) gives you spans and metrics for every request (the same OTLP export TensorZero offers), but they go to a backend you already run, not a warehouse the proxy manages.
+
+Configuration is the other difference, and it's one of degree rather than kind. BitRouter is also configured as code — [`bitrouter.yaml`](/docs/usage/configuration) holds providers, routing policy, and gateways, with a published JSON Schema and a `validate` command for CI. What it doesn't ask you to declare is the *shape of your application*: there are no functions to define and no variants to enumerate before you can route a request. You can run on provider keys alone and add config only where you want policy under review.
 
 ### 2. Agent-native, and cloud/local share one surface
 

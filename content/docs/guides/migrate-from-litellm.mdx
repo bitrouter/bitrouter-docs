@@ -78,7 +78,7 @@ response = client.chat.completions.create(
 </Tab>
 </Tabs>
 
-Fallbacks and provider selection that you'd configure with `litellm.Router` move into BitRouter's [virtual models](/docs/gateway-and-routing/virtual-model) and [model fallback rules](/docs/gateway-and-routing/model-fallback) — declared once, not per call site.
+Fallbacks and provider selection that you'd configure with `litellm.Router` move into BitRouter's [virtual models](/docs/gateway-and-routing/virtual-model) and [model fallback rules](/docs/gateway-and-routing/model-fallback) — declared once in [`bitrouter.yaml`](/docs/usage/configuration), not per call site.
 
 ### From the LiteLLM Proxy
 
@@ -114,7 +114,7 @@ To skip the local proxy entirely, point clients at `https://api.bitrouter.ai/v1`
 
 | LiteLLM concept | BitRouter equivalent | Docs |
 |---|---|---|
-| `model_list` in `config.yaml` | Provider keys + routing presets | [Virtual models](/docs/gateway-and-routing/virtual-model) |
+| `model_list` in `config.yaml` | `providers:` + `presets:` in `bitrouter.yaml` | [Configuration](/docs/usage/configuration) |
 | `router_settings` (retries, fallback) | Model fallback rules | [Model fallback](/docs/gateway-and-routing/model-fallback) |
 | `routing_strategy` (least-busy, latency) | Provider selection | [Provider selection](/docs/gateway-and-routing/provider-selection) |
 | `cache` (Redis/DynamoDB backed) | Not built into the proxy — handle in app/edge if needed | — |

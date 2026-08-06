@@ -83,9 +83,24 @@ The full CRUD surface — `list`, `get`, `create`, `update`, `delete`, plus `dis
 
 A virtual model can be disabled without deleting it (`POST …/routing-presets/{id}/disable`, re-enable with `/enable`, or toggle it in the console). A disabled one is treated as if it doesn't exist: invoking its `@name` returns the same `400` as an unknown name, while the definition is preserved for when you switch it back on.
 
-## Self-hosted: aliases over your own endpoints
+## Self-hosted
 
-The `@name` form above is a BitRouter Cloud namespace feature. When you [self-host](/docs/guides/self-host), the `models` section of `bitrouter.yaml` gives you the other half of the idea — a named alias over an ordered list of endpoints, so one model name fails over across providers:
+`@name` is not Cloud-only. The local binary resolves it from the `presets:` block of [`bitrouter.yaml`](/docs/usage/configuration), with the same fields the API and console expose:
+
+```yaml
+# bitrouter.yaml
+presets:
+  fast:
+    model: "openai/gpt-4o-mini"
+    params:
+      temperature: 0.2
+    routing:
+      sort: cost
+```
+
+`bitrouter route "@fast"` previews the resolution without sending a request. What Cloud adds is the managed lifecycle — namespaces, enable/disable, and the `routing-presets` endpoints — not the `@name` grammar itself.
+
+The separate `models` section is a different feature that's easy to confuse with this one: a named alias over an **ordered list of endpoints**, so one model name fails over across providers. It is not invoked with `@`:
 
 ```yaml
 # bitrouter.yaml

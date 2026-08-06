@@ -1,0 +1,264 @@
+---
+title: Configuration
+description: bitrouter.yaml — the single file that holds your routing policy, providers, and gateways, with a JSON Schema for your editor and a validate command for CI.
+---
+
+BitRouter runs with no configuration at all. When you outgrow that, everything it does becomes **one file you commit**: `bitrouter.yaml`.
+
+That is the whole idea behind **routing as code**. Which model serves which kind of request, which providers are eligible, what happens when one fails, when to spend on a frontier model and when not to — these are policy decisions. Policy that lives in a dashboard drifts, resists review, and can't be rolled back. Policy that lives in a file gets diffed, reviewed, and reverted like anything else you ship.
+
+BitRouter goes one step further than a static file: the router can **propose changes to its own policy**, which you review and merge. See [Routing as code](#routing-as-code).
+
+## Zero-config is still the default
+
+You do not need this file to start. With no config anywhere, BitRouter builds an in-memory default and auto-enables any provider whose key is in your environment:
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-...
+bitrouter serve
+```
+
+Reach for `bitrouter.yaml` when you want something zero-config can't express: named routing policy, provider allow/deny lists, a tiered cost policy, MCP or ACP gateways, or anything you want under review. `bitrouter init` writes a starter file.
+
+## Where the file lives
+
+Resolution stops at the first hit:
+
+| Order | Location | Notes |
+| --- | --- | --- |
+| 1 | `-c/--config <PATH>` | Explicit. A missing path is a hard error, not a fallback. |
+| 2 | `./bitrouter.yaml` | The repo-local file — this is the one you commit. |
+| 3 | `$BITROUTER_HOME/bitrouter.yaml` | If the variable is set, the file **must** be there. |
+| 4 | `~/.bitrouter/bitrouter.yaml` | Per-user default. |
+| 5 | *(none)* | Zero-config in-memory defaults, with `~/.bitrouter` as the implicit home. |
+
+<Callout type="warning">
+**`BITROUTER_HOME` fails loudly on purpose.** If it's set but holds no `bitrouter.yaml`, BitRouter errors instead of falling through to `~/.bitrouter` or zero-config. Silently ignoring an operator's explicit choice of config directory is how the wrong policy reaches production.
+</Callout>
+
+## Editor support
+
+The config has a published JSON Schema, regenerated from the binary's own types on every release, so it never drifts from what the version you run accepts.
+
+Add a modeline to the top of the file and any `yaml-language-server` editor (VS Code, Neovim, JetBrains) gives you completion, hover docs, and inline validation:
+
+```yaml
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bitrouter/bitrouter/main/dist/schema/bitrouter.config.schema.json
+server:
+  listen: "127.0.0.1:4356"
+```
+
+Or wire it up globally in VS Code's `settings.json`:
+
+```json
+{
+  "yaml.schemas": {
+    "https://raw.githubusercontent.com/bitrouter/bitrouter/main/dist/schema/bitrouter.config.schema.json": "bitrouter.yaml"
+  }
+}
+```
+
+That URL tracks the OSS `main` branch. To pin a release instead, swap `main` for a tag such as `v1.0.0-alpha.27`.
+
+## Environment variables
+
+Any value may reference an environment variable. Keys stay out of the file, so the file stays committable:
+
+```yaml
+providers:
+  openai:
+    api_key: "${OPENAI_API_KEY}"
+  selfhosted:
+    # `:-` supplies a fallback when the variable is unset
+    endpoint: "${LLM_ENDPOINT:-http://127.0.0.1:8000/v1}"
+```
+
+Substitution is **comment-aware** — a `${VAR}` inside a `#` comment is left literal and never looked up, so a commented-out example referencing an unset variable won't break loading.
+
+## What the file holds
+
+Every block is optional and defaults to something sensible. An empty file is valid.
+
+| Block | What it configures |
+| --- | --- |
+| `providers` | Upstream providers and their keys. See [BYOK](/docs/gateway-and-routing/bring-your-own-provider) |
+| `presets` | `@name` definitions — model substitution, system prompt, params, routing. See [Virtual models](/docs/gateway-and-routing/virtual-model) |
+| `variants` | `:name` definitions — routing modifiers only. See [Model variants](/docs/gateway-and-routing/model-variants) |
+| `models` | Named models over an ordered endpoint chain. See [Model fallback](/docs/gateway-and-routing/model-fallback) |
+| `policy_table` | Tiered per-request routing by request shape. See [The policy table](#the-policy-table) |
+| `policy` | Where the policy lock lives and whether it may self-update. See [The adaptive loop](#the-adaptive-loop) |
+| `registry` | Public-registry integration and the provider-class priority ladder |
+| `server` | Listen address and HTTP server settings |
+| `upstream` | Outbound HTTP client settings (timeouts, retries) |
+| `database` | Database connection |
+| `mcp` | MCP gateway aggregation and caching. See [MCP gateway](/docs/gateway-and-routing/mcp-gateway) |
+| `mcp_servers` | Upstream MCP servers, keyed by id |
+| `server_tools` | MCP server ids whose tools BitRouter injects and executes itself. See [Server tools](/docs/gateway-and-routing/server-tools) |
+| `agents` | Upstream ACP agents. See [ACP gateway](/docs/gateway-and-routing/acp-gateway) |
+| `plugins` | Plugin config, keyed by plugin or bundle id |
+| `worktrees` | Worktree isolation for orchestrator-spawned subagents |
+| `tui` | Terminal console settings |
+| `inherit_defaults` | Whether providers inherit workspace defaults |
+
+## Routing as code
+
+### Presets and variants
+
+A preset is a name you define once and invoke by putting `@name` in the `model` field. It needs no SDK and no body fields, so it works identically on the OpenAI, Anthropic, and Google surfaces:
+
+```yaml
+presets:
+  fast:
+    model: "openai/gpt-4o-mini"
+    params:
+      temperature: 0.2
+    routing:
+      sort: cost
+      ignore: ["some-slow-provider"]
+
+  careful:
+    model: "anthropic/claude-sonnet-4.6"
+    system_prompt: "Think step by step before answering."
+    routing:
+      require_tags: ["soc2"]
+
+variants:
+  cheap:
+    routing:
+      sort: cost
+```
+
+A request for `@fast` gets the substituted model and the overrides; `@careful:cheap` applies the preset, then lets the variant override its sort. Callers never change — the policy moved into the file.
+
+<Callout type="info">
+**Presets work self-hosted, not just on Cloud.** The `@name` grammar is often described as a Cloud namespace feature, but the local binary resolves `@name` straight from this `presets:` block. `bitrouter route "@fast"` shows you the resolution without sending a request.
+</Callout>
+
+Semantics — precedence, the `@name/base-model` form, what happens on an unknown name — are covered on [Virtual models](/docs/gateway-and-routing/virtual-model) and [Model variants](/docs/gateway-and-routing/model-variants). This page only shows the file.
+
+### The policy table
+
+Presets require the caller to opt in by name. The **policy table** applies policy to traffic that asks for nothing special — it routes each request by its *shape* in an agent loop, so a coding agent's cheap bookkeeping turns stop costing frontier-model money.
+
+```yaml
+policy_table:
+  # Tier name → the model every request on that tier routes to.
+  tiers:
+    cheap: "openai/gpt-4o-mini"
+    capable: "anthropic/claude-sonnet-4.6"
+
+  # Request fingerprint → tier.
+  fingerprints:
+    opening: capable        # first turn, no model output yet
+    after_read: cheap       # the model just called the `read` tool
+    midstream: cheap        # a model turn that called no tool
+
+  # Any fingerprint not listed above.
+  default_tier: capable
+
+  # Guardrail: a request carrying tools is clamped UP to `tool_use_tier`
+  # unless the tier it would otherwise get is known tool-safe.
+  tool_use_tier: capable
+  tool_safe_tiers: ["capable"]
+```
+
+A fingerprint is the agent-loop step: `opening` (no model turn yet), `after_<tool>` (the model last called `<tool>`), or `midstream` (a model turn with no tool call). The section is inert while `tiers` is empty, so adding the block changes nothing until you populate it.
+
+The tool guardrail matters more than it looks. Small models are the ones that mangle tool calls, and a downgrade that breaks tool use breaks the agent loop entirely rather than just degrading an answer. `tool_safe_tiers` is the allow-list; anything else gets clamped up.
+
+### The adaptive loop
+
+A static table is a guess. The parts below let the router check that guess against production and correct it — this is what separates routing-as-code here from a config file that only ever does what you typed.
+
+**Escalation** watches downgraded requests and un-does downgrades that are failing:
+
+```yaml
+policy_table:
+  adequacy:
+    enabled: true
+    escalation_tier: capable
+    escalation_threshold: 2      # consecutive hard failures before pinning
+    pin_cooldown_secs: 1800      # then re-try the downgrade
+```
+
+Once a fingerprint accumulates that many consecutive hard failures it is *pinned* to the escalation tier; the pin decays after the cooldown so the cheap path gets another chance. A clean outcome resets the tally. This half only ever escalates — it will never downgrade on its own.
+
+**Exploration** is the opposite half, and it is off by default because it is genuinely aggressive:
+
+```yaml
+policy_table:
+  adequacy:
+    enabled: true
+    explore_enabled: true
+    explore_tier: cheap
+    explore_interval: 5          # ~1 in 5 eligible requests is a trial
+    explore_threshold: 3         # consecutive good trials before locking
+```
+
+It periodically trials the cheap tier on fingerprints you left at the capable tier, and locks one to cheap after enough consecutive adequate trials — so safe downgrades get *found* rather than hand-guessed. A failed trial escalates and stops. It routes real traffic to a cheaper model to learn this, so turn it on deliberately.
+
+**The lock file is the reviewable artifact.** Learned policy lands in `policy-lock.yaml` next to your config, and `policy.writeback` decides whether the router may write it:
+
+```yaml
+policy:
+  writeback: locked   # observe and propose only (default)
+  # writeback: evolve # permit validated evolution to replace the lock
+```
+
+Under the default `locked`, the router proposes and never writes. `bitrouter policy evolve` prints a dry-run report; `--apply` publishes the candidate. So the loop is: the router learns, you read the diff, you commit it — the same review path as any other change. Set `evolve` only when you want the router to publish without you in the middle.
+
+See [the `policy` commands](/docs/usage/cli#policy) for `check`, `status`, `show`, `lock`, `unlock`, and `reload`.
+
+## Validate in CI
+
+`bitrouter config validate` checks structure, provider `derives` resolution, upstream-URL (SSRF) safety, and that the policy lock loads. It exits non-zero on an invalid config, so it drops straight into a pipeline:
+
+```bash
+bitrouter config validate -c bitrouter.yaml
+```
+
+A valid file exits `0` and reports what it found:
+
+```json
+{
+  "valid": true,
+  "path": "/repo/bitrouter.yaml",
+  "providers": 2,
+  "models": 0,
+  "presets": 1,
+  "variants": 1
+}
+```
+
+An invalid one exits `1` with the parse error located by line and column:
+
+```json
+{
+  "valid": false,
+  "path": "/repo/bitrouter.yaml",
+  "errors": ["bad request: invalid bitrouter.yaml: error: line 3 column 14: unexpected event: expected string scalar"]
+}
+```
+
+**Secrets are not required to validate.** An unset `${VAR}` is substituted with a placeholder and reported under `warnings` — it does **not** fail the run. That's deliberate: CI can check the config's shape on every pull request without holding production keys.
+
+```json
+{
+  "valid": true,
+  "warnings": [{ "unset_env": "OPENAI_API_KEY" }]
+}
+```
+
+If you want unset variables to be fatal in a deploy job rather than a PR check, gate on the `warnings` array being empty.
+
+<Callout type="warning">
+**`validate` needs a real file.** Run against zero-config it errors rather than reporting success — there is nothing to check. Pass `-c <path>` in CI so a missing file fails loudly instead of silently validating defaults.
+</Callout>
+
+## See also
+
+- [CLI reference](/docs/usage/cli) — `config validate`, `route`, `policy`
+- [Virtual models](/docs/gateway-and-routing/virtual-model) and [Model variants](/docs/gateway-and-routing/model-variants) — what `presets:` and `variants:` mean
+- [Model fallback](/docs/gateway-and-routing/model-fallback) — what `models:` means
+- [BYOK](/docs/gateway-and-routing/bring-your-own-provider) — the `providers:` block
+- [Self-hosting](/docs/guides/self-host) — running the binary you just configured

@@ -1,0 +1,213 @@
+---
+title: TUI
+description: The BitRouter terminal console — supervise several agent sessions, resolve permission decisions, and review subagent work, with each harness running in its own real native TUI.
+---
+
+`bitrouter tui` is a **control tower**, not a terminal multiplexer. It hosts your coding agent's *real* native TUI — Claude Code, Codex, opencode — inside a pane, and wraps it in the things a single agent session can't give you: a roster of every running subagent sorted by who needs you, a permission queue, and a review-and-merge surface over isolated git worktrees.
+
+The design assumption is that **your attention is the scarce resource**. Agents drive; you wait. So the console's job is to route you to the one agent that needs a consequential decision and keep everything else as a quiet blip.
+
+```bash
+bitrouter tui --agent claude
+```
+
+## Prerequisites
+
+- **A git repository.** The console runs in your repo and writes to `.bitrouter/` (session records, the fleet socket, worktrees). That directory self-ignores on first run.
+- **`bitrouter serve` running.** The console does not start the router for you. The status bar's `serve ●` / `serve ✗` dot reports it live.
+- **At least one harness installed** — see [Harness support](#harness-support) for which ones can act as the orchestrator.
+
+<Callout type="info">
+**The fleet socket is Unix-only.** It's what lets an orchestrator's subagents appear in your roster. On Windows the console still runs, but agents spawned through the MCP fleet tools fall back to their own headless permission policy instead of surfacing decisions to you.
+</Callout>
+
+## The screen
+
+```
+┌ sessions ─┬─ detail ────────────────────────────┬ subagents ─┐
+│ 1 claude  │                                      │ ⚠ codex    │
+│ 2 codex   │   the focused pane:                  │ ◆ claude   │
+│           │                                      │ ◉ gemini   │
+│ (no       │   · a session — the harness's REAL   │   opencode │
+│  sessions)│     native TUI, keys pass through    │            │
+│           │   · or a subagent — a read-only      │            │
+│           │     transcript you review            │            │
+├───────────┴──────────────────────────────────────┴────────────┤
+│ ctx 62% · claude-opus-4-8 · $0.41    ⚠1 ◆1 ◉2 · $3.80 · serve ●│
+└───────────────────────────────────────────────────────────────┘
+```
+
+**Left — sessions.** Your orchestrator conversations, in spawn order. These are PTY panes running the harness's own interface.
+
+**Right — subagents.** Every ACP agent, sorted by who needs you rather than by name:
+
+| Glyph | Means |
+| --- | --- |
+| `⚠` | needs a decision from you |
+| `◆` | finished and ready to review |
+| `●` | something went wrong in the background |
+| `◉` | finished, not yet looked at |
+
+Working and idle agents sort below these and stay unmarked — the rail is quiet unless something wants you.
+
+**Bottom — the status bar.** It's a gauge, not a cheat sheet. The left zone follows the **focused pane** (context-window occupancy, model, that pane's cost); the right zone is **global** (the roster badges, cumulative fleet cost, and the `serve` dot). A transient notice takes over the left zone and decays. The `<<` and `>>` buttons at the bar's edges collapse and restore the sidebars.
+
+Either sidebar folds automatically on a narrow terminal — the panel that actually has content wins.
+
+## Sessions and subagents
+
+This is the one rule the rest of the console follows from:
+
+- **Sessions take your input.** A focused session pane is in locked-mode passthrough: *every* keystroke goes to the child, including `Ctrl-A` and `Ctrl-B` as readline keys and the arrows its own menus use. The only chord the console intercepts is the leader.
+- **Subagents never do.** A subagent pane is a **read-only transcript**. There is no composer anywhere in the console. You steer subagents by talking to the orchestrator, which drives them through the injected `bitrouter_fleet` MCP tools.
+
+So the loop is: you converse with one orchestrator, it delegates, and you handle only the decisions and the reviews that come back.
+
+Typing into a read-only monitor gets you a notice pointing at the owner rather than silence. If you genuinely need to drive a subagent directly, `leader t` **attaches** it as a PTY for full-fidelity control; closing the attach returns it to read-only.
+
+## Keys
+
+There is no manager mode to enter and escape. Most verbs work inline; the rest hang off a **one-shot leader** (default `Ctrl-Space`) that opens a which-key menu, takes one key, and drops you straight back.
+
+| Key | Does | Reached from |
+| --- | --- | --- |
+| `y` / `a` / `n` | Resolve the **top** pending decision — allow once, allow always, deny | Inline |
+| `D` / `m` / `p` / `r` | Review the focused subagent: diff · merge · apply · reject | Inline, when a diff is ready |
+| `PgUp` / `PgDn` | Scroll the focused pane's scrollback | Inline |
+| `Ctrl-C` | Interrupt the focused agent | Inline |
+| *click* | Focus any session or subagent row | Inline |
+| `:` | Command palette | Inline, on a subagent pane |
+| `1`–`9` | Focus session N | Leader |
+| `Tab` | Focus the next actionable subagent | Leader |
+| `n` | New session (opens the harness picker) | Leader |
+| `p` | Command palette | Leader |
+| `c` | Close the focused pane | Leader |
+| `a` | Cycle its autonomy tier | Leader |
+| `t` | Attach: drive this subagent natively | Leader |
+| `?` | Keys help for the current mode | Leader |
+| `Esc` | Cancel the leader | Leader |
+
+`:` only reaches the palette from a subagent pane — a focused session swallows it like any other character, which is why the leader exists. `leader p` works from anywhere.
+
+**`Ctrl-C` never quits the console.** On a session it passes through as a raw interrupt to the child. On a subagent you own, it cancels the in-flight turn. On an orchestrator-owned subagent it tells you to interrupt from the orchestrator instead. To quit, use the palette's `quit`, or `leader c` on the last remaining pane.
+
+### The palette
+
+`leader p` opens the exhaustive list of rarer verbs, matched by fuzzy subsequence: `spawn subagent`, `new session`, `close agent`, `split horizontal`, `split vertical`, `unsplit`, `autonomy cycle`, `kill done`, `toggle sessions`, `toggle subagents`, `keys help`, `quit`.
+
+`spawn subagent` is the one way *you* start a subagent with no orchestrator behind it — useful for "just run this in the background," and it changes how rejection is routed (see [Review](#review-and-merge)).
+
+## Decisions
+
+When an agent asks permission for something gated, it surfaces at the head of the subagents rail and you answer inline with `y` / `a` / `n`. No mode, no navigation.
+
+Decisions across every subagent **batch into one pass**, risk-sorted: answering advances focus to the next pending item, so `y y y` clears the queue without refocusing by hand. Scrolling still works while a decision is up, so you can read the transcript before answering.
+
+Each agent carries an **autonomy tier**, cycled with `leader a`:
+
+| Tier | Behavior |
+| --- | --- |
+| `Manual` *(default)* | Every request surfaces to you |
+| `Assisted` | Low-risk requests auto-allow; high-risk ones surface |
+| `Auto` | Everything auto-allows — logged, never silent |
+
+A fresh agent starts at `Manual`. Confirmation fatigue is itself a security risk, so the tiers exist to keep the queue meaningful rather than reflexive.
+
+## Review and merge
+
+Subagents spawned from the console get their own **git worktree**, so N agents can edit the same repo without colliding, and each draws a `PORT` from a pool so their dev servers don't fight over a port.
+
+When a subagent finishes, its pane goes `◆ ready to review` and four verbs come live on it:
+
+| Key | Does |
+| --- | --- |
+| `D` | Load and show the diff |
+| `m` | Merge the branch |
+| `p` | Apply the changes without merging |
+| `r` | Reject |
+
+Merges and applies run in the background and report back into the pane. **Writes stay human-gated by default** — an agent finishing does not integrate anything on its own.
+
+**Rejection routes by who owns the agent.** For an orchestrator-spawned subagent, your verdict becomes the subagent's task outcome (`changes_requested` plus a note) and the orchestrator picks it up — nothing is injected into any conversation. For one you spawned yourself from the palette, rejection re-prompts the agent directly, because you *are* the owner. If the orchestrator has already exited, the console says the review was dismissed rather than pretending a verdict was delivered.
+
+### Worktree configuration
+
+```yaml
+worktrees:
+  # Run in each NEWLY created worktree before its agent launches.
+  # Approved by you on first use each session — it executes code.
+  bootstrap: "cp ../.env . && pnpm install"
+
+  # Per-subagent PORT pool, so N dev servers don't collide.
+  ports:
+    from: 3100
+    to: 3199
+
+  # Must pass before a finished turn becomes "ready to review".
+  # A failing check loops back to the subagent, not to you.
+  checks:
+    - "pnpm test"
+    - "pnpm lint"
+```
+
+The bootstrap hook runs with its working directory set to the worktree, `BITROUTER_BASE_REPO` pointing at the base repository, and the subagent's allocated `PORT` in the environment. It exists because a fresh worktree doesn't carry your untracked files — `.env`, installed dependencies, local caches.
+
+`checks` is the difference between "the agent stopped" and "the agent's work is worth your attention." Anything that fails goes back to the agent silently.
+
+## Harness support
+
+`--agent` names the orchestrator by its binary (or by catalog id). What each one gets differs:
+
+| `--agent` | Routed through BitRouter | Fleet MCP tools injected |
+| --- | --- | --- |
+| `claude` | Yes — environment overrides | Yes |
+| `codex` | Yes — one-shot config overrides | Yes |
+| `opencode` | Yes — synthesized config | Yes |
+| `hermes` | Yes — synthesized config | Yes |
+| `pi` | Yes — synthesized config | **No** — no MCP mechanism |
+| `openclaw` | Yes — synthesized profile | **No** — its MCP surface is gateway-scoped |
+| `grok` | **No** — its own subscription auth | **No** |
+| `agy` *(antigravity)* | **No** — its own subscription auth | **No** |
+
+<Callout type="warning">
+**The right-hand column is what makes delegation work.** A harness without the fleet MCP tools can still be your orchestrator pane, but it **cannot spawn or steer subagents** — it has no mechanism to call them. If nothing ever appears in the subagents rail, check this table first.
+</Callout>
+
+`grok` and `agy` launch with their own subscription auth rather than being pointed at the daemon; the daemon can borrow those same sessions as providers separately. See [Claude subscription](/docs/integrations/claude-subscription) and [Codex subscription](/docs/integrations/codex-subscription) for that pattern.
+
+Passing a name that matches a configured `agents:` entry renders that ACP agent as a read-only monitor instead of hosting a native TUI. `--worktree` applies only to that case — an orchestrator always runs in the base repo.
+
+## Configure
+
+The console has exactly one setting of its own:
+
+```yaml
+tui:
+  # The one-shot leader chord. `ctrl-<key>`, where <key> is a single
+  # character or `space`. Defaults to ctrl-space.
+  leader: "ctrl-]"
+```
+
+`Ctrl-Space` is the default because the obvious alternatives are worse: `Ctrl-A` is readline `Home` in the pane you live in, and `Ctrl-B` is tmux's prefix. The console negotiates the kitty keyboard protocol where the terminal supports it, which is what keeps the leader distinguishable from what the child harness wants. An unparseable value falls back to `ctrl-space` with a warning.
+
+Everything else you'd configure — worktree bootstrap, port pool, verification checks — lives under `worktrees:` above.
+
+## Troubleshooting
+
+**`serve ✗` in the status bar.** The router isn't reachable. Start it with `bitrouter serve` (or `bitrouter start` for the background daemon) and the dot flips on its own.
+
+**Nothing in the subagents rail.** Either the orchestrator hasn't spawned anything yet, or its harness has no fleet MCP tools — check [Harness support](#harness-support). On Windows, expect this: the fleet socket is Unix-only.
+
+**The leader chord does nothing, or reaches the harness instead.** Your terminal is likely swallowing `Ctrl-Space` or lacks kitty keyboard support. Set `tui.leader` to something it passes through, such as `ctrl-]` or `ctrl-\`.
+
+**Something crashed and the screen is gone.** The console's stderr, and its agent children's, goes to `.bitrouter/tui.log` on Unix — not to your terminal, which the alt-screen owns.
+
+**A subagent is stuck "working."** `Ctrl-C` cancels the in-flight turn on an agent you own. For an orchestrator-owned one, ask the orchestrator to stop it, or `leader c` to close the pane outright.
+
+## See also
+
+- [Harnesses](/docs/usage/cli#harnesses) — `launch`, `spawn`, and `tui` in the CLI reference
+- [`bitrouter launch`](/docs/usage/cli#bitrouter-launch) — one harness, no console
+- [`bitrouter spawn`](/docs/usage/cli#bitrouter-spawn) — a headless ACP subagent
+- [MCP Server](/docs/usage/mcp) — the `fleet` backend the orchestrator drives
+- [Subagent](/docs/gateway-and-routing/subagent) — the routing feature underneath

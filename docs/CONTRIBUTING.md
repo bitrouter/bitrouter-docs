@@ -37,8 +37,8 @@ tab. Page order within a section is the `pages` list in that section's
 `content/docs/(guide)/meta.json`.
 
 `usage/` is how you drive BitRouter: `cli.mdx` (generated — don't hand-author
-it), `configuration.mdx` (the `bitrouter.yaml` reference), `mcp.mdx`, and
-`skills.mdx`.
+it), `tui.mdx`, `configuration.mdx` (the `bitrouter.yaml` reference),
+`mcp.mdx`, and `skills.mdx`.
 
 ## Authoring contract (import-free MDX)
 
@@ -60,8 +60,14 @@ beyond the whitelisted components. The build enforces this:
 > silently missing. `pnpm lint:docs` still passes, because the components are
 > whitelisted either way. Docs were `.md` until 2026-08; the migration to
 > `.mdx` restored the dropped blocks across 41 pages.
-3. **Callouts** — prefer GitHub-style `> [!NOTE]` / `> [!WARNING]` blockquotes, or
-   the `<Callout>` component.
+3. **Callouts are `<Callout>`, never GitHub alerts.** Use
+   `<Callout type="info">` (also `warning`, `warn`, `success`, or no `type` for
+   the default). **GitHub-style `> [!NOTE]` / `> [!WARNING]` blockquotes do not
+   work on the site** — `source.config.ts` registers only `remarkGfm` and
+   `rehypeSlug`, with no alerts plugin, so the block renders as a plain
+   blockquote with a literal `[!NOTE]` in the body. `pnpm lint:docs` now fails
+   on that syntax. (Alerts *do* render in repo Markdown like this file, which
+   GitHub renders itself — that's the trap. `content/` is not GitHub.)
 4. **Internal links** are site paths without extensions: `/docs/features/byok`,
    not `./byok.md`.
 5. **English only** — the site no longer ships localized docs; don't add

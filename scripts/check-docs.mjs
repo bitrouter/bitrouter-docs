@@ -7,6 +7,8 @@
 //   - a non-whitelisted capitalized component is used (docs are import-free +
 //     may only use the globally-registered components in COMPONENT_WHITELIST)
 //   - an `import`/`export` statement appears outside a fenced code block
+//   - a GitHub-style alert (`> [!NOTE]`) is used: the site has no alerts remark
+//     plugin, so it renders as a blockquote with a literal `[!NOTE]` visible
 import { readdir, readFile } from "node:fs/promises";
 import { join, relative } from "node:path";
 import {
@@ -47,6 +49,11 @@ async function walk(dir) {
 
 const isDoc = (p) => /\.mdx?$/.test(p);
 
+// Lines consumed by the frontmatter block plus the blank run splitFrontmatter
+// strips after it. Added to body-relative line numbers so a reported error
+// points at the real line in the file.
+const bodyOffset = (raw, body) => raw.split("\n").length - body.split("\n").length;
+
 // First `import`/`export` line outside a code fence, or null.
 function findImportLine(body) {
   let inFence = false;
@@ -54,6 +61,20 @@ function findImportLine(body) {
   for (let i = 0; i < lines.length; i++) {
     if (/^\s*```/.test(lines[i])) inFence = !inFence;
     if (!inFence && /^(import|export)[\s{]/.test(lines[i])) return i + 1;
+  }
+  return null;
+}
+
+// First GitHub-style alert (`> [!NOTE]`) outside a code fence, or null.
+// The site registers no alerts remark plugin, so these render as a plain
+// blockquote with the literal `[!NOTE]` marker visible in the body — a silent
+// authoring trap, since every component involved is otherwise legal.
+function findAlertLine(body) {
+  let inFence = false;
+  const lines = body.split("\n");
+  for (let i = 0; i < lines.length; i++) {
+    if (/^\s*```/.test(lines[i])) inFence = !inFence;
+    if (!inFence && /^\s*>\s*\[!\w+\]/.test(lines[i])) return i + 1;
   }
   return null;
 }
@@ -69,10 +90,20 @@ async function main() {
     const rel = relative(ROOT, abs);
     const raw = await readFile(abs, "utf8");
     const { body } = splitFrontmatter(raw);
+    const offset = bodyOffset(raw, body);
 
     const importLine = findImportLine(body);
     if (importLine) {
-      errors.push(`${rel}:${importLine}  import/export is not allowed (docs must be import-free)`);
+      errors.push(
+        `${rel}:${importLine + offset}  import/export is not allowed (docs must be import-free)`,
+      );
+    }
+    const alertLine = findAlertLine(body);
+    if (alertLine) {
+      errors.push(
+        `${rel}:${alertLine + offset}  GitHub-style alert (> [!NOTE]) does not render — ` +
+          `the site has no alerts remark plugin. Use <Callout type="info"> instead.`,
+      );
     }
     // Check the same normalized body the old sync used, so a page with an
     // extensioned link or stray import compares apples-to-apples.

@@ -50,7 +50,7 @@ pairs.push(
   ["/docs/features/byok", "/docs/models-and-routing/byok"],
   // concepts/ section dissolved (2026-07 reorg) → pages land next to their features
   ["/docs/concepts", "/docs/overview/what-is-bitrouter"],
-  ["/docs/concepts/models", "/docs/models-and-routing/models"],
+  ["/docs/concepts/models", "/docs/overview/supported-models#how-model-ids-work"],
   ["/docs/concepts/policy", "/docs/overview/quickstart#adaptive-routing"],
   ["/docs/concepts/tools", "/docs/features/tools"],
   ["/docs/concepts/agents", "/docs/features/agents"],
@@ -115,10 +115,11 @@ pairs.push(
   ["/docs/integrations/migrate/openrouter", "/docs/guides/migrate-from-openrouter"],
   ["/docs/cookbook/migration/litellm", "/docs/guides/migrate-from-litellm"],
   ["/docs/cookbook/migration/openrouter", "/docs/guides/migrate-from-openrouter"],
-  // pages retired (2026-08): provider directory folded into the model catalog,
-  // policy semantics folded into the quickstart, and the search-provider
-  // integrations folded into the web search feature page.
+  // pages retired (2026-08): the provider directory and the models concept page
+  // folded into the model catalog, policy semantics into the quickstart, and the
+  // search-provider integrations into the web search feature page.
   ["/docs/overview/supported-providers", "/docs/overview/supported-models"],
+  ["/docs/models-and-routing/models", "/docs/overview/supported-models#how-model-ids-work"],
   ["/docs/models-and-routing/policy", "/docs/overview/quickstart#adaptive-routing"],
   ["/docs/integrations/tools", "/docs/features/websearch"],
   ["/docs/integrations/exa", "/docs/features/websearch"],

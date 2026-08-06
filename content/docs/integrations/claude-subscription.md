@@ -86,5 +86,5 @@ Genuine Claude Code traffic — recognised by its `anthropic-beta: claude-code-*
 ## Learn more
 
 - [Claude Code](/docs/integrations/claude-code) — point the Claude Code CLI at BitRouter (a harness), distinct from using your plan as a model source above.
-- [Models](/docs/models-and-routing/models) — the full `provider/model` id scheme.
+- [Models](/docs/overview/supported-models#how-model-ids-work) — the full `provider/model` id scheme.
 - [Model fallback](/docs/models-and-routing/model-fallback) — fail over from your subscription to a hosted model on overload.

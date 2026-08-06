@@ -115,7 +115,7 @@ To skip the local proxy entirely, point clients at `https://api.bitrouter.ai/v1`
 
 | TensorZero concept | BitRouter equivalent | Docs |
 |---|---|---|
-| `[models.*]` + `[models.*.providers.*]` in `tensorzero.toml` | Provider keys (auto-detected) + the model registry | [BYOK](/docs/models-and-routing/byok), [Models](/docs/models-and-routing/models) |
+| `[models.*]` + `[models.*.providers.*]` in `tensorzero.toml` | Provider keys (auto-detected) + the model registry | [BYOK](/docs/models-and-routing/byok), [Models](/docs/overview/supported-models#how-model-ids-work) |
 | `[functions.*]` (named prompt + schema) | App-side, or a routing [preset](/docs/models-and-routing/presets) | [Presets](/docs/models-and-routing/presets) |
 | `[functions.*.variants.*]` (per-variant model) | Routing preset variants / model ids | [Presets](/docs/models-and-routing/presets) |
 | `routing` / `retries` / `fallbacks` | Model fallback rules | [Model fallback](/docs/models-and-routing/model-fallback) |

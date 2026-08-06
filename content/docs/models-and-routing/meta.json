@@ -3,7 +3,6 @@
   "icon": "Route",
   "collapsible": false,
   "pages": [
-    "models",
     "provider-selection",
     "model-fallback",
     "model-variants",

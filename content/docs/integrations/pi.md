@@ -3,7 +3,7 @@ title: Pi
 description: Route Pi, the minimal terminal coding harness, through BitRouter as an OpenAI-compatible provider.
 ---
 
-Pi is a minimal terminal coding harness that defines model providers in `~/.pi/agent/models.json`. Add BitRouter as an OpenAI-compatible provider and Pi routes across the whole [registry](/docs/models-and-routing/models).
+Pi is a minimal terminal coding harness that defines model providers in `~/.pi/agent/models.json`. Add BitRouter as an OpenAI-compatible provider and Pi routes across the whole [registry](/docs/overview/supported-models#how-model-ids-work).
 
 ## Prerequisites
 
@@ -42,7 +42,7 @@ Then pick the model with `/model` in the TUI.
 
 ## Pick a model
 
-Each `models[].id` is a registry id in `provider/model` form, optionally with a `:cost` / `:latency` variant. See [Models](/docs/models-and-routing/models).
+Each `models[].id` is a registry id in `provider/model` form, optionally with a `:cost` / `:latency` variant. See [Models](/docs/overview/supported-models#how-model-ids-work).
 
 ## Learn more
 

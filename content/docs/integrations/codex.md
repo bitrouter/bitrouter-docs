@@ -68,7 +68,7 @@ codex
 
 ## Pick a model
 
-The Codex `model` setting, or a per-run `codex --model <id>`, can use any registry id in `provider/model` form — `openai/gpt-5-codex`, `anthropic/claude-sonnet-4-6`, `google/gemini-2.5-pro` — optionally with a `:cost` or `:latency` variant. See [Models](/docs/models-and-routing/models).
+The Codex `model` setting, or a per-run `codex --model <id>`, can use any registry id in `provider/model` form — `openai/gpt-5-codex`, `anthropic/claude-sonnet-4-6`, `google/gemini-2.5-pro` — optionally with a `:cost` or `:latency` variant. See [Models](/docs/overview/supported-models#how-model-ids-work).
 
 ## Verify
 

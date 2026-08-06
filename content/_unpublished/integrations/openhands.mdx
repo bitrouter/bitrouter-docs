@@ -5,7 +5,7 @@ description: Route OpenHands through BitRouter via its LiteLLM-backed custom LLM
 import { Callout } from 'fumadocs-ui/components/callout';
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
-OpenHands talks to models through LiteLLM, which has a generic OpenAI-compatible passthrough. Configure that passthrough to hit BitRouter and OpenHands routes across the whole [registry](/docs/models-and-routing/models).
+OpenHands talks to models through LiteLLM, which has a generic OpenAI-compatible passthrough. Configure that passthrough to hit BitRouter and OpenHands routes across the whole [registry](/docs/overview/supported-models#how-model-ids-work).
 
 ## Prerequisites
 
@@ -52,7 +52,7 @@ For **Cloud**, set the base URL to `https://api.bitrouter.ai/v1` and use your Bi
 
 ## Pick a model
 
-After the leading `openai/`, use any registry id in `provider/model` form — `openai/openai/gpt-4o`, `openai/anthropic/claude-sonnet-4-6`, `openai/google/gemini-2.5-pro` — optionally with a `:cost` or `:latency` variant on the registry id. See [Models](/docs/models-and-routing/models).
+After the leading `openai/`, use any registry id in `provider/model` form — `openai/openai/gpt-4o`, `openai/anthropic/claude-sonnet-4-6`, `openai/google/gemini-2.5-pro` — optionally with a `:cost` or `:latency` variant on the registry id. See [Models](/docs/overview/supported-models#how-model-ids-work).
 
 ## Verify
 

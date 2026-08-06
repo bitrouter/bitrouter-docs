@@ -3,7 +3,7 @@ title: OpenClaw
 description: Route OpenClaw's messaging gateway through BitRouter as an OpenAI-compatible model provider.
 ---
 
-OpenClaw is a self-hosted gateway that bridges messaging platforms — WhatsApp, Telegram, Slack, Discord, and more — to an LLM. Configure BitRouter as its model provider and every channel routes across the whole [registry](/docs/models-and-routing/models).
+OpenClaw is a self-hosted gateway that bridges messaging platforms — WhatsApp, Telegram, Slack, Discord, and more — to an LLM. Configure BitRouter as its model provider and every channel routes across the whole [registry](/docs/overview/supported-models#how-model-ids-work).
 
 ## Prerequisites
 
@@ -46,7 +46,7 @@ For **Cloud**, set `baseUrl` to `https://api.bitrouter.ai/v1` and use your BitRo
 
 ## Pick a model
 
-Each provider model `id` is a registry id in `provider/model` form (`openai/gpt-4o`, `anthropic/claude-sonnet-4-6`, …), optionally with a `:cost` / `:latency` variant. In OpenClaw's `model.primary` it's prefixed with the provider id you chose — e.g. `bitrouter/openai/gpt-4o`. See [Models](/docs/models-and-routing/models).
+Each provider model `id` is a registry id in `provider/model` form (`openai/gpt-4o`, `anthropic/claude-sonnet-4-6`, …), optionally with a `:cost` / `:latency` variant. In OpenClaw's `model.primary` it's prefixed with the provider id you chose — e.g. `bitrouter/openai/gpt-4o`. See [Models](/docs/overview/supported-models#how-model-ids-work).
 
 ## Learn more
 

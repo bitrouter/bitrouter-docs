@@ -1,7 +1,9 @@
 {
   "title": "Guides",
   "icon": "Map",
+  "root": true,
   "collapsible": false,
+  "pagesIndex": "[Guides](/docs/guides/cloud-api)",
   "pages": [
     "cloud-api",
     "---Development---",

@@ -31,7 +31,8 @@ for (const [slug, dest] of Object.entries(finalPath)) {
 // overview + root + special
 pairs.push(
   ["/docs", "/docs/overview/what-is-bitrouter"],
-  ["/docs/guides", "/docs/overview/what-is-bitrouter"],
+  // Guides is its own tab (2026-08) but has no index page — land on its first.
+  ["/docs/guides", "/docs/guides/cloud-api"],
   ["/docs/guides/overview", "/docs/overview/what-is-bitrouter"],
   ["/docs/guides/overview/quickstart", "/docs/overview/quickstart"],
   ["/docs/guides/overview/comparison", "/docs/overview/bitrouter-vs-openrouter"],
@@ -96,6 +97,26 @@ pairs.push(
   ["/docs/reference/cli/:slug*", "/docs/usage/cli/:slug*"],
   ["/docs/reference/cli", "/docs/usage/cli"],
   ["/docs/reference/mcp", "/docs/usage/mcp"],
+  // The CLI reference collapsed from ten pages into one (2026-08). Each retired
+  // page lands on its `##` section anchor — keep these in sync with the section
+  // titles in cli-overlays/<group>.md, which is where the anchors come from.
+  ["/docs/usage/cli/index", "/docs/usage/cli"],
+  ["/docs/usage/cli/daemon", "/docs/usage/cli#daemon-lifecycle"],
+  ["/docs/usage/cli/init", "/docs/usage/cli#init-and-config"],
+  ["/docs/usage/cli/route", "/docs/usage/cli#routing-introspection"],
+  ["/docs/usage/cli/providers", "/docs/usage/cli#providers"],
+  ["/docs/usage/cli/policy", "/docs/usage/cli#policy"],
+  ["/docs/usage/cli/cloud", "/docs/usage/cli#cloud"],
+  ["/docs/usage/cli/tools", "/docs/usage/cli#tools-agents-and-acp"],
+  ["/docs/usage/cli/skills", "/docs/usage/cli#skills-and-mcp"],
+  ["/docs/usage/cli/harnesses", "/docs/usage/cli#harnesses"],
+  ["/docs/usage/cli/misc", "/docs/usage/cli#key-workflow-state-and-update"],
+  // AI Resources dissolved (2026-08): skills and the docs MCP server moved into
+  // Usage; the llms.txt page retired (the endpoints themselves still serve).
+  ["/docs/ai-resources", "/docs/usage/skills"],
+  ["/docs/ai-resources/skills", "/docs/usage/skills"],
+  ["/docs/ai-resources/mcp", "/docs/usage/mcp#the-docs-mcp-server"],
+  ["/docs/ai-resources/llms-txt", "/docs/usage/mcp#the-docs-mcp-server"],
   // reference wildcards (api-reference unwrapped into /docs/reference)
   ["/docs/api-reference/:slug*", "/docs/reference/:slug*"],
   ["/docs/reference/api-reference/:slug*", "/docs/reference/:slug*"],

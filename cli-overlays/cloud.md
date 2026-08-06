@@ -1,6 +1,5 @@
 ---
-title: cloud
-description: BitRouter Cloud from the terminal — sign-in, API keys, usage, billing, policies, budgets, presets, and BYOK.
+title: Cloud
 ---
 
 `bitrouter cloud login` either runs the RFC 8628 Device Authorization Grant or stores an existing BitRouter API key. Both credential types live under `$XDG_DATA_HOME/bitrouter/account-credentials.json` (mode `0600` on Unix). The API-key form performs no network request, which makes it suitable for CI. Interactive OAuth lets you pick the workspace this session is bound to; tokens refresh automatically within 60 s of expiry.

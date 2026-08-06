@@ -28,7 +28,7 @@ This guide is for teams who adopted TensorZero mainly as a **gateway** — unifi
 
 TensorZero is built around a feedback loop: route inference, store every call and its metrics in ClickHouse, then evaluate, fine-tune, and A/B test against that history. That's powerful if you run that loop — and it's why TensorZero needs a database and a typed config of functions and variants.
 
-BitRouter deliberately stops at the gateway. There's no `tensorzero.toml` to maintain, no ClickHouse to operate — you set provider keys and route by `provider/model` id. [OpenTelemetry](/docs/features/opentelemetry) gives you spans and metrics for every request (the same OTLP export TensorZero offers), but they go to a backend you already run, not a warehouse the proxy manages.
+BitRouter deliberately stops at the gateway. There's no `tensorzero.toml` to maintain, no ClickHouse to operate — you set provider keys and route by `provider/model` id. [OpenTelemetry](/docs/observability/opentelemetry) gives you spans and metrics for every request (the same OTLP export TensorZero offers), but they go to a backend you already run, not a warehouse the proxy manages.
 
 ### 2. Agent-native, and cloud/local share one surface
 
@@ -122,8 +122,8 @@ To skip the local proxy entirely, point clients at `https://api.bitrouter.ai/v1`
 | `load_balancing` across providers | Provider selection | [Provider selection](/docs/models-and-routing/provider-selection) |
 | OpenAI-compatible `/openai/v1` endpoint | OpenAI-compatible `/v1` endpoint | [API Reference](/docs/reference/openai-compatible/createChatCompletion) |
 | Native `POST /inference` endpoint | OpenAI-, Anthropic-, and Google-compatible protocols | [API Reference](/docs/reference) |
-| ClickHouse observability + UI | OTLP traces & metrics to your own backend, or hosted Activity on Cloud | [OpenTelemetry](/docs/features/opentelemetry), [Cloud Tracing](/docs/features/opentelemetry#cloud-activity-hosted) |
-| OpenTelemetry (OTLP) export | OpenTelemetry (OTLP) export | [OpenTelemetry](/docs/features/opentelemetry) |
+| ClickHouse observability + UI | OTLP traces & metrics to your own backend, or hosted Activity on Cloud | [OpenTelemetry](/docs/observability/opentelemetry), [Cloud Tracing](/docs/observability/tracing) |
+| OpenTelemetry (OTLP) export | OpenTelemetry (OTLP) export | [OpenTelemetry](/docs/observability/opentelemetry) |
 | Embedded structured outputs (JSON functions) | Structured outputs across all providers | [Structured outputs](/docs/models-and-routing/structured-outputs) |
 | — (no equivalent) | MCP / ACP / Skills agent gateways | [Tools](/docs/features/tools), [Agents](/docs/features/agents) |
 | — (no equivalent) | Autonomous agent payment (x402 / MPP) | [Payment](/docs/features/payment) |
@@ -150,7 +150,7 @@ If your workflow depends on that closed feedback loop — collect inferences and
 - [ ] Export provider keys, or paste them into the cloud dashboard (sealed-box encrypted)
 - [ ] Update client `base_url` to `http://127.0.0.1:4356/v1` (local) or `https://api.bitrouter.ai/v1` (cloud)
 - [ ] Replace `tensorzero::…` model strings with `provider/model` ids
-- [ ] Re-point OTLP export at your backend ([OpenTelemetry](/docs/features/opentelemetry))
+- [ ] Re-point OTLP export at your backend ([OpenTelemetry](/docs/observability/opentelemetry))
 - [ ] Verify with a sample request
 - [ ] Decommission the gateway container and ClickHouse if you no longer need the platform loop
 </Callout>

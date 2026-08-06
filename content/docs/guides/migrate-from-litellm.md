@@ -34,7 +34,7 @@ LiteLLM has shipped MCP, A2A, Skills, and a CLI alongside its horizontal LLM gat
 - [MCP gateway](/docs/features/tools) — proxy MCP servers so agents discover tools across hosts.
 - [ACP gateway](/docs/features/agents) — first-class support for the Agent Client Protocol used by Claude Code, Codex, OpenCode, and others.
 - [Guardrails](/docs/features/guardrails) — regex rules on the proxy hop that redact or block matching content inline.
-- [Cloud Tracing](/docs/features/opentelemetry#cloud-activity-hosted) — built-in spend and request tracing, no external collector required.
+- [Cloud Tracing](/docs/observability/tracing) — built-in spend and request tracing, no external collector required.
 - Agent Skills gateway (coming soon) — install and route capabilities by skill, not by raw model name.
 - [Headless CLI](/docs/reference/cli) — TUI wizard plus scriptable commands for setup and ops.
 - [Agentic auth & payment](/docs/features/payment) — x402 / MPP so an agent can pay per request without you provisioning a key for it. LiteLLM has no equivalent.
@@ -120,7 +120,7 @@ To skip the local proxy entirely, point clients at `https://api.bitrouter.ai/v1`
 | `cache` (Redis/DynamoDB backed) | Not built into the proxy — handle in app/edge if needed | — |
 | Virtual keys + budgets + admin UI | Workspace keys (cloud); env-var keys (local) | [BYOK](/docs/models-and-routing/byok), [Workspaces](/docs/features/namespaces) |
 | Guardrails / PII / content filter | Agent firewall on the proxy hop | [Guardrails](/docs/features/guardrails) |
-| Callbacks (Langfuse, Datadog, etc.) | Built-in spend + request logs; OTLP export | [OpenTelemetry](/docs/features/opentelemetry) |
+| Callbacks (Langfuse, Datadog, etc.) | Built-in spend + request logs; OTLP export | [OpenTelemetry](/docs/observability/opentelemetry) |
 | MCP Gateway | MCP gateway | [MCP](/docs/features/tools) |
 | A2A Agent Gateway | ACP gateway | [ACP](/docs/features/agents) |
 | Skills Gateway / `/skills` endpoint | Skills gateway with [agentskills.io](https://agentskills.io) registry | [Agent Skills](/docs/features/tools) |

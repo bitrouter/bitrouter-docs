@@ -15,7 +15,6 @@
     "---Cross-cutting---",
     "namespaces",
     "guardrails",
-    "opentelemetry",
     "payment"
   ]
 }

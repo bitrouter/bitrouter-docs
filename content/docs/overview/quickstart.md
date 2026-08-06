@@ -187,9 +187,9 @@ curl http://127.0.0.1:4356/v1/chat/completions \
 
 Each request is fingerprinted by loop step (`opening`, `after_<tool>`, `midstream`) and resolved fingerprint → tier → model. An unmatched fingerprint falls back to `default_tier`, and the table starts conservative: everything routes strong until evidence says otherwise.
 
-### The evaluation signal
+### Learning from live traffic
 
-With `adequacy` enabled, every request through a policy-bound route is classified by outcome — success, or a hard failure with a cause (`provider transient`, `provider permanent`, `protocol`, `auth`, `client`, `semantic`) — and recorded against its fingerprint. There is **no LLM judge in the path**: the signal is deterministic and free, which is what makes cheap-tier downgrades safe to attempt at all. Two halves act on it:
+With `adequacy` enabled, every request through a policy-bound route is classified by outcome and recorded against its fingerprint — deterministically, with [no LLM judge in the path](/docs/observability/evaluation). Two halves act on that signal:
 
 - **Escalation (the safety half)** — a downgraded fingerprint that hard-fails `escalation_threshold` consecutive times is pinned up to the strong tier. Pins decay after a cooldown.
 - **Exploration (the aggressive half)** — with `explore_enabled`, roughly 1-in-`explore_interval` candidate requests is trialed on the economy tier; `explore_threshold` consecutive adequate trials qualify that fingerprint for the cheap tier. A failed trial escalates and stops.
@@ -209,11 +209,7 @@ adequacy:
 
 The evidence rule is asymmetric: negative evidence escalates immediately, while a cheaper route needs repeated success before it becomes effective. A policy with `adequacy` off behaves exactly like its deterministic table.
 
-Every request is also **cost-metered** with an estimated charge, so *what did that run cost?* is answerable per request, per model, and per provider. The settlement span carries cost attributes into your OTLP backend, so cost sits next to latency and outcome on every request — which makes your tracing backend double as an evaluation store.
-
-<Callout type="info">
-The dedicated eval engine — scoring each *run* against a declared objective (cost today, latency and accuracy next) — is **landing next**. The signal above is what it will be built on.
-</Callout>
+The signal itself — the outcome classes it records, the per-request cost metering alongside it, and the objective-scored eval engine landing on top — is [Evaluation](/docs/observability/evaluation).
 
 ### Publishing what it learns
 

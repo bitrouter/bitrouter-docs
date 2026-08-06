@@ -38,7 +38,7 @@ References:
 
 - [Workspaces](${BASE_URL}/docs/cloud/workspaces): Per-team routing tables, keys, and observability
 - [BYOK](${BASE_URL}/docs/cloud/byok): Bring your own provider keys at zero cost; auto-detected from env vars
-- [OpenTelemetry](${BASE_URL}/docs/features/opentelemetry): Self-run OTLP export — traces and metrics of every request, pushed to a Collector, Honeycomb, Grafana, or Datadog
+- [OpenTelemetry](${BASE_URL}/docs/observability/opentelemetry): Self-run OTLP export — traces and metrics of every request, pushed to a Collector, Honeycomb, Grafana, or Datadog
 - [Cloud Tracing](${BASE_URL}/docs/cloud/tracing): Hosted Activity view — spend, token, and latency KPIs plus a per-request log, nothing to operate
 - [Guardrails](${BASE_URL}/docs/features/guardrails): Inspect, warn, redact, or block risky content at the proxy layer
 

@@ -11,8 +11,8 @@ const finalPath = {
   "model-variants":"/docs/models-and-routing/model-variants","presets":"/docs/models-and-routing/presets",
   "structured-outputs":"/docs/models-and-routing/structured-outputs","byok":"/docs/models-and-routing/byok",
   "local-models":"/docs/integrations/models","guardrails":"/docs/features/guardrails",
-  "observability":"/docs/features/opentelemetry","opentelemetry":"/docs/features/opentelemetry",
-  "tracing":"/docs/features/opentelemetry","telemetry":"/docs/features/opentelemetry",
+  "observability":"/docs/observability/opentelemetry","opentelemetry":"/docs/observability/opentelemetry",
+  "tracing":"/docs/observability/tracing","telemetry":"/docs/observability/opentelemetry",
   "mcp":"/docs/features/tools","acp":"/docs/features/agents",
   "agentskills":"/docs/features/tools",
   // bitrouter cloud (was: infrastructure)
@@ -73,8 +73,8 @@ pairs.push(
   ["/docs/get-started/installation", "/docs/overview/quickstart"],
   ["/docs/get-started/comparison", "/docs/overview/bitrouter-vs-openrouter"],
   ["/docs/get-started/set-up-routing", "/docs/models-and-routing/provider-selection"],
-  ["/docs/get-started/set-up-tracing", "/docs/features/opentelemetry"],
-  ["/docs/get-started/set-up-evaling", "/docs/overview/quickstart#the-evaluation-signal"],
+  ["/docs/get-started/set-up-tracing", "/docs/observability/opentelemetry"],
+  ["/docs/get-started/set-up-evaling", "/docs/observability/evaluation"],
   ["/docs/get-started/set-up-looping", "/docs/overview/quickstart#adaptive-routing"],
   // infrastructure → bitrouter cloud (folder renamed; pages merged/moved)
   ["/docs/infrastructure/managed-provider", "/docs/overview/supported-models"],
@@ -87,7 +87,7 @@ pairs.push(
   ["/docs/cloud/overview", "/docs/overview/quickstart#self-host-or-cloud"],
   ["/docs/cloud/get-started", "/docs/overview/quickstart#self-host-or-cloud"],
   ["/docs/cloud/byok", "/docs/models-and-routing/byok"],
-  ["/docs/cloud/tracing", "/docs/features/opentelemetry"],
+  ["/docs/cloud/tracing", "/docs/observability/tracing"],
   ["/docs/cloud/managed-models", "/docs/overview/supported-models"],
   ["/docs/cloud/workspaces", "/docs/features/namespaces"],
   ["/docs/cloud/payment", "/docs/features/payment"],
@@ -97,12 +97,15 @@ pairs.push(
   ["/docs/changelog/:slug*", "/docs/reference/changelog/:slug*"],
   ["/docs/changelog", "/docs/reference/changelog"],
   // moved/removed pages (2026-06 refactor) → live destinations
-  ["/docs/features/observability", "/docs/features/opentelemetry"],
-  ["/docs/features/tracing", "/docs/features/opentelemetry"],
-  ["/docs/features/telemetry", "/docs/features/opentelemetry"],
+  ["/docs/features/observability", "/docs/observability/opentelemetry"],
+  ["/docs/features/tracing", "/docs/observability/tracing"],
+  ["/docs/features/telemetry", "/docs/observability/opentelemetry"],
+  // observability & evaluation split out of features/ (2026-08); the single
+  // opentelemetry page was two pages welded together — OSS export vs hosted view
+  ["/docs/features/opentelemetry", "/docs/observability/opentelemetry"],
   ["/docs/features/local-models", "/docs/integrations/models"],
   ["/docs/features/toolsets", "/docs/features/server-tools"],
-  ["/docs/guides/export-telemetry", "/docs/features/opentelemetry"],
+  ["/docs/guides/export-telemetry", "/docs/observability/opentelemetry"],
   ["/docs/cloud/managed-tools", "/docs/overview/quickstart#self-host-or-cloud"],
   ["/docs/cloud/managed-agents", "/docs/overview/quickstart#self-host-or-cloud"],
   // integrations + cookbook history

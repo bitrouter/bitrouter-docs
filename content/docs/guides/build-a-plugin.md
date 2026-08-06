@@ -268,6 +268,6 @@ observability) is what ships as a plugin.
 <Cards>
   <Card title="Self-host BitRouter" href="/docs/guides/self-host" description="Run the router you compiled your plugin into, in production." />
   <Card title="Guardrails" href="/docs/features/guardrails" description="The content-firewall plugin, as a worked reference." />
-  <Card title="OpenTelemetry" href="/docs/features/opentelemetry" description="OTLP trace + metric export, built on the observe plugin." />
+  <Card title="OpenTelemetry" href="/docs/observability/opentelemetry" description="OTLP trace + metric export, built on the observe plugin." />
   <Card title="Core repository" href="https://github.com/bitrouterai/bitrouter" description="The bitrouter-sdk crate and the three reference plugins." />
 </Cards>

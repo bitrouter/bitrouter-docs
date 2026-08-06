@@ -79,4 +79,4 @@ Each backend calls the engine's REST API directly and takes an optional `api_key
 
 - [Server tools](/docs/features/server-tools) — the loop that runs `web_fetch`, plus Advisor, SubAgent, and Fusion.
 - [Web search](/docs/features/websearch) — the sibling built-in that searches instead of fetching.
-- [OpenTelemetry](/docs/features/opentelemetry) — every nested fetch call shows up in your traces like any other.
+- [OpenTelemetry](/docs/observability/opentelemetry) — every nested fetch call shows up in your traces like any other.

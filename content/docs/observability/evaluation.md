@@ -1,0 +1,52 @@
+---
+title: Evaluation
+description: The evaluate step of the loop — a deterministic per-request outcome signal and cost metering that are live today, and the objective-scored eval engine landing on top of them.
+---
+
+The **evaluate** step of the [act → observe → evaluate → learn](/docs/overview/what-is-bitrouter) loop answers one question after each request: *the route BitRouter picked — did it still reach the goal?* That signal is what makes adaptive routing safe to turn on, and it's what the learn step folds back into the policy.
+
+This page is honest about scope. The signal below **is live today** and already drives routing decisions. Run-level, objective-scored evals — scoring a whole agent run against your chosen objective — are the next milestone, and are called out as such.
+
+## The adequacy outcome signal
+
+Every request that goes through a policy-bound route is observed and classified by outcome — success, or a hard failure with a cause:
+
+| Cause | Meaning |
+| --- | --- |
+| `provider transient` | Upstream failed in a retryable way (`5xx`, `408`, `429`, timeout) |
+| `provider permanent` | Upstream rejected the request and a retry won't help |
+| `protocol` | The response didn't conform to the expected wire format |
+| `auth` | Credential rejected or missing scope |
+| `client` | The caller's request was malformed |
+| `semantic` | The response came back, but failed a configured success gate |
+
+The classification is recorded against the request's **fingerprint** — which step of the agent loop it was — in the local adequacy ledger.
+
+There is **no LLM judge in the path**. The signal is deterministic and free, which is what makes cheap-tier downgrades safe to attempt at all: after `escalation_threshold` consecutive failures on a downgraded fingerprint, the route is pinned back up to a more capable tier automatically.
+
+You don't configure the classifier itself — it runs whenever a policy has adequacy enabled. The thresholds that act on it, and the escalation/exploration behavior they drive, are part of the policy: see [Adaptive routing](/docs/overview/quickstart#adaptive-routing).
+
+## Cost metering
+
+Every request is metered into the local database with an estimated charge, so *what did that run cost?* is answerable per request, per model, and per provider — the raw material for cost-objective evaluation. Two ways to read it:
+
+- **Traces** — the settlement span carries cost attributes into your OTLP backend, so cost sits next to latency and outcome on every request. See [OpenTelemetry](/docs/observability/opentelemetry).
+- **Hosted** — on BitRouter Cloud, spend, tokens, and the per-request log are hosted for you; content is never stored. See [Tracing](/docs/observability/tracing).
+
+## Traces as the eval substrate
+
+Because every hop is traced with outcome, cost, tokens, and the model that actually served, your OTLP backend doubles as an evaluation store: join spans by run, score them however you like, and you have run-level evals on your own terms today. This is the same substrate BitRouter's own benchmark harness consumes.
+
+## Objective-scored evals
+
+<Callout type="info">
+The dedicated eval engine — scoring each *run* and routing decision against a declared objective (cost today, latency and accuracy next) as a first-class, user-facing feature — is **landing next**. What's described above is the live signal it will be built on; nothing on this page changes when it ships, it just gains a scorer on top.
+</Callout>
+
+## Next steps
+
+<Cards>
+  <Card title="Adaptive routing" href="/docs/overview/quickstart#adaptive-routing" description="The policy that acts on this signal — escalation, exploration, and publishing." />
+  <Card title="OpenTelemetry" href="/docs/observability/opentelemetry" description="The self-run trace and metric substrate evals build on." />
+  <Card title="Tracing" href="/docs/observability/tracing" description="The hosted request view, if you'd rather not run a collector." />
+</Cards>

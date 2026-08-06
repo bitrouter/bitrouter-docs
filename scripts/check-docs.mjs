@@ -17,7 +17,7 @@ import {
 } from "../lib/docs-sync/transform.mjs";
 import { COMPONENT_WHITELIST } from "../lib/docs-sync/constants.mjs";
 
-const SECTIONS = ["overview", "models-and-routing", "features", "guides", "integrations"];
+const SECTIONS = ["overview", "models-and-routing", "features", "observability", "guides", "integrations"];
 const ROOT = "content/docs";
 
 async function walk(dir) {

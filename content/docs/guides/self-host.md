@@ -188,7 +188,7 @@ name resolves before it ever hits an upstream:
 bitrouter route gpt-4o     # print the full fallback chain for a model
 ```
 
-See [OpenTelemetry](/docs/features/opentelemetry) for the span model,
+See [OpenTelemetry](/docs/observability/opentelemetry) for the span model,
 per-request attribution, and per-backend export configs.
 
 ## 5. Basic hardening
@@ -210,6 +210,6 @@ per-request attribution, and per-backend export configs.
 <Cards>
   <Card title="Quickstart" href="/docs/overview/quickstart" description="The 60-second local install, if you skipped it." />
   <Card title="Self-host vs Cloud" href="/docs/overview/quickstart#self-host-or-cloud" description="Pick the deployment model that fits." />
-  <Card title="OpenTelemetry" href="/docs/features/opentelemetry" description="OTLP trace + metric export and per-request attribution." />
+  <Card title="OpenTelemetry" href="/docs/observability/opentelemetry" description="OTLP trace + metric export and per-request attribution." />
   <Card title="Guardrails" href="/docs/features/guardrails" description="Content firewall for requests and responses." />
 </Cards>

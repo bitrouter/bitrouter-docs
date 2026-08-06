@@ -70,12 +70,4 @@ See [Guardrails](/docs/features/guardrails) and [Presets](/docs/models-and-routi
 
 ## Usage reporting
 
-Per-namespace usage is attributed at request time and queryable from the CLI:
-
-```bash
-bitrouter cloud usage                                          # last 30 days
-bitrouter cloud usage --from 2026-05-01T00:00:00Z --to 2026-06-01T00:00:00Z
-bitrouter cloud requests --limit 25                           # paginated request log
-```
-
-An agent or CI job using a namespace-scoped credential can only read usage for its own namespace — cross-namespace aggregation requires a wider credential issued by the node operator.
+Usage is attributed per namespace at request time. A namespace-scoped credential can only read its own usage — cross-namespace aggregation requires a wider credential issued by the node operator. For the CLI commands, the hosted dashboard, and the management endpoints, see [Tracing](/docs/observability/tracing).

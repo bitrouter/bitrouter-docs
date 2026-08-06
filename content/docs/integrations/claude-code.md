@@ -55,4 +55,4 @@ Launch `claude`, ask it anything, and confirm the response. To see which provide
 
 - [Claude Code — LLM gateway config](https://code.claude.com/docs/en/llm-gateway)
 - [Model fallback](/docs/models-and-routing/model-fallback) — pass an ordered model list and walk it on failure.
-- [OpenTelemetry](/docs/features/opentelemetry) — trace every Claude Code request.
+- [OpenTelemetry](/docs/observability/opentelemetry) — trace every Claude Code request.

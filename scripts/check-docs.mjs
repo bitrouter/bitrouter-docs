@@ -19,26 +19,23 @@ import {
 } from "../lib/docs-sync/transform.mjs";
 import { COMPONENT_WHITELIST } from "../lib/docs-sync/constants.mjs";
 
-// Hand-authored sections of the Documentation tab. They live under the
-// `(guide)` folder group, which fumadocs strips from the URL — `overview/` is
-// still served at /docs/overview.
+// Hand-authored sections, relative to content/docs. The Documentation tab's
+// sections live under the `(guide)` folder group, which fumadocs strips from
+// the URL — `(guide)/overview/` is still served at /docs/overview. The
+// Integrations and Guides tabs are top-level root folders, so they have no
+// group prefix.
 const SECTIONS = [
-  "overview",
-  "usage",
-  "gateway-and-routing",
-  "observability",
-  "guides",
+  "(guide)/overview",
+  "(guide)/usage",
+  "(guide)/gateway-and-routing",
+  "(guide)/observability",
   "integrations",
+  "guides",
 ];
 const ROOT = "content/docs";
-const GUIDE_ROOT = join(ROOT, "(guide)");
-
-// Generated subtrees skipped inside the sections above: scripts/generate-cli.mjs
-// emits `usage/cli/` from .cli-snapshot.json plus the cli-overlays/, and its
-// output legitimately carries generated markup rather than the hand-authoring
-// contract. The hand-written siblings (`usage/mcp.mdx`, `usage/tui.mdx`) are
-// checked — excluding all of `usage/` to dodge `cli/` left them unlinted.
-const GENERATED = [join(GUIDE_ROOT, "usage", "cli")];
+// Generated output, exempt from the hand-authoring contract: it is emitted by
+// scripts/generate-cli.mjs from the binary's own `--help`.
+const GENERATED = new Set(["(guide)/usage/cli.mdx"]);
 
 async function walk(dir) {
   const out = [];
@@ -84,10 +81,8 @@ function findAlertLine(body) {
 
 async function main() {
   const files = [];
-  for (const s of SECTIONS) files.push(...(await walk(join(GUIDE_ROOT, s))));
-  const docs = files
-    .filter(isDoc)
-    .filter((p) => !GENERATED.some((dir) => p.startsWith(dir + "/")));
+  for (const s of SECTIONS) files.push(...(await walk(join(ROOT, s))));
+  const docs = files.filter(isDoc).filter((p) => !GENERATED.has(relative(ROOT, p)));
 
   const errors = [];
 

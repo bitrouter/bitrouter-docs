@@ -10,9 +10,9 @@ const PRODUCT: FooterLink[] = [
 const DEVELOPERS: FooterLink[] = [
   { label: "Docs", href: "/docs" },
   { label: "API", href: "/docs/reference" },
-  { label: "CLI", href: "/docs/reference/cli" },
-  { label: "MCP", href: "/docs/reference/mcp" },
-  { label: "Agent Skills", href: "/docs/ai-resources/skills" },
+  { label: "CLI", href: "/docs/usage/cli" },
+  { label: "MCP", href: "/docs/usage/mcp" },
+  { label: "Agent Skills", href: "/docs/usage/skills" },
 ];
 const RESOURCES: FooterLink[] = [
   { label: "Blog", href: "/blog" },

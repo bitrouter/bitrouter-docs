@@ -6,13 +6,18 @@ is rendered from this repo — docs are committed directly here under
 
 ## What publishes
 
-The docs site has two **tabs**, and each is a folder marked `"root": true` in
-its `meta.json`:
+The docs site has four **tabs**, and each is a folder marked `"root": true` in
+its `meta.json`. Tab order is the `pages` list in `content/docs/meta.json`:
 
 - **Documentation** — `content/docs/(guide)/`. The parentheses make it a
   *folder group*: fumadocs strips it from the URL, so `(guide)/overview/quickstart.mdx`
   still publishes at `/docs/overview/quickstart`. It exists only to give the tab
   something to hang off.
+- **Integrations** — `content/docs/integrations/`, the per-runtime and
+  per-model-source recipes. Lands on its `index.mdx`.
+- **Guides** — `content/docs/guides/`, the end-to-end walkthroughs (Cloud API,
+  self-host, plugins, migrations). It has no `index.mdx`, so its landing URL
+  comes from `pagesIndex`.
 - **API Reference** — `content/docs/reference/`, generated from the BitRouter
   Cloud OpenAPI spec.
 
@@ -22,17 +27,17 @@ Two rules follow from that, and breaking either one silently deletes a tab:
    `meta.json`, or from the folder's first direct *page* child — a root folder
    whose children are all folders resolves to nothing and is dropped from the
    tab bar without an error.
-2. Only these two folders carry `"root": true`. Adding it to a section would
-   turn that section into a third tab.
+2. Only these four folders carry `"root": true`. Adding it to a section would
+   turn that section into a fifth tab.
 
 Each folder under `content/docs/(guide)/` (`overview`, `usage`,
-`gateway-and-routing`, `observability`, `integrations`, `guides`,
-`ai-resources`) is a section within the Documentation tab. Page order within a
-section is the `pages` list in that section's `meta.json`; the section order is
-the `pages` list in `content/docs/(guide)/meta.json`.
+`gateway-and-routing`, `observability`) is a section within the Documentation
+tab. Page order within a section is the `pages` list in that section's
+`meta.json`; the section order is the `pages` list in
+`content/docs/(guide)/meta.json`.
 
-`usage/` holds the CLI and MCP server references — generated, so don't
-hand-author those.
+`usage/` is the ways to drive BitRouter: `cli.mdx` (generated — don't
+hand-author it), `tui.mdx`, `mcp.mdx`, and `skills.mdx`.
 
 ## Authoring contract (import-free MDX)
 
@@ -84,9 +89,14 @@ output:
   other subdirectory is wiped, and the section `meta.json` is rewritten from
   `REFERENCE_META` in the script — including the `"root": true` that makes it a
   tab, so edit the script, not the file.
-- **CLI reference** (`content/docs/(guide)/usage/cli/`) — `pnpm generate:cli`
-  builds the command pages from `.cli-snapshot.json` plus the hand-authored
-  overlays in `cli-overlays/<group>.md` (page intros, per-command examples).
-  When the documented binary changes, re-capture the snapshot locally with
-  `pnpm snapshot:cli` (needs `bitrouter` on PATH, or `BITROUTER_BIN=...`),
-  review the diff, and commit both files.
+- **CLI reference** (`content/docs/(guide)/usage/cli.mdx`) — `pnpm generate:cli`
+  builds the whole page from `.cli-snapshot.json` plus the hand-authored
+  overlays in `cli-overlays/`. It is **one page**: `cli-overlays/index.md`
+  supplies the frontmatter and the intro, and each `cli-overlays/<group>.md`
+  supplies a `##` section (its `title:` is the heading, the prose before the
+  first `## @` is the section intro, and each `## @<command>` block is appended
+  to that command's subsection). Section headings are anchor targets that
+  `next.config.ts` redirects at, so renaming one means updating those
+  redirects. When the documented binary changes, re-capture the snapshot
+  locally with `pnpm snapshot:cli` (needs `bitrouter` on PATH, or
+  `BITROUTER_BIN=...`), review the diff, and commit both files.

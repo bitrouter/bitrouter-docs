@@ -1,6 +1,5 @@
 ---
-title: route, models & observe
-description: Routing introspection — preview a routing decision, list routable models, inspect the OTel exporter's state.
+title: Routing introspection
 ---
 
 Three read-only views over the same routing state the daemon acts on. Use them to answer *what would BitRouter do?* before sending traffic.

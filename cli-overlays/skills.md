@@ -1,9 +1,8 @@
 ---
-title: skills & mcp
-description: Install Agent Skills from GitHub or a registry, and run BitRouter's origin MCP server.
+title: Skills and MCP
 ---
 
-`skills` installs and manages [Agent Skills](https://agentskills.io) for your harness; `mcp` runs BitRouter's own MCP server — the tool surface any MCP client can drive instead of shelling out. What the server exposes (backends, transports, the gateway distinction) lives on the [MCP Server](/docs/reference/mcp) page.
+`skills` installs and manages [Agent Skills](https://agentskills.io) for your harness; `mcp` runs BitRouter's own MCP server — the tool surface any MCP client can drive instead of shelling out. What the server exposes (backends, transports, the gateway distinction) lives on the [MCP Server](/docs/usage/mcp) page.
 
 ## @skills add
 

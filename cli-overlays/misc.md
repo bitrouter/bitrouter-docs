@@ -1,6 +1,5 @@
 ---
-title: key, workflow-state & update
-description: Virtual-key signing for access control, benchmark trace utilities, and the self-updater.
+title: Key, workflow-state, and update
 ---
 
 ## @key sign

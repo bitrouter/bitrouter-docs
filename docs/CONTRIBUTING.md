@@ -7,7 +7,7 @@ is rendered from this repo — docs are committed directly here under
 ## What publishes
 
 Each top-level folder under `content/docs/` (`overview`,
-`gateway-and-routing`, `features`, `observability`, `guides`, `integrations`) is a
+`gateway-and-routing`, `observability`, `guides`, `integrations`) is a
 documentation section on the site. Page order within a section is the `pages` list in that
 section's `meta.json`; the overall section order is the `pages` list in
 `content/docs/meta.json`.

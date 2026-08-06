@@ -45,4 +45,4 @@ The two sides are deliberately asymmetric:
 
 ## On Cloud
 
-Everything above runs in the open-source binary off your config file. **BitRouter Cloud** manages the same block/redact rules for you as a per-workspace policy you edit in the console — no config file to deploy. See [Workspaces](/docs/features/namespaces).
+Everything above runs in the open-source binary off your config file. **BitRouter Cloud** manages the same block/redact rules for you as a per-workspace policy you edit in the console — no config file to deploy.

@@ -4,7 +4,6 @@
   "pages": [
     "overview",
     "gateway-and-routing",
-    "features",
     "observability",
     "integrations",
     "guides",

@@ -32,7 +32,7 @@ BitRouter deliberately stops at the gateway. There's no `tensorzero.toml` to mai
 
 ### 2. Agent-native, and cloud/local share one surface
 
-TensorZero's gateway is provider-facing — it unifies the upstreams. BitRouter adds the **agent-facing** half: an [MCP gateway](/docs/gateway-and-routing/tools) for tools, an [ACP gateway](/docs/gateway-and-routing/agents) for agent identity and dispatch, a [server-tool loop](/docs/gateway-and-routing/server-tools), and [agentic payment](/docs/features/payment) so an agent can pay per request without you provisioning a key for it.
+TensorZero's gateway is provider-facing — it unifies the upstreams. BitRouter adds the **agent-facing** half: an [MCP gateway](/docs/gateway-and-routing/mcp-gateway) for tools, an [ACP gateway](/docs/gateway-and-routing/acp-gateway) for agent identity and dispatch, a [server-tool loop](/docs/gateway-and-routing/server-tools), and agentic payment so an agent can pay per request without you provisioning a key for it.
 
 And **the hosted cloud and local binary expose the same OpenAI-compatible endpoint** — start local during development, point at `api.bitrouter.ai` for production (or vice versa) without changing client code. See the [Quick Start](/docs/overview/quickstart) for both flows.
 
@@ -125,8 +125,8 @@ To skip the local proxy entirely, point clients at `https://api.bitrouter.ai/v1`
 | ClickHouse observability + UI | OTLP traces & metrics to your own backend, or hosted Activity on Cloud | [OpenTelemetry](/docs/observability/opentelemetry), [Cloud Tracing](/docs/observability/tracing) |
 | OpenTelemetry (OTLP) export | OpenTelemetry (OTLP) export | [OpenTelemetry](/docs/observability/opentelemetry) |
 | Embedded structured outputs (JSON functions) | Structured outputs across all providers | [Structured outputs](/docs/gateway-and-routing/structured-outputs) |
-| — (no equivalent) | MCP / ACP / Skills agent gateways | [Tools](/docs/gateway-and-routing/tools), [Agents](/docs/gateway-and-routing/agents) |
-| — (no equivalent) | Autonomous agent payment (x402 / MPP) | [Payment](/docs/features/payment) |
+| — (no equivalent) | MCP / ACP / Skills agent gateways | [Tools](/docs/gateway-and-routing/mcp-gateway), [Agents](/docs/gateway-and-routing/acp-gateway) |
+| — (no equivalent) | Autonomous agent payment (x402 / MPP) | x402 / MPP |
 
 ## What BitRouter intentionally doesn't ship
 
@@ -160,7 +160,7 @@ If your workflow depends on that closed feedback loop — collect inferences and
 <Cards>
   <Card title="Quick Start" href="/docs/overview/quickstart" description="Run BitRouter locally or in the cloud in under a minute" />
   <Card title="BitRouter vs OpenRouter" href="/docs/overview/bitrouter-vs-openrouter" description="Side-by-side with OpenRouter and generic gateways" />
-  <Card title="Agent features" href="/docs/gateway-and-routing/tools" description="MCP, ACP, skills, agent firewall, x402 payment" />
+  <Card title="Agent features" href="/docs/gateway-and-routing/mcp-gateway" description="MCP, ACP, skills, agent firewall, x402 payment" />
   <Card title="API Reference" href="/docs/reference" description="OpenAI- and Anthropic-compatible endpoints" />
 </Cards>
 

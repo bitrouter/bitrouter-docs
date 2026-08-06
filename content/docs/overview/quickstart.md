@@ -85,7 +85,7 @@ npx skills add bitrouter/bitrouter    # via the generic skills CLI
 Then ask your agent: *"Set up BitRouter for me."* — the agent runs the wizard, picks Cloud by default, and verifies the connection autonomously.
 
 <Callout type="info">
-The `/bitrouter` skill *drives* BitRouter; the [AgentSkills gateway](/docs/gateway-and-routing/tools) is the opposite direction — BitRouter *serving* skills as governed, routable resources to the agents behind it.
+The `/bitrouter` skill *drives* BitRouter; the [AgentSkills gateway](/docs/gateway-and-routing/mcp-gateway) is the opposite direction — BitRouter *serving* skills as governed, routable resources to the agents behind it.
 </Callout>
 
 ## Onboard via the CLI wizard
@@ -227,7 +227,7 @@ bitrouter policy lock            # forbid programmatic writes again
 `evolve --apply` only **adds** qualified routes — it never overwrites or removes anything you or Git wrote, and a detected intervening edit aborts the publish instead of clobbering it. Commit the result and the improved table is in Git, where a policy belongs.
 
 <Callout type="info">
-`bitrouter policy create` + `bitrouter key sign` are a **different surface** — per-key access control (allowed models, budgets, rate limits), not routing. See [Guardrails](/docs/features/guardrails).
+`bitrouter policy create` + `bitrouter key sign` are a **different surface** — per-key access control (allowed models, budgets, rate limits), not routing. See [Guardrails](/docs/gateway-and-routing/guardrails).
 </Callout>
 
 ## Next steps

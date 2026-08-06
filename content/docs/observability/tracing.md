@@ -15,7 +15,7 @@ Sign in to [cloud.bitrouter.ai](https://cloud.bitrouter.ai) and open **Activity*
 | **Requests** | Number of requests over the window |
 | **Tokens** | Prompt + completion tokens over the window |
 
-Every figure is scoped to the **active workspace** ([namespace](/docs/features/namespaces)), so a dashboard always reflects the workspace you're signed into.
+Every figure is scoped to the **active workspace** (namespace), so a dashboard always reflects the workspace you're signed into.
 
 ## The request log
 
@@ -53,7 +53,7 @@ Cloud stores per-request **receipts**, not OpenTelemetry span waterfalls. When y
 
 ## Per-namespace usage from the CLI
 
-Usage is attributed at request time and scoped to the [namespace](/docs/features/namespaces) that served the request, so the same figures are readable from the terminal:
+Usage is attributed at request time and scoped to the namespace that served the request, so the same figures are readable from the terminal:
 
 ```bash
 bitrouter cloud usage                                          # last 30 days
@@ -68,6 +68,5 @@ An agent or CI job using a namespace-scoped credential can only read usage for i
 <Cards>
   <Card title="OpenTelemetry" href="/docs/observability/opentelemetry" description="Self-run OTLP export — the span model, metrics, and backend recipes." />
   <Card title="Evaluation" href="/docs/observability/evaluation" description="The outcome signal and cost metering behind these records." />
-  <Card title="Namespaces" href="/docs/features/namespaces" description="Per-workspace scoping for keys, usage, and policy." />
   <Card title="API Reference" href="/docs/reference" description="The usage and requests management endpoints." />
 </Cards>

@@ -1,5 +1,5 @@
 ---
-title: Tools
+title: MCP gateway
 description: Tools are the capabilities an agent acquires at runtime — MCP servers and Agent Skills — both served through one BitRouter gateway.
 ---
 

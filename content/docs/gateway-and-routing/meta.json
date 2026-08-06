@@ -11,14 +11,16 @@
     "structured-outputs",
     "byok",
     "---Tools---",
-    "tools",
+    "mcp-gateway",
     "server-tools",
     "websearch",
     "web-fetch",
     "---Agents---",
-    "agents",
+    "acp-gateway",
     "subagent",
     "advisor",
-    "fusion"
+    "fusion",
+    "---Governance---",
+    "guardrails"
   ]
 }

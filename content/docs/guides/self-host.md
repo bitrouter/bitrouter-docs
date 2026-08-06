@@ -200,7 +200,7 @@ per-request attribution, and per-backend export configs.
   committed `bitrouter.yaml`; the config redacts `api_key` in debug output.
 - **Validate in CI.** Run `bitrouter config validate -c bitrouter.yaml` on every
   change, and pin the `# yaml-language-server` schema URL to your version.
-- **Add a content firewall** with [Guardrails](/docs/features/guardrails) to
+- **Add a content firewall** with [Guardrails](/docs/gateway-and-routing/guardrails) to
   block or redact request/response content.
 - **Reload, don't restart, for config changes** so in-flight requests aren't
   dropped.
@@ -211,5 +211,5 @@ per-request attribution, and per-backend export configs.
   <Card title="Quickstart" href="/docs/overview/quickstart" description="The 60-second local install, if you skipped it." />
   <Card title="Self-host vs Cloud" href="/docs/overview/quickstart#self-host-or-cloud" description="Pick the deployment model that fits." />
   <Card title="OpenTelemetry" href="/docs/observability/opentelemetry" description="OTLP trace + metric export and per-request attribution." />
-  <Card title="Guardrails" href="/docs/features/guardrails" description="Content firewall for requests and responses." />
+  <Card title="Guardrails" href="/docs/gateway-and-routing/guardrails" description="Content firewall for requests and responses." />
 </Cards>

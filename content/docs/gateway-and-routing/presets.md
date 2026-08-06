@@ -83,7 +83,7 @@ A preset can be disabled without deleting it (`POST …/routing-presets/{id}/dis
 
 Resolution happens *before* policy enforcement, and a preset can only ever **narrow** what a key could already do — never widen it:
 
-- [Guardrail](/docs/features/guardrails) model allow/deny lists and BYOK rules judge the **resolved base model**, so a preset that substitutes `openai/gpt-5` is checked exactly as if you had asked for `openai/gpt-5` directly. A preset can't smuggle a request past a model denylist.
+- [Guardrail](/docs/gateway-and-routing/guardrails) model allow/deny lists and BYOK rules judge the **resolved base model**, so a preset that substitutes `openai/gpt-5` is checked exactly as if you had asked for `openai/gpt-5` directly. A preset can't smuggle a request past a model denylist.
 - `routing.only` / `routing.ignore` can only *remove* providers from the eligible set — they can never add a provider the request wasn't already allowed to reach. [BYOK](/docs/gateway-and-routing/byok) providers still rank ahead of platform ones.
 - Billing is unchanged — you pay the selected provider's rate for the resolved base model.
 

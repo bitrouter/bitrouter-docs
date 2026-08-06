@@ -5,7 +5,7 @@ description: Virtual-key signing for access control, benchmark trace utilities, 
 
 ## @key sign
 
-Mints a **virtual key** bound to an access-control policy — the per-key guardrails surface (allowed models, budgets, rate limits), distinct from routing policies. See [Guardrails](/docs/features/guardrails).
+Mints a **virtual key** bound to an access-control policy — the per-key guardrails surface (allowed models, budgets, rate limits), distinct from routing policies. See [Guardrails](/docs/gateway-and-routing/guardrails).
 
 ```bash
 bitrouter key sign --user ci --policy nightly-cap

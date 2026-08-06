@@ -1,5 +1,5 @@
 ---
-title: Agents
+title: ACP gateway
 description: What agent-native means on BitRouter — the ACP gateway for identity, discovery, and task dispatch, plus KYA identity for autonomous pay-per-use.
 ---
 
@@ -13,6 +13,3 @@ Just as the MCP gateway lets an agent reach many tool servers, the **ACP gateway
 
 An autonomous agent holding your keys is a liability unless it has an identity of its own. **KYA (Know-Your-Agent)** gives an agent a **verifiable identity**, which is what makes autonomous payment safe: with that identity, an agent can **pay per use** through the Machine Payment Protocol — x402/MPP — settling each request itself, with no credit cards, prepaid credits, or invoices in the loop.
 
-## Learn how to
-
-- [Agentic payment](/docs/features/payment) — autonomous pay-per-use via MPP / x402.

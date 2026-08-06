@@ -1,0 +1,72 @@
+---
+title: Tracing
+description: The hosted request view on BitRouter Cloud — spend, tokens, and a per-request log traced server-side, with no collector to run. Receipts, never content.
+---
+
+The open-source [OpenTelemetry](/docs/observability/opentelemetry) export runs on your own backend. **BitRouter Cloud** gives you the hosted alternative: every `/v1` request is traced into an **Activity** view server-side — no collector, no warehouse, nothing to run. Content (prompts and responses) is never stored.
+
+## The Activity dashboard
+
+Sign in to [cloud.bitrouter.ai](https://cloud.bitrouter.ai) and open **Activity**. It opens on three KPI cards over a window you pick — **1 day**, **1 week**, **1 month**, or **all time**:
+
+| KPI | What it measures |
+| --- | --- |
+| **Spend** | Total USD charged over the window |
+| **Requests** | Number of requests over the window |
+| **Tokens** | Prompt + completion tokens over the window |
+
+Every figure is scoped to the **active workspace** (namespace), so a dashboard always reflects the workspace you're signed into.
+
+## The request log
+
+Below the KPIs, the request log lists every `/v1` request, newest first. Each row is a per-request trace record:
+
+| Column | Detail |
+| --- | --- |
+| **Time** | When the request landed |
+| **Model** | The model id served, with a `stream` marker for streamed calls |
+| **Provider** | The upstream provider that served it |
+| **Tokens** | Prompt + completion total |
+| **Cost** | Final charge in USD |
+| **Latency** | End-to-end latency |
+| **Source** | Funding source (credit balance, BYOK, MPP session) |
+| **Status** | Succeeded, error, denied, cancelled |
+
+Each record also carries the **routing profile** used (`balanced`, `cost`, `latency`, `throughput`) and the gated **capabilities** exercised (e.g. `structured_outputs`) — so a request that failed over or hit a budget is legible without leaving the dashboard.
+
+<Callout type="info">
+**Receipts, not bodies.** Cloud stores the request *record* — model, provider, tokens, cost, latency, status, routing profile — never the prompt or response content.
+</Callout>
+
+## Usage attribution & the API
+
+Everything in the dashboard is also available over the management API, scoped per workspace and gated by the `usage:read` scope:
+
+- **Aggregate usage** — spend, token counts, request count, and a per-capability breakdown over a `[from, to)` window.
+- **Request history** — the paginated request log, including routing profile and capabilities used.
+
+These are the same `bitrouter cloud usage` and `bitrouter cloud requests` commands you run from the [CLI](/docs/reference/cli). See the [API Reference](/docs/reference) for the `usage` and `requests` endpoints and their fields.
+
+## Deep traces
+
+Cloud stores per-request **receipts**, not OpenTelemetry span waterfalls. When you need the full span tree — the ingress span, the routing decision, and a `CLIENT` span per upstream attempt — that lives in **your own OTLP collector**. Wire it up once with the open-source [OpenTelemetry](/docs/observability/opentelemetry) export and the Activity view links out to it.
+
+## Per-namespace usage from the CLI
+
+Usage is attributed at request time and scoped to the namespace that served the request, so the same figures are readable from the terminal:
+
+```bash
+bitrouter cloud usage                                          # last 30 days
+bitrouter cloud usage --from 2026-05-01T00:00:00Z --to 2026-06-01T00:00:00Z
+bitrouter cloud requests --limit 25                            # paginated request log
+```
+
+An agent or CI job using a namespace-scoped credential can only read usage for its own namespace — cross-namespace aggregation requires a wider credential issued by the node operator.
+
+## Next steps
+
+<Cards>
+  <Card title="OpenTelemetry" href="/docs/observability/opentelemetry" description="Self-run OTLP export — the span model, metrics, and backend recipes." />
+  <Card title="Evaluation" href="/docs/observability/evaluation" description="The outcome signal and cost metering behind these records." />
+  <Card title="API Reference" href="/docs/reference" description="The usage and requests management endpoints." />
+</Cards>

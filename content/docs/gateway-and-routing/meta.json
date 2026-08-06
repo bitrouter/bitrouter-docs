@@ -1,0 +1,26 @@
+{
+  "title": "Gateway & Routing",
+  "icon": "Route",
+  "collapsible": false,
+  "pages": [
+    "---Models---",
+    "provider-selection",
+    "model-fallback",
+    "model-variants",
+    "presets",
+    "structured-outputs",
+    "byok",
+    "---Tools---",
+    "mcp-gateway",
+    "server-tools",
+    "websearch",
+    "web-fetch",
+    "---Agents---",
+    "acp-gateway",
+    "subagent",
+    "advisor",
+    "fusion",
+    "---Governance---",
+    "guardrails"
+  ]
+}

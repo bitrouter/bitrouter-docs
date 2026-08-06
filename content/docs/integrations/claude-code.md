@@ -3,11 +3,11 @@ title: Claude Code
 description: Route Anthropic's Claude Code through BitRouter — every model in the registry, behind the Anthropic Messages API it already speaks.
 ---
 
-Claude Code talks to an Anthropic Messages endpoint. Point it at BitRouter instead of `api.anthropic.com` and every request flows through the [registry](/docs/models-and-routing/models) — so the same agent can run on Anthropic, OpenAI, Google, or an open model, with provider selection and fallback underneath.
+Claude Code talks to an Anthropic Messages endpoint. Point it at BitRouter instead of `api.anthropic.com` and every request flows through the [registry](/docs/overview/supported-models#how-model-ids-work) — so the same agent can run on Anthropic, OpenAI, Google, or an open model, with provider selection and fallback underneath.
 
 ## Prerequisites
 
-- BitRouter running — local proxy at `http://127.0.0.1:4356`, or [BitRouter Cloud](/docs/get-started/onboarding) at `https://api.bitrouter.ai`.
+- BitRouter running — local proxy at `http://127.0.0.1:4356`, or [BitRouter Cloud](/docs/overview/quickstart) at `https://api.bitrouter.ai`.
 - Claude Code installed:
 
   ```bash
@@ -45,7 +45,7 @@ Prefer a file? Put the same values in `.claude/settings.json` so they apply per-
 
 ## Pick a model
 
-`ANTHROPIC_MODEL` takes any registry id in `provider/model` form — `anthropic/claude-sonnet-4-6`, `openai/gpt-4o`, `google/gemini-2.5-pro`. Add a `:cost` or `:latency` suffix to bias provider selection for the session. Switch mid-session with `/model <id>`, or at launch with `claude --model <id>`. See [Models](/docs/models-and-routing/models) for the full id scheme.
+`ANTHROPIC_MODEL` takes any registry id in `provider/model` form — `anthropic/claude-sonnet-4-6`, `openai/gpt-4o`, `google/gemini-2.5-pro`. Add a `:cost` or `:latency` suffix to bias provider selection for the session. Switch mid-session with `/model <id>`, or at launch with `claude --model <id>`. See [Models](/docs/overview/supported-models#how-model-ids-work) for the full id scheme.
 
 ## Verify
 
@@ -54,5 +54,5 @@ Launch `claude`, ask it anything, and confirm the response. To see which provide
 ## Learn more
 
 - [Claude Code — LLM gateway config](https://code.claude.com/docs/en/llm-gateway)
-- [Model fallback](/docs/models-and-routing/model-fallback) — pass an ordered model list and walk it on failure.
-- [OpenTelemetry](/docs/features/opentelemetry) — trace every Claude Code request.
+- [Model fallback](/docs/gateway-and-routing/model-fallback) — pass an ordered model list and walk it on failure.
+- [OpenTelemetry](/docs/observability/opentelemetry) — trace every Claude Code request.

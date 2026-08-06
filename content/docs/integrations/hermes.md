@@ -3,11 +3,11 @@ title: Hermes
 description: Route Nous Research's Hermes agent through BitRouter by setting a custom model endpoint.
 ---
 
-Hermes is Nous Research's self-improving agent. It accepts a custom OpenAI-compatible model endpoint, so you can point it at BitRouter and route its model calls across the whole [registry](/docs/models-and-routing/models).
+Hermes is Nous Research's self-improving agent. It accepts a custom OpenAI-compatible model endpoint, so you can point it at BitRouter and route its model calls across the whole [registry](/docs/overview/supported-models#how-model-ids-work).
 
 ## Prerequisites
 
-- BitRouter running — local proxy at `http://127.0.0.1:4356`, or [BitRouter Cloud](/docs/get-started/onboarding) at `https://api.bitrouter.ai`.
+- BitRouter running — local proxy at `http://127.0.0.1:4356`, or [BitRouter Cloud](/docs/overview/quickstart) at `https://api.bitrouter.ai`.
 - Hermes installed. See [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) for setup.
 
 ## Point Hermes at BitRouter
@@ -38,9 +38,9 @@ For **Cloud**, set `base_url` to `https://api.bitrouter.ai/v1` and use your BitR
 
 ## Pick a model
 
-The `model` field takes any registry id in `provider/model` form, optionally with a `:cost` / `:latency` variant. See [Models](/docs/models-and-routing/models).
+The `model` field takes any registry id in `provider/model` form, optionally with a `:cost` / `:latency` variant. See [Models](/docs/overview/supported-models#how-model-ids-work).
 
 ## Learn more
 
 - [Hermes — configuration](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/user-guide/configuration.md)
-- [Model fallback](/docs/models-and-routing/model-fallback) · [Provider selection](/docs/models-and-routing/provider-selection)
+- [Model fallback](/docs/gateway-and-routing/model-fallback) · [Provider selection](/docs/gateway-and-routing/provider-selection)

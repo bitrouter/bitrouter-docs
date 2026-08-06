@@ -16,7 +16,7 @@ If you are an AI agent setting up BitRouter, follow these steps:
 4. Verify: \`curl http://localhost:8787/v1/chat/completions -H "Content-Type: application/json" -d '{"model":"openai/gpt-4o","messages":[{"role":"user","content":"Hello!"}]}'\`
 
 References:
-- Full quickstart walkthrough: ${BASE_URL}/docs/get-started/quickstart
+- Full quickstart walkthrough: ${BASE_URL}/docs/overview/quickstart
 - Agent Skills (install/configure BitRouter from inside an agent): https://github.com/bitrouter/agent-skills
 - BitRouter CLI (proxy, setup wizard, TUI dashboard): https://github.com/bitrouter/bitrouter
 - Per-runtime setup recipes (Claude Code, Codex, OpenClaw, OpenCode, and more): ${BASE_URL}/docs/integrations
@@ -24,23 +24,23 @@ References:
 ## Getting Started
 
 - [Introduction](${BASE_URL}/docs): What BitRouter is, what's in the box, and why we're building it
-- [Quick Start](${BASE_URL}/docs/get-started/quickstart): Install via Agent Skills or the CLI and start routing in under a minute
-- [Comparison](${BASE_URL}/docs/get-started/comparison): How BitRouter differs from OpenRouter, LiteLLM, and other LLM gateways
+- [Quick Start](${BASE_URL}/docs/overview/quickstart): Install via Agent Skills or the CLI and start routing in under a minute
+- [Comparison](${BASE_URL}/docs/overview/bitrouter-vs-openrouter): How BitRouter differs from OpenRouter, LiteLLM, and other LLM gateways
 - [Agent Skills](https://github.com/bitrouter/agent-skills): Drop-in skills that teach an agent to install and use BitRouter
 - [BitRouter CLI](https://github.com/bitrouter/bitrouter): \`cargo install bitrouter\` — the Rust binary, setup wizard, and TUI dashboard
 
 ## Routing
 
-- [Model Fallback](${BASE_URL}/docs/models-and-routing/model-fallback): Automatic fallback across models when an upstream fails
-- [Provider Selection](${BASE_URL}/docs/models-and-routing/provider-selection): How models resolve to upstream providers, with cost and performance policies
+- [Model Fallback](${BASE_URL}/docs/gateway-and-routing/model-fallback): Automatic fallback across models when an upstream fails
+- [Provider Selection](${BASE_URL}/docs/gateway-and-routing/provider-selection): How models resolve to upstream providers, with cost and performance policies
 
 ## Features
 
 - [Workspaces](${BASE_URL}/docs/cloud/workspaces): Per-team routing tables, keys, and observability
 - [BYOK](${BASE_URL}/docs/cloud/byok): Bring your own provider keys at zero cost; auto-detected from env vars
-- [OpenTelemetry](${BASE_URL}/docs/features/opentelemetry): Self-run OTLP export — traces and metrics of every request, pushed to a Collector, Honeycomb, Grafana, or Datadog
+- [OpenTelemetry](${BASE_URL}/docs/observability/opentelemetry): Self-run OTLP export — traces and metrics of every request, pushed to a Collector, Honeycomb, Grafana, or Datadog
 - [Cloud Tracing](${BASE_URL}/docs/cloud/tracing): Hosted Activity view — spend, token, and latency KPIs plus a per-request log, nothing to operate
-- [Guardrails](${BASE_URL}/docs/features/guardrails): Inspect, warn, redact, or block risky content at the proxy layer
+- [Guardrails](${BASE_URL}/docs/gateway-and-routing/guardrails): Inspect, warn, redact, or block risky content at the proxy layer
 
 ## API Reference
 

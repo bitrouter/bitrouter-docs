@@ -1,8 +1,7 @@
 ---
-title: Onboarding
+title: Quickstart
 description: Install BitRouter and get your agent routing in under a minute — pick self-host or Cloud, then onboard via the Agent Skill, the CLI wizard, or manual env keys.
 ---
-
 
 This page gets BitRouter routing for your agent in under a minute. There are two deployment modes, and three ways to onboard either one — the Agent Skill, the CLI wizard, or manual env keys.
 
@@ -25,6 +24,7 @@ Every core capability works the same either way — Cloud only adds what needs a
 | Local / private model serving | ✅ | ✅ |
 | Model fallback & provider selection | ✅ | ✅ |
 | Model variants & presets | ✅ | ✅ |
+| Adaptive routing policies | ✅ | ✅ |
 | Guardrails | ✅ | ✅ |
 | Observability (OTLP trace + metric export) | ✅ | ✅ |
 | MCP & ACP gateways | ✅ | ✅ |
@@ -85,7 +85,7 @@ npx skills add bitrouter/bitrouter    # via the generic skills CLI
 Then ask your agent: *"Set up BitRouter for me."* — the agent runs the wizard, picks Cloud by default, and verifies the connection autonomously.
 
 <Callout type="info">
-The `/bitrouter` skill *drives* BitRouter; the [AgentSkills gateway](/docs/features/tools) is the opposite direction — BitRouter *serving* skills as governed, routable resources to the agents behind it.
+The `/bitrouter` skill *drives* BitRouter; the [AgentSkills gateway](/docs/gateway-and-routing/mcp-gateway) is the opposite direction — BitRouter *serving* skills as governed, routable resources to the agents behind it.
 </Callout>
 
 ## Onboard via the CLI wizard
@@ -105,32 +105,13 @@ Bare `bitrouter` runs a **network-free credential probe** — BYOK env keys, the
 Every step maps to a flag, so an agent (or CI) can run the whole flow without a human. `--yes` never blocks: it consumes flag-supplied credentials, reports-and-skips anything that would need interactive OAuth, and emits a JSON result envelope on stdout:
 
 ```bash
-bitrouter init --yes \
-  --provider openai --provider-api-key "sk-..." \
-  --harness claude --after serve
-```
-
-| Flag | Step | Effect |
-| --- | --- | --- |
-| `--cloud-login` | 1 | Sign in to Cloud via device-flow OAuth (skipped + reported under `--yes`) |
-| `--api-key <BRK_KEY>` | 1 | Seed the Cloud credential from a `brk_` API key (non-interactive) |
-| `--provider <ID>` | 1 | Log in to an upstream provider by id (repeatable) |
-| `--provider-api-key <KEY>` | 1 | Key for the `--provider` at the same position (repeatable) |
-| `--use-detected` | 1 | Accept the auto-detected credential(s) without prompting |
-| `--harness <claude\|codex>` | 2 | Harness to drive (repeatable) |
-| `--no-install` | 2 | Never install a missing harness |
-| `--after <launch\|serve\|exit>` | 3 | What to do at the end |
-| `-c, --config <PATH>` | — | Where to write the starter `bitrouter.yaml` |
-| `--force` | — | Allow overwriting an existing `bitrouter.yaml` |
-| `--reset` | — | Clear stored onboarding credentials before running |
-
-```bash
+bitrouter init --yes --provider openai --provider-api-key "sk-..." --harness claude --after serve
 bitrouter init --yes --use-detected --harness claude --after serve   # accept env keys, run proxy
 bitrouter init --yes --api-key "brk_..." --after exit                # Cloud key, no launch
 bitrouter init --reset                                               # clear credentials, start over
 ```
 
-The wizard never writes `bitrouter.yaml` beyond the canned starter template — your routing config stays yours to edit.
+Every flag is documented in the [`bitrouter init` reference](/docs/reference/cli/init). The wizard never writes `bitrouter.yaml` beyond the canned starter template — your routing config stays yours to edit.
 
 ## Run self-hosted
 
@@ -142,7 +123,7 @@ bitrouter start
 # Proxy running at http://127.0.0.1:4356
 ```
 
-BitRouter auto-detects any key set in the environment — no config file needed. Any provider whose key is present is immediately available. See [BYOK](/docs/models-and-routing/byok) for the full list of recognized variables, or [local & private models](/docs/integrations/models) to point BitRouter at Ollama, vLLM, or LM Studio for free.
+BitRouter auto-detects any key set in the environment — no config file needed. Any provider whose key is present is immediately available. See [BYOK](/docs/gateway-and-routing/byok) for the full list of recognized variables, or [local & private models](/docs/integrations/models) to point BitRouter at Ollama, vLLM, or LM Studio for free.
 
 For advanced routing rules, guardrails, or multi-account failover, scaffold a config file:
 
@@ -160,19 +141,7 @@ bitrouter cloud login   # RFC 8628 device flow against api.bitrouter.ai
 bitrouter start         # the `bitrouter` provider auto-enables once signed in
 ```
 
-You can also point an agent straight at the hosted endpoint without running a local binary. Either way the core is the same — a Cloud account is an account and network, not a separate deployment. See the [Supported Models](/docs/overview/supported-models) catalog for pricing.
-
-## Attach Cloud to a self-hosted binary
-
-Cloud is not a different binary — it's an account you attach:
-
-```bash
-bitrouter cloud login
-# Opens a browser to sign in and pick a workspace.
-# Your local binary now routes Cloud-managed models alongside your BYOK keys.
-```
-
-You can add or remove the Cloud account at any time. The binary's self-hosted capabilities are unaffected either way.
+Cloud is not a different binary — it's an account you attach. Signing in from a self-hosted binary routes Cloud-managed models alongside your BYOK keys, and you can add or remove the Cloud account at any time without affecting the binary's self-hosted capabilities. You can also point an agent straight at the hosted endpoint without running a local binary at all. See the [Supported Models](/docs/overview/supported-models) catalog for pricing.
 
 ## Point your agent at the proxy
 
@@ -191,11 +160,81 @@ curl http://127.0.0.1:4356/v1/chat/completions \
 
 Point any OpenAI-compatible runtime at `http://127.0.0.1:4356/v1` to route through BitRouter.
 
+Two commands make the routing decision itself legible:
+
+```bash
+bitrouter models                            # every model id routable right now
+bitrouter route anthropic/claude-opus-4.8   # preview the routing decision
+```
+
+## Adaptive routing
+
+Everything above is a static router. The adaptive half — the **learn** step of the [act → observe → evaluate → learn](/docs/overview/what-is-bitrouter) loop — is opt-in, deterministic, and adds no LLM call to the path. Its artifact is `policy-lock.yaml`, living next to `bitrouter.yaml`: **Git owns its history; the local database owns the evidence.**
+
+One command scaffolds everything:
+
+```bash
+bitrouter policy init coding --preset coding --economy moonshotai/kimi-k2.7-code
+```
+
+That writes a two-tier table (strong = your preset's model, economy = the cheap one), clamps tool-carrying requests to the strong tier so a downgrade never strands a tool call, and binds the policy to the preset in `bitrouter.yaml` with `writeback: locked`. Selecting the preset as the model is the entire opt-in boundary — bare model requests are never touched by a policy:
+
+```bash
+curl http://127.0.0.1:4356/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{"model": "@coding", "messages": [{"role": "user", "content": "..."}]}'
+```
+
+Each request is fingerprinted by loop step (`opening`, `after_<tool>`, `midstream`) and resolved fingerprint → tier → model. An unmatched fingerprint falls back to `default_tier`, and the table starts conservative: everything routes strong until evidence says otherwise.
+
+### Learning from live traffic
+
+With `adequacy` enabled, every request through a policy-bound route is classified by outcome and recorded against its fingerprint — deterministically, with [no LLM judge in the path](/docs/observability/evaluation). Two halves act on that signal:
+
+- **Escalation (the safety half)** — a downgraded fingerprint that hard-fails `escalation_threshold` consecutive times is pinned up to the strong tier. Pins decay after a cooldown.
+- **Exploration (the aggressive half)** — with `explore_enabled`, roughly 1-in-`explore_interval` candidate requests is trialed on the economy tier; `explore_threshold` consecutive adequate trials qualify that fingerprint for the cheap tier. A failed trial escalates and stops.
+
+```yaml
+# policy-lock.yaml
+adequacy:
+  enabled: true
+  escalation_tier: strong
+  escalation_threshold: 2
+  pin_cooldown_secs: 1800
+  explore_enabled: true
+  explore_tier: economy
+  explore_threshold: 3
+  explore_interval: 5
+```
+
+The evidence rule is asymmetric: negative evidence escalates immediately, while a cheaper route needs repeated success before it becomes effective. A policy with `adequacy` off behaves exactly like its deterministic table.
+
+The signal itself — the outcome classes it records, the per-request cost metering alongside it, and the objective-scored eval engine landing on top — is [Evaluation](/docs/observability/evaluation).
+
+### Publishing what it learns
+
+Qualified downgrades live in the database until you publish them. The cycle is explicit and digest-checked:
+
+```bash
+bitrouter policy status          # path, digest, writeback mode, bindings
+bitrouter policy evolve          # dry-run: which routes would materialize
+bitrouter policy unlock          # permit programmatic writeback
+bitrouter policy evolve --apply  # atomically republish policy-lock.yaml
+bitrouter policy reload          # daemon picks it up — no restart
+bitrouter policy lock            # forbid programmatic writes again
+```
+
+`evolve --apply` only **adds** qualified routes — it never overwrites or removes anything you or Git wrote, and a detected intervening edit aborts the publish instead of clobbering it. Commit the result and the improved table is in Git, where a policy belongs.
+
+<Callout type="info">
+`bitrouter policy create` + `bitrouter key sign` are a **different surface** — per-key access control (allowed models, budgets, rate limits), not routing. See [Guardrails](/docs/gateway-and-routing/guardrails).
+</Callout>
+
 ## Next steps
 
 <Cards>
-  <Card title="Set up routing" href="/docs/get-started/set-up-routing" description="Presets, fallback chains, and multi-account failover." />
-  <Card title="Integrations" href="/docs/integrations" description="Step-by-step guides for every supported agent runtime" />
+  <Card title="Provider selection" href="/docs/gateway-and-routing/provider-selection" description="Declare providers, rank them, and add multi-account failover." />
+  <Card title="Presets" href="/docs/gateway-and-routing/presets" description="Named routing profiles — the opt-in boundary for adaptive routing." />
+  <Card title="Integrations" href="/docs/integrations" description="Step-by-step guides for every supported agent runtime." />
   <Card title="CLI reference" href="/docs/reference/cli" description="The full command surface of the binary." />
-  <Card title="For Providers" href="/docs/guides/register-as-a-provider" description="List your models on the BitRouter Registry" />
 </Cards>

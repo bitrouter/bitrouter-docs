@@ -55,9 +55,9 @@ No `bitrouter.yaml` block is required — `openai-codex` is a registry-backed lo
 bitrouter route openai-codex:gpt-5-codex
 ```
 
-Then [start BitRouter and send a request](/docs/integrations/models#start-bitrouter-and-send-a-request). Use the provider-qualified id `openai-codex:<model>` to pin the request to your subscription; see [Models](/docs/models-and-routing/models) for the exact ids the Codex backend serves.
+Then [start BitRouter and send a request](/docs/integrations/models#start-bitrouter-and-send-a-request). Use the provider-qualified id `openai-codex:<model>` to pin the request to your subscription; see [Models](/docs/overview/supported-models#how-model-ids-work) for the exact ids the Codex backend serves.
 
 ## Learn more
 
 - [Codex](/docs/integrations/codex) — point the Codex *CLI* at BitRouter (a harness), distinct from using your plan as a model source here.
-- [Model fallback](/docs/models-and-routing/model-fallback) — fail over from your subscription to another source on overload.
+- [Model fallback](/docs/gateway-and-routing/model-fallback) — fail over from your subscription to another source on overload.

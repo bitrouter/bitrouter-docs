@@ -8,9 +8,9 @@ description: A production walkthrough for running self-hosted BitRouter — conf
 This is the **production** path for running BitRouter on your own infrastructure:
 a committed config file, real provider keys, the router running as a managed
 daemon, metrics export, and basic hardening. If you just want it running in 60
-seconds, start with [Configuration](/docs/get-started/onboarding) — this guide
+seconds, start with the [Quickstart](/docs/overview/quickstart) — this guide
 picks up where that leaves off. Deciding between self-host and the hosted product?
-See [Self-host or Cloud?](/docs/get-started/onboarding#self-host-or-cloud).
+See [Self-host or Cloud?](/docs/overview/quickstart#self-host-or-cloud).
 
 The router listens on `127.0.0.1:4356` by default — loopback only, until you
 explicitly choose otherwise.
@@ -188,7 +188,7 @@ name resolves before it ever hits an upstream:
 bitrouter route gpt-4o     # print the full fallback chain for a model
 ```
 
-See [OpenTelemetry](/docs/features/opentelemetry) for the span model,
+See [OpenTelemetry](/docs/observability/opentelemetry) for the span model,
 per-request attribution, and per-backend export configs.
 
 ## 5. Basic hardening
@@ -200,7 +200,7 @@ per-request attribution, and per-backend export configs.
   committed `bitrouter.yaml`; the config redacts `api_key` in debug output.
 - **Validate in CI.** Run `bitrouter config validate -c bitrouter.yaml` on every
   change, and pin the `# yaml-language-server` schema URL to your version.
-- **Add a content firewall** with [Guardrails](/docs/features/guardrails) to
+- **Add a content firewall** with [Guardrails](/docs/gateway-and-routing/guardrails) to
   block or redact request/response content.
 - **Reload, don't restart, for config changes** so in-flight requests aren't
   dropped.
@@ -208,8 +208,8 @@ per-request attribution, and per-backend export configs.
 ## Next steps
 
 <Cards>
-  <Card title="Configuration" href="/docs/get-started/onboarding" description="The 60-second local install, if you skipped it." />
-  <Card title="Self-host vs Cloud" href="/docs/get-started/onboarding#self-host-or-cloud" description="Pick the deployment model that fits." />
-  <Card title="OpenTelemetry" href="/docs/features/opentelemetry" description="OTLP trace + metric export and per-request attribution." />
-  <Card title="Guardrails" href="/docs/features/guardrails" description="Content firewall for requests and responses." />
+  <Card title="Quickstart" href="/docs/overview/quickstart" description="The 60-second local install, if you skipped it." />
+  <Card title="Self-host vs Cloud" href="/docs/overview/quickstart#self-host-or-cloud" description="Pick the deployment model that fits." />
+  <Card title="OpenTelemetry" href="/docs/observability/opentelemetry" description="OTLP trace + metric export and per-request attribution." />
+  <Card title="Guardrails" href="/docs/gateway-and-routing/guardrails" description="Content firewall for requests and responses." />
 </Cards>

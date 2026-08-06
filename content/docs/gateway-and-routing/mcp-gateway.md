@@ -1,5 +1,5 @@
 ---
-title: Tools
+title: MCP gateway
 description: Tools are the capabilities an agent acquires at runtime — MCP servers and Agent Skills — both served through one BitRouter gateway.
 ---
 
@@ -34,5 +34,5 @@ The second capability an agent acquires is **know-how**. **Agent Skills** are dr
 
 ## Learn how to
 
-- [Server tools](/docs/features/server-tools) — let BitRouter run the tool-calling loop for you, server-side.
-- [Toolsets](/docs/features/server-tools#how-tools-are-bundled-toolsets) — how the tools advertised on a request are bundled and namespaced.
+- [Server tools](/docs/gateway-and-routing/server-tools) — let BitRouter run the tool-calling loop for you, server-side.
+- [Toolsets](/docs/gateway-and-routing/server-tools#how-tools-are-bundled-toolsets) — how the tools advertised on a request are bundled and namespaced.

@@ -3,6 +3,7 @@
   "icon": "Telescope",
   "collapsible": false,
   "pages": [
+    "quickstart",
     "what-is-bitrouter",
     "supported-models",
     "bitrouter-vs-openrouter",

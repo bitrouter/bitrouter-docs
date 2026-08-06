@@ -7,7 +7,7 @@ Codex CLI can run through BitRouter without taking over your Codex config. The q
 
 ## Prerequisites
 
-- BitRouter running — local proxy at `http://127.0.0.1:4356`, or [BitRouter Cloud](/docs/get-started/onboarding) at `https://api.bitrouter.ai`.
+- BitRouter running — local proxy at `http://127.0.0.1:4356`, or [BitRouter Cloud](/docs/overview/quickstart) at `https://api.bitrouter.ai`.
 - Codex installed:
 
   ```bash
@@ -68,7 +68,7 @@ codex
 
 ## Pick a model
 
-The Codex `model` setting, or a per-run `codex --model <id>`, can use any registry id in `provider/model` form — `openai/gpt-5-codex`, `anthropic/claude-sonnet-4-6`, `google/gemini-2.5-pro` — optionally with a `:cost` or `:latency` variant. See [Models](/docs/models-and-routing/models).
+The Codex `model` setting, or a per-run `codex --model <id>`, can use any registry id in `provider/model` form — `openai/gpt-5-codex`, `anthropic/claude-sonnet-4-6`, `google/gemini-2.5-pro` — optionally with a `:cost` or `:latency` variant. See [Models](/docs/overview/supported-models#how-model-ids-work).
 
 ## Verify
 
@@ -77,4 +77,4 @@ Run `codex` and issue a prompt; check BitRouter's `request finished` log line (`
 ## Learn more
 
 - [Codex — configuration reference](https://developers.openai.com/codex/config-reference)
-- [Model fallback](/docs/models-and-routing/model-fallback) · [Provider selection](/docs/models-and-routing/provider-selection)
+- [Model fallback](/docs/gateway-and-routing/model-fallback) · [Provider selection](/docs/gateway-and-routing/provider-selection)

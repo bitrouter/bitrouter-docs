@@ -19,7 +19,7 @@ Points the harness's API base URL at the local daemon — the same wiring the [I
 bitrouter spawn -p "summarize the diff" --model @coding
 ```
 
-Spawns an ACP-compatible harness as a headless sub-agent, routed through the daemon by default. This is the mechanism behind the [Subagent](/docs/features/subagent) feature.
+Spawns an ACP-compatible harness as a headless sub-agent, routed through the daemon by default. This is the mechanism behind the [Subagent](/docs/gateway-and-routing/subagent) feature.
 
 ## @tui
 

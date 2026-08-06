@@ -3,11 +3,11 @@ title: OpenCode
 description: Route OpenCode through BitRouter by adding it as an OpenAI-compatible provider in opencode.json.
 ---
 
-OpenCode registers providers through `opencode.json` using the AI SDK. Add BitRouter as an OpenAI-compatible provider and the terminal agent routes across the whole [registry](/docs/models-and-routing/models).
+OpenCode registers providers through `opencode.json` using the AI SDK. Add BitRouter as an OpenAI-compatible provider and the terminal agent routes across the whole [registry](/docs/overview/supported-models#how-model-ids-work).
 
 ## Prerequisites
 
-- BitRouter running — local proxy at `http://127.0.0.1:4356`, or [BitRouter Cloud](/docs/get-started/onboarding) at `https://api.bitrouter.ai`.
+- BitRouter running — local proxy at `http://127.0.0.1:4356`, or [BitRouter Cloud](/docs/overview/quickstart) at `https://api.bitrouter.ai`.
 - OpenCode installed:
 
   ```bash
@@ -49,9 +49,9 @@ opencode
 
 ## Pick a model
 
-Each key under `models` is a registry id in `provider/model` form, optionally with a `:cost` / `:latency` variant. Select one in the TUI, or run `opencode run --model bitrouter/openai/gpt-4o`. See [Models](/docs/models-and-routing/models).
+Each key under `models` is a registry id in `provider/model` form, optionally with a `:cost` / `:latency` variant. Select one in the TUI, or run `opencode run --model bitrouter/openai/gpt-4o`. See [Models](/docs/overview/supported-models#how-model-ids-work).
 
 ## Learn more
 
 - [OpenCode — providers](https://opencode.ai/docs/providers/) · [config](https://opencode.ai/docs/config/)
-- [Model fallback](/docs/models-and-routing/model-fallback)
+- [Model fallback](/docs/gateway-and-routing/model-fallback)

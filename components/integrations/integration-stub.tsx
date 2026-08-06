@@ -123,7 +123,7 @@ export function IntegrationStub({
                 }}
               >
                 <Link
-                  href="/docs/get-started"
+                  href="/docs/overview/quickstart"
                   style={{
                     display: "inline-flex",
                     alignItems: "center",

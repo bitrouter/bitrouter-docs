@@ -38,6 +38,6 @@ The `skills` backend is the **AgentSkills gateway** — it exposes installed ski
 Keep two BitRouter-and-MCP roles distinct:
 
 - **This page — the origin server.** BitRouter *is* the tool. A client calls `complete` / `list_models` / `status` to drive the router.
-- **The [MCP gateway](/docs/features/tools).** BitRouter sits *in front of* your own MCP servers, proxying their tools to agents with auth, access control, and identity forwarding. There BitRouter is the middle, not the endpoint.
+- **The [MCP gateway](/docs/gateway-and-routing/mcp-gateway).** BitRouter sits *in front of* your own MCP servers, proxying their tools to agents with auth, access control, and identity forwarding. There BitRouter is the middle, not the endpoint.
 
-One is how you reach BitRouter; the other is how BitRouter reaches your tools. See [Tools](/docs/features/tools) for the gateway, and [Agent Skill](/docs/get-started/onboarding) for the third way an agent drives BitRouter.
+One is how you reach BitRouter; the other is how BitRouter reaches your tools. See [Tools](/docs/gateway-and-routing/mcp-gateway) for the gateway, and [Agent Skill](/docs/overview/quickstart) for the third way an agent drives BitRouter.

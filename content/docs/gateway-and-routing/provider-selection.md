@@ -6,7 +6,7 @@ description: Choose how BitRouter ranks providers when a model is served by more
 Most models on BitRouter are served by more than one provider. When you request `openai/gpt-4o`, BitRouter has to pick which registered endpoint to send the request to. By default it uses a balanced score; with the `provider.sort` field, you choose the policy explicitly.
 
 <Callout type="warn">
-**Today, choose a policy with the [`model:<profile>` suffix](/docs/models-and-routing/model-variants)** — e.g. `openai/gpt-4o:latency`. The `provider.sort` request-body field described on this page is planned and **not yet active**; the suffix is the supported surface.
+**Today, choose a policy with the [`model:<profile>` suffix](/docs/gateway-and-routing/model-variants)** — e.g. `openai/gpt-4o:latency`. The `provider.sort` request-body field described on this page is planned and **not yet active**; the suffix is the supported surface.
 </Callout>
 
 There are three policies. Pick whichever matters most for the request.
@@ -37,7 +37,7 @@ The same `provider.sort` field works on `/v1/messages` (Anthropic) and `/v1beta/
 
 ## BYOK providers come first
 
-If you've [added an external key](/docs/models-and-routing/byok) for a provider, BitRouter prefers that provider for any model it can serve — ahead of every non-BYOK provider, regardless of `provider.sort`. Your BYOK key bills against your own account at upstream list price with no rev share, and you opted into that provider explicitly; honoring that opt-in by default is the only choice that doesn't surprise you later.
+If you've [added an external key](/docs/gateway-and-routing/byok) for a provider, BitRouter prefers that provider for any model it can serve — ahead of every non-BYOK provider, regardless of `provider.sort`. Your BYOK key bills against your own account at upstream list price with no rev share, and you opted into that provider explicitly; honoring that opt-in by default is the only choice that doesn't surprise you later.
 
 Within the BYOK-eligible set, the `provider.sort` policy still applies. So `provider.sort: "latency"` plus BYOK keys for OpenAI and Anthropic ranks those two by TTFT first, and falls back to non-BYOK providers (also ranked by latency) only if both BYOK paths fail.
 
@@ -53,7 +53,7 @@ When `provider` is not set, BitRouter ranks by a **balanced score** — a weight
 
 ## How selection composes with fallback
 
-[Model fallback](/docs/models-and-routing/model-fallback) and provider selection are independent layers:
+[Model fallback](/docs/gateway-and-routing/model-fallback) and provider selection are independent layers:
 
 1. For each model in your `models` list (or the single `model` if no fallback), BitRouter applies your `provider.sort` policy to pick the best provider.
 2. If the chosen provider fails in a way that doesn't surface to the caller (rate limit, 5xx), BitRouter retries on the **next-ranked provider of the same model** before falling through to the next model in the list.

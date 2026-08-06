@@ -1,0 +1,10 @@
+{
+  "title": "Observability & Evaluation",
+  "icon": "Activity",
+  "collapsible": false,
+  "pages": [
+    "opentelemetry",
+    "tracing",
+    "evaluation"
+  ]
+}

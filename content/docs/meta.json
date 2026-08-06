@@ -1,5 +1,13 @@
 {
   "title": "Documentation",
   "root": true,
-  "pages": ["overview", "get-started", "models-and-routing", "features", "concepts", "integrations", "guides", "ai-resources", "reference"]
+  "pages": [
+    "overview",
+    "gateway-and-routing",
+    "observability",
+    "integrations",
+    "guides",
+    "ai-resources",
+    "reference"
+  ]
 }

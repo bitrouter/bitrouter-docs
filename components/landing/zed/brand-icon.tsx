@@ -6,6 +6,8 @@ import Cline from "@lobehub/icons/es/Cline/components/Mono";
 import Codex from "@lobehub/icons/es/Codex/components/Mono";
 import Cursor from "@lobehub/icons/es/Cursor/components/Mono";
 import DeepSeek from "@lobehub/icons/es/DeepSeek/components/Mono";
+import Exa from "@lobehub/icons/es/Exa/components/Mono";
+import Figma from "@lobehub/icons/es/Figma/components/Mono";
 import Gemini from "@lobehub/icons/es/Gemini/components/Mono";
 import Github from "@lobehub/icons/es/Github/components/Mono";
 import Grok from "@lobehub/icons/es/Grok/components/Mono";
@@ -17,8 +19,11 @@ import Minimax from "@lobehub/icons/es/Minimax/components/Mono";
 import Mistral from "@lobehub/icons/es/Mistral/components/Mono";
 import Moonshot from "@lobehub/icons/es/Moonshot/components/Mono";
 import Notion from "@lobehub/icons/es/Notion/components/Mono";
+import Obsidian from "@lobehub/icons/es/Obsidian/components/Mono";
 import OpenAI from "@lobehub/icons/es/OpenAI/components/Mono";
+import OpenCode from "@lobehub/icons/es/OpenCode/components/Mono";
 import Qwen from "@lobehub/icons/es/Qwen/components/Mono";
+import Snowflake from "@lobehub/icons/es/Snowflake/components/Mono";
 import Stepfun from "@lobehub/icons/es/Stepfun/components/Mono";
 import Windsurf from "@lobehub/icons/es/Windsurf/components/Mono";
 import XiaomiMiMo from "@lobehub/icons/es/XiaomiMiMo/components/Mono";
@@ -32,8 +37,8 @@ type IconComponent = ComponentType<
  * Shared brand-glyph resolver for the Zed surfaces. Maps a model / lab / agent /
  * tool name (any casing/punctuation) to its @lobehub/icons monochrome mark, which
  * renders in `currentColor` — so callers tint it by setting `color`. Names lobehub
- * doesn't carry (Playwright, Postgres, Slack, …) fall back to a lettered monogram
- * tile that matches the mono aesthetic, so every row still gets a real glyph.
+ * doesn't carry fall back to a lettered monogram tile that matches the mono
+ * aesthetic — prefer names with a real mark for anything user-facing.
  */
 const ICONS: Record<string, IconComponent> = {
   // ── model providers / labs ──
@@ -70,10 +75,15 @@ const ICONS: Record<string, IconComponent> = {
   cursor: Cursor,
   codex: Codex,
   cline: Cline,
+  opencode: OpenCode,
   windsurf: Windsurf,
-  // ── capabilities / tools ──
+  // ── contexts: MCP servers / skills / sources ──
   github: Github,
   notion: Notion,
+  figma: Figma,
+  obsidian: Obsidian,
+  exa: Exa,
+  snowflake: Snowflake,
   mcp: MCP,
 };
 

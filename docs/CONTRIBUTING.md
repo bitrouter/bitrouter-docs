@@ -36,8 +36,9 @@ tab. Page order within a section is the `pages` list in that section's
 `meta.json`; the section order is the `pages` list in
 `content/docs/(guide)/meta.json`.
 
-`usage/` is the ways to drive BitRouter: `cli.mdx` (generated — don't
-hand-author it), `tui.mdx`, `mcp.mdx`, and `skills.mdx`.
+`usage/` is how you drive BitRouter: `cli.mdx` (generated — don't hand-author
+it), `tui.mdx`, `configuration.mdx` (the `bitrouter.yaml` reference),
+`mcp.mdx`, and `skills.mdx`.
 
 ## Authoring contract (import-free MDX)
 

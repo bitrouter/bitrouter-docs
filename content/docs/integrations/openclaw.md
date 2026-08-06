@@ -51,4 +51,4 @@ Each provider model `id` is a registry id in `provider/model` form (`openai/gpt-
 ## Learn more
 
 - [OpenClaw — model providers](https://docs.openclaw.ai/concepts/model-providers)
-- [Model fallback](/docs/models-and-routing/model-fallback)
+- [Model fallback](/docs/gateway-and-routing/model-fallback)

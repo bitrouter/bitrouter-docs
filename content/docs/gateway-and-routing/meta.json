@@ -1,0 +1,24 @@
+{
+  "title": "Gateway & Routing",
+  "icon": "Route",
+  "collapsible": false,
+  "pages": [
+    "---Models---",
+    "provider-selection",
+    "model-fallback",
+    "model-variants",
+    "presets",
+    "structured-outputs",
+    "byok",
+    "---Tools---",
+    "tools",
+    "server-tools",
+    "websearch",
+    "web-fetch",
+    "---Agents---",
+    "agents",
+    "subagent",
+    "advisor",
+    "fusion"
+  ]
+}

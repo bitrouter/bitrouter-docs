@@ -3,7 +3,7 @@ title: tools, agents & acp
 description: MCP server introspection, the ACP agent catalog, and the per-session ACP substrate.
 ---
 
-The command surfaces behind the [Tools](/docs/features/tools) and [Agents](/docs/features/agents) gateways: `tools` introspects the MCP upstreams declared under `mcp_servers`, `agents` manages the ACP agent catalog, and `acp` runs per-session headless agent sessions.
+The command surfaces behind the [Tools](/docs/gateway-and-routing/tools) and [Agents](/docs/gateway-and-routing/agents) gateways: `tools` introspects the MCP upstreams declared under `mcp_servers`, `agents` manages the ACP agent catalog, and `acp` runs per-session headless agent sessions.
 
 ## @tools discover
 

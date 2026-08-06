@@ -3,7 +3,7 @@ title: Presets
 description: Save a named @preset per namespace — a reusable bundle of base model, system prompt, params, and routing rules you invoke inline with @name.
 ---
 
-A **preset** is a named, reusable routing configuration you save once on a namespace and invoke inline by putting `@<name>` in the `model` field. Where a [model variant](/docs/models-and-routing/model-variants) (`:cost`) only re-ranks providers for one request, a preset can also **substitute the base model**, **prepend a system prompt**, **set default generation params**, and **restrict which providers are eligible** — all behind a single short token.
+A **preset** is a named, reusable routing configuration you save once on a namespace and invoke inline by putting `@<name>` in the `model` field. Where a [model variant](/docs/gateway-and-routing/model-variants) (`:cost`) only re-ranks providers for one request, a preset can also **substitute the base model**, **prepend a system prompt**, **set default generation params**, and **restrict which providers are eligible** — all behind a single short token.
 
 Like a variant, the token lives in the `model` string itself, so it needs no body fields and no SDK — it works the same on the OpenAI, Anthropic, and Google surfaces. A request that uses `@fast` looks exactly like any other request; the preset is resolved server-side before routing.
 
@@ -14,7 +14,7 @@ Put `@<name>` where you would normally put a model id. The grammar is `@<name>[/
 | `model` value | Resolves to |
 | --- | --- |
 | `@fast` | The preset `fast`; its saved base model and overrides apply. |
-| `@fast:cost` | The preset `fast`, with the [`:cost` variant](/docs/models-and-routing/model-variants) overriding the preset's own `sort`. |
+| `@fast:cost` | The preset `fast`, with the [`:cost` variant](/docs/gateway-and-routing/model-variants) overriding the preset's own `sort`. |
 | `@fast/openai/gpt-5` | The preset `fast`, but routed to `openai/gpt-5` instead of the preset's saved model. |
 
 A bare model id with no leading `@` — `anthropic/claude-sonnet-4.6` — is untouched and routes exactly as it does today. Presets are purely additive.
@@ -28,7 +28,7 @@ Every field is optional. An empty preset is valid (it just resolves to its base 
 | `model` | The base model to route to (e.g. `openai/gpt-5-mini`). If omitted, the request must supply a base inline (`@name/<model>`). |
 | `system_prompt` | A system prompt applied when the request doesn't already set one. |
 | `params` | Default generation params (`temperature`, `max_tokens`, `top_p`, …), merged in for keys the request didn't set. |
-| `routing.sort` | A default routing profile (`balanced` / `cost` / `latency` / `throughput`) — the same axes as [model variants](/docs/models-and-routing/model-variants). |
+| `routing.sort` | A default routing profile (`balanced` / `cost` / `latency` / `throughput`) — the same axes as [model variants](/docs/gateway-and-routing/model-variants). |
 | `routing.only` | A provider allow-list. Routing is restricted to these `provider_name`s. |
 | `routing.ignore` | A provider deny-list. These providers are dropped from the chain. |
 
@@ -84,7 +84,7 @@ A preset can be disabled without deleting it (`POST …/routing-presets/{id}/dis
 Resolution happens *before* policy enforcement, and a preset can only ever **narrow** what a key could already do — never widen it:
 
 - [Guardrail](/docs/features/guardrails) model allow/deny lists and BYOK rules judge the **resolved base model**, so a preset that substitutes `openai/gpt-5` is checked exactly as if you had asked for `openai/gpt-5` directly. A preset can't smuggle a request past a model denylist.
-- `routing.only` / `routing.ignore` can only *remove* providers from the eligible set — they can never add a provider the request wasn't already allowed to reach. [BYOK](/docs/models-and-routing/byok) providers still rank ahead of platform ones.
+- `routing.only` / `routing.ignore` can only *remove* providers from the eligible set — they can never add a provider the request wasn't already allowed to reach. [BYOK](/docs/gateway-and-routing/byok) providers still rank ahead of platform ones.
 - Billing is unchanged — you pay the selected provider's rate for the resolved base model.
 
 ## Errors
@@ -100,7 +100,7 @@ Resolution happens *before* policy enforcement, and a preset can only ever **nar
 
 The two features overlap deliberately — reach for whichever fits:
 
-- A [**model variant**](/docs/models-and-routing/model-variants) (`openai/gpt-4o:cost`) is anonymous and zero-setup: it re-ranks providers along one axis for a single request and nothing else.
+- A [**model variant**](/docs/gateway-and-routing/model-variants) (`openai/gpt-4o:cost`) is anonymous and zero-setup: it re-ranks providers along one axis for a single request and nothing else.
 - A **preset** (`@fast`) is named and saved: it captures a base model, a prompt, params, and provider constraints once, so callers invoke a tested configuration by name instead of repeating it.
 
 They compose — `@fast:cost` applies the preset and then overrides its routing profile with the inline variant.

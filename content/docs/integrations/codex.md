@@ -77,4 +77,4 @@ Run `codex` and issue a prompt; check BitRouter's `request finished` log line (`
 ## Learn more
 
 - [Codex — configuration reference](https://developers.openai.com/codex/config-reference)
-- [Model fallback](/docs/models-and-routing/model-fallback) · [Provider selection](/docs/models-and-routing/provider-selection)
+- [Model fallback](/docs/gateway-and-routing/model-fallback) · [Provider selection](/docs/gateway-and-routing/provider-selection)

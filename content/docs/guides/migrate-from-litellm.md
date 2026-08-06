@@ -31,8 +31,8 @@ This matters when your agent should *pay per request* without you provisioning k
 
 LiteLLM has shipped MCP, A2A, Skills, and a CLI alongside its horizontal LLM gateway — virtual keys, team budgets, spend dashboards, admin UI all included. BitRouter inverts that: agent primitives *are* the product, the team-admin stack is intentionally minimal. What you get on the BitRouter surface:
 
-- [MCP gateway](/docs/features/tools) — proxy MCP servers so agents discover tools across hosts.
-- [ACP gateway](/docs/features/agents) — first-class support for the Agent Client Protocol used by Claude Code, Codex, OpenCode, and others.
+- [MCP gateway](/docs/gateway-and-routing/tools) — proxy MCP servers so agents discover tools across hosts.
+- [ACP gateway](/docs/gateway-and-routing/agents) — first-class support for the Agent Client Protocol used by Claude Code, Codex, OpenCode, and others.
 - [Guardrails](/docs/features/guardrails) — regex rules on the proxy hop that redact or block matching content inline.
 - [Cloud Tracing](/docs/observability/tracing) — built-in spend and request tracing, no external collector required.
 - Agent Skills gateway (coming soon) — install and route capabilities by skill, not by raw model name.
@@ -78,7 +78,7 @@ response = client.chat.completions.create(
 </Tab>
 </Tabs>
 
-Fallbacks and provider selection that you'd configure with `litellm.Router` move into BitRouter's [routing presets](/docs/models-and-routing/presets) and [model fallback rules](/docs/models-and-routing/model-fallback) — declared once, not per call site.
+Fallbacks and provider selection that you'd configure with `litellm.Router` move into BitRouter's [routing presets](/docs/gateway-and-routing/presets) and [model fallback rules](/docs/gateway-and-routing/model-fallback) — declared once, not per call site.
 
 ### From the LiteLLM Proxy
 
@@ -114,16 +114,16 @@ To skip the local proxy entirely, point clients at `https://api.bitrouter.ai/v1`
 
 | LiteLLM concept | BitRouter equivalent | Docs |
 |---|---|---|
-| `model_list` in `config.yaml` | Provider keys + routing presets | [Presets](/docs/models-and-routing/presets) |
-| `router_settings` (retries, fallback) | Model fallback rules | [Model fallback](/docs/models-and-routing/model-fallback) |
-| `routing_strategy` (least-busy, latency) | Provider selection | [Provider selection](/docs/models-and-routing/provider-selection) |
+| `model_list` in `config.yaml` | Provider keys + routing presets | [Presets](/docs/gateway-and-routing/presets) |
+| `router_settings` (retries, fallback) | Model fallback rules | [Model fallback](/docs/gateway-and-routing/model-fallback) |
+| `routing_strategy` (least-busy, latency) | Provider selection | [Provider selection](/docs/gateway-and-routing/provider-selection) |
 | `cache` (Redis/DynamoDB backed) | Not built into the proxy — handle in app/edge if needed | — |
-| Virtual keys + budgets + admin UI | Workspace keys (cloud); env-var keys (local) | [BYOK](/docs/models-and-routing/byok), [Workspaces](/docs/features/namespaces) |
+| Virtual keys + budgets + admin UI | Workspace keys (cloud); env-var keys (local) | [BYOK](/docs/gateway-and-routing/byok), [Workspaces](/docs/features/namespaces) |
 | Guardrails / PII / content filter | Agent firewall on the proxy hop | [Guardrails](/docs/features/guardrails) |
 | Callbacks (Langfuse, Datadog, etc.) | Built-in spend + request logs; OTLP export | [OpenTelemetry](/docs/observability/opentelemetry) |
-| MCP Gateway | MCP gateway | [MCP](/docs/features/tools) |
-| A2A Agent Gateway | ACP gateway | [ACP](/docs/features/agents) |
-| Skills Gateway / `/skills` endpoint | Skills gateway with [agentskills.io](https://agentskills.io) registry | [Agent Skills](/docs/features/tools) |
+| MCP Gateway | MCP gateway | [MCP](/docs/gateway-and-routing/tools) |
+| A2A Agent Gateway | ACP gateway | [ACP](/docs/gateway-and-routing/agents) |
+| Skills Gateway / `/skills` endpoint | Skills gateway with [agentskills.io](https://agentskills.io) registry | [Agent Skills](/docs/gateway-and-routing/tools) |
 | LiteLLM Proxy CLI | `bitrouter` CLI / TUI | [Headless CLI](/docs/reference/cli) |
 | — (no equivalent) | Autonomous agent payment (x402 / MPP) | [Payment](/docs/features/payment) |
 
@@ -154,7 +154,7 @@ To set expectations honestly: BitRouter does not ship a built-in admin UI for te
 <Cards>
   <Card title="Quick Start" href="/docs/overview/quickstart" description="Run BitRouter locally or in the cloud in under a minute" />
   <Card title="BitRouter vs LiteLLM" href="/docs/overview/bitrouter-vs-litellm" description="Side-by-side on routing, observability, and operations" />
-  <Card title="Agent features" href="/docs/features/tools" description="MCP, ACP, skills, agent firewall, x402 payment" />
+  <Card title="Agent features" href="/docs/gateway-and-routing/tools" description="MCP, ACP, skills, agent firewall, x402 payment" />
   <Card title="API Reference" href="/docs/reference" description="OpenAI- and Anthropic-compatible endpoints" />
 </Cards>
 

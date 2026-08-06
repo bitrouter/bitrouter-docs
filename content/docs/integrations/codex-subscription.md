@@ -60,4 +60,4 @@ Then [start BitRouter and send a request](/docs/integrations/models#start-bitrou
 ## Learn more
 
 - [Codex](/docs/integrations/codex) — point the Codex *CLI* at BitRouter (a harness), distinct from using your plan as a model source here.
-- [Model fallback](/docs/models-and-routing/model-fallback) — fail over from your subscription to another source on overload.
+- [Model fallback](/docs/gateway-and-routing/model-fallback) — fail over from your subscription to another source on overload.

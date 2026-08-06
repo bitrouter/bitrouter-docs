@@ -67,7 +67,7 @@ curl http://localhost:4356/v1/chat/completions \
 The bare model name (`llama3.1`) also works — BitRouter auto-cascades it to whichever active provider declares it. The provider-qualified `ollama:llama3.1` form pins the request to that exact provider.
 
 <Callout type="info">
-**Mix local and hosted.** Declare a [virtual model](/docs/models-and-routing/model-fallback) whose endpoints list your local provider first and a hosted one second: requests run on local hardware for free and fail over to the hosted model on error or overload — one model name, automatic failover.
+**Mix local and hosted.** Declare a [virtual model](/docs/gateway-and-routing/model-fallback) whose endpoints list your local provider first and a hosted one second: requests run on local hardware for free and fail over to the hosted model on error or overload — one model name, automatic failover.
 </Callout>
 
 For the concepts behind this — why front a local server, and the registry-detection alternative — see [Local & private models](/docs/integrations/models).

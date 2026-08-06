@@ -24,5 +24,5 @@ You want a Python-native library embedded directly in your app code, your stack 
 <Cards>
   <Card title="Migrate from LiteLLM" href="/docs/guides/migrate-from-litellm" description="Move routing out of your process, keep your provider mappings." />
   <Card title="BitRouter vs OpenRouter" href="/docs/overview/bitrouter-vs-openrouter" description="The cloud-catalog alternative, side by side." />
-  <Card title="Provider selection" href="/docs/models-and-routing/provider-selection" description="Get adaptive routing running on your own keys." />
+  <Card title="Provider selection" href="/docs/gateway-and-routing/provider-selection" description="Get adaptive routing running on your own keys." />
 </Cards>

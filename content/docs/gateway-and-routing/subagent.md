@@ -91,6 +91,6 @@ Sub-agent is enabled and managed on **BitRouter Cloud**, with per-run cost for t
 
 ## See also
 
-- [Advisor](/docs/features/advisor) — consult a stronger model for guidance instead of delegating a task
-- [Fusion](/docs/features/fusion) — deliberate across a panel of models on one prompt
-- [Provider selection](/docs/models-and-routing/provider-selection) — control which provider serves the worker model
+- [Advisor](/docs/gateway-and-routing/advisor) — consult a stronger model for guidance instead of delegating a task
+- [Fusion](/docs/gateway-and-routing/fusion) — deliberate across a panel of models on one prompt
+- [Provider selection](/docs/gateway-and-routing/provider-selection) — control which provider serves the worker model

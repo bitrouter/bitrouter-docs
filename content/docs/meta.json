@@ -3,7 +3,7 @@
   "root": true,
   "pages": [
     "overview",
-    "models-and-routing",
+    "gateway-and-routing",
     "features",
     "observability",
     "integrations",

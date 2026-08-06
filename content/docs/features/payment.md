@@ -9,7 +9,7 @@ the **Machine Payment Protocol (x402 / MPP)**, so a request can carry its own
 payment over **Stripe**, **Tempo**, or **Solana** — no cards, no prepaid credits.
 
 This is the agent-facing half of the gateway: where [namespaces](/docs/features/namespaces)
-scope *what* an agent may do and [BYOK](/docs/models-and-routing/byok) decides *whose key*
+scope *what* an agent may do and [BYOK](/docs/gateway-and-routing/byok) decides *whose key*
 pays, agentic payments let the agent itself *pay per call* — useful when you want
 a fleet of agents to transact without sharing a single provisioned credential.
 

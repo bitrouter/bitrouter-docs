@@ -46,4 +46,4 @@ Then [start BitRouter and send a request](/docs/integrations/models#start-bitrou
 ## Learn more
 
 - [OpenRouter — API reference](https://openrouter.ai/docs/api-reference/overview)
-- [Provider selection](/docs/models-and-routing/provider-selection) · [Model fallback](/docs/models-and-routing/model-fallback)
+- [Provider selection](/docs/gateway-and-routing/provider-selection) · [Model fallback](/docs/gateway-and-routing/model-fallback)

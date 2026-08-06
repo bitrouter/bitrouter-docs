@@ -1,18 +1,8 @@
 {
-  "title": "Features",
+  "title": "Platform",
   "icon": "Boxes",
   "collapsible": false,
   "pages": [
-    "---Tools gateway---",
-    "tools",
-    "server-tools",
-    "websearch",
-    "web-fetch",
-    "agents",
-    "subagent",
-    "advisor",
-    "fusion",
-    "---Cross-cutting---",
     "namespaces",
     "guardrails",
     "payment"

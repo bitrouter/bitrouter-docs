@@ -47,4 +47,4 @@ Each `models[].id` is a registry id in `provider/model` form, optionally with a 
 ## Learn more
 
 - [Pi — custom providers](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/models.md)
-- [Model fallback](/docs/models-and-routing/model-fallback)
+- [Model fallback](/docs/gateway-and-routing/model-fallback)

@@ -66,7 +66,7 @@ bitrouter cloud policy bind <policy-id> --principal-type api_key --principal-id 
 bitrouter cloud budget create --name daily-cap --window day --limit-micro-usd 5000000
 ```
 
-See [Guardrails](/docs/features/guardrails) and [Presets](/docs/models-and-routing/presets) for details on authoring policies.
+See [Guardrails](/docs/features/guardrails) and [Presets](/docs/gateway-and-routing/presets) for details on authoring policies.
 
 ## Usage reporting
 

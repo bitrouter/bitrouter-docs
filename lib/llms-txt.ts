@@ -31,8 +31,8 @@ References:
 
 ## Routing
 
-- [Model Fallback](${BASE_URL}/docs/models-and-routing/model-fallback): Automatic fallback across models when an upstream fails
-- [Provider Selection](${BASE_URL}/docs/models-and-routing/provider-selection): How models resolve to upstream providers, with cost and performance policies
+- [Model Fallback](${BASE_URL}/docs/gateway-and-routing/model-fallback): Automatic fallback across models when an upstream fails
+- [Provider Selection](${BASE_URL}/docs/gateway-and-routing/provider-selection): How models resolve to upstream providers, with cost and performance policies
 
 ## Features
 

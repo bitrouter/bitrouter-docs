@@ -240,6 +240,6 @@ router and confirm the trace lands in your backend; you should see one inbound
 <Cards>
   <Card title="Tracing" href="/docs/observability/tracing" description="Hosted request view — spend, tokens, and a per-request log, nothing to operate." />
   <Card title="Self-host BitRouter" href="/docs/guides/self-host" description="Run the router in production, with telemetry wired in." />
-  <Card title="Model fallback" href="/docs/models-and-routing/model-fallback" description="The failover chains you'll see in every trace." />
+  <Card title="Model fallback" href="/docs/gateway-and-routing/model-fallback" description="The failover chains you'll see in every trace." />
   <Card title="Evaluation" href="/docs/observability/evaluation" description="The outcome signal and cost metering these traces carry." />
 </Cards>

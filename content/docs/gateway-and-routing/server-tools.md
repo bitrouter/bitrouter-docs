@@ -32,7 +32,7 @@ You turn server tools on by declaring them in the request's `tools` array — no
 }
 ```
 
-Two more built-ins, [**Web search**](/docs/features/websearch) and [**Web fetch**](/docs/features/web-fetch), work the same way — declare `bitrouter:web_search` or `bitrouter:web_fetch` to give the model a search or a BYOK URL reader backed by a key you bring.
+Two more built-ins, [**Web search**](/docs/gateway-and-routing/websearch) and [**Web fetch**](/docs/gateway-and-routing/web-fetch), work the same way — declare `bitrouter:web_search` or `bitrouter:web_fetch` to give the model a search or a BYOK URL reader backed by a key you bring.
 
 MCP-server tools are wired through configuration instead — set `server_tools.mcp_servers` to the servers whose tools BitRouter should run inside the loop.
 
@@ -40,9 +40,9 @@ MCP-server tools are wired through configuration instead — set `server_tools.m
 
 Three of the built-ins wrap a **nested model call** instead of an external side effect. Each gets its own page:
 
-- [**Advisor**](/docs/features/advisor) — the running model consults a stronger model on one hard sub-question mid-generation, without escalating the whole request.
-- [**Sub-agent**](/docs/features/subagent) — the model delegates a self-contained task to a cheaper, faster worker that runs in isolation and returns only its result.
-- [**Fusion**](/docs/features/fusion) — a panel of models answers in parallel, a judge compares (not merges) their answers, and the calling model writes the final reply from that analysis.
+- [**Advisor**](/docs/gateway-and-routing/advisor) — the running model consults a stronger model on one hard sub-question mid-generation, without escalating the whole request.
+- [**Sub-agent**](/docs/gateway-and-routing/subagent) — the model delegates a self-contained task to a cheaper, faster worker that runs in isolation and returns only its result.
+- [**Fusion**](/docs/gateway-and-routing/fusion) — a panel of models answers in parallel, a judge compares (not merges) their answers, and the calling model writes the final reply from that analysis.
 
 <Callout type="info">
 Advisor, Sub-agent, and Fusion are each backed by model calls nested inside your request. They cost what their underlying model calls cost, and they appear in your usage history like any other call.

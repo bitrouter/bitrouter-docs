@@ -13,7 +13,7 @@ It runs anywhere your agent runs, with no dependencies to install, and operates 
 
 Our bet is simple: routing is a learning problem. BitRouter wraps your agentic loop in a **second loop**. Each loop gets its own [policy spec](/docs/overview/quickstart#adaptive-routing) — a config file that declares how its calls, tools, and agents should route — and against that spec BitRouter runs a continuous **act → observe → evaluate → learn** cycle. Every step is a component it already ships:
 
-- **Act — the router.** Each model, tool, and agent call is rewritten to a chosen route: policy-table routing, cross-protocol translation, multi-account failover. See [Provider selection](/docs/models-and-routing/provider-selection).
+- **Act — the router.** Each model, tool, and agent call is rewritten to a chosen route: policy-table routing, cross-protocol translation, multi-account failover. See [Provider selection](/docs/gateway-and-routing/provider-selection).
 - **Observe — telemetry.** Every hop is attributed with cost, tokens, latency, and outcome, exported over OTLP to any backend you run. See [OpenTelemetry](/docs/observability/opentelemetry).
 - **Evaluate — the adequacy signal.** Each served request is scored against the route that served it — did the cheaper path still reach the goal? — and every request is cost-metered. Run-level, objective-scored evals are the next milestone. See [Evaluation](/docs/observability/evaluation).
 - **Learn — the policy engine.** The observed signal folds back into the policy spec: proven downgrades materialize into the table, failed ones escalate back. The next turn of the loop acts on the improved spec. See [Adaptive routing](/docs/overview/quickstart#adaptive-routing).
@@ -25,8 +25,8 @@ You choose what the loop optimizes for, and it improves the longer it runs in pr
 Here's something we noticed early: an agentic loop consumes three things, and most routers govern only one. We built BitRouter to make all three routable, observable, and governed:
 
 - **Models** — route LLM calls across providers, accounts, and wire protocols (OpenAI, Anthropic, Google). See [Models](/docs/overview/supported-models#how-model-ids-work).
-- **Capabilities** — an **MCP gateway** and an **AgentSkills gateway**: tools and skills become governed, routable resources, not hardcoded endpoints. See [Tools](/docs/features/tools).
-- **Agents** — an **ACP gateway**: sub-agents are first-class routable primitives, so a task can go to the sub-agent that best fits the objective — just as a call routes to the best-fit model. See [Agents](/docs/features/agents).
+- **Capabilities** — an **MCP gateway** and an **AgentSkills gateway**: tools and skills become governed, routable resources, not hardcoded endpoints. See [Tools](/docs/gateway-and-routing/tools).
+- **Agents** — an **ACP gateway**: sub-agents are first-class routable primitives, so a task can go to the sub-agent that best fits the objective — just as a call routes to the best-fit model. See [Agents](/docs/gateway-and-routing/agents).
 
 Optimizing a loop isn't just model selection — it's the model, the tool, *and* the sub-agent that best serve the loop's objective.
 
@@ -36,4 +36,4 @@ Optimizing a loop isn't just model selection — it's the model, the tool, *and*
 
 ## Next steps
 
-BitRouter is a drop-in proxy for any runtime that supports a custom OpenAI or Anthropic base URL. The [Quickstart](/docs/overview/quickstart) gets you routing in under a minute; [Models & Routing](/docs/models-and-routing/provider-selection) covers the routing surface in depth. Per-runtime recipes (Claude Code, OpenClaw, Codex, and more) live in [Integrations](/docs/integrations), and machine-readable docs in [AI Resources](/docs/ai-resources).
+BitRouter is a drop-in proxy for any runtime that supports a custom OpenAI or Anthropic base URL. The [Quickstart](/docs/overview/quickstart) gets you routing in under a minute; [Gateway & Routing](/docs/gateway-and-routing/provider-selection) covers models, tools, and agents in depth. Per-runtime recipes (Claude Code, OpenClaw, Codex, and more) live in [Integrations](/docs/integrations), and machine-readable docs in [AI Resources](/docs/ai-resources).

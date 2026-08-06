@@ -87,6 +87,6 @@ Fusion is enabled and managed on **BitRouter Cloud** — a curated default panel
 
 ## See also
 
-- [Sub-agent](/docs/features/subagent) — delegate a self-contained task to a single worker model
-- [Advisor](/docs/features/advisor) — consult one stronger model mid-task
-- [Provider selection](/docs/models-and-routing/provider-selection) — control which provider serves each panel model
+- [Sub-agent](/docs/gateway-and-routing/subagent) — delegate a self-contained task to a single worker model
+- [Advisor](/docs/gateway-and-routing/advisor) — consult one stronger model mid-task
+- [Provider selection](/docs/gateway-and-routing/provider-selection) — control which provider serves each panel model

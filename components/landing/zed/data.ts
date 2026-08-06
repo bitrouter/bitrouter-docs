@@ -7,7 +7,7 @@
 export const HERO = {
   announcement: "self-tuning routing policies",
   headline: "Stop tokenmaxxing while loop engineering.",
-  sub: "A self-improving LLM router that optimizes agentic workflows with every run.",
+  sub: "Context-aware LLM router that continuously improves your agent workflows",
 };
 
 // ── Bring-your-own ──────────────────────────────────────────────────────────
@@ -20,16 +20,16 @@ export const BYO: ByoGroup[] = [
     logos: ["OpenAI", "Anthropic", "Qwen", "DeepSeek", "Mistral", "Llama"],
   },
   {
-    title: "bring your own capabilities",
-    desc: "MCPs & Skills — any tool your agent needs",
+    title: "bring your own contexts",
+    desc: "MCPs & Skills — any context your agent needs",
     duration: "26s",
-    logos: ["Playwright", "Postgres", "GitHub", "Slack", "Filesystem", "Notion"],
+    logos: ["GitHub", "Notion", "Figma", "Obsidian", "Exa", "Snowflake"],
   },
   {
     title: "bring your own agents",
     desc: "Claude Code, Cursor, Codex — or your own",
     duration: "24s",
-    logos: ["Claude Code", "Cursor", "Codex", "Cline", "Aider", "Windsurf"],
+    logos: ["Claude Code", "Cursor", "Codex", "Cline", "OpenCode", "Windsurf"],
   },
 ];
 

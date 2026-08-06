@@ -5,7 +5,7 @@ Next.js 16 (App Router) + fumadocs site for [bitrouter.ai](https://bitrouter.ai)
 ## Documentation rules
 
 - **English only.** The site no longer ships localized docs — do not create `<name>.zh.md` translation files or reintroduce i18n plumbing. Old `/zh/*` URLs 301 to the English pages via `next.config.ts` redirects.
-- Docs are plain Markdown (`.md`), import-free, using only the whitelisted global components — see `docs/CONTRIBUTING.md` for the full authoring contract.
+- Docs are **`.mdx`**, import-free, using only the whitelisted global components — see `docs/CONTRIBUTING.md` for the full authoring contract. Write Markdown; the extension is what makes `<Callout>` / `<Cards>` / `<Tabs>` actually render (fumadocs-mdx picks its processor by extension, and `.md` silently drops those blocks).
 - Lint with `pnpm lint:docs` (`scripts/check-docs.mjs`) after editing docs.
 - **Always use the scripts — never hand-edit generated output.** Anything produced by a generator is regenerated at `prebuild`, so manual edits are silently lost:
   - API reference (`content/docs/reference/<tag>/`) — edit `openapi.yaml`, then `pnpm generate:openapi`.

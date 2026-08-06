@@ -31,12 +31,12 @@ describe("buildFooterColumns", () => {
       "Docs", "API", "CLI", "MCP", "Agent Skills",
     ]);
   });
-  it("CLI and MCP point at the reference interface docs, Agent Skills at ai-resources", () => {
+  it("CLI, MCP, and Agent Skills point at the Usage section", () => {
     const dev = buildFooterColumns().find((c) => c.title === "Developers")!;
     const byLabel = Object.fromEntries(dev.links.map((l) => [l.label, l.href]));
-    expect(byLabel["CLI"]).toBe("/docs/reference/cli");
-    expect(byLabel["MCP"]).toBe("/docs/reference/mcp");
-    expect(byLabel["Agent Skills"]).toBe("/docs/ai-resources/skills");
+    expect(byLabel["CLI"]).toBe("/docs/usage/cli");
+    expect(byLabel["MCP"]).toBe("/docs/usage/mcp");
+    expect(byLabel["Agent Skills"]).toBe("/docs/usage/skills");
   });
   it("Product lists Enterprise and Startup, not Providers", () => {
     const product = buildFooterColumns().find((c) => c.title === "Product")!;

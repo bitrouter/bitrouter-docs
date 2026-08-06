@@ -36,7 +36,7 @@ LiteLLM has shipped MCP, A2A, Skills, and a CLI alongside its horizontal LLM gat
 - [Guardrails](/docs/gateway-and-routing/guardrails) — regex rules on the proxy hop that redact or block matching content inline.
 - [Cloud Tracing](/docs/observability/tracing) — built-in spend and request tracing, no external collector required.
 - Agent Skills gateway (coming soon) — install and route capabilities by skill, not by raw model name.
-- [Headless CLI](/docs/reference/cli) — TUI wizard plus scriptable commands for setup and ops.
+- [Headless CLI](/docs/usage/cli) — TUI wizard plus scriptable commands for setup and ops.
 - **Agentic auth & payment** — x402 / MPP so an agent can pay per request without you provisioning a key for it. LiteLLM has no equivalent.
 
 If you depend on LiteLLM's team-admin UI, virtual keys, and per-user budgets, LiteLLM is still the better fit. If you're building agents — especially agents that should transact autonomously — BitRouter is.
@@ -124,7 +124,7 @@ To skip the local proxy entirely, point clients at `https://api.bitrouter.ai/v1`
 | MCP Gateway | MCP gateway | [MCP](/docs/gateway-and-routing/mcp-gateway) |
 | A2A Agent Gateway | ACP gateway | [ACP](/docs/gateway-and-routing/acp-gateway) |
 | Skills Gateway / `/skills` endpoint | Skills gateway with [agentskills.io](https://agentskills.io) registry | [Agent Skills](/docs/gateway-and-routing/mcp-gateway) |
-| LiteLLM Proxy CLI | `bitrouter` CLI / TUI | [Headless CLI](/docs/reference/cli) |
+| LiteLLM Proxy CLI | `bitrouter` CLI / TUI | [Headless CLI](/docs/usage/cli) |
 | — (no equivalent) | Autonomous agent payment (x402 / MPP) | x402 / MPP |
 
 ## What BitRouter intentionally doesn't ship

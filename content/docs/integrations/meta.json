@@ -1,8 +1,10 @@
 {
   "title": "Integrations",
   "icon": "Blocks",
+  "root": true,
   "collapsible": false,
   "pages": [
+    "index",
     "---Models---",
     "models",
     "claude-subscription",

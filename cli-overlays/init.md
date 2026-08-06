@@ -1,6 +1,5 @@
 ---
-title: init & config
-description: The onboarding wizard and config tooling — write the starter bitrouter.yaml, validate it against the published schema.
+title: Init and config
 ---
 
 BitRouter discovers its config in this order — first hit wins:

@@ -47,7 +47,7 @@ The suffix behaves identically on `/v1/messages` (Anthropic) and `/v1beta/models
 The profile affects provider *ranking* only. Everything else keys off the base model id:
 
 - [Guardrail](/docs/gateway-and-routing/guardrails) model allowlists/denylists and BYOK rules judge `anthropic/claude-sonnet-4.6:cost` exactly as `anthropic/claude-sonnet-4.6` — a profile can never widen or bypass a policy.
-- [BYOK](/docs/gateway-and-routing/byok) providers still rank ahead of platform providers; the profile orders providers *within* each tier.
+- [BYOK](/docs/gateway-and-routing/bring-your-own-provider) providers still rank ahead of platform providers; the profile orders providers *within* each tier.
 - Billing is unchanged — you pay the selected provider's rate for the base model.
 
 ## Seeing which profile a request used

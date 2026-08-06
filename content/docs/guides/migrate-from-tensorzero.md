@@ -78,7 +78,7 @@ response = client.chat.completions.create(
 </Tab>
 </Tabs>
 
-A TensorZero **function** (a named prompt template + schema with one or more variants) has no single equivalent — the routing half maps to BitRouter, the templating/variant half stays in your app or moves to a [preset](/docs/gateway-and-routing/presets). See the [feature mapping](#feature-mapping) below.
+A TensorZero **function** (a named prompt template + schema with one or more variants) has no single equivalent — the routing half maps to BitRouter, the templating/variant half stays in your app or moves to a [preset](/docs/gateway-and-routing/virtual-model). See the [feature mapping](#feature-mapping) below.
 
 ### From the gateway + ClickHouse stack
 
@@ -115,9 +115,9 @@ To skip the local proxy entirely, point clients at `https://api.bitrouter.ai/v1`
 
 | TensorZero concept | BitRouter equivalent | Docs |
 |---|---|---|
-| `[models.*]` + `[models.*.providers.*]` in `tensorzero.toml` | Provider keys (auto-detected) + the model registry | [BYOK](/docs/gateway-and-routing/byok), [Models](/docs/overview/supported-models#how-model-ids-work) |
-| `[functions.*]` (named prompt + schema) | App-side, or a routing [preset](/docs/gateway-and-routing/presets) | [Presets](/docs/gateway-and-routing/presets) |
-| `[functions.*.variants.*]` (per-variant model) | Routing preset variants / model ids | [Presets](/docs/gateway-and-routing/presets) |
+| `[models.*]` + `[models.*.providers.*]` in `tensorzero.toml` | Provider keys (auto-detected) + the model registry | [BYOK](/docs/gateway-and-routing/bring-your-own-provider), [Models](/docs/overview/supported-models#how-model-ids-work) |
+| `[functions.*]` (named prompt + schema) | App-side, or a routing [preset](/docs/gateway-and-routing/virtual-model) | [Virtual models](/docs/gateway-and-routing/virtual-model) |
+| `[functions.*.variants.*]` (per-variant model) | Routing preset variants / model ids | [Virtual models](/docs/gateway-and-routing/virtual-model) |
 | `routing` / `retries` / `fallbacks` | Model fallback rules | [Model fallback](/docs/gateway-and-routing/model-fallback) |
 | `load_balancing` across providers | Provider selection | [Provider selection](/docs/gateway-and-routing/provider-selection) |
 | OpenAI-compatible `/openai/v1` endpoint | OpenAI-compatible `/v1` endpoint | [API Reference](/docs/reference/openai-compatible/createChatCompletion) |
@@ -140,7 +140,7 @@ If your workflow depends on that closed feedback loop — collect inferences and
 **Before migration**
 - [ ] List the providers and models you actually route through TensorZero (skip the rest)
 - [ ] Separate gateway use from platform use — are you using evals / optimization / experimentation, or just routing?
-- [ ] Note where `[functions.*]` templates and schemas live; plan to keep them app-side or move them to a [preset](/docs/gateway-and-routing/presets)
+- [ ] Note where `[functions.*]` templates and schemas live; plan to keep them app-side or move them to a [preset](/docs/gateway-and-routing/virtual-model)
 - [ ] Decide cloud vs. local (or both — they share the endpoint)
 </Callout>
 

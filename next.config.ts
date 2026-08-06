@@ -8,8 +8,8 @@ const finalPath = {
   comparison: "/docs/overview/bitrouter-vs-openrouter", "self-host-vs-cloud": "/docs/overview/quickstart#self-host-or-cloud",
   // gateway & routing
   "provider-selection":"/docs/gateway-and-routing/provider-selection","model-fallback":"/docs/gateway-and-routing/model-fallback",
-  "model-variants":"/docs/gateway-and-routing/model-variants","presets":"/docs/gateway-and-routing/presets",
-  "structured-outputs":"/docs/gateway-and-routing/structured-outputs","byok":"/docs/gateway-and-routing/byok",
+  "model-variants":"/docs/gateway-and-routing/model-variants","presets":"/docs/gateway-and-routing/virtual-model",
+  "structured-outputs":"/docs/gateway-and-routing/structured-outputs","byok":"/docs/gateway-and-routing/bring-your-own-provider",
   "local-models":"/docs/integrations/models","guardrails":"/docs/gateway-and-routing/guardrails",
   "observability":"/docs/observability/opentelemetry","opentelemetry":"/docs/observability/opentelemetry",
   "tracing":"/docs/observability/tracing","telemetry":"/docs/observability/opentelemetry",
@@ -45,9 +45,9 @@ pairs.push(
   ["/docs/features/provider-selection", "/docs/gateway-and-routing/provider-selection"],
   ["/docs/features/model-fallback", "/docs/gateway-and-routing/model-fallback"],
   ["/docs/features/model-variants", "/docs/gateway-and-routing/model-variants"],
-  ["/docs/features/presets", "/docs/gateway-and-routing/presets"],
+  ["/docs/features/presets", "/docs/gateway-and-routing/virtual-model"],
   ["/docs/features/structured-outputs", "/docs/gateway-and-routing/structured-outputs"],
-  ["/docs/features/byok", "/docs/gateway-and-routing/byok"],
+  ["/docs/features/byok", "/docs/gateway-and-routing/bring-your-own-provider"],
   // concepts/ section dissolved (2026-07 reorg) → pages land next to their features
   ["/docs/concepts", "/docs/overview/what-is-bitrouter"],
   ["/docs/concepts/models", "/docs/overview/supported-models#how-model-ids-work"],
@@ -86,7 +86,7 @@ pairs.push(
   ["/docs/cloud", "/docs/overview/quickstart#self-host-or-cloud"],
   ["/docs/cloud/overview", "/docs/overview/quickstart#self-host-or-cloud"],
   ["/docs/cloud/get-started", "/docs/overview/quickstart#self-host-or-cloud"],
-  ["/docs/cloud/byok", "/docs/gateway-and-routing/byok"],
+  ["/docs/cloud/byok", "/docs/gateway-and-routing/bring-your-own-provider"],
   ["/docs/cloud/tracing", "/docs/observability/tracing"],
   ["/docs/cloud/managed-models", "/docs/overview/supported-models"],
   ["/docs/cloud/workspaces", "/docs/reference/management/listNamespaces"],
@@ -123,9 +123,9 @@ pairs.push(
   ["/docs/models-and-routing/provider-selection", "/docs/gateway-and-routing/provider-selection"],
   ["/docs/models-and-routing/model-fallback", "/docs/gateway-and-routing/model-fallback"],
   ["/docs/models-and-routing/model-variants", "/docs/gateway-and-routing/model-variants"],
-  ["/docs/models-and-routing/presets", "/docs/gateway-and-routing/presets"],
+  ["/docs/models-and-routing/presets", "/docs/gateway-and-routing/virtual-model"],
   ["/docs/models-and-routing/structured-outputs", "/docs/gateway-and-routing/structured-outputs"],
-  ["/docs/models-and-routing/byok", "/docs/gateway-and-routing/byok"],
+  ["/docs/models-and-routing/byok", "/docs/gateway-and-routing/bring-your-own-provider"],
   ["/docs/models-and-routing", "/docs/gateway-and-routing/provider-selection"],
   // tools/agents pages retitled to name their protocol; features/ dissolved —
   // guardrails moved, namespaces and payment retired (2026-08)
@@ -154,6 +154,15 @@ pairs.push(
   ["/docs/integrations/parallel", "/docs/gateway-and-routing/websearch"],
   ["/docs/integrations/firecrawl", "/docs/gateway-and-routing/websearch"],
   ["/docs/integrations/tavily", "/docs/gateway-and-routing/websearch"],
+  // gateway pages renamed for what they are, not what the field is called
+  // (2026-08): presets → virtual model, external providers (BYOK) → bring your
+  // own provider. The API keeps `routing-presets` and `byok`; the docs don't.
+  ["/docs/gateway-and-routing/presets", "/docs/gateway-and-routing/virtual-model"],
+  ["/docs/gateway-and-routing/byok", "/docs/gateway-and-routing/bring-your-own-provider"],
+  // the OpenRouter page was unpublished (2026-08); the aggregator provider block
+  // it documented is the worked example on the model-sources page. The
+  // migrate-from-openrouter guide is unaffected.
+  ["/docs/integrations/openrouter", "/docs/integrations/models"],
 );
 const docsRedirects = pairs.flatMap(([source, destination]) => [
   { source, destination, permanent: true },

@@ -29,15 +29,18 @@ References:
 - [Agent Skills](https://github.com/bitrouter/agent-skills): Drop-in skills that teach an agent to install and use BitRouter
 - [BitRouter CLI](https://github.com/bitrouter/bitrouter): \`cargo install bitrouter\` — the Rust binary, setup wizard, and TUI dashboard
 
-## Routing
+## Gateway & Routing
 
-- [Model Fallback](${BASE_URL}/docs/gateway-and-routing/model-fallback): Automatic fallback across models when an upstream fails
+- [Model Fallbacks](${BASE_URL}/docs/gateway-and-routing/model-fallback): Automatic fallback across models when an upstream fails
 - [Provider Selection](${BASE_URL}/docs/gateway-and-routing/provider-selection): How models resolve to upstream providers, with cost and performance policies
+- [Virtual Model](${BASE_URL}/docs/gateway-and-routing/virtual-model): Define a named model of your own — base model, prompt, params, and routing rules behind \`@name\`
+- [Model Variants](${BASE_URL}/docs/gateway-and-routing/model-variants): Append \`:cost\`, \`:latency\`, or \`:throughput\` to a model id to pick a ranking axis inline
+- [Bring Your Own Model](${BASE_URL}/docs/gateway-and-routing/bring-your-own-model): Put a model you serve yourself behind BitRouter and route to it like any hosted model
+- [Bring Your Own Provider](${BASE_URL}/docs/gateway-and-routing/bring-your-own-provider): Route through your own provider account at list price, with no rev share or per-token fee
 
 ## Features
 
 - [Workspaces](${BASE_URL}/docs/cloud/workspaces): Per-team routing tables, keys, and observability
-- [BYOK](${BASE_URL}/docs/cloud/byok): Bring your own provider keys at zero cost; auto-detected from env vars
 - [OpenTelemetry](${BASE_URL}/docs/observability/opentelemetry): Self-run OTLP export — traces and metrics of every request, pushed to a Collector, Honeycomb, Grafana, or Datadog
 - [Cloud Tracing](${BASE_URL}/docs/cloud/tracing): Hosted Activity view — spend, token, and latency KPIs plus a per-request log, nothing to operate
 - [Guardrails](${BASE_URL}/docs/gateway-and-routing/guardrails): Inspect, warn, redact, or block risky content at the proxy layer

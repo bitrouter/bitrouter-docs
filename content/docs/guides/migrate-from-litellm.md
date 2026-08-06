@@ -78,7 +78,7 @@ response = client.chat.completions.create(
 </Tab>
 </Tabs>
 
-Fallbacks and provider selection that you'd configure with `litellm.Router` move into BitRouter's [routing presets](/docs/gateway-and-routing/presets) and [model fallback rules](/docs/gateway-and-routing/model-fallback) — declared once, not per call site.
+Fallbacks and provider selection that you'd configure with `litellm.Router` move into BitRouter's [virtual models](/docs/gateway-and-routing/virtual-model) and [model fallback rules](/docs/gateway-and-routing/model-fallback) — declared once, not per call site.
 
 ### From the LiteLLM Proxy
 
@@ -114,11 +114,11 @@ To skip the local proxy entirely, point clients at `https://api.bitrouter.ai/v1`
 
 | LiteLLM concept | BitRouter equivalent | Docs |
 |---|---|---|
-| `model_list` in `config.yaml` | Provider keys + routing presets | [Presets](/docs/gateway-and-routing/presets) |
+| `model_list` in `config.yaml` | Provider keys + routing presets | [Virtual models](/docs/gateway-and-routing/virtual-model) |
 | `router_settings` (retries, fallback) | Model fallback rules | [Model fallback](/docs/gateway-and-routing/model-fallback) |
 | `routing_strategy` (least-busy, latency) | Provider selection | [Provider selection](/docs/gateway-and-routing/provider-selection) |
 | `cache` (Redis/DynamoDB backed) | Not built into the proxy — handle in app/edge if needed | — |
-| Virtual keys + budgets + admin UI | Workspace keys (cloud); env-var keys (local) | [BYOK](/docs/gateway-and-routing/byok) |
+| Virtual keys + budgets + admin UI | Workspace keys (cloud); env-var keys (local) | [BYOK](/docs/gateway-and-routing/bring-your-own-provider) |
 | Guardrails / PII / content filter | Agent firewall on the proxy hop | [Guardrails](/docs/gateway-and-routing/guardrails) |
 | Callbacks (Langfuse, Datadog, etc.) | Built-in spend + request logs; OTLP export | [OpenTelemetry](/docs/observability/opentelemetry) |
 | MCP Gateway | MCP gateway | [MCP](/docs/gateway-and-routing/mcp-gateway) |

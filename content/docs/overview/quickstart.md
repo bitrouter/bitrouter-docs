@@ -123,7 +123,7 @@ bitrouter start
 # Proxy running at http://127.0.0.1:4356
 ```
 
-BitRouter auto-detects any key set in the environment — no config file needed. Any provider whose key is present is immediately available. See [BYOK](/docs/gateway-and-routing/byok) for the full list of recognized variables, or [local & private models](/docs/integrations/models) to point BitRouter at Ollama, vLLM, or LM Studio for free.
+BitRouter auto-detects any key set in the environment — no config file needed. Any provider whose key is present is immediately available. See [BYOK](/docs/gateway-and-routing/bring-your-own-provider) for the full list of recognized variables, or [local & private models](/docs/integrations/models) to point BitRouter at Ollama, vLLM, or LM Studio for free.
 
 For advanced routing rules, guardrails, or multi-account failover, scaffold a config file:
 
@@ -234,7 +234,7 @@ bitrouter policy lock            # forbid programmatic writes again
 
 <Cards>
   <Card title="Provider selection" href="/docs/gateway-and-routing/provider-selection" description="Declare providers, rank them, and add multi-account failover." />
-  <Card title="Presets" href="/docs/gateway-and-routing/presets" description="Named routing profiles — the opt-in boundary for adaptive routing." />
+  <Card title="Virtual models" href="/docs/gateway-and-routing/virtual-model" description="Named routing profiles — the opt-in boundary for adaptive routing." />
   <Card title="Integrations" href="/docs/integrations" description="Step-by-step guides for every supported agent runtime." />
   <Card title="CLI reference" href="/docs/reference/cli" description="The full command surface of the binary." />
 </Cards>

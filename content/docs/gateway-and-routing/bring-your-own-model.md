@@ -1,0 +1,105 @@
+---
+title: Bring Your Own Model
+description: Put a model you serve yourself — a local runner, a fine-tune, a private GPU cluster — behind BitRouter, and route to it with the same ids, fallbacks, and variants as any hosted model.
+---
+
+Bring your own model means the weights are yours: a model running on your laptop, a fine-tune you serve on your own GPUs, or an inference endpoint inside your own network. BitRouter fronts it as one more provider, so agents address it by id and never learn the difference between your GPU and a hosted API.
+
+This is the mirror image of [bring your own provider](/docs/gateway-and-routing/bring-your-own-provider): there, someone else's model on your account; here, your model on whatever hardware you like.
+
+## The shape: one provider block
+
+Any endpoint that speaks a protocol BitRouter already talks — OpenAI-compatible `/v1/chat/completions` in the common case — becomes a provider in `bitrouter.yaml`:
+
+```yaml
+# bitrouter.yaml
+providers:
+  my-cluster:                              # an id you choose
+    api_base: https://llm.internal.example/v1
+    api_key: ${MY_CLUSTER_TOKEN}           # omit if the endpoint is keyless
+    api_protocol:
+      - "*": chat_completions              # upstream wire format
+    models:
+      - id: my-team/llama-3.1-8b-finetune  # the id your endpoint serves
+```
+
+| Field | What it is |
+| --- | --- |
+| `api_base` | Your endpoint's base URL — the part before `/chat/completions`. |
+| `api_key` | Optional. Use a `${VAR}` reference; it resolves from the environment at load time, so no secret lands in the committed file. |
+| `api_protocol` | The upstream wire format. `chat_completions` for anything OpenAI-compatible (also the inferred default, so the block is optional); `messages`, `generate_content`, and `responses` are the other known values. |
+| `models[].id` | The model id **exactly as your endpoint serves it**. This is what you'll route to. |
+
+Scaffold a starter file with `bitrouter init` (writes `./bitrouter.yaml` with `skip_auth: true`; `-c <path>` puts it elsewhere), then check it before you ship:
+
+```bash
+bitrouter config validate -c bitrouter.yaml
+```
+
+## Already running a local model server?
+
+The common runners each have a page with their port, id conventions, and auth quirks — the provider block is the same shape:
+
+<Cards>
+  <Card title="Ollama" href="/docs/integrations/ollama" description="Easiest local start · :11434 · no key" />
+  <Card title="vLLM" href="/docs/integrations/vllm" description="High-throughput GPU serving · :8000" />
+  <Card title="Unsloth" href="/docs/integrations/unsloth" description="Run or fine-tune on your own machine · :8888" />
+  <Card title="Model sources" href="/docs/integrations/models" description="Every way tokens can reach BitRouter, side by side" />
+</Cards>
+
+<Callout type="info">
+**Most local servers need no key.** Ollama and vLLM accept anonymous loopback requests, so their blocks have no `api_key`. Add one only if you launched the server with auth (e.g. `vllm serve --api-key <token>`) — or if the server requires it, as Unsloth does.
+</Callout>
+
+## Route to it
+
+Point the CLI at the model to make it the active route:
+
+```bash
+bitrouter route my-cluster:my-team/llama-3.1-8b-finetune
+```
+
+Then start the proxy — it listens on `127.0.0.1:4356` by default — and send a normal request:
+
+```bash
+curl http://127.0.0.1:4356/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "my-cluster:my-team/llama-3.1-8b-finetune",
+    "messages": [{"role": "user", "content": "Hello from my own model"}]
+  }'
+```
+
+The provider-qualified form (`my-cluster:<model>`) pins the request to that exact endpoint. The bare model id also works — BitRouter cascades it to whichever active provider declares it, which is what you want when the same model name is served in more than one place.
+
+## Your model is a first-class routing target
+
+Once declared, your endpoint is eligible for the rest of the gateway:
+
+- [**Model fallbacks**](/docs/gateway-and-routing/model-fallback) — put your model first in the `models` list and a hosted model after it. Requests run on your hardware and only spill over when it errors or is saturated.
+- [**Virtual models**](/docs/gateway-and-routing/virtual-model) — give that pairing a single name. Self-hosted, the `models` section of `bitrouter.yaml` does it with a `priority` strategy over an ordered `endpoints` list; on Cloud, a saved `@name`.
+- [**Provider selection**](/docs/gateway-and-routing/provider-selection) and [**model variants**](/docs/gateway-and-routing/model-variants) rank *among* the providers serving a model, so they matter here once your endpoint is one of several serving the same id — a model only your cluster serves has nothing to re-rank.
+
+## Compatibility switches
+
+Most endpoints need nothing beyond `api_base` and a model id. When an upstream is strict about a field, set it per model under `compatibility`:
+
+```yaml
+    models:
+      - id: my-team/llama-3.1-8b-finetune
+        compatibility:
+          chat_completions:
+            token_limit_field: max_completion_tokens   # or max_tokens
+            supports_store: false
+            supports_stream_options: false
+```
+
+`token_limit_field` picks the output-token field the upstream expects — current OpenAI models want `max_completion_tokens`, while some older compatible servers still require `max_tokens`. BitRouter otherwise preserves the caller's spelling and translates the semantic limit across the Chat, Messages, Responses, and Generate Content surfaces for you.
+
+## Serving your model to others
+
+Everything above is private: your config, your endpoint, your traffic. To make a model you host **discoverable and routable by anyone on the network** — including from BitRouter Cloud — list it in the open registry instead, by opening a PR with a provider manifest. See [Register as a provider](/docs/guides/register-as-a-provider) for the manifest schema, the `models_url` BitRouter polls, and the payment modes.
+
+<Callout type="warn">
+**Cloud can't reach a private endpoint.** BitRouter Cloud routes to registry providers, and there's no per-account way to attach your own endpoint to a Cloud namespace. To use a model only you serve, either run BitRouter yourself in front of it ([self-host](/docs/guides/self-host)) or publish it to the registry.
+</Callout>

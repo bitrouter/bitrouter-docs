@@ -1,0 +1,6 @@
+{
+  "title": "Usage",
+  "icon": "Terminal",
+  "collapsible": false,
+  "pages": ["cli", "mcp"]
+}

@@ -19,8 +19,8 @@ const finalPath = {
   "managed-provider":"/docs/overview/supported-models","discounted-models":"/docs/overview/supported-models",
   "payment":"/docs/overview/quickstart#self-host-or-cloud","workspaces":"/docs/reference/management/listNamespaces",
   "for-providers":"/docs/guides/register-as-a-provider",
-  // reference
-  "cli":"/docs/reference/cli",
+  // usage (CLI + MCP moved out of reference/ into the Documentation tab, 2026-08)
+  "cli":"/docs/usage/cli",
 };
 const legacyBuckets = ["core","cloud","features","routing"]; // /docs/guides/<bucket>/<slug>
 const pairs: Array<[string, string]> = [];
@@ -54,16 +54,16 @@ pairs.push(
   ["/docs/concepts/policy", "/docs/overview/quickstart#adaptive-routing"],
   ["/docs/concepts/tools", "/docs/gateway-and-routing/mcp-gateway"],
   ["/docs/concepts/agents", "/docs/gateway-and-routing/acp-gateway"],
-  ["/docs/concepts/cli", "/docs/reference/cli"],
-  ["/docs/concepts/mcp", "/docs/reference/mcp"],
+  ["/docs/concepts/cli", "/docs/usage/cli"],
+  ["/docs/concepts/mcp", "/docs/usage/mcp"],
   ["/docs/concepts/agent-skill", "/docs/overview/quickstart"],
   // get-started consolidation (2026-07): onboarding merge, FAQs dissolved, cli/mcp → reference
   ["/docs/get-started/configuration", "/docs/overview/quickstart"],
   ["/docs/get-started/wizard", "/docs/overview/quickstart"],
   ["/docs/get-started/agent-skill", "/docs/overview/quickstart"],
   ["/docs/get-started/faqs", "/docs/overview/quickstart"],
-  ["/docs/get-started/cli", "/docs/reference/cli"],
-  ["/docs/get-started/mcp", "/docs/reference/mcp"],
+  ["/docs/get-started/cli", "/docs/usage/cli"],
+  ["/docs/get-started/mcp", "/docs/usage/mcp"],
   // get-started/ section dissolved (2026-08): onboarding → overview/quickstart,
   // the four set-up-* walkthroughs → the quickstart or the page that owns each topic
   ["/docs/get-started", "/docs/overview/quickstart"],
@@ -91,6 +91,11 @@ pairs.push(
   ["/docs/cloud/managed-models", "/docs/overview/supported-models"],
   ["/docs/cloud/workspaces", "/docs/reference/management/listNamespaces"],
   ["/docs/cloud/payment", "/docs/overview/quickstart#self-host-or-cloud"],
+  // CLI + MCP left the API Reference tab for Documentation → Usage (2026-08).
+  // These must stay above the /docs/reference wildcards below.
+  ["/docs/reference/cli/:slug*", "/docs/usage/cli/:slug*"],
+  ["/docs/reference/cli", "/docs/usage/cli"],
+  ["/docs/reference/mcp", "/docs/usage/mcp"],
   // reference wildcards (api-reference unwrapped into /docs/reference)
   ["/docs/api-reference/:slug*", "/docs/reference/:slug*"],
   ["/docs/reference/api-reference/:slug*", "/docs/reference/:slug*"],

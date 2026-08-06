@@ -9,7 +9,7 @@ Next.js 16 (App Router) + fumadocs site for [bitrouter.ai](https://bitrouter.ai)
 - Lint with `pnpm lint:docs` (`scripts/check-docs.mjs`) after editing docs.
 - **Always use the scripts — never hand-edit generated output.** Anything produced by a generator is regenerated at `prebuild`, so manual edits are silently lost:
   - API reference (`content/docs/reference/<tag>/`) — edit `openapi.yaml`, then `pnpm generate:openapi`.
-  - CLI reference (`content/docs/reference/cli/`) — edit `cli-overlays/<group>.md`, then `pnpm generate:cli`.
+  - CLI reference (`content/docs/(guide)/usage/cli/`) — edit `cli-overlays/<group>.md`, then `pnpm generate:cli`.
   - `.cli-snapshot.json` — re-capture from the binary with `pnpm snapshot:cli`; never edit by hand.
   - `.models-snapshot.json` / changelog-latest data — `pnpm generate:models` / `pnpm generate:changelog`.
 

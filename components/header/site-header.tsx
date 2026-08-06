@@ -155,7 +155,10 @@ export function SiteHeaderBody({
             }}
           />
         </span>
-        <span className="font-sans text-[17px] font-semibold tracking-[-0.01em] text-[var(--z-ink)]">
+        {/* Wordmark drops below `sm`: the row is logo + search + CTA + menu,
+            which overflows a 375px viewport and pushes the CTA over the search
+            trigger. The mark alone still identifies and links home. */}
+        <span className="hidden font-sans text-[17px] font-semibold tracking-[-0.01em] text-[var(--z-ink)] sm:inline">
           bitrouter.
         </span>
       </a>

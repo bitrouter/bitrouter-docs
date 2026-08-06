@@ -1,4 +1,4 @@
-// Generates the CLI reference pages under content/docs/reference/cli/ from
+// Generates the CLI reference pages under content/docs/(guide)/usage/cli/ from
 // .cli-snapshot.json (captured by scripts/snapshot-cli.mjs) plus the
 // hand-authored overlays in cli-overlays/<slug>.md (intro prose, per-command
 // examples and notes).
@@ -14,10 +14,10 @@ import { join } from "node:path";
 const ROOT = process.cwd();
 const SNAPSHOT = join(ROOT, ".cli-snapshot.json");
 const OVERLAY_DIR = join(ROOT, "cli-overlays");
-const OUT_DIR = join(ROOT, "content/docs/reference/cli");
+const OUT_DIR = join(ROOT, "content/docs/(guide)/usage/cli");
 
 // Page groups: slug → top-level commands whose trees land on that page.
-// Order here is the nav order in content/docs/reference/cli/meta.json.
+// Order here is the nav order in content/docs/(guide)/usage/cli/meta.json.
 const GROUPS = [
   { slug: "daemon", commands: ["serve", "start", "stop", "restart", "reload", "status"] },
   { slug: "init", commands: ["init", "config"] },
@@ -145,4 +145,4 @@ writeFileSync(
   join(OUT_DIR, "meta.json"),
   JSON.stringify({ title: "CLI", pages: metaPages }, null, 2) + "\n",
 );
-console.log(`generate-cli: wrote ${written} page(s) + meta.json → content/docs/reference/cli/`);
+console.log(`generate-cli: wrote ${written} page(s) + meta.json → content/docs/(guide)/usage/cli/`);

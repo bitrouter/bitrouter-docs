@@ -1,12 +1,10 @@
 {
-  "title": "Reference",
+  "title": "API Reference",
   "icon": "Library",
+  "root": true,
   "collapsible": false,
   "pages": [
     "index",
-    "---Interfaces---",
-    "cli",
-    "mcp",
     "---Cloud API---",
     "health",
     "discovery",

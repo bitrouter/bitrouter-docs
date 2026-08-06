@@ -23,7 +23,10 @@ export default async function Page({ params }: Props) {
   const MDX = page.data.body;
   const slugPath = slug?.join("/") ?? "";
   const markdownUrl = `/api/docs/llms-mdx/${slugPath}`;
-  const githubUrl = `${GITHUB_REPO}/blob/main/content/docs/${slugPath}/index.mdx`;
+  // `page.path` is the real file path relative to content/docs — slugs can't be
+  // used here, since folder groups like `(guide)/` are stripped from the URL and
+  // pages are a mix of `<name>.md` and `<name>/index.mdx`.
+  const githubUrl = `${GITHUB_REPO}/blob/main/content/docs/${page.path}`;
 
   const isFaqPage =
     slug?.length === 2 && slug[0] === "overview" && slug[1] === "faqs";

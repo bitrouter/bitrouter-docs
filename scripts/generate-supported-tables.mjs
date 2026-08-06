@@ -1,4 +1,4 @@
-// Regenerates the catalog table in `content/docs/overview/supported-models.md`
+// Regenerates the catalog table in `content/docs/(guide)/overview/supported-models.md`
 // from the committed snapshot. Replaces the Rust `dist-helper registry docs`
 // generator, which lived in bitrouter/bitrouter and was deleted in #742 when the
 // docs moved to this repo — leaving these tables frozen and unchecked.
@@ -69,7 +69,7 @@ function modelRows() {
 
 const TARGETS = [
   {
-    file: "content/docs/overview/supported-models.md",
+    file: "content/docs/(guide)/overview/supported-models.md",
     header: ["Model", "Name", "Context", "Modalities", "Open weights", "Input $/M", "Output $/M"],
     rows: modelRows,
   },

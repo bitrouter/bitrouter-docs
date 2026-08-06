@@ -6,15 +6,33 @@ is rendered from this repo — docs are committed directly here under
 
 ## What publishes
 
-Each top-level folder under `content/docs/` (`overview`,
-`gateway-and-routing`, `observability`, `guides`, `integrations`) is a
-documentation section on the site. Page order within a section is the `pages` list in that
-section's `meta.json`; the overall section order is the `pages` list in
-`content/docs/meta.json`.
+The docs site has two **tabs**, and each is a folder marked `"root": true` in
+its `meta.json`:
 
-The **API reference** (generated from the BitRouter Cloud OpenAPI spec) and
-**AI resources** (docs MCP, llms.txt, drop-in skills) are also site sections,
-but the reference pages are generated — don't hand-author those.
+- **Documentation** — `content/docs/(guide)/`. The parentheses make it a
+  *folder group*: fumadocs strips it from the URL, so `(guide)/overview/quickstart.md`
+  still publishes at `/docs/overview/quickstart`. It exists only to give the tab
+  something to hang off.
+- **API Reference** — `content/docs/reference/`, generated from the BitRouter
+  Cloud OpenAPI spec.
+
+Two rules follow from that, and breaking either one silently deletes a tab:
+
+1. A root folder needs a landing URL. Fumadocs takes it from `pagesIndex` in
+   `meta.json`, or from the folder's first direct *page* child — a root folder
+   whose children are all folders resolves to nothing and is dropped from the
+   tab bar without an error.
+2. Only these two folders carry `"root": true`. Adding it to a section would
+   turn that section into a third tab.
+
+Each folder under `content/docs/(guide)/` (`overview`, `usage`,
+`gateway-and-routing`, `observability`, `integrations`, `guides`,
+`ai-resources`) is a section within the Documentation tab. Page order within a
+section is the `pages` list in that section's `meta.json`; the section order is
+the `pages` list in `content/docs/(guide)/meta.json`.
+
+`usage/` holds the CLI and MCP server references — generated, so don't
+hand-author those.
 
 ## Authoring contract (plain Markdown)
 
@@ -34,7 +52,7 @@ Pages are plain Markdown (`.md`), not MDX with imports. The build enforces this:
 
 ## Adding a page
 
-1. Create `content/docs/<section>/<name>.md`.
+1. Create `content/docs/(guide)/<section>/<name>.md`.
 2. Add `<name>` to that section's `meta.json` `pages` list in the position you
    want it to appear in the nav.
 3. Run `pnpm lint:docs` to check the authoring contract.
@@ -45,9 +63,11 @@ Two parts of the docs are **generated at build time** — don't hand-edit their
 output:
 
 - **API reference** (`content/docs/reference/<tag>/`) — `pnpm generate:openapi`
-  regenerates from `openapi.yaml`. Hand-authored top-level pages (`index.mdx`,
-  `mcp.mdx`) survive; the section `meta.json` is rewritten.
-- **CLI reference** (`content/docs/reference/cli/`) — `pnpm generate:cli`
+  regenerates from `openapi.yaml`. The hand-authored `index.mdx` survives; every
+  other subdirectory is wiped, and the section `meta.json` is rewritten from
+  `REFERENCE_META` in the script — including the `"root": true` that makes it a
+  tab, so edit the script, not the file.
+- **CLI reference** (`content/docs/(guide)/usage/cli/`) — `pnpm generate:cli`
   builds the command pages from `.cli-snapshot.json` plus the hand-authored
   overlays in `cli-overlays/<group>.md` (page intros, per-command examples).
   When the documented binary changes, re-capture the snapshot locally with

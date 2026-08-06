@@ -1,5 +1,6 @@
 "use client";
 
+import type * as React from "react";
 import { usePathname } from "next/navigation";
 import { SiteHeader, SiteHeaderBody, type HeaderSession } from "@/components/header";
 import { authClient } from "@/lib/auth-client";
@@ -21,7 +22,7 @@ const searchSlot = <AISearchBar />;
 
 // ── shared prop plumbing ──────────────────────────────────────────────
 
-function useWebHeaderProps() {
+function useWebHeaderProps(leadingSlot?: React.ReactNode) {
   const { data: session } = authClient.useSession();
   const pathname = usePathname();
   const headerSession: HeaderSession | null = session?.user
@@ -42,6 +43,7 @@ function useWebHeaderProps() {
     },
     searchSlot,
     utilitySlot,
+    leadingSlot,
   };
 }
 
@@ -50,7 +52,12 @@ export function WebHeader() {
   return <SiteHeader {...useWebHeaderProps()} />;
 }
 
-/** Headerless body — for the docs notebook grid header (DocsHeader). */
-export function WebHeaderBody() {
-  return <SiteHeaderBody {...useWebHeaderProps()} />;
+/**
+ * Headerless body — for the docs notebook grid header (DocsHeader).
+ *
+ * `leadingSlot` is where docs passes the sidebar drawer trigger, so the docs
+ * nav (and the tabs dropdown inside it) is reachable on small screens.
+ */
+export function WebHeaderBody({ leadingSlot }: { leadingSlot?: React.ReactNode }) {
+  return <SiteHeaderBody {...useWebHeaderProps(leadingSlot)} />;
 }

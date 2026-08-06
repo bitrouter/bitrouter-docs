@@ -1,0 +1,14 @@
+{
+  "title": "Documentation",
+  "root": true,
+  "pagesIndex": "[Documentation](/docs/overview/what-is-bitrouter)",
+  "pages": [
+    "overview",
+    "usage",
+    "gateway-and-routing",
+    "observability",
+    "integrations",
+    "guides",
+    "ai-resources"
+  ]
+}

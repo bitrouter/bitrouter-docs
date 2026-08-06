@@ -41,7 +41,7 @@ describe("formatSearchResults", () => {
   const raw: RawSearchResult[] = [
     { id: "1", url: "/docs/guides/routing/model-fallback", type: "page", content: "Model Fallback" },
     { id: "2", url: "/docs/guides/routing/model-fallback#auto", type: "heading", content: "Automatic fallback" },
-    { id: "3", url: "/docs/gateway-and-routing/byok", type: "page", content: "BYOK" },
+    { id: "3", url: "/docs/gateway-and-routing/bring-your-own-provider", type: "page", content: "BYOK" },
   ];
   it("dedups by page and caps to the limit", () => {
     const hits = formatSearchResults(raw, 1);

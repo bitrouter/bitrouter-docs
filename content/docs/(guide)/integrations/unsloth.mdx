@@ -1,0 +1,72 @@
+---
+title: Unsloth
+description: Register a local Unsloth server as a BitRouter provider — run or fine-tune a model on your own machine, served behind an OpenAI-compatible API.
+---
+
+[Unsloth](https://unsloth.ai) trains and runs open models locally. Its CLI serves whatever model you load behind an OpenAI-compatible API at `http://localhost:8888/v1` — the same port also answers Anthropic `/v1/messages` — so it drops into `bitrouter.yaml` as one provider block. That makes it the shortest path from a model you just fine-tuned to a model your agents can route to.
+
+## Prerequisites
+
+- BitRouter installed, with a `bitrouter.yaml` ([scaffold one](/docs/integrations/models#scaffold-a-config) with `bitrouter init`).
+- Unsloth installed:
+
+  ```bash
+  curl -fsSL https://unsloth.ai/install.sh | sh    # macOS, Linux, WSL
+  ```
+
+- Unsloth serving a model:
+
+  ```bash
+  unsloth run --model unsloth/gemma-4-26B-A4B-it-GGUF:UD-Q4_K_XL    # default port 8888
+  ```
+
+  This loads the model, opens the Studio UI, and **prints your endpoint URL and API key** — note both.
+
+## Add Unsloth to BitRouter
+
+```yaml
+# bitrouter.yaml
+providers:
+  unsloth:
+    api_base: http://localhost:8888/v1
+    api_protocol:
+      - "*": chat_completions
+    api_key: ${UNSLOTH_API_KEY}
+    models:
+      - id: unsloth/gemma-4-26B-A4B-it-GGUF
+```
+
+The `models` id must match the name Unsloth serves — the model name as it appears in Studio, without the quantization tag you passed to `--model`. Confirm it against the server:
+
+```bash
+curl http://localhost:8888/v1/models -H "Authorization: Bearer $UNSLOTH_API_KEY"
+```
+
+<Callout type="warn">
+**Unsloth requires a key.** Unlike Ollama and vLLM, it authenticates every request with an `Authorization: Bearer sk-unsloth-…` header — the server can load and run models, so it isn't left open. Export the key `unsloth run` printed (or one from **Settings → API** in Studio) and reference it in the block:
+
+```bash
+export UNSLOTH_API_KEY=sk-unsloth-xxxxxxxxxxxx
+```
+
+`api_key` resolves from the environment at load time, so no secret lands in the committed file.
+</Callout>
+
+<Callout type="info">
+**Serving with `llama-server` instead?** Unsloth also documents running a GGUF through `llama.cpp`'s `llama-server` directly. That's the same wiring with two changes: point `api_base` at the `--port` you chose, and use the `--alias` you set as the `models` id.
+</Callout>
+
+## Route to it
+
+```bash
+bitrouter route unsloth:unsloth/gemma-4-26B-A4B-it-GGUF
+```
+
+Then [start BitRouter and send a request](/docs/integrations/models#start-bitrouter-and-send-a-request). Use the provider-qualified id to pin the request to Unsloth, or the bare model name to let BitRouter cascade.
+
+## Learn more
+
+- [Unsloth — API endpoint guide](https://unsloth.ai/docs/basics/api)
+- [Unsloth — llama-server & OpenAI endpoint](https://unsloth.ai/docs/basics/inference-and-deployment/llama-server-and-openai-endpoint)
+- [Bring your own model](/docs/gateway-and-routing/bring-your-own-model) — the general shape, for any endpoint you serve.
+- [Model fallback](/docs/gateway-and-routing/model-fallback) — fail over from your own machine to a hosted model.

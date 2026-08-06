@@ -1,9 +1,11 @@
 ---
-title: External providers (BYOK)
-description: Bring your own provider key — use your own account, pay the provider directly, and let BitRouter route requests without a rev share or per-token fee. Works self-hosted, locally, and on BitRouter Cloud.
+title: Bring Your Own Provider
+description: Route through your own provider account — pay the provider directly at list price, with no rev share or per-token fee. Works self-hosted, locally, and on BitRouter Cloud.
 ---
 
-**BYOK** (bring your own key) routes your requests using your own provider account, not BitRouter's. You pay the provider directly at their list price — BitRouter takes no rev share, adds no per-token fee, and never holds your keys in plaintext.
+Bring your own provider — **BYOK** (bring your own key) in the API and CLI — routes your requests using your own provider account, not BitRouter's. You pay the provider directly at their list price — BitRouter takes no rev share, adds no per-token fee, and never holds your keys in plaintext.
+
+Where [bring your own model](/docs/gateway-and-routing/bring-your-own-model) is about weights you serve yourself, this page is about *someone else's* model reached on *your* account.
 
 BYOK works the same way regardless of deployment:
 

@@ -5,23 +5,25 @@ description: Bring any model source under BitRouter — a Claude or Codex subscr
 
 A **model source** is wherever your tokens actually come from. BitRouter puts every source behind one endpoint and one [registry](/docs/overview/supported-models#how-model-ids-work), so an agent addresses models by their `provider/model` id and never sees the difference between a subscription, an aggregator, and a GPU in your closet.
 
-There are three shapes of source, by how you authenticate:
+Set one up:
 
 <Cards>
   <Card title="Claude subscription" href="/docs/integrations/claude-subscription" description="Route your Claude Pro/Max plan — OAuth, no API key" />
   <Card title="Codex subscription" href="/docs/integrations/codex-subscription" description="Route your ChatGPT plan through the Codex backend — OAuth" />
-  <Card title="OpenRouter" href="/docs/integrations/openrouter" description="Bring an OpenRouter key — one aggregator, hundreds of models" />
   <Card title="Ollama" href="/docs/integrations/ollama" description="Run open models locally · :11434 · no key" />
   <Card title="vLLM" href="/docs/integrations/vllm" description="High-throughput GPU serving · :8000" />
+  <Card title="Unsloth" href="/docs/integrations/unsloth" description="Run or fine-tune on your own machine · :8888" />
 </Cards>
 
 ## How a source is wired
 
+There are three shapes of source, by how you authenticate:
+
 | Source | Auth | Where it's configured |
 | --- | --- | --- |
 | **Subscriptions** (Claude, Codex) | OAuth — your plan's login | `bitrouter providers login <provider>` (no key, no yaml) |
-| **Aggregators / hosted** (OpenRouter, …) | Bring-your-own API key | A provider block in `bitrouter.yaml` |
-| **Self-hosted** (Ollama, vLLM) | Usually none — loopback | A provider block in `bitrouter.yaml` |
+| **Aggregators / hosted** | Bring-your-own API key | A provider block in `bitrouter.yaml` |
+| **Self-hosted** (Ollama, vLLM, Unsloth) | Usually none — loopback | A provider block in `bitrouter.yaml` |
 
 Subscriptions skip `bitrouter.yaml` entirely: `bitrouter providers login claude-code` or `bitrouter providers login openai-codex` stores a refreshing subscription credential for BitRouter to attach at request time. Everything else is a provider block — an `api_base`, an optional `api_key`, and the models that source serves.
 
@@ -76,7 +78,7 @@ curl http://localhost:4356/v1/chat/completions \
 The bare model name also works — BitRouter auto-cascades it to whichever active source declares it. The provider-qualified form (`openrouter:openai/gpt-4o`) pins the request to that exact source.
 
 <Callout type="info">
-**Mix sources freely.** Declare a [virtual model](/docs/gateway-and-routing/model-fallback) whose endpoints list a local source first and a hosted one second: requests run on your own hardware for free and fail over to the hosted model on error or overload — one model name, automatic failover.
+**Mix sources freely.** Declare a [virtual model](/docs/gateway-and-routing/virtual-model) whose endpoints list a local source first and a hosted one second: requests run on your own hardware for free and fail over to the hosted model on error or overload — one model name, automatic failover.
 </Callout>
 
-For the concepts behind this — provider selection, fallback, and registry detection — see [Models](/docs/overview/supported-models#how-model-ids-work). To serve models yourself, see the local-server integrations: [Ollama](/docs/integrations/ollama) and [vLLM](/docs/integrations/vllm).
+For the concepts behind this — provider selection, fallback, and registry detection — see [Models](/docs/overview/supported-models#how-model-ids-work). To serve models yourself, see the local-server integrations — [Ollama](/docs/integrations/ollama), [vLLM](/docs/integrations/vllm), and [Unsloth](/docs/integrations/unsloth) — or [bring your own model](/docs/gateway-and-routing/bring-your-own-model) for the general shape.

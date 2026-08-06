@@ -15,9 +15,9 @@ Where your tokens come from — a subscription you already pay for, an aggregato
   <Card title="Models overview" href="/docs/integrations/models" description="The three shapes of model source" />
   <Card title="Claude subscription" href="/docs/integrations/claude-subscription" description="Route your Claude Pro/Max plan — OAuth, no key" />
   <Card title="Codex subscription" href="/docs/integrations/codex-subscription" description="Route your ChatGPT plan via the Codex backend" />
-  <Card title="OpenRouter" href="/docs/integrations/openrouter" description="Bring an OpenRouter key" />
   <Card title="Ollama" href="/docs/integrations/ollama" description="Run open models locally · :11434" />
   <Card title="vLLM" href="/docs/integrations/vllm" description="High-throughput GPU serving · :8000" />
+  <Card title="Unsloth" href="/docs/integrations/unsloth" description="Run or fine-tune locally · :8888" />
 </Cards>
 
 ## Harnesses

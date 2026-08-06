@@ -105,7 +105,7 @@ If your OpenRouter integration sets any of these headers, you can safely drop th
 
 <Cards>
   <Card title="Quick Start" href="/docs/overview/quickstart" description="Get BitRouter running in under a minute" />
-  <Card title="Configuration" href="/docs/gateway-and-routing/presets" description="Advanced routing and configuration options" />
+  <Card title="Configuration" href="/docs/gateway-and-routing/virtual-model" description="Advanced routing and configuration options" />
   <Card title="Integrations" href="/docs/integrations" description="Integration guides for specific agents" />
   <Card title="API Reference" href="/docs/reference" description="Complete API documentation" />
 </Cards>

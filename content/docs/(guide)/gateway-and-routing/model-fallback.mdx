@@ -1,5 +1,5 @@
 ---
-title: Model Fallback
+title: Model Fallbacks
 description: Pass an ordered list of models and BitRouter walks the list when the primary fails.
 ---
 

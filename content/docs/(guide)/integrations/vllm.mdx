@@ -33,10 +33,6 @@ The `models` id must match the name vLLM serves. By default that's the full Hugg
 **Optional auth.** vLLM is keyless by default. If you launched it with `--api-key <token>` (or `VLLM_API_KEY`), add `api_key: ${VLLM_API_KEY}` to the provider block — it resolves from the environment at load time.
 </Callout>
 
-<Callout type="warn">
-**Port clash with Unsloth.** vLLM and Unsloth Studio both default to `:8000`. If you run both, start one on another port (`vllm serve … --port 8001`) and update `api_base`.
-</Callout>
-
 ## Route to it
 
 ```bash

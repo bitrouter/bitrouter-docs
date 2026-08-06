@@ -3,24 +3,11 @@
   "icon": "Route",
   "collapsible": false,
   "pages": [
-    "---Models---",
-    "provider-selection",
     "model-fallback",
+    "provider-selection",
+    "virtual-model",
     "model-variants",
-    "presets",
-    "structured-outputs",
-    "byok",
-    "---Tools---",
-    "mcp-gateway",
-    "server-tools",
-    "websearch",
-    "web-fetch",
-    "---Agents---",
-    "acp-gateway",
-    "subagent",
-    "advisor",
-    "fusion",
-    "---Governance---",
-    "guardrails"
+    "bring-your-own-model",
+    "bring-your-own-provider"
   ]
 }

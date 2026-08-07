@@ -13,8 +13,6 @@ LiteLLM's bet is coverage: every provider, every gateway feature, in one proxy y
 
 "Minimal" here means minimal to *operate*, not minimal in ambition. An MCP gateway, an ACP gateway for sub-agents, KYA identity, and x402 payments are all in the box — but they serve that one loop, and it's still one binary and one `bitrouter.yaml`. Anything we don't ship, you add: the [provider registry](/docs/gateway-and-routing/provider-selection) takes a YAML file and a PR.
 
-<CompareTerminal slug="bitrouter-vs-litellm" step="03" />
-
 <CompareTable slug="bitrouter-vs-litellm" />
 
 ## Self-serve cloud vs. enterprise-only
@@ -25,11 +23,9 @@ LiteLLM's hosted offering is an enterprise product: quote-only, sized to your re
 
 ## Rust-accelerated vs. Rust-native
 
-A correction to the record first: LiteLLM is no longer a Python-performance story. They've moved their translation hot path to a Rust core and publish benchmarks showing roughly **TK-LITELLM-RUST-OVERHEAD** of added overhead. That's a real result, and we'd rather say so than pretend it isn't happening.
+A correction to the record first: LiteLLM is no longer a Python-performance story. They've moved their translation hot path to a Rust core and publish benchmarks showing **sub-millisecond** added overhead. That's a real result, and we'd rather say so than pretend it isn't happening.
 
-<CompareTerminal slug="bitrouter-vs-litellm" step="02" />
-
-What remains is where the Rust stops. In LiteLLM's recommended mode it's a bridge inside the Python wheel — Python still owns auth, routing, callbacks, and spend tracking, and you still deploy a Python runtime, a web framework, and a database. The standalone Rust server is beta and covers fewer routes. Their roadmap puts the full transition at the end of 2026, and even that endgame runs Python in a sidecar for plugins, guardrails, and SSO by design. BitRouter is one statically linked binary: `bitrouter serve`, ready in **TK-BR-STARTUP**, **TK-BR-MEMORY** resident, no interpreter in the image.
+What remains is where the Rust stops. In LiteLLM's recommended mode it's a bridge inside the Python wheel — Python still owns auth, routing, callbacks, and spend tracking, and you still deploy a Python runtime, a web framework, and a database. The standalone Rust server is beta and covers fewer routes. Their roadmap puts the full transition at the end of 2026, and even that endgame runs Python in a sidecar for plugins, guardrails, and SSO by design. BitRouter is one statically linked binary: `bitrouter serve`, cold-starting in well under a second and holding tens of megabytes resident, with no interpreter and no web framework in the image.
 
 That gap matters less for latency than you'd think, and more for what you inherit. A Python proxy inherits its framework's vulnerabilities — 2026 saw a critical unauthenticated RCE in LiteLLM built by chaining a command-injection bug in its MCP endpoints with a host-header bypass in an upstream Python web framework. Both were disclosed and patched properly, and we're not claiming immunity: our MCP gateway executes tools too, and no language prevents a design bug. We're claiming a smaller blast radius — no interpreter loading code at runtime, no transitive framework chain to inherit a bypass from, and a lot less of it to audit.
 

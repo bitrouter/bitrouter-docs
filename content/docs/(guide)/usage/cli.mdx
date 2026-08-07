@@ -21,11 +21,11 @@ Every command below is **generated from the binary's own `--help`**, so the flag
 
 | Variable | Effect |
 | --- | --- |
-| `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `OPENCODE_ZEN_API_KEY` | Zero-config BYOK — auto-enables the provider. See [BYOK](/docs/gateway-and-routing/bring-your-own-provider) |
+| `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `OPENCODE_ZEN_API_KEY` | Zero-config BYOK — auto-enables the provider. See [BYOK](/docs/models-and-routing/bring-your-own-provider) |
 | `BITROUTER_API_KEY` | Cloud API key; enables the managed `bitrouter` provider |
 | `BITROUTER_HOME` | Config discovery override (see above) |
 | `BITROUTER_OAUTH_AS` | Override the OAuth authorization server for self-hosted Cloud |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | Opt in to OTLP export. See [OpenTelemetry](/docs/observability/opentelemetry) |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | Opt in to OTLP export. See [OpenTelemetry](/docs/evals-and-tracing/opentelemetry) |
 
 ## Command map
 
@@ -255,11 +255,11 @@ Report the OTel exporter's current state (endpoint, sampler, cardinality usage, 
 | `--socket <SOCKET>` | Explicit control socket path. Overrides the config-derived path |
 
 
-Reports the OTel exporter's live state — endpoint, sampler, cardinality usage, in-flight spans. The verification step for [OpenTelemetry](/docs/observability/opentelemetry).
+Reports the OTel exporter's live state — endpoint, sampler, cardinality usage, in-flight spans. The verification step for [OpenTelemetry](/docs/evals-and-tracing/opentelemetry).
 
 ## Providers
 
-Two ways a provider becomes available: **BYOK** (its API key in the environment — see [BYOK](/docs/gateway-and-routing/bring-your-own-provider)) and **`providers login`** (OAuth against subscription providers such as Claude or Codex subscriptions — see [Integrations](/docs/integrations)). `providers list` shows the catalog and which providers are active in the current config.
+Two ways a provider becomes available: **BYOK** (its API key in the environment — see [BYOK](/docs/models-and-routing/bring-your-own-provider)) and **`providers login`** (OAuth against subscription providers such as Claude or Codex subscriptions — see [Integrations](/docs/integrations)). `providers list` shows the catalog and which providers are active in the current config.
 
 ### `bitrouter providers`
 
@@ -319,7 +319,7 @@ Log out of an upstream provider — clears every stored credential for it. For t
 Routing policies are the artifact the [self-improving loop](/docs/overview/what-is-bitrouter) learns into: `init` scaffolds `policy-lock.yaml` and binds it to a preset, live traffic teaches the adequacy ledger, and `evolve --apply` folds proven downgrades back into the file. The walkthrough, table, and ledger semantics are in [Adaptive routing](/docs/overview/quickstart#adaptive-routing).
 
 <Callout type="info">
-`bitrouter policy create` + `bitrouter key sign` are a **different surface** — per-virtual-key access control (allowed models, budgets, rate limits), not routing. See [Guardrails](/docs/gateway-and-routing/guardrails).
+`bitrouter policy create` + `bitrouter key sign` are a **different surface** — per-virtual-key access control (allowed models, budgets, rate limits), not routing. See [Guardrails](/docs/models-and-routing/guardrails).
 </Callout>
 
 ### `bitrouter policy`
@@ -989,7 +989,7 @@ Remove a BYOK row by provider id
 
 ## Tools, agents, and ACP
 
-The command surfaces behind the [Tools](/docs/gateway-and-routing/mcp-gateway) and [Agents](/docs/gateway-and-routing/acp-gateway) gateways: `tools` introspects the MCP upstreams declared under `mcp_servers`, `agents` manages the ACP agent catalog, and `acp` runs per-session headless agent sessions.
+The command surfaces behind the [Tools](/docs/mcp-and-tool-calling/mcp-gateway) and [Agents](/docs/mcp-and-tool-calling/acp-gateway) gateways: `tools` introspects the MCP upstreams declared under `mcp_servers`, `agents` manages the ACP agent catalog, and `acp` runs per-session headless agent sessions.
 
 ### `bitrouter tools`
 
@@ -1380,7 +1380,7 @@ Spawn an ACP-compatible harness as a headless *sub-agent*, routed through the Bi
 bitrouter spawn -p "summarize the diff" --model @coding
 ```
 
-Spawns an ACP-compatible harness as a headless sub-agent, routed through the daemon by default. This is the mechanism behind the [Subagent](/docs/gateway-and-routing/subagent) feature.
+Spawns an ACP-compatible harness as a headless sub-agent, routed through the daemon by default. This is the mechanism behind the [Subagent](/docs/mcp-and-tool-calling/subagent) feature.
 
 ## Key, workflow-state, and update
 
@@ -1403,7 +1403,7 @@ Mint a new `brvk_` virtual key for a user. v1 does not sign a JWT — it creates
 | `--policy <POLICY>` | Optional policy id to bind to the key (the `policy_id` column) |
 
 
-Mints a **virtual key** bound to an access-control policy — the per-key guardrails surface (allowed models, budgets, rate limits), distinct from routing policies. See [Guardrails](/docs/gateway-and-routing/guardrails).
+Mints a **virtual key** bound to an access-control policy — the per-key guardrails surface (allowed models, budgets, rate limits), distinct from routing policies. See [Guardrails](/docs/models-and-routing/guardrails).
 
 ```bash
 bitrouter key sign --user ci --policy nightly-cap

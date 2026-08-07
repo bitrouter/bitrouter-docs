@@ -67,7 +67,7 @@ Each fallback attempt is a fresh upstream request. Practical advice:
 - Lowest expected latency: order by **most reliable first**, accept higher per-token cost.
 - For long-running agent loops: bias toward reliability. The cost of a stalled loop is much higher than the marginal cost difference between two frontier models.
 
-For declarative cost or latency optimization across providers of a single model, see [Provider Selection](/docs/gateway-and-routing/provider-selection). Fallback and provider selection compose: BitRouter picks the best provider for each model in your `models` array, falling through to the next model only after the chosen provider for the current one has exhausted its retry budget.
+For declarative cost or latency optimization across providers of a single model, see [Provider Selection](/docs/models-and-routing/provider-selection). Fallback and provider selection compose: BitRouter picks the best provider for each model in your `models` array, falling through to the next model only after the chosen provider for the current one has exhausted its retry budget.
 
 ## Anthropic and Google surfaces
 

@@ -11,7 +11,7 @@
         "openai",
         "responses"
       ],
-      "models": 8
+      "models": 9
     },
     {
       "id": "alibaba_cn",
@@ -23,7 +23,7 @@
         "openai",
         "responses"
       ],
-      "models": 13
+      "models": 15
     },
     {
       "id": "alibaba_coding_plan",
@@ -43,7 +43,7 @@
       "protocols": [
         "openai"
       ],
-      "models": 4
+      "models": 7
     },
     {
       "id": "anthropic",
@@ -53,7 +53,7 @@
       "protocols": [
         "anthropic"
       ],
-      "models": 8
+      "models": 9
     },
     {
       "id": "atlascloud",
@@ -63,7 +63,7 @@
       "protocols": [
         "openai"
       ],
-      "models": 13
+      "models": 15
     },
     {
       "id": "aws-bedrock",
@@ -74,7 +74,7 @@
         "openai",
         "responses"
       ],
-      "models": 17
+      "models": 18
     },
     {
       "id": "azure",
@@ -85,7 +85,7 @@
         "openai",
         "responses"
       ],
-      "models": 18
+      "models": 20
     },
     {
       "id": "bitrouter",
@@ -95,7 +95,7 @@
       "protocols": [
         "openai"
       ],
-      "models": 49
+      "models": 52
     },
     {
       "id": "byteplus",
@@ -135,7 +135,7 @@
       "protocols": [
         "anthropic"
       ],
-      "models": 7
+      "models": 8
     },
     {
       "id": "deepseek",
@@ -144,7 +144,8 @@
       "billing": "usage_token",
       "protocols": [
         "anthropic",
-        "openai"
+        "openai",
+        "responses"
       ],
       "models": 2
     },
@@ -156,7 +157,7 @@
       "protocols": [
         "openai"
       ],
-      "models": 17
+      "models": 19
     },
     {
       "id": "gmicloud",
@@ -238,9 +239,11 @@
       "headquarters": "US",
       "billing": "usage_token",
       "protocols": [
-        "openai"
+        "anthropic",
+        "openai",
+        "responses"
       ],
-      "models": 15
+      "models": 18
     },
     {
       "id": "openai",
@@ -271,7 +274,7 @@
       "protocols": [
         "openai"
       ],
-      "models": 20
+      "models": 23
     },
     {
       "id": "opencode-zen",
@@ -281,7 +284,7 @@
       "protocols": [
         "openai"
       ],
-      "models": 30
+      "models": 32
     },
     {
       "id": "openrouter",
@@ -293,7 +296,7 @@
         "openai",
         "responses"
       ],
-      "models": 51
+      "models": 55
     },
     {
       "id": "phala",
@@ -303,7 +306,7 @@
       "protocols": [
         "openai"
       ],
-      "models": 5
+      "models": 6
     },
     {
       "id": "qianfan",
@@ -313,7 +316,7 @@
       "protocols": [
         "openai"
       ],
-      "models": 8
+      "models": 9
     },
     {
       "id": "qianfan_cn",
@@ -333,7 +336,7 @@
       "protocols": [
         "openai"
       ],
-      "models": 5
+      "models": 6
     },
     {
       "id": "siliconflow",

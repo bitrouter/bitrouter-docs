@@ -1,5 +1,5 @@
 {
-  "title": "Gateway & Routing",
+  "title": "Models & Routing",
   "icon": "Route",
   "collapsible": false,
   "pages": [
@@ -8,6 +8,8 @@
     "virtual-model",
     "model-variants",
     "bring-your-own-model",
-    "bring-your-own-provider"
+    "bring-your-own-provider",
+    "structured-outputs",
+    "guardrails"
   ]
 }

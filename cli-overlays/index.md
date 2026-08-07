@@ -19,11 +19,11 @@ Every command below is **generated from the binary's own `--help`**, so the flag
 
 | Variable | Effect |
 | --- | --- |
-| `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `OPENCODE_ZEN_API_KEY` | Zero-config BYOK — auto-enables the provider. See [BYOK](/docs/gateway-and-routing/bring-your-own-provider) |
+| `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `OPENCODE_ZEN_API_KEY` | Zero-config BYOK — auto-enables the provider. See [BYOK](/docs/models-and-routing/bring-your-own-provider) |
 | `BITROUTER_API_KEY` | Cloud API key; enables the managed `bitrouter` provider |
 | `BITROUTER_HOME` | Config discovery override (see above) |
 | `BITROUTER_OAUTH_AS` | Override the OAuth authorization server for self-hosted Cloud |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | Opt in to OTLP export. See [OpenTelemetry](/docs/observability/opentelemetry) |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | Opt in to OTLP export. See [OpenTelemetry](/docs/evals-and-tracing/opentelemetry) |
 
 ## Command map
 

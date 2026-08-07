@@ -1,23 +1,29 @@
 ---
 title: BitRouter vs OpenRouter
-description: OpenRouter is a closed-source cloud gateway with the widest model catalog; BitRouter is an Apache 2.0 binary you run anywhere, with ~6× less routing overhead and agent-native primitives built in. An honest side-by-side.
+description: Two takes on the same idea. OpenRouter went wide on the catalog; BitRouter went open source, took no cut, and taught the router to learn your workload. An honest side-by-side.
 ---
 
-Every LLM gateway makes the same headline promise: one API, many models, automatic failover. The differences that actually decide the choice show up underneath — how you deploy it, what it costs you in latency on every call, and whether it was built for chat apps or for agents.
+OpenRouter built this category. One key, hundreds of models, a catalog nobody has matched — if you've ever swapped providers without rewriting a line of code, that's largely their doing. We've learned plenty from them, and for a lot of teams they're still the right answer.
 
-## Deployment and overhead
+We're not trying to out-catalog them. BitRouter is a bet that the interesting problem has moved: not *how many models can you reach*, but *which one should this particular call go to* — and who owns the layer making that call. That's harder to build and slower to prove. It's the thing we want to build.
 
-OpenRouter is a closed-source cloud gateway with the widest model catalog on the market. That breadth is real, but it comes with a dependency: there is no self-host option, so your routing layer lives on someone else's infrastructure and adds their network hop to every call — roughly **~30ms of overhead per request**. BitRouter is the inverse trade: an Apache 2.0 binary you own and run inside your own VPC or CI, at **~5ms p50** — about 6× less overhead — with an open, PR-based provider registry instead of a curated one you can't extend.
+## Where we're genuinely different
 
-## What each one routes
+**You can run the whole thing yourself.** BitRouter is Apache 2.0, top to bottom — `bitrouter serve` and the router lives in your VPC, your CI, your laptop. OpenRouter is a closed-source cloud service: if it's down you're down, and you can't read the code that's choosing your models. Self-hosted, there's no platform fee at all.
 
-The sharper divide is what each one routes. OpenRouter routes model requests. BitRouter routes *agent runs*: identity per agent (KYA), an MCP/ACP tool gateway, injection checks, and autonomous stablecoin payments (x402) — none of which exist in OpenRouter. And where OpenRouter's routing is static, BitRouter wraps your loop in an [act → observe → evaluate → learn](/docs/overview/what-is-bitrouter) cycle that tightens routing every run.
+**We don't take a cut.** You pay the upstream provider rate and nothing else — 0% markup on every token. OpenRouter passes inference through too, but bills **5.5% to load credits** and **5% on BYOK traffic** past their free allowance. Bring your own keys to BitRouter and we charge you nothing for it.
+
+**The router learns your workload.** Every gateway can pick a model. BitRouter runs an [act → observe → evaluate → learn](/docs/overview/what-is-bitrouter) cycle over your actual runs, so routing tightens with every request instead of following a preset someone else tuned. That's the whole product — not a feature bolted onto a catalog.
 
 <CompareTable slug="bitrouter-vs-openrouter" />
 
-## OpenRouter is the right call when
+## When OpenRouter is the better call
 
-You need the widest possible model catalog with zero infrastructure to operate, you're building a consumer-facing app that doesn't need agent-native features, or your team already runs OpenRouter and has no migration bandwidth right now. Switching later is a one-URL, one-key change — the [migration guide](/docs/guides/migrate-from-openrouter) walks it in under five minutes.
+**You want everything.** We host roughly 50 models, deliberately — the SOTA tier for agentic and coding work. OpenRouter carries hundreds, including the long tail we don't. You can always [bring your own model](/docs/gateway-and-routing/bring-your-own-model), local or cloud, and we don't charge for it — where OpenRouter takes a cut of BYOK traffic.
+
+**You want free models.** OpenRouter has a free tier on some models; we don't. We're focused on making production agent workflows reliable and cheap, and free tiers come with the rate limits and quantization that production loops can't live with.
+
+**You need deeper enterprise tooling.** OpenRouter has more of it built out today. If there's a requirement we don't meet, [talk to us](/enterprise) — we'd rather hear the gap than guess at it.
 
 ## Next steps
 

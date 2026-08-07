@@ -11,12 +11,12 @@ LiteLLM is a Python SDK and self-hosted proxy for unifying access to 100+ LLM pr
 
 | | LiteLLM Proxy | BitRouter |
 |---|---|---|
-| **Runtime** | Python | Rust (single static binary) |
-| **Production deps** | Postgres + Redis + Docker/K8s | None |
-| **Deployment modes** | Self-hosted only | Local binary **or** hosted (`api.bitrouter.ai`) — same OpenAI-compatible endpoint |
+| **Runtime** | Python host with a Rust core for translation | Rust (single static binary) |
+| **Production deps** | Python runtime + web framework + Postgres/Redis | None |
+| **Deployment modes** | Self-hosted, or Enterprise cloud (quote-only) | Local binary **or** self-serve hosted (`api.bitrouter.ai`) — same OpenAI-compatible endpoint |
+| **Provider & endpoint coverage** | 100+ providers, plus embeddings / rerank / audio | SOTA-tier chat models; extend by PR |
 | **Agentic auth & payment** | None | x402 / MPP autonomous payment (cloud mode) |
-| **Design focus** | All-in-one LLM gateway: admin UI, virtual keys, budgets, with agent gateways added alongside | Agent-first proxy: MCP / ACP / Skills, agent firewall, agentic payment as the core surface |
-| **Agent protocol surface** | MCP, A2A, Skills, CLI — bolted onto the horizontal gateway | MCP, ACP, Skills, CLI — the product, not an add-on |
+| **Design focus** | All-in-one LLM gateway: admin UI, virtual keys, budgets, with agent gateways alongside | Agent-first proxy: MCP / ACP / Skills, agent firewall, agentic payment as the core surface |
 | **License** | MIT (SDK) / paid enterprise tier | Apache 2.0 throughout |
 
 ## Two things worth highlighting
@@ -29,7 +29,7 @@ This matters when your agent should *pay per request* without you provisioning k
 
 ### 2. Agent-native, not all-in-one
 
-LiteLLM has shipped MCP, A2A, Skills, and a CLI alongside its horizontal LLM gateway — virtual keys, team budgets, spend dashboards, admin UI all included. BitRouter inverts that: agent primitives *are* the product, the team-admin stack is intentionally minimal. What you get on the BitRouter surface:
+LiteLLM has shipped MCP, A2A, Skills, and a CLI alongside its horizontal LLM gateway — virtual keys, team budgets, spend dashboards, and an admin UI all included. BitRouter inverts the emphasis: agent primitives *are* the product, and the team-admin stack is intentionally minimal. What you get on the BitRouter surface:
 
 - [MCP gateway](/docs/gateway-and-routing/mcp-gateway) — proxy MCP servers so agents discover tools across hosts.
 - [ACP gateway](/docs/gateway-and-routing/acp-gateway) — first-class support for the Agent Client Protocol used by Claude Code, Codex, OpenCode, and others.
@@ -82,7 +82,7 @@ Fallbacks and provider selection that you'd configure with `litellm.Router` move
 
 ### From the LiteLLM Proxy
 
-The proxy migration replaces the Python process + Postgres + Redis with a single binary. Install and launch:
+The proxy migration replaces the Python host and its datastores with a single binary. Install and launch:
 
 <Tabs items={['Before (LiteLLM Proxy)', 'After (BitRouter local)']}>
 <Tab value="Before (LiteLLM Proxy)">
@@ -129,7 +129,11 @@ To skip the local proxy entirely, point clients at `https://api.bitrouter.ai/v1`
 
 ## What BitRouter intentionally doesn't ship
 
-To set expectations honestly: BitRouter does not ship a built-in admin UI for team/user budgets, virtual-key generation by API, or a spend analytics dashboard at parity with LiteLLM Enterprise. Per-workspace key scoping in cloud mode and env-var-scoped keys in local mode cover the common cases, but if your migration depends on per-user virtual keys with quotas enforced inside the proxy, plan for that gap or stay on LiteLLM for those workloads.
+To set expectations honestly, two gaps are worth checking before you start.
+
+**Non-chat endpoints.** LiteLLM covers embeddings, rerank, audio, and image endpoints across 100+ providers out of the box. BitRouter ships deep support for SOTA-tier chat models and extends by PR to the [provider registry](/docs/gateway-and-routing/provider-selection). If your workload leans on embeddings or rerank today, either add them to the registry first or keep those calls on LiteLLM.
+
+**Team administration.** BitRouter does not ship a built-in admin UI for team/user budgets, virtual-key generation by API, or a spend analytics dashboard at parity with LiteLLM Enterprise. Per-workspace key scoping in cloud mode and env-var-scoped keys in local mode cover the common cases, but if your migration depends on per-user virtual keys with quotas enforced inside the proxy, plan for that gap or stay on LiteLLM for those workloads.
 
 ## Migration checklist
 

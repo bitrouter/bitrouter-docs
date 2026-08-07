@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Ok, Err, Dim, Faint } from "../zed/terminal";
+import { Ok, Err, Warn, Dim, Faint } from "../zed/terminal";
 
 export type TermStep = { term: string; prog: () => unknown[] };
 export type CompareRow = { feat: string; them: string; br: string };
@@ -21,20 +21,21 @@ export const COMPARE_REGISTRY: Record<string, CompareRegistryEntry> = {
         term: "deploy · bitrouter",
         prog: () => [
           ["print", <span className="mut">LiteLLM production</span>, 240],
-          ["print", <span><Err>✗</Err> <Dim>postgres · redis · docker-compose · nginx</Dim></span>, 200],
+          ["print", <span><Warn>⚠</Warn> <Dim>python runtime · web framework · datastore</Dim></span>, 200],
           ["print", <span className="mut">BitRouter</span>, 300],
-          ["print", <span><Ok>✓</Ok> <span className="lbl">bitrouter serve</span> <Faint>· 1 binary · 0 deps</Faint></span>, 320],
-          ["print", <span><Ok>●</Ok> <Dim>ready in</Dim> <span className="lbl">340ms</span></span>, 600],
+          ["print", <span><Ok>✓</Ok> <span className="lbl">bitrouter serve</span> <Faint>· 1 static binary · 0 deps</Faint></span>, 320],
+          ["print", <span className="fnt">{"  ↓ no interpreter in the image"}</span>, 600],
           ["loop", 2000],
         ],
       },
       "02": {
-        term: "latency · 1k req/s",
+        term: "runtime · where the rust stops",
         prog: () => [
-          ["print", <span className="mut">tail latency · 1k concurrent req/s</span>, 240],
-          ["print", <span><span className="ind">LiteLLM </span> <Err>~85ms p99</Err> <Faint>Python GIL</Faint></span>, 240],
-          ["print", <span><span className="ind">BitRouter</span> <Ok>~12ms p99</Ok> <Faint>Rust async</Faint></span>, 320],
-          ["print", <span className="fnt">{"  ↓ no GIL · no thread contention"}</span>, 600],
+          ["print", <span className="mut">LiteLLM · rust core for translation</span>, 240],
+          ["print", <span><Warn>⚠</Warn> <Dim>python owns auth · routing · callbacks</Dim></span>, 200],
+          ["print", <span><Warn>⚠</Warn> <Dim>standalone rust server</Dim> <Faint>beta · fewer routes</Faint></span>, 320],
+          ["print", <span className="mut">BitRouter · rust end to end</span>, 240],
+          ["print", <span><Ok>✓</Ok> <Dim>one binary</Dim> <Faint>· nothing in a sidecar</Faint></span>, 600],
           ["loop", 2000],
         ],
       },
@@ -43,31 +44,25 @@ export const COMPARE_REGISTRY: Record<string, CompareRegistryEntry> = {
         prog: () => [
           ["print", <span><Dim>configuring policy</Dim> <span className="lbl">default</span></span>, 320],
           ["print", <span><Ok>✓</Ok> <Dim>MCP gateway</Dim> <Faint>active</Faint></span>, 180],
+          ["print", <span><Ok>✓</Ok> <Dim>ACP gateway</Dim> <Faint>active</Faint></span>, 180],
           ["print", <span><Ok>✓</Ok> <Dim>KYA identity</Dim> <Faint>active</Faint></span>, 180],
-          ["print", <span><Ok>✓</Ok> <Dim>injection detect</Dim> <Faint>active</Faint></span>, 180],
           ["print", <span><Ok>✓</Ok> <Dim>x402 payments</Dim> <Faint>active</Faint></span>, 420],
-          ["print", <span><Err>LiteLLM:</Err> <Dim>none of the above</Dim></span>, 600],
+          ["print", <span><Warn>LiteLLM:</Warn> <Dim>MCP only</Dim></span>, 600],
           ["loop", 2000],
         ],
       },
     },
     rows: [
-      { feat: "Open source",                        them: "✓ MIT",                       br: "✓ Apache 2.0" },
-      { feat: "Single binary (no dependencies)",    them: "✗ Postgres + Redis + Docker",  br: "✓" },
-      { feat: "Agent gateway (MCP / ACP / Skills)", them: "✗",                            br: "✓ built-in" },
-      { feat: "Autonomous agent payments (x402)",   them: "✗",                            br: "✓" },
-      { feat: "KYA agent identity",                 them: "✗",                            br: "✓" },
-      { feat: "Prompt injection detection",         them: "✗",                            br: "✓" },
-      { feat: "Multi-provider failover mid-run",    them: "✗ manual config",              br: "✓ automatic" },
-      { feat: "Routing overhead",                   them: "✗ ~20ms+ (asyncio overhead)",   br: "✓ ~5ms p50" },
-      { feat: "Per-run cost attribution",           them: "✗",                            br: "✓" },
-      { feat: "BYOK support",                       them: "✓",                            br: "✓" },
-      { feat: "Platform fee (hosted option)",       them: "— self-host only",             br: "✓ 2% stablecoin / 5% card" },
+      { feat: "Provider & endpoint coverage",       them: "✓ 100+ providers, embeddings / rerank / audio", br: "⚠ SOTA-tier chat, extend by PR" },
+      { feat: "What you deploy",                    them: "⚠ Python runtime + web framework + database",   br: "✓ one static binary, no deps" },
+      { feat: "Agent gateway (MCP / ACP / Skills)", them: "⚠ MCP only",                                    br: "✓ built-in" },
+      { feat: "Routing that learns from outcomes",  them: "✗ static config",                               br: "✓ act → observe → evaluate → learn" },
+      { feat: "Hosted option",                      them: "⚠ Enterprise, quote-only",                      br: "✓ self-serve, no sales call" },
     ],
     tradeoffs: [
-      "You want a Python-native library embedded directly in your application code with SDK-level call hooks",
-      "Your stack is pure Python and you need framework callbacks (async generators, middleware)",
-      "You're using LiteLLM's extensive provider mapping for non-standard model endpoints",
+      "You need breadth on day one — 100+ providers plus embeddings, rerank, and audio endpoints",
+      "You want the library, not the proxy: in-process Python calls with SDK-level hooks and middleware",
+      "You need enterprise checkboxes shipped today — SSO/SAML, audit logs, RBAC, compliance certifications",
     ],
   },
 
@@ -119,7 +114,7 @@ export const COMPARE_REGISTRY: Record<string, CompareRegistryEntry> = {
       { feat: "Routing overhead",                   them: "✗ ~30ms",                  br: "✓ ~5ms p50" },
       { feat: "Per-run cost attribution",           them: "✗",                        br: "✓" },
       { feat: "BYOK support",                       them: "✓",                        br: "✓" },
-      { feat: "Platform fee",                       them: "✗ 5.5% card only",         br: "✓ 2% stablecoin / 5% card" },
+      { feat: "Platform fee",                       them: "✗ 5.5% card only",         br: "✓ 0% markup" },
     ],
     tradeoffs: [
       "You need the widest possible model catalog and don't want to operate any infrastructure",
@@ -179,7 +174,7 @@ export const COMPARE_REGISTRY: Record<string, CompareRegistryEntry> = {
       { feat: "Routing overhead",                   them: "⚠ ~15ms p50",                br: "✓ ~5ms p50" },
       { feat: "Per-run cost attribution",           them: "✓",                          br: "✓" },
       { feat: "BYOK support",                       them: "✓",                          br: "✓" },
-      { feat: "Platform fee",                       them: "— varies by plan",           br: "✓ 2% stablecoin / 5% card" },
+      { feat: "Platform fee",                       them: "— varies by plan",           br: "✓ 0% markup" },
     ],
     tradeoffs: [
       "Your team already relies on Portkey's prompt management, versioning, and caching workflows",

@@ -1,23 +1,43 @@
 ---
 title: BitRouter vs LiteLLM
-description: LiteLLM is a Python-native library that lives inside your app; BitRouter is a single Rust binary with zero dependencies and ~7× better tail latency under load. An honest side-by-side.
+description: LiteLLM is the all-in-one AI gateway with the widest provider coverage in the category. BitRouter is a focused, extensible one built around a loop that learns. An honest side-by-side.
 ---
 
-LiteLLM is the popular MIT-licensed, Python-native option — and if you want a library that lives *inside* your application with SDK-level call hooks, that's exactly its strength. The differences show up in operations and latency.
+LiteLLM is the default choice for good reason. It's MIT-licensed, it speaks to 100+ providers, and whatever gateway feature you're looking for, it probably already has a config key for it. We're not going to pretend otherwise. If you want a Python library that lives *inside* your process — `from litellm import completion`, no proxy at all — BitRouter has no answer for that, and it isn't close.
 
-## Operations and latency
+So the useful question isn't which is better. It's whether you want a box with everything in it, or a small thing that gets better at its job.
 
-A production LiteLLM deployment typically means Postgres, Redis, and Docker Compose to run the proxy, and its Python runtime carries the GIL: under concurrent load, tail latency climbs to **~85ms p99**. BitRouter is a single binary with zero dependencies (`bitrouter serve`, ready in ~340ms) and a Rust async core that holds **~12ms p99** at 1k req/s.
+## All-in-one proxy vs. a router that learns
 
-## What each one routes
+LiteLLM's bet is coverage: every provider, every gateway feature, in one proxy you configure. It works. Ours is the opposite, because we don't think the interesting problem is feature count — it's that routers don't learn. Every gateway on the market forwards your thousandth call exactly the way it forwarded your first. BitRouter wraps your agent loop in a second one — [act → observe → evaluate → learn](/docs/overview/what-is-bitrouter) — and folds what it observes back into the routing policy. Cheaper paths that still reached the goal get promoted; ones that didn't get escalated back.
 
-On agent features the gap is structural: an MCP/ACP gateway, KYA identity, injection detection, and autonomous x402 payments are built into BitRouter and absent from LiteLLM. LiteLLM routes model calls; BitRouter routes *agent runs* — and wraps them in an [act → observe → evaluate → learn](/docs/overview/what-is-bitrouter) loop that tightens routing every run, instead of forwarding to a static route.
+"Minimal" here means minimal to *operate*, not minimal in ambition. An MCP gateway, an ACP gateway for sub-agents, KYA identity, and x402 payments are all in the box — but they serve that one loop, and it's still one binary and one `bitrouter.yaml`. Anything we don't ship, you add: the [provider registry](/docs/gateway-and-routing/provider-selection) takes a YAML file and a PR.
 
 <CompareTable slug="bitrouter-vs-litellm" />
 
-## LiteLLM is the right call when
+## Self-serve cloud vs. enterprise-only
 
-You want a Python-native library embedded directly in your app code, your stack is pure Python and you rely on framework callbacks (async generators, middleware), or you lean on LiteLLM's extensive provider mapping for non-standard model endpoints. If you'd rather move the routing out of your process, the [migration guide](/docs/guides/migrate-from-litellm) covers it.
+LiteLLM's hosted offering is an enterprise product: quote-only, sized to your request volume, priced through a sales conversation. SSO, audit logs, RBAC, and support SLAs live behind it. If you're a two-person team, the only real option is self-hosting it yourself.
+
+[BitRouter Cloud](/docs/overview/quickstart) is self-serve for anyone with a credit card — no call, no minimum, no seat count, and **0% markup** on what providers charge. The Core stays Apache 2.0 and free to self-host forever; bring your own keys or run a local model and you owe us nothing.
+
+## Rust-accelerated vs. Rust-native
+
+A correction to the record first: LiteLLM is no longer a Python-performance story. They've moved their translation hot path to a Rust core and publish benchmarks showing **sub-millisecond** added overhead. That's a real result, and we'd rather say so than pretend it isn't happening.
+
+What remains is where the Rust stops. In LiteLLM's recommended mode it's a bridge inside the Python wheel — Python still owns auth, routing, callbacks, and spend tracking, and you still deploy a Python runtime, a web framework, and a database. The standalone Rust server is beta and covers fewer routes. Their roadmap puts the full transition at the end of 2026, and even that endgame runs Python in a sidecar for plugins, guardrails, and SSO by design. BitRouter is one statically linked binary: `bitrouter serve`, cold-starting in well under a second and holding tens of megabytes resident, with no interpreter and no web framework in the image.
+
+That gap matters less for latency than you'd think, and more for what you inherit. A Python proxy inherits its framework's vulnerabilities — 2026 saw a critical unauthenticated RCE in LiteLLM built by chaining a command-injection bug in its MCP endpoints with a host-header bypass in an upstream Python web framework. Both were disclosed and patched properly, and we're not claiming immunity: our MCP gateway executes tools too, and no language prevents a design bug. We're claiming a smaller blast radius — no interpreter loading code at runtime, no transitive framework chain to inherit a bypass from, and a lot less of it to audit.
+
+## Use LiteLLM when
+
+**You need breadth on day one.** LiteLLM covers 100+ providers plus embeddings, rerank, audio, and image endpoints out of the box. BitRouter deliberately ships deep support for SOTA-tier chat models and extends by PR — if you need Bedrock's fourteenth variant or a rerank endpoint this afternoon, that's LiteLLM.
+
+**You want the library, not the proxy.** LiteLLM's real superpower is being importable — in-process calls with SDK-level hooks, async generators, and framework middleware. If your stack is pure Python and you want the gateway inside your app rather than next to it, use LiteLLM.
+
+**You need enterprise checkboxes today.** SSO/SAML, audit logs, RBAC, compliance certifications, support SLAs — LiteLLM Enterprise has them shipped and we're still building ours. If you like where we're going and have enterprise requirements, [talk to us](https://cal.com/bitrouter/founder-call) — that roadmap is very much open to being shaped.
+
+Already running LiteLLM and want to try the other shape? The [migration guide](/docs/guides/migrate-from-litellm) keeps your provider mappings.
 
 ## Next steps
 

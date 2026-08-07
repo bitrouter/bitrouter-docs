@@ -120,8 +120,10 @@ pairs.push(
   // reference wildcards (api-reference unwrapped into /docs/reference)
   ["/docs/api-reference/:slug*", "/docs/reference/:slug*"],
   ["/docs/reference/api-reference/:slug*", "/docs/reference/:slug*"],
-  ["/docs/changelog/:slug*", "/docs/reference/changelog/:slug*"],
-  ["/docs/changelog", "/docs/reference/changelog"],
+  // The changelog is a top-level route (app/changelog), not a docs section —
+  // /docs/reference/changelog has never existed.
+  ["/docs/changelog/:slug*", "/changelog/:slug*"],
+  ["/docs/changelog", "/changelog"],
   // moved/removed pages (2026-06 refactor) → live destinations
   ["/docs/features/observability", "/docs/evals-and-tracing/opentelemetry"],
   ["/docs/features/tracing", "/docs/evals-and-tracing/tracing"],
@@ -137,7 +139,9 @@ pairs.push(
   // integrations + cookbook history
   ["/docs/integrations/harnesses/:slug*", "/docs/integrations/:slug*"],
   ["/docs/cookbook/integration/:slug*", "/docs/integrations/:slug*"],
-  ["/docs/cookbook/local-models", "/docs/integrations/local-models"],
+  // the local-models page was unpublished; the model catalog absorbed it
+  ["/docs/cookbook/local-models", "/docs/integrations/models"],
+  ["/docs/integrations/local-models", "/docs/integrations/models"],
   ["/docs/cookbook", "/docs/integrations"],
   // migration history → guides
   ["/docs/integrations/migrate/litellm", "/docs/guides/migrate-from-litellm"],

@@ -14,6 +14,10 @@ An agent's callable tools are [MCP](https://modelcontextprotocol.io) servers. Ea
 
 BitRouter's **MCP gateway** sits in front of them and proxies them. Your agent connects to one BitRouter endpoint; behind it, the gateway forwards **tool discovery** and **tool calls** to the right upstream host and relays the responses back. One connection, many tool servers — mirroring how BitRouter treats models.
 
+<Callout type="info">
+Not to be confused with the [BitRouter MCP server](/docs/usage/mcp), which points the other way: it exposes BitRouter *itself* as a handful of tools (`complete`, `list_models`, `status`) for an MCP client to call. The gateway here puts BitRouter *in front of* everyone else's MCP servers.
+</Callout>
+
 Routing tools through one gateway buys you three things you'd otherwise rebuild per agent:
 
 - **Uniform auth** — the agent authenticates once to BitRouter, instead of carrying credentials for every upstream server.
@@ -34,5 +38,5 @@ The second capability an agent acquires is **know-how**. **Agent Skills** are dr
 
 ## Learn how to
 
-- [Server tools](/docs/gateway-and-routing/server-tools) — let BitRouter run the tool-calling loop for you, server-side.
-- [Toolsets](/docs/gateway-and-routing/server-tools#how-tools-are-bundled-toolsets) — how the tools advertised on a request are bundled and namespaced.
+- [Server tools](/docs/mcp-and-tool-calling/server-tools) — let BitRouter run the tool-calling loop for you, server-side.
+- [Toolsets](/docs/mcp-and-tool-calling/server-tools#how-tools-are-bundled-toolsets) — how the tools advertised on a request are bundled and namespaced.

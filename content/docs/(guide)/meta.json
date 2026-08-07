@@ -6,7 +6,8 @@
   "pages": [
     "overview",
     "usage",
-    "gateway-and-routing",
-    "observability"
+    "models-and-routing",
+    "mcp-and-tool-calling",
+    "evals-and-tracing"
   ]
 }

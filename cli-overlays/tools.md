@@ -2,7 +2,7 @@
 title: Tools, agents, and ACP
 ---
 
-The command surfaces behind the [Tools](/docs/gateway-and-routing/mcp-gateway) and [Agents](/docs/gateway-and-routing/acp-gateway) gateways: `tools` introspects the MCP upstreams declared under `mcp_servers`, `agents` manages the ACP agent catalog, and `acp` runs per-session headless agent sessions.
+The command surfaces behind the [Tools](/docs/mcp-and-tool-calling/mcp-gateway) and [Agents](/docs/mcp-and-tool-calling/acp-gateway) gateways: `tools` introspects the MCP upstreams declared under `mcp_servers`, `agents` manages the ACP agent catalog, and `acp` runs per-session headless agent sessions.
 
 ## @tools discover
 

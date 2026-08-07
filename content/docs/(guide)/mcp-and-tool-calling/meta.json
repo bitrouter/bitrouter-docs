@@ -1,0 +1,14 @@
+{
+  "title": "MCP & Tool Calling",
+  "icon": "Wrench",
+  "collapsible": false,
+  "pages": [
+    "mcp-gateway",
+    "server-tools",
+    "advisor",
+    "subagent",
+    "fusion",
+    "websearch",
+    "web-fetch"
+  ]
+}

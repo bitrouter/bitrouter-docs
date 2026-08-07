@@ -3,7 +3,7 @@ title: Tracing
 description: The hosted request view on BitRouter Cloud — spend, tokens, and a per-request log traced server-side, with no collector to run. Receipts, never content.
 ---
 
-The open-source [OpenTelemetry](/docs/observability/opentelemetry) export runs on your own backend. **BitRouter Cloud** gives you the hosted alternative: every `/v1` request is traced into an **Activity** view server-side — no collector, no warehouse, nothing to run. Content (prompts and responses) is never stored.
+The open-source [OpenTelemetry](/docs/evals-and-tracing/opentelemetry) export runs on your own backend. **BitRouter Cloud** gives you the hosted alternative: every `/v1` request is traced into an **Activity** view server-side — no collector, no warehouse, nothing to run. Content (prompts and responses) is never stored.
 
 ## The Activity dashboard
 
@@ -49,7 +49,7 @@ These are the same `bitrouter cloud usage` and `bitrouter cloud requests` comman
 
 ## Deep traces
 
-Cloud stores per-request **receipts**, not OpenTelemetry span waterfalls. When you need the full span tree — the ingress span, the routing decision, and a `CLIENT` span per upstream attempt — that lives in **your own OTLP collector**. Wire it up once with the open-source [OpenTelemetry](/docs/observability/opentelemetry) export and the Activity view links out to it.
+Cloud stores per-request **receipts**, not OpenTelemetry span waterfalls. When you need the full span tree — the ingress span, the routing decision, and a `CLIENT` span per upstream attempt — that lives in **your own OTLP collector**. Wire it up once with the open-source [OpenTelemetry](/docs/evals-and-tracing/opentelemetry) export and the Activity view links out to it.
 
 ## Per-namespace usage from the CLI
 
@@ -66,7 +66,7 @@ An agent or CI job using a namespace-scoped credential can only read usage for i
 ## Next steps
 
 <Cards>
-  <Card title="OpenTelemetry" href="/docs/observability/opentelemetry" description="Self-run OTLP export — the span model, metrics, and backend recipes." />
-  <Card title="Evaluation" href="/docs/observability/evaluation" description="The outcome signal and cost metering behind these records." />
+  <Card title="OpenTelemetry" href="/docs/evals-and-tracing/opentelemetry" description="Self-run OTLP export — the span model, metrics, and backend recipes." />
+  <Card title="Evaluation" href="/docs/evals-and-tracing/evaluation" description="The outcome signal and cost metering behind these records." />
   <Card title="API Reference" href="/docs/reference" description="The usage and requests management endpoints." />
 </Cards>

@@ -3,7 +3,7 @@ title: Overview
 description: Point a coding agent or runtime at BitRouter — Claude Code, Codex, OpenCode, Hermes, OpenClaw, Pi — and run it on any model in the registry.
 ---
 
-A **harness** is the agent runtime that drives the loop — the CLI or service that reads your prompt, calls tools, and edits files. Each one already speaks some model API; the move is always the same: point it at BitRouter's endpoint (local proxy at `http://127.0.0.1:4356`, or Cloud at `https://api.bitrouter.ai`) instead of the vendor's, and address models by their `provider/model` id. From there the same harness can run on Anthropic, OpenAI, Google, or an open model — with [provider selection](/docs/gateway-and-routing/provider-selection) and [fallback](/docs/gateway-and-routing/model-fallback) underneath.
+A **harness** is the agent runtime that drives the loop — the CLI or service that reads your prompt, calls tools, and edits files. Each one already speaks some model API; the move is always the same: point it at BitRouter's endpoint (local proxy at `http://127.0.0.1:4356`, or Cloud at `https://api.bitrouter.ai`) instead of the vendor's, and address models by their `provider/model` id. From there the same harness can run on Anthropic, OpenAI, Google, or an open model — with [provider selection](/docs/models-and-routing/provider-selection) and [fallback](/docs/models-and-routing/model-fallback) underneath.
 
 <Cards>
   <Card title="Claude Code" href="/docs/integrations/claude-code" description="Anthropic Messages via ANTHROPIC_BASE_URL" />

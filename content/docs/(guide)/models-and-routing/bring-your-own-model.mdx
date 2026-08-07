@@ -5,7 +5,7 @@ description: Put a model you serve yourself — a local runner, a fine-tune, a p
 
 Bring your own model means the weights are yours: a model running on your laptop, a fine-tune you serve on your own GPUs, or an inference endpoint inside your own network. BitRouter fronts it as one more provider, so agents address it by id and never learn the difference between your GPU and a hosted API.
 
-This is the mirror image of [bring your own provider](/docs/gateway-and-routing/bring-your-own-provider): there, someone else's model on your account; here, your model on whatever hardware you like.
+This is the mirror image of [bring your own provider](/docs/models-and-routing/bring-your-own-provider): there, someone else's model on your account; here, your model on whatever hardware you like.
 
 ## The shape: one provider block
 
@@ -76,9 +76,9 @@ The provider-qualified form (`my-cluster:<model>`) pins the request to that exac
 
 Once declared, your endpoint is eligible for the rest of the gateway:
 
-- [**Model fallbacks**](/docs/gateway-and-routing/model-fallback) — put your model first in the `models` list and a hosted model after it. Requests run on your hardware and only spill over when it errors or is saturated.
-- [**Virtual models**](/docs/gateway-and-routing/virtual-model) — give that pairing a single name. Self-hosted, the `models` section of `bitrouter.yaml` does it with a `priority` strategy over an ordered `endpoints` list; on Cloud, a saved `@name`.
-- [**Provider selection**](/docs/gateway-and-routing/provider-selection) and [**model variants**](/docs/gateway-and-routing/model-variants) rank *among* the providers serving a model, so they matter here once your endpoint is one of several serving the same id — a model only your cluster serves has nothing to re-rank.
+- [**Model fallbacks**](/docs/models-and-routing/model-fallback) — put your model first in the `models` list and a hosted model after it. Requests run on your hardware and only spill over when it errors or is saturated.
+- [**Virtual models**](/docs/models-and-routing/virtual-model) — give that pairing a single name. Self-hosted, the `models` section of `bitrouter.yaml` does it with a `priority` strategy over an ordered `endpoints` list; on Cloud, a saved `@name`.
+- [**Provider selection**](/docs/models-and-routing/provider-selection) and [**model variants**](/docs/models-and-routing/model-variants) rank *among* the providers serving a model, so they matter here once your endpoint is one of several serving the same id — a model only your cluster serves has nothing to re-rank.
 
 ## Compatibility switches
 

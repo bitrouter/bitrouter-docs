@@ -3,9 +3,9 @@ title: Web fetch
 description: A built-in web_fetch server tool — give any model routed through BitRouter a BYOK URL-content fetcher, served by an extraction backend you bring keys for.
 ---
 
-`web_fetch` is a built-in [server tool](/docs/gateway-and-routing/server-tools): BitRouter runs the fetch itself, inside the tool-calling loop, and feeds the extracted page back to the model. So **any model routed through BitRouter gains a URL reader** — hand it a link and it gets clean, normalized page content — and the extraction engine behind it is one you bring a key for.
+`web_fetch` is a built-in [server tool](/docs/mcp-and-tool-calling/server-tools): BitRouter runs the fetch itself, inside the tool-calling loop, and feeds the extracted page back to the model. So **any model routed through BitRouter gains a URL reader** — hand it a link and it gets clean, normalized page content — and the extraction engine behind it is one you bring a key for.
 
-It's the same family as Advisor, SubAgent, Fusion, and [Web search](/docs/gateway-and-routing/websearch): off by default, enabled in config, and advertised to the model only on requests that declare it.
+It's the same family as Advisor, SubAgent, Fusion, and [Web search](/docs/mcp-and-tool-calling/websearch): off by default, enabled in config, and advertised to the model only on requests that declare it.
 
 ## How it works
 
@@ -32,7 +32,7 @@ From there the model calls `web_fetch` with a `url`; BitRouter fetches it throug
 }
 ```
 
-`title` and `published` are optional — no engine fills them all, so the contract is additive. The loop bounds (`max_iterations`, `tool_timeout`, …) and approval policy from [server tools](/docs/gateway-and-routing/server-tools#how-the-loop-runs) apply unchanged.
+`title` and `published` are optional — no engine fills them all, so the contract is additive. The loop bounds (`max_iterations`, `tool_timeout`, …) and approval policy from [server tools](/docs/mcp-and-tool-calling/server-tools#how-the-loop-runs) apply unchanged.
 
 ## Enabling it
 
@@ -77,6 +77,6 @@ Each backend calls the engine's REST API directly and takes an optional `api_key
 
 ## Learn more
 
-- [Server tools](/docs/gateway-and-routing/server-tools) — the loop that runs `web_fetch`, plus Advisor, SubAgent, and Fusion.
-- [Web search](/docs/gateway-and-routing/websearch) — the sibling built-in that searches instead of fetching.
-- [OpenTelemetry](/docs/observability/opentelemetry) — every nested fetch call shows up in your traces like any other.
+- [Server tools](/docs/mcp-and-tool-calling/server-tools) — the loop that runs `web_fetch`, plus Advisor, SubAgent, and Fusion.
+- [Web search](/docs/mcp-and-tool-calling/websearch) — the sibling built-in that searches instead of fetching.
+- [OpenTelemetry](/docs/evals-and-tracing/opentelemetry) — every nested fetch call shows up in your traces like any other.

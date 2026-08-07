@@ -11,7 +11,7 @@ So the useful question isn't which is better. It's whether you want a box with e
 
 LiteLLM's bet is coverage: every provider, every gateway feature, in one proxy you configure. It works. Ours is the opposite, because we don't think the interesting problem is feature count — it's that routers don't learn. Every gateway on the market forwards your thousandth call exactly the way it forwarded your first. BitRouter wraps your agent loop in a second one — [act → observe → evaluate → learn](/docs/overview/what-is-bitrouter) — and folds what it observes back into the routing policy. Cheaper paths that still reached the goal get promoted; ones that didn't get escalated back.
 
-"Minimal" here means minimal to *operate*, not minimal in ambition. An MCP gateway, an ACP gateway for sub-agents, KYA identity, and x402 payments are all in the box — but they serve that one loop, and it's still one binary and one `bitrouter.yaml`. Anything we don't ship, you add: the [provider registry](/docs/gateway-and-routing/provider-selection) takes a YAML file and a PR.
+"Minimal" here means minimal to *operate*, not minimal in ambition. An MCP gateway, an ACP gateway for sub-agents, KYA identity, and x402 payments are all in the box — but they serve that one loop, and it's still one binary and one `bitrouter.yaml`. Anything we don't ship, you add: the [provider registry](/docs/models-and-routing/provider-selection) takes a YAML file and a PR.
 
 <CompareTable slug="bitrouter-vs-litellm" />
 
@@ -44,5 +44,5 @@ Already running LiteLLM and want to try the other shape? The [migration guide](/
 <Cards>
   <Card title="Migrate from LiteLLM" href="/docs/guides/migrate-from-litellm" description="Move routing out of your process, keep your provider mappings." />
   <Card title="BitRouter vs OpenRouter" href="/docs/overview/bitrouter-vs-openrouter" description="The cloud-catalog alternative, side by side." />
-  <Card title="Provider selection" href="/docs/gateway-and-routing/provider-selection" description="Get adaptive routing running on your own keys." />
+  <Card title="Provider selection" href="/docs/models-and-routing/provider-selection" description="Get adaptive routing running on your own keys." />
 </Cards>

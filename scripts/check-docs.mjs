@@ -27,8 +27,9 @@ import { COMPONENT_WHITELIST } from "../lib/docs-sync/constants.mjs";
 const SECTIONS = [
   "(guide)/overview",
   "(guide)/usage",
-  "(guide)/gateway-and-routing",
-  "(guide)/observability",
+  "(guide)/models-and-routing",
+  "(guide)/mcp-and-tool-calling",
+  "(guide)/evals-and-tracing",
   "integrations",
   "guides",
 ];

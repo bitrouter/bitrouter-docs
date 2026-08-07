@@ -81,20 +81,20 @@ Every block is optional and defaults to something sensible. An empty file is val
 
 | Block | What it configures |
 | --- | --- |
-| `providers` | Upstream providers and their keys. See [BYOK](/docs/gateway-and-routing/bring-your-own-provider) |
-| `presets` | `@name` definitions — model substitution, system prompt, params, routing. See [Virtual models](/docs/gateway-and-routing/virtual-model) |
-| `variants` | `:name` definitions — routing modifiers only. See [Model variants](/docs/gateway-and-routing/model-variants) |
-| `models` | Named models over an ordered endpoint chain. See [Model fallback](/docs/gateway-and-routing/model-fallback) |
+| `providers` | Upstream providers and their keys. See [BYOK](/docs/models-and-routing/bring-your-own-provider) |
+| `presets` | `@name` definitions — model substitution, system prompt, params, routing. See [Virtual models](/docs/models-and-routing/virtual-model) |
+| `variants` | `:name` definitions — routing modifiers only. See [Model variants](/docs/models-and-routing/model-variants) |
+| `models` | Named models over an ordered endpoint chain. See [Model fallback](/docs/models-and-routing/model-fallback) |
 | `policy_table` | Tiered per-request routing by request shape. See [The policy table](#the-policy-table) |
 | `policy` | Where the policy lock lives and whether it may self-update. See [The adaptive loop](#the-adaptive-loop) |
 | `registry` | Public-registry integration and the provider-class priority ladder |
 | `server` | Listen address and HTTP server settings |
 | `upstream` | Outbound HTTP client settings (timeouts, retries) |
 | `database` | Database connection |
-| `mcp` | MCP gateway aggregation and caching. See [MCP gateway](/docs/gateway-and-routing/mcp-gateway) |
+| `mcp` | MCP gateway aggregation and caching. See [MCP gateway](/docs/mcp-and-tool-calling/mcp-gateway) |
 | `mcp_servers` | Upstream MCP servers, keyed by id |
-| `server_tools` | MCP server ids whose tools BitRouter injects and executes itself. See [Server tools](/docs/gateway-and-routing/server-tools) |
-| `agents` | Upstream ACP agents. See [ACP gateway](/docs/gateway-and-routing/acp-gateway) |
+| `server_tools` | MCP server ids whose tools BitRouter injects and executes itself. See [Server tools](/docs/mcp-and-tool-calling/server-tools) |
+| `agents` | Upstream ACP agents. See [ACP gateway](/docs/mcp-and-tool-calling/acp-gateway) |
 | `plugins` | Plugin config, keyed by plugin or bundle id |
 | `worktrees` | Worktree isolation for orchestrator-spawned subagents |
 | `tui` | Terminal console settings |
@@ -134,7 +134,7 @@ A request for `@fast` gets the substituted model and the overrides; `@careful:ch
 **Presets work self-hosted, not just on Cloud.** The `@name` grammar is often described as a Cloud namespace feature, but the local binary resolves `@name` straight from this `presets:` block. `bitrouter route "@fast"` shows you the resolution without sending a request.
 </Callout>
 
-Semantics — precedence, the `@name/base-model` form, what happens on an unknown name — are covered on [Virtual models](/docs/gateway-and-routing/virtual-model) and [Model variants](/docs/gateway-and-routing/model-variants). This page only shows the file.
+Semantics — precedence, the `@name/base-model` form, what happens on an unknown name — are covered on [Virtual models](/docs/models-and-routing/virtual-model) and [Model variants](/docs/models-and-routing/model-variants). This page only shows the file.
 
 ### The policy table
 
@@ -258,7 +258,7 @@ If you want unset variables to be fatal in a deploy job rather than a PR check, 
 ## See also
 
 - [CLI reference](/docs/usage/cli) — `config validate`, `route`, `policy`
-- [Virtual models](/docs/gateway-and-routing/virtual-model) and [Model variants](/docs/gateway-and-routing/model-variants) — what `presets:` and `variants:` mean
-- [Model fallback](/docs/gateway-and-routing/model-fallback) — what `models:` means
-- [BYOK](/docs/gateway-and-routing/bring-your-own-provider) — the `providers:` block
+- [Virtual models](/docs/models-and-routing/virtual-model) and [Model variants](/docs/models-and-routing/model-variants) — what `presets:` and `variants:` mean
+- [Model fallback](/docs/models-and-routing/model-fallback) — what `models:` means
+- [BYOK](/docs/models-and-routing/bring-your-own-provider) — the `providers:` block
 - [Self-hosting](/docs/guides/self-host) — running the binary you just configured

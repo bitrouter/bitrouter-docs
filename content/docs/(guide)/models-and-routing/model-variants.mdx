@@ -16,7 +16,7 @@ The suffix is part of the `model` string itself, so it needs no body fields and 
 | `openai/gpt-4o:latency` | Lowest p50 time-to-first-token. |
 | `openai/gpt-4o:throughput` | Highest output tokens/sec. |
 
-These are the same three axes described in [Provider Selection](/docs/gateway-and-routing/provider-selection), exposed as an inline shorthand. A bare model id behaves exactly like `:balanced`.
+These are the same three axes described in [Provider Selection](/docs/models-and-routing/provider-selection), exposed as an inline shorthand. A bare model id behaves exactly like `:balanced`.
 
 ## Quick example
 
@@ -46,8 +46,8 @@ The suffix behaves identically on `/v1/messages` (Anthropic) and `/v1beta/models
 
 The profile affects provider *ranking* only. Everything else keys off the base model id:
 
-- [Guardrail](/docs/gateway-and-routing/guardrails) model allowlists/denylists and BYOK rules judge `anthropic/claude-sonnet-4.6:cost` exactly as `anthropic/claude-sonnet-4.6` — a profile can never widen or bypass a policy.
-- [BYOK](/docs/gateway-and-routing/bring-your-own-provider) providers still rank ahead of platform providers; the profile orders providers *within* each tier.
+- [Guardrail](/docs/models-and-routing/guardrails) model allowlists/denylists and BYOK rules judge `anthropic/claude-sonnet-4.6:cost` exactly as `anthropic/claude-sonnet-4.6` — a profile can never widen or bypass a policy.
+- [BYOK](/docs/models-and-routing/bring-your-own-provider) providers still rank ahead of platform providers; the profile orders providers *within* each tier.
 - Billing is unchanged — you pay the selected provider's rate for the base model.
 
 ## Seeing which profile a request used
@@ -56,4 +56,4 @@ The selected profile is recorded on every request and returned in your usage his
 
 ## Relationship to `provider.sort`
 
-The model-id suffix is the supported way to choose a routing profile today. A request-body equivalent — `provider.sort` — is described in [Provider Selection](/docs/gateway-and-routing/provider-selection) but is **not yet active**; until it ships, use the suffix.
+The model-id suffix is the supported way to choose a routing profile today. A request-body equivalent — `provider.sort` — is described in [Provider Selection](/docs/models-and-routing/provider-selection) but is **not yet active**; until it ships, use the suffix.

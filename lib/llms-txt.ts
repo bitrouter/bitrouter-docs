@@ -29,21 +29,32 @@ References:
 - [Agent Skills](https://github.com/bitrouter/agent-skills): Drop-in skills that teach an agent to install and use BitRouter
 - [BitRouter CLI](https://github.com/bitrouter/bitrouter): \`cargo install bitrouter\` — the Rust binary, setup wizard, and TUI dashboard
 
-## Gateway & Routing
+## Models & Routing
 
-- [Model Fallbacks](${BASE_URL}/docs/gateway-and-routing/model-fallback): Automatic fallback across models when an upstream fails
-- [Provider Selection](${BASE_URL}/docs/gateway-and-routing/provider-selection): How models resolve to upstream providers, with cost and performance policies
-- [Virtual Model](${BASE_URL}/docs/gateway-and-routing/virtual-model): Define a named model of your own — base model, prompt, params, and routing rules behind \`@name\`
-- [Model Variants](${BASE_URL}/docs/gateway-and-routing/model-variants): Append \`:cost\`, \`:latency\`, or \`:throughput\` to a model id to pick a ranking axis inline
-- [Bring Your Own Model](${BASE_URL}/docs/gateway-and-routing/bring-your-own-model): Put a model you serve yourself behind BitRouter and route to it like any hosted model
-- [Bring Your Own Provider](${BASE_URL}/docs/gateway-and-routing/bring-your-own-provider): Route through your own provider account at list price, with no rev share or per-token fee
+- [Model Fallbacks](${BASE_URL}/docs/models-and-routing/model-fallback): Automatic fallback across models when an upstream fails
+- [Provider Selection](${BASE_URL}/docs/models-and-routing/provider-selection): How models resolve to upstream providers, with cost and performance policies
+- [Virtual Model](${BASE_URL}/docs/models-and-routing/virtual-model): Define a named model of your own — base model, prompt, params, and routing rules behind \`@name\`
+- [Model Variants](${BASE_URL}/docs/models-and-routing/model-variants): Append \`:cost\`, \`:latency\`, or \`:throughput\` to a model id to pick a ranking axis inline
+- [Bring Your Own Model](${BASE_URL}/docs/models-and-routing/bring-your-own-model): Put a model you serve yourself behind BitRouter and route to it like any hosted model
+- [Bring Your Own Provider](${BASE_URL}/docs/models-and-routing/bring-your-own-provider): Route through your own provider account at list price, with no rev share or per-token fee
+- [Structured Outputs](${BASE_URL}/docs/models-and-routing/structured-outputs): Enforce a JSON schema across every provider, with the protocol translation handled for you
+- [Guardrails](${BASE_URL}/docs/models-and-routing/guardrails): Named regex rules that block or redact matching content in requests and responses
 
-## Features
+## MCP & Tool Calling
 
-- [Workspaces](${BASE_URL}/docs/cloud/workspaces): Per-team routing tables, keys, and observability
-- [OpenTelemetry](${BASE_URL}/docs/observability/opentelemetry): Self-run OTLP export — traces and metrics of every request, pushed to a Collector, Honeycomb, Grafana, or Datadog
-- [Cloud Tracing](${BASE_URL}/docs/cloud/tracing): Hosted Activity view — spend, token, and latency KPIs plus a per-request log, nothing to operate
-- [Guardrails](${BASE_URL}/docs/gateway-and-routing/guardrails): Inspect, warn, redact, or block risky content at the proxy layer
+- [MCP Gateway](${BASE_URL}/docs/mcp-and-tool-calling/mcp-gateway): One endpoint in front of many MCP servers and Agent Skills — uniform auth, merged discovery, one policy point
+- [Server Tools](${BASE_URL}/docs/mcp-and-tool-calling/server-tools): Move the tool-calling loop into BitRouter — declare tools, and the router executes and re-calls until the model is done
+- [Advisor](${BASE_URL}/docs/mcp-and-tool-calling/advisor): Let a fast model escalate one hard sub-question to a stronger model mid-generation
+- [Sub-agent](${BASE_URL}/docs/mcp-and-tool-calling/subagent): Delegate a self-contained task to a cheaper worker model that returns only its result
+- [Fusion](${BASE_URL}/docs/mcp-and-tool-calling/fusion): A panel of models answers in parallel, a judge compares them, and your model writes the final reply
+- [Web Search](${BASE_URL}/docs/mcp-and-tool-calling/websearch): A built-in \`web_search\` server tool that gives any routed model a search, on a backend you bring keys for
+- [Web Fetch](${BASE_URL}/docs/mcp-and-tool-calling/web-fetch): A built-in \`web_fetch\` server tool that turns a URL into clean page content for any routed model
+
+## Evals & Tracing
+
+- [OpenTelemetry](${BASE_URL}/docs/evals-and-tracing/opentelemetry): Self-run OTLP export — traces and metrics of every request, pushed to a Collector, Honeycomb, Grafana, or Datadog
+- [Cloud Tracing](${BASE_URL}/docs/evals-and-tracing/tracing): Hosted Activity view — spend, token, and latency KPIs plus a per-request log, nothing to operate
+- [Evaluation](${BASE_URL}/docs/evals-and-tracing/evaluation): Per-request outcome signals and cost metering today, with an objective-scored eval engine landing on top
 
 ## API Reference
 
@@ -51,6 +62,7 @@ References:
 - [OpenAI-Compatible](${BASE_URL}/docs/reference/openai-compatible/createChatCompletion): \`/v1/chat/completions\` — drop-in for any OpenAI SDK
 - [Anthropic-Compatible](${BASE_URL}/docs/reference/anthropic-compatible/createMessage): \`/v1/messages\` — drop-in for the Anthropic SDK
 - [Discovery](${BASE_URL}/docs/reference/discovery/listModels): List models, providers, and routing tables
+- [Management](${BASE_URL}/docs/reference/management/listNamespaces): Workspaces — per-team routing tables, keys, and usage
 - [BYOK](${BASE_URL}/docs/reference/byok/getEncryptionPubkey): Encrypted upload of upstream provider keys
 - [Billing](${BASE_URL}/docs/reference/billing/createCheckoutSession): Stripe checkout for prepaid credits
 - [Webhooks](${BASE_URL}/docs/reference/webhooks/stripeWebhook): Stripe webhook receiver

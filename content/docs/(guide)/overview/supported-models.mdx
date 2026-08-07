@@ -3,7 +3,7 @@ title: Supported Models
 description: The full catalog of models any BitRouter account can call — with pricing, reachable over your own keys or one hosted BitRouter Cloud account.
 ---
 
-Every model BitRouter can route to is listed below. Reach any of them over your own provider keys ([BYOK](/docs/gateway-and-routing/bring-your-own-provider), paid to the providers at their list price) or one [BitRouter Cloud](/docs/overview/quickstart) account — one sign-in, no upstream keys, billed per request with failed requests not charged. Running your own model? See [local & private models](/docs/integrations/models) (free).
+Every model BitRouter can route to is listed below. Reach any of them over your own provider keys ([BYOK](/docs/models-and-routing/bring-your-own-provider), paid to the providers at their list price) or one [BitRouter Cloud](/docs/overview/quickstart) account — one sign-in, no upstream keys, billed per request with failed requests not charged. Running your own model? See [local & private models](/docs/integrations/models) (free).
 
 Prices are USD per **million tokens** — what a BitRouter Cloud request costs today, from the cheapest provider actually serving that model (`—` means no per-token provider is currently serving it). A provider listed in the [registry](https://github.com/bitrouter/bitrouter/tree/main/registry) but not currently reachable isn't priced here, so bringing your own key to one of them can beat these rates. Every model is served by one or more registered providers — membership lives in the public, open-source [registry](https://github.com/bitrouter/bitrouter/tree/main/registry), and anyone can [register a provider](/docs/guides/register-as-a-provider).
 
@@ -11,7 +11,7 @@ Prices are USD per **million tokens** — what a BitRouter Cloud request costs t
 
 On BitRouter a "model" is not a single endpoint. It's an **aggregate**: one logical model — say `openai/gpt-4o` or `anthropic/claude-sonnet-4.6` — that can be served by many providers at once. You address it by the stable **model id** in the catalog below, and BitRouter decides which underlying provider endpoint actually answers each request. That indirection is the point: you write your agent against `anthropic/claude-sonnet-4.6`, and the set of providers behind it can grow, shrink, or re-price without you changing a line of code.
 
-Because a model is an aggregate, requesting one kicks off a [provider selection](/docs/gateway-and-routing/provider-selection) step — BitRouter ranks the eligible providers on a blend of cost, latency, throughput, and uptime, and sends your request to the best one. A transient failure falls through to the next-ranked provider, or to the next model you listed via [fallback](/docs/gateway-and-routing/model-fallback). Append a [variant](/docs/gateway-and-routing/model-variants) suffix — `:cost`, `:latency`, `:throughput` — to re-rank the eligible providers along one axis for a single request; a bare id is the balanced default.
+Because a model is an aggregate, requesting one kicks off a [provider selection](/docs/models-and-routing/provider-selection) step — BitRouter ranks the eligible providers on a blend of cost, latency, throughput, and uptime, and sends your request to the best one. A transient failure falls through to the next-ranked provider, or to the next model you listed via [fallback](/docs/models-and-routing/model-fallback). Append a [variant](/docs/models-and-routing/model-variants) suffix — `:cost`, `:latency`, `:throughput` — to re-rank the eligible providers along one axis for a single request; a bare id is the balanced default.
 
 ### Four protocols in
 
@@ -33,50 +33,53 @@ Pick the one your SDK is already wired for — you don't adopt a new client. And
 | `anthropic/claude-opus-4.6` | Anthropic: Claude Opus 4.6 | 200K | text, image | — | $5 | $25 |
 | `anthropic/claude-opus-4.7` | Anthropic: Claude Opus 4.7 | 200K | text, image | — | $4.5 | $22.5 |
 | `anthropic/claude-opus-4.8` | Anthropic: Claude Opus 4.8 | 1M | text, image | — | $5 | $25 |
+| `anthropic/claude-opus-5` | Anthropic: Claude Opus 5 | 1M | text, image | — | $5 | $25 |
 | `anthropic/claude-sonnet-4.6` | Anthropic: Claude Sonnet 4.6 | 1M | text, image | — | $3 | $15 |
 | `anthropic/claude-sonnet-5` | Anthropic: Claude Sonnet 5 | 1M | text, image | — | $2 | $10 |
-| `deepseek/deepseek-v3.2` | DeepSeek: DeepSeek V3.2 | 128K | text | ✅ | $0.21 | $0.315 |
-| `deepseek/deepseek-v4-flash` | DeepSeek: DeepSeek V4 Flash | 256K | text | ✅ | $0.0983 | $0.1966 |
-| `deepseek/deepseek-v4-pro` | DeepSeek: DeepSeek V4 Pro | 256K | text | ✅ | $1.305 | $2.61 |
+| `deepseek/deepseek-v3.2` | DeepSeek: DeepSeek V3.2 | 128K | text | ✅ | $0.252 | $0.378 |
+| `deepseek/deepseek-v4-flash` | DeepSeek: DeepSeek V4 Flash | 256K | text | ✅ | $0.112 | $0.224 |
+| `deepseek/deepseek-v4-flash-0731` | DeepSeek: DeepSeek V4 Flash 0731 | 1M | text | ✅ | $0.14 | $0.28 |
+| `deepseek/deepseek-v4-pro` | DeepSeek: DeepSeek V4 Pro | 256K | text | ✅ | $0.435 | $0.87 |
 | `google/gemini-3.1-flash-lite-preview` | Google: Gemini 3.1 Flash Lite Preview | 1M | text, image | — | $0.25 | $1.5 |
 | `google/gemini-3.1-pro-preview` | Google: Gemini 3.1 Pro Preview | 2M | text, image | — | $2 | $12 |
 | `google/gemini-3.5-flash` | Google: Gemini 3.5 Flash | 1M | text, image, audio | — | $1.5 | $9 |
 | `google/gemma-4-31b` | Google: Gemma 4 31B | 128K | text, image | ✅ | $0.13 | $0.4 |
 | `meituan/longcat-2.0` | LongCat 2.0 | 1M | text | ✅ | $0.75 | $2.95 |
-| `minimax/minimax-m2.5` | MiniMax: M2.5 | 192K | text | ✅ | $0.225 | $0.9 |
-| `minimax/minimax-m2.7` | MiniMax: M2.7 | 192K | text | ✅ | $0.225 | $0.9 |
+| `minimax/minimax-m2.5` | MiniMax: M2.5 | 192K | text | ✅ | $0.15 | $1.2 |
+| `minimax/minimax-m2.7` | MiniMax: M2.7 | 192K | text | ✅ | $0.3 | $1.2 |
 | `minimax/minimax-m3` | MiniMax: M3 | 1M | text, image | ✅ | $0.3 | $1.2 |
 | `moonshotai/kimi-k2.5` | Kimi: K2.5 | 256K | text, image | ✅ | $0.44 | $2 |
-| `moonshotai/kimi-k2.6` | Kimi: K2.6 | 256K | text | ✅ | $0.7125 | $3 |
-| `moonshotai/kimi-k2.7-code` | Kimi: K2.7 Code | 256K | text, image | ✅ | $0.7125 | $3 |
+| `moonshotai/kimi-k2.6` | Kimi: K2.6 | 256K | text | ✅ | $0.66 | $3.5 |
+| `moonshotai/kimi-k2.7-code` | Kimi: K2.7 Code | 256K | text, image | ✅ | $0.73 | $3.5 |
 | `moonshotai/kimi-k3` | Kimi: K3 | 1M | text, image | ✅ | $3 | $15 |
 | `openai/gpt-5.4` | OpenAI: GPT-5.4 | 128K | text, image | — | $2.5 | $15 |
 | `openai/gpt-5.4-mini` | OpenAI: GPT-5.4 Mini | 128K | text, image | — | $0.75 | $4.5 |
 | `openai/gpt-5.5` | OpenAI: GPT-5.5 | 128K | text, image | — | $5 | $30 |
-| `openai/gpt-5.6-luna` | OpenAI: GPT-5.6 Luna | 400K | text, image | — | $1 | $6 |
+| `openai/gpt-5.6-luna` | OpenAI: GPT-5.6 Luna | 400K | text, image | — | $0.2 | $1.2 |
 | `openai/gpt-5.6-sol` | OpenAI: GPT-5.6 Sol | 1M | text, image | — | $5 | $30 |
-| `openai/gpt-5.6-terra` | OpenAI: GPT-5.6 Terra | 1M | text, image | — | $2.5 | $15 |
+| `openai/gpt-5.6-terra` | OpenAI: GPT-5.6 Terra | 1M | text, image | — | $2 | $12 |
 | `qwen/qwen3.5-122b-a10b` | Qwen: Qwen3.5 122B-A10B | 256K | text, image | ✅ | $0.26 | $2.08 |
 | `qwen/qwen3.5-27b` | Qwen: Qwen3.5 27B | 256K | text, image | ✅ | $0.25 | $2 |
 | `qwen/qwen3.6-27b` | Qwen: Qwen3.6 27B | 256K | text, image | ✅ | $0.3 | $3.2 |
 | `qwen/qwen3.6-35b-a3b` | Qwen: Qwen3.6 35B-A3B | 256K | text, image | ✅ | $0.248 | $1.485 |
 | `qwen/qwen3.6-flash` | Qwen: Qwen3.6 Flash | 1M | text, image | — | $0.1875 | $1.125 |
-| `qwen/qwen3.7-max` | Qwen: Qwen3.7 Max | 1M | text | — | $1.875 | $5.625 |
+| `qwen/qwen3.7-max` | Qwen: Qwen3.7 Max | 1M | text | — | $2.5 | $7.5 |
 | `qwen/qwen3.7-plus` | Qwen: Qwen3.7 Plus | 1M | text, image | — | $0.4 | $1.6 |
-| `stepfun/step-3.5-flash` | StepFun: Step 3.5 Flash | 256K | text | ✅ | $0.072 | $0.216 |
-| `stepfun/step-3.7-flash` | StepFun: Step 3.7 Flash | 256K | text, image | ✅ | $0.15 | $0.8625 |
+| `qwen/qwen3.8-max` | Qwen: Qwen3.8 Max | 1M | text, image, video | — | $2 | $6 |
+| `stepfun/step-3.5-flash` | StepFun: Step 3.5 Flash | 256K | text | ✅ | $0.1 | $0.3 |
+| `stepfun/step-3.7-flash` | StepFun: Step 3.7 Flash | 256K | text, image | ✅ | $0.185 | $1.11 |
 | `tencent/hy3` | Hunyuan 3 | 256K | text | ✅ | $0.066 | $0.26 |
 | `x-ai/grok-4.20` | xAI: Grok 4.20 | 128K | text, image | — | $1.25 | $2.5 |
 | `x-ai/grok-4.20-multi-agent` | xAI: Grok 4.20 Multi-Agent | 1M | text, image | — | $1.25 | $2.5 |
 | `x-ai/grok-4.3` | xAI: Grok 4.3 | 1M | text, image | — | $1.25 | $2.5 |
 | `x-ai/grok-4.5` | xAI: Grok 4.5 | 500K | text, image | — | $2 | $6 |
 | `x-ai/grok-build-0.1` | xAI: Grok Build 0.1 | 256K | text | — | $1 | $2 |
-| `xiaomi/mimo-v2.5` | Xiaomi: MiMo V2.5 | 256K | text | ✅ | $0.3 | $1.5 |
-| `xiaomi/mimo-v2.5-pro` | Xiaomi: MiMo V2.5 Pro | 256K | text | ✅ | $0.75 | $2.25 |
+| `xiaomi/mimo-v2.5` | Xiaomi: MiMo V2.5 | 256K | text | ✅ | $0.14 | $0.28 |
+| `xiaomi/mimo-v2.5-pro` | Xiaomi: MiMo V2.5 Pro | 256K | text | ✅ | $0.435 | $0.87 |
 | `z-ai/glm-4.7` | Zhipu: GLM-4.7 | 200K | text | ✅ | $0.6 | $2.2 |
 | `z-ai/glm-5` | Zhipu: GLM-5 | 198K | text | ✅ | $0.6 | $1.92 |
 | `z-ai/glm-5.1` | Zhipu: GLM-5.1 | 128K | text | ✅ | $0.98 | $3.08 |
-| `z-ai/glm-5.2` | Zhipu: GLM-5.2 | 1M | text | ✅ | $0.97 | $3.07 |
+| `z-ai/glm-5.2` | Zhipu: GLM-5.2 | 1M | text | ✅ | $0.979 | $3.08 |
 
 ## Using BitRouter Cloud
 

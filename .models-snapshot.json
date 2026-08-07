@@ -1,5 +1,5 @@
 {
-  "count": 49,
+  "count": 52,
   "models": [
     {
       "id": "anthropic/claude-fable-5",
@@ -99,6 +99,23 @@
       "openWeights": false
     },
     {
+      "id": "anthropic/claude-opus-5",
+      "name": "Anthropic: Claude Opus 5",
+      "inputModalities": [
+        "text",
+        "image"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1000000,
+      "capabilities": [],
+      "providers": 2,
+      "inputUsdPerM": 5,
+      "outputUsdPerM": 25,
+      "openWeights": false
+    },
+    {
       "id": "anthropic/claude-sonnet-4.6",
       "name": "Anthropic: Claude Sonnet 4.6",
       "inputModalities": [
@@ -158,8 +175,8 @@
         "tools"
       ],
       "providers": 6,
-      "inputUsdPerM": 0.21,
-      "outputUsdPerM": 0.315,
+      "inputUsdPerM": 0.252,
+      "outputUsdPerM": 0.378,
       "openWeights": true
     },
     {
@@ -177,8 +194,27 @@
         "tools"
       ],
       "providers": 7,
-      "inputUsdPerM": 0.0983,
-      "outputUsdPerM": 0.1966,
+      "inputUsdPerM": 0.112,
+      "outputUsdPerM": 0.224,
+      "openWeights": true
+    },
+    {
+      "id": "deepseek/deepseek-v4-flash-0731",
+      "name": "DeepSeek: DeepSeek V4 Flash 0731",
+      "inputModalities": [
+        "text"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1000000,
+      "capabilities": [
+        "reasoning",
+        "tools"
+      ],
+      "providers": 4,
+      "inputUsdPerM": 0.14,
+      "outputUsdPerM": 0.28,
       "openWeights": true
     },
     {
@@ -197,8 +233,8 @@
         "tools"
       ],
       "providers": 8,
-      "inputUsdPerM": 1.305,
-      "outputUsdPerM": 2.61,
+      "inputUsdPerM": 0.435,
+      "outputUsdPerM": 0.87,
       "openWeights": true
     },
     {
@@ -307,8 +343,8 @@
         "tools"
       ],
       "providers": 6,
-      "inputUsdPerM": 0.225,
-      "outputUsdPerM": 0.9,
+      "inputUsdPerM": 0.15,
+      "outputUsdPerM": 1.2,
       "openWeights": true
     },
     {
@@ -326,8 +362,8 @@
         "tools"
       ],
       "providers": 3,
-      "inputUsdPerM": 0.225,
-      "outputUsdPerM": 0.9,
+      "inputUsdPerM": 0.3,
+      "outputUsdPerM": 1.2,
       "openWeights": true
     },
     {
@@ -387,8 +423,8 @@
         "tools"
       ],
       "providers": 10,
-      "inputUsdPerM": 0.7125,
-      "outputUsdPerM": 3,
+      "inputUsdPerM": 0.66,
+      "outputUsdPerM": 3.5,
       "openWeights": true
     },
     {
@@ -408,8 +444,8 @@
         "tools"
       ],
       "providers": 5,
-      "inputUsdPerM": 0.7125,
-      "outputUsdPerM": 3,
+      "inputUsdPerM": 0.73,
+      "outputUsdPerM": 3.5,
       "openWeights": true
     },
     {
@@ -513,8 +549,8 @@
         "tools"
       ],
       "providers": 1,
-      "inputUsdPerM": 1,
-      "outputUsdPerM": 6,
+      "inputUsdPerM": 0.2,
+      "outputUsdPerM": 1.2,
       "openWeights": false
     },
     {
@@ -555,8 +591,8 @@
         "tools"
       ],
       "providers": 1,
-      "inputUsdPerM": 2.5,
-      "outputUsdPerM": 15,
+      "inputUsdPerM": 2,
+      "outputUsdPerM": 12,
       "openWeights": false
     },
     {
@@ -656,8 +692,8 @@
       "maxInputTokens": 1000000,
       "capabilities": [],
       "providers": 4,
-      "inputUsdPerM": 1.875,
-      "outputUsdPerM": 5.625,
+      "inputUsdPerM": 2.5,
+      "outputUsdPerM": 7.5,
       "openWeights": false
     },
     {
@@ -678,6 +714,24 @@
       "openWeights": false
     },
     {
+      "id": "qwen/qwen3.8-max",
+      "name": "Qwen: Qwen3.8 Max",
+      "inputModalities": [
+        "text",
+        "image",
+        "video"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1000000,
+      "capabilities": [],
+      "providers": 1,
+      "inputUsdPerM": 2,
+      "outputUsdPerM": 6,
+      "openWeights": false
+    },
+    {
       "id": "stepfun/step-3.5-flash",
       "name": "StepFun: Step 3.5 Flash",
       "inputModalities": [
@@ -692,8 +746,8 @@
         "tools"
       ],
       "providers": 3,
-      "inputUsdPerM": 0.072,
-      "outputUsdPerM": 0.216,
+      "inputUsdPerM": 0.1,
+      "outputUsdPerM": 0.3,
       "openWeights": true
     },
     {
@@ -711,8 +765,8 @@
         "structured_outputs"
       ],
       "providers": 3,
-      "inputUsdPerM": 0.15,
-      "outputUsdPerM": 0.8625,
+      "inputUsdPerM": 0.185,
+      "outputUsdPerM": 1.11,
       "openWeights": true
     },
     {
@@ -842,9 +896,9 @@
         "reasoning",
         "tools"
       ],
-      "providers": 2,
-      "inputUsdPerM": 0.3,
-      "outputUsdPerM": 1.5,
+      "providers": 3,
+      "inputUsdPerM": 0.14,
+      "outputUsdPerM": 0.28,
       "openWeights": true
     },
     {
@@ -862,8 +916,8 @@
         "tools"
       ],
       "providers": 2,
-      "inputUsdPerM": 0.75,
-      "outputUsdPerM": 2.25,
+      "inputUsdPerM": 0.435,
+      "outputUsdPerM": 0.87,
       "openWeights": true
     },
     {
@@ -936,8 +990,8 @@
         "tools"
       ],
       "providers": 8,
-      "inputUsdPerM": 0.97,
-      "outputUsdPerM": 3.07,
+      "inputUsdPerM": 0.979,
+      "outputUsdPerM": 3.08,
       "openWeights": true
     }
   ]

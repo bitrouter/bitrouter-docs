@@ -15,6 +15,7 @@
       "capabilities": [],
       "providers": 1,
       "inputUsdPerM": 10,
+      "cacheReadUsdPerM": 1,
       "outputUsdPerM": 50,
       "openWeights": false
     },
@@ -32,6 +33,7 @@
       "capabilities": [],
       "providers": 1,
       "inputUsdPerM": 1,
+      "cacheReadUsdPerM": 0.1,
       "outputUsdPerM": 5,
       "openWeights": false
     },
@@ -53,6 +55,7 @@
       ],
       "providers": 2,
       "inputUsdPerM": 5,
+      "cacheReadUsdPerM": 0.5,
       "outputUsdPerM": 25,
       "openWeights": false
     },
@@ -74,6 +77,7 @@
       ],
       "providers": 2,
       "inputUsdPerM": 4.5,
+      "cacheReadUsdPerM": 0.45,
       "outputUsdPerM": 22.5,
       "openWeights": false
     },
@@ -95,6 +99,7 @@
       ],
       "providers": 2,
       "inputUsdPerM": 5,
+      "cacheReadUsdPerM": 0.5,
       "outputUsdPerM": 25,
       "openWeights": false
     },
@@ -112,6 +117,7 @@
       "capabilities": [],
       "providers": 2,
       "inputUsdPerM": 5,
+      "cacheReadUsdPerM": 0.5,
       "outputUsdPerM": 25,
       "openWeights": false
     },
@@ -134,6 +140,7 @@
       ],
       "providers": 2,
       "inputUsdPerM": 3,
+      "cacheReadUsdPerM": 0.3,
       "outputUsdPerM": 15,
       "openWeights": false
     },
@@ -156,6 +163,7 @@
       ],
       "providers": 1,
       "inputUsdPerM": 2,
+      "cacheReadUsdPerM": 0.2,
       "outputUsdPerM": 10,
       "openWeights": false
     },
@@ -176,6 +184,7 @@
       ],
       "providers": 6,
       "inputUsdPerM": 0.252,
+      "cacheReadUsdPerM": 0.0252,
       "outputUsdPerM": 0.378,
       "openWeights": true
     },
@@ -195,6 +204,7 @@
       ],
       "providers": 7,
       "inputUsdPerM": 0.112,
+      "cacheReadUsdPerM": 0.022,
       "outputUsdPerM": 0.224,
       "openWeights": true
     },
@@ -214,6 +224,7 @@
       ],
       "providers": 4,
       "inputUsdPerM": 0.14,
+      "cacheReadUsdPerM": 0.028,
       "outputUsdPerM": 0.28,
       "openWeights": true
     },
@@ -234,6 +245,7 @@
       ],
       "providers": 8,
       "inputUsdPerM": 0.435,
+      "cacheReadUsdPerM": 0.003625,
       "outputUsdPerM": 0.87,
       "openWeights": true
     },
@@ -251,6 +263,7 @@
       "capabilities": [],
       "providers": 1,
       "inputUsdPerM": 0.25,
+      "cacheReadUsdPerM": 0.025,
       "outputUsdPerM": 1.5,
       "openWeights": false
     },
@@ -271,6 +284,7 @@
       ],
       "providers": 1,
       "inputUsdPerM": 2,
+      "cacheReadUsdPerM": 0.2,
       "outputUsdPerM": 12,
       "openWeights": false
     },
@@ -292,6 +306,7 @@
       ],
       "providers": 1,
       "inputUsdPerM": 1.5,
+      "cacheReadUsdPerM": 0.15,
       "outputUsdPerM": 9,
       "openWeights": false
     },
@@ -309,6 +324,7 @@
       "capabilities": [],
       "providers": 3,
       "inputUsdPerM": 0.13,
+      "cacheReadUsdPerM": null,
       "outputUsdPerM": 0.4,
       "openWeights": true
     },
@@ -325,6 +341,7 @@
       "capabilities": [],
       "providers": 1,
       "inputUsdPerM": 0.75,
+      "cacheReadUsdPerM": null,
       "outputUsdPerM": 2.95,
       "openWeights": true
     },
@@ -344,6 +361,7 @@
       ],
       "providers": 6,
       "inputUsdPerM": 0.15,
+      "cacheReadUsdPerM": 0.075,
       "outputUsdPerM": 1.2,
       "openWeights": true
     },
@@ -363,6 +381,7 @@
       ],
       "providers": 3,
       "inputUsdPerM": 0.3,
+      "cacheReadUsdPerM": 0.06,
       "outputUsdPerM": 1.2,
       "openWeights": true
     },
@@ -383,6 +402,7 @@
       ],
       "providers": 4,
       "inputUsdPerM": 0.3,
+      "cacheReadUsdPerM": 0.06,
       "outputUsdPerM": 1.2,
       "openWeights": true
     },
@@ -404,6 +424,7 @@
       ],
       "providers": 6,
       "inputUsdPerM": 0.44,
+      "cacheReadUsdPerM": 0.22,
       "outputUsdPerM": 2,
       "openWeights": true
     },
@@ -424,6 +445,7 @@
       ],
       "providers": 10,
       "inputUsdPerM": 0.66,
+      "cacheReadUsdPerM": 0.33,
       "outputUsdPerM": 3.5,
       "openWeights": true
     },
@@ -445,6 +467,7 @@
       ],
       "providers": 5,
       "inputUsdPerM": 0.73,
+      "cacheReadUsdPerM": 0.15,
       "outputUsdPerM": 3.5,
       "openWeights": true
     },
@@ -466,6 +489,7 @@
       ],
       "providers": 1,
       "inputUsdPerM": 3,
+      "cacheReadUsdPerM": 0.3,
       "outputUsdPerM": 15,
       "openWeights": true
     },
@@ -487,6 +511,7 @@
       ],
       "providers": 1,
       "inputUsdPerM": 2.5,
+      "cacheReadUsdPerM": 0.25,
       "outputUsdPerM": 15,
       "openWeights": false
     },
@@ -508,6 +533,7 @@
       ],
       "providers": 1,
       "inputUsdPerM": 0.75,
+      "cacheReadUsdPerM": 0.075,
       "outputUsdPerM": 4.5,
       "openWeights": false
     },
@@ -529,6 +555,7 @@
       ],
       "providers": 2,
       "inputUsdPerM": 5,
+      "cacheReadUsdPerM": 0.5,
       "outputUsdPerM": 30,
       "openWeights": false
     },
@@ -550,6 +577,7 @@
       ],
       "providers": 1,
       "inputUsdPerM": 0.2,
+      "cacheReadUsdPerM": 0.02,
       "outputUsdPerM": 1.2,
       "openWeights": false
     },
@@ -571,6 +599,7 @@
       ],
       "providers": 1,
       "inputUsdPerM": 5,
+      "cacheReadUsdPerM": 0.5,
       "outputUsdPerM": 30,
       "openWeights": false
     },
@@ -592,6 +621,7 @@
       ],
       "providers": 1,
       "inputUsdPerM": 2,
+      "cacheReadUsdPerM": 0.2,
       "outputUsdPerM": 12,
       "openWeights": false
     },
@@ -609,6 +639,7 @@
       "capabilities": [],
       "providers": 2,
       "inputUsdPerM": 0.26,
+      "cacheReadUsdPerM": null,
       "outputUsdPerM": 2.08,
       "openWeights": true
     },
@@ -626,6 +657,7 @@
       "capabilities": [],
       "providers": 2,
       "inputUsdPerM": 0.25,
+      "cacheReadUsdPerM": null,
       "outputUsdPerM": 2,
       "openWeights": true
     },
@@ -643,6 +675,7 @@
       "capabilities": [],
       "providers": 2,
       "inputUsdPerM": 0.3,
+      "cacheReadUsdPerM": null,
       "outputUsdPerM": 3.2,
       "openWeights": true
     },
@@ -660,6 +693,7 @@
       "capabilities": [],
       "providers": 2,
       "inputUsdPerM": 0.248,
+      "cacheReadUsdPerM": null,
       "outputUsdPerM": 1.485,
       "openWeights": true
     },
@@ -677,6 +711,7 @@
       "capabilities": [],
       "providers": 2,
       "inputUsdPerM": 0.1875,
+      "cacheReadUsdPerM": null,
       "outputUsdPerM": 1.125,
       "openWeights": false
     },
@@ -693,6 +728,7 @@
       "capabilities": [],
       "providers": 4,
       "inputUsdPerM": 2.5,
+      "cacheReadUsdPerM": 0.5,
       "outputUsdPerM": 7.5,
       "openWeights": false
     },
@@ -710,6 +746,7 @@
       "capabilities": [],
       "providers": 3,
       "inputUsdPerM": 0.4,
+      "cacheReadUsdPerM": 0.08,
       "outputUsdPerM": 1.6,
       "openWeights": false
     },
@@ -728,6 +765,7 @@
       "capabilities": [],
       "providers": 1,
       "inputUsdPerM": 2,
+      "cacheReadUsdPerM": 0.25,
       "outputUsdPerM": 6,
       "openWeights": false
     },
@@ -747,6 +785,7 @@
       ],
       "providers": 3,
       "inputUsdPerM": 0.1,
+      "cacheReadUsdPerM": 0.02,
       "outputUsdPerM": 0.3,
       "openWeights": true
     },
@@ -766,6 +805,7 @@
       ],
       "providers": 3,
       "inputUsdPerM": 0.185,
+      "cacheReadUsdPerM": 0.037,
       "outputUsdPerM": 1.11,
       "openWeights": true
     },
@@ -782,6 +822,7 @@
       "capabilities": [],
       "providers": 2,
       "inputUsdPerM": 0.066,
+      "cacheReadUsdPerM": 0.0261,
       "outputUsdPerM": 0.26,
       "openWeights": true
     },
@@ -801,6 +842,7 @@
       ],
       "providers": 1,
       "inputUsdPerM": 1.25,
+      "cacheReadUsdPerM": 0.2,
       "outputUsdPerM": 2.5,
       "openWeights": false
     },
@@ -821,6 +863,7 @@
       ],
       "providers": 1,
       "inputUsdPerM": 1.25,
+      "cacheReadUsdPerM": 0.2,
       "outputUsdPerM": 2.5,
       "openWeights": false
     },
@@ -841,6 +884,7 @@
       ],
       "providers": 2,
       "inputUsdPerM": 1.25,
+      "cacheReadUsdPerM": 0.2,
       "outputUsdPerM": 2.5,
       "openWeights": false
     },
@@ -861,6 +905,7 @@
       ],
       "providers": 1,
       "inputUsdPerM": 2,
+      "cacheReadUsdPerM": 0.3,
       "outputUsdPerM": 6,
       "openWeights": false
     },
@@ -879,6 +924,7 @@
       ],
       "providers": 1,
       "inputUsdPerM": 1,
+      "cacheReadUsdPerM": 0.2,
       "outputUsdPerM": 2,
       "openWeights": false
     },
@@ -898,6 +944,7 @@
       ],
       "providers": 3,
       "inputUsdPerM": 0.14,
+      "cacheReadUsdPerM": 0.0028,
       "outputUsdPerM": 0.28,
       "openWeights": true
     },
@@ -917,6 +964,7 @@
       ],
       "providers": 2,
       "inputUsdPerM": 0.435,
+      "cacheReadUsdPerM": 0.0036,
       "outputUsdPerM": 0.87,
       "openWeights": true
     },
@@ -933,6 +981,7 @@
       "capabilities": [],
       "providers": 2,
       "inputUsdPerM": 0.6,
+      "cacheReadUsdPerM": 0.11,
       "outputUsdPerM": 2.2,
       "openWeights": true
     },
@@ -953,6 +1002,7 @@
       ],
       "providers": 7,
       "inputUsdPerM": 0.6,
+      "cacheReadUsdPerM": 0.12,
       "outputUsdPerM": 1.92,
       "openWeights": true
     },
@@ -972,6 +1022,7 @@
       ],
       "providers": 8,
       "inputUsdPerM": 0.98,
+      "cacheReadUsdPerM": 0.49,
       "outputUsdPerM": 3.08,
       "openWeights": true
     },
@@ -991,6 +1042,7 @@
       ],
       "providers": 8,
       "inputUsdPerM": 0.979,
+      "cacheReadUsdPerM": 0.182,
       "outputUsdPerM": 3.08,
       "openWeights": true
     }

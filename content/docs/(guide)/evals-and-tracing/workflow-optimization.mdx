@@ -44,6 +44,13 @@ unambiguous result, offers a choice when several are plausible, and fails with
 exact flags when headless discovery is ambiguous. It does not guess ordinary
 unit-test scripts.
 
+Model selection follows the same fail-closed rule. Setup reuses the current
+`@auto` strong and economy routes when both exist. Otherwise a TTY asks for
+provider-qualified models; headless automation must supply `--strong` and
+`--economy`. BitRouter does not embed a default vendor, model, or synthetic
+price. Add repeated `--normalized-price` values when a subscription route has
+no authoritative token price.
+
 ## Every workflow model goes through the daemon
 
 Each variant receives a fresh private BitRouter daemon and database. The

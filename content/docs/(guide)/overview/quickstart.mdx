@@ -50,7 +50,7 @@ From the Git repository that contains your agent workflow:
 bitrouter init
 ```
 
-The wizard walks through three decisions:
+The wizard walks through four decisions:
 
 1. **Credentials.** Sign in to BitRouter Cloud with OAuth, reuse a provider
    subscription such as Codex, or configure your own provider key.
@@ -59,6 +59,9 @@ The wizard walks through three decisions:
    workflow now. It discovers project-owned eval and benchmark entrypoints,
    asks when more than one is plausible, and asks what observable output means
    success.
+4. **`@auto` tiers.** Reuse the current strong/economy routes when they already
+   exist. Otherwise, choose the two provider-qualified models explicitly; the
+   wizard does not assume a vendor or model family.
 
 The guided optimization path creates a conservative `@auto` strong/economy
 ladder. A typical setup can use a Codex subscription for the strong tier and a
@@ -70,7 +73,9 @@ optimization lock.
 Already configured? Run `bitrouter optimize setup` directly. With no workflow
 flags it uses the same discovery flow. If discovery is ambiguous or finds
 nothing, pass an exact argv with `--workflow-command` and repeated
-`--workflow-arg` values.
+`--workflow-arg` values. A non-interactive fresh setup must also pass
+`--strong` and `--economy`; `bitrouter init --yes --optimize` uses the equivalent
+`--optimize-strong` and `--optimize-economy` flags.
 </Callout>
 
 ### Let an agent drive setup

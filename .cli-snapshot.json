@@ -320,11 +320,11 @@
         },
         {
           "payload": "--optimize-strong <OPTIMIZE_STRONG>",
-          "help": "Provider-qualified strong route for optimization onboarding [default: openai-codex:gpt-5.6-sol]"
+          "help": "Provider-qualified strong route for optimization onboarding"
         },
         {
           "payload": "--optimize-economy <OPTIMIZE_ECONOMY>",
-          "help": "Provider-qualified economy route for optimization onboarding [default: bitrouter:deepseek/deepseek-v4-flash-0731]"
+          "help": "Provider-qualified economy route for optimization onboarding"
         },
         {
           "payload": "--optimize-normalized-price <OPTIMIZE_NORMALIZED_PRICES>",

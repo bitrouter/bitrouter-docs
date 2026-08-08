@@ -184,8 +184,8 @@ Guided onboarding wizard that sequences credential, harness, and finish steps to
 | `--optimize-workflow-arg <OPTIMIZE_WORKFLOW_ARG>` | One exact workflow argument; repeat to preserve argv boundaries |
 | `--optimize-workflow-input <OPTIMIZE_WORKFLOW_INPUT>` | Ignored or generated workflow input to freeze into both variants; repeat for dependency roots such as node_modules or .venv |
 | `--optimize-success <OPTIMIZE_SUCCESS>` | Observable workflow success contract text |
-| `--optimize-strong <OPTIMIZE_STRONG>` | Provider-qualified strong route for optimization onboarding [default: openai-codex:gpt-5.6-sol] |
-| `--optimize-economy <OPTIMIZE_ECONOMY>` | Provider-qualified economy route for optimization onboarding [default: bitrouter:deepseek/deepseek-v4-flash-0731] |
+| `--optimize-strong <OPTIMIZE_STRONG>` | Provider-qualified strong route for optimization onboarding |
+| `--optimize-economy <OPTIMIZE_ECONOMY>` | Provider-qualified economy route for optimization onboarding |
 | `--optimize-normalized-price <OPTIMIZE_NORMALIZED_PRICES>` | Frozen normalized-showback price override. Repeat for unpriced subscription routes |
 | `--optimize-preference <OPTIMIZE_PREFERENCE>` | Qualitative optimization trade-off; latency is observe-only [default: balanced] [possible values: quality-first, balanced, savings-first] |
 
@@ -575,6 +575,8 @@ Restore an exact lock snapshot from local promotion history
 project-owned agent workflow. Setup discovers an eval entrypoint when it can,
 pins the workflow, evaluator, prices, and policy lineage in version-controlled
 files, and keeps every workflow model call behind a fresh private daemon.
+It reuses existing `@auto` tiers, prompts for missing routes on a TTY, and
+requires explicit `--strong` / `--economy` values in headless fresh setup.
 
 ```bash
 bitrouter optimize setup

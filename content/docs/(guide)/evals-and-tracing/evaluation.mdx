@@ -24,7 +24,7 @@ The classification is recorded against the request's **fingerprint** — which s
 
 There is **no LLM judge in the path**. The signal is deterministic and free, which is what makes cheap-tier downgrades safe to attempt at all: after `escalation_threshold` consecutive failures on a downgraded fingerprint, the route is pinned back up to a more capable tier automatically.
 
-You don't configure the classifier itself — it runs whenever a policy has adequacy enabled. The thresholds that act on it, and the escalation/exploration behavior they drive, are part of the policy: see [Adaptive routing](/docs/overview/quickstart#adaptive-routing).
+You don't configure the classifier itself — it runs whenever a policy has adequacy enabled. The thresholds that act on it, and the escalation/exploration behavior they drive, are part of the policy.
 
 ## Cost metering
 
@@ -46,7 +46,6 @@ The dedicated eval engine — scoring each *run* and routing decision against a 
 ## Next steps
 
 <Cards>
-  <Card title="Adaptive routing" href="/docs/overview/quickstart#adaptive-routing" description="The policy that acts on this signal — escalation, exploration, and publishing." />
   <Card title="OpenTelemetry" href="/docs/evals-and-tracing/opentelemetry" description="The self-run trace and metric substrate evals build on." />
   <Card title="Tracing" href="/docs/evals-and-tracing/tracing" description="The hosted request view, if you'd rather not run a collector." />
 </Cards>

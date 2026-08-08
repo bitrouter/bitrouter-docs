@@ -1,0 +1,66 @@
+name: Notify Console Changelog
+
+# When curated changelog content lands on main, push the changelog snapshot to
+# the BitRouter console so its "What's new" panel updates right away (rather
+# than waiting for the console to poll). The payload is HMAC-signed with
+# CHANGELOG_WEBHOOK_SECRET — the same secret the console verifies with.
+#
+# Setup:
+#   • Actions secret  CHANGELOG_WEBHOOK_SECRET  — must equal the console's env
+#     value (generate once with `openssl rand -hex 32`, set in both).
+#   • Actions variable CONSOLE_URL (optional)   — console origin; defaults to
+#     https://cloud.bitrouter.ai.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "content/changelog/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: notify-console-changelog
+  cancel-in-progress: true
+
+jobs:
+  notify:
+    name: Push changelog snapshot to the console
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      # Only js-yaml is needed to read the frontmatter; skip postinstall
+      # (fumadocs codegen) so this stays fast and can't fail on build concerns.
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Build changelog payload
+        run: node scripts/emit-changelog-json.mjs > changelog.json
+
+      - name: Push signed snapshot to the console
+        env:
+          CHANGELOG_WEBHOOK_SECRET: ${{ secrets.CHANGELOG_WEBHOOK_SECRET }}
+          CONSOLE_URL: ${{ vars.CONSOLE_URL || 'https://cloud.bitrouter.ai' }}
+        run: |
+          if [ -z "$CHANGELOG_WEBHOOK_SECRET" ]; then
+            echo "::error::CHANGELOG_WEBHOOK_SECRET is not set in Actions secrets"
+            exit 1
+          fi
+          # HMAC-SHA256 over the exact bytes we POST (openssl prints
+          # "HMAC-SHA256(changelog.json)= <hex>" — take the last field).
+          sig="sha256=$(openssl dgst -sha256 -hmac "$CHANGELOG_WEBHOOK_SECRET" changelog.json | awk '{print $NF}')"
+          curl -fsS -X POST "$CONSOLE_URL/api/webhooks/changelog" \
+            -H "Content-Type: application/json" \
+            -H "X-Changelog-Signature: $sig" \
+            --data-binary @changelog.json
+          echo "Pushed changelog snapshot to $CONSOLE_URL"

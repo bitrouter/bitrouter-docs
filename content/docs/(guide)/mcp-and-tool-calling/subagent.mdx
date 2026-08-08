@@ -71,6 +71,17 @@ When the calling model invokes the tool, it supplies:
 
 The worker model sees **only** the `task_description` — no other conversation context — runs the task, and its final result is returned to the calling model. Because the worker is isolated, the calling model must put everything the worker needs into the description.
 
+### Non-blocking execution
+
+Sub-agent spawn and prompt are **non-blocking** — the tool returns immediately with a `working` acknowledgement while the worker runs in the background. The response includes a `note` instructing the model to poll for completion rather than retrying. Use `subagent_status` to check progress:
+
+| Status | Meaning |
+| --- | --- |
+| `working` | Still running — poll again |
+| `completed` | Finished — response carries `reply`, `stop_reason`, `diff_stat`, and `result`/`schema_ok` |
+
+Only **one turn per session** can run at a time. A `prompt_subagent` call is refused while a turn is already in-flight for that session.
+
 ## Configuration
 
 Declared on the `tools`-array entry:

@@ -2,15 +2,18 @@
 title: Harnesses
 ---
 
-Three ways to run a harness on top of the daemon: `launch` for an interactive session, `spawn` for a headless sub-agent, and `tui` for the orchestrator console — supervise multiple agent sessions, inspect per-session cost, and delegate work to sub-agents, backed by the `fleet` MCP backend. `tui` is not in the binary's own `--help` listing, so it has no generated subsection below.
+Three ways to run a harness on top of the daemon: `launch` for an interactive
+session, `spawn` for a headless sub-agent, and `tui` for the orchestrator
+console. All routed modes use the same daemon provider and policy runtime.
 
 ## @launch
 
 ```bash
-bitrouter launch claude
+bitrouter launch -a claude
 ```
 
-Points the harness's API base URL at the local daemon — the same wiring the [Integrations](/docs/integrations) recipes do by hand — and prints a session spend summary on exit.
+Points the harness's API base URL and model at the local daemon without editing
+the agent's global config, then prints a session spend summary on exit.
 
 ## @spawn
 

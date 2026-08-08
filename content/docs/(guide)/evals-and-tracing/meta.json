@@ -5,6 +5,7 @@
   "pages": [
     "opentelemetry",
     "tracing",
-    "evaluation"
+    "evaluation",
+    "workflow-optimization"
   ]
 }

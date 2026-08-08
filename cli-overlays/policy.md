@@ -2,32 +2,60 @@
 title: Policy
 ---
 
-Routing policies are the artifact the [self-improving loop](/docs/overview/what-is-bitrouter) learns into: `init` scaffolds `policy-lock.yaml` and binds it to a preset, live traffic teaches the adequacy ledger, and `evolve --apply` folds proven downgrades back into the file.
+Routing policies are version-controlled lockfiles. BitRouter compiles and
+validates candidates against an exact parent and evidence root; publication is
+always a separate command and is blocked while `policy.mode: frozen`.
 
 <Callout type="info">
-`bitrouter policy create` + `bitrouter key sign` are a **different surface** — per-virtual-key access control (allowed models, budgets, rate limits), not routing. See [Guardrails](/docs/models-and-routing/guardrails).
+`bitrouter policy create` + `bitrouter key sign` are a different surface:
+per-virtual-key access control (allowed models, budgets, and rate limits), not
+model routing. See [Guardrails](/docs/models-and-routing/guardrails).
 </Callout>
 
 ## @policy init
 
 ```bash
-bitrouter policy init coding --preset coding \
-  --economy moonshotai/kimi-k2.7-code
+bitrouter policy init auto --preset auto \
+  --economy bitrouter:moonshotai/kimi-k3
 ```
 
-Writes `policy-lock.yaml` (strong/economy tiers, adequacy pre-seeded) and edits `bitrouter.yaml` comment-preservingly to bind the preset with `writeback: locked`.
+Creates or extends `policy-lock.yaml`, binds it to the preset, and keeps the
+runtime in `frozen` mode. `@auto` is the maintained public preset used by
+workflow optimization.
+
+## @policy compile
+
+```bash
+bitrouter policy compile --output candidate-policy-lock.yaml \
+  --eval-snapshot sha256:<eval-snapshot>
+bitrouter policy diff policy-lock.yaml <candidate-path>
+```
+
+Compilation writes a candidate without changing the active policy. The
+candidate pins its parent, evidence, compiler, and certificate lineage.
+
+## @policy publish
+
+```bash
+bitrouter policy publish <candidate-path>
+```
+
+Publishes an already-compiled candidate only when the current config, parent
+digest, evidence, certificates, and runtime mode still match. A stale candidate
+or concurrent edit is rejected.
 
 ## @policy evolve
 
 ```bash
-bitrouter policy evolve          # dry-run candidate projection
-bitrouter policy unlock
-bitrouter policy evolve --apply  # atomically republish policy-lock.yaml
-bitrouter policy lock
+bitrouter policy evolve          # legacy evidence projection, dry run
+bitrouter policy evolve --apply  # explicit publication; requires adaptive mode
 ```
 
-Only **adds** qualified routes — never overwrites or removes yours — and refuses to publish while `writeback: locked`.
+`evolve` is the legacy adequacy-ledger projection. Use `compile` + `publish`
+when an Eval snapshot is part of the candidate lineage, and use
+`bitrouter optimize` for the controlled workflow quality/cost loop.
 
 ## @policy reload
 
-Hot-reloads the daemon's policy snapshot. An invalid lock is rejected and the daemon keeps its last-known-good.
+Hot-reloads the validated active policy through the daemon control socket. An
+invalid lock is rejected and the daemon keeps its last-known-good snapshot.

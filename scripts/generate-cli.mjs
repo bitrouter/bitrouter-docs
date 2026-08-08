@@ -32,6 +32,8 @@ const GROUPS = [
   { slug: "route", commands: ["route", "models", "observe"] },
   { slug: "providers", commands: ["providers"] },
   { slug: "policy", commands: ["policy"] },
+  { slug: "optimize", commands: ["optimize"] },
+  { slug: "evals", commands: ["eval", "trajectory"] },
   { slug: "cloud", commands: ["cloud"] },
   { slug: "tools", commands: ["tools", "agents", "acp"] },
   { slug: "skills", commands: ["skills", "mcp"] },
@@ -48,6 +50,24 @@ const GLOBAL_FLAGS = ["-j, --json", "--json", "--human"];
 
 const snapshot = JSON.parse(readFileSync(SNAPSHOT, "utf8"));
 const nodes = snapshot.commands;
+
+// A new top-level CLI command must never disappear just because its docs group
+// was not updated. Keep the generated reference exhaustive and make drift a
+// build-time error instead of a silent omission.
+const groupedCommands = new Set(GROUPS.flatMap((group) => group.commands));
+const ungroupedCommands = [
+  ...new Set(
+    nodes
+      .map((node) => node.path[0])
+      .filter((command) => command && !groupedCommands.has(command)),
+  ),
+].sort();
+if (ungroupedCommands.length > 0) {
+  console.error(
+    `generate-cli: ungrouped top-level snapshot command(s): ${ungroupedCommands.join(", ")}`,
+  );
+  process.exit(1);
+}
 
 // --- overlay parsing -------------------------------------------------------
 // Overlay format:

@@ -86,7 +86,7 @@ Every block is optional and defaults to something sensible. An empty file is val
 | `variants` | `:name` definitions — routing modifiers only. See [Model variants](/docs/models-and-routing/model-variants) |
 | `models` | Named models over an ordered endpoint chain. See [Model fallback](/docs/models-and-routing/model-fallback) |
 | `policy_table` | Tiered per-request routing by request shape. See [The policy table](#the-policy-table) |
-| `policy` | Where the policy lock lives and whether it may self-update. See [The adaptive loop](#the-adaptive-loop) |
+| `policy` | Policy-lock path and publication mode (`frozen` or `adaptive`). See [The adaptive loop](#the-adaptive-loop) |
 | `registry` | Public-registry integration and the provider-class priority ladder |
 | `server` | Listen address and HTTP server settings |
 | `upstream` | Outbound HTTP client settings (timeouts, retries) |
@@ -197,17 +197,27 @@ policy_table:
 
 It periodically trials the cheap tier on fingerprints you left at the capable tier, and locks one to cheap after enough consecutive adequate trials — so safe downgrades get *found* rather than hand-guessed. A failed trial escalates and stops. It routes real traffic to a cheaper model to learn this, so turn it on deliberately.
 
-**The lock file is the reviewable artifact.** Learned policy lands in `policy-lock.yaml` next to your config, and `policy.writeback` decides whether the router may write it:
+**The lock file is the reviewable artifact.** Learned policy lands in
+`policy-lock.yaml` next to your config. `policy.mode` is the publication safety
+gate:
 
 ```yaml
 policy:
-  writeback: locked   # observe and propose only (default)
-  # writeback: evolve # permit validated evolution to replace the lock
+  path: ./policy-lock.yaml
+  mode: frozen        # compile and review only (default)
+  # mode: adaptive    # allow an explicit validated publication
 ```
 
-Under the default `locked`, the router proposes and never writes. `bitrouter policy evolve` prints a dry-run report; `--apply` publishes the candidate. So the loop is: the router learns, you read the diff, you commit it — the same review path as any other change. Set `evolve` only when you want the router to publish without you in the middle.
+Under the default `frozen`, BitRouter may compile a candidate but cannot replace
+the active lock. `adaptive` still does not publish automatically: an explicit
+`bitrouter policy publish` or reviewed `bitrouter optimize publish` command must
+validate the candidate, parent digest, evidence, and current config before the
+atomic replacement. The optimizer's first publication asks before changing a
+TTY project from `frozen` to `adaptive`; headless use requires
+`--enable-adaptive`.
 
-See [the `policy` commands](/docs/usage/cli#policy) for `check`, `status`, `show`, `lock`, `unlock`, and `reload`.
+See [the `policy` commands](/docs/usage/cli#bitrouter-policy) for `check`,
+`status`, `show`, `compile`, `diff`, `publish`, `rollback`, and `reload`.
 
 ## Validate in CI
 

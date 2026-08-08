@@ -19,11 +19,12 @@ explicitly choose otherwise.
 Scaffold a commented starter file:
 
 ```bash
-bitrouter init                 # writes ./bitrouter.yaml
-bitrouter init -c /etc/bitrouter/bitrouter.yaml
+bitrouter init --yes --after exit
+bitrouter init --yes --after exit -c /etc/bitrouter/bitrouter.yaml
 ```
 
-`bitrouter init` writes a starter config with `skip_auth: true`. Edit it to
+Headless `bitrouter init --yes` writes a starter config with `skip_auth: true`.
+Interactive `bitrouter init` asks before writing one. Edit it to
 configure providers, routing, and the rest. Treat `bitrouter.yaml` as
 infrastructure-as-code: commit it, review changes, and keep secrets out of it
 (use `${VAR}` references, resolved from the environment at load time).

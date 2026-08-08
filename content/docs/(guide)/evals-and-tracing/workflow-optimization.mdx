@@ -1,0 +1,198 @@
+---
+title: Workflow optimization
+description: Measure one @auto route change against your own agent workflow, then review and publish the result as version-controlled policy.
+---
+
+Workflow optimization answers a product question, not a benchmark question:
+*can this exact agent workflow keep meeting its observable success contract
+while one request shape moves to a cheaper model?*
+
+BitRouter treats the answer as a controlled, white-box policy experiment. The
+online router never receives task labels or expected answers. It sees ordinary
+model requests; the offline optimizer joins their route decisions and settled
+cost to the workflow-level eval result.
+
+## The controlled experiment
+
+One `bitrouter optimize run` creates two fresh, isolated variants:
+
+| Variant | Routing |
+| --- | --- |
+| Baseline | The current version-controlled `@auto` policy |
+| Candidate | The same policy with one eligible request key changed from `strong` to `economy` |
+
+The command, source revision, declared ignored inputs, executable, evaluator,
+models, price schedule, policy parent, and success contract are pinned by
+digest. Both variants run once; neither workflow identity is retried. A timeout
+is terminal.
+
+Baseline and candidate run in separate detached Git worktrees created from one
+frozen source snapshot. Declare ignored dependencies or fixtures explicitly:
+
+```bash
+bitrouter optimize setup \
+  --workflow-command npm \
+  --workflow-arg run \
+  --workflow-arg eval:agent \
+  --workflow-input node_modules \
+  --workflow-input fixtures/generated
+```
+
+With no workflow flags, interactive setup discovers project-owned `eval` and
+`benchmark` package scripts and executable entrypoints. It adopts one
+unambiguous result, offers a choice when several are plausible, and fails with
+exact flags when headless discovery is ambiguous. It does not guess ordinary
+unit-test scripts.
+
+Model selection follows the same fail-closed rule. Setup reuses the current
+`@auto` strong and economy routes when both exist. Otherwise a TTY asks for
+provider-qualified models; headless automation must supply `--strong` and
+`--economy`. BitRouter does not embed a default vendor, model, or synthetic
+price. Add repeated `--normalized-price` values when a subscription route has
+no authoritative token price.
+
+## Every workflow model goes through the daemon
+
+Each variant receives a fresh private BitRouter daemon and database. The
+optimizer points recognized harnesses and common OpenAI, Anthropic, Gemini, and
+BitRouter client variables at that loopback daemon. Harness-specific adapters
+also force their public model to `@auto`; for example, Codex cannot silently
+retain a direct OpenAI provider.
+
+The strong and economy tiers may still use different native credentials:
+
+```text
+@auto
+  strong  -> openai-codex:gpt-5.6-sol
+  economy -> bitrouter:deepseek/deepseek-v4-flash-0731
+```
+
+In that example, the daemon uses the Codex subscription for the first route and
+BitRouter Cloud OAuth for the second. Provider choice changes outbound daemon
+authentication and protocol translation. It never bypasses the daemon.
+
+If a known harness cannot be redirected exactly, setup or run fails closed.
+
+## What gets measured
+
+| Signal | Authority | Publication role |
+| --- | --- | --- |
+| Workflow quality | Generic agentic evaluator applying `bitrouter.eval.md` | Candidate must pass |
+| Normalized cost | Private-daemon request settlement and frozen prices | Candidate must be cheaper |
+| Route attribution | Private-daemon decision records | Candidate must exercise the one changed key |
+| Latency | Private-daemon observations | Reported only |
+
+The default evaluator is the generic agentic eval protocol embedded in
+BitRouter. A detected Codex or Claude ACP adapter runs in a fresh session using
+that agent's own subscription. The evaluator returns a typed pass, fail, or
+inconclusive quality verdict; it does not author cost or route facts. ORI is not
+required.
+
+The adapter and installed agent are trusted executors, not an OS sandbox.
+Their package integrity, runtime executable, model, and contract are pinned in
+the optimization lock so a later run cannot silently change the judge.
+
+For subscriptions with no per-call invoice, a committed normalized price
+override converts tokens to API-equivalent showback. This makes alternatives
+comparable; it does not claim the subscription produced that cash charge.
+
+## Version-controlled artifacts
+
+Setup creates or updates the following project artifacts without embedding
+credentials:
+
+| File | Purpose |
+| --- | --- |
+| `bitrouter.yaml` | Provider, preset, policy-path, and daemon configuration |
+| `policy-lock.yaml` | Deterministic `@auto` tiers, routes, certificates, and lineage |
+| `bitrouter.optimize.yaml` | Human-authored workflow, models, inputs, prices, and preference |
+| `bitrouter.optimize.lock.yaml` | Resolved evaluator, source, policy, report, and run digests |
+| `bitrouter.eval.md` | Human-authored observable success contract |
+
+Commit them. The local BitRouter home keeps workflow output, private databases,
+and detailed evidence; those are runtime artifacts, not policy source.
+
+If you edit the intent or contract, synchronize the new version before another
+run:
+
+```bash
+bitrouter optimize resolve
+```
+
+`resolve` revalidates the models, evaluator, active policy, and source contract,
+then clears stale candidate lineage. It does not publish a route.
+
+## Review and publish
+
+```bash
+bitrouter optimize run --human
+bitrouter optimize review --human
+```
+
+The human report shows the exact route, `pass -> pass` quality result,
+baseline/candidate normalized cost and percentage delta, observe-only latency,
+candidate digest, caveats, and the next safe command. JSON remains the default
+for automation.
+
+The preference controls search order, not a promised loss budget:
+
+- `quality-first` requires no observed quality regression;
+- `balanced` prioritizes frequently exercised eligible routes;
+- `savings-first` prioritizes the greatest normalized cost opportunity.
+
+All three still require an explicit candidate pass and lower normalized cost in
+this release. A single workflow run does not justify a statistical “2% quality
+loss” claim.
+
+Publishing is a separate, lineage-checked action:
+
+```bash
+bitrouter optimize publish
+```
+
+The active config begins with `policy.mode: frozen`. The first publication asks
+for confirmation in a terminal; non-interactive use must pass
+`--enable-adaptive`. Publication rechecks the intent, config, parent policy,
+candidate, eval snapshot, and report digests, atomically writes the reviewed
+policy, and reloads the daemon. A stale or concurrent edit is rejected.
+
+Continue with another one-route cycle, or restore a prior archived policy:
+
+```bash
+bitrouter optimize status --human
+bitrouter optimize rollback sha256:<policy-digest>
+```
+
+Rollback updates both the active policy and optimization lineage, so the next
+run starts from the restored parent.
+
+## Fail-closed conditions
+
+A candidate is not publishable when any required fact is ambiguous, including:
+
+- a baseline or candidate timeout;
+- no successful model request or incomplete settlement/price evidence;
+- a model call that bypassed the private daemon;
+- a candidate that did not exercise its changed route;
+- more than one semantic policy change;
+- source, input, executable, evaluator, contract, or policy drift;
+- missing or changed provider authority; or
+- quality fail/inconclusive or no normalized cost improvement.
+
+Non-zero workflow exit codes are preserved as quality evidence. The observable
+success contract, not a hard-coded host rule, decides whether that output is
+acceptable.
+
+## Current scope
+
+Controlled execution is available on macOS and Linux. The current experiment
+is an exact two-tier route change and rejects an active signed
+`progress_guard` rather than silently weakening it. Latency is observe-only;
+future objectives can add gates without changing the lockfile or private-daemon
+boundary.
+
+<Cards>
+  <Card title="Evaluation" href="/docs/evals-and-tracing/evaluation" description="How quality and operational evidence stay separate." />
+  <Card title="Configuration" href="/docs/usage/configuration" description="Presets, policy mode, and version-controlled routing." />
+  <Card title="CLI reference" href="/docs/usage/cli#bitrouter-optimize" description="Every optimize flag and subcommand." />
+</Cards>

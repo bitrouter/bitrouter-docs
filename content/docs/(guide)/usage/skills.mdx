@@ -11,14 +11,8 @@ Install with the generic skills CLI:
 npx skills add bitrouter/bitrouter
 ```
 
-Or via BitRouter's own installer:
-
-```bash
-bitrouter skills add bitrouter
-```
-
 The skill is kept in sync with the code in the [bitrouter repo](https://github.com/bitrouter/bitrouter).
 
 ## Serving skills to a harness
 
-`bitrouter skills` installs and manages skills locally; `bitrouter mcp serve --backend skills` exposes the installed set as a standalone AgentSkills server so any harness can discover and load them. Under `bitrouter tui` that server is injected into every launched harness automatically — see [MCP server](/docs/usage/mcp#backend-variants).
+`bitrouter skills` manages the locally installed set; `bitrouter mcp serve --backend skills` exposes it as a standalone AgentSkills server so any harness can discover and load them. Under `bitrouter tui` that server is injected into every launched harness automatically — see [MCP server](/docs/usage/mcp#backend-variants).

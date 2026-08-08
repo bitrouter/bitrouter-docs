@@ -316,7 +316,7 @@ Log out of an upstream provider — clears every stored credential for it. For t
 
 ## Policy
 
-Routing policies are the artifact the [self-improving loop](/docs/overview/what-is-bitrouter) learns into: `init` scaffolds `policy-lock.yaml` and binds it to a preset, live traffic teaches the adequacy ledger, and `evolve --apply` folds proven downgrades back into the file. The walkthrough, table, and ledger semantics are in [Adaptive routing](/docs/overview/quickstart#adaptive-routing).
+Routing policies are the artifact the [self-improving loop](/docs/overview/what-is-bitrouter) learns into: `init` scaffolds `policy-lock.yaml` and binds it to a preset, live traffic teaches the adequacy ledger, and `evolve --apply` folds proven downgrades back into the file.
 
 <Callout type="info">
 `bitrouter policy create` + `bitrouter key sign` are a **different surface** — per-virtual-key access control (allowed models, budgets, rate limits), not routing. See [Guardrails](/docs/models-and-routing/guardrails).
@@ -1156,7 +1156,7 @@ Reattach to a warm session: bridge this terminal's stdio to the session's unix s
 
 ## Skills and MCP
 
-`skills` installs and manages [Agent Skills](https://agentskills.io) for your harness; `mcp` runs BitRouter's own MCP server — the tool surface any MCP client can drive instead of shelling out. What the server exposes (backends, transports, the gateway distinction) lives on the [MCP Server](/docs/usage/mcp) page.
+`skills` manages the [Agent Skills](https://agentskills.io) installed for your harness — install them with `npx skills add <source>`; `mcp` runs BitRouter's own MCP server — the tool surface any MCP client can drive instead of shelling out. What the server exposes (backends, transports, the gateway distinction) lives on the [MCP Server](/docs/usage/mcp) page.
 
 ### `bitrouter skills`
 
@@ -1183,11 +1183,6 @@ Install a skill from a source (GitHub `owner/repo`, a git URL, or a registry ski
 | `--registry <URL>` | Registry base URL used when `source` is a bare skill name |
 | `-n, --namespace <NSID>` | Namespace id whose registry hub to query (required for registry operations) |
 
-
-```bash
-bitrouter skills add bitrouter        # the /bitrouter skill, from the registry
-bitrouter skills add owner/repo       # from GitHub
-```
 
 #### `bitrouter skills list`
 

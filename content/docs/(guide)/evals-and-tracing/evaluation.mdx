@@ -1,11 +1,17 @@
 ---
 title: Evaluation
-description: The evaluate step of the loop — a deterministic per-request outcome signal and cost metering that are live today, and the objective-scored eval engine landing on top of them.
+description: Per-request outcome and cost evidence, plus controlled workflow-level quality and cost evaluation for @auto.
 ---
 
-The **evaluate** step of the [act → observe → evaluate → learn](/docs/overview/what-is-bitrouter) loop answers one question after each request: *the route BitRouter picked — did it still reach the goal?* That signal is what makes adaptive routing safe to turn on, and it's what the learn step folds back into the policy.
+The **evaluate** step of the [act → observe → evaluate → learn](/docs/overview/what-is-bitrouter) loop has two scopes:
 
-This page is honest about scope. The signal below **is live today** and already drives routing decisions. Run-level, objective-scored evals — scoring a whole agent run against your chosen objective — are the next milestone, and are called out as such.
+- a deterministic per-request outcome signal for live routing safety; and
+- a controlled workflow experiment that compares quality and normalized cost
+  before publishing one `@auto` route change.
+
+The two share request traces and settlement, but they do not share authority.
+BitRouter authors operational facts such as cost and route attribution; the
+user's eval contract and agentic judge author workflow quality.
 
 ## The adequacy outcome signal
 
@@ -37,15 +43,32 @@ Every request is metered into the local database with an estimated charge, so *w
 
 Because every hop is traced with outcome, cost, tokens, and the model that actually served, your OTLP backend doubles as an evaluation store: join spans by run, score them however you like, and you have run-level evals on your own terms today. This is the same substrate BitRouter's own benchmark harness consumes.
 
-## Objective-scored evals
+## Workflow-level evaluation
 
-<Callout type="info">
-The dedicated eval engine — scoring each *run* and routing decision against a declared objective (cost today, latency and accuracy next) as a first-class, user-facing feature — is **landing next**. What's described above is the live signal it will be built on; nothing on this page changes when it ships, it just gains a scorer on top.
-</Callout>
+`bitrouter optimize` runs an arbitrary agent eval or benchmark command against
+two frozen workspaces: the current `@auto` policy and a candidate with exactly
+one strong-to-economy route change. A generic agentic evaluator applies the
+project's observable success contract to each workflow output. The private
+daemon independently provides normalized cost, latency, decisions, and
+settlement.
+
+A candidate is publishable only when the candidate quality verdict passes,
+normalized cost is lower, the changed route was actually exercised, and every
+source and evidence digest still matches. Latency is reported but does not gate
+this release.
+
+This is deliberately not a hidden online reward or a task-data injection path.
+The router sees normal requests; the offline optimizer joins those requests to
+the workflow result after execution. The intent, contract, evaluator, prices,
+policy, and evidence roots are versioned, so the trade-off stays inspectable.
+
+See [Workflow optimization](/docs/evals-and-tracing/workflow-optimization) for
+the setup, review, publication, and rollback flow.
 
 ## Next steps
 
 <Cards>
   <Card title="OpenTelemetry" href="/docs/evals-and-tracing/opentelemetry" description="The self-run trace and metric substrate evals build on." />
   <Card title="Tracing" href="/docs/evals-and-tracing/tracing" description="The hosted request view, if you'd rather not run a collector." />
+  <Card title="Workflow optimization" href="/docs/evals-and-tracing/workflow-optimization" description="Measure one @auto route change against your own eval contract." />
 </Cards>

@@ -1,179 +1,208 @@
 ---
 title: Quickstart
-description: Point your agent at BitRouter, then start optimizing what it costs — one base URL, one key, one model id.
+description: Install BitRouter, route an agent through @auto, and optimize one measured workflow route at a time.
 ---
 
-BitRouter puts every model behind one endpoint and picks which one each request should go to. Then it measures whether the pick was right, so your routing gets cheaper without getting worse.
+BitRouter gives an agent one local model endpoint and a version-controlled
+routing policy. The public model is always `@auto`: its strong and economy
+tiers may use different providers, but every workflow request still passes
+through the same BitRouter daemon.
 
-Let an agent set it up, or change three strings yourself.
+## Install the CLI
 
-## Set up with the agent
-
-Four ways to point an agent at BitRouter — pick whichever fits your setup.
-
-<Tabs items={['CLI', 'MCP', 'Agent Skills', 'Wizard']}>
-<Tab value="CLI">
-
-```bash
-curl -fsSL https://bitrouter.ai/install.sh | sh
-```
-
-Then launch your harness through the router:
+<Tabs items={['macOS / Linux', 'Homebrew', 'npm', 'cargo']}>
+<Tab value="macOS / Linux">
 
 ```bash
-bitrouter launch claude
+curl --proto '=https' --tlsv1.2 -LsSf \
+  https://github.com/bitrouter/bitrouter/releases/latest/download/bitrouter-installer.sh | sh
 ```
 
 </Tab>
-<Tab value="MCP">
+<Tab value="Homebrew">
 
 ```bash
-npx bitrouter mcp install --client claude
+brew install bitrouter/tap/bitrouter
 ```
 
-Registers BitRouter as an MCP server, so the agent can drive it as a tool. See [MCP server](/docs/usage/mcp).
+</Tab>
+<Tab value="npm">
+
+```bash
+npm install -g bitrouter
+```
 
 </Tab>
-<Tab value="Agent Skills">
+<Tab value="cargo">
+
+```bash
+cargo install bitrouter
+```
+
+</Tab>
+</Tabs>
+
+## Run guided setup
+
+From the Git repository that contains your agent workflow:
+
+```bash
+bitrouter init
+```
+
+The wizard walks through three decisions:
+
+1. **Credentials.** Sign in to BitRouter Cloud with OAuth, reuse a provider
+   subscription such as Codex, or configure your own provider key.
+2. **Harness.** Select an installed coding agent such as Codex or Claude Code.
+3. **Workflow optimization.** Opt in if you want BitRouter to measure your
+   workflow now. It discovers project-owned eval and benchmark entrypoints,
+   asks when more than one is plausible, and asks what observable output means
+   success.
+
+The guided optimization path creates a conservative `@auto` strong/economy
+ladder. A typical setup can use a Codex subscription for the strong tier and a
+BitRouter Cloud OAuth model for the economy tier. Provider credentials remain
+in their native stores; they are not copied into `bitrouter.yaml` or an
+optimization lock.
+
+<Callout type="info">
+Already configured? Run `bitrouter optimize setup` directly. With no workflow
+flags it uses the same discovery flow. If discovery is ambiguous or finds
+nothing, pass an exact argv with `--workflow-command` and repeated
+`--workflow-arg` values.
+</Callout>
+
+### Let an agent drive setup
+
+For an agent runtime that supports Agent Skills:
 
 ```bash
 npx skills add bitrouter/bitrouter
 ```
 
-A drop-in [skill](/docs/usage/skills) for any agent that supports them. Then ask it: *"Set up BitRouter for me."*
+Then ask the agent: *"Set up BitRouter and configure measured `@auto`
+optimization for this workflow."* The bundled skill follows the same CLI
+contract; there is no separate routing implementation.
 
-</Tab>
-<Tab value="Wizard">
+## Route through `@auto`
 
-```bash
-npx @bitrouter/agent
-```
-
-[bitrouter-agent](https://github.com/bitrouter/bitrouter-agent) reads your codebase read-only, then writes a starter `bitrouter.yaml`, an audit of your LLM usage, and a savings estimate. It never modifies your source.
-
-</Tab>
-</Tabs>
-
-## Or wire it up yourself
-
-Get a key with `bitrouter cloud login`, or mint one in the [console](https://cloud.bitrouter.ai). Then change three strings:
-
-| String | Value |
-| --- | --- |
-| Base URL | `https://api.bitrouter.ai/v1` |
-| API key | your `brk_` key |
-| Model id | `bitrouter/auto` — or any id from the [catalog](/docs/overview/supported-models) |
-
-<Tabs items={['OpenAI SDK', 'Anthropic SDK', 'curl']}>
-<Tab value="OpenAI SDK">
-
-```python
-from openai import OpenAI
-import os
-
-client = OpenAI(
-    base_url="https://api.bitrouter.ai/v1",
-    api_key=os.environ["BITROUTER_API_KEY"],
-)
-
-response = client.chat.completions.create(
-    model="bitrouter/auto",
-    messages=[{"role": "user", "content": "Hello!"}],
-)
-```
-
-</Tab>
-<Tab value="Anthropic SDK">
-
-```python
-from anthropic import Anthropic
-import os
-
-client = Anthropic(
-    base_url="https://api.bitrouter.ai",
-    api_key=os.environ["BITROUTER_API_KEY"],
-)
-
-message = client.messages.create(
-    model="bitrouter/auto",
-    max_tokens=1024,
-    messages=[{"role": "user", "content": "Hello!"}],
-)
-```
-
-</Tab>
-<Tab value="curl">
+Start the local daemon and launch your coding agent through it:
 
 ```bash
-curl https://api.bitrouter.ai/v1/chat/completions \
-  -H "Authorization: Bearer $BITROUTER_API_KEY" \
-  -H "Content-Type: application/json" \
+bitrouter start
+bitrouter launch -a codex
+```
+
+`bitrouter launch` supplies the harness-specific routing adapter without
+editing the agent's global config. For example, Codex keeps its subscription
+authentication while its model requests enter the daemon as `@auto`.
+
+You can call the same preset from any supported wire protocol. A local curl
+smoke test is:
+
+```bash
+curl http://127.0.0.1:4356/v1/chat/completions \
+  -H 'Content-Type: application/json' \
   -d '{
-    "model": "bitrouter/auto",
+    "model": "@auto",
     "messages": [{"role": "user", "content": "Hello!"}]
   }'
 ```
 
-</Tab>
-</Tabs>
-
-You are not switching to an OpenAI-shaped API. BitRouter speaks four request formats natively on the same host and the same key, so whichever SDK you already use keeps working — only the base URL changes:
-
-| Surface | Path |
+| Surface | Local path |
 | --- | --- |
 | OpenAI Chat Completions | `/v1/chat/completions` |
 | OpenAI Responses | `/v1/responses` |
 | Anthropic Messages | `/v1/messages` |
 | Google Generative Language | `/v1beta/models/{model}:generateContent` |
 
-Model ids and routing behave identically across all four. `bitrouter/auto` hands the model choice to BitRouter, which decides from evidence you don't have to collect — how models hold up per kind of request, live provider health, current price. Name a model id instead (`anthropic/claude-opus-4.8`) to pin that request. Pinning and routing mix freely.
+The daemon translates the inbound protocol to each selected provider's native
+protocol. `@auto` is the only stable public preset; `auto` is only its internal
+preset and policy key.
 
-## Start optimizing
+## Optimize your workflow
 
-`bitrouter/auto` starts from general evidence. Optimizing replaces it with evidence from **your** workflow — and the result routes under the same `bitrouter/auto`, so nothing in your app changes.
-
-This is not "swap in a cheaper model." BitRouter runs your workflow twice — once as-is, once with exactly one routing change — then compares the two. One variable, measured on your code, against a success contract you wrote.
-
-<Callout type="info">
-This needs the CLI, a Git repository, and macOS or Linux. Everything above stays install-free.
-</Callout>
-
-Point it at a command that exercises your agent:
+If you did not opt in during `bitrouter init`, start with:
 
 ```bash
-bitrouter optimize setup --workflow-command ./run-agent-eval
+bitrouter optimize setup
 ```
 
-That writes three files you own and commit: the workflow intent, a lock of resolved identities and digests, and a success contract describing what a good run looks like.
+Setup creates version-controlled intent, lock, and success-contract files:
 
-Then run the loop:
+- `bitrouter.optimize.yaml` — workflow argv, route ladder, preference, and
+  normalized price overrides;
+- `bitrouter.optimize.lock.yaml` — resolved evaluator, executable, source, and
+  policy digests;
+- `bitrouter.eval.md` — the observable quality contract the judge applies.
+
+Review those files like code. If the workflow needs ignored inputs such as
+`node_modules`, `.venv`, or generated fixtures, repeat `--workflow-input PATH`
+so both variants receive the same frozen input.
+
+Run one controlled comparison:
 
 ```bash
-bitrouter optimize run       # baseline and one candidate, once each
-bitrouter optimize review    # the comparison
+bitrouter optimize run --human
+bitrouter optimize review --human
 ```
 
-`review` reports the route key that changed, which model served each side, the evaluator's verdict on both, the settled cost delta, and whether the candidate is publishable at all. Observed latency is reported alongside but does not gate anything yet.
+`run` executes the same frozen workflow once as the active baseline and once
+with exactly one eligible route changed from strong to economy. It does not
+retry either workflow identity. `review` shows:
 
-If quality held and cost dropped, apply it:
+- the route key and strong/economy model pair;
+- the agentic evaluator's baseline and candidate verdicts;
+- normalized showback cost and the percentage delta;
+- observed latency, which is reported but does not gate publication;
+- the candidate and evidence digests; and
+- whether the candidate is publishable.
+
+The agentic evaluator is separate from the workflow model path. By default it
+uses a detected Codex or Claude subscription in a fresh ACP session. It judges
+only the user-authored success contract; daemon-authored settlement remains
+the authority for cost, latency, route attribution, and policy lineage.
+
+If quality passed, normalized cost fell, and the lineage is still current:
 
 ```bash
 bitrouter optimize publish
 ```
 
-From then on `bitrouter/auto` sends that kind of request to the cheaper model **for you** — same base URL, same key, same model id. Then run the loop again. Each cycle moves one more route down a tier, so the savings compound while every step stays individually reviewed. Nothing is ever applied automatically, and every published state is reversible by digest.
+The first publication asks on a TTY before changing `policy.mode` from
+`frozen` to `adaptive`. Headless automation must opt in explicitly with
+`--enable-adaptive`. `run` itself never publishes.
+
+After publication, the same `@auto` model sends that request shape to the
+economy tier. Run the loop again to consider one more route. Restore a prior
+reviewed policy at any time with:
+
+```bash
+bitrouter optimize rollback sha256:<policy-digest>
+```
 
 <Callout type="warn">
-`quality-first`, `balanced`, and `savings-first` set what the optimizer tries first. They are not quality-loss budgets, and no percentage is promised — your eval result is the authority on every trade-off. Both sides of a comparison must currently be hosted routes.
+`quality-first`, `balanced`, and `savings-first` control which eligible route
+BitRouter evaluates first. They are not fixed quality-loss percentages. This
+release still requires an explicit agentic pass and lower normalized cost;
+latency is observe-only.
+</Callout>
+
+<Callout type="info">
+Both the strong and economy workflow tiers always run through a fresh private
+BitRouter daemon during optimization. A provider subscription, BitRouter Cloud
+OAuth, BYOK, or a local model changes the daemon's outbound provider — never
+the workflow's routing boundary.
 </Callout>
 
 ## Next steps
 
 <Cards>
-  <Card title="Supported models" href="/docs/overview/supported-models" description="The full catalog, id grammar, and per-model pricing." />
-  <Card title="Virtual models" href="/docs/models-and-routing/virtual-model" description="Named routing profiles you invoke inline with @name." />
-  <Card title="Integrations" href="/docs/integrations" description="Step-by-step guides for every supported agent runtime." />
-  <Card title="Self-host" href="/docs/guides/self-host" description="Run the same router on your own infrastructure." />
-  <Card title="Bring your own models" href="/docs/models-and-routing/bring-your-own-model" description="Put a local runner, a fine-tune, or a private cluster behind the same endpoint." />
-  <Card title="CLI reference" href="/docs/usage/cli" description="The full command surface of the binary." />
+  <Card title="Workflow optimization" href="/docs/evals-and-tracing/workflow-optimization" description="The full white-box experiment, artifact, and failure contract." />
+  <Card title="Supported models" href="/docs/overview/supported-models" description="Provider-qualified model ids and pricing." />
+  <Card title="Virtual models" href="/docs/models-and-routing/virtual-model" description="How @name presets compose model and routing policy." />
+  <Card title="Integrations" href="/docs/integrations" description="Harness-specific routing setup." />
+  <Card title="Self-host" href="/docs/guides/self-host" description="Run BitRouter under your own process manager." />
+  <Card title="CLI reference" href="/docs/usage/cli" description="The generated command surface." />
 </Cards>

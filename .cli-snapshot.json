@@ -1,12 +1,12 @@
 {
-  "version": "bitrouter 1.0.0-alpha.26",
-  "capturedAt": "2026-07-26",
-  "binary": "bitrouter",
+  "version": "bitrouter 1.0.0-alpha.27",
+  "capturedAt": "2026-08-08",
+  "binary": "/private/tmp/bitrouter-installed-path.N4LBqh/bin/bitrouter",
   "commands": [
     {
       "path": [],
       "about": "BitRouter: an LLM API router. CLI + TUI + assembly library.",
-      "usage": "bitrouter [OPTIONS] <COMMAND>",
+      "usage": "bitrouter [OPTIONS] [COMMAND]",
       "args": [],
       "options": [
         {
@@ -210,13 +210,13 @@
       "path": [
         "init"
       ],
-      "about": "Write a starter `bitrouter.yaml` (with `skip_auth: true`)",
+      "about": "Guided onboarding wizard that sequences credential, harness, and finish steps to first value. Interactive by default; `--yes` (or no TTY) runs it headlessly, emitting the JSON result envelope and never blocking on a human. Every prompt has a flag equivalent (below) so an agent can drive the whole thing. With `--yes` this also reproduces the classic starter-`bitrouter.yaml` scaffold (refusing to overwrite unless `--force`)",
       "usage": "bitrouter init [OPTIONS]",
       "args": [],
       "options": [
         {
           "payload": "-c, --config <CONFIG>",
-          "help": "Path to write [default: bitrouter.yaml]"
+          "help": "Path for the starter `bitrouter.yaml` write [default: bitrouter.yaml]"
         },
         {
           "payload": "-j, --json",
@@ -225,6 +225,114 @@
         {
           "payload": "--human",
           "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "-y, --yes",
+          "help": "Run non-interactively: process the flags below, never block, emit the JSON envelope, and scaffold the starter config"
+        },
+        {
+          "payload": "--force",
+          "help": "Allow overwriting an existing `bitrouter.yaml` when scaffolding"
+        },
+        {
+          "payload": "--reset",
+          "help": "Clear stored onboarding credentials (cloud session always; provider credentials after a confirm, or unconditionally under `--yes`) before running"
+        },
+        {
+          "payload": "--cloud-login",
+          "help": "(Step 1) Sign in to BitRouter Cloud via device-flow OAuth. Skipped and reported under `--yes` (a machine can't complete the device flow)"
+        },
+        {
+          "payload": "--api-key <BRK_KEY>",
+          "help": "(Step 1) Seed the cloud credential from a `brk_` API key (non-interactive)"
+        },
+        {
+          "payload": "--provider <ID>",
+          "help": "(Step 1) Log in to an upstream provider by id (repeatable). A paired `--provider-api-key` seeds it non-interactively; otherwise it is reported-and-skipped under `--yes`"
+        },
+        {
+          "payload": "--provider-api-key <KEY>",
+          "help": "(Step 1) API key for the `--provider` at the same position (repeatable)"
+        },
+        {
+          "payload": "--use-detected",
+          "help": "(Step 1) Accept the auto-detected credential(s) without prompting"
+        },
+        {
+          "payload": "--harness <HARNESSES>",
+          "help": "(Step 2) Harness to drive: `claude` or `codex` (repeatable) Possible values:"
+        },
+        {
+          "payload": "- claude: Anthropic's Claude Code CLI (`claude`)",
+          "help": ""
+        },
+        {
+          "payload": "- codex:",
+          "help": "OpenAI's Codex CLI (`codex`)"
+        },
+        {
+          "payload": "--no-install",
+          "help": "(Step 2) Never install a missing harness"
+        },
+        {
+          "payload": "--after <AFTER>",
+          "help": "(Step 3) What to do at the end: `launch` | `serve` | `exit` Possible values:"
+        },
+        {
+          "payload": "- launch: Launch the harness's native TUI now (`bitrouter launch`)",
+          "help": ""
+        },
+        {
+          "payload": "- serve:",
+          "help": "Start the daemon and print a paste-in snippet for an existing tool"
+        },
+        {
+          "payload": "- exit:",
+          "help": "Do nothing further"
+        },
+        {
+          "payload": "--model <ID>",
+          "help": "(Step 3) Model handed to the harness for this session only (not persisted)"
+        },
+        {
+          "payload": "--write-config",
+          "help": "(Step 3) Write a starter `bitrouter.yaml` (the one sanctioned config write)"
+        },
+        {
+          "payload": "--optimize",
+          "help": "Configure the version-controlled workflow optimization loop"
+        },
+        {
+          "payload": "--optimize-workflow-command <OPTIMIZE_WORKFLOW_COMMAND>",
+          "help": "Exact workflow executable for headless optimization onboarding"
+        },
+        {
+          "payload": "--optimize-workflow-arg <OPTIMIZE_WORKFLOW_ARG>",
+          "help": "One exact workflow argument; repeat to preserve argv boundaries"
+        },
+        {
+          "payload": "--optimize-workflow-input <OPTIMIZE_WORKFLOW_INPUT>",
+          "help": "Ignored or generated workflow input to freeze into both variants; repeat for dependency roots such as node_modules or .venv"
+        },
+        {
+          "payload": "--optimize-success <OPTIMIZE_SUCCESS>",
+          "help": "Observable workflow success contract text"
+        },
+        {
+          "payload": "--optimize-strong <OPTIMIZE_STRONG>",
+          "help": "Provider-qualified strong route for optimization onboarding [default: openai-codex:gpt-5.6-sol]"
+        },
+        {
+          "payload": "--optimize-economy <OPTIMIZE_ECONOMY>",
+          "help": "Provider-qualified economy route for optimization onboarding [default: bitrouter:deepseek/deepseek-v4-flash-0731]"
+        },
+        {
+          "payload": "--optimize-normalized-price <OPTIMIZE_NORMALIZED_PRICES>",
+          "help": "Frozen normalized-showback price override. Repeat for unpriced subscription routes"
+        },
+        {
+          "payload": "--optimize-preference <OPTIMIZE_PREFERENCE>",
+          "help": "Qualitative optimization trade-off; latency is observe-only [default: balanced] [possible values: quality-first, balanced, savings-first]"
         }
       ]
     },
@@ -593,9 +701,36 @@
     {
       "path": [
         "policy",
+        "verify"
+      ],
+      "about": "Verify the lock's compiled evidence root against the local ledger",
+      "usage": "bitrouter policy verify [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "--evidence",
+          "help": ""
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": ""
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "policy",
         "status"
       ],
-      "about": "Show policy path, digest, writeback mode, and preset bindings",
+      "about": "Show policy path, digest, runtime mode, and preset bindings",
       "usage": "bitrouter policy status [OPTIONS]",
       "args": [],
       "options": [
@@ -671,6 +806,101 @@
     {
       "path": [
         "policy",
+        "compile"
+      ],
+      "about": "Compile a deterministic v2 candidate without changing the active lock",
+      "usage": "bitrouter policy compile [OPTIONS] --output <FILE>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--output <FILE>",
+          "help": "Candidate output path"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--snapshot-time <UNIX_MS>",
+          "help": "Frozen evidence snapshot time in Unix milliseconds"
+        },
+        {
+          "payload": "--eval-snapshot <SHA256>",
+          "help": "Immutable admitted-evidence root from `eval snapshot freeze`"
+        },
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": ""
+        }
+      ]
+    },
+    {
+      "path": [
+        "policy",
+        "diff"
+      ],
+      "about": "Compare explicit routes in two policy lock artifacts",
+      "usage": "bitrouter policy diff [OPTIONS] <ACTIVE> <CANDIDATE>",
+      "args": [
+        {
+          "payload": "<ACTIVE>",
+          "help": ""
+        },
+        {
+          "payload": "<CANDIDATE>",
+          "help": ""
+        }
+      ],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "policy",
+        "publish"
+      ],
+      "about": "Publish one already-compiled candidate after lineage validation",
+      "usage": "bitrouter policy publish [OPTIONS] <CANDIDATE>",
+      "args": [
+        {
+          "payload": "<CANDIDATE>",
+          "help": ""
+        }
+      ],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": ""
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--socket <SOCKET>",
+          "help": ""
+        }
+      ]
+    },
+    {
+      "path": [
+        "policy",
         "evolve"
       ],
       "about": "Project qualified database evidence into a deterministic policy lock",
@@ -686,8 +916,62 @@
           "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
         },
         {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--output <FILE>",
+          "help": "Export the candidate without changing the active policy lock"
+        },
+        {
           "payload": "-c, --config <CONFIG>",
           "help": ""
+        }
+      ]
+    },
+    {
+      "path": [
+        "policy",
+        "rollback"
+      ],
+      "about": "Restore an exact lock snapshot from local promotion history",
+      "usage": "bitrouter policy rollback [OPTIONS] <DIGEST>",
+      "args": [
+        {
+          "payload": "<DIGEST>",
+          "help": ""
+        }
+      ],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": ""
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--socket <SOCKET>",
+          "help": ""
+        }
+      ]
+    },
+    {
+      "path": [
+        "eval"
+      ],
+      "about": "Evaluator-neutral evidence exchange",
+      "usage": "bitrouter eval [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
         },
         {
           "payload": "--human",
@@ -697,11 +981,118 @@
     },
     {
       "path": [
-        "policy",
-        "lock"
+        "eval",
+        "subject"
       ],
-      "about": "Forbid optimizer writes to `policy-lock.yaml`",
-      "usage": "bitrouter policy lock [OPTIONS]",
+      "about": "Create, inspect, and list eval subjects",
+      "usage": "bitrouter eval subject [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "eval",
+        "subject",
+        "seal"
+      ],
+      "about": "Calculate the canonical evidence digest and write a validated JSON subject",
+      "usage": "bitrouter eval subject seal [OPTIONS] --output <FILE> <DRAFT>",
+      "args": [
+        {
+          "payload": "<DRAFT>",
+          "help": "Draft JSON or YAML subject with redacted evidence items"
+        }
+      ],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--output <FILE>",
+          "help": "Destination for the deterministic sealed JSON subject"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "eval",
+        "subject",
+        "put"
+      ],
+      "about": "Insert an immutable subject from JSON or YAML",
+      "usage": "bitrouter eval subject put [OPTIONS] <FILE>",
+      "args": [
+        {
+          "payload": "<FILE>",
+          "help": ""
+        }
+      ],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": ""
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "eval",
+        "subject",
+        "get"
+      ],
+      "about": "Get one subject by eval id",
+      "usage": "bitrouter eval subject get [OPTIONS] <EVAL_ID>",
+      "args": [
+        {
+          "payload": "<EVAL_ID>",
+          "help": ""
+        }
+      ],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": ""
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "eval",
+        "subject",
+        "list"
+      ],
+      "about": "List subjects",
+      "usage": "bitrouter eval subject list [OPTIONS]",
       "args": [],
       "options": [
         {
@@ -720,11 +1111,135 @@
     },
     {
       "path": [
-        "policy",
-        "unlock"
+        "eval",
+        "result"
       ],
-      "about": "Permit `policy evolve --apply` to publish `policy-lock.yaml`",
-      "usage": "bitrouter policy unlock [OPTIONS]",
+      "about": "Submit an evaluator result through authority admission",
+      "usage": "bitrouter eval result [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "eval",
+        "result",
+        "submit"
+      ],
+      "about": "Submit an immutable result from JSON or YAML as the local operator",
+      "usage": "bitrouter eval result submit [OPTIONS] <FILE>",
+      "args": [
+        {
+          "payload": "<FILE>",
+          "help": ""
+        }
+      ],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": ""
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "eval",
+        "snapshot"
+      ],
+      "about": "Freeze or inspect an immutable admitted-evidence snapshot",
+      "usage": "bitrouter eval snapshot [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "eval",
+        "snapshot",
+        "freeze"
+      ],
+      "about": "Freeze all currently admitted results into a content-addressed manifest",
+      "usage": "bitrouter eval snapshot freeze [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "--at <AT>",
+          "help": ""
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": ""
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "eval",
+        "snapshot",
+        "get"
+      ],
+      "about": "Get a frozen manifest by evidence root",
+      "usage": "bitrouter eval snapshot get [OPTIONS] <EVIDENCE_ROOT>",
+      "args": [
+        {
+          "payload": "<EVIDENCE_ROOT>",
+          "help": ""
+        }
+      ],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": ""
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "eval",
+        "status"
+      ],
+      "about": "Summarize local exchange state",
+      "usage": "bitrouter eval status [OPTIONS]",
       "args": [],
       "options": [
         {
@@ -734,6 +1249,375 @@
         {
           "payload": "-j, --json",
           "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "optimize"
+      ],
+      "about": "Optimize an agent workflow against measured quality and normalized cost",
+      "usage": "bitrouter optimize [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "optimize",
+        "setup"
+      ],
+      "about": "Create version-controlled optimization intent and lock files",
+      "usage": "bitrouter optimize setup [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Optimization intent path [default: bitrouter.optimize.yaml]"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--source-config <SOURCE_CONFIG>",
+          "help": "Source BitRouter config used by the workflow [default: bitrouter.yaml]"
+        },
+        {
+          "payload": "--workflow-command <WORKFLOW_COMMAND>",
+          "help": "Exact workflow executable (no shell parsing). Omit for project discovery"
+        },
+        {
+          "payload": "--workflow-arg <WORKFLOW_ARG>",
+          "help": "One exact workflow argument; repeat to preserve argv boundaries"
+        },
+        {
+          "payload": "--workflow-input <WORKFLOW_INPUT>",
+          "help": "Project file or directory copied into both frozen variants. Repeat for ignored fixtures or dependencies the workflow needs"
+        },
+        {
+          "payload": "--timeout-secs <TIMEOUT_SECS>",
+          "help": "Hard deadline for each baseline or candidate workflow invocation [default: 1800]"
+        },
+        {
+          "payload": "--contract <CONTRACT>",
+          "help": "Success contract path. A starter is created when absent [default: bitrouter.eval.md]"
+        },
+        {
+          "payload": "--policy <POLICY>",
+          "help": "Named routing policy [default: auto]"
+        },
+        {
+          "payload": "--preset <PRESET>",
+          "help": "Preset passed to the workflow as `@preset` [default: auto]"
+        },
+        {
+          "payload": "--strong <STRONG>",
+          "help": "Provider-qualified strong route. Omit to reuse @auto or prompt"
+        },
+        {
+          "payload": "--economy <ECONOMY>",
+          "help": "Provider-qualified economy route. Omit to reuse @auto or prompt"
+        },
+        {
+          "payload": "--normalized-price <NORMALIZED_PRICE_OVERRIDES>",
+          "help": "Frozen normalized-showback price as provider:model=uncached,cache_read,cache_write,output. Repeat for subscription or otherwise unpriced routes"
+        },
+        {
+          "payload": "--preference <PREFERENCE>",
+          "help": "Qualitative quality/cost trade-off. Latency remains observe-only [default: balanced] [possible values: quality-first, balanced, savings-first]"
+        },
+        {
+          "payload": "--evaluator-agent <EVALUATOR_AGENT>",
+          "help": "ACP evaluator id. Codex is the default generic agentic evaluator [default: codex-acp]"
+        },
+        {
+          "payload": "--evaluator-model <EVALUATOR_MODEL>",
+          "help": "Concrete judge model, independent from the workflow candidate"
+        },
+        {
+          "payload": "--evaluator-via-cloud",
+          "help": "Route judge traffic through BitRouter Cloud instead of the detected agent's own subscription. Workflow traffic always uses the private BitRouter daemon and may select any configured provider"
+        }
+      ]
+    },
+    {
+      "path": [
+        "optimize",
+        "resolve"
+      ],
+      "about": "Accept edited version-controlled intent and start a fresh lineage",
+      "usage": "bitrouter optimize resolve [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "[default: bitrouter.optimize.yaml]"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "optimize",
+        "run"
+      ],
+      "about": "Run one baseline and one controlled candidate, then compile a report",
+      "usage": "bitrouter optimize run [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "[default: bitrouter.optimize.yaml]"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "optimize",
+        "review"
+      ],
+      "about": "Show the immutable report for the latest or named run",
+      "usage": "bitrouter optimize review [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "[default: bitrouter.optimize.yaml]"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--run <RUN>",
+          "help": ""
+        }
+      ]
+    },
+    {
+      "path": [
+        "optimize",
+        "publish"
+      ],
+      "about": "Atomically publish the reviewed candidate policy",
+      "usage": "bitrouter optimize publish [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "[default: bitrouter.optimize.yaml]"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--run <RUN>",
+          "help": ""
+        },
+        {
+          "payload": "--enable-adaptive",
+          "help": "Explicitly enable adaptive publication at the reviewed commit point"
+        }
+      ]
+    },
+    {
+      "path": [
+        "optimize",
+        "rollback"
+      ],
+      "about": "Restore a policy digest and keep optimization lineage in sync",
+      "usage": "bitrouter optimize rollback [OPTIONS] <DIGEST>",
+      "args": [
+        {
+          "payload": "<DIGEST>",
+          "help": ""
+        }
+      ],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "[default: bitrouter.optimize.yaml]"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--socket <SOCKET>",
+          "help": ""
+        }
+      ]
+    },
+    {
+      "path": [
+        "optimize",
+        "status"
+      ],
+      "about": "Show resolved optimization state without running the workflow",
+      "usage": "bitrouter optimize status [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "[default: bitrouter.optimize.yaml]"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "trajectory"
+      ],
+      "about": "Inspect, replay, and retain durable trajectory history in the local database",
+      "usage": "bitrouter trajectory [OPTIONS] <COMMAND>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml`. Uses the standard config resolution chain when omitted"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "trajectory",
+        "inspect"
+      ],
+      "about": "Inspect one episode's structural health, route intents, and event digests",
+      "usage": "bitrouter trajectory inspect [OPTIONS] <EPISODE_ID>",
+      "args": [
+        {
+          "payload": "<EPISODE_ID>",
+          "help": "Globally unique trajectory episode id"
+        }
+      ],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml`. Uses the standard config resolution chain when omitted"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "trajectory",
+        "replay"
+      ],
+      "about": "Verify one episode and compare persisted live checkpoint evidence with replay",
+      "usage": "bitrouter trajectory replay [OPTIONS] <EPISODE_ID>",
+      "args": [
+        {
+          "payload": "<EPISODE_ID>",
+          "help": "Globally unique trajectory episode id"
+        }
+      ],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml`. Uses the standard config resolution chain when omitted"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "trajectory",
+        "prune"
+      ],
+      "about": "Prune delivered outbox rows and retention-expired terminal episodes",
+      "usage": "bitrouter trajectory prune [OPTIONS] --before <BEFORE>",
+      "args": [],
+      "options": [
+        {
+          "payload": "--before <BEFORE>",
+          "help": "Exclusive RFC3339 cutoff"
+        },
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml`. Uses the standard config resolution chain when omitted"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--dry-run",
+          "help": "Report exact eligible counts without mutating the database"
         },
         {
           "payload": "--human",
@@ -815,6 +1699,14 @@
         {
           "payload": "--no-browser",
           "help": "Do not run a browser-based provider OAuth flow"
+        },
+        {
+          "payload": "--api-key <KEY>",
+          "help": "Seed a BYOK provider non-interactively from this API key — skips the method menu and the stdin paste. The provider must accept a pasted key (OAuth-only backends reject it)"
+        },
+        {
+          "payload": "--key-stdin",
+          "help": "Read the API key from stdin (one line) instead of prompting — for pipelines, e.g. `printf %s \"$KEY\" | bitrouter providers login openai --key-stdin`"
         }
       ]
     },
@@ -1051,10 +1943,6 @@
           "help": "Remove the worktree when the session ends (only one this session created). Off by default — removal discards uncommitted work"
         },
         {
-          "payload": "--no-transcript",
-          "help": "Disable the durable session transcript (on by default)"
-        },
-        {
           "payload": "--turn-timeout <SECS>",
           "help": "Per-turn deadline in seconds"
         },
@@ -1063,12 +1951,8 @@
           "help": "(with `-p`) Return immediately after submitting the prompt"
         },
         {
-          "payload": "--warm",
-          "help": "(with `--serve`) Keep the session alive for reattach after the manager disconnects. Unix-only"
-        },
-        {
-          "payload": "--idle-timeout <SECS>",
-          "help": "(with `--serve --warm`) Shut down after this many idle seconds [default: 1800]"
+          "payload": "--result-schema <JSON|@PATH>",
+          "help": "(with `-p`) JSON Schema — inline JSON or `@path` — the subagent's final reply must satisfy. The schema rides the prompt; the terminal NDJSON `result` line gains `result`/`schema_ok` fields, with one repair re-prompt on invalid output (then `schema_ok:false` + raw)"
         },
         {
           "payload": "-c, --config <CONFIG>",
@@ -2316,50 +3200,6 @@
     {
       "path": [
         "skills",
-        "add"
-      ],
-      "about": "Install a skill from a source (GitHub `owner/repo`, a git URL, or a registry skill name)",
-      "usage": "bitrouter skills add [OPTIONS] <SOURCE>",
-      "args": [
-        {
-          "payload": "<SOURCE>",
-          "help": "Source: `owner/repo`, a full git URL, or a registry skill name"
-        }
-      ],
-      "options": [
-        {
-          "payload": "-j, --json",
-          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
-        },
-        {
-          "payload": "--skill <NAME>",
-          "help": "When the source exposes several skills, install the one with this frontmatter `name`"
-        },
-        {
-          "payload": "-g, --global",
-          "help": "Install into `~/.claude/skills/` instead of `./.claude/skills/`"
-        },
-        {
-          "payload": "--human",
-          "help": "Render the human-readable view to stdout instead of JSON"
-        },
-        {
-          "payload": "-y, --yes",
-          "help": "Overwrite an existing install of the same skill"
-        },
-        {
-          "payload": "--registry <URL>",
-          "help": "Registry base URL used when `source` is a bare skill name"
-        },
-        {
-          "payload": "-n, --namespace <NSID>",
-          "help": "Namespace id whose registry hub to query (required for registry operations)"
-        }
-      ]
-    },
-    {
-      "path": [
-        "skills",
         "list"
       ],
       "about": "List installed skills",
@@ -2383,66 +3223,6 @@
     {
       "path": [
         "skills",
-        "remove"
-      ],
-      "about": "Remove an installed skill by name",
-      "usage": "bitrouter skills remove [OPTIONS] <NAME>",
-      "args": [
-        {
-          "payload": "<NAME>",
-          "help": "The skill name to remove"
-        }
-      ],
-      "options": [
-        {
-          "payload": "-g, --global",
-          "help": "Remove from the global skills directory"
-        },
-        {
-          "payload": "-j, --json",
-          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
-        },
-        {
-          "payload": "--human",
-          "help": "Render the human-readable view to stdout instead of JSON"
-        }
-      ]
-    },
-    {
-      "path": [
-        "skills",
-        "find"
-      ],
-      "about": "Search the configured registry for skills",
-      "usage": "bitrouter skills find [OPTIONS] <QUERY>",
-      "args": [
-        {
-          "payload": "<QUERY>",
-          "help": "Query matched against name, description, and tags"
-        }
-      ],
-      "options": [
-        {
-          "payload": "-j, --json",
-          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
-        },
-        {
-          "payload": "--registry <URL>",
-          "help": "Registry base URL to search"
-        },
-        {
-          "payload": "--human",
-          "help": "Render the human-readable view to stdout instead of JSON"
-        },
-        {
-          "payload": "-n, --namespace <NSID>",
-          "help": "Namespace id whose registry hub to query (required for registry operations)"
-        }
-      ]
-    },
-    {
-      "path": [
-        "skills",
         "init"
       ],
       "about": "Scaffold a new `SKILL.md` in the current directory",
@@ -2460,47 +3240,11 @@
         },
         {
           "payload": "-o, --output <OUTPUT>",
-          "help": "Output path for the SKILL.md [default: SKILL.md]"
+          "help": "Output path for the SKILL.md (default: `<NAME>/SKILL.md`)"
         },
         {
           "payload": "--human",
           "help": "Render the human-readable view to stdout instead of JSON"
-        }
-      ]
-    },
-    {
-      "path": [
-        "skills",
-        "update"
-      ],
-      "about": "Re-install installed skills from the registry to their latest version",
-      "usage": "bitrouter skills update [OPTIONS] [NAME]",
-      "args": [
-        {
-          "payload": "[NAME]",
-          "help": "Update only this skill. When omitted, updates every installed skill found in the registry"
-        }
-      ],
-      "options": [
-        {
-          "payload": "-g, --global",
-          "help": "Update the global skills directory"
-        },
-        {
-          "payload": "-j, --json",
-          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
-        },
-        {
-          "payload": "--human",
-          "help": "Render the human-readable view to stdout instead of JSON"
-        },
-        {
-          "payload": "--registry <URL>",
-          "help": "Registry base URL to update from"
-        },
-        {
-          "payload": "-n, --namespace <NSID>",
-          "help": "Namespace id whose registry hub to query (required for registry operations)"
         }
       ]
     },
@@ -2508,7 +3252,7 @@
       "path": [
         "mcp"
       ],
-      "about": "Run or install BitRouter's origin MCP server",
+      "about": "Run or install BitRouter's origin MCP server, and discover upstream MCP servers from the official registry (`mcp search` / `list` / `add`)",
       "usage": "bitrouter mcp [OPTIONS] <COMMAND>",
       "args": [],
       "options": [
@@ -2549,14 +3293,22 @@
         },
         {
           "payload": "--backend <BACKEND>",
-          "help": "`local` or `cloud`. Defaults: stdio→local, http→cloud Possible values:"
+          "help": "`local`, `cloud`, `fleet`, or `skills`. Defaults: stdio→local, http→cloud Possible values:"
         },
         {
-          "payload": "- local: The local BYOK daemon at `127.0.0.1:4356`",
-          "help": ""
+          "payload": "- local:",
+          "help": "The local BYOK daemon at `127.0.0.1:4356`"
         },
         {
-          "payload": "- cloud: BitRouter Cloud at `api.bitrouter.ai`",
+          "payload": "- cloud:",
+          "help": "BitRouter Cloud at `api.bitrouter.ai`"
+        },
+        {
+          "payload": "- fleet:",
+          "help": "The fleet bridge: tools that spawn/manage worktree-isolated ACP subagents for an orchestrating harness (TUI_SPEC §4). Stdio only"
+        },
+        {
+          "payload": "- skills: The origin AgentSkills server: `skills_search`/`skills_get` over the installed-skills root (the `bitrouter_skills` gateway server every TUI-launched harness gets). Stdio only",
           "help": ""
         },
         {
@@ -2578,6 +3330,14 @@
         {
           "payload": "--bind <BIND>",
           "help": "HTTP bind address [default: 127.0.0.1:4357]"
+        },
+        {
+          "payload": "--allow-writes",
+          "help": "(fleet backend only) Grant the orchestrator write autonomy: apply_subagent/merge_subagent may integrate into the base repo. Off by default — writes are human-gated"
+        },
+        {
+          "payload": "--budget-usd <BUDGET_USD>",
+          "help": "(fleet backend only) Spend ceiling in USD. spawn_subagent/ prompt_subagent refuse once today's machine-wide spend reaches it. Unset = unlimited"
         }
       ]
     },
@@ -2601,6 +3361,81 @@
         {
           "payload": "--config <CONFIG>",
           "help": "Config file to merge into; omit to print to stdout"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "mcp",
+        "search"
+      ],
+      "about": "Search the official MCP registry (registry.modelcontextprotocol.io) for upstream MCP servers. Rows carry an install-support column: `remote` (zero-install), `npx`/`uvx` (stub-able), `manual` (other package types)",
+      "usage": "bitrouter mcp search [OPTIONS] <QUERY>",
+      "args": [
+        {
+          "payload": "<QUERY>",
+          "help": "Search text (matched server-side against registry names)"
+        }
+      ],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--limit <LIMIT>",
+          "help": "Maximum rows to print [default: 50]"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "mcp",
+        "list"
+      ],
+      "about": "List servers from the official MCP registry with an install-support column. Responses are cached for 24h under `$XDG_CACHE_HOME/bitrouter/mcp-registry/`",
+      "usage": "bitrouter mcp list [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--limit <LIMIT>",
+          "help": "Maximum rows to print [default: 50]"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "mcp",
+        "add"
+      ],
+      "about": "Print a YAML stub for a registry server (paste under `mcp_servers:` in `bitrouter.yaml`). Prefers a zero-install `streamable-http` remote when the entry publishes one; otherwise stubs `npx`/`uvx` stdio packages with required env vars as placeholders. Entries without a pinned npm/PyPI stdio package are refused with a manual-install pointer",
+      "usage": "bitrouter mcp add [OPTIONS] <NAME>",
+      "args": [
+        {
+          "payload": "<NAME>",
+          "help": "Registry name, e.g. `com.pulsemcp/remote-filesystem` (see `bitrouter mcp search` / `bitrouter mcp list`)"
+        }
+      ],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
         },
         {
           "payload": "--human",
@@ -2659,7 +3494,7 @@
         "bundle"
       ],
       "about": "Build a deterministic benchmark trace bundle",
-      "usage": "bitrouter workflow-state bundle [OPTIONS] --run-label <RUN_LABEL> --traces <TRACES> --cloud-usage <CLOUD_USAGE> --outcomes <OUTCOMES> --output-dir <OUTPUT_DIR>",
+      "usage": "bitrouter workflow-state bundle [OPTIONS] --run-label <RUN_LABEL> --traces <TRACES> --cloud-usage <CLOUD_USAGE> --output-dir <OUTPUT_DIR>",
       "args": [],
       "options": [
         {
@@ -2684,7 +3519,7 @@
         },
         {
           "payload": "--outcomes <OUTCOMES>",
-          "help": "Benchmark outcome JSONL"
+          "help": "Optional request-scoped benchmark outcome JSONL. Omit when task or episode outcomes will be submitted through the Eval Exchange"
         },
         {
           "payload": "--policy-decisions <POLICY_DECISIONS>",
@@ -2723,7 +3558,7 @@
         },
         {
           "payload": "--impute-price <IMPUTE_PRICES>",
-          "help": "Impute zero/missing charges as provider:model=input_micro_usd,output_micro_usd"
+          "help": "Impute charges as provider:model=uncached,cache_read,cache_write,output. Legacy input,output is accepted only for records with no cache usage"
         },
         {
           "payload": "--since <SINCE>",
@@ -2738,10 +3573,139 @@
     {
       "path": [
         "workflow-state",
+        "reliability-report"
+      ],
+      "about": "Replay persisted provider reliability state into a deterministic JSON report",
+      "usage": "bitrouter workflow-state reliability-report [OPTIONS] --database-url <DATABASE_URL> --config <CONFIG> --output <OUTPUT>",
+      "args": [],
+      "options": [
+        {
+          "payload": "--database-url <DATABASE_URL>",
+          "help": "Database URL for the daemon policy DB"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--config <CONFIG>",
+          "help": "Frozen BitRouter config that defines the reliability thresholds"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--output <OUTPUT>",
+          "help": "Output JSON report path"
+        }
+      ]
+    },
+    {
+      "path": [
+        "workflow-state",
+        "policy-oracle"
+      ],
+      "about": "Estimate policy cost coverage and savings without changing live routing",
+      "usage": "bitrouter workflow-state policy-oracle [OPTIONS] --traces <TRACES> --cloud-usage <CLOUD_USAGE> --policy-lock <POLICY_LOCK> --policy <POLICY> --effective-cost-factor <EFFECTIVE_COST_FACTOR_PPM> --target-savings <TARGET_SAVINGS_PPM> --output <OUTPUT>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--traces <TRACES>",
+          "help": "Protocol-native daemon workflow trace JSONL from the baseline run"
+        },
+        {
+          "payload": "--cloud-usage <CLOUD_USAGE>",
+          "help": "Request-settled usage JSONL for the same baseline run"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--policy-lock <POLICY_LOCK>",
+          "help": "Policy lock containing the candidate routes to replay"
+        },
+        {
+          "payload": "--policy <POLICY>",
+          "help": "Named policy within the lock"
+        },
+        {
+          "payload": "--effective-cost-factor <EFFECTIVE_COST_FACTOR_PPM>",
+          "help": "Candidate effective cost divided by baseline cost, including any expected token, retry, or turn inflation (for example 0.24)"
+        },
+        {
+          "payload": "--target-savings <TARGET_SAVINGS_PPM>",
+          "help": "Desired end-to-end savings fraction. Repeat for multiple targets"
+        },
+        {
+          "payload": "--output <OUTPUT>",
+          "help": "Output JSON report path"
+        }
+      ]
+    },
+    {
+      "path": [
+        "workflow-state",
+        "reconcile-metering"
+      ],
+      "about": "Reconcile selected metering rows against request-scoped receipts",
+      "usage": "bitrouter workflow-state reconcile-metering [OPTIONS] --database-url <DATABASE_URL> --request-id <REQUEST_IDS>",
+      "args": [],
+      "options": [
+        {
+          "payload": "--database-url <DATABASE_URL>",
+          "help": "Database URL for the daemon metering DB"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--api-base <API_BASE>",
+          "help": "Inference API root ending in `/v1` [default: https://api.bitrouter.ai/v1]"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "--api-key-env <API_KEY_ENV>",
+          "help": "Environment variable containing the inference key [default: BITROUTER_API_KEY]"
+        },
+        {
+          "payload": "--credentials-file <CREDENTIALS_FILE>",
+          "help": "Protected BitRouter Cloud credential file. When set, resolves either a static API key or an OAuth bearer (with refresh) without exporting the credential into the process environment"
+        },
+        {
+          "payload": "--request-id <REQUEST_IDS>",
+          "help": "Exact request id to reconcile. Repeat for every selected row"
+        },
+        {
+          "payload": "--price <PRICES>",
+          "help": "Frozen price as provider:model=uncached,cache_read,cache_write,output. Repeat a provider/model pair for alternative schedules; settlement accepts only one distinct candidate that reconstructs the receipt"
+        },
+        {
+          "payload": "--max-attempts <MAX_ATTEMPTS>",
+          "help": "Maximum durable receipt fetches per request [default: 12]"
+        },
+        {
+          "payload": "--poll-interval-ms <POLL_INTERVAL_MS>",
+          "help": "Delay between pending-receipt polls [default: 1000]"
+        }
+      ]
+    },
+    {
+      "path": [
+        "workflow-state",
         "apply-reward-feedback"
       ],
       "about": "Apply task rewards to cheap replacement transitions before the next round",
-      "usage": "bitrouter workflow-state apply-reward-feedback [OPTIONS] --database-url <DATABASE_URL> --traces <TRACES> --outcomes <OUTCOMES> --policy-decisions <POLICY_DECISIONS>",
+      "usage": "bitrouter workflow-state apply-reward-feedback [OPTIONS] --database-url <DATABASE_URL> --traces <TRACES> --cloud-usage <CLOUD_USAGE> --outcomes <OUTCOMES> --policy-decisions <POLICY_DECISIONS>",
       "args": [],
       "options": [
         {
@@ -2759,6 +3723,10 @@
         {
           "payload": "--traces <TRACES>",
           "help": "Daemon workflow trace JSONL for the just-finished benchmark group"
+        },
+        {
+          "payload": "--cloud-usage <CLOUD_USAGE>",
+          "help": "Exact, reconciled usage JSONL for the same benchmark group"
         },
         {
           "payload": "--outcomes <OUTCOMES>",
@@ -2856,20 +3824,8 @@
           "help": "Remove the worktree when the session ends. Off by default: the worktree holds the agent's work, and removal discards anything uncommitted. Only a worktree created by this session is removed"
         },
         {
-          "payload": "--no-transcript",
-          "help": "Disable the durable session transcript (`.bitrouter/sessions/<id>.transcript.ndjson`, on by default)"
-        },
-        {
           "payload": "--turn-timeout <SECS>",
           "help": "Per-turn deadline in seconds. On elapse the agent is asked to cancel cooperatively; a turn that still doesn't finish errors"
-        },
-        {
-          "payload": "--warm",
-          "help": "Keep the session alive after the manager disconnects and accept reattach connections on `.bitrouter/sessions/<record_id>.sock` (same stdio JSON-RPC framing over a unix socket; reconnect with `bitrouter acp attach <record>` and rejoin history via `session/load`). Unix-only"
-        },
-        {
-          "payload": "--idle-timeout <SECS>",
-          "help": "Shut a warm session down after this many seconds with no manager attached [default: 1800]"
         },
         {
           "payload": "--direct",
@@ -2928,10 +3884,6 @@
           "help": "Remove the worktree when the session ends. Off by default: the worktree holds the agent's work, and removal discards anything uncommitted. Only a worktree created by this session is removed"
         },
         {
-          "payload": "--no-transcript",
-          "help": "Disable the durable session transcript (`.bitrouter/sessions/<id>.transcript.ndjson`, on by default)"
-        },
-        {
           "payload": "--turn-timeout <SECS>",
           "help": "Per-turn deadline in seconds. On elapse the agent is asked to cancel cooperatively; a turn that still doesn't finish errors"
         },
@@ -2982,18 +3934,16 @@
     },
     {
       "path": [
-        "acp",
-        "attach"
+        "tui"
       ],
-      "about": "Reattach to a warm session: bridge this terminal's stdio to the session's unix socket. Speak ACP as usual; `session/load` replays the conversation so far. Unix-only",
-      "usage": "bitrouter acp attach [OPTIONS] <RECORD>",
-      "args": [
-        {
-          "payload": "<RECORD>",
-          "help": "Session record id (or unique prefix) from `bitrouter acp sessions`"
-        }
-      ],
+      "about": "Launch the composite multi-agent TUI: a left rail (roster sorted by who needs you, radar strip, decision + review queues) beside the primary pane. `--agent claude|codex|opencode|pi|hermes|openclaw|grok|agy` hosts that harness's REAL native TUI in a PTY pane (the orchestrator — keys pass through; `Ctrl-Space` is the one manager leader; `Ctrl-C` interrupts the agent, not the TUI) with the fleet MCP bridge injected where the harness supports MCP (pi/openclaw/grok/agy have no mechanism). grok and agy launch with their own subscription auth (the daemon borrows those same sessions as providers). A configured `agents:` id instead renders that ACP agent from typed events. `Ctrl-Space n` spawns worktree-isolated ACP subagents either way",
+      "usage": "bitrouter tui [OPTIONS] --agent <AGENT>",
+      "args": [],
       "options": [
+        {
+          "payload": "-a, --agent <AGENT>",
+          "help": "The primary agent: a native harness (`claude`, `codex`, `opencode`, `pi`, `grok`, `agy`/`antigravity`) hosted in a PTY as the orchestrator, or a configured `agents:` entry rendered from ACP events"
+        },
         {
           "payload": "-j, --json",
           "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
@@ -3001,6 +3951,14 @@
         {
           "payload": "--human",
           "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "-w, --worktree <WORKTREE>",
+          "help": "Optional git worktree name for the first session (ACP agents only)"
+        },
+        {
+          "payload": "-m, --model <MODEL>",
+          "help": "Pin the orchestrator's model (a daemon-routable id, e.g. `anthropic/claude-sonnet-5` or the explicit `provider:model` form). Defaults to the harness's own configuration (claude, codex) or the daemon's first advertised model (opencode, pi)"
         }
       ]
     }

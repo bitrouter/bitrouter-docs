@@ -65,6 +65,16 @@ So the loop is: you converse with one orchestrator, it delegates, and you handle
 
 Typing into a read-only monitor gets you a notice pointing at the owner rather than silence. If you genuinely need to drive a subagent directly, `leader t` **attaches** it as a PTY for full-fidelity control; closing the attach returns it to read-only.
 
+## Scrollback and mouse
+
+PTY panes support **host-owned scrollback** (the tmux/zellij model). When a session pane is focused:
+
+- **Wheel / PgUp / PgDn** page through the scrollback history
+- An `↑ SCROLLBACK` hint appears when you're scrolled up from the live tail
+- **Typing any key** snaps back to the live tail
+
+Apps that run on the **alternate screen** and enable mouse reporting (like `claude` with its native transcript) receive **real mouse events** instead — wheel, clicks, and drags go directly to the app so it can handle its own selection and scrolling.
+
 ## Keys
 
 There is no manager mode to enter and escape. Most verbs work inline; the rest hang off a **one-shot leader** (default `Ctrl-Space`) that opens a which-key menu, takes one key, and drops you straight back.

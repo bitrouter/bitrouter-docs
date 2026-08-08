@@ -1,29 +1,56 @@
 /**
- * Sync the marketing changelog from bitrouter/bitrouter GitHub Releases.
+ * Sync the marketing changelog from BitRouter GitHub Releases.
  *
- * Deterministic generator for the "curated, PR-assisted" flow: it writes a
- * *draft* MDX entry per release into content/changelog/, which a human curates
- * (title/description/prose) before the PR is merged. It never overwrites an
- * existing entry, so once an entry is hand-edited and merged it is frozen.
+ * Curated, PR-assisted flow: writes a *draft* MDX entry per release into
+ * content/changelog/, which a human curates before the PR is merged. It never
+ * overwrites an existing entry, so a merged entry is frozen.
+ *
+ * The draft is optionally polished by BitRouter (dogfood) when BITROUTER_API_KEY
+ * is present — the raw git-cliff bullets become benefit-oriented prose plus a
+ * tighter title/description. Without a key it falls back to the deterministic
+ * clean-up, so local runs and CI-without-secrets still work.
+ *
+ * Two products feed the same directory:
+ *   - oss   → reads releases from bitrouter/bitrouter (public; fetched via API)
+ *   - cloud → body is passed inline via CHANGELOG_BODY (the private repo is not
+ *             fetched), and entries are written as cloud-<slug>.mdx
  *
  * Env:
- *   SOURCE_REPO      owner/repo to read releases from (default bitrouter/bitrouter)
- *   CHANGELOG_TAG    a single tag to sync (set from the repository_dispatch
- *                    payload); when unset, backfills the most recent releases
- *   CHANGELOG_LIMIT  how many recent releases to consider when no tag is given
- *                    (default 20)
+ *   PRODUCT          oss | cloud (default oss)
+ *   SOURCE_REPO      owner/repo to read releases from (default per product)
+ *   CHANGELOG_TAG    a single tag to sync (from the repository_dispatch payload);
+ *                    unset → backfill the most recent releases
+ *   CHANGELOG_BODY   inline release notes (used instead of fetching; cloud path)
+ *   CHANGELOG_NAME   release title for the inline path (optional)
+ *   CHANGELOG_DATE   ISO date for the inline path (optional)
+ *   CHANGELOG_LIMIT  how many recent releases when no tag is given (default 20)
+ *   BITROUTER_API_KEY       enables the refine pass (brk_ key for api.bitrouter.ai)
+ *   BITROUTER_BASE_URL      default https://api.bitrouter.ai/v1
+ *   CHANGELOG_REFINE_MODEL  default bitrouter/kimi-k2.5
+ *   CHANGELOG_FORCE_REFINE  "1" to also refine backfills (default: only single-tag)
  *   GITHUB_TOKEN     optional — raises the API rate limit
  *
- * Writes the list of created files to $GITHUB_OUTPUT as `created` (newline-
- * joined) and `count`, so the workflow can decide whether to open a PR.
+ * Writes `created` (newline-joined) and `count` to $GITHUB_OUTPUT.
  */
 import { readdir, writeFile, appendFile } from "node:fs/promises";
 import { join } from "node:path";
 
-const SOURCE_REPO = process.env.SOURCE_REPO ?? "bitrouter/bitrouter";
+const PRODUCT = (process.env.PRODUCT ?? "oss").toLowerCase() === "cloud" ? "cloud" : "oss";
+const SOURCE_REPO =
+  process.env.SOURCE_REPO?.trim() ||
+  (PRODUCT === "cloud" ? "bitrouter/bitrouter-cloud" : "bitrouter/bitrouter");
 const ONLY_TAG = process.env.CHANGELOG_TAG?.trim() || null;
+const INLINE_BODY = process.env.CHANGELOG_BODY ?? null;
 const LIMIT = Number(process.env.CHANGELOG_LIMIT ?? 20);
 const DIR = "content/changelog";
+
+const BITROUTER_API_KEY = process.env.BITROUTER_API_KEY ?? "";
+const BITROUTER_BASE_URL = (process.env.BITROUTER_BASE_URL ?? "https://api.bitrouter.ai/v1").replace(/\/$/, "");
+const REFINE_MODEL = process.env.CHANGELOG_REFINE_MODEL ?? "bitrouter/kimi-k2.5";
+// Refining every backfilled release is wasteful; by default only refine the
+// real-time single-tag path. CHANGELOG_FORCE_REFINE=1 overrides.
+const REFINE_ENABLED =
+  Boolean(BITROUTER_API_KEY) && (Boolean(ONLY_TAG) || process.env.CHANGELOG_FORCE_REFINE === "1");
 
 function ghHeaders() {
   const h = { Accept: "application/vnd.github+json", "User-Agent": "bitrouter-docs-changelog-sync" };
@@ -32,6 +59,19 @@ function ghHeaders() {
 }
 
 async function fetchReleases() {
+  // Inline path (cloud / private): synthesize a release from the payload.
+  if (INLINE_BODY != null) {
+    if (!ONLY_TAG) throw new Error("CHANGELOG_BODY requires CHANGELOG_TAG");
+    return [
+      {
+        tag_name: ONLY_TAG,
+        name: process.env.CHANGELOG_NAME?.trim() || ONLY_TAG,
+        body: INLINE_BODY,
+        published_at: process.env.CHANGELOG_DATE?.trim() || new Date().toISOString(),
+        draft: false,
+      },
+    ];
+  }
   if (ONLY_TAG) {
     const res = await fetch(
       `https://api.github.com/repos/${SOURCE_REPO}/releases/tags/${encodeURIComponent(ONLY_TAG)}`,
@@ -49,8 +89,10 @@ async function fetchReleases() {
 }
 
 // Tag → file slug, matching the existing v0-4-0.mdx convention (dots → dashes).
+// Cloud entries are prefixed so they never collide with an equal OSS version.
 function slugForTag(tag) {
-  return tag.replace(/[^\w.-]/g, "").replace(/\./g, "-").toLowerCase();
+  const base = tag.replace(/[^\w.-]/g, "").replace(/\./g, "-").toLowerCase();
+  return PRODUCT === "cloud" ? `cloud-${base}` : base;
 }
 
 // git-cliff release notes group bullets under "### ⛰️ Features" etc. and end
@@ -58,7 +100,6 @@ function slugForTag(tag) {
 // link) so the draft reads less like a raw commit log.
 function cleanBody(body) {
   return (body ?? "")
-    // strip the trailing " - ([hash](url))" without crossing line boundaries
     .replace(/[^\S\n]*-[^\S\n]*\(\[[0-9a-f]{7,}\]\([^)]+\)\)[^\S\n]*$/gim, "")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
@@ -70,8 +111,8 @@ function firstFeatureLine(body) {
     if (line.startsWith("- ")) {
       return line
         .replace(/^- /, "")
-        .replace(/\*\(([^)]+)\)\*\s*/, "") // drop the *(scope)* prefix
-        .replace(/\s*\(\[#\d+\][^)]*\)\s*.*$/, "") // drop PR/commit refs + tail
+        .replace(/\*\(([^)]+)\)\*\s*/, "")
+        .replace(/\s*\(\[#\d+\][^)]*\)\s*.*$/, "")
         .trim();
     }
   }
@@ -95,7 +136,70 @@ function yaml(v) {
   return JSON.stringify(v); // JSON scalars/arrays are valid YAML flow syntax
 }
 
-function buildMdx(release) {
+// Product-aware voice for the refine pass.
+const VOICE = {
+  oss:
+    "BitRouter (open source) is a self-hosted LLM proxy/gateway written in Rust. " +
+    "Readers self-host it; they care about routing correctness, new providers/models, " +
+    "config/CLI changes, performance, and breaking changes. Be precise and technical, no hype.",
+  cloud:
+    "BitRouter Cloud is the managed gateway (api.bitrouter.ai). Readers are paying customers; " +
+    "they care about new models/providers they can call, reliability, billing/dashboard changes, " +
+    "and new capabilities. Benefit-first and clear, never salesy; drop internal-only changes.",
+};
+
+function extractJson(text) {
+  let t = String(text ?? "").trim();
+  const fence = t.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fence) t = fence[1].trim();
+  const s = t.indexOf("{");
+  const e = t.lastIndexOf("}");
+  if (s === -1 || e === -1) return null;
+  try {
+    return JSON.parse(t.slice(s, e + 1));
+  } catch {
+    return null;
+  }
+}
+
+// Polish the draft through BitRouter. Returns { title, description, body } or
+// null on any failure so the caller falls back to the deterministic draft.
+async function refine(release, cleaned) {
+  const label = PRODUCT === "cloud" ? "BitRouter Cloud" : "BitRouter (open source)";
+  const system =
+    `You are the changelog editor for ${label}. ${VOICE[PRODUCT]} ` +
+    "Rewrite the raw release notes into a polished changelog entry. Respond with ONLY a JSON " +
+    'object: {"title": string (<=60 chars), "description": string (one sentence, <=140 chars), ' +
+    '"body": string}. In "body": keep the "### Group" headings and the PR links like ' +
+    "([#123](url)); turn terse bullets into clear, benefit-oriented lines; drop noise; no H1.";
+  const user = `Release ${release.tag_name}\n\nRaw notes:\n${cleaned || "(none)"}`;
+  try {
+    const res = await fetch(`${BITROUTER_BASE_URL}/chat/completions`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${BITROUTER_API_KEY}` },
+      body: JSON.stringify({
+        model: REFINE_MODEL,
+        temperature: 0.3,
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: user },
+        ],
+      }),
+    });
+    if (!res.ok) {
+      console.warn(`refine: BitRouter ${res.status} — falling back to deterministic draft`);
+      return null;
+    }
+    const data = await res.json();
+    const json = extractJson(data?.choices?.[0]?.message?.content);
+    return json?.body ? json : null;
+  } catch (err) {
+    console.warn(`refine: ${err} — falling back to deterministic draft`);
+    return null;
+  }
+}
+
+async function buildMdx(release) {
   const tag = release.tag_name;
   const date = (release.published_at ?? release.created_at ?? "").slice(0, 10);
   const cleaned = cleanBody(release.body);
@@ -103,23 +207,35 @@ function buildMdx(release) {
   const tags = deriveTags(cleaned);
   const breaking = isBreaking(cleaned);
 
+  let title = release.name?.trim() || tag;
+  let description = lead ? `${lead}.` : `BitRouter ${tag} release.`;
+  let body = cleaned || "_No release notes._";
+
+  const refined = REFINE_ENABLED ? await refine(release, cleaned) : null;
+  if (refined) {
+    title = refined.title?.trim() || title;
+    description = refined.description?.trim() || description;
+    body = refined.body?.trim() || body;
+  }
+
   const fm = [
     "---",
-    `title: ${yaml(release.name?.trim() || tag)}`,
-    `description: ${yaml(lead ? `${lead}.` : `BitRouter ${tag} release.`)}`,
+    `title: ${yaml(title)}`,
+    `description: ${yaml(description)}`,
     `date: ${yaml(date)}`,
     `version: ${yaml(tag)}`,
+    `product: ${yaml(PRODUCT)}`,
     `tags: ${yaml(tags)}`,
     ...(breaking ? ["breaking: true"] : []),
     "---",
   ].join("\n");
 
   const banner =
-    `{/* AUTO-GENERATED DRAFT from ${SOURCE_REPO} release ${tag}.\n` +
+    `{/* AUTO-GENERATED DRAFT${refined ? " (BitRouter-refined)" : ""} from ${SOURCE_REPO} release ${tag}.\n` +
     `    Curate the title, description and prose below, then merge.\n` +
     `    Re-running the sync will NOT overwrite this file. */}`;
 
-  return `${fm}\n\n${banner}\n\n${cleaned || "_No release notes._"}\n`;
+  return `${fm}\n\n${banner}\n\n${body}\n`;
 }
 
 async function main() {
@@ -139,9 +255,9 @@ async function main() {
       console.log(`skip  ${file} (already present)`);
       continue;
     }
-    await writeFile(join(DIR, file), buildMdx(release), "utf8");
+    await writeFile(join(DIR, file), await buildMdx(release), "utf8");
     created.push(join(DIR, file));
-    console.log(`write ${file} (${release.tag_name})`);
+    console.log(`write ${file} (${release.tag_name}, product=${PRODUCT})`);
   }
 
   console.log(`\n${created.length} new entr${created.length === 1 ? "y" : "ies"}.`);

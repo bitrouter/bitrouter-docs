@@ -1,0 +1,93 @@
+# Fan out newly-merged changelog entries to Discord / X / Resend.
+#
+# Fires when a curation PR merges to main (the review gate) and touches
+# content/changelog/. The docs page + RSS/Atom feed publish themselves via the
+# site rebuild; this owns only the push channels. Each entry is announced once
+# (guarded by an `announced/<slug>` tag) and only if recent (the script skips
+# backfill-age entries). Channels with no secret configured are skipped, so this
+# is safe to merge before everything is wired.
+name: Announce changelog
+
+on:
+  push:
+    branches: [main]
+    paths: ["content/changelog/**"]
+
+permissions:
+  contents: write # push the announced/<slug> marker tags
+
+concurrency: announce-changelog
+
+jobs:
+  announce:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find new, un-announced entries
+        id: find
+        run: |
+          set -euo pipefail
+          before="${{ github.event.before }}"
+          if ! git cat-file -e "${before}^{commit}" 2>/dev/null; then
+            before="${{ github.event.after }}^"
+          fi
+          added=$(git diff --name-only --diff-filter=A "$before" "${{ github.event.after }}" \
+                    -- 'content/changelog/*.mdx' || true)
+          entries=""
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            slug=$(basename "$f" .mdx)
+            if git rev-parse -q --verify "refs/tags/announced/$slug" >/dev/null 2>&1; then
+              echo "already announced: $slug"; continue
+            fi
+            entries="${entries}${f}"$'\n'
+          done <<< "$added"
+          { echo "entries<<EOF"; printf '%s' "$entries"; echo "EOF"; } >> "$GITHUB_OUTPUT"
+          [ -n "$entries" ] && echo "has=true" >> "$GITHUB_OUTPUT" || true
+          printf 'to announce:\n%s\n' "$entries"
+
+      - uses: actions/setup-node@v4
+        if: steps.find.outputs.has == 'true'
+        with:
+          node-version: 22
+
+      - name: Install + auth xurl (X posting; no-op without tokens)
+        if: steps.find.outputs.has == 'true'
+        env:
+          XURL_TOKENS: ${{ secrets.XURL_TOKENS }}
+        run: |
+          # Pin to the xurl release you use rather than 'latest'.
+          curl -fsSL -o /usr/local/bin/xurl \
+            https://github.com/xdevplatform/xurl/releases/latest/download/xurl-linux-amd64 || true
+          chmod +x /usr/local/bin/xurl || true
+          printf '%s' "${XURL_TOKENS:-}" > "$HOME/.xurl"   # verify path for your xurl version
+
+      - name: Post to channels
+        if: steps.find.outputs.has == 'true'
+        env:
+          ENTRY_FILES: ${{ steps.find.outputs.entries }}
+          SITE_URL: ${{ vars.SITE_URL }}
+          DISCORD_WEBHOOK_OSS: ${{ secrets.DISCORD_WEBHOOK_OSS }}
+          DISCORD_WEBHOOK_CLOUD: ${{ secrets.DISCORD_WEBHOOK_CLOUD }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_AUDIENCE_OSS: ${{ vars.RESEND_AUDIENCE_OSS }}
+          RESEND_AUDIENCE_CLOUD: ${{ vars.RESEND_AUDIENCE_CLOUD }}
+          RESEND_FROM: ${{ vars.RESEND_FROM }}
+          # Optional: spins per-channel copy from the entry (dogfood). Absent → deterministic.
+          BITROUTER_API_KEY: ${{ secrets.BITROUTER_API_KEY }}
+        run: node scripts/announce-channels.mjs
+
+      - name: Mark announced
+        if: steps.find.outputs.has == 'true'
+        run: |
+          git config user.name "bitrouter-bot"
+          git config user.email "bot@bitrouter.ai"
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            slug=$(basename "$f" .mdx)
+            git tag "announced/$slug" || true
+            git push origin "announced/$slug" || true
+          done <<< "${{ steps.find.outputs.entries }}"

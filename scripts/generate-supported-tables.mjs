@@ -55,14 +55,17 @@ function table(header, rows) {
   ].join("\n");
 }
 
+// The display name restates the id ("anthropic/claude-opus-5" → "Anthropic:
+// Claude Opus 5"), so the table quotes only the id — the string you actually
+// paste into a request — and spends the width on pricing instead.
 function modelRows() {
   return MODELS.map((m) => [
     `\`${m.id}\``,
-    m.name,
     formatContext(m.maxInputTokens),
     (m.inputModalities ?? []).join(", ") || "text",
     m.openWeights === true ? "✅" : "—",
     formatUsd(m.inputUsdPerM),
+    formatUsd(m.cacheReadUsdPerM),
     formatUsd(m.outputUsdPerM),
   ]);
 }
@@ -70,7 +73,15 @@ function modelRows() {
 const TARGETS = [
   {
     file: "content/docs/(guide)/overview/supported-models.mdx",
-    header: ["Model", "Name", "Context", "Modalities", "Open weights", "Input $/M", "Output $/M"],
+    header: [
+      "Model",
+      "Context",
+      "Modalities",
+      "Open weights",
+      "Input $/M",
+      "Cached input $/M",
+      "Output $/M",
+    ],
     rows: modelRows,
   },
 ];

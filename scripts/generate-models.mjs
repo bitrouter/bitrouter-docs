@@ -52,6 +52,10 @@ function normalize(model, registryOpenWeights) {
     capabilities: model.capabilities ?? [],
     providers: model.providers?.total_online ?? 0,
     inputUsdPerM: inUsd,
+    // Cached-input reads are a separate line on every bill and the price an
+    // agent loop actually pays on turn two onward, so the catalog carries it
+    // beside the uncached rate. Null where the model prices no cache tier.
+    cacheReadUsdPerM: p?.input_tokens?.cache_read ?? null,
     outputUsdPerM: outUsd,
     openWeights:
       typeof model.open_weights === "boolean"

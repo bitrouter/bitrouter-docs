@@ -28,7 +28,6 @@ const SECTIONS = [
   "(guide)/overview",
   "(guide)/usage",
   "(guide)/models-and-routing",
-  "(guide)/mcp-and-tool-calling",
   "(guide)/evals-and-tracing",
   "integrations",
   "guides",

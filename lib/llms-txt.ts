@@ -40,15 +40,15 @@ References:
 - [Structured Outputs](${BASE_URL}/docs/models-and-routing/structured-outputs): Enforce a JSON schema across every provider, with the protocol translation handled for you
 - [Guardrails](${BASE_URL}/docs/models-and-routing/guardrails): Named regex rules that block or redact matching content in requests and responses
 
-## MCP & Tool Calling
+## Tool Calling
 
-- [MCP Gateway](${BASE_URL}/docs/mcp-and-tool-calling/mcp-gateway): One endpoint in front of many MCP servers and Agent Skills — uniform auth, merged discovery, one policy point
-- [Server Tools](${BASE_URL}/docs/mcp-and-tool-calling/server-tools): Move the tool-calling loop into BitRouter — declare tools, and the router executes and re-calls until the model is done
-- [Advisor](${BASE_URL}/docs/mcp-and-tool-calling/advisor): Let a fast model escalate one hard sub-question to a stronger model mid-generation
-- [Sub-agent](${BASE_URL}/docs/mcp-and-tool-calling/subagent): Delegate a self-contained task to a cheaper worker model that returns only its result
-- [Fusion](${BASE_URL}/docs/mcp-and-tool-calling/fusion): A panel of models answers in parallel, a judge compares them, and your model writes the final reply
-- [Web Search](${BASE_URL}/docs/mcp-and-tool-calling/websearch): A built-in \`web_search\` server tool that gives any routed model a search, on a backend you bring keys for
-- [Web Fetch](${BASE_URL}/docs/mcp-and-tool-calling/web-fetch): A built-in \`web_fetch\` server tool that turns a URL into clean page content for any routed model
+- [MCP Gateway](${BASE_URL}/docs/usage/mcp-gateway): One endpoint in front of many MCP servers and Agent Skills — uniform auth, merged discovery, one policy point
+- [Server Tools](${BASE_URL}/docs/models-and-routing/tool-calling/server-tools): Move the tool-calling loop into BitRouter — declare tools, and the router executes and re-calls until the model is done
+- [Advisor](${BASE_URL}/docs/models-and-routing/tool-calling/advisor): Let a fast model escalate one hard sub-question to a stronger model mid-generation
+- [Sub-agent](${BASE_URL}/docs/models-and-routing/tool-calling/subagent): Delegate a self-contained task to a cheaper worker model that returns only its result
+- [Fusion](${BASE_URL}/docs/models-and-routing/tool-calling/fusion): A panel of models answers in parallel, a judge compares them, and your model writes the final reply
+- [Web Search](${BASE_URL}/docs/models-and-routing/tool-calling/websearch): A built-in \`web_search\` server tool that gives any routed model a search, on a backend you bring keys for
+- [Web Fetch](${BASE_URL}/docs/models-and-routing/tool-calling/web-fetch): A built-in \`web_fetch\` server tool that turns a URL into clean page content for any routed model
 
 ## Evals & Tracing
 

@@ -7,7 +7,6 @@
     "overview",
     "usage",
     "models-and-routing",
-    "mcp-and-tool-calling",
     "evals-and-tracing"
   ]
 }

@@ -989,7 +989,7 @@ Remove a BYOK row by provider id
 
 ## Tools, agents, and ACP
 
-The command surfaces behind the [Tools](/docs/mcp-and-tool-calling/mcp-gateway) and [Agents](/docs/mcp-and-tool-calling/acp-gateway) gateways: `tools` introspects the MCP upstreams declared under `mcp_servers`, `agents` manages the ACP agent catalog, and `acp` runs per-session headless agent sessions.
+The command surfaces behind the [Tools](/docs/usage/mcp-gateway) and [Agents](/docs/models-and-routing/acp-gateway) gateways: `tools` introspects the MCP upstreams declared under `mcp_servers`, `agents` manages the ACP agent catalog, and `acp` runs per-session headless agent sessions.
 
 ### `bitrouter tools`
 
@@ -1380,7 +1380,7 @@ Spawn an ACP-compatible harness as a headless *sub-agent*, routed through the Bi
 bitrouter spawn -p "summarize the diff" --model @coding
 ```
 
-Spawns an ACP-compatible harness as a headless sub-agent, routed through the daemon by default. This is the mechanism behind the [Subagent](/docs/mcp-and-tool-calling/subagent) feature.
+Spawns an ACP-compatible harness as a headless sub-agent, routed through the daemon by default. This is the mechanism behind the [Subagent](/docs/models-and-routing/tool-calling/subagent) feature.
 
 ## Key, workflow-state, and update
 

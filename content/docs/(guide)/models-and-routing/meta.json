@@ -10,6 +10,7 @@
     "bring-your-own-model",
     "bring-your-own-provider",
     "structured-outputs",
-    "guardrails"
+    "guardrails",
+    "tool-calling"
   ]
 }

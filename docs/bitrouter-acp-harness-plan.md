@@ -418,7 +418,7 @@ Run against real Vercel Sandboxes. Scripts in `scratchpad/e2e/`.
 | 1 — provision | PASS — Amazon Linux 2023, node 24.14.1, glibc 2.34 |
 | 2 — install `bitrouter` | PASS — `1.0.0-alpha.27` runs, ~24s |
 | 3 — ACP handshake | PASS — `protocolVersion: 1`, `agentInfo` "Claude Code" 0.16.2 |
-| 4 — full turn | not run (needs router credentials; spends model tokens) |
+| 4 — full turn | **PASS on `codex-acp`** — `stop_reason=EndTurn`, 4.7s; fails on `claude-acp` (§8.4) |
 
 ### 8.1 `xz` is the bootstrap blocker
 
@@ -450,3 +450,72 @@ trio through explicitly and recognises the local OIDC path.
   wrong for catalog ids — `apply_routing` synthesizes the entry.
 - `acp serve` runs until the manager disconnects, so a probe must hold stdin
   open; a pipe that EOFs after the request makes it exit before replying.
+
+### 8.4 Stage 4 — a turn completes, on one agent
+
+`codex-acp` on `deepseek/deepseek-v4-flash` completed a full turn end to end:
+
+```
+acp turn completed agent=codex-acp stop_reason=EndTurn latency_ms=4666
+```
+
+That settles the three assumptions the plan carried: the **routed path**
+(`--base-url` + `BITROUTER_API_KEY`) works, `--model` **accepts a raw
+`CHAT_MODELS` id**, and the bridge's **WebSocket dial** into the sandbox works.
+
+Three separate blockers surfaced getting there, none of them in the AI SDK
+integration:
+
+**a. Two catalog models cannot do tools.** `POST /v1/messages` with a `tools`
+array returns:
+
+```
+400 bad request: model 'anthropic/claude-haiku-4.5' has no provider
+    that supports the requested capability: tools
+```
+
+Same for `qwen/qwen3.8-max`. The other six in `CHAT_MODELS` are fine. Since
+every coding agent sends tools, those two models cannot back **any** ACP
+harness. The playground should reflect that rather than offering a pairing that
+always 400s.
+
+**b. `--model` does not take effect for `claude-acp`.** BitRouter sets
+`ANTHROPIC_MODEL` (`harness.rs`, `Routing::Env`), and the catalog comment
+asserts claude-code-acp "passes process env through to the SDK-spawned CLI,
+which honors these exactly as interactive Claude Code does". It does not — with
+`--model deepseek/deepseek-v4-flash` the agent still used its own default:
+
+```
+There's an issue with the selected model (claude-sonnet-4-5-20250929)
+```
+
+The base URL *did* apply (the request reached BitRouter, which rejected an id it
+does not know), so this is specifically the model pin. `codex-acp` is unaffected
+because `Routing::CodexArgs` passes the model as an argument rather than an env
+var. Worth re-testing against the renamed
+`@agentclientprotocol/claude-agent-acp` before concluding it is unfixable.
+
+**c. Host tools reach the sandbox but not the model's toolset.** With `tools`
+set, `claude-acp` fails the bridge's catalog gate outright:
+
+> The ACP implementation did not load the active harness-owned MCP tool catalog
+> to revision 1
+
+`codex-acp` passes that gate — so it does spawn the injected MCP server and call
+`tools/list` (which is what advances `servedRevision`,
+`host-tool-mcp-server.ts:58`) — but the tool still never reaches the model:
+
+> I don't have a `bitrouter_probe_code` tool available in my current toolset,
+> and there are no MCP resources configured.
+
+So the relay works and the catalog is served, but the tool is not surfaced into
+the agent's tool list. **This is the blocker for shipping**, because the
+playground passes `agentTools` — as it stands the BitRouter ACP harnesses cannot
+offer the documentation tools, which is most of their value.
+
+### 8.5 Method note
+
+Two runs were wasted guessing at causes (a doubled `/v1`, a cross-vendor model)
+before enabling `debug: { enabled: true }`, which surfaced the real error
+immediately from `acp.agent.stderr`. Turn diagnostics on at the *first* failure,
+not the third.

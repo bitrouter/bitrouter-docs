@@ -13,8 +13,8 @@ const finalPath = {
   "local-models":"/docs/integrations/models","guardrails":"/docs/models-and-routing/guardrails",
   "observability":"/docs/evals-and-tracing/opentelemetry","opentelemetry":"/docs/evals-and-tracing/opentelemetry",
   "tracing":"/docs/evals-and-tracing/tracing","telemetry":"/docs/evals-and-tracing/opentelemetry",
-  "mcp":"/docs/mcp-and-tool-calling/mcp-gateway","acp":"/docs/mcp-and-tool-calling/acp-gateway",
-  "agentskills":"/docs/mcp-and-tool-calling/mcp-gateway",
+  "mcp":"/docs/usage/mcp-gateway","acp":"/docs/models-and-routing/acp-gateway",
+  "agentskills":"/docs/usage/mcp-gateway",
   // bitrouter cloud (was: infrastructure)
   "managed-provider":"/docs/overview/supported-models","discounted-models":"/docs/overview/supported-models",
   "payment":"/docs/overview/quickstart#self-host-or-cloud","workspaces":"/docs/reference/management/listNamespaces",
@@ -53,8 +53,8 @@ pairs.push(
   ["/docs/concepts", "/docs/overview/what-is-bitrouter"],
   ["/docs/concepts/models", "/docs/overview/supported-models#how-model-ids-work"],
   ["/docs/concepts/policy", "/docs/overview/quickstart#adaptive-routing"],
-  ["/docs/concepts/tools", "/docs/mcp-and-tool-calling/mcp-gateway"],
-  ["/docs/concepts/agents", "/docs/mcp-and-tool-calling/acp-gateway"],
+  ["/docs/concepts/tools", "/docs/usage/mcp-gateway"],
+  ["/docs/concepts/agents", "/docs/models-and-routing/acp-gateway"],
   ["/docs/concepts/cli", "/docs/usage/cli"],
   ["/docs/concepts/mcp", "/docs/usage/mcp"],
   ["/docs/concepts/agent-skill", "/docs/overview/quickstart"],
@@ -132,7 +132,7 @@ pairs.push(
   // opentelemetry page was two pages welded together — OSS export vs hosted view
   ["/docs/features/opentelemetry", "/docs/evals-and-tracing/opentelemetry"],
   ["/docs/features/local-models", "/docs/integrations/models"],
-  ["/docs/features/toolsets", "/docs/mcp-and-tool-calling/server-tools"],
+  ["/docs/features/toolsets", "/docs/models-and-routing/tool-calling/server-tools"],
   ["/docs/guides/export-telemetry", "/docs/evals-and-tracing/opentelemetry"],
   ["/docs/cloud/managed-tools", "/docs/overview/quickstart#self-host-or-cloud"],
   ["/docs/cloud/managed-agents", "/docs/overview/quickstart#self-host-or-cloud"],
@@ -155,7 +155,8 @@ pairs.push(
   ["/docs/models-and-routing/byok", "/docs/models-and-routing/bring-your-own-provider"],
   ["/docs/models-and-routing", "/docs/models-and-routing/provider-selection"],
   // gateway-and-routing/ split (2026-09): the routing pages went back to
-  // models-and-routing/, the tool-calling pages to mcp-and-tool-calling/.
+  // models-and-routing/, the tool-calling pages to what became
+  // models-and-routing/tool-calling/ (see the section dissolve below).
   ["/docs/gateway-and-routing/model-fallback", "/docs/models-and-routing/model-fallback"],
   ["/docs/gateway-and-routing/provider-selection", "/docs/models-and-routing/provider-selection"],
   ["/docs/gateway-and-routing/virtual-model", "/docs/models-and-routing/virtual-model"],
@@ -164,45 +165,56 @@ pairs.push(
   ["/docs/gateway-and-routing/bring-your-own-provider", "/docs/models-and-routing/bring-your-own-provider"],
   ["/docs/gateway-and-routing/structured-outputs", "/docs/models-and-routing/structured-outputs"],
   ["/docs/gateway-and-routing/guardrails", "/docs/models-and-routing/guardrails"],
-  ["/docs/gateway-and-routing/mcp-gateway", "/docs/mcp-and-tool-calling/mcp-gateway"],
-  ["/docs/gateway-and-routing/server-tools", "/docs/mcp-and-tool-calling/server-tools"],
-  ["/docs/gateway-and-routing/advisor", "/docs/mcp-and-tool-calling/advisor"],
-  ["/docs/gateway-and-routing/subagent", "/docs/mcp-and-tool-calling/subagent"],
-  ["/docs/gateway-and-routing/fusion", "/docs/mcp-and-tool-calling/fusion"],
-  ["/docs/gateway-and-routing/websearch", "/docs/mcp-and-tool-calling/websearch"],
-  ["/docs/gateway-and-routing/web-fetch", "/docs/mcp-and-tool-calling/web-fetch"],
-  ["/docs/gateway-and-routing/acp-gateway", "/docs/mcp-and-tool-calling/acp-gateway"],
+  ["/docs/gateway-and-routing/mcp-gateway", "/docs/usage/mcp-gateway"],
+  ["/docs/gateway-and-routing/server-tools", "/docs/models-and-routing/tool-calling/server-tools"],
+  ["/docs/gateway-and-routing/advisor", "/docs/models-and-routing/tool-calling/advisor"],
+  ["/docs/gateway-and-routing/subagent", "/docs/models-and-routing/tool-calling/subagent"],
+  ["/docs/gateway-and-routing/fusion", "/docs/models-and-routing/tool-calling/fusion"],
+  ["/docs/gateway-and-routing/websearch", "/docs/models-and-routing/tool-calling/websearch"],
+  ["/docs/gateway-and-routing/web-fetch", "/docs/models-and-routing/tool-calling/web-fetch"],
+  ["/docs/gateway-and-routing/acp-gateway", "/docs/models-and-routing/acp-gateway"],
   ["/docs/gateway-and-routing", "/docs/models-and-routing/provider-selection"],
+  // mcp-and-tool-calling/ dissolved (2026-08): the section never earned its own
+  // top-level slot. The six server-tool pages nest under Models & Routing as a
+  // collapsed tool-calling/ subfolder, the MCP gateway joins Usage next to the
+  // origin MCP server it is the mirror of, and the still-unlisted ACP gateway
+  // sits on its own under models-and-routing/ rather than paired with MCP.
+  // The section index has no page of its own, and `:slug*` matches zero
+  // segments too — so the bare path has to be claimed before the wildcard.
+  ["/docs/mcp-and-tool-calling", "/docs/models-and-routing/tool-calling/server-tools"],
+  ["/docs/mcp-and-tool-calling/mcp-gateway", "/docs/usage/mcp-gateway"],
+  ["/docs/mcp-and-tool-calling/acp-gateway", "/docs/models-and-routing/acp-gateway"],
+  ["/docs/mcp-and-tool-calling/:slug*", "/docs/models-and-routing/tool-calling/:slug*"],
   // observability/ → evals-and-tracing/ (2026-09)
   ["/docs/observability/:slug*", "/docs/evals-and-tracing/:slug*"],
   ["/docs/observability", "/docs/evals-and-tracing/opentelemetry"],
   // tools/agents pages retitled to name their protocol; features/ dissolved —
   // guardrails moved, namespaces and payment retired (2026-08)
-  ["/docs/gateway-and-routing/tools", "/docs/mcp-and-tool-calling/mcp-gateway"],
-  ["/docs/gateway-and-routing/agents", "/docs/mcp-and-tool-calling/acp-gateway"],
+  ["/docs/gateway-and-routing/tools", "/docs/usage/mcp-gateway"],
+  ["/docs/gateway-and-routing/agents", "/docs/models-and-routing/acp-gateway"],
   ["/docs/features", "/docs/models-and-routing/guardrails"],
   ["/docs/features/guardrails", "/docs/models-and-routing/guardrails"],
   ["/docs/features/namespaces", "/docs/reference/management/listNamespaces"],
   ["/docs/features/payment", "/docs/overview/quickstart#self-host-or-cloud"],
-  ["/docs/features/tools", "/docs/mcp-and-tool-calling/mcp-gateway"],
-  ["/docs/features/server-tools", "/docs/mcp-and-tool-calling/server-tools"],
-  ["/docs/features/websearch", "/docs/mcp-and-tool-calling/websearch"],
-  ["/docs/features/web-fetch", "/docs/mcp-and-tool-calling/web-fetch"],
-  ["/docs/features/agents", "/docs/mcp-and-tool-calling/acp-gateway"],
-  ["/docs/features/subagent", "/docs/mcp-and-tool-calling/subagent"],
-  ["/docs/features/advisor", "/docs/mcp-and-tool-calling/advisor"],
-  ["/docs/features/fusion", "/docs/mcp-and-tool-calling/fusion"],
+  ["/docs/features/tools", "/docs/usage/mcp-gateway"],
+  ["/docs/features/server-tools", "/docs/models-and-routing/tool-calling/server-tools"],
+  ["/docs/features/websearch", "/docs/models-and-routing/tool-calling/websearch"],
+  ["/docs/features/web-fetch", "/docs/models-and-routing/tool-calling/web-fetch"],
+  ["/docs/features/agents", "/docs/models-and-routing/acp-gateway"],
+  ["/docs/features/subagent", "/docs/models-and-routing/tool-calling/subagent"],
+  ["/docs/features/advisor", "/docs/models-and-routing/tool-calling/advisor"],
+  ["/docs/features/fusion", "/docs/models-and-routing/tool-calling/fusion"],
   // pages retired (2026-08): the provider directory and the models concept page
   // folded into the model catalog, policy semantics into the quickstart, and the
   // search-provider integrations into the web search feature page.
   ["/docs/overview/supported-providers", "/docs/overview/supported-models"],
   ["/docs/gateway-and-routing/models", "/docs/overview/supported-models#how-model-ids-work"],
   ["/docs/gateway-and-routing/policy", "/docs/overview/quickstart#adaptive-routing"],
-  ["/docs/integrations/tools", "/docs/mcp-and-tool-calling/websearch"],
-  ["/docs/integrations/exa", "/docs/mcp-and-tool-calling/websearch"],
-  ["/docs/integrations/parallel", "/docs/mcp-and-tool-calling/websearch"],
-  ["/docs/integrations/firecrawl", "/docs/mcp-and-tool-calling/websearch"],
-  ["/docs/integrations/tavily", "/docs/mcp-and-tool-calling/websearch"],
+  ["/docs/integrations/tools", "/docs/models-and-routing/tool-calling/websearch"],
+  ["/docs/integrations/exa", "/docs/models-and-routing/tool-calling/websearch"],
+  ["/docs/integrations/parallel", "/docs/models-and-routing/tool-calling/websearch"],
+  ["/docs/integrations/firecrawl", "/docs/models-and-routing/tool-calling/websearch"],
+  ["/docs/integrations/tavily", "/docs/models-and-routing/tool-calling/websearch"],
   // gateway pages renamed for what they are, not what the field is called
   // (2026-08): presets → virtual model, external providers (BYOK) → bring your
   // own provider. The API keeps `routing-presets` and `byok`; the docs don't.

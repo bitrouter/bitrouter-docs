@@ -28,8 +28,8 @@ describe("pathToSlug", () => {
     ]);
   });
   it("strips a #hash and a full origin", () => {
-    expect(pathToSlug("https://bitrouter.ai/docs/mcp-and-tool-calling/advisor#usage")).toEqual([
-      "mcp-and-tool-calling", "advisor",
+    expect(pathToSlug("https://bitrouter.ai/docs/models-and-routing/tool-calling/advisor#usage")).toEqual([
+      "models-and-routing", "tool-calling", "advisor",
     ]);
   });
   it("accepts a bare slug path", () => {

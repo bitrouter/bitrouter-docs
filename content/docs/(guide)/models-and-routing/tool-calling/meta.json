@@ -1,9 +1,8 @@
 {
-  "title": "MCP & Tool Calling",
+  "title": "Tool Calling",
   "icon": "Wrench",
-  "collapsible": false,
+  "defaultOpen": false,
   "pages": [
-    "mcp-gateway",
     "server-tools",
     "advisor",
     "subagent",

@@ -31,8 +31,8 @@ This matters when your agent should *pay per request* without you provisioning k
 
 LiteLLM has shipped MCP, A2A, Skills, and a CLI alongside its horizontal LLM gateway — virtual keys, team budgets, spend dashboards, and an admin UI all included. BitRouter inverts the emphasis: agent primitives *are* the product, and the team-admin stack is intentionally minimal. What you get on the BitRouter surface:
 
-- [MCP gateway](/docs/mcp-and-tool-calling/mcp-gateway) — proxy MCP servers so agents discover tools across hosts.
-- [ACP gateway](/docs/mcp-and-tool-calling/acp-gateway) — first-class support for the Agent Client Protocol used by Claude Code, Codex, OpenCode, and others.
+- [MCP gateway](/docs/usage/mcp-gateway) — proxy MCP servers so agents discover tools across hosts.
+- [ACP gateway](/docs/models-and-routing/acp-gateway) — first-class support for the Agent Client Protocol used by Claude Code, Codex, OpenCode, and others.
 - [Guardrails](/docs/models-and-routing/guardrails) — regex rules on the proxy hop that redact or block matching content inline.
 - [Cloud Tracing](/docs/evals-and-tracing/tracing) — built-in spend and request tracing, no external collector required.
 - Agent Skills gateway (coming soon) — install and route capabilities by skill, not by raw model name.
@@ -121,9 +121,9 @@ To skip the local proxy entirely, point clients at `https://api.bitrouter.ai/v1`
 | Virtual keys + budgets + admin UI | Workspace keys (cloud); env-var keys (local) | [BYOK](/docs/models-and-routing/bring-your-own-provider) |
 | Guardrails / PII / content filter | Agent firewall on the proxy hop | [Guardrails](/docs/models-and-routing/guardrails) |
 | Callbacks (Langfuse, Datadog, etc.) | Built-in spend + request logs; OTLP export | [OpenTelemetry](/docs/evals-and-tracing/opentelemetry) |
-| MCP Gateway | MCP gateway | [MCP](/docs/mcp-and-tool-calling/mcp-gateway) |
-| A2A Agent Gateway | ACP gateway | [ACP](/docs/mcp-and-tool-calling/acp-gateway) |
-| Skills Gateway / `/skills` endpoint | Skills gateway with [agentskills.io](https://agentskills.io) registry | [Agent Skills](/docs/mcp-and-tool-calling/mcp-gateway) |
+| MCP Gateway | MCP gateway | [MCP](/docs/usage/mcp-gateway) |
+| A2A Agent Gateway | ACP gateway | [ACP](/docs/models-and-routing/acp-gateway) |
+| Skills Gateway / `/skills` endpoint | Skills gateway with [agentskills.io](https://agentskills.io) registry | [Agent Skills](/docs/usage/mcp-gateway) |
 | LiteLLM Proxy CLI | `bitrouter` CLI / TUI | [Headless CLI](/docs/usage/cli) |
 | — (no equivalent) | Autonomous agent payment (x402 / MPP) | x402 / MPP |
 
@@ -158,7 +158,7 @@ To set expectations honestly, two gaps are worth checking before you start.
 <Cards>
   <Card title="Quick Start" href="/docs/overview/quickstart" description="Run BitRouter locally or in the cloud in under a minute" />
   <Card title="BitRouter vs LiteLLM" href="/docs/overview/bitrouter-vs-litellm" description="Side-by-side on routing, observability, and operations" />
-  <Card title="Agent features" href="/docs/mcp-and-tool-calling/mcp-gateway" description="MCP, ACP, skills, agent firewall, x402 payment" />
+  <Card title="Agent features" href="/docs/usage/mcp-gateway" description="MCP, ACP, skills, agent firewall, x402 payment" />
   <Card title="API Reference" href="/docs/reference" description="OpenAI- and Anthropic-compatible endpoints" />
 </Cards>
 

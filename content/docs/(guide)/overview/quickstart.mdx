@@ -138,13 +138,19 @@ This is not "swap in a cheaper model." BitRouter runs your workflow twice — on
 This needs the CLI, a Git repository, and macOS or Linux. Everything above stays install-free.
 </Callout>
 
-Point it at a command that exercises your agent:
+Setup looks for a command that exercises your agent:
+
+```bash
+bitrouter optimize setup
+```
+
+It reads your project's eval and benchmark entrypoints, adopts the one unambiguous candidate, and offers a numbered choice when several are plausible. Ordinary unit-test scripts are never adopted by guesswork. If nothing is discoverable — or you want a specific command — name it exactly:
 
 ```bash
 bitrouter optimize setup --workflow-command ./run-agent-eval
 ```
 
-That writes three files you own and commit: the workflow intent, a lock of resolved identities and digests, and a success contract describing what a good run looks like.
+Either way it writes three files you own and commit: the workflow intent, a lock of resolved identities and digests, and a success contract describing what a good run looks like.
 
 Then run the loop:
 

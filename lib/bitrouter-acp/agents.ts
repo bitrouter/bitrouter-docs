@@ -12,6 +12,7 @@ import {
   createHarnessSandbox,
   hasSandboxCredentials,
 } from "@/lib/harness-sandbox.server";
+import type { PlaygroundCredential } from "@/lib/playground-credential";
 
 /**
  * BitRouter's own agent catalog, exposed to the AI SDK over ACP.
@@ -39,12 +40,6 @@ Rules:
 
 You are running in a disposable sandbox, not on the user's machine. Its filesystem starts empty and nothing you do there is visible to the user unless you say so. Use the shell for work that genuinely benefits from it and the documentation tools for anything about BitRouter itself.`;
 
-function requireEnv(name: string): string {
-  const value = process.env[name];
-  if (!value) throw new Error(`${name} is not set`);
-  return value;
-}
-
 /**
  * Bump when the bootstrap's side effects change.
  *
@@ -54,30 +49,28 @@ function requireEnv(name: string): string {
 const BOOTSTRAP_HASH = "bitrouter-acp-v2-xz";
 
 /**
- * Build a `HarnessAgent` for one catalog agent on one model.
+ * Build a `HarnessAgent` for one catalog agent on one model, spending on
+ * `credential`.
  *
- * Both axes are fixed at construction: `--model` only takes effect when the
- * routed path applies its overlay, so it is an argument to the spawned process
- * rather than something switchable mid-session.
+ * All three axes are fixed at construction: `--model` only takes effect when
+ * the routed path applies its overlay, so it is an argument to the spawned
+ * process rather than something switchable mid-session, and the credential is
+ * baked into the sandbox's environment with no way to refresh it.
  */
 export async function createBitrouterAcpAgent({
   harnessId,
   modelId,
+  credential,
 }: {
   harnessId: string;
   modelId: string;
+  credential: PlaygroundCredential;
 }) {
   const agent = getBitrouterAcpAgent(harnessId);
   if (!agent) throw new Error(`Unknown BitRouter ACP harness: ${harnessId}`);
   if (!hasSandboxCredentials()) {
     throw new Error("Sandbox credentials are not configured");
   }
-
-  const baseUrl = requireEnv("BITROUTER_API_BASE");
-  // Present so `forwardEnv` has something to forward; the spawned CLI reads it
-  // from its own environment rather than from an argument, keeping the key off
-  // the process command line.
-  requireEnv("BITROUTER_API_KEY");
 
   return new HarnessAgent({
     harness: createACP({
@@ -97,11 +90,23 @@ export async function createBitrouterAcpAgent({
         "--agent",
         agent.agentId,
         "--base-url",
-        baseUrl,
+        credential.baseUrl,
         "--model",
         modelId,
       ],
-      forwardEnv: ["BITROUTER_API_KEY"],
+      // `env`, not `forwardEnv`: the token is now per-visitor, and `forwardEnv`
+      // can only name variables on *this* process — it would forward the house
+      // key to everyone. The adapter rejects a key present in both.
+      //
+      // Safe despite the "values persist in identity" warning on this option.
+      // The value lands in `implementationIdentity`, a hash that gates only
+      // resume-compatibility *within* one session, where the credential is
+      // fixed (the pool rebuilds on expiry rather than swapping). It does not
+      // reach the sandbox's `implementation.json`, which records env *keys*
+      // only, nor the bootstrap file set — so the snapshot `BOOTSTRAP_HASH`
+      // gates stays shared across visitors instead of paying a cold `dnf
+      // install xz` per session.
+      env: { BITROUTER_API_KEY: credential.token },
       // Deliberately no `authentication`: the bridge only performs the ACP
       // `authenticate` round trip when this is set, and BitRouter's down-facing
       // endpoint does not relay upstream auth methods — it answers

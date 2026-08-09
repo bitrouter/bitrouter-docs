@@ -8,7 +8,7 @@ import {
   type UIMessage,
 } from "ai";
 
-import { bitrouter } from "@/lib/bitrouter-provider";
+import { createBitrouterProvider } from "@/lib/bitrouter-provider";
 import {
   AGENT_INSTRUCTIONS,
   AGENT_MAX_STEPS,
@@ -22,6 +22,11 @@ import {
 } from "@/lib/chat-models";
 import { DEFAULT_HARNESS, type HarnessId, isHarnessId } from "@/lib/harnesses";
 import { isHarnessAvailable } from "@/lib/harnesses.server";
+import {
+  CredentialError,
+  type PlaygroundCredential,
+  resolveCredential,
+} from "@/lib/playground-credential";
 import { getPostHogClient } from "@/lib/posthog-server";
 
 /**
@@ -63,11 +68,30 @@ export async function POST(req: Request) {
   }
 
   // Never forward a client-supplied model id straight to the router — this
-  // endpoint spends the site's shared key.
+  // endpoint spends a real credential.
   const modelId = isAllowedChatModel(model) ? model : DEFAULT_CHAT_MODEL;
 
+  // Who is paying. In session mode this is the authoritative gate: the UI's
+  // sign-in prompt is advisory, and a hand-rolled request that skips it gets a
+  // 401 here rather than spending the house key.
+  //
+  // A session-backed harness holds its credential for the life of the session,
+  // so it asks for the revocable kind.
+  let credential: PlaygroundCredential;
+  try {
+    credential = await resolveCredential(
+      req,
+      harnessId === "ai-sdk" ? "chat" : "harness",
+    );
+  } catch (err) {
+    if (err instanceof CredentialError) {
+      return Response.json({ error: err.message }, { status: err.status });
+    }
+    throw err;
+  }
+
   if (harnessId === "ai-sdk") {
-    return streamAiSdkLoop({ messages, modelId, distinctId });
+    return streamAiSdkLoop({ messages, modelId, distinctId, credential });
   }
 
   // Imported lazily: the packaged harnesses pull in a large dependency tree,
@@ -79,6 +103,7 @@ export async function POST(req: Request) {
     harnessId,
     sessionId,
     distinctId,
+    credential,
     abortSignal: req.signal,
   });
 }
@@ -90,12 +115,15 @@ async function streamAiSdkLoop({
   messages,
   modelId,
   distinctId,
+  credential,
 }: {
   messages: UIMessage[];
   modelId: string;
   distinctId: string;
+  credential: PlaygroundCredential;
 }) {
   let steps = 0;
+  const bitrouter = createBitrouterProvider(credential);
 
   const result = streamText({
     model: bitrouter(AGENT_STEP_MODEL),

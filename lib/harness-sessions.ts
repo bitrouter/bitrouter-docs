@@ -1,6 +1,10 @@
 import "server-only";
 
 import type { HarnessId } from "@/lib/harnesses";
+import {
+  type PlaygroundCredential,
+  revokePlaygroundCredential,
+} from "@/lib/playground-credential";
 
 /**
  * Live harness sessions, shared by every session-backed harness.
@@ -29,6 +33,12 @@ type Entry<TAgent extends HarnessLike> = {
   session: Awaited<ReturnType<TAgent["createSession"]>>;
   modelId: string;
   harnessId: HarnessId;
+  /**
+   * The credential this session spends on. Held so it can be handed back when
+   * the session ends — a harness credential is minted per session precisely so
+   * that teardown can revoke it.
+   */
+  credential: PlaygroundCredential;
   lastUsedAt: number;
   busy: boolean;
 };
@@ -64,6 +74,9 @@ async function disposeEntry(key: string, entry: Entry<HarnessLike>) {
     // Best-effort: a session that fails to tear down must not fail the request
     // that triggered the sweep.
   }
+  // Hand the credential back even if the teardown above threw — the sandbox
+  // may be gone while the token it held is still live.
+  await revokePlaygroundCredential(entry.credential);
 }
 
 async function sweep() {
@@ -97,11 +110,13 @@ export async function acquireSession<TAgent extends HarnessLike>({
   sessionId,
   modelId,
   harnessId,
+  credential,
   createAgent,
 }: {
   sessionId: string;
   modelId: string;
   harnessId: HarnessId;
+  credential: PlaygroundCredential;
   createAgent: () => Promise<TAgent>;
 }): Promise<Entry<TAgent>> {
   await sweep();
@@ -112,7 +127,13 @@ export async function acquireSession<TAgent extends HarnessLike>({
 
   if (
     existing &&
-    (existing.modelId !== modelId || existing.harnessId !== harnessId)
+    (existing.modelId !== modelId ||
+      existing.harnessId !== harnessId ||
+      // The runtime holds its token in a process environment with no way to
+      // refresh it, so an expired credential makes the session useless. Rebuild
+      // rather than hand back a session whose next turn would 401. Credentials
+      // are minted to outlive the session TTL, so this is the rare case.
+      existing.credential.expiresAt.getTime() <= Date.now())
   ) {
     await disposeEntry(sessionId, existing);
   } else if (existing) {
@@ -130,6 +151,7 @@ export async function acquireSession<TAgent extends HarnessLike>({
     session,
     modelId,
     harnessId,
+    credential,
     lastUsedAt: Date.now(),
     busy: true,
   };

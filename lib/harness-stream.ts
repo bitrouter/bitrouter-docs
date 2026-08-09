@@ -16,6 +16,7 @@ import {
 } from "@/lib/harness-sessions";
 import { type HarnessId, isHarnessId } from "@/lib/harnesses";
 import { createPiAgent } from "@/lib/pi-harness/agent";
+import type { PlaygroundCredential } from "@/lib/playground-credential";
 import { getPostHogClient } from "@/lib/posthog-server";
 
 /**
@@ -37,9 +38,13 @@ function latestUserText(messages: UIMessage[]): string {
 }
 
 /** Which builder backs a harness id. */
-function agentFactory(harnessId: HarnessId, modelId: string) {
-  if (harnessId === "pi") return () => createPiAgent(modelId);
-  return () => createBitrouterAcpAgent({ harnessId, modelId });
+function agentFactory(
+  harnessId: HarnessId,
+  modelId: string,
+  credential: PlaygroundCredential,
+) {
+  if (harnessId === "pi") return () => createPiAgent(modelId, credential);
+  return () => createBitrouterAcpAgent({ harnessId, modelId, credential });
 }
 
 export async function streamHarnessTurn({
@@ -48,6 +53,7 @@ export async function streamHarnessTurn({
   harnessId,
   sessionId,
   distinctId,
+  credential,
   abortSignal,
 }: {
   messages: UIMessage[];
@@ -55,6 +61,12 @@ export async function streamHarnessTurn({
   harnessId: HarnessId;
   sessionId?: string;
   distinctId: string;
+  /**
+   * Who is paying for this session. Bound to the session when the agent is
+   * built — these runtimes hold the token in a process environment with no
+   * refresh path, so it cannot be swapped mid-session (see `acquireSession`).
+   */
+  credential: PlaygroundCredential;
   /** The request's signal — a client that navigates away mid-turn would
    * otherwise leave the session checked out until the TTL sweep. */
   abortSignal?: AbortSignal;
@@ -74,7 +86,8 @@ export async function streamHarnessTurn({
     sessionId,
     modelId,
     harnessId,
-    createAgent: agentFactory(harnessId, modelId),
+    credential,
+    createAgent: agentFactory(harnessId, modelId, credential),
   }).catch((err: unknown) => {
     if (err instanceof HarnessSessionBusyError) return err;
     throw err;

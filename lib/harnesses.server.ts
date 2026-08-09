@@ -8,6 +8,7 @@ import {
   HARNESSES,
   type HarnessOption,
 } from "@/lib/harnesses";
+import { credentialMode } from "@/lib/playground-credential";
 
 /**
  * Which harnesses this deployment can actually run.
@@ -17,18 +18,34 @@ import {
  * harnesses drag ~165MB of dependencies behind them.
  */
 
+/** What a deployment needs configured before it can spend on the router. */
+const ROUTER_CREDENTIAL_REQUIREMENT =
+  credentialMode() === "session"
+    ? "Needs BITROUTER_API_BASE and NEXT_PUBLIC_CONSOLE_URL."
+    : "Needs BITROUTER_API_KEY and BITROUTER_API_BASE.";
+
+/**
+ * Whether this deployment can obtain a router credential at all.
+ *
+ * Mode-dependent: `byo-key` needs the key in the environment, while `session`
+ * needs a console to mint against and gets no key of its own. Note this is a
+ * question about the *deployment*, not the visitor — in session mode a signed-out
+ * visitor still sees an available harness and is turned away by the 401 from
+ * `resolveCredential`, because the picker is rendered before we know who they are.
+ */
 function hasRouterCredentials(): boolean {
-  return (
-    Boolean(process.env.BITROUTER_API_KEY) &&
-    Boolean(process.env.BITROUTER_API_BASE)
-  );
+  if (!process.env.BITROUTER_API_BASE) return false;
+  return credentialMode() === "session"
+    ? Boolean(process.env.NEXT_PUBLIC_CONSOLE_URL)
+    : Boolean(process.env.BITROUTER_API_KEY);
 }
 
 /**
  * Whether the Pi harness is switched on.
  *
- * It holds a live agent session per visitor and spends the site's shared key,
- * so it stays dark unless a deployment opts in explicitly.
+ * It holds a live agent session per visitor, so it stays dark unless a
+ * deployment opts in explicitly — in `byo-key` mode that session spends the
+ * site's shared key with nothing to cap it.
  */
 export function isPiHarnessEnabled(): boolean {
   return process.env.ENABLE_PI_HARNESS === "1" && hasRouterCredentials();
@@ -46,7 +63,7 @@ function availabilityFor(harness: Harness): HarnessOption {
         available: false,
         reason: hasRouterCredentials()
           ? "Set ENABLE_PI_HARNESS=1 to switch it on."
-          : "Needs BITROUTER_API_KEY and BITROUTER_API_BASE.",
+          : ROUTER_CREDENTIAL_REQUIREMENT,
       };
 
     // BitRouter's own catalog over ACP. Needs a port-capable sandbox (the ACP
@@ -74,7 +91,7 @@ function availabilityFor(harness: Harness): HarnessOption {
         return {
           ...harness,
           available: false,
-          reason: "Needs BITROUTER_API_KEY and BITROUTER_API_BASE.",
+          reason: ROUTER_CREDENTIAL_REQUIREMENT,
         };
       }
       return { ...harness, available: true };

@@ -2,7 +2,7 @@
 
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, getToolName, isStaticToolUIPart } from "ai";
-import { BotIcon, CpuIcon, RefreshCwIcon } from "lucide-react";
+import { BotIcon, CpuIcon, LogInIcon, RefreshCwIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
@@ -47,6 +47,7 @@ import {
   ToolOutput,
 } from "@/components/ai-elements/tool";
 import { ProviderIcon } from "@/components/models/provider-icon";
+import { authClient } from "@/lib/auth-client";
 import {
   CHAT_MODELS,
   type ChatUIMessage,
@@ -64,6 +65,13 @@ import {
 
 import { SessionsSidebar } from "./sessions-sidebar";
 import { useSessions } from "./use-sessions";
+
+/**
+ * Where a signed-out visitor is sent. Social sign-in auto-creates the account,
+ * so this one route covers sign-in and sign-up — same CTA the header uses.
+ */
+const CONSOLE_URL =
+  process.env.NEXT_PUBLIC_CONSOLE_URL ?? "https://cloud.bitrouter.ai";
 
 /** What each harness is, in the words of the empty conversation. */
 const EMPTY_STATE: Record<HarnessId, string> = {
@@ -92,11 +100,29 @@ export type PlaygroundConfig = {
    * Unavailable entries still render, greyed out with their reason.
    */
   harnesses: HarnessOption[];
+  /**
+   * Whether turns are billed to a signed-in visitor rather than to the site's
+   * own key. Drives the composer's sign-in prompt — which is advisory only, and
+   * exists so a signed-out visitor is told why before they type a paragraph
+   * rather than after. The route handler is what actually refuses.
+   */
+  requiresAuth?: boolean;
 };
 
-export function ChatPlayground({ harnesses }: PlaygroundConfig) {
+export function ChatPlayground({ harnesses, requiresAuth }: PlaygroundConfig) {
   const store = useSessions(DEFAULT_CHAT_MODEL);
   const { active, sessions, activeId, ready, setActiveId, startSession } = store;
+
+  // Read cross-origin from the console, same shared session the header uses.
+  const { data: session, isPending: sessionPending } = authClient.useSession();
+  // Only while we genuinely do not know: `isPending` is false once the console
+  // has answered, so a signed-out visitor is gated rather than left waiting.
+  const needsSignIn = Boolean(requiresAuth) && !sessionPending && !session;
+
+  // Read in an effect, not during render: this component is server-rendered and
+  // `window.location` would differ between the two passes.
+  const [returnTo, setReturnTo] = useState("");
+  useEffect(() => setReturnTo(window.location.href), []);
 
   const [model, setModel] = useState(DEFAULT_CHAT_MODEL);
   const [harness, setHarness] = useState<HarnessId>(DEFAULT_HARNESS);
@@ -196,6 +222,9 @@ export function ChatPlayground({ harnesses }: PlaygroundConfig) {
 
   const onSend = useCallback(
     (text: string) => {
+      // Belt and braces with the disabled composer: the route would 401 anyway,
+      // but sending would burn the typed turn against an error bubble.
+      if (needsSignIn) return;
       if (!activeId) {
         const session = startSession(model, harness);
         // Claim the new session as already-loaded. Without this, the
@@ -210,7 +239,7 @@ export function ChatPlayground({ harnesses }: PlaygroundConfig) {
       }
       void sendMessage({ text });
     },
-    [activeId, harness, model, sendMessage, startSession],
+    [activeId, harness, model, needsSignIn, sendMessage, startSession],
   );
 
   return (
@@ -313,6 +342,21 @@ export function ChatPlayground({ harnesses }: PlaygroundConfig) {
         </Conversation>
 
         <div className="border-t border-border px-4 py-3 sm:px-6">
+          {needsSignIn && (
+            <div className="mx-auto mb-2 flex w-full max-w-3xl flex-wrap items-center gap-x-2 gap-y-1 rounded-[10px] border border-border bg-secondary px-3 py-2">
+              <LogInIcon className="size-3.5 shrink-0 text-primary" />
+              <p className="text-[13px] text-muted-foreground">
+                Sign in to run the playground — turns are billed to your account.
+              </p>
+              <a
+                className="font-mono text-[12px] text-primary underline-offset-4 hover:underline"
+                href={`${CONSOLE_URL}/sign-in?returnTo=${encodeURIComponent(returnTo)}`}
+              >
+                Sign in
+              </a>
+            </div>
+          )}
+
           <PromptInput
             className="mx-auto w-full max-w-3xl"
             onSubmit={(message) => {
@@ -322,7 +366,14 @@ export function ChatPlayground({ harnesses }: PlaygroundConfig) {
             }}
           >
             <PromptInputBody>
-              <PromptInputTextarea placeholder="Ask the agent to research something…" />
+              <PromptInputTextarea
+                disabled={needsSignIn}
+                placeholder={
+                  needsSignIn
+                    ? "Sign in to run the playground…"
+                    : "Ask the agent to research something…"
+                }
+              />
             </PromptInputBody>
             <PromptInputFooter>
               <PromptInputTools>
@@ -433,6 +484,7 @@ export function ChatPlayground({ harnesses }: PlaygroundConfig) {
                 )}
               </PromptInputTools>
               <PromptInputSubmit
+                disabled={needsSignIn}
                 onClick={isBusy ? () => stop() : undefined}
                 status={status}
                 type={isBusy ? "button" : "submit"}

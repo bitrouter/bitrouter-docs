@@ -9,6 +9,7 @@ import path from "node:path";
 
 import { agentTools } from "@/lib/chat-agent";
 import { buildPiModelsJson, piAlias } from "@/lib/pi-harness/models-json";
+import type { PlaygroundCredential } from "@/lib/playground-credential";
 
 /**
  * Pi agent runtime for the harness playground.
@@ -48,8 +49,10 @@ function requireEnv(name: string): string {
 /**
  * Write Pi's catalog once per process.
  *
- * `agentDir` also holds Pi's `auth.json`, which stays empty: the API key is
- * passed through `customEnv` and never touches disk.
+ * `agentDir` also holds Pi's `auth.json`, which stays empty: the token is
+ * passed through `customEnv` and never touches disk. That split is what lets
+ * this be memoized across visitors — the catalog is the same for everyone, and
+ * only the credential differs.
  */
 let agentDirPromise: Promise<string> | undefined;
 
@@ -57,6 +60,9 @@ function ensureAgentDir(): Promise<string> {
   agentDirPromise ??= (async () => {
     const dir = path.join(tmpdir(), "bitrouter-pi-agent");
     await mkdir(dir, { recursive: true, mode: 0o700 });
+    // Read from the environment rather than the caller's credential: this is
+    // memoized per process, so a per-request value would freeze whichever
+    // request happened to be first. `credential.baseUrl` is this same variable.
     const models = buildPiModelsJson({
       baseUrl: requireEnv("BITROUTER_API_BASE"),
     });
@@ -70,7 +76,17 @@ function ensureAgentDir(): Promise<string> {
   return agentDirPromise;
 }
 
-export async function createPiAgent(modelId: string) {
+/**
+ * Build a Pi agent that spends on `credential`.
+ *
+ * The token is baked into the runtime's environment at construction and there
+ * is no path to refresh it, so the credential is fixed for the life of the
+ * session — `acquireSession` rebuilds rather than swapping it.
+ */
+export async function createPiAgent(
+  modelId: string,
+  credential: PlaygroundCredential,
+) {
   const agentDir = await ensureAgentDir();
 
   return new HarnessAgent({
@@ -80,8 +96,8 @@ export async function createPiAgent(modelId: string) {
       agentDir,
       auth: {
         customEnv: {
-          BITROUTER_API_KEY: requireEnv("BITROUTER_API_KEY"),
-          BITROUTER_BASE_URL: requireEnv("BITROUTER_API_BASE"),
+          BITROUTER_API_KEY: credential.token,
+          BITROUTER_BASE_URL: credential.baseUrl,
         },
       },
     }),

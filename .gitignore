@@ -18,3 +18,7 @@ next-env.d.ts
 # owns them here; content/docs/reference/ operation pages are regenerated at build
 # by scripts/generate-openapi.mjs.
 .claude/launch.json
+
+# Vercel project link (written by `vercel link`; used by @vercel/sandbox
+# to resolve the team/project it provisions sandboxes into).
+.vercel

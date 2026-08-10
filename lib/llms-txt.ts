@@ -11,9 +11,9 @@ ${LLMS_PRODUCT_SUMMARY}
 If you are an AI agent setting up BitRouter, follow these steps:
 
 1. Install via Agent Skills (recommended for skill-capable runtimes — Claude Code, Cursor, Codex, Copilot): run \`npx skills add bitrouter/bitrouter\`, then invoke the skill ("Set up BitRouter for me"). The skill runs the wizard, defaults to BitRouter Cloud, and verifies the connection autonomously — no further input needed.
-2. Or install the CLI directly (pick one): \`curl -fsSL https://bitrouter.ai/install.sh | sh\` · \`npm install -g bitrouter\` · \`brew install bitrouter/tap/bitrouter\` · \`cargo install bitrouter\`. Then run \`bitrouter\` to launch the setup wizard/TUI. It asks Cloud or local (default Cloud); choose local to BYOK with your own provider keys, which starts the proxy at http://localhost:8787.
-3. Route your runtime through BitRouter with zero code changes — just point the base URL: local proxy \`http://localhost:8787/v1\` (OpenAI-compatible) or \`http://localhost:8787\` (Anthropic-compatible); hosted Cloud \`https://api.bitrouter.ai/v1\`. Models use \`provider/model\` ids, e.g. \`openai/gpt-4o\`, \`anthropic/claude-sonnet-4\`.
-4. Verify: \`curl http://localhost:8787/v1/chat/completions -H "Content-Type: application/json" -d '{"model":"openai/gpt-4o","messages":[{"role":"user","content":"Hello!"}]}'\`
+2. Or install the CLI directly (pick one): \`curl -fsSL https://bitrouter.ai/install.sh | sh\` · \`npm install -g bitrouter\` · \`brew install bitrouter/tap/bitrouter\` · \`cargo install bitrouter\`. Then run \`bitrouter\` to launch the setup wizard/TUI. It asks Cloud or local (default Cloud); choose local to BYOK with your own provider keys, which starts the proxy at http://127.0.0.1:4356.
+3. Route your runtime through BitRouter with zero code changes — just point the base URL: local proxy \`http://127.0.0.1:4356/v1\` (OpenAI-compatible) or \`http://127.0.0.1:4356\` (Anthropic-compatible); hosted Cloud \`https://api.bitrouter.ai/v1\`. Ask for \`bitrouter/auto\` to let BitRouter pick the model per call, or name a \`provider/model\` id to pin one, e.g. \`anthropic/claude-opus-4.8\`, \`anthropic/claude-haiku-4.5\`.
+4. Verify: \`curl http://127.0.0.1:4356/v1/chat/completions -H "Content-Type: application/json" -d '{"model":"anthropic/claude-haiku-4.5","messages":[{"role":"user","content":"Hello!"}]}'\`
 
 References:
 - Full quickstart walkthrough: ${BASE_URL}/docs/overview/quickstart
@@ -23,14 +23,17 @@ References:
 
 ## Getting Started
 
-- [Introduction](${BASE_URL}/docs): What BitRouter is, what's in the box, and why we're building it
-- [Quick Start](${BASE_URL}/docs/overview/quickstart): Install via Agent Skills or the CLI and start routing in under a minute
-- [Comparison](${BASE_URL}/docs/overview/bitrouter-vs-openrouter): How BitRouter differs from OpenRouter, LiteLLM, and other LLM gateways
+- [What is BitRouter?](${BASE_URL}/docs/overview/what-is-bitrouter): The one-page explanation — \`bitrouter/auto\`, how routing reads each call, and the two loops that improve it
+- [Quick Start](${BASE_URL}/docs/overview/quickstart): Install via Agent Skills or the CLI, start routing in under a minute, then optimize against your own workflow
+- [Supported Models](${BASE_URL}/docs/overview/supported-models): The curated catalog the router can score, downgrade, and fail over between, with pricing
+- [vs OpenRouter](${BASE_URL}/docs/overview/bitrouter-vs-openrouter): Honest side-by-side with the cloud catalog
+- [vs LiteLLM](${BASE_URL}/docs/overview/bitrouter-vs-litellm): Honest side-by-side with the all-in-one proxy
 - [Agent Skills](https://github.com/bitrouter/agent-skills): Drop-in skills that teach an agent to install and use BitRouter
 - [BitRouter CLI](https://github.com/bitrouter/bitrouter): \`cargo install bitrouter\` — the Rust binary, setup wizard, and TUI dashboard
 
 ## Models & Routing
 
+- [ACP Gateway](${BASE_URL}/docs/models-and-routing/acp-gateway): Sub-agents as first-class routable primitives — a task goes to the sub-agent that best fits it
 - [Model Fallbacks](${BASE_URL}/docs/models-and-routing/model-fallback): Automatic fallback across models when an upstream fails
 - [Provider Selection](${BASE_URL}/docs/models-and-routing/provider-selection): How models resolve to upstream providers, with cost and performance policies
 - [Virtual Model](${BASE_URL}/docs/models-and-routing/virtual-model): Define a named model of your own — base model, prompt, params, and routing rules behind \`@name\`
@@ -49,6 +52,14 @@ References:
 - [Fusion](${BASE_URL}/docs/models-and-routing/tool-calling/fusion): A panel of models answers in parallel, a judge compares them, and your model writes the final reply
 - [Web Search](${BASE_URL}/docs/models-and-routing/tool-calling/websearch): A built-in \`web_search\` server tool that gives any routed model a search, on a backend you bring keys for
 - [Web Fetch](${BASE_URL}/docs/models-and-routing/tool-calling/web-fetch): A built-in \`web_fetch\` server tool that turns a URL into clean page content for any routed model
+
+## Usage
+
+- [CLI](${BASE_URL}/docs/usage/cli): Every command of the binary — serve, route, models, policy, optimize, providers
+- [TUI](${BASE_URL}/docs/usage/tui): The terminal dashboard for live routing, spend, and traces
+- [Configuration](${BASE_URL}/docs/usage/configuration): The \`bitrouter.yaml\` reference, including the policy table and the adaptive loop
+- [MCP Server](${BASE_URL}/docs/usage/mcp): Drive BitRouter itself as an MCP tool from inside an agent
+- [Agent Skills](${BASE_URL}/docs/usage/skills): Skills as governed, routable resources behind the gateway
 
 ## Evals & Tracing
 

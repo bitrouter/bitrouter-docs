@@ -41,7 +41,7 @@ const siteJsonLd = {
       url: BASE_URL,
       logo: `${BASE_URL}/logo.svg`,
       description:
-        "Open-source LLM router that optimizes your agent for cost and performance with every run. Zero harness changes.",
+        "Context-aware LLM router that continuously improves your agent workflows. Send bitrouter/auto instead of a model name. Zero harness changes.",
       sameAs: SOCIAL_LINKS.map((s) => s.href),
     },
     {
@@ -49,7 +49,7 @@ const siteJsonLd = {
       name: "BitRouter",
       url: BASE_URL,
       description:
-        "An open-source LLM router that sends routine calls to open models and pays frontier prices only for the calls that earn them. Zero harness changes. Open-sourced, Cloud opt-in.",
+        "A context-aware LLM router that picks the model for every call in your agent loop, then keeps improving that choice against your own workflows. Open-sourced, Cloud opt-in.",
       inLanguage: "en",
     },
     {
@@ -74,11 +74,11 @@ export const metadata: Metadata = {
     icon: "/logo.svg",
   },
   title: {
-    default: "BitRouter — Optimize Your Agent for Cost and Performance",
+    default: "BitRouter — Context-Aware LLM Router for Agent Workflows",
     template: "%s | BitRouter",
   },
   description:
-    "An open-source LLM router that sends routine calls to open models and pays frontier prices only for the calls that earn them. Zero harness changes. Open-sourced, Cloud opt-in.",
+    "A context-aware LLM router that picks the model for every call in your agent loop, then keeps improving that choice against your own workflows. Open-sourced, Cloud opt-in.",
   alternates: {
     types: {
       "application/rss+xml": [
@@ -92,16 +92,16 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "BitRouter",
-    title: "BitRouter — Optimize Your Agent for Cost and Performance",
+    title: "BitRouter — Context-Aware LLM Router for Agent Workflows",
     description:
-      "An open-source LLM router that sends routine calls to open models and pays frontier prices only for the calls that earn them. Zero harness changes. Open-sourced, Cloud opt-in.",
+      "A context-aware LLM router that picks the model for every call in your agent loop, then keeps improving that choice against your own workflows. Open-sourced, Cloud opt-in.",
     url: BASE_URL,
   },
   twitter: {
     card: "summary_large_image",
-    title: "BitRouter — Optimize Your Agent for Cost and Performance",
+    title: "BitRouter — Context-Aware LLM Router for Agent Workflows",
     description:
-      "An open-source LLM router that sends routine calls to open models and pays frontier prices only for the calls that earn them. Zero harness changes.",
+      "A context-aware LLM router that picks the model for every call in your agent loop, then keeps improving that choice against your own workflows.",
   },
 };
 

@@ -27,12 +27,17 @@ const COMPANY: FooterLink[] = [
   { label: "Privacy", href: "/privacy-policy" },
   { label: "Terms", href: "/terms-of-service" },
 ];
+// Straight to the setup guide in docs — the per-harness marketing routes
+// (/claude-code, /codex, …) were content-free stubs and were retired (2026-08);
+// next.config.ts 301s them here. "More" lands on the integrations index, which
+// carries the harnesses we don't surface in the footer (Hermes, OpenClaw) plus
+// the model-source and gateway-migration guides.
 const INTEGRATIONS: FooterLink[] = [
-  { label: "Claude Code", href: "/claude-code" },
-  { label: "Codex", href: "/codex" },
-  { label: "OpenClaw", href: "/openclaw" },
-  { label: "Hermes Agent", href: "/hermes-agent" },
-  { label: "OpenCode", href: "/opencode" },
+  { label: "Claude Code", href: "/docs/integrations/claude-code" },
+  { label: "Codex", href: "/docs/integrations/codex" },
+  { label: "OpenCode", href: "/docs/integrations/opencode" },
+  { label: "Pi", href: "/docs/integrations/pi" },
+  { label: "More", href: "/docs/integrations" },
 ];
 
 // Text columns only. The Community column (social links, which carry icons) is

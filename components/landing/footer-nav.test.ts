@@ -15,15 +15,28 @@ describe("buildFooterColumns", () => {
     expect(titles).not.toContain("Use Cases");
     expect(titles).not.toContain("Community");
   });
-  it("Integrations column links to the per-agent pages", () => {
+  it("Integrations column links straight into the docs setup guides", () => {
     const int = buildFooterColumns().find((c) => c.title === "Integrations")!;
     expect(int.links.map((l) => l.href)).toEqual([
-      "/claude-code",
-      "/codex",
-      "/openclaw",
-      "/hermes-agent",
-      "/opencode",
+      "/docs/integrations/claude-code",
+      "/docs/integrations/codex",
+      "/docs/integrations/opencode",
+      "/docs/integrations/pi",
+      "/docs/integrations",
     ]);
+  });
+  it("Integrations no longer points at the retired per-agent routes", () => {
+    // /claude-code, /codex, /opencode, /openclaw, /hermes-agent were stubs and
+    // are now 301s (next.config.ts). Nothing should link at them directly.
+    const int = buildFooterColumns().find((c) => c.title === "Integrations")!;
+    for (const l of int.links) expect(l.href.startsWith("/docs/")).toBe(true);
+  });
+  it("Integrations surfaces four harnesses plus a More escape hatch", () => {
+    const int = buildFooterColumns().find((c) => c.title === "Integrations")!;
+    expect(int.links.map((l) => l.label)).toEqual([
+      "Claude Code", "Codex", "OpenCode", "Pi", "More",
+    ]);
+    expect(int.links.at(-1)!.href).toBe("/docs/integrations");
   });
   it("Developers lists the docs entry points, no Integrations", () => {
     const dev = buildFooterColumns().find((c) => c.title === "Developers")!;

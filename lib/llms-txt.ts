@@ -79,13 +79,16 @@ References:
 - [Webhooks](${BASE_URL}/docs/reference/webhooks/stripeWebhook): Stripe webhook receiver
 - [Health](${BASE_URL}/docs/reference/health/ping): Liveness probe
 
-## Cookbook (Agent Recipes)
+## Integrations (Harness Setup Guides)
 
-- [Cookbook Index](${BASE_URL}/docs/integrations): All supported agent runtimes with setup-time matrix
-- [Claude Code](${BASE_URL}/docs/integrations/agents/claude-code): Route Claude Code through BitRouter
-- [Codex](${BASE_URL}/docs/integrations/agents/codex): Route OpenAI Codex through BitRouter
-- [OpenClaw](${BASE_URL}/docs/integrations/agents/openclaw): Route the OpenClaw multi-channel agent
-- [Opencode](${BASE_URL}/docs/integrations/agents/opencode): Route the provider-agnostic Opencode runtime
+- [Integrations Index](${BASE_URL}/docs/integrations): Every model source and agent harness, with setup recipes
+- [Harnesses overview](${BASE_URL}/docs/integrations/harnesses): Harness vs. model source
+- [Claude Code](${BASE_URL}/docs/integrations/claude-code): Route Claude Code via ANTHROPIC_BASE_URL
+- [Codex](${BASE_URL}/docs/integrations/codex): Route OpenAI Codex through BitRouter
+- [OpenCode](${BASE_URL}/docs/integrations/opencode): Provider block in opencode.json
+- [Pi](${BASE_URL}/docs/integrations/pi): Minimal terminal coding harness via models.json
+- [Hermes](${BASE_URL}/docs/integrations/hermes): Nous Research's self-improving agent
+- [OpenClaw](${BASE_URL}/docs/integrations/openclaw): Route the OpenClaw multi-channel agent
 
 ## Open Network
 

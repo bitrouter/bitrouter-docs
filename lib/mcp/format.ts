@@ -107,7 +107,7 @@ export function buildConfigSnippet(id: string): string {
   return [
     "# Route through BitRouter (OpenAI-compatible).",
     "#   hosted base URL: https://api.bitrouter.ai/v1",
-    "#   local proxy:     http://localhost:8787/v1",
+    "#   local proxy:     http://127.0.0.1:4356/v1",
     "curl https://api.bitrouter.ai/v1/chat/completions \\",
     '  -H "Authorization: Bearer $BITROUTER_API_KEY" \\',
     '  -H "Content-Type: application/json" \\',

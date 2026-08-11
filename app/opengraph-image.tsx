@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "BitRouter — Agent-native LLM Router";
+export const alt = "BitRouter — Context-Aware LLM Router for Agent Workflows";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -46,7 +46,8 @@ export default function OGImage() {
               maxWidth: "800px",
             }}
           >
-            Agent-native LLM Router
+            Context-aware LLM router that continuously
+            improves your agent workflows
           </div>
           <div
             style={{

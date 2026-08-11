@@ -93,11 +93,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       { url: `${BASE_URL}/pricing`, file: "app/(home)/pricing/page.tsx", priority: 0.8, changeFrequency: "monthly" },
       { url: `${BASE_URL}/enterprise`, file: "app/(home)/enterprise/page.tsx", priority: 0.6, changeFrequency: "monthly" },
       { url: `${BASE_URL}/startup`, file: "app/(home)/startup/page.tsx", priority: 0.6, changeFrequency: "monthly" },
-      { url: `${BASE_URL}/claude-code`, file: "app/(home)/claude-code/page.tsx", priority: 0.6, changeFrequency: "monthly" },
-      { url: `${BASE_URL}/codex`, file: "app/(home)/codex/page.tsx", priority: 0.6, changeFrequency: "monthly" },
-      { url: `${BASE_URL}/openclaw`, file: "app/(home)/openclaw/page.tsx", priority: 0.6, changeFrequency: "monthly" },
-      { url: `${BASE_URL}/hermes-agent`, file: "app/(home)/hermes-agent/page.tsx", priority: 0.6, changeFrequency: "monthly" },
-      { url: `${BASE_URL}/opencode`, file: "app/(home)/opencode/page.tsx", priority: 0.6, changeFrequency: "monthly" },
+      // The per-harness routes (/claude-code, /codex, …) were retired in 2026-08
+      // and now 301 into /docs/integrations/*, which the docs entries above
+      // already cover — a redirecting URL must not be listed here.
       { url: `${BASE_URL}/about`, file: "app/(home)/about/page.tsx", priority: 0.5, changeFrequency: "monthly" },
       { url: `${BASE_URL}/open`, file: "app/(home)/open/page.tsx", priority: 0.5, changeFrequency: "monthly" },
       { url: `${BASE_URL}/blog`, file: "app/blog/(index)/page.tsx", priority: 0.6, changeFrequency: "weekly" },

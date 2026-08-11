@@ -268,6 +268,21 @@ const nextConfig: NextConfig = {
       { source: "/zh/blog", destination: "/blog", permanent: true },
       { source: "/zh/blog/:slug", destination: "/blog/:slug", permanent: true },
 
+      // ── Per-harness marketing routes retired (2026-08) ──
+      // /claude-code, /codex, … were IntegrationStub placeholders ("setup guide
+      // pending") with no unique content, so they land on the real setup guide.
+      // Note the slug change: the route was /hermes-agent, the doc is hermes.
+      { source: "/claude-code", destination: "/docs/integrations/claude-code", permanent: true },
+      { source: "/codex", destination: "/docs/integrations/codex", permanent: true },
+      { source: "/opencode", destination: "/docs/integrations/opencode", permanent: true },
+      { source: "/openclaw", destination: "/docs/integrations/openclaw", permanent: true },
+      { source: "/hermes-agent", destination: "/docs/integrations/hermes", permanent: true },
+      { source: "/zh/claude-code", destination: "/docs/integrations/claude-code", permanent: true },
+      { source: "/zh/codex", destination: "/docs/integrations/codex", permanent: true },
+      { source: "/zh/opencode", destination: "/docs/integrations/opencode", permanent: true },
+      { source: "/zh/openclaw", destination: "/docs/integrations/openclaw", permanent: true },
+      { source: "/zh/hermes-agent", destination: "/docs/integrations/hermes", permanent: true },
+
       // ── /compare article retired; comparisons live in docs → overview (2026-07) ──
       { source: "/compare/bitrouter-vs-openrouter", destination: "/docs/overview/bitrouter-vs-openrouter", permanent: true },
       { source: "/compare/bitrouter-vs-litellm", destination: "/docs/overview/bitrouter-vs-litellm", permanent: true },

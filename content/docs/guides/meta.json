@@ -5,14 +5,14 @@
   "collapsible": false,
   "pagesIndex": "[Guides](/docs/guides/cloud-api)",
   "pages": [
+    "---Cloud---",
     "cloud-api",
-    "---Development---",
-    "build-a-plugin",
-    "self-host",
-    "register-as-a-provider",
     "---Migration---",
     "migrate-from-litellm",
     "migrate-from-openrouter",
-    "migrate-from-tensorzero"
+    "migrate-from-tensorzero",
+    "---Extending---",
+    "build-a-plugin",
+    "register-as-a-provider"
   ]
 }

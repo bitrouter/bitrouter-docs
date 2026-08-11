@@ -6,7 +6,7 @@ is rendered from this repo — docs are committed directly here under
 
 ## What publishes
 
-The docs site has four **tabs**, and each is a folder marked `"root": true` in
+The docs site has five **tabs**, and each is a folder marked `"root": true` in
 its `meta.json`. Tab order is the `pages` list in `content/docs/meta.json`:
 
 - **Documentation** — `content/docs/(guide)/`. The parentheses make it a
@@ -15,9 +15,12 @@ its `meta.json`. Tab order is the `pages` list in `content/docs/meta.json`:
   something to hang off.
 - **Integrations** — `content/docs/integrations/`, the per-runtime and
   per-model-source recipes. Lands on its `index.mdx`.
+- **Self-hosting** — `content/docs/self-hosting/`, the operator's lifecycle:
+  install, configure, run under a supervisor, expose, secure, operate. Lands on
+  its `index.mdx`.
 - **Guides** — `content/docs/guides/`, the end-to-end walkthroughs (Cloud API,
-  self-host, plugins, migrations). It has no `index.mdx`, so its landing URL
-  comes from `pagesIndex`.
+  migrations, plugins, provider registration). It has no `index.mdx`, so its
+  landing URL comes from `pagesIndex`.
 - **API Reference** — `content/docs/reference/`, generated from the BitRouter
   Cloud OpenAPI spec.
 
@@ -27,8 +30,24 @@ Two rules follow from that, and breaking either one silently deletes a tab:
    `meta.json`, or from the folder's first direct *page* child — a root folder
    whose children are all folders resolves to nothing and is dropped from the
    tab bar without an error.
-2. Only these four folders carry `"root": true`. Adding it to a section would
-   turn that section into a fifth tab.
+2. Only these five folders carry `"root": true`. Adding it to a section would
+   turn that section into a sixth tab.
+
+### Documentation vs Self-hosting
+
+These two tabs slice the same product differently, so the boundary has to be
+held deliberately or they rot into two half-answers per topic:
+
+- **Documentation** answers *what the router does* — feature semantics, routing
+  behaviour, and the `bitrouter.yaml` block reference.
+- **Self-hosting** answers *how the process runs, who can reach it, and what
+  happens on day 2* — supervision, bind address and TLS, authentication,
+  upgrades, state.
+
+Self-hosting **links** to feature pages rather than restating them. The
+`bitrouter.yaml` block reference stays in `usage/configuration.mdx`; the
+Self-hosting page about config covers only the operational contract around it
+(resolution, secrets, CI validation).
 
 Each folder under `content/docs/(guide)/` (`overview`, `usage`,
 `gateway-and-routing`, `observability`) is a section within the Documentation

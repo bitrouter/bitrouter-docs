@@ -1,0 +1,131 @@
+---
+title: Day-2 operations
+description: Reload vs restart, what a hot reload actually swaps, the diagnostic commands, and how to work out why a request went somewhere unexpected.
+---
+
+Once the router is serving, almost every change you make is a config change — and the difference between applying it with `reload` and applying it with `restart` is whether your agents notice.
+
+## Reload vs restart
+
+```bash
+bitrouter reload -c /etc/bitrouter/bitrouter.yaml    # hot; no connection is dropped
+bitrouter restart -c /etc/bitrouter/bitrouter.yaml   # drains up to 30s, then a new process
+```
+
+`reload` re-reads the config from disk, re-substitutes `${VAR}` references, re-applies the built-in provider catalog, and swaps the result into the live routing table. It's transactional across subsystems and holds a lock for the duration, so a request never sees a half-applied config. `SIGHUP` does the same thing, which is what makes it usable from a supervisor.
+
+**What a reload swaps:**
+
+| Subsystem | Effect |
+| --- | --- |
+| Routing table | New/changed `providers`, `models`, `presets`, `variants` take effect |
+| Upstream timeouts | The outbound HTTP client set is rebuilt with the new `upstream.timeouts` |
+| Policy runtime | The routing-policy registry and lock are prepared and committed |
+| Stored credentials | Providers backed by an OAuth/subscription credential are re-activated, so a `providers login` session survives the reload |
+| Provider API keys | Keys exported in the shell running `reload` are pushed into the daemon's env-override map |
+
+**What needs a restart:** anything fixed when the process bound its sockets — `server.listen` and `server.control_socket` — plus `RUST_LOG`, which is read once at startup.
+
+Prefer `reload`. `restart` waits up to 30 seconds for in-flight requests to finish and then escalates to a force-kill against the pid file; a long agentic stream can outlive that window and be cut mid-generation.
+
+<Callout type="info">
+**A reload of a broken config leaves the old one running.** Failures are accumulated per subsystem and reported together, so one bad section doesn't mask another. Run `bitrouter config validate -c <path>` first and you'll almost never see this path.
+</Callout>
+
+## The diagnostic set
+
+Four read-only commands answer nearly every "why did it do that?" question. None of them send a request to a provider.
+
+```bash
+bitrouter status                    # pid, listen address, routable model count, socket path
+bitrouter models                    # every model id routable right now
+bitrouter route anthropic/claude-opus-4.8   # the full routing decision for one model
+bitrouter providers list            # configured providers and which are active
+bitrouter observe status            # OTel exporter state, sampler, cardinality, in-flight spans
+```
+
+`bitrouter route` is the one worth internalising. It resolves a model name through the same routing table the daemon acts on — using the running daemon when reachable, and falling back to loading the config from disk when it isn't. That fallback is why it works in CI, and why it's the right check to run against a config before you deploy it:
+
+```bash
+bitrouter route "@coding"           # presets resolve through their bound policy
+```
+
+## A triage order that works
+
+**1. Is the process there?**
+
+```bash
+bitrouter status -c /etc/bitrouter/bitrouter.yaml
+```
+
+`running: no` from a host you know is serving usually means the command didn't find the control socket, not that the daemon is down — the control commands locate the socket through the config, so an omitted `-c` looks exactly like an outage. Try `--socket` with the explicit path before you panic.
+
+**2. Is it serving HTTP?**
+
+```bash
+curl -s http://127.0.0.1:4356/health     # {"status":"ok"}
+```
+
+**3. Does it have anything to route to?** A healthy process with zero routable models is the most common "it's up but nothing works" state — an unset provider key, a credential that expired, a typo'd provider id. `status` prints the model count; `bitrouter providers list` shows which providers are actually active.
+
+**4. Is the model going where you expect?**
+
+```bash
+bitrouter route <the-model-the-caller-asked-for>
+```
+
+This separates a routing problem from a provider problem. If `route` resolves to the endpoint you expected, the failure is upstream; if it doesn't, it's your config.
+
+**5. Turn up the logs.** `RUST_LOG=info,bitrouter=debug` and restart. `api_key` values are redacted in debug output.
+
+## Rolling out a config change
+
+```bash
+bitrouter config validate -c /etc/bitrouter/bitrouter.yaml   # 1. catch it before the daemon sees it
+bitrouter route <a-model-you-care-about> -c /etc/bitrouter/bitrouter.yaml   # 2. confirm the intent
+bitrouter reload -c /etc/bitrouter/bitrouter.yaml            # 3. apply, no dropped connections
+bitrouter status -c /etc/bitrouter/bitrouter.yaml            # 4. model count still sane?
+```
+
+Step 4 catches the failure mode validation can't: a config that is structurally valid and routes to nothing, because the provider key it depends on isn't set in the daemon's environment.
+
+## Publishing what the router learned
+
+If you run adaptive routing, the daemon accumulates evidence in its database and proposes downgrades, but does not publish them on its own under the default `writeback: locked`. The publish cycle is explicit and digest-checked:
+
+```bash
+bitrouter policy status          # path, digest, writeback mode, bindings
+bitrouter policy evolve          # dry run — which routes would materialize
+bitrouter policy unlock          # permit programmatic writeback
+bitrouter policy evolve --apply  # atomically republish policy-lock.yaml
+bitrouter policy reload          # daemon picks it up, no restart
+bitrouter policy lock            # forbid programmatic writes again
+```
+
+`evolve --apply` only **adds** qualified routes — it never overwrites or removes anything you or Git wrote, and a detected intervening edit aborts the publish rather than clobbering it. Commit the result: the improved table belongs in version control like the rest of the config. Semantics are on [Adaptive routing](/docs/overview/quickstart#adaptive-routing).
+
+## Telemetry
+
+The router is OpenTelemetry-native, and OTLP push is the only path that carries real data — the `/metrics` endpoint exists but the shipped binary renders nothing into it. Point the observe plugin at a collector:
+
+```yaml
+plugins:
+  bitrouter-observe:
+    otel:
+      endpoint: "http://otel-collector:4318"
+      service_name: "bitrouter"
+```
+
+Then confirm the exporter is actually live rather than assuming it:
+
+```bash
+bitrouter observe status
+```
+
+It reports the endpoint, sampler, cardinality usage, and in-flight spans from the running daemon — and reports `stopped` plus the compile-time flag when no daemon is reachable. For a Prometheus-based stack, ingest through an OpenTelemetry Collector. Span model and per-request attribution are on [OpenTelemetry](/docs/evals-and-tracing/opentelemetry).
+
+<Cards>
+  <Card title="State & backups" href="/docs/self-hosting/state-and-backups" description="What the database holds and how to back it up." />
+  <Card title="Install & upgrade" href="/docs/self-hosting/install" description="The binary-swap sequence for a live host." />
+  <Card title="CLI reference" href="/docs/usage/cli" description="Every flag on every command used here." />
+</Cards>

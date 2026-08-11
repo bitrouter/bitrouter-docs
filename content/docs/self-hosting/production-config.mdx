@@ -1,0 +1,143 @@
+---
+title: Production configuration
+description: Commit bitrouter.yaml as infrastructure-as-code — config resolution, secrets via environment references, the working-directory rule, and CI validation.
+---
+
+BitRouter runs with no configuration at all, and on a workstation that's the right answer. A deployed router is different: you want the routing policy reviewable, the secrets outside the file, and a CI job that fails before a bad config reaches a host.
+
+This page is about the operational contract around `bitrouter.yaml`. For what each block *means* — `providers`, `models`, `presets`, `policy_table` — see the [Configuration reference](/docs/usage/configuration).
+
+## Scaffold, then edit
+
+```bash
+bitrouter init -c /etc/bitrouter/bitrouter.yaml
+```
+
+`bitrouter init` writes a commented starter file that **mirrors the zero-config in-memory defaults** — running with the generated file behaves exactly like running with no file at all. Nothing in it is load-bearing; every section is there to be edited or deleted.
+
+The generated file is local-first, and two of its defaults are the ones you must revisit before deploying:
+
+```yaml
+server:
+  listen: "127.0.0.1:4356"
+  skip_auth: true
+```
+
+Both are correct for a laptop and wrong for a shared host. `skip_auth: true` admits credential-less requests; loopback is what keeps that safe. Changing one without the other is the central self-hosting footgun — see [Authentication](/docs/self-hosting/authentication) and [Networking](/docs/self-hosting/networking).
+
+`init` refuses to overwrite an existing `bitrouter.yaml` unless you pass `--force`.
+
+## Where the file is found
+
+Resolution stops at the first hit:
+
+| Order | Location |
+| --- | --- |
+| 1 | `-c/--config <PATH>` — explicit; a missing path is a hard error, never a fallback |
+| 2 | `./bitrouter.yaml` — the repo-local file |
+| 3 | `$BITROUTER_HOME/bitrouter.yaml` — when the variable is set, the file **must** be there |
+| 4 | `~/.bitrouter/bitrouter.yaml` — per-user default |
+| 5 | *(none)* — zero-config in-memory defaults |
+
+**Always pass `-c` in a deployment.** Under a supervisor, the working directory is whatever the supervisor chose, so relying on `./bitrouter.yaml` means the config that loads depends on how the process was launched. An explicit path fails loudly if it's missing; implicit resolution silently falls through to zero-config and serves a router with none of your policy in it.
+
+<Callout type="warning">
+**`BITROUTER_HOME` fails loudly on purpose.** If the variable is set but holds no `bitrouter.yaml`, BitRouter errors instead of falling through to `~/.bitrouter` or zero-config. Silently ignoring an operator's explicit choice of config directory is how the wrong policy reaches production.
+</Callout>
+
+## The working-directory rule
+
+**The daemon chdirs into the config file's directory on startup.** Every relative path in the file — `database.url`, `policy.path`, the control socket, the log file — resolves against *that* directory, not against the directory you launched from.
+
+This is what makes a deployment self-contained: point at `/etc/bitrouter/bitrouter.yaml` and the database, socket, pid file, log, and policy lock all land in `/etc/bitrouter/` regardless of who started the process or from where.
+
+It also means a relative path in the file is a promise about layout. If you'd rather be explicit, use absolute paths:
+
+```yaml
+database:
+  url: "sqlite:///var/lib/bitrouter/bitrouter.db"
+```
+
+## Keep secrets out of the file
+
+The file is meant to be committed; keys are not. Any value may reference an environment variable, resolved at load time:
+
+```yaml
+providers:
+  openai:
+    api_key: "${OPENAI_API_KEY}"
+  selfhosted:
+    # `:-` supplies a fallback when the variable is unset
+    endpoint: "${LLM_ENDPOINT:-http://127.0.0.1:8000/v1}"
+```
+
+Substitution is **comment-aware** — a `${VAR}` inside a `#` comment is left literal and never looked up, so a commented-out example referencing an unset variable won't break loading. Debug output redacts `api_key` values.
+
+Deliver the variables through your process manager rather than a shell profile — a systemd `EnvironmentFile`, a secrets mount, or your orchestrator's secret injection. See [Run as a service](/docs/self-hosting/run-as-a-service).
+
+### Rotating a key without a restart
+
+```bash
+export OPENAI_API_KEY=sk-new...
+bitrouter reload
+```
+
+`bitrouter reload` snapshots every env-var-credentialed provider key **from the shell that runs the command** and hands them to the daemon along with the reload, which writes them into its env-override map before re-parsing config. The new key takes effect on the next request, with no dropped connections.
+
+<Callout type="warning">
+**The key comes from the reloading shell, not from the daemon's environment.** Updating a systemd `EnvironmentFile` does *not* by itself change what the running daemon uses — the file is only read when the unit starts. Either export the new value in the shell that runs `bitrouter reload`, or restart the unit.
+</Callout>
+
+## Multiple accounts for one provider
+
+A production deployment often holds more than one credential for the same upstream — two subscriptions, or a spare account for burst. Declare them as `accounts` and pick a strategy:
+
+```yaml
+providers:
+  opencode-go:
+    account_strategy: failover   # or: balance
+    accounts:
+      - api_key: "${OPENCODE_GO_KEY_A}"
+        label: primary
+      - api_key: "${OPENCODE_GO_KEY_B}"
+        label: backup
+```
+
+`failover` (the default) tries the first account and drops to the next on a retryable or out-of-credits error. `balance` spreads load evenly across accounts.
+
+## Validate in CI
+
+```bash
+bitrouter config validate -c bitrouter.yaml
+```
+
+`validate` checks structure, provider `derives` resolution, upstream-URL (SSRF) safety, and that the policy lock loads. It exits non-zero on an invalid config, so it drops straight into a pipeline as a required check.
+
+**Secrets are not required to validate.** An unset `${VAR}` is substituted with a placeholder and reported under `warnings` — it does not fail the run. That's deliberate: CI checks the config's *shape* on every pull request without holding production keys.
+
+```json
+{ "valid": true, "warnings": [{ "unset_env": "OPENAI_API_KEY" }] }
+```
+
+If you want unset variables to be fatal in a deploy job — as opposed to a PR check — gate on the `warnings` array being empty. A useful split:
+
+| Job | Command | Fails on |
+| --- | --- | --- |
+| PR check | `bitrouter config validate -c bitrouter.yaml` | structure, `derives`, SSRF, policy lock |
+| Deploy gate | same, plus a check that `warnings` is empty | any secret the target environment hasn't supplied |
+
+<Callout type="warning">
+**`validate` needs a real file.** Run with no `-c` against a host that has no config, it errors rather than reporting success — there is nothing to check. Always pass `-c <path>` in CI so a missing file fails loudly instead of silently validating in-memory defaults.
+</Callout>
+
+Validating against the *right* schema matters as much as validating at all. Pin the `# yaml-language-server` URL to the release you deploy, not `main` — see [Install & upgrade](/docs/self-hosting/install#pin-a-version).
+
+## Treat it like the rest of your infrastructure
+
+The file is the artifact. Commit it, review changes to it, and roll it back the way you roll back anything else. That extends to the adaptive routing loop: the router writes what it learns to `policy-lock.yaml` next to the config, `bitrouter policy evolve` prints the diff, and `--apply` publishes it — so a routing change the router proposed still arrives through the same review path as one you typed.
+
+<Cards>
+  <Card title="Configuration reference" href="/docs/usage/configuration" description="What every block in bitrouter.yaml means." />
+  <Card title="Run as a service" href="/docs/self-hosting/run-as-a-service" description="Put the config you just wrote under a supervisor." />
+  <Card title="Authentication" href="/docs/self-hosting/authentication" description="Turn off skip_auth and mint keys before you expose it." />
+</Cards>

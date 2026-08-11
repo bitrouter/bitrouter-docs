@@ -1,0 +1,109 @@
+---
+title: Authentication & virtual keys
+description: Turn off skip_auth, mint brvk_ virtual keys, and understand exactly what the auth hook checks on every request.
+---
+
+A self-hosted router has one authentication switch and one credential type. The switch is `server.skip_auth`; the credential is a `brvk_` **virtual key** backed by the router's database.
+
+## `skip_auth` — what it actually does
+
+```yaml
+server:
+  skip_auth: true
+```
+
+With `skip_auth: true`, a request that carries no credentials is admitted and given a **synthesised local caller**. The auth hook sees that the caller is local and returns `Allow` immediately — no credential is read, nothing is looked up, no key is required.
+
+That's what makes the local proxy drop-in: harnesses like Claude Code and litellm-style clients inject a placeholder token or none at all, and the router accepts them. Every request is the same anonymous caller.
+
+Two defaults to keep straight:
+
+- The **SDK default is `false`** — a binary built on the SDK requires credentials unless told otherwise.
+- The **`bitrouter` CLI sets it to `true`** in zero-config mode and writes `true` into the file produced by `bitrouter init`, paired with a loopback `listen`.
+
+<Callout type="warning">
+`skip_auth: true` is safe **only** because loopback is the access control. The moment `listen` leaves `127.0.0.1`, that flag means anyone who can reach the port can spend your provider keys anonymously. Flip `skip_auth: false` and mint keys *before* you change the bind address, not after.
+</Callout>
+
+## Mint a virtual key
+
+```bash
+bitrouter key sign --user alice
+```
+
+```
+id:     brvk_id_9f2c1ab4e7d05386
+secret: brvk_...
+```
+
+The plaintext secret is printed **once** and never again — only a hash is stored. Lost keys are re-minted, not recovered.
+
+The flags:
+
+| Flag | Meaning |
+| --- | --- |
+| `-u, --user <USER>` | The owning user id. Created if it doesn't exist. |
+| `-d, --db <DB>` | Database URL. Defaults to `sqlite://./bitrouter.db` |
+| `--policy <POLICY>` | Optional access-control policy id, stored on the key |
+
+`key sign` connects to the database, runs any pending migrations, upserts the user, and inserts the key — so it works against a fresh deployment before the daemon has ever started.
+
+<Callout type="info">
+**Point `--db` at the same database the daemon uses.** The default is `sqlite://./bitrouter.db` relative to your *current* directory, while the daemon resolves its `database.url` relative to the config file's directory. Mint a key from the wrong working directory and you create a second SQLite file the router never reads — the key then fails as "unknown API key". Pass `--db` explicitly on a deployed host.
+</Callout>
+
+Callers then send the secret as a bearer token, exactly as they would a provider key:
+
+```bash
+curl https://router.internal.example.com/v1/chat/completions \
+  -H "Authorization: Bearer brvk_..." \
+  -H "Content-Type: application/json" \
+  -d '{"model": "openai/gpt-4o", "messages": [{"role": "user", "content": "Hello!"}]}'
+```
+
+## What the auth hook checks
+
+With `skip_auth: false`, every request runs this sequence. Each step is a `401`:
+
+1. **A credential is present.** Missing → `missing API key`.
+2. **It looks like a virtual key.** v1 has **no JWT path** — the credential must be a `brvk_` key. Anything else → `credential is not a brvk_ virtual key`.
+3. **The hash resolves to a stored key.** Unknown → `unknown API key`.
+4. **The key is active.** The `active` column is the revocation switch. Inactive → `API key is inactive`.
+5. **The key has not expired.** Expired → `API key has expired`.
+
+Only then is the caller's identity established. The router attaches `api_key_id`, `user_id`, and `policy_id` to the request and emits an `Authenticated` event — that's what gives per-caller attribution in metering and telemetry. Without authentication, every request is the same anonymous local caller, and per-user cost attribution is not available.
+
+## Per-key limits: what's there and what isn't
+
+The `api_keys` table carries `spend_limit_micro_usd`, `rpm_limit`, `expires_at`, `active`, and `policy_id` alongside the hash.
+
+**`bitrouter key sign` does not yet expose flags for the first three.** A key minted through the CLI today is created with no spend limit, no rate limit, and no expiry — the columns are set to `NULL`. Expiry and the `active` flag *are* enforced by the auth hook when they're set; the CLI simply has no flag to set them at mint time.
+
+Practically, that means:
+
+- **Revocation works today** — set `active` to `0` on the row and the key is refused on the next request.
+- **Per-key budgets and rate limits are schema-present but not CLI-driven.** Don't plan a multi-tenant deployment around minting per-tenant keys with budgets from the CLI in this version.
+- **BitRouter Cloud manages these as a product surface** — budgets, rate limits, and per-key policies through the management API and console. See the [Management reference](/docs/reference/management/mintApiKey).
+
+## Content-level control
+
+Authentication answers *who is calling*. It says nothing about what flows through the request. For blocking or redacting content — prompt patterns, secrets, PII shapes — use [Guardrails](/docs/models-and-routing/guardrails), which run inside the router on the proxy hop with no extra model call.
+
+The two compose: a key identifies the caller, a guardrail decides whether the content is allowed through.
+
+## Protecting the control socket
+
+The HTTP API is not the only way in. The Unix **control socket** accepts `stop`, `reload`, and `restart` with no authentication of its own — filesystem permissions are the entire access control. Anyone who can write to the socket can stop your router or reload it onto a different config.
+
+Keep it in a directory owned by the service user, and don't place it somewhere world-writable:
+
+```yaml
+server:
+  control_socket: "/run/bitrouter/bitrouter.sock"
+```
+
+<Cards>
+  <Card title="Networking & TLS" href="/docs/self-hosting/networking" description="The bind decision this page assumes you're about to make." />
+  <Card title="Guardrails" href="/docs/models-and-routing/guardrails" description="Block or redact content, independent of who is calling." />
+  <Card title="Hardening checklist" href="/docs/self-hosting/hardening" description="Run down the list before you expose anything." />
+</Cards>

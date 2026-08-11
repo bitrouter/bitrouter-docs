@@ -1,0 +1,173 @@
+---
+title: Networking & TLS
+description: Bind address, the endpoints the daemon serves, a streaming-safe reverse proxy with TLS, and the upstream timeouts that decide when a long stream dies.
+---
+
+The router has two network sides, and they fail differently. **Inbound** is the listen socket your agents hit — the side that needs a bind decision and TLS. **Outbound** is the HTTP client that calls providers — the side where a badly chosen timeout kills a working agent mid-run.
+
+## Bind deliberately
+
+```yaml
+server:
+  listen: "127.0.0.1:4356"
+```
+
+<Callout type="warning">
+**The default depends on which layer you ask.** The `bitrouter` CLI binds `127.0.0.1:4356` in zero-config mode and writes the same into the file produced by `bitrouter init` — loopback-only, because it also sets `skip_auth: true`. But the underlying SDK's `ServerConfig` default — the one in the published JSON Schema — is **`0.0.0.0:4356` with `skip_auth: false`**. If you read the schema, or build your own binary against the SDK, you get all interfaces. Set `listen` explicitly and don't rely on the default matching your expectation.
+</Callout>
+
+Binding `0.0.0.0` while `skip_auth: true` is the one configuration that turns a local convenience into an open relay for your provider keys: any host that can reach the port can spend your credits, with no credential and no attribution. The starter config says so in a comment for a reason.
+
+Only two combinations are safe:
+
+| `listen` | `skip_auth` | Verdict |
+| --- | --- | --- |
+| `127.0.0.1:4356` | `true` | Fine — the OS is the access control |
+| non-loopback | `false` + minted keys | Fine — see [Authentication](/docs/self-hosting/authentication) |
+| non-loopback | `true` | **Never.** Unauthenticated access to your provider keys |
+
+A third option is often the best one: keep `listen` on loopback and let a reverse proxy on the same host own the public interface. The router is then unreachable except through something that terminates TLS and authenticates.
+
+## What the daemon serves
+
+| Endpoint | Purpose |
+| --- | --- |
+| `POST /v1/chat/completions` | OpenAI Chat Completions |
+| `POST /v1/responses` | OpenAI Responses |
+| `POST /v1/messages` | Anthropic Messages |
+| `POST /v1beta/models/{model_action}` | Google Generative AI |
+| `GET /v1/models` | Model discovery |
+| `POST /mcp/{server}` | MCP gateway — see [MCP gateway](/docs/usage/mcp-gateway) |
+| `GET /health` | Liveness — `200` with `{"status":"ok"}` |
+| `GET /metrics` | Prometheus-format endpoint, see the note below |
+
+Request bodies are capped at **16 MiB**. That is generous for text, and reachable if you push large base64 image or document parts through the proxy — a `413` on a multimodal request is this limit, not the provider's.
+
+<Callout type="warning">
+**`GET /v1/models` and `GET /health` are never authenticated.** The auth hook runs on the inference pipeline; those two are plain reads that answer before it. Even with `skip_auth: false`, anyone who can reach the port can enumerate every model you route and the providers serving them. That's a catalog rather than a credential, but if the provider list is sensitive, restrict the paths at the reverse proxy.
+</Callout>
+
+<Callout type="info">
+**`/metrics` answers, but the shipped binary has nothing to say.** It returns `200` with two comment lines pointing at OTLP — metrics were moved to OpenTelemetry push, and the endpoint remains as an SDK seam for people building their own binary. Point Prometheus at it and you get a *successful, empty* scrape, which is far more confusing than a 404. Use OTLP: see [OpenTelemetry](/docs/evals-and-tracing/opentelemetry), and ingest through an OpenTelemetry Collector if your stack is Prometheus-based.
+</Callout>
+
+## Reverse proxy with TLS
+
+The router speaks plain HTTP. Terminate TLS in front of it.
+
+The thing that breaks here is always the same: **LLM responses are long-lived streams**, and a proxy tuned for ordinary web requests will buffer them into uselessness or cut them off mid-generation. Two settings matter more than the rest — disable response buffering, and raise the read timeout well past your slowest expected completion.
+
+<Tabs items={['nginx', 'Caddy']}>
+<Tab value="nginx">
+
+```nginx
+server {
+    listen 443 ssl http2;
+    server_name router.internal.example.com;
+
+    ssl_certificate     /etc/ssl/certs/router.pem;
+    ssl_certificate_key /etc/ssl/private/router.key;
+
+    location / {
+        proxy_pass http://127.0.0.1:4356;
+        proxy_http_version 1.1;
+
+        # Streaming: without these, SSE arrives in one lump at the end
+        # — or not at all.
+        proxy_buffering off;
+        proxy_cache off;
+        proxy_set_header Connection "";
+
+        # A reasoning model can think for minutes before the first token.
+        proxy_read_timeout 600s;
+        proxy_send_timeout 600s;
+
+        client_max_body_size 16m;
+
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+</Tab>
+<Tab value="Caddy">
+
+```
+router.internal.example.com {
+    reverse_proxy 127.0.0.1:4356 {
+        flush_interval -1          # stream immediately, never buffer
+        transport http {
+            read_timeout 600s
+            write_timeout 600s
+        }
+    }
+    request_body {
+        max_size 16MB
+    }
+}
+```
+
+Caddy provisions and renews the certificate itself.
+
+</Tab>
+</Tabs>
+
+`client_max_body_size` / `max_size` should match the router's own 16 MiB limit — set it lower and multimodal requests fail at the proxy with a different error than they would at the router.
+
+<Callout type="warning">
+**A reverse proxy is TLS, not authentication.** Fronting the router with nginx does nothing about `skip_auth: true` behind it — the proxy forwards credential-less requests just as happily. Either enforce auth at the proxy, or turn `skip_auth` off and mint keys.
+</Callout>
+
+## Outbound timeouts
+
+The other side of the connection is the client BitRouter uses to call providers. It's configured globally under `upstream.timeouts`, in seconds:
+
+```yaml
+upstream:
+  timeouts:
+    connect_secs: 10        # TCP connect
+    read_secs: 120          # idle guard — no bytes for this long, including mid-stream
+    pool_idle_secs: 90      # evict idle pooled connections
+    tcp_keepalive_secs: 60  # keepalive probe interval
+    # total_secs: unset     # no overall wall-clock cap. See below.
+```
+
+Every field is optional and inherits from the level above; an unset global falls back to the built-in default.
+
+**`read_secs` is the one that matters for streaming.** It's a per-read idle timeout, not a total — it fires when the upstream has sent nothing for that long, *including mid-stream*. It's the guard that kills a genuinely hung provider without killing a slow one, and it's what you tune when a reasoning model that pauses to think keeps getting disconnected.
+
+<Callout type="info">
+**`total_secs` is opt-in, and leaving it unset is deliberate.** Unset means no overall wall-clock cap on a request or stream — the right default for long agentic runs, where a "reasonable" cap is indistinguishable from a bug. Set it only when you have a real reason to bound total duration, and set it generously.
+</Callout>
+
+Per-provider overrides live under the provider entry, which is how you give one slow upstream a longer leash without loosening everything:
+
+```yaml
+providers:
+  slow-local-vllm:
+    timeouts:
+      read_secs: 600
+```
+
+**Timeouts are not inherited through a provider's `derives:` chain.** A provider that derives from another does *not* pick up its timeout block — resolution goes to the global `upstream.timeouts` instead. If a derived provider needs a longer read timeout, state it on the provider itself.
+
+## Health checks
+
+`GET /health` returns `200` with `{"status":"ok"}` — the right probe for a load balancer or a systemd watchdog. It reports that the HTTP server is up; it does not check upstream provider reachability, so a `200` here does not promise that a given model is routable.
+
+For a check that reflects routing state, use the control socket instead:
+
+```bash
+bitrouter status -c /etc/bitrouter/bitrouter.yaml   # pid, listen address, routable model count
+```
+
+A model count of zero is a healthy process with no usable providers — an HTTP health check will never catch that.
+
+<Cards>
+  <Card title="Authentication" href="/docs/self-hosting/authentication" description="What to do before the listen address leaves loopback." />
+  <Card title="Hardening checklist" href="/docs/self-hosting/hardening" description="The full pre-flight list." />
+  <Card title="OpenTelemetry" href="/docs/evals-and-tracing/opentelemetry" description="The metrics path that actually carries data." />
+</Cards>

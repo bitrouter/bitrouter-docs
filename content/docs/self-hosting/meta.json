@@ -1,0 +1,20 @@
+{
+  "title": "Self-hosting",
+  "icon": "Server",
+  "root": true,
+  "collapsible": false,
+  "pages": [
+    "index",
+    "install",
+    "---Deploy---",
+    "production-config",
+    "run-as-a-service",
+    "networking",
+    "---Secure---",
+    "authentication",
+    "hardening",
+    "---Operate---",
+    "operations",
+    "state-and-backups"
+  ]
+}

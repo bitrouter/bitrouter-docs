@@ -61,6 +61,18 @@ References:
 - [MCP Server](${BASE_URL}/docs/usage/mcp): Drive BitRouter itself as an MCP tool from inside an agent
 - [Agent Skills](${BASE_URL}/docs/usage/skills): Skills as governed, routable resources behind the gateway
 
+## Self-hosting
+
+- [Self-hosting Overview](${BASE_URL}/docs/self-hosting): Run the Apache-2.0 router on your own infrastructure — one binary, no database required, no container required, no platform fee
+- [Install & Upgrade](${BASE_URL}/docs/self-hosting/install): Install methods, version pinning, in-place upgrade with \`bitrouter update\`, and rollback by release tag
+- [Production Configuration](${BASE_URL}/docs/self-hosting/production-config): Commit \`bitrouter.yaml\` as infrastructure-as-code — config resolution, \`\${VAR}\` secrets, and CI validation
+- [Run as a Service](${BASE_URL}/docs/self-hosting/run-as-a-service): \`serve\` vs \`start\`, a systemd unit, logs via \`RUST_LOG\`, and the Unix control socket
+- [Networking & TLS](${BASE_URL}/docs/self-hosting/networking): Bind address, a streaming-safe reverse proxy, and the \`upstream.timeouts\` knobs that decide when a long stream dies
+- [Authentication & Virtual Keys](${BASE_URL}/docs/self-hosting/authentication): \`skip_auth\`, \`brvk_\` virtual keys, and exactly what the auth hook checks per request
+- [Hardening Checklist](${BASE_URL}/docs/self-hosting/hardening): The pre-flight list for any deployment reachable from beyond localhost
+- [Day-2 Operations](${BASE_URL}/docs/self-hosting/operations): Reload vs restart, the diagnostic commands, and rolling out a config change
+- [State & Backups](${BASE_URL}/docs/self-hosting/state-and-backups): What persists, SQLite/Postgres/MySQL, backups, and what is shared across instances
+
 ## Evals & Tracing
 
 - [OpenTelemetry](${BASE_URL}/docs/evals-and-tracing/opentelemetry): Self-run OTLP export — traces and metrics of every request, pushed to a Collector, Honeycomb, Grafana, or Datadog

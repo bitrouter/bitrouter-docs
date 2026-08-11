@@ -2,6 +2,9 @@
   "name": "bitrouter-docs",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -20,8 +23,13 @@
     "lint:tables": "node scripts/generate-supported-tables.mjs --check"
   },
   "dependencies": {
-    "@ai-sdk/openai-compatible": "^2.0.35",
-    "@ai-sdk/react": "^3.0.118",
+    "@ai-sdk/harness": "1.0.64",
+    "@ai-sdk/harness-acp": "1.0.1",
+    "@ai-sdk/harness-pi": "1.0.64",
+    "@ai-sdk/openai-compatible": "^3.0.27",
+    "@ai-sdk/react": "^4.0.61",
+    "@ai-sdk/sandbox-just-bash": "1.0.64",
+    "@ai-sdk/sandbox-vercel": "1.0.64",
     "@calcom/embed-react": "^1.5.3",
     "@hackernoon/pixel-icon-library": "^1.1.0",
     "@lobehub/icons": "^5.8.0",
@@ -32,12 +40,14 @@
     "@radix-ui/react-presence": "^1.1.5",
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tabs": "^1.1.13",
+    "@radix-ui/react-use-controllable-state": "^1.2.6",
     "@tanstack/react-table": "^8.21.3",
     "@types/mdx": "^2.0.13",
-    "ai": "^6.0.116",
+    "ai": "^7.0.58",
     "better-auth": "1.6.11",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
     "cobe": "^0.6.3",
     "feed": "^5.2.1",
     "fumadocs-core": "16.11.1",
@@ -50,6 +60,7 @@
     "markdown-draft-js": "^2.4.0",
     "mcp-handler": "^1.1.0",
     "motion": "^12.38.0",
+    "nanoid": "^6.0.1",
     "next": "16.2.6",
     "next-themes": "^0.4.6",
     "octokit": "^5.0.5",
@@ -66,9 +77,11 @@
     "remark-mdx": "^3.1.1",
     "remark-rehype": "^11.1.2",
     "shiki": "^4.0.1",
+    "streamdown": "^2.5.0",
     "svg-dotted-map": "^2.1.0",
     "tailwind-merge": "^3.5.0",
     "unist-util-visit": "^5.1.0",
+    "use-stick-to-bottom": "^1.1.6",
     "zod": "^4.3.6"
   },
   "devDependencies": {

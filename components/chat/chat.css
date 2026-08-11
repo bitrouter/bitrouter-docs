@@ -1,0 +1,87 @@
+/* ============================================================================
+ * /chat — AI Elements on the site's global theme.
+ *
+ * Colour needs no remapping: the shadcn tokens AI Elements consume
+ * (--background, --foreground, --secondary, --border, --primary …) are already
+ * bound to the Zed palette in app/globals.css, so the components inherit the
+ * site's dark theme as-is.
+ *
+ * What is missing is typography and edge treatment. The stock components are
+ * sans-serif with pill radii; the rest of the site is mono with 7-10px corners.
+ * Everything below is scoped to `.br-chat` so it cannot leak into the docs or
+ * landing pages, and it styles AI Elements from the outside rather than
+ * editing their files — so `shadcn add` can update them later without
+ * clobbering this.
+ * ========================================================================== */
+
+.br-chat {
+  font-family: var(--font-mono);
+}
+
+/* Full-viewport app shell.
+ *
+ * `--fd-nav-height` is only defined by fumadocs' DocsLayout, not the HomeLayout
+ * this page uses — referencing it bare makes the calc() invalid, which drops
+ * the height declaration entirely and lets the shell collapse to its content.
+ * The fallback is the site header: `h-12` plus its 1px bottom border. Keep the
+ * var first so the docs layout still wins if this ever moves there. */
+.br-chat-shell {
+  height: calc(100dvh - var(--fd-nav-height, 49px));
+}
+
+/* Prose inside assistant replies: mono headings/labels, readable body. */
+.br-chat .prose,
+.br-chat [class*="prose"] {
+  font-family: inherit;
+}
+
+.br-chat h1,
+.br-chat h2,
+.br-chat h3,
+.br-chat h4 {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--z-ink-bright, var(--foreground));
+}
+
+/* Streamdown code blocks — match the site's inset code wells. */
+.br-chat pre {
+  background: var(--z-inset, var(--secondary));
+  border: 1px solid var(--z-rule-code, var(--border));
+  border-radius: 8px;
+}
+
+.br-chat :not(pre) > code {
+  font-family: var(--font-mono);
+  color: var(--z-code, var(--primary));
+}
+
+/* User bubbles: inset well + hairline, instead of the stock filled pill. */
+.br-chat .is-user > div {
+  background: var(--z-inset, var(--secondary));
+  border: 1px solid var(--z-rule-code, var(--border));
+  border-radius: 10px;
+}
+
+/* Composer + popovers: square off the stock radii toward the Zed language. */
+.br-chat [data-slot="input-group"] {
+  border-radius: 10px;
+  background: var(--z-inset, var(--secondary));
+  border-color: var(--z-rule-code, var(--border));
+}
+
+.br-chat textarea {
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.br-chat textarea::placeholder {
+  color: var(--z-ink-6, var(--muted-foreground));
+}
+
+/* Links in replies pick up the site's blue rather than the default. */
+.br-chat a {
+  color: var(--z-blue, var(--primary));
+  text-underline-offset: 2px;
+}

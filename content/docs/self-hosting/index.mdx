@@ -1,0 +1,51 @@
+---
+title: Self-hosting BitRouter
+description: Run the Apache-2.0 router on your own infrastructure — one binary, no database required, no container required, and no platform fee.
+---
+
+BitRouter self-hosted is **one statically-linked binary**. No Postgres, no Redis, no message broker, no container runtime, no sidecar. You put the binary on a host, give it provider keys, and point your agents at it.
+
+That is the whole deployment story, and it is deliberate. A router sits in the hot path of every model call your agents make; the more infrastructure it drags along, the more ways your agent loop can die for reasons that have nothing to do with the models. Everything in this section is about the small number of decisions that remain once the dependency list is empty.
+
+## The whole thing, in three commands
+
+```bash
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/bitrouter/bitrouter/releases/latest/download/bitrouter-installer.sh | sh
+export OPENAI_API_KEY=sk-...        # any provider key in the environment is auto-detected
+bitrouter start                     # http://127.0.0.1:4356
+```
+
+That is a working router. No config file was written, no database was created, and nothing was exposed beyond loopback. Every page that follows exists because production adds one of four things to that picture: a committed config, a process supervisor, a network boundary, and someone other than you making requests.
+
+## What you get, and what you don't
+
+The routing engine is the same code in both deployment modes — self-hosting is not a stripped build. Cross-protocol routing, model fallback, provider selection, presets and variants, adaptive routing policies, guardrails, structured outputs, the MCP and ACP gateways, and OTLP telemetry all run in the open-source binary against your own keys, at no platform fee.
+
+What Cloud adds is the set of things that inherently need a server you don't run: a managed provider network with no upstream signups, team seats, a hosted console, one managed wallet, an uptime SLA, and the agentic payment marketplace. The full capability matrix — and the decision framework for picking one — lives on the [Quickstart](/docs/overview/quickstart#self-host-or-cloud).
+
+<Callout type="info">
+**It isn't either/or.** Cloud is an *account you attach*, not a different binary. `bitrouter cloud login` from a self-hosted daemon enables the built-in `bitrouter` provider alongside your BYOK keys, so Cloud-managed models and your own keys route from the same process. You can attach and detach it at any time without affecting anything else the binary does.
+</Callout>
+
+## What actually persists
+
+Nothing, until you ask for it. The router will happily run forever without writing a byte of state — routing decisions are computed from config, not from a database.
+
+Three features are backed by a database, and each one is opt-in by use:
+
+- **Virtual keys** — the `users` and `api_keys` tables behind `bitrouter key sign`, when you authenticate callers.
+- **Metering** — the `requests` table, per-request cost accounting.
+- **The adequacy ledger** — the evidence tables the adaptive routing loop learns from.
+
+The default is `sqlite://./bitrouter.db`, created on first run next to your config. Postgres and MySQL work from the same binary with no recompile. See [State & backups](/docs/self-hosting/state-and-backups).
+
+## Where to go next
+
+<Cards>
+  <Card title="Install & upgrade" href="/docs/self-hosting/install" description="Install methods, version pinning, in-place upgrade and rollback." />
+  <Card title="Production configuration" href="/docs/self-hosting/production-config" description="Commit the config, keep secrets out of it, validate in CI." />
+  <Card title="Run as a service" href="/docs/self-hosting/run-as-a-service" description="serve vs start, a systemd unit, logs, and the control socket." />
+  <Card title="Networking & TLS" href="/docs/self-hosting/networking" description="Bind address, reverse proxy, and the timeouts that break streaming." />
+  <Card title="Authentication" href="/docs/self-hosting/authentication" description="skip_auth, virtual keys, and per-key access policies." />
+  <Card title="Hardening checklist" href="/docs/self-hosting/hardening" description="Everything above, as a list you can run down before you ship." />
+</Cards>

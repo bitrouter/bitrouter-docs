@@ -1,0 +1,75 @@
+---
+title: Hardening checklist
+description: The pre-flight list for a BitRouter deployment that anything other than localhost can reach.
+---
+
+Everything here is covered in depth on the page it links to. This is the list to run down before a deployment takes traffic — ordered by how badly each one bites.
+
+## Before you expose the port
+
+**1. Never pair a non-loopback `listen` with `skip_auth: true`.** This is the one that turns a router into an open relay for your provider keys: any host that can reach the port spends your credits, anonymously and unattributably. Set `skip_auth: false` and mint keys *before* changing the bind address. → [Networking](/docs/self-hosting/networking#bind-deliberately)
+
+**2. Set `listen` explicitly.** Don't rely on the default matching your expectation — the CLI's is `127.0.0.1:4356`, but the SDK's (and the published JSON Schema's) is `0.0.0.0:4356`. → [Networking](/docs/self-hosting/networking#bind-deliberately)
+
+**3. Prefer loopback plus a reverse proxy** over binding the router to a public interface directly. TLS terminates in front; the router stays unreachable except through it. → [Networking](/docs/self-hosting/networking#reverse-proxy-with-tls)
+
+**4. Remember a reverse proxy is TLS, not auth.** Fronting the router with nginx does nothing about `skip_auth: true` behind it. Enforce auth at the proxy, or at the router. → [Authentication](/docs/self-hosting/authentication)
+
+## Secrets and keys
+
+**5. Only `${VAR}` references belong in the committed config.** Deliver the actual values through the process manager — a systemd `EnvironmentFile` at mode `0600`, or a secrets mount. → [Production configuration](/docs/self-hosting/production-config#keep-secrets-out-of-the-file)
+
+**6. Mint virtual keys against the daemon's own database.** `bitrouter key sign` defaults `--db` relative to your current directory; the daemon resolves relative paths against the config's directory. Pass `--db` explicitly or the key lands in a file the router never reads. → [Authentication](/docs/self-hosting/authentication#mint-a-virtual-key)
+
+**7. Know your revocation path before you need it.** Setting a key's `active` column to `0` refuses it on the next request. `key sign` has no flag for spend limits, rate limits, or expiry in this version — don't plan a multi-tenant deployment around limits the CLI can't set. → [Authentication](/docs/self-hosting/authentication#per-key-limits-whats-there-and-what-isnt)
+
+**8. Rotate keys with `reload`, from the right shell.** `bitrouter reload` picks up provider keys from the environment of the shell that runs it — not from the daemon's environment, and not from an updated `EnvironmentFile`. → [Production configuration](/docs/self-hosting/production-config#rotating-a-key-without-a-restart)
+
+## The host
+
+**9. Run as an unprivileged user** with a dedicated state directory. The daemon needs no privileges beyond writing its own database, socket, pid file, and log. → [Run as a service](/docs/self-hosting/run-as-a-service#a-systemd-unit)
+
+**10. Lock down the control socket.** `stop`, `reload`, and `restart` over it are unauthenticated — filesystem permissions are the whole access control. → [Authentication](/docs/self-hosting/authentication#protecting-the-control-socket)
+
+**11. Always pass `-c`.** Without an explicit config path, resolution can fall through to zero-config and serve a router with none of your policy in it — silently. → [Production configuration](/docs/self-hosting/production-config#where-the-file-is-found)
+
+**12. Use `Restart=on-failure`, not `always`.** A config that will never parse should stop the unit and page someone, not loop. → [Run as a service](/docs/self-hosting/run-as-a-service#a-systemd-unit)
+
+## Change management
+
+**13. Validate on every change.** `bitrouter config validate -c bitrouter.yaml` exits non-zero on a bad config and needs no secrets, so it belongs on every pull request. → [Production configuration](/docs/self-hosting/production-config#validate-in-ci)
+
+**14. Pin the version and the schema together.** `bitrouter update --tag <release>`, and point the `# yaml-language-server` header at that same release rather than `main`. A bare `bitrouter update` follows prereleases while BitRouter is pre-1.0. → [Install & upgrade](/docs/self-hosting/install#pin-a-version)
+
+**15. Validate between the binary swap and the restart.** The running daemon keeps serving the old code until you restart it — that gap is where a config the new version rejects should be caught. → [Install & upgrade](/docs/self-hosting/install#the-upgrade-sequence-for-a-live-host)
+
+**16. Reload, don't restart, when a reload will do.** `restart` drains for up to 30 seconds and then force-kills; long agentic streams can exceed that. → [Day-2 operations](/docs/self-hosting/operations#reload-vs-restart)
+
+## Content and data
+
+**17. Add a content firewall if request content is sensitive.** [Guardrails](/docs/models-and-routing/guardrails) block or redact by regex inside the router, with no extra model call. There are no built-in classifiers — you bring the patterns.
+
+**18. Back up before an upgrade you might reverse.** Migrations run forward automatically at startup and there is no down-migration command. → [State & backups](/docs/self-hosting/state-and-backups#backups)
+
+**19. Know what leaves the host.** By default nothing does beyond provider calls. OTLP export is opt-in and goes only where you point it. → [OpenTelemetry](/docs/evals-and-tracing/opentelemetry)
+
+**20. `GET /v1/models` and `GET /health` are unauthenticated, always.** The auth hook runs on the inference pipeline, not on those two reads — so model discovery returns your full routable model list, provider names included, to anyone who can reach the port even with `skip_auth: false`. It's a catalog, not a credential, but it does disclose which providers you use. If that matters, restrict the paths at the reverse proxy. → [Networking](/docs/self-hosting/networking#what-the-daemon-serves)
+
+## Verify
+
+```bash
+bitrouter config validate -c /etc/bitrouter/bitrouter.yaml
+bitrouter status -c /etc/bitrouter/bitrouter.yaml     # pid, listen address, routable model count
+curl -s http://127.0.0.1:4356/health                  # {"status":"ok"}
+```
+
+Then confirm the auth switch is actually off, with an unauthenticated inference request:
+
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' \
+  -X POST http://127.0.0.1:4356/v1/chat/completions \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"openai/gpt-4o","messages":[{"role":"user","content":"hi"}]}'
+```
+
+Expect `401`. This is the check people skip — and note it must be a `POST` to an inference endpoint. Probing `/v1/models` proves nothing, because it returns `200` either way.

@@ -1,0 +1,128 @@
+---
+title: Install & upgrade
+description: Install the BitRouter binary, pin a version, upgrade in place, and roll back to a specific release tag.
+---
+
+BitRouter ships as a single binary with no runtime dependencies. Four install methods produce the same router; they differ only in who owns the upgrade path.
+
+## Install
+
+<Tabs items={['macOS / Linux', 'Homebrew', 'npm', 'cargo']}>
+<Tab value="macOS / Linux">
+
+```bash
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/bitrouter/bitrouter/releases/latest/download/bitrouter-installer.sh | sh
+```
+
+The installer script fetches a prebuilt release binary. This is the method `bitrouter update` can drive in place.
+
+</Tab>
+<Tab value="Homebrew">
+
+```bash
+brew install bitrouter/tap/bitrouter
+```
+
+</Tab>
+<Tab value="npm">
+
+```bash
+npm install -g bitrouter
+```
+
+</Tab>
+<Tab value="cargo">
+
+```bash
+cargo install bitrouter
+```
+
+Builds from source. Slowest to install, but the only method that needs no prebuilt artifact for your platform.
+
+</Tab>
+</Tabs>
+
+Confirm what you got:
+
+```bash
+bitrouter --version
+```
+
+## Pin a version
+
+For anything you deploy, pin. Fetching `latest` at provision time means two hosts built a week apart run different routers, and the difference only surfaces when routing behaviour diverges under load.
+
+`bitrouter update --tag` is the pinning primitive — it moves the installed binary to an exact release, up **or down**:
+
+```bash
+bitrouter update --tag 1.0.0-alpha.18
+```
+
+Pin the config schema to match. The `# yaml-language-server` header in `bitrouter.yaml` should reference the same release, not `main`, so your editor and CI validate against the schema the deployed binary actually implements:
+
+```yaml
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bitrouter/bitrouter/v1.0.0-alpha.27/dist/schema/bitrouter.config.schema.json
+```
+
+<Callout type="warning">
+**BitRouter is pre-1.0, and `update` follows prereleases by default.** A bare `bitrouter update` on a production host can move you across an alpha boundary. Use `--stable` to consider only stable releases, or `--tag` to name the exact version — and gate either behind your normal change process.
+</Callout>
+
+## Upgrade in place
+
+```bash
+bitrouter update --check     # report whether a newer release exists, change nothing
+bitrouter update             # upgrade to the latest release
+bitrouter update --stable    # ignore prereleases
+bitrouter update --restart   # after upgrading, restart a running daemon onto the new binary
+bitrouter update -y          # skip the confirmation prompt (CI / automation)
+```
+
+`--check` is the one to put in a cron job or a monitoring script: it exits without touching the binary and tells you whether you're behind.
+
+**Homebrew and `cargo install` builds are not updated in place.** `bitrouter update` detects how the binary was installed and prints the correct package-manager command instead of overwriting a file your package manager owns. That's the intended behaviour, not a failure — run the command it gives you.
+
+## The upgrade sequence for a live host
+
+`bitrouter update --restart` replaces the binary and restarts the daemon in one step, which is right for a workstation and wrong for a host serving traffic — the restart drops you into the new version with no verification step in between.
+
+For a production host, separate the two:
+
+```bash
+bitrouter update --tag 1.0.0-alpha.27 -y   # swap the binary; running daemon keeps serving the old one
+bitrouter config validate -c /etc/bitrouter/bitrouter.yaml
+bitrouter restart -c /etc/bitrouter/bitrouter.yaml
+bitrouter status -c /etc/bitrouter/bitrouter.yaml
+```
+
+The already-running daemon holds the old binary's code in memory, so it keeps serving normally between steps one and three. That gap is where you validate the config against the new schema — a config that was valid for the old version and isn't for the new one is exactly the failure you want to catch *before* the restart, not after.
+
+`bitrouter restart` drains in-flight requests for up to 30 seconds before the new process takes over. See [Day-2 operations](/docs/self-hosting/operations).
+
+## Roll back
+
+Rollback is the same command with an older tag:
+
+```bash
+bitrouter update --tag 1.0.0-alpha.26 -y
+bitrouter restart
+```
+
+Two things do **not** roll back with the binary, and they are the ones that will hurt:
+
+- **Database migrations.** Migrations are applied forward automatically at daemon startup and there is no down-migration command. A newer schema is generally readable by an older binary, but this is not a guarantee — take the backup described in [State & backups](/docs/self-hosting/state-and-backups) before an upgrade you might reverse.
+- **`policy-lock.yaml`.** It's a file in Git. Roll it back with Git, not with the installer.
+
+## Air-gapped and image-baked installs
+
+There's no network requirement at runtime beyond reaching your providers, so an offline install is just file placement: fetch the release binary on a connected host, verify it against the published release checksum, and ship it into your image or artifact store like any other binary.
+
+Two consequences on a host with no egress to GitHub:
+
+- `bitrouter update` cannot work — it resolves releases over the network. Replace the binary through whatever mechanism builds the host.
+- The registry-backed provider catalog and any schema URL your editor resolves also need reachability. Config validation itself is local and does not fetch the schema.
+
+<Cards>
+  <Card title="Production configuration" href="/docs/self-hosting/production-config" description="The config file you commit, and validating it in CI." />
+  <Card title="Day-2 operations" href="/docs/self-hosting/operations" description="Reload vs restart, and diagnosing a bad rollout." />
+</Cards>

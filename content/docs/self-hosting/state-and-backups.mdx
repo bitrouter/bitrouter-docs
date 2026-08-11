@@ -1,0 +1,105 @@
+---
+title: State & backups
+description: What the router persists, how to move from SQLite to Postgres, what to back up, and what is and isn't shared when you run more than one instance.
+---
+
+Routing itself is stateless — a routing decision is computed from config, not read from a database. The router will run indefinitely without writing a byte of state, which is why the [Quickstart](/docs/overview/quickstart) never mentions a database.
+
+Three features change that, and each one is opt-in by use.
+
+## What persists
+
+| Tables | Written by | Needed for |
+| --- | --- | --- |
+| `users`, `api_keys` | `bitrouter key sign`, and the auth hook on every request | Caller authentication and revocation |
+| `requests` | The metering pipeline | Per-request cost accounting and attribution |
+| `adequacy_pins`, `adequacy_exploration`, `adequacy_semantic_success`, `adequacy_reliability_events` | The adaptive routing loop | The evidence a downgrade must earn before it's published |
+
+If you authenticate no callers, meter nothing, and run no adaptive policy, the database file is created and stays effectively empty.
+
+Note what is **not** in the database: `policy-lock.yaml` is a file on disk next to your config. The database holds the *evidence*; the lock file holds the *decision*. That split is deliberate — Git owns the policy's history, the database owns the observations behind it.
+
+## Backends
+
+`database.url` accepts any backend sea-orm supports, from the same binary with no recompile:
+
+```yaml
+database:
+  url: "sqlite://./bitrouter.db"          # default
+  # url: "postgres://user:pass@db:5432/bitrouter"
+  # url: "mysql://user:pass@db:3306/bitrouter"
+```
+
+SQLite is the default and is right for a single-host deployment. A **file** URL is created on first run — the connector appends `?mode=rwc` when no explicit mode is given, so a fresh `sqlite://./bitrouter.db` comes into existence instead of failing to open.
+
+Use `${VAR}` for credentials in a Postgres or MySQL URL, the same as anywhere else in the file:
+
+```yaml
+database:
+  url: "postgres://bitrouter:${DB_PASSWORD}@db.internal:5432/bitrouter"
+```
+
+<Callout type="warning">
+**A relative URL follows the config file, not your shell.** The daemon chdirs into the config's directory at startup, so `sqlite://./bitrouter.db` always lands next to `bitrouter.yaml`. That's convenient for the daemon and a trap for the CLI: `bitrouter key sign` resolves its own `--db` default against your *current* directory. Mint a key from the wrong directory and you silently create a second database the router never reads. Pass `--db` explicitly, or give `database.url` an absolute path.
+</Callout>
+
+## Migrations
+
+The daemon applies every pending migration at startup — `serve` and `start` both load config, migrate, then serve. `bitrouter key sign` migrates too, so it works against a database the daemon has never touched.
+
+Migrations are idempotent and tracked in a `seaql_migrations` table. The schema is defined in Rust and applies verbatim across all three backends.
+
+<Callout type="warning">
+**Migrations only run forward.** There is no down-migration command. An older binary can generally read a newer schema, but that is not a guarantee — take a backup before an upgrade you might want to reverse. See [Install & upgrade](/docs/self-hosting/install#roll-back).
+</Callout>
+
+## Backups
+
+What to capture, in priority order:
+
+1. **`bitrouter.yaml` and `policy-lock.yaml`** — these belong in Git, and Git is the backup. Everything else can be rebuilt; your routing policy can't.
+2. **The database** — needed if you authenticate callers (losing it invalidates every minted key) or care about historical cost data. Losing the adequacy evidence costs you learned routing, which the loop will re-derive from live traffic.
+3. **Provider credentials** — the environment file or secrets store, backed up wherever your other secrets live. Not BitRouter's to hold.
+
+For SQLite, back up with the SQLite tooling rather than copying the file out from under a running daemon:
+
+```bash
+sqlite3 /etc/bitrouter/bitrouter.db ".backup '/backup/bitrouter-$(date +%F).db'"
+```
+
+`.backup` is safe against a live database; `cp` of a file mid-write is not. For Postgres or MySQL, this is a normal database in your existing backup rotation — nothing about it is BitRouter-specific.
+
+To restore: stop the daemon, put the file or dump back, start it. Migrations re-run on startup and skip anything already applied.
+
+## Running more than one instance
+
+BitRouter's single-instance guard is a **pid file derived from the control-socket path** — it stops a second daemon from starting against the same socket on the same host, and it is not a distributed lock. Two hosts will start happily without knowing about each other.
+
+If you point several instances at one Postgres, here is what is and isn't shared:
+
+| | Shared via the database | Local to each instance |
+| --- | --- | --- |
+| Virtual keys and users | ✅ a key minted once authenticates everywhere | |
+| Metering rows | ✅ one combined cost history | |
+| Adequacy evidence | ✅ written to the same tables | |
+| `policy-lock.yaml` | | ❌ a file per host — each has its own copy, and `evolve --apply` writes locally |
+| Control socket and pid file | | ❌ per host; `stop`/`reload`/`status` reach only the local daemon |
+| In-process routing state | | ❌ rebuilt per process from config |
+
+<Callout type="warning">
+**We don't publish a supported multi-replica topology.** There is no leader election, no coordination between instances, and no distributed locking anywhere in the router. Sharing a database across replicas is *possible* and the table above describes what would happen, but it isn't a configuration we document as supported or test against — the adaptive loop in particular assumes it's the only writer reasoning over its evidence. If you need a managed multi-node deployment with an SLA, that's what [BitRouter Cloud](/docs/overview/quickstart#self-host-or-cloud) is.
+</Callout>
+
+The practical shape for redundancy today is **several independent single-node routers**, each with its own config in Git and its own local state, behind a load balancer — accepting that each learns its own policy. Deploy the same `policy-lock.yaml` to all of them and they route identically; let each evolve its own and they'll drift.
+
+## Cleaning up
+
+Metering rows accumulate for as long as you route. There's no built-in retention policy, so for a high-volume deployment plan to age out `requests` on your own schedule — it's an ordinary table and a `DELETE` with a date bound is fine.
+
+Don't hand-prune the adequacy tables. They're the evidence behind published downgrades; deleting rows resets the loop's confidence and it re-explores from scratch.
+
+<Cards>
+  <Card title="Authentication" href="/docs/self-hosting/authentication" description="The keys stored in the tables above." />
+  <Card title="Day-2 operations" href="/docs/self-hosting/operations" description="Publishing what the adequacy ledger learned." />
+  <Card title="Install & upgrade" href="/docs/self-hosting/install" description="Backup timing around an upgrade." />
+</Cards>

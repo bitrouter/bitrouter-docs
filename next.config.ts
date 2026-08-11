@@ -224,6 +224,13 @@ pairs.push(
   // it documented is the worked example on the model-sources page. The
   // migrate-from-openrouter guide is unaffected.
   ["/docs/integrations/openrouter", "/docs/integrations/models"],
+  // Self-hosting became its own tab (2026-08). The single `guides/self-host`
+  // page was split across the new section: config → production-config, daemon
+  // → run-as-a-service, telemetry → operations, hardening → hardening. Its old
+  // `#1-…`/`#5-…` anchors can't be redirected (fragments never reach the
+  // server), so the index page links out to all four.
+  ["/docs/guides/self-host", "/docs/self-hosting"],
+  ["/docs/self-host", "/docs/self-hosting"],
 );
 const docsRedirects = pairs.flatMap(([source, destination]) => [
   { source, destination, permanent: true },

@@ -19,7 +19,7 @@ plugins that ship in the [core repository](https://github.com/bitrouterai/bitrou
 Plugins are a **build-time, Rust** extension mechanism — you compile them into a
 router binary against the SDK. There is no dynamic plugin loading or scripting
 surface. If you only need to configure providers, routing, or guardrail rules,
-use [`bitrouter.yaml`](/docs/guides/self-host) instead — you do not need to write
+use [`bitrouter.yaml`](/docs/usage/configuration) instead — you do not need to write
 a plugin.
 </Callout>
 
@@ -266,7 +266,7 @@ observability) is what ships as a plugin.
 ## Next steps
 
 <Cards>
-  <Card title="Self-host BitRouter" href="/docs/guides/self-host" description="Run the router you compiled your plugin into, in production." />
+  <Card title="Self-host BitRouter" href="/docs/self-hosting" description="Run the router you compiled your plugin into, in production." />
   <Card title="Guardrails" href="/docs/models-and-routing/guardrails" description="The content-firewall plugin, as a worked reference." />
   <Card title="OpenTelemetry" href="/docs/evals-and-tracing/opentelemetry" description="OTLP trace + metric export, built on the observe plugin." />
   <Card title="Core repository" href="https://github.com/bitrouterai/bitrouter" description="The bitrouter-sdk crate and the three reference plugins." />

@@ -1,0 +1,134 @@
+---
+title: Run as a service
+description: serve vs start, a systemd unit that gets the details right, log handling, the control socket, and the pid-file guard.
+---
+
+There are two ways to run the router, and picking the wrong one under a supervisor produces a service that looks healthy and isn't.
+
+| Command | Behaviour | Use it for |
+| --- | --- | --- |
+| `bitrouter serve` | Runs in the **foreground**, logging to stdout | Under a process supervisor — systemd, or any orchestrator |
+| `bitrouter start` | Spawns `serve` as a **detached** daemon, writes a pid file | Workstations, and hosts with no supervisor |
+
+Both load the config, run any pending database migrations, and serve the HTTP API plus the Unix control socket.
+
+<Callout type="warning">
+**Never point a supervisor at `bitrouter start`.** It forks and exits immediately, so systemd sees the launcher die and — under the default `Type=simple` — either declares the unit failed or kills the process group it thinks it owns. Use `bitrouter serve` as the `ExecStart` and let the supervisor own the process lifecycle.
+</Callout>
+
+## A systemd unit
+
+```ini
+# /etc/systemd/system/bitrouter.service
+[Unit]
+Description=BitRouter
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/bitrouter serve -c /etc/bitrouter/bitrouter.yaml
+EnvironmentFile=/etc/bitrouter/bitrouter.env
+Restart=on-failure
+RestartSec=2
+User=bitrouter
+Group=bitrouter
+StateDirectory=bitrouter
+
+# The daemon needs no privileges beyond its own state directory.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/etc/bitrouter /var/lib/bitrouter
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Points that matter:
+
+- **`-c` is not optional.** The supervisor's working directory is not yours; without an explicit path, config resolution can fall through to zero-config and serve a router with none of your policy. See [the resolution chain](/docs/self-hosting/production-config#where-the-file-is-found).
+- **`EnvironmentFile` holds the provider keys**, mode `0600`, owned by the service user. It is not the config file and should not be committed.
+- **`ReadWritePaths` must include wherever the daemon writes.** Because the daemon chdirs into the config's directory, a relative `database.url`, the control socket, the pid file, and `policy-lock.yaml` all land next to `bitrouter.yaml`. With `ProtectSystem=strict`, that directory must be writable or startup fails. If you'd rather keep `/etc` read-only, give the database an absolute path under `/var/lib/bitrouter`.
+- **`Restart=on-failure`, not `always`.** A config error should stop the unit and page you, not loop forever against a file that will never parse.
+
+Then:
+
+```bash
+systemctl daemon-reload
+systemctl enable --now bitrouter
+systemctl status bitrouter
+```
+
+## Logs
+
+Under `serve`, logs go to stdout and journald captures them.
+
+**Verbosity comes from `RUST_LOG`, not from the config file.** The daemon builds its log filter from the standard `RUST_LOG` environment variable and falls back to `info` when it's unset, so this is the knob:
+
+```ini
+# in /etc/bitrouter/bitrouter.env
+RUST_LOG=info
+```
+
+It takes the full `tracing` filter grammar, so you can raise one module without drowning in everything else — `RUST_LOG=info,bitrouter=debug`.
+
+<Callout type="warning">
+**`server.log_level` in `bitrouter.yaml` is inert in this version.** The field exists in the config schema and validates fine, but nothing reads it — setting `log_level: debug` there changes nothing. Use `RUST_LOG`.
+</Callout>
+
+Under `start`, the daemon is detached and redirects stdout/stderr to a file. It defaults to `bitrouter.log` **inside the config file's directory** — alongside the socket and pid file, not in whatever directory you launched from. Override it:
+
+```bash
+bitrouter start -c /etc/bitrouter/bitrouter.yaml --log /var/log/bitrouter/bitrouter.log
+```
+
+There's no built-in rotation. If you use `start` on a long-lived host, hand the file to `logrotate` with `copytruncate`, or use `serve` under a supervisor and let the journal handle it.
+
+<Callout type="info">
+`RUST_LOG=debug` is safe to reach for during an incident — `api_key` values are redacted in debug output. It's verbose enough to matter on a busy host, though, and because the filter is read at process start you need a restart to change it either way.
+</Callout>
+
+## The control socket
+
+Every daemon-control command — `stop`, `restart`, `reload`, `status`, `observe status`, `route` — reaches the daemon over a **Unix domain socket**, not over HTTP. It defaults to `./bitrouter.sock`, resolved against the config's directory:
+
+```yaml
+server:
+  control_socket: "/run/bitrouter/bitrouter.sock"
+```
+
+Two operational consequences:
+
+- **Control commands need the same `-c` as the daemon**, because that's how they locate the socket. `bitrouter status` with no `-c` on a host whose config lives in `/etc/bitrouter` will look in the wrong place and report `running: no` for a perfectly healthy daemon. Pass `-c`, or `--socket` to name the path directly.
+- **Filesystem permissions on the socket are the access control** for daemon administration. Anyone who can write to it can stop your router. Keep it in a directory owned by the service user.
+
+## The pid-file guard
+
+`bitrouter start` writes a pid file derived from the control-socket path, and refuses to start when a live daemon already holds it:
+
+```
+bitrouter is already running (pid 4711); use `restart` or `stop` first
+```
+
+A stale pid file — left behind by a killed process — is detected and cleaned up rather than blocking startup.
+
+This guard is **per pid-file path, which means per host**. It is not a distributed lock: two hosts, or two configs on one host with different socket paths, will happily run at once. That's the intended behaviour for separate deployments; see [State & backups](/docs/self-hosting/state-and-backups#running-more-than-one-instance) before pointing two daemons at one database.
+
+## Stopping and restarting
+
+```bash
+bitrouter stop -c /etc/bitrouter/bitrouter.yaml
+bitrouter restart -c /etc/bitrouter/bitrouter.yaml
+```
+
+`restart` drains in-flight requests before the replacement takes over, waiting up to **30 seconds** for the endpoint to be released; past that it escalates to a force-kill against the pid file. Long agentic streams can exceed that window, so treat `restart` as "brief interruption possible" and prefer `bitrouter reload` for anything a reload can express — see [Day-2 operations](/docs/self-hosting/operations).
+
+Under systemd, `systemctl restart bitrouter` is the equivalent and the one to use — going around the supervisor with `bitrouter stop` just makes the unit restart the process anyway.
+
+<Cards>
+  <Card title="Networking & TLS" href="/docs/self-hosting/networking" description="Expose the service you just created, safely." />
+  <Card title="Day-2 operations" href="/docs/self-hosting/operations" description="Reload vs restart, health checks, and diagnostics." />
+  <Card title="CLI reference" href="/docs/usage/cli#daemon-lifecycle" description="Every flag on the lifecycle commands." />
+</Cards>

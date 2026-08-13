@@ -7,8 +7,8 @@ export default function Page() {
 
 export function generateMetadata(): Metadata {
   const description =
-    "Zero markup on every model, flat-rate open-source subscriptions, or outcome-based pricing that only bills a share of what we save you.";
-  const ogTitle = "BitRouter Pricing — 0% markup, or pay only on savings";
+    "0% markup on every token — no gateway fee at all. Savings come from bitrouter/auto choosing the model for each call, not from shaving a percentage: 3–7× lower cost per session than running a frontier model outright. Outcome-based pricing at enterprise scale.";
+  const ogTitle = "BitRouter Pricing — 0% markup, and a router that lowers the bill";
   return {
     title: "Pricing",
     description,

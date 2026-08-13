@@ -223,7 +223,7 @@ function AuditCta() {
 // ── self-serve vs enterprise ──
 type Mark = "yes" | "no" | string;
 const EROWS: { feat: string; self: Mark; ent: Mark; hi?: boolean }[] = [
-  { feat: "Pricing", self: "0% markup · subscription", ent: "Outcome-based" },
+  { feat: "Pricing", self: "0% markup · individual", ent: "Outcome-based" },
   { feat: "Budget guarantee", self: "no", ent: "yes" },
   { feat: "Org budgets & alerts", self: "no", ent: "yes", hi: true },
   { feat: "Showback / chargeback", self: "no", ent: "yes", hi: true },

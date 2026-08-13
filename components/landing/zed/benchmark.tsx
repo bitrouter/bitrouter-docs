@@ -4,7 +4,7 @@ const COLS = "1.6fr 1fr 0.8fr 0.7fr";
 
 export function Benchmark() {
   return (
-    <section className="zed-section">
+    <section className="zed-section" id="benchmark">
       <div className="zed-wrap" style={{ padding: "88px 34px" }}>
         <div
           className="zed-grid-2"

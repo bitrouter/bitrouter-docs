@@ -5,24 +5,28 @@ import { Kicker } from "./primitives";
 
 const PFAQS = [
   {
-    q: "How does BitRouter make money if pay-as-you-go is 0% markup?",
-    a: "Pay-as-you-go is genuinely passthrough — you pay the exact upstream provider rate, no token markup, no routing fee. BitRouter earns on the flat-rate Subscription and on the outcome-based tier, where we take a share of the spend we actually save you. Routing your usage never carries a BitRouter fee.",
+    q: "How is this different from OpenRouter and LiteLLM?",
+    a: "OpenRouter picks the best provider for a model you chose, and charges 5.5% to load credits. LiteLLM doesn't pick anything — you configure the routes yourself, and its hosted tier is quote-only through a sales call. BitRouter picks the model and the provider for each call, based on where it sits in your agent's trajectory and how much risk it carries, and charges 0%. That difference isn't a discount, it's a different lever: choosing a cheaper host for the same model moves cost by single digits, while choosing a cheaper model for the calls that don't need a frontier one moves it by multiples. We don't need a percentage because the routing is the product.",
+  },
+  {
+    q: "So what do I actually pay?",
+    a: "Tokens, at the provider's published list price, with 0% markup — no routing fee, no platform fee, no seat fee. Routing itself is never metered, and that's a commitment rather than a not-yet: your request volume will not turn into a billed line later. A free account also includes 1M trace receipts a month kept 30 days, evals, guardrails, multi-provider failover, unlimited seats and one workspace. Point BitRouter at your own provider contracts and we take no percentage on that traffic either — unlike gateways that levy one on BYOK — or self-host the whole Apache-2.0 stack, with the same routing engine, guardrails and observability as the hosted edge, and owe us nothing at all.",
+  },
+  {
+    q: "Is cost-per-session a quote, or what you bill me on?",
+    a: "Neither — it's a unit of account. Cost-per-session is how you compare bitrouter/auto against running a frontier model outright, in the unit the router actually controls; your invoice is tokens at list price. And we deliberately don't quote it in advance, because an accurate forecast would have to absorb the variance in your context shape, how often the router escalates, and upstream prices that move — the spread we'd charge to cover that would be exactly the markup we removed. What we can do is show you what your traffic did cost, computed from your own receipts, against what your baseline model would have cost for the same sessions. At enterprise scale the variance does get absorbed: that's what the budget guarantee is.",
+  },
+  {
+    q: "How do I know routing didn't make quality worse?",
+    a: "Because a route has to earn its traffic. You declare what each workload is optimizing for — a cost ceiling, a p50/p95 target, a quality floor — and every session is measured against it. Success rate is the default quality metric and needs nothing from you: outcome classification is deterministic, with no judge in the request path, so a failure escalates a route immediately and a cheaper route must succeed repeatedly before it earns traffic. If your definition of good is narrower than that, point an eval at it — `bitrouter optimize` then runs your workflow twice, once as-is and once with a single routing change, and reports the cost and quality deltas so you can publish or roll back.",
+  },
+  {
+    q: "How long are traces kept, and why those windows?",
+    a: "A free account keeps receipts for 30 days, sized for debugging rather than for an audit. Longer windows are set by the regimes that actually govern log retention rather than by round numbers: 6 months matches the EU AI Act's Article 19 minimum for providers of high-risk AI systems, applicable since 2 August 2026; 12 months matches SOC 2 expectations and PCI DSS 4.0; 7 years covers HIPAA and SOX. Whether a given obligation applies to your system is a call for your own counsel — under the AI Act the duty sits with the provider of the high-risk system, not with BitRouter. Either way we store receipts, never prompts or responses.",
   },
   {
     q: "How does outcome-based pricing work?",
-    a: "You run your full production loop through BitRouter. You set a budget and a measurable quality floor. We guarantee the loop stays under your budget, and we bill a custom share of what we save you against your measured baseline — only on runs that clear your quality bar, and never more than we saved you. It's enterprise-only for now; talk to the founders to scope the rate.",
-  },
-  {
-    q: "Do the three plans stack?",
-    a: "Yes. Passthrough (0% markup) is the substrate under everything. Subscription overrides it with a flat rate for open-source models — frontier calls still run at passthrough. Outcome-based sits on top as an engagement layer for teams routing production loops at scale. You're not picking one wall; you're stacking layers.",
-  },
-  {
-    q: "What's included in the Subscription plan?",
-    a: "The $20/month plan buys flat-rate access to the leading open-source models — Kimi, GLM, DeepSeek, Qwen, MiniMax, and more — at 20 requests/min and 1M tokens/day. Frontier models stay one alias away at passthrough. If you hit the plan's limits, BitRouter falls back to pay-as-you-go so your workloads keep running. (Subscription billing is coming soon.)",
-  },
-  {
-    q: "Can I self-host for free?",
-    a: "Yes. The full stack is Apache-2.0. Self-host on your own infrastructure with no platform fee, no minimums, and no token markup — you pay only your upstream provider costs. Same routing engine, guardrails, and observability as the hosted edge.",
+    a: "You run your full production loop through BitRouter. You set a budget and a measurable quality floor. We guarantee the loop stays under your budget, and we bill a custom share of what we save you against your measured baseline — only on runs that clear your quality bar, and never more than we saved you. It's enterprise-only, because agreeing a baseline and a quality bar takes a conversation; talk to the founders to scope the rate.",
   },
 ];
 

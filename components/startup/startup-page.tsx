@@ -169,7 +169,7 @@ function HowWeCut() {
 // ── self-serve vs startup ──
 type Mark = "yes" | "no" | string;
 const SROWS: { feat: string; self: Mark; st: Mark; hi?: boolean }[] = [
-  { feat: "Pricing", self: "0% markup · subscription", st: "0% markup + credits" },
+  { feat: "Pricing", self: "0% markup · individual", st: "0% markup + credits" },
   { feat: "OSS models credits", self: "no", st: "Apply", hi: true },
   { feat: "Cost-per-user analytics", self: "no", st: "yes", hi: true },
   { feat: "Quality-floor routing", self: "yes", st: "yes" },

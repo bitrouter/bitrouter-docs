@@ -1,11 +1,24 @@
 import "@/components/landing/zed/zed.css";
-import { getChangelogItems } from "@/lib/source";
+import { changelogSource, getChangelogItems } from "@/lib/source";
 import { ChangelogFeed } from "@/components/changelog/changelog-feed";
 import { Kicker } from "@/components/landing/zed/primitives";
+import { getMDXComponents } from "@/mdx-components";
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 
 export default async function ChangelogIndexPage() {
   const items = getChangelogItems();
+
+  // Render every entry's notes here, on the server, and hand them to the feed as
+  // elements keyed by URL. The feed is a client component (it clears the nav's
+  // unseen dot), and MDX bodies can't be compiled there — but a server component
+  // may pass already-rendered elements down as props. The per-release pages stay
+  // as permalinks for sharing, RSS, and search.
+  const bodies: Record<string, ReactNode> = {};
+  for (const page of changelogSource.getPages()) {
+    const MDX = page.data.body;
+    bodies[page.url] = <MDX components={getMDXComponents({})} />;
+  }
 
   return (
     <div className="zed-bg">
@@ -66,7 +79,7 @@ export default async function ChangelogIndexPage() {
               No entries yet. Check back soon.
             </p>
           ) : (
-            <ChangelogFeed items={items} />
+            <ChangelogFeed items={items} bodies={bodies} />
           )}
           <div style={{ height: 60 }} />
         </div>

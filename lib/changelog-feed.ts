@@ -1,5 +1,5 @@
 import { Feed } from "feed";
-import { sortByDateDesc, type ChangelogItem } from "./changelog";
+import { sortReleasesDesc, type ChangelogItem } from "./changelog";
 
 const SITE = "https://bitrouter.ai";
 
@@ -18,7 +18,9 @@ export function buildChangelogFeed(items: ChangelogItem[]): Feed {
     },
   });
 
-  for (const item of sortByDateDesc(items)) {
+  // Every release stays in the feed, routine ones included — RSS is the
+  // developer channel, where the collapsing the page does would only hide things.
+  for (const item of sortReleasesDesc(items)) {
     feed.addItem({
       id: `${SITE}${item.url}`,
       title: item.title,

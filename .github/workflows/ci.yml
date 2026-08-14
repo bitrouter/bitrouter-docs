@@ -26,6 +26,9 @@ jobs:
         # regenerating, without failing unrelated PRs when upstream prices move.
         # (Upstream drift is absorbed at deploy time by `prebuild`.)
       - run: pnpm lint:tables
+        # Enforces the curation gate: a notable/highlight entry that still has
+        # its draft banner fails here rather than shipping raw release notes.
+      - run: pnpm lint:changelog
       - run: pnpm build
         env:
           # Authenticates the docs/changelog sync fetches against GitHub

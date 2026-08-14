@@ -89,6 +89,28 @@ Declared on the `tools`-array entry:
 
 Sub-agent is enabled and managed on **BitRouter Cloud**, with per-run cost for the worker calls visible in the request log. Self-hosters enable it with `server_tools.subagent: true`; it is then advertised per-request only when the caller declares it.
 
+## Fleet MCP tools (self-hosted)
+
+When running `bitrouter tui` with the fleet MCP backend, orchestrators spawn and manage subagents through the `bitrouter_fleet` tools. Two behaviors matter for long-running tasks:
+
+### Non-blocking spawn and prompt
+
+`spawn_subagent` and `prompt_subagent` return immediately with a `working` ack — the turn runs in the background and the orchestrator polls `subagent_status` for completion. This prevents the orchestrator's MCP tool-call timeout from firing on a long task (which would otherwise report a false "timed out" and risk spawning duplicate subagents).
+
+```json
+{
+  "handle": "subagent-abc123",
+  "state": "working",
+  "note": "launched and running in the background. Poll subagent_status(...) for its state..."
+}
+```
+
+Poll `subagent_status` until `state` becomes `completed` or `failed`; the response carries the `reply`, `stop_reason`, `diff_stat`, and `result`/`schema_ok` from the finished turn. Do not re-spawn if the call seems slow — the subagent is already running.
+
+### One turn per session
+
+A subagent can only run one turn at a time. `prompt_subagent` is refused while the subagent is still `working`; poll `subagent_status` and wait for the current turn to finish before prompting again.
+
 ## See also
 
 - [Advisor](/docs/models-and-routing/tool-calling/advisor) — consult a stronger model for guidance instead of delegating a task

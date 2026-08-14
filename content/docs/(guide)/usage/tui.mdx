@@ -74,6 +74,7 @@ There is no manager mode to enter and escape. Most verbs work inline; the rest h
 | `y` / `a` / `n` | Resolve the **top** pending decision — allow once, allow always, deny | Inline |
 | `D` / `m` / `p` / `r` | Review the focused subagent: diff · merge · apply · reject | Inline, when a diff is ready |
 | `PgUp` / `PgDn` | Scroll the focused pane's scrollback | Inline |
+| *wheel* | Scroll the pane (host scrollback for main-screen apps; forwarded to apps with mouse reporting) | Inline |
 | `Ctrl-C` | Interrupt the focused agent | Inline |
 | *click* | Focus any session or subagent row | Inline |
 | `:` | Command palette | Inline, on a subagent pane |
@@ -90,6 +91,12 @@ There is no manager mode to enter and escape. Most verbs work inline; the rest h
 `:` only reaches the palette from a subagent pane — a focused session swallows it like any other character, which is why the leader exists. `leader p` works from anywhere.
 
 **`Ctrl-C` never quits the console.** On a session it passes through as a raw interrupt to the child. On a subagent you own, it cancels the in-flight turn. On an orchestrator-owned subagent it tells you to interrupt from the orchestrator instead. To quit, use the palette's `quit`, or `leader c` on the last remaining pane.
+
+### Scrollback and mouse
+
+PTY panes support **host-owned scrollback** for main-screen applications (tmux/zellij model). When scrolled, a `↑ SCROLLBACK` hint appears; typing snaps back to the live tail.
+
+Apps that enable **mouse reporting** (like Claude Code on the alternate screen) receive real mouse events instead of host scrollback — the wheel scrolls the app's own transcript, clicks select, and drags work natively. This happens automatically when the inner app sets the appropriate terminal modes.
 
 ### The palette
 

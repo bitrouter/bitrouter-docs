@@ -1,5 +1,6 @@
 import "@/components/landing/zed/zed.css";
 import { changelogSource } from "@/lib/source";
+import { headlineOf } from "@/lib/changelog";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getMDXComponents } from "@/mdx-components";
@@ -55,14 +56,12 @@ export default async function ChangelogEntryPage({ params }: Props) {
             )}
           </div>
 
+          {/* Headline = description, matching the index. The sync writes the
+              version string as the title, so using it here gave entry pages a
+              headline of "v1.0.0-alpha.18"; the version is already the chip above. */}
           <h1 className="zed-display" style={{ fontSize: "clamp(32px, 5vw, 44px)", lineHeight: 1.08, margin: "14px 0 0" }}>
-            {page.data.title}
+            {headlineOf(page.data)}
           </h1>
-          {page.data.description && (
-            <p style={{ fontFamily: "var(--font-mono)", fontSize: 16, lineHeight: 1.6, color: "var(--z-ink-4)", margin: "16px 0 0" }}>
-              {page.data.description}
-            </p>
-          )}
 
           <div className="zed-article" style={{ marginTop: 28, paddingBottom: 76 }}>
             <MDX components={getMDXComponents({})} />
@@ -86,8 +85,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const page = changelogSource.getPage([slug]);
   if (!page) notFound();
+  // Keep the version in the <title> — it's what people search for — but don't
+  // repeat it when the headline already is the version string.
+  const headline = headlineOf(page.data);
   return {
-    title: page.data.title,
+    title:
+      page.data.version && headline !== page.data.version
+        ? `${page.data.version} — ${headline}`
+        : headline,
     description: page.data.description,
     alternates: { canonical: `https://bitrouter.ai${page.url}` },
   };

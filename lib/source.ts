@@ -45,5 +45,6 @@ export function getChangelogItems(): ChangelogItem[] {
     version: page.data.version,
     tags: page.data.tags ?? [],
     breaking: page.data.breaking ?? false,
+    significance: page.data.significance,
   }));
 }

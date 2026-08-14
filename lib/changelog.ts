@@ -1,6 +1,15 @@
 // Pure, dependency-free presentation logic for the changelog. Unit-tested in
 // lib/changelog.test.ts. Operates on flat ChangelogItem objects so the same
 // helpers work server-side (route/page) and client-side (feed component).
+import {
+  compareVersionsDesc,
+  releaseLineOf,
+  significanceFor,
+} from "./release-version.mjs";
+
+/** How much of the page a release earns. See significanceFor() for the default. */
+export type Significance = "highlight" | "notable" | "routine";
+
 export type ChangelogItem = {
   url: string;
   title: string;
@@ -9,33 +18,115 @@ export type ChangelogItem = {
   version?: string;
   tags: string[];
   breaking: boolean;
+  significance?: Significance; // absent → derived from the version
 };
 
-export function sortByDateDesc(items: ChangelogItem[]): ChangelogItem[] {
-  return [...items].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-  );
+/**
+ * Newest first. Date alone is not a total order — a release train can ship
+ * several versions in a day — so ties fall through to semver and finally to the
+ * URL, making the order deterministic (and the "latest" badge correct).
+ */
+export function sortReleasesDesc(items: ChangelogItem[]): ChangelogItem[] {
+  return [...items].sort((a, b) => {
+    const byDate = new Date(b.date).getTime() - new Date(a.date).getTime();
+    if (byDate !== 0) return byDate;
+    const byVersion = compareVersionsDesc(a.version, b.version);
+    if (byVersion !== 0) return byVersion;
+    return b.url < a.url ? -1 : b.url > a.url ? 1 : 0;
+  });
 }
 
-export function groupByMonth(
-  items: ChangelogItem[],
-): { label: string; items: ChangelogItem[] }[] {
-  const groups: { label: string; items: ChangelogItem[] }[] = [];
-  for (const item of sortByDateDesc(items)) {
-    const label = new Date(item.date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      timeZone: "UTC", // deterministic regardless of machine timezone
-    });
-    const last = groups.at(-1);
-    if (last && last.label === label) last.items.push(item);
-    else groups.push({ label, items: [item] });
-  }
-  return groups;
+export function significanceOf(item: ChangelogItem): Significance {
+  return item.significance ?? (significanceFor(item.version) as Significance);
 }
 
 export function allTags(items: ChangelogItem[]): string[] {
   const set = new Set<string>();
   for (const item of items) for (const tag of item.tags) set.add(tag);
   return [...set].sort();
+}
+
+/** A release that carries the page on its own. */
+export type FeedEntry = { kind: "entry"; item: ChangelogItem };
+
+/**
+ * A run of consecutive routine releases from one train, collapsed into a single
+ * row. The individual releases stay reachable (and stay in the feed data) — they
+ * just stop each claiming a full-width slot.
+ */
+export type FeedRollup = {
+  kind: "rollup";
+  line: string; // e.g. "v1.0.0-alpha"
+  items: ChangelogItem[]; // newest first
+  from: ChangelogItem; // oldest in the run
+  to: ChangelogItem; // newest in the run
+  tagCounts: { tag: string; count: number }[];
+  breaking: boolean; // true if any release in the run is breaking
+};
+
+export type FeedBlock = FeedEntry | FeedRollup;
+
+function rollup(items: ChangelogItem[]): FeedRollup {
+  const counts = new Map<string, number>();
+  for (const item of items) {
+    for (const tag of item.tags) counts.set(tag, (counts.get(tag) ?? 0) + 1);
+  }
+  return {
+    kind: "rollup",
+    line: releaseLineOf(items[0].version),
+    items,
+    from: items[items.length - 1],
+    to: items[0],
+    tagCounts: [...counts]
+      .map(([tag, count]) => ({ tag, count }))
+      .sort((a, b) => b.count - a.count || (a.tag < b.tag ? -1 : 1)),
+    breaking: items.some((i) => i.breaking),
+  };
+}
+
+/**
+ * Sort the feed and collapse consecutive routine releases from the same train
+ * into rollups. A run of one stays a normal entry — a "group" wrapping a single
+ * release would be more chrome than the release itself.
+ */
+export function groupFeed(items: ChangelogItem[]): FeedBlock[] {
+  const blocks: FeedBlock[] = [];
+  let run: ChangelogItem[] = [];
+
+  const flush = () => {
+    if (run.length === 0) return;
+    if (run.length === 1) blocks.push({ kind: "entry", item: run[0] });
+    else blocks.push(rollup(run));
+    run = [];
+  };
+
+  for (const item of sortReleasesDesc(items)) {
+    if (significanceOf(item) !== "routine") {
+      flush();
+      blocks.push({ kind: "entry", item });
+      continue;
+    }
+    // An unparseable version has no line, so it never merges with a real train.
+    const line = releaseLineOf(item.version);
+    if (run.length > 0 && (line === "" || releaseLineOf(run[0].version) !== line)) {
+      flush();
+    }
+    run.push(item);
+  }
+  flush();
+
+  return blocks;
+}
+
+/**
+ * The human-readable headline for an entry. Changelog titles are often just the
+ * version string (that's what the sync writes), so the description carries the
+ * meaning and the version is shown separately as a chip. Shared by the index,
+ * the entry page, and its metadata so the three can't drift apart.
+ */
+export function headlineOf(item: {
+  title: string;
+  description?: string;
+}): string {
+  return item.description?.trim() || item.title;
 }

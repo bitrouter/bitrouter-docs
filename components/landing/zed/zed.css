@@ -436,6 +436,52 @@
   color: var(--z-ink-bright);
   font-weight: 600;
 }
+/* Release notes rendered inline on the changelog index. The standalone article
+   styling sets h3 as 22px serif italic, which is right for one entry on its own
+   page but shouts when ~50 of them ("Features", "Bug Fixes") stack down a feed —
+   they'd outweigh the release headlines they sit under. Demote them to quiet
+   mono labels and tighten the rhythm so the hierarchy stays
+   headline → section → bullets. */
+.zed-changelog-body :is(h2, h3, h4) {
+  font-family: var(--font-mono) !important;
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--z-ink-6);
+  margin: 20px 0 9px;
+}
+.zed-changelog-body :is(p, li) {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--z-ink-4);
+}
+.zed-changelog-body li {
+  margin: 0 0 4px;
+}
+.zed-changelog-body :is(ul, ol, p) {
+  margin-bottom: 12px;
+}
+.zed-changelog-body > :first-child {
+  margin-top: 0;
+}
+.zed-changelog-body > :last-child {
+  margin-bottom: 0;
+}
+/* Commit scopes — *(sdk)*, *(tui)* — lead most bullets. Keep them present but
+   recessive so the eye lands on the change, not the subsystem tag. */
+.zed-changelog-body li em {
+  font-style: normal;
+  color: var(--z-ink-6);
+}
+/* Headings carry an autolink anchor, which the article rules paint blue and
+   underline. On a section label repeated down the whole feed that reads as a
+   row of broken links. */
+.zed-changelog-body :is(h2, h3, h4) a {
+  color: inherit;
+  border-bottom: none;
+}
 .zed-article a {
   color: var(--z-blue);
   text-decoration: none;

@@ -1,0 +1,142 @@
+name: Announce changelog
+
+# Fans a merged changelog entry out to Discord / X / Resend. Channels come from
+# the entry's `significance` (lib/announce-tiers.mjs), so an alpha bump reaches
+# Discord and nothing else, while a 1.0 reaches everything.
+#
+# Three ways in:
+#   • workflow_call — sync-changelog.yml calls this after it publishes routine
+#     entries. It has to: that job pushes with GITHUB_TOKEN, and GitHub does not
+#     fire workflows for such a push, so a `push:` trigger alone would silently
+#     never announce a routine release.
+#   • push — a human merging a curation PR does trigger workflows.
+#   • workflow_dispatch — manual re-run for a specific entry.
+#
+# Two independent brakes, because this writes in public and a mistake is not
+# retractable:
+#   1. `ANNOUNCE_ENABLED` must be the string "true". Landing this file therefore
+#      posts nothing until someone deliberately turns it on.
+#   2. The `announce` environment. Add required reviewers to it in repo settings
+#      and every run waits for a human before any request goes out.
+# Beyond those: email is only ever *drafted* (see scripts/announce-changelog.mjs),
+# and a channel with no secret is skipped rather than failing the run.
+
+on:
+  workflow_call:
+    inputs:
+      files:
+        description: "Newline-separated content/changelog/*.mdx paths"
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      files:
+        description: "Newline-separated content/changelog/*.mdx paths"
+        required: true
+        type: string
+  push:
+    branches: [main]
+    paths: ["content/changelog/**"]
+
+permissions:
+  contents: write # push the announced/<slug> marker tags
+
+concurrency: announce-changelog
+
+jobs:
+  announce:
+    if: vars.ANNOUNCE_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    environment: announce
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Collect entries to announce
+        id: collect
+        env:
+          INPUT_FILES: ${{ inputs.files }}
+        run: |
+          set -euo pipefail
+          if [ -n "${INPUT_FILES:-}" ]; then
+            candidates="$INPUT_FILES"
+          else
+            before="${{ github.event.before }}"
+            if ! git cat-file -e "${before}^{commit}" 2>/dev/null; then
+              before="${{ github.event.after }}^"
+            fi
+            candidates=$(git diff --name-only --diff-filter=A \
+                          "$before" "${{ github.event.after }}" \
+                          -- 'content/changelog/*.mdx' || true)
+          fi
+
+          entries=""
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            [ -f "$f" ] || { echo "missing, skipping: $f"; continue; }
+            slug=$(basename "$f" .mdx)
+            # Marker tags make this idempotent: a re-run, or a second push
+            # touching the same file, must not post twice.
+            if git rev-parse -q --verify "refs/tags/announced/$slug" >/dev/null 2>&1; then
+              echo "already announced: $slug"; continue
+            fi
+            entries="${entries}${f}"$'\n'
+          done <<< "$candidates"
+
+          { echo "entries<<EOF"; printf '%s' "$entries"; echo "EOF"; } >> "$GITHUB_OUTPUT"
+          if [ -n "$entries" ]; then echo "has=true" >> "$GITHUB_OUTPUT"; fi
+          printf 'to announce:\n%s\n' "${entries:-(none)}"
+
+      - uses: actions/setup-node@v4
+        if: steps.collect.outputs.has == 'true'
+        with:
+          node-version: 22
+
+      - name: Install xurl
+        if: steps.collect.outputs.has == 'true'
+        env:
+          XURL_VERSION: ${{ vars.XURL_VERSION }}
+          XURL_TOKENS: ${{ secrets.XURL_TOKENS }}
+        run: |
+          set -euo pipefail
+          if [ -z "${XURL_VERSION:-}" ]; then
+            # Not configured. Entries that need X will fail loudly at post time
+            # rather than being silently reported as skipped.
+            echo "XURL_VERSION not set — X posting unavailable this run."
+            exit 0
+          fi
+          # No `|| true` anywhere below: a failed download used to leave the job
+          # green and simply never post.
+          curl -fsSL -o /usr/local/bin/xurl \
+            "https://github.com/xdevplatform/xurl/releases/download/${XURL_VERSION}/xurl-linux-amd64"
+          chmod +x /usr/local/bin/xurl
+          printf '%s' "${XURL_TOKENS:-}" > "$HOME/.xurl"
+
+      - name: Announce
+        if: steps.collect.outputs.has == 'true'
+        env:
+          ENTRY_FILES: ${{ steps.collect.outputs.entries }}
+          SITE_URL: ${{ vars.SITE_URL }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_AUDIENCE: ${{ vars.RESEND_AUDIENCE }}
+          RESEND_FROM: ${{ vars.RESEND_FROM }}
+        run: node scripts/announce-changelog.mjs
+
+      - name: Mark announced
+        if: steps.collect.outputs.has == 'true'
+        env:
+          # Via env, not `${{ }}` inside the script — expression interpolation
+          # splices the value into the shell before it runs.
+          ENTRY_FILES: ${{ steps.collect.outputs.entries }}
+        run: |
+          set -euo pipefail
+          git config user.name "bitrouter-bot"
+          git config user.email "bot@bitrouter.ai"
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            slug=$(basename "$f" .mdx)
+            git tag "announced/$slug"
+            git push origin "announced/$slug"
+          done <<< "$ENTRY_FILES"

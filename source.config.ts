@@ -50,6 +50,10 @@ export const changelog = defineDocs({
       version: z.string().optional(),
       tags: z.array(z.string()).optional(),
       breaking: z.boolean().optional(),
+      // How much of the changelog page this release earns. Omitted → derived
+      // from the version shape (see lib/release-version.mjs); set it explicitly
+      // to promote a release the version shape would otherwise call routine.
+      significance: z.enum(["highlight", "notable", "routine"]).optional(),
     }),
   },
   meta: {

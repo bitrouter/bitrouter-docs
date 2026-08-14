@@ -1,5 +1,5 @@
 ---
-title: MCP Server
+title: MCP
 description: Drive BitRouter from any MCP client — the origin MCP server exposing complete, list_models, and status as tools onto the same local endpoint, plus the hosted docs MCP server.
 ---
 
@@ -31,7 +31,7 @@ The `--backend` flag selects which tool surface the server exposes:
 | `fleet` | Orchestrator profile — completion tools plus subagent spawn/manage, cost, routing preview, and human-bridge tools | TUI orchestrator delegated to an agent |
 | `skills` | `skills_search`, `skills_get` | Origin AgentSkills server over installed skills |
 
-The `skills` backend is the **AgentSkills gateway** — it exposes installed skills as a standalone server so harnesses can discover and load them. When running under `bitrouter tui`, this server is automatically injected into every launched harness alongside the MCP gateway. See [Agent Skills](/docs/usage/skills).
+The `skills` backend exposes installed skills as a standalone server so harnesses can discover and load them. When running under `bitrouter tui`, this server is automatically injected into every launched harness. See [Agent Skills](/docs/usage/skills).
 
 ## The docs MCP server
 
@@ -66,12 +66,11 @@ Cursor and other clients — add a remote MCP server entry to your client's conf
 }
 ```
 
-## Not the MCP gateway
+## Two servers, two jobs
 
 Keep the BitRouter-and-MCP roles distinct:
 
 - **The origin server.** BitRouter *is* the tool. A client calls `complete` / `list_models` / `status` to drive the router.
 - **The docs server.** BitRouter's documentation is the tool. A client calls `search_docs` / `get_doc` / `lookup_model` to read about the router.
-- **The [MCP gateway](/docs/usage/mcp-gateway).** BitRouter sits *in front of* your own MCP servers, proxying their tools to agents with auth, access control, and identity forwarding. There BitRouter is the middle, not the endpoint.
 
-The first two are how you reach BitRouter; the gateway is how BitRouter reaches your tools. See [Tools](/docs/usage/mcp-gateway) for the gateway, and [Agent Skills](/docs/usage/skills) for the third way an agent drives BitRouter.
+Both are how you reach BitRouter. See [Agent Skills](/docs/usage/skills) for the other way an agent drives it.

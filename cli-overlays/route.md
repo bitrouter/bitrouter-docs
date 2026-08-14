@@ -22,4 +22,4 @@ bitrouter models --provider anthropic
 
 ## @observe status
 
-Reports the OTel exporter's live state — endpoint, sampler, cardinality usage, in-flight spans. The verification step for [OpenTelemetry](/docs/evals-and-tracing/opentelemetry).
+Reports the OTel exporter's live state — endpoint, sampler, cardinality usage, in-flight spans. The verification step for [OpenTelemetry](/docs/evals-and-observability/opentelemetry).

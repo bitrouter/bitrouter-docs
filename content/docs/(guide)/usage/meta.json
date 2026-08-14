@@ -2,5 +2,5 @@
   "title": "Usage",
   "icon": "Terminal",
   "collapsible": false,
-  "pages": ["cli", "tui", "configuration", "mcp", "mcp-gateway", "skills"]
+  "pages": ["cli", "tui", "configuration", "mcp", "skills"]
 }

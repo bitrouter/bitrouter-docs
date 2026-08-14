@@ -37,7 +37,7 @@ A third option is often the best one: keep `listen` on loopback and let a revers
 | `POST /v1/messages` | Anthropic Messages |
 | `POST /v1beta/models/{model_action}` | Google Generative AI |
 | `GET /v1/models` | Model discovery |
-| `POST /mcp/{server}` | MCP gateway — see [MCP gateway](/docs/usage/mcp-gateway) |
+| `POST /mcp/{server}` | MCP gateway |
 | `GET /health` | Liveness — `200` with `{"status":"ok"}` |
 | `GET /metrics` | Prometheus-format endpoint, see the note below |
 
@@ -48,7 +48,7 @@ Request bodies are capped at **16 MiB**. That is generous for text, and reachabl
 </Callout>
 
 <Callout type="info">
-**`/metrics` answers, but the shipped binary has nothing to say.** It returns `200` with two comment lines pointing at OTLP — metrics were moved to OpenTelemetry push, and the endpoint remains as an SDK seam for people building their own binary. Point Prometheus at it and you get a *successful, empty* scrape, which is far more confusing than a 404. Use OTLP: see [OpenTelemetry](/docs/evals-and-tracing/opentelemetry), and ingest through an OpenTelemetry Collector if your stack is Prometheus-based.
+**`/metrics` answers, but the shipped binary has nothing to say.** It returns `200` with two comment lines pointing at OTLP — metrics were moved to OpenTelemetry push, and the endpoint remains as an SDK seam for people building their own binary. Point Prometheus at it and you get a *successful, empty* scrape, which is far more confusing than a 404. Use OTLP: see [OpenTelemetry](/docs/evals-and-observability/opentelemetry), and ingest through an OpenTelemetry Collector if your stack is Prometheus-based.
 </Callout>
 
 ## Reverse proxy with TLS
@@ -169,5 +169,5 @@ A model count of zero is a healthy process with no usable providers — an HTTP 
 <Cards>
   <Card title="Authentication" href="/docs/self-hosting/authentication" description="What to do before the listen address leaves loopback." />
   <Card title="Hardening checklist" href="/docs/self-hosting/hardening" description="The full pre-flight list." />
-  <Card title="OpenTelemetry" href="/docs/evals-and-tracing/opentelemetry" description="The metrics path that actually carries data." />
+  <Card title="OpenTelemetry" href="/docs/evals-and-observability/opentelemetry" description="The metrics path that actually carries data." />
 </Cards>

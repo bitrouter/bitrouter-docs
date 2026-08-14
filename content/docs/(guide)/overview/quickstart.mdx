@@ -85,7 +85,7 @@ npx skills add bitrouter/bitrouter    # via the generic skills CLI
 Then ask your agent: *"Set up BitRouter for me."* — the agent runs the wizard, picks Cloud by default, and verifies the connection autonomously.
 
 <Callout type="info">
-The `/bitrouter` skill *drives* BitRouter; the [AgentSkills gateway](/docs/usage/mcp-gateway) is the opposite direction — BitRouter *serving* skills as governed, routable resources to the agents behind it.
+The `/bitrouter` skill *drives* BitRouter; the [AgentSkills gateway](/docs/usage/skills) is the opposite direction — BitRouter *serving* skills as governed, routable resources to the agents behind it.
 </Callout>
 
 ## Onboard via the CLI wizard
@@ -189,7 +189,7 @@ Each request is fingerprinted by loop step (`opening`, `after_<tool>`, `midstrea
 
 ### Learning from live traffic
 
-With `adequacy` enabled, every request through a policy-bound route is classified by outcome and recorded against its fingerprint — deterministically, with [no LLM judge in the path](/docs/evals-and-tracing/evaluation). Two halves act on that signal:
+With `adequacy` enabled, every request through a policy-bound route is classified by outcome and recorded against its fingerprint — deterministically, with [no LLM judge in the path](/docs/evals-and-observability/evaluation). Two halves act on that signal:
 
 - **Escalation (the safety half)** — a downgraded fingerprint that hard-fails `escalation_threshold` consecutive times is pinned up to the strong tier. Pins decay after a cooldown.
 - **Exploration (the aggressive half)** — with `explore_enabled`, roughly 1-in-`explore_interval` candidate requests is trialed on the economy tier; `explore_threshold` consecutive adequate trials qualify that fingerprint for the cheap tier. A failed trial escalates and stops.
@@ -209,7 +209,7 @@ adequacy:
 
 The evidence rule is asymmetric: negative evidence escalates immediately, while a cheaper route needs repeated success before it becomes effective. A policy with `adequacy` off behaves exactly like its deterministic table.
 
-The signal itself — the outcome classes it records, the per-request cost metering alongside it, and the objective-scored eval engine landing on top — is [Evaluation](/docs/evals-and-tracing/evaluation).
+The signal itself — the outcome classes it records, the per-request cost metering alongside it, and the objective-scored eval engine landing on top — is [Evaluation](/docs/evals-and-observability/evaluation).
 
 ### Publishing what it learns
 

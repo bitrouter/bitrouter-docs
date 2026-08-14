@@ -25,7 +25,7 @@ Every command below is **generated from the binary's own `--help`**, so the flag
 | `BITROUTER_API_KEY` | Cloud API key; enables the managed `bitrouter` provider |
 | `BITROUTER_HOME` | Config discovery override (see above) |
 | `BITROUTER_OAUTH_AS` | Override the OAuth authorization server for self-hosted Cloud |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | Opt in to OTLP export. See [OpenTelemetry](/docs/evals-and-tracing/opentelemetry) |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | Opt in to OTLP export. See [OpenTelemetry](/docs/evals-and-observability/opentelemetry) |
 
 ## Command map
 
@@ -255,7 +255,7 @@ Report the OTel exporter's current state (endpoint, sampler, cardinality usage, 
 | `--socket <SOCKET>` | Explicit control socket path. Overrides the config-derived path |
 
 
-Reports the OTel exporter's live state — endpoint, sampler, cardinality usage, in-flight spans. The verification step for [OpenTelemetry](/docs/evals-and-tracing/opentelemetry).
+Reports the OTel exporter's live state — endpoint, sampler, cardinality usage, in-flight spans. The verification step for [OpenTelemetry](/docs/evals-and-observability/opentelemetry).
 
 ## Providers
 
@@ -471,7 +471,7 @@ Permit `policy evolve --apply` to publish `policy-lock.yaml`
 
 The default scope set covers `inference:invoke`, `usage:read`, `keys:read`/`keys:write`, `billing:read`, `policy:read`/`policy:write`, `byok:read`/`byok:write`, and `namespace:read`. Sensitive scopes such as `billing:write` are opt-in via `--scope`. After either login form, the `bitrouter` provider auto-enables in zero-config mode — every model your account is entitled to is routable as `bitrouter:<model-id>`.
 
-Every leaf accepts `--json` for raw output; the default is a `systemctl`-style key:value block for single resources and a small table for lists. When the server returns `403 missing required scope: <s>`, OAuth users get a copy-pasteable re-login hint; API-key users are told to mint a key with that scope. See the [Cloud API guide](/docs/guides/cloud-api) for protocol details.
+Every leaf accepts `--json` for raw output; the default is a `systemctl`-style key:value block for single resources and a small table for lists. When the server returns `403 missing required scope: <s>`, OAuth users get a copy-pasteable re-login hint; API-key users are told to mint a key with that scope.
 
 ### `bitrouter cloud`
 
@@ -989,7 +989,7 @@ Remove a BYOK row by provider id
 
 ## Tools, agents, and ACP
 
-The command surfaces behind the [Tools](/docs/usage/mcp-gateway) and [Agents](/docs/models-and-routing/acp-gateway) gateways: `tools` introspects the MCP upstreams declared under `mcp_servers`, `agents` manages the ACP agent catalog, and `acp` runs per-session headless agent sessions.
+The command surfaces behind the Tools and [Agents](/docs/models-and-routing/acp-gateway) gateways: `tools` introspects the MCP upstreams declared under `mcp_servers`, `agents` manages the ACP agent catalog, and `acp` runs per-session headless agent sessions.
 
 ### `bitrouter tools`
 

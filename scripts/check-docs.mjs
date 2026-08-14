@@ -28,7 +28,7 @@ const SECTIONS = [
   "(guide)/overview",
   "(guide)/usage",
   "(guide)/models-and-routing",
-  "(guide)/evals-and-tracing",
+  "(guide)/evals-and-observability",
   "integrations",
   "guides",
 ];

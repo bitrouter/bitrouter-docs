@@ -30,8 +30,8 @@ You don't configure the classifier itself — it runs whenever a policy has adeq
 
 Every request is metered into the local database with an estimated charge, so *what did that run cost?* is answerable per request, per model, and per provider — the raw material for cost-objective evaluation. Two ways to read it:
 
-- **Traces** — the settlement span carries cost attributes into your OTLP backend, so cost sits next to latency and outcome on every request. See [OpenTelemetry](/docs/evals-and-tracing/opentelemetry).
-- **Hosted** — on BitRouter Cloud, spend, tokens, and the per-request log are hosted for you; content is never stored. See [Tracing](/docs/evals-and-tracing/tracing).
+- **Traces** — the settlement span carries cost attributes into your OTLP backend, so cost sits next to latency and outcome on every request. See [OpenTelemetry](/docs/evals-and-observability/opentelemetry).
+- **Hosted** — on BitRouter Cloud, spend, tokens, and the per-request log are hosted for you; content is never stored. See [Tracing](/docs/evals-and-observability/tracing).
 
 ## Traces as the eval substrate
 
@@ -47,6 +47,6 @@ The dedicated eval engine — scoring each *run* and routing decision against a 
 
 <Cards>
   <Card title="Adaptive routing" href="/docs/overview/quickstart#adaptive-routing" description="The policy that acts on this signal — escalation, exploration, and publishing." />
-  <Card title="OpenTelemetry" href="/docs/evals-and-tracing/opentelemetry" description="The self-run trace and metric substrate evals build on." />
-  <Card title="Tracing" href="/docs/evals-and-tracing/tracing" description="The hosted request view, if you'd rather not run a collector." />
+  <Card title="OpenTelemetry" href="/docs/evals-and-observability/opentelemetry" description="The self-run trace and metric substrate evals build on." />
+  <Card title="Tracing" href="/docs/evals-and-observability/tracing" description="The hosted request view, if you'd rather not run a collector." />
 </Cards>

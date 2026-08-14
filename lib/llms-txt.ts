@@ -101,8 +101,14 @@ References:
 - [Hermes](${BASE_URL}/docs/integrations/hermes): Nous Research's self-improving agent
 - [OpenClaw](${BASE_URL}/docs/integrations/openclaw): Route the OpenClaw multi-channel agent
 
+## Changelog
+
+- [Changelog](${BASE_URL}/changelog): Every release, newest first — what shipped, what broke, and how to migrate
+- [changelog.md](${BASE_URL}/changelog.md): The complete release history as one plain-Markdown file; fetch this to answer "what's new", "is X supported yet", or "what changed between versions"
+- [RSS](${BASE_URL}/changelog/rss.xml) / [Atom](${BASE_URL}/changelog/atom.xml): Release feeds
+
 ## Optional
 
-- [llms-full.txt](${BASE_URL}/api/docs/llms-full.txt): Complete documentation as plain text for ingestion
+- [llms-full.txt](${BASE_URL}/api/docs/llms-full.txt): Complete documentation as plain text for ingestion, with the full changelog appended
 - [Blog: Introducing BitRouter](${BASE_URL}/blog/introducing-bitrouter): Long-form launch post
 `;

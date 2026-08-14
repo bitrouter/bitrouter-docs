@@ -8,6 +8,38 @@ import type { Metadata } from "next";
 
 type Props = { params: Promise<{ slug: string }> };
 
+const SITE = "https://bitrouter.ai";
+
+/**
+ * A release entry is a version fact, not just an article: schema.org models it
+ * as the application at a version, with `softwareVersion` and `releaseNotes`.
+ * Answer engines use that to bind "which version added X" to an entity instead
+ * of inferring it from prose.
+ *
+ * Carries an `@id` of its own and states only version facts. The root layout
+ * already publishes the canonical BitRouter `SoftwareApplication`; without a
+ * distinct id these would merge into one node, and app-level properties
+ * restated here would contradict the ones stated there.
+ */
+function releaseJsonLd(page: ReturnType<typeof changelogSource.getPage>) {
+  if (!page) return null;
+  const url = `${SITE}${page.url}`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "@id": `${url}#release`,
+    name: "BitRouter",
+    applicationCategory: "DeveloperApplication",
+    url,
+    // JSON.stringify drops undefined members, so an entry with no version or
+    // description simply omits them rather than emitting nulls.
+    softwareVersion: page.data.version,
+    datePublished: page.data.date,
+    releaseNotes: url,
+    description: page.data.description,
+  };
+}
+
 export default async function ChangelogEntryPage({ params }: Props) {
   const { slug } = await params;
 
@@ -15,6 +47,7 @@ export default async function ChangelogEntryPage({ params }: Props) {
   if (!page) notFound();
 
   const MDX = page.data.body;
+  const jsonLd = releaseJsonLd(page);
   const date = new Date(page.data.date).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -24,6 +57,12 @@ export default async function ChangelogEntryPage({ params }: Props) {
 
   return (
     <div className="zed-bg">
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
       <section style={{ position: "relative" }}>
         <div
           style={{
@@ -88,12 +127,29 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // Keep the version in the <title> — it's what people search for — but don't
   // repeat it when the headline already is the version string.
   const headline = headlineOf(page.data);
+  const title =
+    page.data.version && headline !== page.data.version
+      ? `${page.data.version} — ${headline}`
+      : headline;
+  const url = `${SITE}${page.url}`;
   return {
-    title:
-      page.data.version && headline !== page.data.version
-        ? `${page.data.version} — ${headline}`
-        : headline,
+    title,
     description: page.data.description,
-    alternates: { canonical: `https://bitrouter.ai${page.url}` },
+    alternates: { canonical: url },
+    // Release entries are dated articles. Without `type: article` and
+    // `publishedTime` a shared link carries no date, and the whole point of a
+    // changelog entry is when it happened.
+    openGraph: {
+      type: "article",
+      url,
+      title,
+      description: page.data.description,
+      publishedTime: new Date(page.data.date).toISOString(),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: page.data.description,
+    },
   };
 }

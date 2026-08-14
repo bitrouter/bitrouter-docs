@@ -5,6 +5,9 @@ import {
   groupFeed,
   allTags,
   headlineOf,
+  releaseHeading,
+  releaseSection,
+  stripMdxComments,
   type ChangelogItem,
   type FeedRollup,
 } from "./changelog";
@@ -158,5 +161,43 @@ describe("headlineOf", () => {
   it("falls back to the title when there is no description", () => {
     expect(headlineOf({ title: "v1.0.0-alpha.18" })).toBe("v1.0.0-alpha.18");
     expect(headlineOf({ title: "t", description: "  " })).toBe("t");
+  });
+});
+
+describe("Markdown surface", () => {
+  const item = {
+    url: "/changelog/v1-0-0-alpha-28",
+    title: "v1.0.0-alpha.28",
+    description: "Skills are served over MCP.",
+    date: "2026-08-15",
+    version: "v1.0.0-alpha.28",
+    tags: [],
+    breaking: true,
+  };
+
+  it("drops the sync's provenance comment from the notes", () => {
+    const notes = "{/* Auto-generated from bitrouter/bitrouter release v1. */}\n\n### Added\n\nProse.";
+    expect(stripMdxComments(notes)).toBe("### Added\n\nProse.");
+  });
+
+  it("titles a release with its version and headline, no trailing period", () => {
+    expect(releaseHeading(item)).toBe("## v1.0.0-alpha.28 — Skills are served over MCP");
+  });
+
+  it("does not repeat the version when it is also the headline", () => {
+    expect(releaseHeading({ ...item, description: undefined })).toBe("## v1.0.0-alpha.28");
+  });
+
+  it("carries the date, permalink and breaking flag above the notes", () => {
+    const section = releaseSection(item, "{/* banner */}\n\n### Added\n\nProse.");
+    expect(section).toContain("Released: 2026-08-15");
+    expect(section).toContain("Permalink: https://bitrouter.ai/changelog/v1-0-0-alpha-28");
+    expect(section).toContain("Breaking: yes");
+    expect(section).not.toContain("banner");
+    expect(section.endsWith("### Added\n\nProse.")).toBe(true);
+  });
+
+  it("omits the breaking line for an ordinary release", () => {
+    expect(releaseSection({ ...item, breaking: false }, "Prose.")).not.toContain("Breaking:");
   });
 });

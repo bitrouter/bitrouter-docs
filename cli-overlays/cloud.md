@@ -6,7 +6,7 @@ title: Cloud
 
 The default scope set covers `inference:invoke`, `usage:read`, `keys:read`/`keys:write`, `billing:read`, `policy:read`/`policy:write`, `byok:read`/`byok:write`, and `namespace:read`. Sensitive scopes such as `billing:write` are opt-in via `--scope`. After either login form, the `bitrouter` provider auto-enables in zero-config mode — every model your account is entitled to is routable as `bitrouter:<model-id>`.
 
-Every leaf accepts `--json` for raw output; the default is a `systemctl`-style key:value block for single resources and a small table for lists. When the server returns `403 missing required scope: <s>`, OAuth users get a copy-pasteable re-login hint; API-key users are told to mint a key with that scope. See the [Cloud API guide](/docs/guides/cloud-api) for protocol details.
+Every leaf accepts `--json` for raw output; the default is a `systemctl`-style key:value block for single resources and a small table for lists. When the server returns `403 missing required scope: <s>`, OAuth users get a copy-pasteable re-login hint; API-key users are told to mint a key with that scope.
 
 ## @cloud login
 

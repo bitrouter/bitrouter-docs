@@ -3,16 +3,11 @@
   "icon": "Map",
   "root": true,
   "collapsible": false,
-  "pagesIndex": "[Guides](/docs/guides/cloud-api)",
+  "pagesIndex": "[Guides](/docs/guides/migrate-from-litellm)",
   "pages": [
-    "---Cloud---",
-    "cloud-api",
     "---Migration---",
     "migrate-from-litellm",
     "migrate-from-openrouter",
-    "migrate-from-tensorzero",
-    "---Extending---",
-    "build-a-plugin",
-    "register-as-a-provider"
+    "migrate-from-tensorzero"
   ]
 }

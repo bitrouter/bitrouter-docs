@@ -11,14 +11,14 @@ const finalPath = {
   "model-variants":"/docs/models-and-routing/model-variants","presets":"/docs/models-and-routing/virtual-model",
   "structured-outputs":"/docs/models-and-routing/structured-outputs","byok":"/docs/models-and-routing/bring-your-own-provider",
   "local-models":"/docs/integrations/models","guardrails":"/docs/models-and-routing/guardrails",
-  "observability":"/docs/evals-and-tracing/opentelemetry","opentelemetry":"/docs/evals-and-tracing/opentelemetry",
-  "tracing":"/docs/evals-and-tracing/tracing","telemetry":"/docs/evals-and-tracing/opentelemetry",
-  "mcp":"/docs/usage/mcp-gateway","acp":"/docs/models-and-routing/acp-gateway",
-  "agentskills":"/docs/usage/mcp-gateway",
+  "observability":"/docs/evals-and-observability/opentelemetry","opentelemetry":"/docs/evals-and-observability/opentelemetry",
+  "tracing":"/docs/evals-and-observability/tracing","telemetry":"/docs/evals-and-observability/opentelemetry",
+  "mcp":"/docs/usage/mcp","acp":"/docs/models-and-routing/acp-gateway",
+  "agentskills":"/docs/usage/skills",
   // bitrouter cloud (was: infrastructure)
   "managed-provider":"/docs/overview/supported-models","discounted-models":"/docs/overview/supported-models",
   "payment":"/docs/overview/quickstart#self-host-or-cloud","workspaces":"/docs/reference/management/listNamespaces",
-  "for-providers":"/docs/guides/register-as-a-provider",
+  "for-providers":"/docs/models-and-routing/bring-your-own-provider",
   // usage (CLI + MCP moved out of reference/ into the Documentation tab, 2026-08)
   "cli":"/docs/usage/cli",
 };
@@ -32,11 +32,11 @@ for (const [slug, dest] of Object.entries(finalPath)) {
 pairs.push(
   ["/docs", "/docs/overview/what-is-bitrouter"],
   // Guides is its own tab (2026-08) but has no index page — land on its first.
-  ["/docs/guides", "/docs/guides/cloud-api"],
+  ["/docs/guides", "/docs/guides/migrate-from-litellm"],
   ["/docs/guides/overview", "/docs/overview/what-is-bitrouter"],
   ["/docs/guides/overview/quickstart", "/docs/overview/quickstart"],
   ["/docs/guides/overview/comparison", "/docs/overview/bitrouter-vs-openrouter"],
-  ["/docs/guides/overview/provider", "/docs/guides/register-as-a-provider"],
+  ["/docs/guides/overview/provider", "/docs/models-and-routing/bring-your-own-provider"],
   // intro page renamed (2026-07): recursive-self-improvement → what-is-bitrouter
   ["/docs/overview/recursive-self-improvement", "/docs/overview/what-is-bitrouter"],
   // overview/get-started split + features→models-and-routing (2026-07 reorg)
@@ -53,7 +53,7 @@ pairs.push(
   ["/docs/concepts", "/docs/overview/what-is-bitrouter"],
   ["/docs/concepts/models", "/docs/overview/supported-models#how-model-ids-work"],
   ["/docs/concepts/policy", "/docs/overview/quickstart#adaptive-routing"],
-  ["/docs/concepts/tools", "/docs/usage/mcp-gateway"],
+  ["/docs/concepts/tools", "/docs/usage/mcp"],
   ["/docs/concepts/agents", "/docs/models-and-routing/acp-gateway"],
   ["/docs/concepts/cli", "/docs/usage/cli"],
   ["/docs/concepts/mcp", "/docs/usage/mcp"],
@@ -74,21 +74,21 @@ pairs.push(
   ["/docs/get-started/installation", "/docs/overview/quickstart"],
   ["/docs/get-started/comparison", "/docs/overview/bitrouter-vs-openrouter"],
   ["/docs/get-started/set-up-routing", "/docs/models-and-routing/provider-selection"],
-  ["/docs/get-started/set-up-tracing", "/docs/evals-and-tracing/opentelemetry"],
-  ["/docs/get-started/set-up-evaling", "/docs/evals-and-tracing/evaluation"],
+  ["/docs/get-started/set-up-tracing", "/docs/evals-and-observability/opentelemetry"],
+  ["/docs/get-started/set-up-evaling", "/docs/evals-and-observability/evaluation"],
   ["/docs/get-started/set-up-looping", "/docs/overview/quickstart#adaptive-routing"],
   // infrastructure → bitrouter cloud (folder renamed; pages merged/moved)
   ["/docs/infrastructure/managed-provider", "/docs/overview/supported-models"],
   ["/docs/infrastructure/discounted-models", "/docs/overview/supported-models"],
   ["/docs/infrastructure/payment", "/docs/overview/quickstart#self-host-or-cloud"],
   ["/docs/infrastructure/workspaces", "/docs/reference/management/listNamespaces"],
-  ["/docs/infrastructure/for-providers", "/docs/guides/register-as-a-provider"],
+  ["/docs/infrastructure/for-providers", "/docs/models-and-routing/bring-your-own-provider"],
   // cloud/ section dissolved (2026-06 reorg) → new homes (preserve old links)
   ["/docs/cloud", "/docs/overview/quickstart#self-host-or-cloud"],
   ["/docs/cloud/overview", "/docs/overview/quickstart#self-host-or-cloud"],
   ["/docs/cloud/get-started", "/docs/overview/quickstart#self-host-or-cloud"],
   ["/docs/cloud/byok", "/docs/models-and-routing/bring-your-own-provider"],
-  ["/docs/cloud/tracing", "/docs/evals-and-tracing/tracing"],
+  ["/docs/cloud/tracing", "/docs/evals-and-observability/tracing"],
   ["/docs/cloud/managed-models", "/docs/overview/supported-models"],
   ["/docs/cloud/workspaces", "/docs/reference/management/listNamespaces"],
   ["/docs/cloud/payment", "/docs/overview/quickstart#self-host-or-cloud"],
@@ -125,15 +125,15 @@ pairs.push(
   ["/docs/changelog/:slug*", "/changelog/:slug*"],
   ["/docs/changelog", "/changelog"],
   // moved/removed pages (2026-06 refactor) → live destinations
-  ["/docs/features/observability", "/docs/evals-and-tracing/opentelemetry"],
-  ["/docs/features/tracing", "/docs/evals-and-tracing/tracing"],
-  ["/docs/features/telemetry", "/docs/evals-and-tracing/opentelemetry"],
+  ["/docs/features/observability", "/docs/evals-and-observability/opentelemetry"],
+  ["/docs/features/tracing", "/docs/evals-and-observability/tracing"],
+  ["/docs/features/telemetry", "/docs/evals-and-observability/opentelemetry"],
   // observability & evaluation split out of features/ (2026-08); the single
   // opentelemetry page was two pages welded together — OSS export vs hosted view
-  ["/docs/features/opentelemetry", "/docs/evals-and-tracing/opentelemetry"],
+  ["/docs/features/opentelemetry", "/docs/evals-and-observability/opentelemetry"],
   ["/docs/features/local-models", "/docs/integrations/models"],
   ["/docs/features/toolsets", "/docs/models-and-routing/tool-calling/server-tools"],
-  ["/docs/guides/export-telemetry", "/docs/evals-and-tracing/opentelemetry"],
+  ["/docs/guides/export-telemetry", "/docs/evals-and-observability/opentelemetry"],
   ["/docs/cloud/managed-tools", "/docs/overview/quickstart#self-host-or-cloud"],
   ["/docs/cloud/managed-agents", "/docs/overview/quickstart#self-host-or-cloud"],
   // integrations + cookbook history
@@ -165,7 +165,7 @@ pairs.push(
   ["/docs/gateway-and-routing/bring-your-own-provider", "/docs/models-and-routing/bring-your-own-provider"],
   ["/docs/gateway-and-routing/structured-outputs", "/docs/models-and-routing/structured-outputs"],
   ["/docs/gateway-and-routing/guardrails", "/docs/models-and-routing/guardrails"],
-  ["/docs/gateway-and-routing/mcp-gateway", "/docs/usage/mcp-gateway"],
+  ["/docs/gateway-and-routing/mcp-gateway", "/docs/usage/mcp"],
   ["/docs/gateway-and-routing/server-tools", "/docs/models-and-routing/tool-calling/server-tools"],
   ["/docs/gateway-and-routing/advisor", "/docs/models-and-routing/tool-calling/advisor"],
   ["/docs/gateway-and-routing/subagent", "/docs/models-and-routing/tool-calling/subagent"],
@@ -182,21 +182,30 @@ pairs.push(
   // The section index has no page of its own, and `:slug*` matches zero
   // segments too — so the bare path has to be claimed before the wildcard.
   ["/docs/mcp-and-tool-calling", "/docs/models-and-routing/tool-calling/server-tools"],
-  ["/docs/mcp-and-tool-calling/mcp-gateway", "/docs/usage/mcp-gateway"],
+  ["/docs/mcp-and-tool-calling/mcp-gateway", "/docs/usage/mcp"],
   ["/docs/mcp-and-tool-calling/acp-gateway", "/docs/models-and-routing/acp-gateway"],
   ["/docs/mcp-and-tool-calling/:slug*", "/docs/models-and-routing/tool-calling/:slug*"],
-  // observability/ → evals-and-tracing/ (2026-09)
-  ["/docs/observability/:slug*", "/docs/evals-and-tracing/:slug*"],
-  ["/docs/observability", "/docs/evals-and-tracing/opentelemetry"],
+  // evals-and-tracing/ → evals-and-observability/ (2026-08): section renamed
+  ["/docs/evals-and-tracing/:slug*", "/docs/evals-and-observability/:slug*"],
+  ["/docs/evals-and-tracing", "/docs/evals-and-observability/opentelemetry"],
+  // Guides tab trimmed to migration only (2026-08): the Cloud and Extending
+  // sections were retired, and usage/mcp-gateway folded away into usage/mcp.
+  ["/docs/guides/cloud-api", "/docs/usage/cli"],
+  ["/docs/guides/build-a-plugin", "/docs/overview/what-is-bitrouter"],
+  ["/docs/guides/register-as-a-provider", "/docs/models-and-routing/bring-your-own-provider"],
+  ["/docs/usage/mcp-gateway", "/docs/usage/mcp"],
+  // observability/ → evals-and-observability/ (2026-09)
+  ["/docs/observability/:slug*", "/docs/evals-and-observability/:slug*"],
+  ["/docs/observability", "/docs/evals-and-observability/opentelemetry"],
   // tools/agents pages retitled to name their protocol; features/ dissolved —
   // guardrails moved, namespaces and payment retired (2026-08)
-  ["/docs/gateway-and-routing/tools", "/docs/usage/mcp-gateway"],
+  ["/docs/gateway-and-routing/tools", "/docs/usage/mcp"],
   ["/docs/gateway-and-routing/agents", "/docs/models-and-routing/acp-gateway"],
   ["/docs/features", "/docs/models-and-routing/guardrails"],
   ["/docs/features/guardrails", "/docs/models-and-routing/guardrails"],
   ["/docs/features/namespaces", "/docs/reference/management/listNamespaces"],
   ["/docs/features/payment", "/docs/overview/quickstart#self-host-or-cloud"],
-  ["/docs/features/tools", "/docs/usage/mcp-gateway"],
+  ["/docs/features/tools", "/docs/usage/mcp"],
   ["/docs/features/server-tools", "/docs/models-and-routing/tool-calling/server-tools"],
   ["/docs/features/websearch", "/docs/models-and-routing/tool-calling/websearch"],
   ["/docs/features/web-fetch", "/docs/models-and-routing/tool-calling/web-fetch"],

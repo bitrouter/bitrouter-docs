@@ -76,5 +76,5 @@ The `models` field works identically on `/v1/messages` (Anthropic Messages) and 
 ## Limits
 
 - Maximum 8 entries in `models`.
-- Each model ID must resolve to a registered model in the [registry](/docs/guides/register-as-a-provider). Unknown IDs return `400` before any upstream attempt.
+- Each model ID must resolve to a registered model in the [registry](https://github.com/bitrouter/provider-registry). Unknown IDs return `400` before any upstream attempt.
 - Streaming is supported. The first model that begins emitting tokens wins; later models are not attempted even if the stream fails after the first token.

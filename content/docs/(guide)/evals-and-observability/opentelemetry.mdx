@@ -5,7 +5,7 @@ description: BitRouter is OpenTelemetry-native — traces and metrics for every 
 
 BitRouter is **OpenTelemetry-native**. Every request you send through the router becomes a **trace** — the full lifecycle from ingress through routing, each upstream attempt (including failovers), and settlement — plus a set of **metrics**, all following the [OpenTelemetry GenAI semantic conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/) and pushed over OTLP to any backend you already run.
 
-Everything on this page is **open-source** and runs entirely on your own infrastructure — there's no BitRouter telemetry endpoint in the middle. It's **off until you point it somewhere**, and it excludes message content by default. If you'd rather not run a collector, [Tracing](/docs/evals-and-tracing/tracing) gives you a hosted request view with nothing to operate.
+Everything on this page is **open-source** and runs entirely on your own infrastructure — there's no BitRouter telemetry endpoint in the middle. It's **off until you point it somewhere**, and it excludes message content by default. If you'd rather not run a collector, [Tracing](/docs/evals-and-observability/tracing) gives you a hosted request view with nothing to operate.
 
 ## How a trace looks
 
@@ -238,8 +238,8 @@ router and confirm the trace lands in your backend; you should see one inbound
 ## Next steps
 
 <Cards>
-  <Card title="Tracing" href="/docs/evals-and-tracing/tracing" description="Hosted request view — spend, tokens, and a per-request log, nothing to operate." />
+  <Card title="Tracing" href="/docs/evals-and-observability/tracing" description="Hosted request view — spend, tokens, and a per-request log, nothing to operate." />
   <Card title="Self-host BitRouter" href="/docs/self-hosting" description="Run the router in production, with telemetry wired in." />
   <Card title="Model fallback" href="/docs/models-and-routing/model-fallback" description="The failover chains you'll see in every trace." />
-  <Card title="Evaluation" href="/docs/evals-and-tracing/evaluation" description="The outcome signal and cost metering these traces carry." />
+  <Card title="Evaluation" href="/docs/evals-and-observability/evaluation" description="The outcome signal and cost metering these traces carry." />
 </Cards>

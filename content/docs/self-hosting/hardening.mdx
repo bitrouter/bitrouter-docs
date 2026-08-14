@@ -51,7 +51,7 @@ Everything here is covered in depth on the page it links to. This is the list to
 
 **18. Back up before an upgrade you might reverse.** Migrations run forward automatically at startup and there is no down-migration command. → [State & backups](/docs/self-hosting/state-and-backups#backups)
 
-**19. Know what leaves the host.** By default nothing does beyond provider calls. OTLP export is opt-in and goes only where you point it. → [OpenTelemetry](/docs/evals-and-tracing/opentelemetry)
+**19. Know what leaves the host.** By default nothing does beyond provider calls. OTLP export is opt-in and goes only where you point it. → [OpenTelemetry](/docs/evals-and-observability/opentelemetry)
 
 **20. `GET /v1/models` and `GET /health` are unauthenticated, always.** The auth hook runs on the inference pipeline, not on those two reads — so model discovery returns your full routable model list, provider names included, to anyone who can reach the port even with `skip_auth: false`. It's a catalog, not a credential, but it does disclose which providers you use. If that matters, restrict the paths at the reverse proxy. → [Networking](/docs/self-hosting/networking#what-the-daemon-serves)
 

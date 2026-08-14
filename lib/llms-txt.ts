@@ -45,7 +45,6 @@ References:
 
 ## Tool Calling
 
-- [MCP Gateway](${BASE_URL}/docs/usage/mcp-gateway): One endpoint in front of many MCP servers and Agent Skills — uniform auth, merged discovery, one policy point
 - [Server Tools](${BASE_URL}/docs/models-and-routing/tool-calling/server-tools): Move the tool-calling loop into BitRouter — declare tools, and the router executes and re-calls until the model is done
 - [Advisor](${BASE_URL}/docs/models-and-routing/tool-calling/advisor): Let a fast model escalate one hard sub-question to a stronger model mid-generation
 - [Sub-agent](${BASE_URL}/docs/models-and-routing/tool-calling/subagent): Delegate a self-contained task to a cheaper worker model that returns only its result
@@ -58,8 +57,8 @@ References:
 - [CLI](${BASE_URL}/docs/usage/cli): Every command of the binary — serve, route, models, policy, optimize, providers
 - [TUI](${BASE_URL}/docs/usage/tui): The terminal dashboard for live routing, spend, and traces
 - [Configuration](${BASE_URL}/docs/usage/configuration): The \`bitrouter.yaml\` reference, including the policy table and the adaptive loop
-- [MCP Server](${BASE_URL}/docs/usage/mcp): Drive BitRouter itself as an MCP tool from inside an agent
-- [Agent Skills](${BASE_URL}/docs/usage/skills): Skills as governed, routable resources behind the gateway
+- [MCP](${BASE_URL}/docs/usage/mcp): Drive BitRouter itself as an MCP tool from inside an agent
+- [Agent Skills](${BASE_URL}/docs/usage/skills): Skills as governed, routable resources an agent loads on demand
 
 ## Self-hosting
 
@@ -73,11 +72,11 @@ References:
 - [Day-2 Operations](${BASE_URL}/docs/self-hosting/operations): Reload vs restart, the diagnostic commands, and rolling out a config change
 - [State & Backups](${BASE_URL}/docs/self-hosting/state-and-backups): What persists, SQLite/Postgres/MySQL, backups, and what is shared across instances
 
-## Evals & Tracing
+## Evals & Observability
 
-- [OpenTelemetry](${BASE_URL}/docs/evals-and-tracing/opentelemetry): Self-run OTLP export — traces and metrics of every request, pushed to a Collector, Honeycomb, Grafana, or Datadog
-- [Cloud Tracing](${BASE_URL}/docs/evals-and-tracing/tracing): Hosted Activity view — spend, token, and latency KPIs plus a per-request log, nothing to operate
-- [Evaluation](${BASE_URL}/docs/evals-and-tracing/evaluation): Per-request outcome signals and cost metering today, with an objective-scored eval engine landing on top
+- [OpenTelemetry](${BASE_URL}/docs/evals-and-observability/opentelemetry): Self-run OTLP export — traces and metrics of every request, pushed to a Collector, Honeycomb, Grafana, or Datadog
+- [Cloud Tracing](${BASE_URL}/docs/evals-and-observability/tracing): Hosted Activity view — spend, token, and latency KPIs plus a per-request log, nothing to operate
+- [Evaluation](${BASE_URL}/docs/evals-and-observability/evaluation): Per-request outcome signals and cost metering today, with an objective-scored eval engine landing on top
 
 ## API Reference
 
@@ -101,10 +100,6 @@ References:
 - [Pi](${BASE_URL}/docs/integrations/pi): Minimal terminal coding harness via models.json
 - [Hermes](${BASE_URL}/docs/integrations/hermes): Nous Research's self-improving agent
 - [OpenClaw](${BASE_URL}/docs/integrations/openclaw): Route the OpenClaw multi-channel agent
-
-## Open Network
-
-- [For Providers](${BASE_URL}/docs/guides/register-as-a-provider): Permissionless provider registration via the open [provider-registry](https://github.com/bitrouter/provider-registry); list an OpenAI- or Anthropic-compatible endpoint and earn per-request payment via x402/MPP
 
 ## Optional
 

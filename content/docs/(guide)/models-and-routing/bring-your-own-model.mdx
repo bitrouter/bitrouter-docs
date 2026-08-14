@@ -98,7 +98,7 @@ Most endpoints need nothing beyond `api_base` and a model id. When an upstream i
 
 ## Serving your model to others
 
-Everything above is private: your config, your endpoint, your traffic. To make a model you host **discoverable and routable by anyone on the network** — including from BitRouter Cloud — list it in the open registry instead, by opening a PR with a provider manifest. See [Register as a provider](/docs/guides/register-as-a-provider) for the manifest schema, the `models_url` BitRouter polls, and the payment modes.
+Everything above is private: your config, your endpoint, your traffic. To make a model you host **discoverable and routable by anyone on the network** — including from BitRouter Cloud — list it in the [open registry](https://github.com/bitrouter/provider-registry) instead, by opening a PR with a provider manifest. The registry README covers the manifest schema, the `models_url` BitRouter polls, and the payment modes.
 
 <Callout type="warn">
 **Cloud can't reach a private endpoint.** BitRouter Cloud routes to registry providers, and there's no per-account way to attach your own endpoint to a Cloud namespace. To use a model only you serve, either run BitRouter yourself in front of it ([self-host](/docs/self-hosting)) or publish it to the registry.

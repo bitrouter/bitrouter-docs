@@ -33,214 +33,363 @@ export const BYO: ByoGroup[] = [
   },
 ];
 
-// ── TUI demo sessions ───────────────────────────────────────────────────────
-export type TraceKind =
-  | "model" | "tool" | "skill" | "agent" | "cache" | "watch" | "score" | "write";
+// ── Hero TUI demo — five harnesses in one macOS terminal ────────────────────
+/**
+ * One id — `bitrouter/auto` — is configured once per harness. Inside the session
+ * BitRouter moves between five tiers (low → max), which resolve to a different
+ * model and/or reasoning effort. The user presses nothing: every row below is
+ * the harness's own output, and the only non-native chrome in the window is the
+ * BitRouter statusline along the bottom.
+ *
+ * The chrome for claude-code, codex, opencode and pi is transcribed from real
+ * screenshots. deepseek-harness has no screenshot — see the note on that entry.
+ *
+ * Identifiers are checked, not illustrative: model ids come from the registry
+ * snapshot (`.models-snapshot.json`) and the per-harness setup from
+ * `content/docs/(guide)/integrations/*.mdx`.
+ */
 
-export const TRACE_KIND: Record<TraceKind, { tag: string; color: string }> = {
-  model: { tag: "MODEL", color: "var(--z-blue)" },
-  tool: { tag: "TOOL ", color: "var(--z-cost)" },
-  skill: { tag: "SKILL", color: "var(--z-green)" },
-  agent: { tag: "AGENT", color: "var(--z-purple)" },
-  cache: { tag: "CACHE", color: "var(--z-ink-5)" },
-  watch: { tag: "WATCH", color: "var(--z-blue)" },
-  score: { tag: "SCORE", color: "var(--z-cost)" },
-  write: { tag: "WRITE", color: "var(--z-green)" },
+/** Terminal palette — real terminal colours, deliberately not the `--z-*` set. */
+export const TERM = {
+  bright: "#e6e6e6",
+  body: "#c9c9c9",
+  dim: "#8f8f8f",
+  faint: "#6e6e6e",
+  ghost: "#4a4a4a",
+  claude: "#c9764f",
+  cyan: "#56b6c2",
+  amber: "#d19a3f",
+  blue: "#5aa9f8",
+  ok: "#8bbf78",
+  white: "#ffffff",
+} as const;
+
+export type Tier = "low" | "medium" | "high" | "extra" | "max";
+export const TIERS: Tier[] = ["low", "medium", "high", "extra", "max"];
+export const TIER_COLOR: Record<Tier, string> = {
+  low: "var(--z-green)",
+  medium: "var(--z-blue)",
+  high: "var(--z-cost)",
+  extra: "var(--z-amber)",
+  max: "var(--z-purple)",
 };
 
-export type TraceRow = { kind: TraceKind; action: string; target: string; meta: string; esc?: boolean };
-export type Ledger = { label: string; value: string };
-export type Session = {
-  name: string;
-  sub: string;
-  dot: string;
-  cost: string;
-  costColor: string;
-  objTag: string;
-  calls: string;
-  goal: string;
-  trace: TraceRow[];
-  result: string;
-  ledger: Ledger[];
-  policyVer: string;
-  policy: string[];
-  summary: string;
-  beforeLabel: string;
-  beforeW: string;
-  afterLabel: string;
-  afterW: string;
+/** A run of styled text inside one terminal line. */
+export type Seg = { t: string; c: string; b?: boolean; i?: boolean };
+
+/** One line of harness output. `tier`/`model`/`effort` drive the statusline. */
+export type Row = {
+  bullet: string;
+  label?: string;
+  text: string;
+  meta?: string;
+  sub?: string;
+  /** The user's own turn — starts hard left, no label column. */
+  user?: boolean;
+  /** A reasoning line — italic, amber bullet. */
+  think?: boolean;
+  ok?: boolean;
+  tier: Tier;
+  model: string;
+  effort: string;
 };
 
-export const SESSIONS: Session[] = [
-  {
-    name: "bitrouter",
-    sub: "pi-agent · acp",
-    dot: "var(--z-blue)",
-    cost: "live",
-    costColor: "var(--z-blue)",
-    objTag: "optimize · self-tune",
-    calls: "3 sessions",
-    goal: "watch traces across every session → rewrite the shared policy",
-    trace: [
-      { kind: "watch", action: "ingest traces", target: "3 sessions", meta: "2,480 calls" },
-      { kind: "score", action: "complexity + quality", target: "per call", meta: "floor 0.92" },
-      { kind: "model", action: "demote routine", target: "open pool", meta: "2,200 calls" },
-      { kind: "tool", action: "prune", target: "semantic-search", meta: "used 0/5" },
-      { kind: "agent", action: "bias harness", target: "opencode", meta: "+12%" },
-      { kind: "write", action: "commit policy", target: "policy.yaml", meta: "→ v0.7" },
-    ],
-    result: "✓ policy v0.7 · −78% cost avg · quality held 0.96",
-    ledger: [
-      { label: "MODELS", value: "12 registered · 3 in rotation" },
-      { label: "MCP", value: "6 servers · 1 pruned this lap" },
-      { label: "SKILLS", value: "9 registered · 5 active" },
-      { label: "HARNESS", value: "opencode · hermes-agent · openclaw · acp" },
-    ],
-    policyVer: "v0.7",
-    policy: [
-      "policy:",
-      "  scope: global",
-      "  objective: per_session",
-      "tune:",
-      "  every: run   # closed loop",
-      "  fold_traces: true",
-      "  prune_unused_tools: true",
-      "──────────────────────",
-      "controls 3 sessions · 2,480 calls",
-    ],
-    summary: "−78% cost avg · quality held 0.96",
-    beforeLabel: "all-frontier · $3.60 avg",
-    beforeW: "100%",
-    afterLabel: "BitRouter · $0.79 avg",
-    afterW: "22%",
-  },
-  {
-    name: "coding-agent",
-    sub: "opencode · acp",
-    dot: "var(--z-green)",
-    cost: "$0.43",
-    costColor: "var(--z-cost)",
-    objTag: "optimize · cost",
-    calls: "2,400 calls",
-    goal: "200-file refactor — route routine edits to open models",
-    trace: [
-      { kind: "model", action: "fix auth.py test", target: "qwen/qwen-3.7", meta: "$0.002 · 82ms" },
-      { kind: "tool", action: "grep repo", target: "github-mcp", meta: "$0.000 · 14ms" },
-      { kind: "skill", action: "apply-diff", target: "invoked", meta: "8ms" },
-      { kind: "model", action: "design migration", target: "claude-opus-4.8", meta: "$0.021 · 140ms", esc: true },
-      { kind: "agent", action: "refactor task", target: "opencode", meta: "ok · 2 hops" },
-      { kind: "model", action: "format edits", target: "minimax/m3", meta: "$0.001 · 61ms" },
-    ],
-    result: "✓ $0.43/run · −80% vs all-frontier · tests green",
-    ledger: [
-      { label: "MODELS", value: "qwen-3.7 78% · minimax 15% · opus 7%↑" },
-      { label: "MCP", value: "github 412 · filesystem 1.2k" },
-      { label: "SKILLS", value: "apply-diff · run-tests" },
-      { label: "HARNESS", value: "opencode · acp" },
-    ],
-    policyVer: "v0.7",
-    policy: [
-      "route:",
-      "  optimize: cost   # objective",
-      "  quality_floor: 0.92",
-      "open_pool:",
-      "  - qwen/qwen-3.7",
-      "  - minimax/m3",
-      "escalate_when: cx > 0.55",
-      "──────────────────────",
-      "$0.43/run · p50 88ms · q 0.96",
-    ],
-    summary: "$0.43/run · p50 88ms · quality 0.96",
-    beforeLabel: "all-frontier · $2.10",
-    beforeW: "100%",
-    afterLabel: "BitRouter · $0.43",
-    afterW: "20%",
-  },
-  {
-    name: "research-agent",
-    sub: "hermes-agent · acp",
-    dot: "var(--z-blue)",
-    cost: "$0.18",
-    costColor: "var(--z-cost)",
-    objTag: "optimize · quality",
-    calls: "320 calls",
-    goal: "read 40 filings → reason → answer, hold the 0.92 floor",
-    trace: [
-      { kind: "tool", action: "fetch 10-K", target: "postgres-mcp", meta: "$0.000 · 22ms" },
-      { kind: "skill", action: "pdf-extract", target: "invoked", meta: "210ms" },
-      { kind: "model", action: "extract tables", target: "qwen/qwen-3.7", meta: "$0.003 · 96ms" },
-      { kind: "model", action: "reason: guidance", target: "claude-opus-4.8", meta: "$0.024 · 180ms", esc: true },
-      { kind: "skill", action: "cite-check", target: "invoked", meta: "12ms" },
-      { kind: "model", action: "verify answer", target: "deepseek-v4", meta: "$0.002 · 88ms" },
-    ],
-    result: "✓ 99% correct · +11 pts vs all-open · floor held",
-    ledger: [
-      { label: "MODELS", value: "qwen-3.7 68% · opus 24%↑ · deepseek 8%" },
-      { label: "MCP", value: "postgres 88 · fetch 40" },
-      { label: "SKILLS", value: "pdf-extract · cite-check" },
-      { label: "HARNESS", value: "hermes-agent · acp" },
-    ],
-    policyVer: "v0.4",
-    policy: [
-      "route:",
-      "  optimize: quality  # objective",
-      "  quality_floor: 0.92",
-      "verify: true",
-      "escalate_when: judgment",
-      "keep_open: read · extract",
-      "──────────────────────",
-      "99% correct · p50 120ms · q 0.94",
-    ],
-    summary: "99% correct · +11 pts vs all-open",
-    beforeLabel: "all-open · 88% correct",
-    beforeW: "89%",
-    afterLabel: "BitRouter · 99% correct",
-    afterW: "100%",
-  },
-  {
-    name: "support-bot",
-    sub: "openclaw · acp",
-    dot: "var(--z-amber)",
-    cost: "$0.04",
-    costColor: "var(--z-cost)",
-    objTag: "optimize · latency",
-    calls: "40 calls/session",
-    goal: "live chat + tools — fastest model that still clears the bar",
-    trace: [
-      { kind: "cache", action: "hot-path hit", target: "cache", meta: "3ms" },
-      { kind: "model", action: "reply", target: "gemini-3.5-flash", meta: "$0.001 · 48ms" },
-      { kind: "tool", action: "lookup order", target: "postgres-mcp", meta: "$0.000 · 19ms" },
-      { kind: "skill", action: "refund-policy", target: "invoked", meta: "9ms" },
-      { kind: "model", action: "tricky refund", target: "claude-opus-4.8", meta: "$0.018 · 160ms", esc: true },
-      { kind: "model", action: "reply", target: "qwen-3.7-turbo", meta: "$0.001 · 44ms" },
-    ],
-    result: "✓ p50 61ms · −92% vs all-frontier · floor held",
-    ledger: [
-      { label: "MODELS", value: "gemini-flash 65% · qwen-turbo 28% · opus 7%↑" },
-      { label: "MCP", value: "postgres 30 · stripe 6" },
-      { label: "SKILLS", value: "refund-policy · order-lookup" },
-      { label: "HARNESS", value: "openclaw · acp" },
-    ],
-    policyVer: "v0.9",
-    policy: [
-      "route:",
-      "  optimize: latency  # objective",
-      "  max_latency_p95: 200ms",
-      "  quality_floor: 0.92",
-      "cache: hot_path",
-      "fallback: qwen-3.7-turbo",
-      "──────────────────────",
-      "p50 61ms · −92% · q 0.94",
-    ],
-    summary: "p50 61ms · −92% latency · quality 0.94",
-    beforeLabel: "all-frontier · 720ms",
-    beforeW: "100%",
-    afterLabel: "BitRouter · 61ms",
-    afterW: "9%",
-  },
+export type InputWidget = {
+  /** A hairline rule above the input (claude, pi, dsh). */
+  rule?: boolean;
+  ruleBelow?: boolean;
+  /** A filled input row (codex, opencode) rather than a bare prompt line. */
+  boxed?: boolean;
+  boxBg?: string;
+  /** opencode's blue left bar. */
+  bar?: string;
+  glyph: string;
+  hint: string;
+};
+
+export type Harness = {
+  id: string;
+  /** Binary name, shown in the tab. */
+  tab: string;
+  cwd: string;
+  /** macOS Terminal window title. */
+  title: string;
+  bg: string;
+  accent: string;
+  mascot?: boolean;
+  boxedHeader?: boolean;
+  /** Shell lines typed before the harness starts. */
+  boot: string[];
+  header: Seg[][];
+  notes: Seg[][];
+  /** Width of the label column, 0 for harnesses that don't have one. */
+  labelW: number;
+  working: string;
+  rows: Row[];
+  input: InputWidget;
+  after: Seg[][];
+  afterRight?: Seg[][];
+  /** codex prints the serving model under its input… */
+  afterLive?: boolean;
+  /** …pi prints it bottom-right, where it normally prints `unknown`. */
+  afterLiveRight?: boolean;
+  ladder: { name: Tier; value: string }[];
+  workflow: string;
+  tierShape: string;
+};
+
+/** Claude Code's pixel mascot: 7×7, salmon face, two eyes, three feet. */
+export const MASCOT = [
+  "0111110",
+  "1111111",
+  "1011101",
+  "1111111",
+  "1111111",
+  "0000000",
+  "1010100",
 ];
 
-export const FOOTER_STAT = "4 sessions · −78% cost avg · q 0.96";
+export const SHELL_PROMPT = "[dev@mbp ~ %";
+
+export const HARNESSES: Harness[] = [
+  {
+    id: "claude-code",
+    tab: "claude",
+    cwd: "~/work/api",
+    title: "dev — api — node ~/.local/bin/claude — 100×31",
+    bg: "#1c1c1c",
+    accent: TERM.claude,
+    mascot: true,
+    boot: ["export ANTHROPIC_MODEL=bitrouter/auto", "claude"],
+    header: [
+      [{ t: "Claude Code ", c: TERM.white, b: true }, { t: "v2.1.175", c: TERM.dim }],
+      [
+        { t: "bitrouter/auto ", c: TERM.body },
+        { t: "(5 tiers)", c: TERM.dim },
+        { t: " · ~/work/api", c: TERM.body },
+      ],
+      [{ t: "1 working · 0 awaiting input · 0 completed", c: TERM.dim }],
+    ],
+    notes: [],
+    labelW: 62,
+    working: "Investigating…",
+    rows: [
+      { bullet: "❯", text: "the auth test is flaky — find out why", user: true, tier: "low", model: "claude-opus-4.8", effort: "think off" },
+      { bullet: "·", label: "read", text: "tests/test_auth.py", meta: "84 lines", tier: "low", model: "claude-opus-4.8", effort: "think off" },
+      { bullet: "·", label: "search", text: "verify_jwt", meta: "12 files", tier: "low", model: "claude-opus-4.8", effort: "think off" },
+      { bullet: "·", label: "read", text: "auth/jwt.py", meta: "210 lines", tier: "medium", model: "claude-opus-4.8", effort: "think 4k" },
+      { bullet: "✳", label: "reason", text: "clock skew on token refresh", think: true, tier: "high", model: "claude-opus-4.8", effort: "think 12k" },
+      { bullet: "✳", label: "reason", text: "tracing the async refresh path", think: true, tier: "max", model: "claude-opus-4.8", effort: "think 64k" },
+      { bullet: "·", label: "edit", text: "auth/jwt.py", meta: "+1 −1", tier: "medium", model: "claude-opus-4.8", effort: "think 4k" },
+      { bullet: "·", label: "bash", text: "pytest tests/test_auth.py -q", meta: "14 passed", ok: true, tier: "low", model: "claude-opus-4.8", effort: "think off" },
+    ],
+    input: { rule: true, glyph: "❯", hint: "describe a task for a new session" },
+    after: [[{ t: "? for shortcuts", c: TERM.faint }], []],
+    ladder: [
+      { name: "low", value: "claude-opus-4.8 · think off" },
+      { name: "medium", value: "claude-opus-4.8 · think 4k" },
+      { name: "high", value: "claude-opus-4.8 · think 12k" },
+      { name: "extra", value: "claude-opus-4.8 · think 32k" },
+      { name: "max", value: "claude-opus-4.8 · think 64k" },
+    ],
+    workflow: "Debugging",
+    tierShape: "one model, five efforts",
+  },
+  {
+    id: "codex",
+    tab: "codex",
+    cwd: "~/work/payments",
+    title: "dev — payments — node ~/.local/bin/codex — 111×37",
+    bg: "#0d0d0d",
+    accent: TERM.cyan,
+    boxedHeader: true,
+    boot: ["codex"],
+    header: [
+      [
+        { t: ">_ ", c: TERM.dim },
+        { t: "OpenAI Codex ", c: TERM.white, b: true },
+        { t: "(v0.147.0)", c: TERM.dim },
+      ],
+      [],
+      [
+        { t: "model:     ", c: TERM.dim },
+        { t: "bitrouter/auto auto", c: TERM.bright },
+        { t: "     /model", c: TERM.cyan },
+        { t: " to change", c: TERM.dim },
+      ],
+      [{ t: "directory: ", c: TERM.dim }, { t: "~/work/payments", c: TERM.bright }],
+    ],
+    notes: [
+      [
+        { t: "  Tip: ", c: TERM.bright, b: true },
+        { t: "New ", c: TERM.body, i: true },
+        { t: "Use ", c: TERM.body },
+        { t: "/fast", c: TERM.bright, b: true },
+        { t: " to enable our fastest inference with increased plan usage.", c: TERM.body },
+      ],
+    ],
+    labelW: 0,
+    working: "Working…",
+    rows: [
+      { bullet: "›", text: "scaffold the payments module from interfaces.ts", user: true, tier: "low", model: "openai/gpt-5.4", effort: "—" },
+      { bullet: "•", text: "Read interfaces.ts", sub: "  └ 3 exported interfaces", tier: "low", model: "openai/gpt-5.4", effort: "—" },
+      { bullet: "•", text: "Generated types and stubs", tier: "medium", model: "openai/gpt-5.4", effort: "—" },
+      { bullet: "•", text: "Thought about retry semantics", think: true, tier: "high", model: "openai/gpt-5.5", effort: "medium" },
+      { bullet: "•", text: "Reasoned about idempotent refunds", think: true, tier: "max", model: "openai/gpt-5.5", effort: "high" },
+      { bullet: "•", text: "Wrote handlers/ · 6 files", sub: "  └ +412 −0", tier: "medium", model: "openai/gpt-5.4", effort: "—" },
+      { bullet: "•", text: "Ran pnpm lint --fix", sub: "  └ clean", ok: true, tier: "low", model: "openai/gpt-5.4", effort: "—" },
+    ],
+    input: { boxed: true, boxBg: "#2b2b2b", glyph: "›", hint: "find and fix a bug in @filename" },
+    after: [],
+    afterLive: true,
+    ladder: [
+      { name: "low", value: "openai/gpt-5.4" },
+      { name: "medium", value: "openai/gpt-5.4" },
+      { name: "high", value: "openai/gpt-5.5 · medium" },
+      { name: "extra", value: "openai/gpt-5.5 · high" },
+      { name: "max", value: "openai/gpt-5.5 · high" },
+    ],
+    workflow: "Code generation",
+    tierShape: "two models on one ladder",
+  },
+  {
+    id: "opencode",
+    tab: "opencode",
+    cwd: "~/work/monorepo",
+    title: "dev — OpenCode — opencode — 111×37",
+    bg: "#0a0a0a",
+    accent: TERM.blue,
+    boot: ["opencode"],
+    header: [
+      [{ t: "opencode", c: TERM.white, b: true }, { t: "   ~/work/monorepo   ⑂ main", c: TERM.faint }],
+    ],
+    notes: [
+      [
+        { t: "  ● ", c: "#e5a05a" },
+        { t: "Tip ", c: "#e5a05a", b: true },
+        { t: "Press ", c: TERM.body },
+        { t: "ctrl+c", c: TERM.bright, b: true },
+        { t: " when typing to clear the input field", c: TERM.body },
+      ],
+    ],
+    labelW: 0,
+    working: "Scanning…",
+    rows: [
+      { bullet: "▍", text: "find every call site of the legacy client", user: true, tier: "low", model: "qwen/qwen3.6-flash", effort: "—" },
+      { bullet: " ", text: "glob **/*.ts", meta: "1,800 files", tier: "low", model: "qwen/qwen3.6-flash", effort: "—" },
+      { bullet: " ", text: "classify imports", meta: "212 candidates", tier: "low", model: "qwen/qwen3.6-flash", effort: "—" },
+      { bullet: " ", text: "read 40 candidates", tier: "medium", model: "qwen/qwen3.7-plus", effort: "—" },
+      { bullet: " ", text: "rank true call sites", meta: "61 confirmed", tier: "high", model: "minimax/minimax-m3", effort: "—" },
+      { bullet: " ", text: "resolve dynamic dispatch", tier: "extra", model: "deepseek/deepseek-v4-pro", effort: "—" },
+      { bullet: " ", text: "write migration plan", meta: "MIGRATION.md", ok: true, tier: "max", model: "claude-opus-4.8", effort: "—" },
+    ],
+    input: {
+      boxed: true,
+      boxBg: "#1a1a1a",
+      bar: "#3b82f6",
+      glyph: "",
+      hint: 'Ask anything...  "What is the tech stack of this project?"',
+    },
+    after: [
+      [
+        { t: "tab", c: TERM.bright, b: true },
+        { t: " agents   ", c: TERM.faint },
+        { t: "ctrl+p", c: TERM.bright, b: true },
+        { t: " commands", c: TERM.faint },
+      ],
+      [{ t: "~", c: TERM.faint }],
+    ],
+    afterRight: [[], [{ t: "1.18.3", c: TERM.faint }]],
+    ladder: [
+      { name: "low", value: "qwen/qwen3.6-flash" },
+      { name: "medium", value: "qwen/qwen3.7-plus" },
+      { name: "high", value: "minimax/minimax-m3" },
+      { name: "extra", value: "deepseek/deepseek-v4-pro" },
+      { name: "max", value: "anthropic/claude-opus-4.8" },
+    ],
+    workflow: "Repo scanning",
+    tierShape: "a different model per rung",
+  },
+  {
+    id: "pi",
+    tab: "pi",
+    cwd: "~/work/analytics",
+    title: "dev — π - pi — 111×37",
+    bg: "#000000",
+    accent: TERM.cyan,
+    boot: ["pi"],
+    header: [
+      [{ t: "  pi ", c: TERM.cyan, b: true }, { t: "v0.80.10", c: TERM.dim }],
+      [{ t: "  escape interrupt · ctrl+c/ctrl+d clear/exit · / commands · ! bash · ctrl+o more", c: TERM.faint }],
+    ],
+    notes: [
+      [{ t: "  [Skills]", c: TERM.amber }],
+      [{ t: "    bitrouter, find-skills, twitter", c: TERM.dim }],
+    ],
+    labelW: 0,
+    working: "thinking",
+    rows: [
+      { bullet: "❯", text: "this report query takes 40s — fix it", user: true, tier: "low", model: "kimi-k2.7-code", effort: "—" },
+      { bullet: "·", text: "describe schema", meta: "11 tables", tier: "low", model: "kimi-k2.7-code", effort: "—" },
+      { bullet: "·", text: "read EXPLAIN output", tier: "medium", model: "kimi-k2.7-code", effort: "—" },
+      { bullet: "·", text: "rewrite the join", tier: "high", model: "openai/gpt-5.5", effort: "medium" },
+      { bullet: "·", text: "cost the index tradeoff", tier: "extra", model: "openai/gpt-5.5", effort: "high" },
+      { bullet: "·", text: "write the migration", meta: "0004_report_idx.sql", tier: "max", model: "claude-opus-4.8", effort: "—" },
+      { bullet: "·", text: "generate rollback", meta: "40s → 1.1s", ok: true, tier: "low", model: "kimi-k2.7-code", effort: "—" },
+    ],
+    input: { rule: true, ruleBelow: true, glyph: "", hint: "" },
+    after: [[{ t: "~", c: TERM.faint }], [{ t: "0.0%/0 (auto)", c: TERM.dim }]],
+    afterLiveRight: true,
+    ladder: [
+      { name: "low", value: "moonshotai/kimi-k2.7-code" },
+      { name: "medium", value: "moonshotai/kimi-k2.7-code" },
+      { name: "high", value: "openai/gpt-5.5 · medium" },
+      { name: "extra", value: "openai/gpt-5.5 · high" },
+      { name: "max", value: "anthropic/claude-opus-4.8" },
+    ],
+    workflow: "SQL & database",
+    tierShape: "three models, five rungs",
+  },
+  {
+    // UNVERIFIED CHROME. No screenshot of dsh exists, unlike the four above, so
+    // the header, prefixes and input widget here are a plain best guess rather
+    // than a transcription. Replace once someone has run it.
+    id: "deepseek-harness",
+    tab: "dsh",
+    cwd: "~/work/console",
+    title: "dev — console — dsh — 111×37",
+    bg: "#0d0d0d",
+    accent: TERM.blue,
+    boot: ["dsh"],
+    header: [
+      [{ t: "[dsh] ", c: TERM.blue, b: true }, { t: "deepseek-harness · developer preview", c: TERM.body }],
+      [{ t: "  plugins: llm · tools · log     provider: bitrouter", c: TERM.faint }],
+    ],
+    notes: [],
+    labelW: 0,
+    working: "running",
+    rows: [
+      { bullet: "›", text: "rebuild the settings panel", user: true, tier: "low", model: "deepseek-v4-pro", effort: "off" },
+      { bullet: "·", text: "[llm] read design tokens", tier: "low", model: "deepseek-v4-pro", effort: "off" },
+      { bullet: "·", text: "[llm] lay out the form grid", tier: "low", model: "deepseek-v4-pro", effort: "off" },
+      { bullet: "·", text: "[tools] write SettingsPanel.tsx", meta: "+186 −40", tier: "medium", model: "deepseek-v4-pro", effort: "low" },
+      { bullet: "·", text: "[llm] validation state machine", think: true, tier: "high", model: "deepseek-v4-pro", effort: "medium" },
+      { bullet: "·", text: "[llm] optimistic save and revert", think: true, tier: "extra", model: "deepseek-v4-pro", effort: "high" },
+      { bullet: "·", text: "[log] done · 4 files changed", ok: true, tier: "low", model: "deepseek-v4-pro", effort: "off" },
+    ],
+    input: { rule: true, glyph: "›", hint: "message" },
+    after: [[{ t: "⌃D exit", c: TERM.faint }], []],
+    ladder: [
+      { name: "low", value: "deepseek-v4-pro · off" },
+      { name: "medium", value: "deepseek-v4-pro · low" },
+      { name: "high", value: "deepseek-v4-pro · medium" },
+      { name: "extra", value: "deepseek-v4-pro · high" },
+      { name: "max", value: "deepseek-v4-pro · high" },
+    ],
+    workflow: "Frontend & UI",
+    tierShape: "declared efforts, routed per step",
+  },
+];
 
 // ── Trusted / metrics ───────────────────────────────────────────────────────
 export const TRUSTED = ["Anthropic", "Vercel", "Ramp", "Linear", "Sourcegraph", "Retool"];

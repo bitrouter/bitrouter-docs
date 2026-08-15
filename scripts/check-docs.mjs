@@ -21,15 +21,16 @@ import { COMPONENT_WHITELIST } from "../lib/docs-sync/constants.mjs";
 
 // Hand-authored sections, relative to content/docs. The Documentation tab's
 // sections live under the `(guide)` folder group, which fumadocs strips from
-// the URL — `(guide)/overview/` is still served at /docs/overview. The
-// Integrations and Guides tabs are top-level root folders, so they have no
-// group prefix.
+// the URL — `(guide)/overview/` is still served at /docs/overview, and the
+// harness recipes in `(guide)/integrations/` keep their /docs/integrations/*
+// URLs from when Integrations was its own tab. The Guides tab is a top-level
+// root folder, so it has no group prefix.
 const SECTIONS = [
   "(guide)/overview",
   "(guide)/usage",
+  "(guide)/integrations",
   "(guide)/models-and-routing",
   "(guide)/evals-and-observability",
-  "integrations",
   "guides",
 ];
 const ROOT = "content/docs";

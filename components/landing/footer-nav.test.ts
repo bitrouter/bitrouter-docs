@@ -22,7 +22,7 @@ describe("buildFooterColumns", () => {
       "/docs/integrations/codex",
       "/docs/integrations/opencode",
       "/docs/integrations/pi",
-      "/docs/integrations",
+      "/docs/integrations/deepseek-harness",
     ]);
   });
   it("Integrations no longer points at the retired per-agent routes", () => {
@@ -31,12 +31,12 @@ describe("buildFooterColumns", () => {
     const int = buildFooterColumns().find((c) => c.title === "Integrations")!;
     for (const l of int.links) expect(l.href.startsWith("/docs/")).toBe(true);
   });
-  it("Integrations surfaces four harnesses plus a More escape hatch", () => {
+  it("Integrations names every documented harness, no More escape hatch", () => {
     const int = buildFooterColumns().find((c) => c.title === "Integrations")!;
     expect(int.links.map((l) => l.label)).toEqual([
-      "Claude Code", "Codex", "OpenCode", "Pi", "More",
+      "Claude Code", "Codex", "OpenCode", "Pi", "DeepSeek Harness",
     ]);
-    expect(int.links.at(-1)!.href).toBe("/docs/integrations");
+    expect(int.links.map((l) => l.label)).not.toContain("More");
   });
   it("Developers lists the docs entry points, no Integrations", () => {
     const dev = buildFooterColumns().find((c) => c.title === "Developers")!;

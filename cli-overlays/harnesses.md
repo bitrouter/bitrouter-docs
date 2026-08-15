@@ -10,7 +10,7 @@ Three ways to run a harness on top of the daemon: `launch` for an interactive se
 bitrouter launch claude
 ```
 
-Points the harness's API base URL at the local daemon — the same wiring the [Integrations](/docs/integrations) recipes do by hand — and prints a session spend summary on exit.
+Points the harness's API base URL at the local daemon — the same wiring the [Integrations](/docs/integrations/harnesses) recipes do by hand — and prints a session spend summary on exit.
 
 ## @spawn
 

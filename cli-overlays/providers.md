@@ -2,7 +2,7 @@
 title: Providers
 ---
 
-Two ways a provider becomes available: **BYOK** (its API key in the environment — see [BYOK](/docs/models-and-routing/bring-your-own-provider)) and **`providers login`** (OAuth against subscription providers such as Claude or Codex subscriptions — see [Integrations](/docs/integrations)). `providers list` shows the catalog and which providers are active in the current config.
+Two ways a provider becomes available: **BYOK** (its API key in the environment — see [BYOK](/docs/models-and-routing/bring-your-own-provider)) and **`providers login`** (OAuth against subscription providers such as Claude or Codex subscriptions — see [Model sources](/docs/guides/models)). `providers list` shows the catalog and which providers are active in the current config.
 
 ## @providers login
 

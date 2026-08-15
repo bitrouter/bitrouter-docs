@@ -1,0 +1,13 @@
+{
+  "title": "Integrations",
+  "icon": "Blocks",
+  "collapsible": false,
+  "pages": [
+    "harnesses",
+    "claude-code",
+    "codex",
+    "opencode",
+    "deepseek-harness",
+    "pi"
+  ]
+}

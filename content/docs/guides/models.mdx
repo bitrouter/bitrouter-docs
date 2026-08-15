@@ -8,11 +8,11 @@ A **model source** is wherever your tokens actually come from. BitRouter puts ev
 Set one up:
 
 <Cards>
-  <Card title="Claude subscription" href="/docs/integrations/claude-subscription" description="Route your Claude Pro/Max plan — OAuth, no API key" />
-  <Card title="Codex subscription" href="/docs/integrations/codex-subscription" description="Route your ChatGPT plan through the Codex backend — OAuth" />
-  <Card title="Ollama" href="/docs/integrations/ollama" description="Run open models locally · :11434 · no key" />
-  <Card title="vLLM" href="/docs/integrations/vllm" description="High-throughput GPU serving · :8000" />
-  <Card title="Unsloth" href="/docs/integrations/unsloth" description="Run or fine-tune on your own machine · :8888" />
+  <Card title="Claude subscription" href="/docs/guides/claude-subscription" description="Route your Claude Pro/Max plan — OAuth, no API key" />
+  <Card title="Codex subscription" href="/docs/guides/codex-subscription" description="Route your ChatGPT plan through the Codex backend — OAuth" />
+  <Card title="Ollama" href="/docs/guides/ollama" description="Run open models locally · :11434 · no key" />
+  <Card title="vLLM" href="/docs/guides/vllm" description="High-throughput GPU serving · :8000" />
+  <Card title="Unsloth" href="/docs/guides/unsloth" description="Run or fine-tune on your own machine · :8888" />
 </Cards>
 
 ## How a source is wired
@@ -81,4 +81,4 @@ The bare model name also works — BitRouter auto-cascades it to whichever activ
 **Mix sources freely.** Declare a [virtual model](/docs/models-and-routing/virtual-model) whose endpoints list a local source first and a hosted one second: requests run on your own hardware for free and fail over to the hosted model on error or overload — one model name, automatic failover.
 </Callout>
 
-For the concepts behind this — provider selection, fallback, and registry detection — see [Models](/docs/overview/supported-models#how-model-ids-work). To serve models yourself, see the local-server integrations — [Ollama](/docs/integrations/ollama), [vLLM](/docs/integrations/vllm), and [Unsloth](/docs/integrations/unsloth) — or [bring your own model](/docs/models-and-routing/bring-your-own-model) for the general shape.
+For the concepts behind this — provider selection, fallback, and registry detection — see [Models](/docs/overview/supported-models#how-model-ids-work). To serve models yourself, see the local-server integrations — [Ollama](/docs/guides/ollama), [vLLM](/docs/guides/vllm), and [Unsloth](/docs/guides/unsloth) — or [bring your own model](/docs/models-and-routing/bring-your-own-model) for the general shape.

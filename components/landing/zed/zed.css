@@ -279,6 +279,78 @@
   animation: zed-blink 1.05s steps(1) infinite;
 }
 
+/* ── Hero terminal (tui-demo) ──
+   Two layouts. At full size the window is a faithful 920px macOS terminal. The
+   interior's real floor is ~410px (the widest transcript row) — everything
+   above that is chrome, so below `--tui-narrow` the chrome reflows instead of
+   the window shrinking: tabs drop their cwd, the statusline stacks, and the
+   decorative harness output (pi's keybind line, codex's tip) truncates.
+   tui-demo.tsx then scales whatever is left to fit its scroller. */
+.zed-tui-fit {
+  min-width: 920px;
+  max-width: 1000px;
+}
+.zed-tui-body {
+  height: 452px;
+}
+.zed-tui-status {
+  height: 28px;
+}
+@media (max-width: 699px) {
+  .zed-tui-fit {
+    min-width: 380px;
+    max-width: 560px;
+  }
+  /* No height override here: the reflow is horizontal only, so the transcript
+     still needs the full 452px. Shrinking it collides the last rows with the
+     harness's input widget. */
+  .zed-tui-cwd {
+    display: none;
+  }
+  /* Size tabs to their binary name instead of five equal shares, which is too
+     narrow for `opencode`; they still grow to fill the bar. */
+  .zed-tui-tab {
+    flex: 1 1 auto !important;
+    padding-left: 9px !important;
+    padding-right: 9px !important;
+  }
+  .zed-tui-line {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* Wide enough for `search`, the longest label. */
+  .zed-tui-label {
+    width: 48px !important;
+  }
+  /* Three explicit rows rather than free wrapping, which stranded the `│`
+     separators at the end of a line: id + switch count, then the rungs, then
+     the serving model. */
+  .zed-tui-status {
+    height: auto;
+    flex-wrap: wrap;
+    padding-top: 6px;
+    padding-bottom: 7px;
+    row-gap: 2px;
+  }
+  .zed-tui-sep {
+    display: none;
+  }
+  .zed-tui-id {
+    order: 0;
+  }
+  .zed-tui-switches {
+    order: 0;
+  }
+  .zed-tui-rungs {
+    order: 1;
+    flex-basis: 100%;
+  }
+  .zed-tui-model {
+    order: 2;
+    flex-basis: 100%;
+  }
+}
+
 /* ── Blinking cursor ── */
 .zed-ck {
   display: inline-block;
@@ -286,6 +358,15 @@
   height: 1.05em;
   transform: translateY(0.16em);
   background: var(--z-blue);
+  animation: zed-blink 1.05s steps(1) infinite;
+}
+/* Block caret inside the hero terminal. Colour is set per call site, because
+   the shell caret and a harness's input caret are different greys. */
+.zed-tui-caret {
+  display: inline-block;
+  width: 0.6em;
+  height: 1.02em;
+  transform: translateY(0.16em);
   animation: zed-blink 1.05s steps(1) infinite;
 }
 @keyframes zed-blink {
@@ -342,7 +423,8 @@
   .zed-marq-track {
     animation: none;
   }
-  .zed-ck {
+  .zed-ck,
+  .zed-tui-caret {
     animation: none;
   }
 }

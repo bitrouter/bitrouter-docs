@@ -11,7 +11,7 @@
         "openai",
         "responses"
       ],
-      "models": 9
+      "models": 11
     },
     {
       "id": "alibaba_cn",
@@ -157,7 +157,7 @@
       "protocols": [
         "openai"
       ],
-      "models": 19
+      "models": 20
     },
     {
       "id": "gmicloud",
@@ -178,7 +178,7 @@
         "google",
         "openai"
       ],
-      "models": 4
+      "models": 5
     },
     {
       "id": "google-ai",
@@ -445,7 +445,7 @@
       "protocols": [
         "openai"
       ],
-      "models": 4
+      "models": 5
     },
     {
       "id": "vertex",
@@ -466,7 +466,7 @@
         "openai",
         "responses"
       ],
-      "models": 5
+      "models": 6
     },
     {
       "id": "xiaomi",

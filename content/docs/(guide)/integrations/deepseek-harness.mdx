@@ -1,0 +1,116 @@
+---
+title: DeepSeek Harness
+description: Route DeepSeek Harness (dsh) through BitRouter by declaring it as a custom OpenAI-compatible provider route.
+---
+
+DeepSeek Harness (`dsh`) is DeepSeek's open-source agent harness, built on the [Cordis](https://github.com/cordiverse/cordis) plugin framework — the model adapter, tool registry, session log, and the agent loop itself are all swappable plugins. Its LLM plugin takes hand-declared OpenAI-compatible routes as configuration rather than code, so BitRouter goes in as one provider and every session runs on the whole [registry](/docs/overview/supported-models#how-model-ids-work).
+
+<Callout type="warning">
+DeepSeek Harness is in **developer preview** and ships breaking changes between releases. Check the field names below against the version you installed.
+</Callout>
+
+## Prerequisites
+
+- BitRouter running — local proxy at `http://127.0.0.1:4356`, or [BitRouter Cloud](/docs/overview/quickstart) at `https://api.bitrouter.ai`.
+- Node.js, then start the Web UI:
+
+  ```bash
+  npx @deepseek-ai/dsh web
+  ```
+
+  It serves at `http://127.0.0.1:3080`, and the directory you launched from becomes the default workspace root.
+
+## Point dsh at BitRouter
+
+BitRouter isn't in the harness's installed provider catalog, so it goes in as a **custom provider** — a route that declares its own protocol, endpoint, and model list. Configure it from the Web UI or write it into settings directly; both land in the same file.
+
+### From the Web UI
+
+Open **Settings → Models** and choose **Add a custom provider**:
+
+| Field | Value |
+| --- | --- |
+| Provider ID | `bitrouter` (lowercase) |
+| Base URL | `http://127.0.0.1:4356/v1` |
+| API protocol | `openai-completions` |
+| API key | Any placeholder for the local proxy; your BitRouter key for Cloud |
+
+Under **Model catalog**, **Fetch available models** calls `GET /v1/models` against the base URL you typed — BitRouter answers that with its whole catalog, so you can pick the ids you want instead of typing them. Select at least one; a custom provider isn't storable without a model.
+
+<Callout type="info">
+**The Provider ID is permanent.** Requests, saved sessions, model defaults, and credential references all key off it — renaming means adding a new provider and deleting the old one. Everything else (display name, base URL, protocol, credential, models) stays editable.
+</Callout>
+
+Keys saved this way are write-only: they land in `$DSH_HOME/.credentials.yaml` and the page only ever gets a redacted descriptor back.
+
+### From `settings.yaml`
+
+The same route can be written by hand in `~/.dsh/settings.yaml` (or `$DSH_HOME/settings.yaml`). The LLM adapter owns the `llm-pi-ai` section, and providers are a dict keyed by route id:
+
+```yaml
+llm-pi-ai:
+  providers:
+    bitrouter:
+      displayName: BitRouter
+      api: openai-completions
+      baseURL: http://127.0.0.1:4356/v1
+      models:
+        - id: openai/gpt-4o
+        - id: anthropic/claude-sonnet-4-6
+        - id: deepseek/deepseek-v4-pro
+```
+
+A route the catalog doesn't ship must declare `api`, `baseURL`, and a non-empty `models` list — an incomplete profile is refused where it's written rather than stored and disabled later. Edits take effect on the next request; the server doesn't need a restart.
+
+<Callout type="info">
+For **Cloud**, set `baseURL` to `https://api.bitrouter.ai/v1` and give the route a credential. `settings.yaml` never holds the key itself — only a reference: add `apiKeyEnv: BITROUTER_API_KEY` and export that variable, or save the literal key through **Settings → Models**. The local proxy needs no key at all, so a hand-written local route can leave the credential out entirely.
+</Callout>
+
+## Pick a model
+
+Each `models[].id` is a registry id in `provider/model` form, optionally with a `:cost` / `:latency` variant. See [Models](/docs/overview/supported-models#how-model-ids-work).
+
+The list you declare *is* the route — a model that isn't in it fails with `UNKNOWN_MODEL` before any request goes out, so add ids here as you start using them. Configured models show up in the Web UI model picker, and picking one also makes it the default for new sessions; a session that has already sent a request keeps the model recorded in its own log.
+
+Models the route doesn't size fall back to the route's `defaultContextWindow` (262,144) and `defaultMaxTokens` (32,768). Correct either per model when that guess is wrong:
+
+```yaml
+      models:
+        - id: anthropic/claude-sonnet-4-6
+          contextWindow: 200000
+          maxTokens: 64000
+```
+
+## Reasoning models
+
+A hand-declared model reasons only if you say it does. Give it `reasoningEfforts` — keys are the levels the picker offers, values the spelling sent on the wire (`off:` with no value means "offer Off, send nothing"):
+
+```yaml
+      models:
+        - id: deepseek/deepseek-v4-pro
+          reasoningEfforts:
+            off:
+            high: high
+```
+
+The adapter also guesses the *thinking dialect* from the endpoint URL, and a gateway URL tells it nothing — so a route serving DeepSeek-dialect reasoning wants that stated:
+
+```yaml
+      compat:
+        thinkingFormat: deepseek
+```
+
+`compat` applies to `openai-completions` models only, and can be set per model when one route mixes dialects.
+
+## Headless runs
+
+The same route serves the non-interactive profile, which runs one session and prints the final answer:
+
+```bash
+dsh --profile headless "summarize the changes on this branch"
+```
+
+## Learn more
+
+- [DeepSeek Harness — configure models](https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/guide/providers.md) · [`dsh-llm-pi-ai` reference](https://github.com/deepseek-ai/deepseek-harness/tree/master/packages/llm/llm-pi-ai)
+- [Model fallback](/docs/models-and-routing/model-fallback) · [Provider selection](/docs/models-and-routing/provider-selection)

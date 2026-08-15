@@ -19,7 +19,7 @@ References:
 - Full quickstart walkthrough: ${BASE_URL}/docs/overview/quickstart
 - Agent Skills (install/configure BitRouter from inside an agent): https://github.com/bitrouter/agent-skills
 - BitRouter CLI (proxy, setup wizard, TUI dashboard): https://github.com/bitrouter/bitrouter
-- Per-runtime setup recipes (Claude Code, Codex, OpenClaw, OpenCode, and more): ${BASE_URL}/docs/integrations
+- Per-runtime setup recipes (Claude Code, Codex, OpenCode, DeepSeek Harness, and more): ${BASE_URL}/docs/integrations
 
 ## Getting Started
 
@@ -92,14 +92,24 @@ References:
 
 ## Integrations (Harness Setup Guides)
 
-- [Integrations Index](${BASE_URL}/docs/integrations): Every model source and agent harness, with setup recipes
-- [Harnesses overview](${BASE_URL}/docs/integrations/harnesses): Harness vs. model source
+- [Harnesses overview](${BASE_URL}/docs/integrations/harnesses): Harness vs. model source, and every runtime with a recipe
 - [Claude Code](${BASE_URL}/docs/integrations/claude-code): Route Claude Code via ANTHROPIC_BASE_URL
 - [Codex](${BASE_URL}/docs/integrations/codex): Route OpenAI Codex through BitRouter
 - [OpenCode](${BASE_URL}/docs/integrations/opencode): Provider block in opencode.json
 - [Pi](${BASE_URL}/docs/integrations/pi): Minimal terminal coding harness via models.json
-- [Hermes](${BASE_URL}/docs/integrations/hermes): Nous Research's self-improving agent
-- [OpenClaw](${BASE_URL}/docs/integrations/openclaw): Route the OpenClaw multi-channel agent
+- [DeepSeek Harness](${BASE_URL}/docs/integrations/deepseek-harness): Custom provider route in dsh settings.yaml
+
+## Guides (Model Sources and Migration)
+
+- [Model sources](${BASE_URL}/docs/guides/models): The three shapes of model source — subscription, aggregator key, self-served
+- [Claude subscription](${BASE_URL}/docs/guides/claude-subscription): Route your Claude Pro/Max plan — OAuth, no key
+- [Codex subscription](${BASE_URL}/docs/guides/codex-subscription): Route your ChatGPT plan via the Codex backend
+- [Ollama](${BASE_URL}/docs/guides/ollama): Run open models locally
+- [vLLM](${BASE_URL}/docs/guides/vllm): High-throughput GPU serving
+- [Unsloth](${BASE_URL}/docs/guides/unsloth): Run or fine-tune locally
+- [Migrate from LiteLLM](${BASE_URL}/docs/guides/migrate-from-litellm): Swap your gateway, keep your code
+- [Migrate from OpenRouter](${BASE_URL}/docs/guides/migrate-from-openrouter): Change base URL and key
+- [Migrate from TensorZero](${BASE_URL}/docs/guides/migrate-from-tensorzero): Drop the LLMOps stack for a single binary
 
 ## Optional
 

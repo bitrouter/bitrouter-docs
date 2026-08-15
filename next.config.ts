@@ -10,7 +10,7 @@ const finalPath = {
   "provider-selection":"/docs/models-and-routing/provider-selection","model-fallback":"/docs/models-and-routing/model-fallback",
   "model-variants":"/docs/models-and-routing/model-variants","presets":"/docs/models-and-routing/virtual-model",
   "structured-outputs":"/docs/models-and-routing/structured-outputs","byok":"/docs/models-and-routing/bring-your-own-provider",
-  "local-models":"/docs/integrations/models","guardrails":"/docs/models-and-routing/guardrails",
+  "local-models":"/docs/guides/models","guardrails":"/docs/models-and-routing/guardrails",
   "observability":"/docs/evals-and-observability/opentelemetry","opentelemetry":"/docs/evals-and-observability/opentelemetry",
   "tracing":"/docs/evals-and-observability/tracing","telemetry":"/docs/evals-and-observability/opentelemetry",
   "mcp":"/docs/usage/mcp","acp":"/docs/models-and-routing/acp-gateway",
@@ -131,18 +131,22 @@ pairs.push(
   // observability & evaluation split out of features/ (2026-08); the single
   // opentelemetry page was two pages welded together — OSS export vs hosted view
   ["/docs/features/opentelemetry", "/docs/evals-and-observability/opentelemetry"],
-  ["/docs/features/local-models", "/docs/integrations/models"],
+  ["/docs/features/local-models", "/docs/guides/models"],
   ["/docs/features/toolsets", "/docs/models-and-routing/tool-calling/server-tools"],
   ["/docs/guides/export-telemetry", "/docs/evals-and-observability/opentelemetry"],
   ["/docs/cloud/managed-tools", "/docs/overview/quickstart#self-host-or-cloud"],
   ["/docs/cloud/managed-agents", "/docs/overview/quickstart#self-host-or-cloud"],
-  // integrations + cookbook history
-  ["/docs/integrations/harnesses/:slug*", "/docs/integrations/:slug*"],
+  // integrations + cookbook history.
+  // `:slug+` (one or more), NOT `:slug*` — with `*` this rule also matched the
+  // bare /docs/integrations/harnesses and bounced it to the index, shadowing
+  // the Harnesses overview page itself. That page is now the section landing,
+  // so `*` here would be an outright redirect loop against the rule below.
+  ["/docs/integrations/harnesses/:slug+", "/docs/integrations/:slug+"],
   ["/docs/cookbook/integration/:slug*", "/docs/integrations/:slug*"],
   // the local-models page was unpublished; the model catalog absorbed it
-  ["/docs/cookbook/local-models", "/docs/integrations/models"],
-  ["/docs/integrations/local-models", "/docs/integrations/models"],
-  ["/docs/cookbook", "/docs/integrations"],
+  ["/docs/cookbook/local-models", "/docs/guides/models"],
+  ["/docs/integrations/local-models", "/docs/guides/models"],
+  ["/docs/cookbook", "/docs/integrations/harnesses"],
   // migration history → guides
   ["/docs/integrations/migrate/litellm", "/docs/guides/migrate-from-litellm"],
   ["/docs/integrations/migrate/openrouter", "/docs/guides/migrate-from-openrouter"],
@@ -232,7 +236,7 @@ pairs.push(
   // the OpenRouter page was unpublished (2026-08); the aggregator provider block
   // it documented is the worked example on the model-sources page. The
   // migrate-from-openrouter guide is unaffected.
-  ["/docs/integrations/openrouter", "/docs/integrations/models"],
+  ["/docs/integrations/openrouter", "/docs/guides/models"],
   // Self-hosting became its own tab (2026-08). The single `guides/self-host`
   // page was split across the new section: config → production-config, daemon
   // → run-as-a-service, telemetry → operations, hardening → hardening. Its old
@@ -287,17 +291,37 @@ const nextConfig: NextConfig = {
       // ── Per-harness marketing routes retired (2026-08) ──
       // /claude-code, /codex, … were IntegrationStub placeholders ("setup guide
       // pending") with no unique content, so they land on the real setup guide.
-      // Note the slug change: the route was /hermes-agent, the doc is hermes.
+      // /openclaw and /hermes-agent land on the harnesses overview instead:
+      // their integration pages were retired in 2026-08 (see below), so there
+      // is no per-harness doc left to point them at.
       { source: "/claude-code", destination: "/docs/integrations/claude-code", permanent: true },
       { source: "/codex", destination: "/docs/integrations/codex", permanent: true },
       { source: "/opencode", destination: "/docs/integrations/opencode", permanent: true },
-      { source: "/openclaw", destination: "/docs/integrations/openclaw", permanent: true },
-      { source: "/hermes-agent", destination: "/docs/integrations/hermes", permanent: true },
+      { source: "/openclaw", destination: "/docs/integrations/harnesses", permanent: true },
+      { source: "/hermes-agent", destination: "/docs/integrations/harnesses", permanent: true },
       { source: "/zh/claude-code", destination: "/docs/integrations/claude-code", permanent: true },
       { source: "/zh/codex", destination: "/docs/integrations/codex", permanent: true },
       { source: "/zh/opencode", destination: "/docs/integrations/opencode", permanent: true },
-      { source: "/zh/openclaw", destination: "/docs/integrations/openclaw", permanent: true },
-      { source: "/zh/hermes-agent", destination: "/docs/integrations/hermes", permanent: true },
+      { source: "/zh/openclaw", destination: "/docs/integrations/harnesses", permanent: true },
+      { source: "/zh/hermes-agent", destination: "/docs/integrations/harnesses", permanent: true },
+
+      // ── OpenClaw / Hermes integration pages retired (2026-08) ──
+      { source: "/docs/integrations/openclaw", destination: "/docs/integrations/harnesses", permanent: true },
+      { source: "/docs/integrations/hermes", destination: "/docs/integrations/harnesses", permanent: true },
+
+      // ── Integrations tab folded away (2026-08) ──
+      // The harness recipes moved to content/docs/(guide)/integrations/ — a
+      // section of the Documentation tab — and keep their URLs, because
+      // fumadocs strips the `(guide)` folder group. Only the model sources
+      // changed address: they are Guides pages now. The tab's index page had
+      // no job left once the tab was gone, so it lands on the harness overview.
+      { source: "/docs/integrations", destination: "/docs/integrations/harnesses", permanent: true },
+      { source: "/docs/integrations/models", destination: "/docs/guides/models", permanent: true },
+      { source: "/docs/integrations/claude-subscription", destination: "/docs/guides/claude-subscription", permanent: true },
+      { source: "/docs/integrations/codex-subscription", destination: "/docs/guides/codex-subscription", permanent: true },
+      { source: "/docs/integrations/ollama", destination: "/docs/guides/ollama", permanent: true },
+      { source: "/docs/integrations/vllm", destination: "/docs/guides/vllm", permanent: true },
+      { source: "/docs/integrations/unsloth", destination: "/docs/guides/unsloth", permanent: true },
 
       // ── /compare article retired; comparisons live in docs → overview (2026-07) ──
       { source: "/compare/bitrouter-vs-openrouter", destination: "/docs/overview/bitrouter-vs-openrouter", permanent: true },

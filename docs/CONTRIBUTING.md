@@ -6,21 +6,19 @@ is rendered from this repo — docs are committed directly here under
 
 ## What publishes
 
-The docs site has five **tabs**, and each is a folder marked `"root": true` in
+The docs site has four **tabs**, and each is a folder marked `"root": true` in
 its `meta.json`. Tab order is the `pages` list in `content/docs/meta.json`:
 
 - **Documentation** — `content/docs/(guide)/`. The parentheses make it a
   *folder group*: fumadocs strips it from the URL, so `(guide)/overview/quickstart.mdx`
   still publishes at `/docs/overview/quickstart`. It exists only to give the tab
   something to hang off.
-- **Integrations** — `content/docs/integrations/`, the per-runtime and
-  per-model-source recipes. Lands on its `index.mdx`.
 - **Self-hosting** — `content/docs/self-hosting/`, the operator's lifecycle:
   install, configure, run under a supervisor, expose, secure, operate. Lands on
   its `index.mdx`.
-- **Guides** — `content/docs/guides/`, the end-to-end walkthroughs (Cloud API,
-  migrations, plugins, provider registration). It has no `index.mdx`, so its
-  landing URL comes from `pagesIndex`.
+- **Guides** — `content/docs/guides/`, the model sources (subscriptions,
+  Ollama, vLLM, Unsloth) and the end-to-end migration walkthroughs. It has no
+  `index.mdx`, so its landing URL comes from `pagesIndex`.
 - **API Reference** — `content/docs/reference/`, generated from the BitRouter
   Cloud OpenAPI spec.
 
@@ -30,8 +28,21 @@ Two rules follow from that, and breaking either one silently deletes a tab:
    `meta.json`, or from the folder's first direct *page* child — a root folder
    whose children are all folders resolves to nothing and is dropped from the
    tab bar without an error.
-2. Only these five folders carry `"root": true`. Adding it to a section would
-   turn that section into a sixth tab.
+2. Only these four folders carry `"root": true`. Adding it to a section would
+   turn that section into a fifth tab.
+
+### Integrations is a section, not a tab
+
+Integrations was its own tab until 2026-08. The harness recipes now live in
+`content/docs/(guide)/integrations/` as a section of the Documentation tab, and
+they still publish at `/docs/integrations/*` — the `(guide)` group is stripped
+from the URL, so the folder path and the URL disagree by design. Don't "fix" it:
+those URLs are load-bearing (the retired `/claude-code`-style marketing routes
+301 into them, and the landing footer links straight at them).
+
+The other half of that tab — the model sources — moved to **Guides**, where
+`/docs/guides/models` and its five siblings sit above the migration group. Every
+old `/docs/integrations/<model-source>` URL 301s there from `next.config.ts`.
 
 ### Documentation vs Self-hosting
 

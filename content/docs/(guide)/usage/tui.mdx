@@ -180,7 +180,7 @@ The bootstrap hook runs with its working directory set to the worktree, `BITROUT
 **The right-hand column is what makes delegation work.** A harness without the fleet MCP tools can still be your orchestrator pane, but it **cannot spawn or steer subagents** — it has no mechanism to call them. If nothing ever appears in the subagents rail, check this table first.
 </Callout>
 
-`grok` and `agy` launch with their own subscription auth rather than being pointed at the daemon; the daemon can borrow those same sessions as providers separately. See [Claude subscription](/docs/integrations/claude-subscription) and [Codex subscription](/docs/integrations/codex-subscription) for that pattern.
+`grok` and `agy` launch with their own subscription auth rather than being pointed at the daemon; the daemon can borrow those same sessions as providers separately. See [Claude subscription](/docs/guides/claude-subscription) and [Codex subscription](/docs/guides/codex-subscription) for that pattern.
 
 Passing a name that matches a configured `agents:` entry renders that ACP agent as a read-only monitor instead of hosting a native TUI. `--worktree` applies only to that case — an orchestrator always runs in the base repo.
 

@@ -259,7 +259,7 @@ Reports the OTel exporter's live state — endpoint, sampler, cardinality usage,
 
 ## Providers
 
-Two ways a provider becomes available: **BYOK** (its API key in the environment — see [BYOK](/docs/models-and-routing/bring-your-own-provider)) and **`providers login`** (OAuth against subscription providers such as Claude or Codex subscriptions — see [Integrations](/docs/integrations)). `providers list` shows the catalog and which providers are active in the current config.
+Two ways a provider becomes available: **BYOK** (its API key in the environment — see [BYOK](/docs/models-and-routing/bring-your-own-provider)) and **`providers login`** (OAuth against subscription providers such as Claude or Codex subscriptions — see [Model sources](/docs/guides/models)). `providers list` shows the catalog and which providers are active in the current config.
 
 ### `bitrouter providers`
 
@@ -1343,7 +1343,7 @@ The agent authenticates to BitRouter with `BITROUTER_API_KEY` when it is set; ot
 bitrouter launch claude
 ```
 
-Points the harness's API base URL at the local daemon — the same wiring the [Integrations](/docs/integrations) recipes do by hand — and prints a session spend summary on exit.
+Points the harness's API base URL at the local daemon — the same wiring the [Integrations](/docs/integrations/harnesses) recipes do by hand — and prints a session spend summary on exit.
 
 ### `bitrouter spawn`
 

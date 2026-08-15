@@ -54,11 +54,12 @@ References:
 
 ## Usage
 
+- [Config (YAML)](${BASE_URL}/docs/usage/configuration): The \`bitrouter.yaml\` reference, including the policy table and the adaptive loop
 - [CLI](${BASE_URL}/docs/usage/cli): Every command of the binary — serve, route, models, policy, optimize, providers
 - [TUI](${BASE_URL}/docs/usage/tui): The terminal dashboard for live routing, spend, and traces
-- [Configuration](${BASE_URL}/docs/usage/configuration): The \`bitrouter.yaml\` reference, including the policy table and the adaptive loop
+- [Agent](${BASE_URL}/docs/usage/agent): \`npx @bitrouter/agent\` — reads an agentic codebase and writes an MVP policy, a cost audit, and an observed-spend optimization
 - [MCP](${BASE_URL}/docs/usage/mcp): Drive BitRouter itself as an MCP tool from inside an agent
-- [Agent Skills](${BASE_URL}/docs/usage/skills): Skills as governed, routable resources an agent loads on demand
+- [Skills](${BASE_URL}/docs/usage/skills): Skills as governed, routable resources an agent loads on demand
 
 ## Self-hosting
 

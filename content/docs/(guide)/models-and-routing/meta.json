@@ -9,8 +9,6 @@
     "model-variants",
     "bring-your-own-model",
     "bring-your-own-provider",
-    "structured-outputs",
-    "guardrails",
-    "tool-calling"
+    "structured-outputs"
   ]
 }

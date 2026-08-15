@@ -1,0 +1,100 @@
+---
+title: Agent
+description: bitrouter-agent — a CLI wizard that reads your agentic codebase and writes an MVP bitrouter.yaml, a cost audit, and a machine-readable analysis, then upgrades the estimate to observed spend once the router has metered real traffic.
+---
+
+**[bitrouter-agent](https://github.com/bitrouter/bitrouter-agent)** is a CLI wizard that answers the question you have *before* you adopt BitRouter: what is this codebase actually spending on LLM calls, and what would a routing policy save? It reads your code **read-only** and writes three artifacts:
+
+| Artifact | What it is |
+|----------|------------|
+| `bitrouter.yaml` | An MVP routing policy to try — see [Config (YAML)](/docs/usage/configuration) |
+| `bitrouter-audit.md` | An audit of your LLM usage, with a savings estimate |
+| `.bitrouter/analysis.json` | The same analysis, machine-readable |
+
+It never modifies your source. The only files it creates are the ones above.
+
+<Callout type="warn">
+  bitrouter-agent is **in development**. Commands and artifact shapes can still change between releases.
+</Callout>
+
+## Run it
+
+```bash
+npx @bitrouter/agent            # analyze + generate all three artifacts
+npx @bitrouter/agent audit      # audit + estimate only (no policy file)
+npx @bitrouter/agent estimate   # estimate only (.bitrouter/analysis.json)
+npx @bitrouter/agent optimize   # tighten the policy from real metered traffic
+```
+
+Flags: `--out-dir <dir>`, `--model <id>`, `--target <local|cloud>`, `--offline`, `--yes`, `--debug`, plus the observed-mode flags `--db <path|url>`, `--since <days>`, and `--min-requests <n>`.
+
+### Targets
+
+The agent routes its own LLM calls through BitRouter, so it needs a router to talk to:
+
+- **`local`** *(default)* — a BitRouter daemon at `http://127.0.0.1:4356`. Run [`bitrouter start`](/docs/usage/cli) first.
+- **`cloud`** — BitRouter Cloud. Run `bitrouter auth login` first.
+
+### Offline analysis
+
+By default the analysis is done by a [pi](https://pi.dev) agent routed through BitRouter, with a **consent prompt before any code is sent**. Pass `--offline` to run a fully local static analysis instead — nothing leaves your machine, and no LLM is required. If the router is unreachable, the tool falls back to that path on its own.
+
+## Cold start vs. observed
+
+A first run has no traffic to look at, so its numbers are a **rate-card scenario, not a bill**. Once BitRouter is your gateway it meters every request into a local `bitrouter.db`, and `optimize` reads that database (read-only) to replace the estimate with **observed spend**:
+
+```bash
+npx @bitrouter/agent optimize            # read bitrouter.db, propose a tighter policy
+npx @bitrouter/agent optimize --since 7  # use only the last 7 days of traffic
+```
+
+That run adds:
+
+- **`bitrouter-optimizer.md`** — real dollars spent per model and provider, the rate you actually paid ($/Mtok), error rates, and a projected monthly saving.
+- **`bitrouter.optimized.yaml`** — a **proposed** tightened policy, written to a *new* file. Your own `bitrouter.yaml` is never touched.
+- an `observed` block merged into `.bitrouter/analysis.json`.
+
+The model drafts the policy diff (through BitRouter, with a deterministic offline fallback), but the numbers are always computed locally. The first command also performs this upgrade silently when it finds a populated `bitrouter.db` — when there isn't enough traffic yet, both degrade to the cold-start rate card and tell you why.
+
+<Callout type="info">
+  Reading the metering database uses Node's built-in `node:sqlite`. It works out of the box on **Node ≥ 24**; on Node 22–23 run with `--experimental-sqlite`, or the optimizer cleanly falls back to the cold-start rate card.
+</Callout>
+
+## Interactive session
+
+The package also ships a **read-only chat session**, launched as `bitrouter` from the agent package rather than `pi`. It can inspect your codebase and run the `estimate` / `audit` / `optimize` tools and the `/bitrouter` command, but it **cannot edit files or run shell commands**. Its identity, tool set, and skills are locked to BitRouter, and its config lives under `~/.bitrouter/agent` rather than pi's `~/.pi`.
+
+<Callout type="warn">
+  This session shares its name with the router binary documented in [CLI](/docs/usage/cli). They are different programs from different packages — `@bitrouter/agent` is the npm wizard, and the router is the Rust binary. Check which one is first on your `PATH` before assuming which you launched.
+</Callout>
+
+### Which skills load
+
+By default the session loads **only BitRouter-family skills** — every skill whose front-matter `name` is `bitrouter` or `bitrouter-<thing>`, such as the bundled `bitrouter` analysis skill and the provider's `bitrouter-pi` setup skill. pi's usual skill auto-discovery (`~/.agents/skills`, ancestor `.agents/skills`, and so on) is otherwise disabled, so unrelated skills don't leak into the appliance. See [Skills](/docs/usage/skills) for the skills BitRouter itself publishes.
+
+Discovery is **by declared name, not directory name**, and de-duplicates by name — the bundled copy wins over a stray `~/.agents/skills` copy. Naming a skill `bitrouter-<thing>` is all it takes to have it auto-load.
+
+Skills outside the family can be opted in, per invocation:
+
+```bash
+bitrouter --skill ~/.agents/skills/paseo   # by path
+bitrouter --skill paseo                    # by name, searched in the skill roots
+```
+
+Or persistently, via a `skills` array under the `bitrouter` key in `~/.bitrouter/agent/settings.json` — each entry a name or a path:
+
+```json
+{ "bitrouter": { "skills": ["paseo", "/abs/path/to/team-skill"] } }
+```
+
+The list is namespaced under `bitrouter` on purpose: pi reads the top-level `skills` key as auto-discovery *patterns*, so the opt-in list needs its own home.
+
+## Where it fits
+
+bitrouter-agent is an **adoption and tuning** tool, not a runtime surface — it writes policy, it doesn't serve traffic. Once the generated `bitrouter.yaml` is in place, the router runs it like any other config:
+
+<Cards>
+  <Card title="Config (YAML)" href="/docs/usage/configuration" description="The bitrouter.yaml reference — every block the generated policy can contain." />
+  <Card title="CLI" href="/docs/usage/cli" description="Start the daemon the agent routes through, and validate the policy it wrote." />
+  <Card title="TUI" href="/docs/usage/tui" description="Watch the metered traffic that optimize later reads back." />
+</Cards>

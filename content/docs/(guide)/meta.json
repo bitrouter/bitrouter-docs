@@ -6,8 +6,8 @@
   "pages": [
     "overview",
     "usage",
-    "integrations",
     "models-and-routing",
-    "evals-and-observability"
+    "evals-and-observability",
+    "integrations"
   ]
 }

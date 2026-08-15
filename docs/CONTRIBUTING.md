@@ -66,9 +66,21 @@ tab. Page order within a section is the `pages` list in that section's
 `meta.json`; the section order is the `pages` list in
 `content/docs/(guide)/meta.json`.
 
-`usage/` is how you drive BitRouter: `cli.mdx` (generated — don't hand-author
-it), `tui.mdx`, `configuration.mdx` (the `bitrouter.yaml` reference),
-`mcp.mdx`, and `skills.mdx`.
+`usage/` is how you drive BitRouter, in nav order: `configuration.mdx` (the
+`bitrouter.yaml` reference, titled "Config (YAML)"), `cli.mdx` (generated —
+don't hand-author it), `tui.mdx`, `agent.mdx` (the `@bitrouter/agent` adoption
+wizard), `mcp.mdx`, and `skills.mdx` (titled "Skills"; the page is still about
+the Agent Skills product, so body copy keeps that name).
+
+### Unlisted pages are hidden, not retired
+
+A page left out of its section's `pages` list still builds and still answers at
+its URL — it just doesn't appear in the sidebar. Three pages are hidden this
+way on purpose: `models-and-routing/acp-gateway.mdx`, `guardrails.mdx`, and the
+whole `tool-calling/` subfolder. They stay linked from feature pages, the
+migration guides, and `lib/llms-txt.ts`, so **don't delete them and don't add
+301s** — hiding a page changes the nav, not the URL history. Deleting one is a
+separate decision that does need a redirect.
 
 ## Authoring contract (import-free MDX)
 

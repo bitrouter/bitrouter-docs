@@ -1,0 +1,70 @@
+---
+title: Overview
+description: BitRouter routes more than models — the MCP gateway makes tools and skills routable resources, and the ACP gateway makes sub-agents first-class primitives, both on the same endpoint.
+---
+
+A workflow's cost isn't only its model calls. It's the model calls *plus* the tool definitions you ship on every request *plus* the sub-agents that go off and run their own loops. BitRouter treats all three as routable, which is why there are two gateways alongside the model surface:
+
+- The **MCP gateway** fronts your tool servers — and the skills built on top of them.
+- The **ACP gateway** fronts your agents — identity, discovery, and task dispatch.
+
+Both are served from the same local daemon on `127.0.0.1:4356` as the four model protocols, and both are configured in the same `bitrouter.yaml`. Nothing new to deploy.
+
+A third page covers what happens when you hand the tool-calling loop to the router instead of running it yourself — see [Server tools](/docs/agents-and-orchestration/tool-calling/server-tools).
+
+<Callout type="warning">
+**This whole section is unstable and under active development.** Config keys, endpoints, CLI flags, and behavior here can change between releases without the deprecation window the model-routing surface gets. Everything documented is real and shipping, but pin your version if you build on it, and read the [changelog](/changelog) before upgrading.
+</Callout>
+
+## The MCP gateway
+
+Declare your upstream MCP servers once, under `mcp_servers` in [`bitrouter.yaml`](/docs/usage/configuration), keyed by id. The daemon then serves them two ways: each on its own route at `POST /mcp/{server}`, and all of them together through an **aggregate** endpoint at `POST /mcp` that fans a single connection out across the set.
+
+That one declaration is worth making because the tools then become reachable **two different ways**, and you choose per workload:
+
+- **The agent calls them.** Your harness speaks MCP to the gateway instead of to each server directly — one endpoint, one place where a server is added, removed, or swapped.
+- **BitRouter calls them.** Name the servers under `server_tools.mcp_servers` and the router runs the tool-calling loop itself: it advertises the tools, executes the calls, feeds results back, and re-calls the model until it stops asking. See [Server tools](/docs/agents-and-orchestration/tool-calling/server-tools).
+
+Either way, tools merged into the aggregate are prefixed to avoid collisions — the `search` tool on the `demo` server is advertised as `demo__search`. The transports, fan-out settings, list-call caching, and the `bitrouter tools` introspection commands are all on [MCP gateway](/docs/agents-and-orchestration/mcp-gateway).
+
+### Skills ride the same rails
+
+[Agent Skills](/docs/usage/skills) are the higher-level layer on this gateway: a skill is a capability an agent loads by name rather than a raw tool it calls. They're distributed over MCP like everything else here.
+
+```bash
+bitrouter skills add bitrouter          # install a skill locally
+bitrouter mcp serve --backend skills    # serve the installed set to any harness
+```
+
+The `skills` backend exposes `skills_search` and `skills_get` over the installed set, so a harness can discover and load skills without you wiring each one in. Under [`bitrouter tui`](/docs/usage/tui) that server is injected into every launched harness automatically — the harness gets your skills without being configured for them.
+
+## The ACP gateway
+
+Where the MCP gateway routes *tools*, the ACP gateway routes *agents*. Declare them under `agents:` and BitRouter handles identity, discovery, and task dispatch — a sub-agent becomes something you route to, not a subprocess you hand-wire.
+
+```bash
+bitrouter agents list                   # the bundled catalog + what's configured
+bitrouter agents list --remote          # also fetch the official ACP registry
+bitrouter agents check                  # spawn each agent, verify it answers initialize
+bitrouter acp prompt --agent <id> "..." # one prompt, NDJSON streamed back
+```
+
+Two properties matter more than the command list:
+
+- **Sub-agent traffic routes through the daemon by default.** A delegated agent's model calls inherit your routing policy, fallback, and metering rather than escaping to the harness's own provider auth. `--direct` opts out when you want the sub-agent on its own keys.
+- **Sessions are durable and isolatable.** A session can be provisioned into its own git worktree (`--worktree`), writes a transcript to `.bitrouter/sessions/`, and can be kept warm for reattach.
+
+Today the gateway drives local sub-agents over stdio; cross-host discovery and dispatch arrive with ACP v2. The full picture — including how a BitRouter-managed sub-agent is exposed to a parent agent as a vanilla ACP Agent — is on [ACP gateway](/docs/agents-and-orchestration/acp-gateway).
+
+<Callout type="info">
+Orchestrating several agents at once is the [TUI](/docs/usage/tui)'s job: it runs an orchestrator pane with the `bitrouter_fleet` MCP tools injected, and the sub-agents it spawns appear as read-only transcripts in the rail beside it. That's both gateways working together — fleet control arrives as MCP tools, and what they spawn are ACP sessions.
+</Callout>
+
+## Where to go next
+
+<Cards>
+  <Card title="MCP gateway" href="/docs/agents-and-orchestration/mcp-gateway" description="Transports, fan-out, caching, and the tool loop in full." />
+  <Card title="ACP gateway" href="/docs/agents-and-orchestration/acp-gateway" description="Agent identity, discovery, and task dispatch in full." />
+  <Card title="Server tools" href="/docs/agents-and-orchestration/tool-calling/server-tools" description="Move the tool-calling loop into the router, MCP upstreams included." />
+  <Card title="Config (YAML)" href="/docs/usage/configuration" description="The mcp, mcp_servers, server_tools, and agents blocks." />
+</Cards>

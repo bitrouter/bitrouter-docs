@@ -1,0 +1,11 @@
+{
+  "title": "Agents & Orchestration",
+  "icon": "Network",
+  "collapsible": false,
+  "pages": [
+    "overview",
+    "mcp-gateway",
+    "acp-gateway",
+    "tool-calling"
+  ]
+}

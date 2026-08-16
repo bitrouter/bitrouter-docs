@@ -1,0 +1,96 @@
+---
+title: ACP gateway
+description: Sub-agents as routable primitives — declare ACP agents in bitrouter.yaml, dispatch tasks to them, and keep their model traffic under your routing policy.
+---
+
+Where the [MCP gateway](/docs/agents-and-orchestration/mcp-gateway) routes *tools*, the **ACP gateway** routes *agents*. It handles **agent identity, discovery, and task dispatch** over the [Agent Client Protocol](https://agentclientprotocol.com) — so a sub-agent becomes something you route a task to, not a subprocess you hand-wire into your harness.
+
+Today it drives local sub-agents over stdio. Cross-host discovery and dispatch across the network arrive with [ACP v2](https://agentclientprotocol.com/rfds/v2/overview).
+
+## The bundled catalog
+
+For the well-known agents you don't have to configure anything. BitRouter ships a catalog — `claude-acp`, `codex-acp`, `gemini-cli`, `pi-acp` — and **a catalog id needs no `agents:` entry**; name it and it resolves.
+
+```bash
+bitrouter agents list             # the bundled catalog + which are configured
+bitrouter agents list --remote    # also fetch the official ACP registry
+bitrouter agents install <id>     # print a YAML stub to paste under agents:
+bitrouter agents check            # spawn each agent, verify it answers initialize
+```
+
+`agents check` spawns every configured agent and reports latency or the error per agent — the first thing to run when dispatch isn't working.
+
+## Declaring your own
+
+Anything outside the catalog goes under `agents:` in [`bitrouter.yaml`](/docs/usage/configuration), keyed by agent id. v1.0 ships **stdio only** — the spec's primary transport for agent processes spawned by a CLI or IDE client:
+
+```yaml
+agents:
+  house-agent:
+    name: house-agent
+    transport:
+      type: stdio
+      command: ./bin/our-acp-agent
+      args: ["--profile", "review"]
+      env:
+        RUST_LOG: warn
+```
+
+As with MCP upstreams, the child **inherits the ambient environment** and `env` adds to it. Agent ids are non-empty and contain no `/`. `bitrouter agents install <id>` prints this stub for you rather than making you write it — including for registry agents distributed via `npx` or `uvx`.
+
+## Dispatching a task
+
+Two commands drive a session. `prompt` is the one-shot form: it launches a session, sends a prompt, and streams the result as NDJSON — one JSON object per line with a `type` field (`message_chunk`, `tool_call`, and a final `result` line carrying `stop_reason`).
+
+```bash
+bitrouter acp prompt --agent claude-acp "Fix the failing test in src/parser.rs"
+```
+
+`serve` is the other direction: it exposes **one agent session as a vanilla ACP Agent over stdio**, which is how a parent agent or a GUI delegates to a BitRouter-managed sub-agent. The parent speaks ordinary ACP and doesn't need to know BitRouter is in the middle.
+
+```bash
+bitrouter acp serve --agent claude-acp
+```
+
+### Sub-agent traffic is routed by default
+
+This is the property that makes the gateway worth using rather than spawning the harness yourself: a delegated agent's model calls go **through the daemon**, so they inherit your routing policy, fallback chain, and metering instead of escaping to the harness's own provider auth.
+
+`--direct` opts out when you deliberately want the sub-agent on its own keys. `--model` pins the harness's model, and `--base-url` overrides where it points.
+
+### Sessions are durable and isolatable
+
+| Flag | What it does |
+| --- | --- |
+| `--worktree <name>` | Provision a git worktree for the session — created, or reused if it exists. Without it, the session runs in the current directory. |
+| `--rm-worktree` | Remove that worktree when the session ends. **Off by default**, because the worktree holds the agent's work and removal discards anything uncommitted. |
+| `--turn-timeout <secs>` | Per-turn deadline. On elapse the agent is asked to cancel cooperatively; a turn that still doesn't finish errors. |
+| `--warm` | Keep the session alive after the manager disconnects and accept reattach on a unix socket. Unix-only. |
+| `--idle-timeout <secs>` | Shut a warm session down after this long with no manager attached. Defaults to 1800. |
+| `--no-transcript` | Disable the durable transcript, which is otherwise written to `.bitrouter/sessions/<id>.transcript.ndjson`. |
+
+Warm sessions are what make a long-running agent survivable across disconnects:
+
+```bash
+bitrouter acp sessions            # session records for this repo, newest first
+bitrouter acp attach <record>     # bridge this terminal to a warm session
+```
+
+`sessions` marks a `running` record whose process no longer exists as `dead`. On reattach, `session/load` replays the conversation so far.
+
+## Orchestrating several at once
+
+Running one sub-agent is a command; running a fleet is the [TUI](/docs/usage/tui)'s job. It gives an orchestrator harness the `bitrouter_fleet` MCP tools and renders each spawned sub-agent as a read-only transcript beside it — you steer them by talking to the orchestrator rather than typing into their panes.
+
+That's both gateways in one loop: fleet control reaches the orchestrator as MCP tools, and what those tools spawn are ACP sessions. Worktree isolation for orchestrator-spawned sub-agents is configured under `worktrees` in `bitrouter.yaml`.
+
+<Callout type="info">
+The fleet socket is **Unix-only**. On Windows the console still runs, but sub-agents spawned through the fleet tools fall back to their own headless permission policy instead of surfacing decisions to you.
+</Callout>
+
+<Cards>
+  <Card title="MCP gateway" href="/docs/agents-and-orchestration/mcp-gateway" description="The other gateway — many tool servers behind one endpoint." />
+  <Card title="TUI" href="/docs/usage/tui" description="The console that orchestrates a fleet of these sessions." />
+  <Card title="Sub-agent tool" href="/docs/agents-and-orchestration/tool-calling/subagent" description="The in-request version — delegate to a worker model mid-generation." />
+  <Card title="CLI" href="/docs/usage/cli#tools-agents-and-acp" description="Every flag of agents and acp." />
+</Cards>

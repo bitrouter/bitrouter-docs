@@ -37,9 +37,12 @@ A third option is often the best one: keep `listen` on loopback and let a revers
 | `POST /v1/messages` | Anthropic Messages |
 | `POST /v1beta/models/{model_action}` | Google Generative AI |
 | `GET /v1/models` | Model discovery |
-| `POST /mcp/{server}` | MCP gateway |
+| `POST /mcp/{server}` | [MCP gateway](/docs/agents-and-orchestration/mcp-gateway) — one upstream server |
+| `POST /mcp` | MCP gateway — aggregate fan-out across every participating server |
 | `GET /health` | Liveness — `200` with `{"status":"ok"}` |
 | `GET /metrics` | Prometheus-format endpoint, see the note below |
+
+Both MCP routes are mounted only when `mcp_servers` is non-empty — on a config that declares none, they are absent rather than empty.
 
 Request bodies are capped at **16 MiB**. That is generous for text, and reachable if you push large base64 image or document parts through the proxy — a `413` on a multimodal request is this limit, not the provider's.
 

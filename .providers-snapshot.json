@@ -1,5 +1,5 @@
 {
-  "count": 50,
+  "count": 46,
   "providers": [
     {
       "id": "alibaba",
@@ -43,7 +43,7 @@
       "protocols": [
         "openai"
       ],
-      "models": 7
+      "models": 6
     },
     {
       "id": "anthropic",
@@ -95,7 +95,7 @@
       "protocols": [
         "openai"
       ],
-      "models": 52
+      "models": 47
     },
     {
       "id": "byteplus",
@@ -115,7 +115,7 @@
       "protocols": [
         "openai"
       ],
-      "models": 3
+      "models": 2
     },
     {
       "id": "chutes",
@@ -274,7 +274,7 @@
       "protocols": [
         "openai"
       ],
-      "models": 23
+      "models": 22
     },
     {
       "id": "opencode-zen",
@@ -296,7 +296,7 @@
         "openai",
         "responses"
       ],
-      "models": 55
+      "models": 51
     },
     {
       "id": "phala",
@@ -316,7 +316,7 @@
       "protocols": [
         "openai"
       ],
-      "models": 9
+      "models": 8
     },
     {
       "id": "qianfan_cn",
@@ -346,7 +346,7 @@
       "protocols": [
         "openai"
       ],
-      "models": 18
+      "models": 14
     },
     {
       "id": "siliconflow_cn",
@@ -356,51 +356,7 @@
       "protocols": [
         "openai"
       ],
-      "models": 13
-    },
-    {
-      "id": "stepfun",
-      "name": "StepFun",
-      "headquarters": "CN",
-      "billing": "usage_token",
-      "protocols": [
-        "anthropic",
-        "openai"
-      ],
-      "models": 2
-    },
-    {
-      "id": "stepfun_cn",
-      "name": "StepFun",
-      "headquarters": "CN",
-      "billing": "usage_token",
-      "protocols": [
-        "anthropic",
-        "openai"
-      ],
-      "models": 2
-    },
-    {
-      "id": "stepfun_step_plan",
-      "name": "StepFun",
-      "headquarters": "CN",
-      "billing": "subscription",
-      "protocols": [
-        "anthropic",
-        "openai"
-      ],
-      "models": 2
-    },
-    {
-      "id": "stepfun_step_plan_cn",
-      "name": "StepFun",
-      "headquarters": "CN",
-      "billing": "subscription",
-      "protocols": [
-        "anthropic",
-        "openai"
-      ],
-      "models": 2
+      "models": 12
     },
     {
       "id": "supergrok",
@@ -435,7 +391,7 @@
         "openai",
         "responses"
       ],
-      "models": 12
+      "models": 11
     },
     {
       "id": "tinfoil",
@@ -445,7 +401,7 @@
       "protocols": [
         "openai"
       ],
-      "models": 5
+      "models": 4
     },
     {
       "id": "vertex",

@@ -33,7 +33,6 @@ References:
 
 ## Models & Routing
 
-- [ACP Gateway](${BASE_URL}/docs/models-and-routing/acp-gateway): Sub-agents as first-class routable primitives — a task goes to the sub-agent that best fits it
 - [Model Fallbacks](${BASE_URL}/docs/models-and-routing/model-fallback): Automatic fallback across models when an upstream fails
 - [Provider Selection](${BASE_URL}/docs/models-and-routing/provider-selection): How models resolve to upstream providers, with cost and performance policies
 - [Virtual Model](${BASE_URL}/docs/models-and-routing/virtual-model): Define a named model of your own — base model, prompt, params, and routing rules behind \`@name\`
@@ -42,15 +41,6 @@ References:
 - [Bring Your Own Provider](${BASE_URL}/docs/models-and-routing/bring-your-own-provider): Route through your own provider account at list price, with no rev share or per-token fee
 - [Structured Outputs](${BASE_URL}/docs/models-and-routing/structured-outputs): Enforce a JSON schema across every provider, with the protocol translation handled for you
 - [Guardrails](${BASE_URL}/docs/models-and-routing/guardrails): Named regex rules that block or redact matching content in requests and responses
-
-## Tool Calling
-
-- [Server Tools](${BASE_URL}/docs/models-and-routing/tool-calling/server-tools): Move the tool-calling loop into BitRouter — declare tools, and the router executes and re-calls until the model is done
-- [Advisor](${BASE_URL}/docs/models-and-routing/tool-calling/advisor): Let a fast model escalate one hard sub-question to a stronger model mid-generation
-- [Sub-agent](${BASE_URL}/docs/models-and-routing/tool-calling/subagent): Delegate a self-contained task to a cheaper worker model that returns only its result
-- [Fusion](${BASE_URL}/docs/models-and-routing/tool-calling/fusion): A panel of models answers in parallel, a judge compares them, and your model writes the final reply
-- [Web Search](${BASE_URL}/docs/models-and-routing/tool-calling/websearch): A built-in \`web_search\` server tool that gives any routed model a search, on a backend you bring keys for
-- [Web Fetch](${BASE_URL}/docs/models-and-routing/tool-calling/web-fetch): A built-in \`web_fetch\` server tool that turns a URL into clean page content for any routed model
 
 ## Usage
 
@@ -78,6 +68,18 @@ References:
 - [OpenTelemetry](${BASE_URL}/docs/evals-and-observability/opentelemetry): Self-run OTLP export — traces and metrics of every request, pushed to a Collector, Honeycomb, Grafana, or Datadog
 - [Cloud Tracing](${BASE_URL}/docs/evals-and-observability/tracing): Hosted Activity view — spend, token, and latency KPIs plus a per-request log, nothing to operate
 - [Evaluation](${BASE_URL}/docs/evals-and-observability/evaluation): Per-request outcome signals and cost metering today, with an objective-scored eval engine landing on top
+
+## Agents & Orchestration
+
+- [Overview](${BASE_URL}/docs/agents-and-orchestration/overview): The two agent-facing gateways — MCP for tools and skills, ACP for sub-agents — on the same endpoint as the model protocols
+- [MCP Gateway](${BASE_URL}/docs/agents-and-orchestration/mcp-gateway): Front many MCP tool servers with one endpoint — stdio and HTTP upstreams, aggregate fan-out with name prefixing, and list-call caching
+- [ACP Gateway](${BASE_URL}/docs/agents-and-orchestration/acp-gateway): Sub-agents as first-class routable primitives — a task goes to the sub-agent that best fits it
+- [Server Tools](${BASE_URL}/docs/agents-and-orchestration/tool-calling/server-tools): Move the tool-calling loop into BitRouter — declare tools, and the router executes and re-calls until the model is done
+- [Advisor](${BASE_URL}/docs/agents-and-orchestration/tool-calling/advisor): Let a fast model escalate one hard sub-question to a stronger model mid-generation
+- [Sub-agent](${BASE_URL}/docs/agents-and-orchestration/tool-calling/subagent): Delegate a self-contained task to a cheaper worker model that returns only its result
+- [Fusion](${BASE_URL}/docs/agents-and-orchestration/tool-calling/fusion): A panel of models answers in parallel, a judge compares them, and your model writes the final reply
+- [Web Search](${BASE_URL}/docs/agents-and-orchestration/tool-calling/websearch): A built-in \`web_search\` server tool that gives any routed model a search, on a backend you bring keys for
+- [Web Fetch](${BASE_URL}/docs/agents-and-orchestration/tool-calling/web-fetch): A built-in \`web_fetch\` server tool that turns a URL into clean page content for any routed model
 
 ## API Reference
 

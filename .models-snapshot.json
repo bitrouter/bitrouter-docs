@@ -1,5 +1,5 @@
 {
-  "count": 55,
+  "count": 50,
   "models": [
     {
       "id": "anthropic/claude-fable-5",
@@ -230,7 +230,7 @@
       ],
       "providers": 5,
       "inputUsdPerM": 0.14,
-      "cacheReadUsdPerM": 0.028,
+      "cacheReadUsdPerM": 0.0028,
       "outputUsdPerM": 0.28,
       "openWeights": true
     },
@@ -360,41 +360,6 @@
       "cacheReadUsdPerM": 0.15,
       "outputUsdPerM": 7.5,
       "openWeights": false
-    },
-    {
-      "id": "google/gemma-4-31b",
-      "name": "Google: Gemma 4 31B",
-      "inputModalities": [
-        "text",
-        "image"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 131072,
-      "capabilities": [],
-      "providers": 3,
-      "inputUsdPerM": 0.13,
-      "cacheReadUsdPerM": null,
-      "outputUsdPerM": 0.4,
-      "openWeights": true
-    },
-    {
-      "id": "meituan/longcat-2.0",
-      "name": "LongCat 2.0",
-      "inputModalities": [
-        "text"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 1000000,
-      "capabilities": [],
-      "providers": 1,
-      "inputUsdPerM": 0.75,
-      "cacheReadUsdPerM": null,
-      "outputUsdPerM": 2.95,
-      "openWeights": true
     },
     {
       "id": "minimax/minimax-m2.5",
@@ -821,63 +786,6 @@
       "cacheReadUsdPerM": 0.25,
       "outputUsdPerM": 6,
       "openWeights": false
-    },
-    {
-      "id": "stepfun/step-3.5-flash",
-      "name": "StepFun: Step 3.5 Flash",
-      "inputModalities": [
-        "text"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 262144,
-      "capabilities": [
-        "reasoning",
-        "tools"
-      ],
-      "providers": 3,
-      "inputUsdPerM": 0.072,
-      "cacheReadUsdPerM": 0.01425,
-      "outputUsdPerM": 0.216,
-      "openWeights": true
-    },
-    {
-      "id": "stepfun/step-3.7-flash",
-      "name": "StepFun: Step 3.7 Flash",
-      "inputModalities": [
-        "text",
-        "image"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 256000,
-      "capabilities": [
-        "structured_outputs"
-      ],
-      "providers": 3,
-      "inputUsdPerM": 0.15,
-      "cacheReadUsdPerM": 0.03,
-      "outputUsdPerM": 0.8625,
-      "openWeights": true
-    },
-    {
-      "id": "tencent/hy3",
-      "name": "Hunyuan 3",
-      "inputModalities": [
-        "text"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 256000,
-      "capabilities": [],
-      "providers": 2,
-      "inputUsdPerM": 0.066,
-      "cacheReadUsdPerM": 0.0261,
-      "outputUsdPerM": 0.26,
-      "openWeights": true
     },
     {
       "id": "x-ai/grok-4.20",

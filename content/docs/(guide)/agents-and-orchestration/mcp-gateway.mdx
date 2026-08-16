@@ -1,0 +1,151 @@
+---
+title: MCP gateway
+description: Put BitRouter in front of your MCP servers — one endpoint for many tool servers, with fan-out, name prefixing, list caching, and the option to run the tool loop server-side.
+---
+
+An agent that wants ten tool servers normally has to know about ten endpoints, each with its own address, auth, and lifecycle. The **MCP gateway** puts BitRouter in front of them: your agent connects to one endpoint, and the gateway forwards discovery and tool calls to the right upstream and relays the responses back. Same idea as the model surface, applied to tools.
+
+That buys three things you'd otherwise rebuild in every agent:
+
+- **Uniform auth** — the agent authenticates once to BitRouter instead of carrying credentials for every upstream.
+- **Discovery** — tools from every server surface in one place, so an agent finds what's available without being pre-wired to each one.
+- **Policy** — every tool call passes through one process, which is the only practical place to enforce rules consistently.
+
+## Declaring upstream servers
+
+Upstreams live under `mcp_servers` in [`bitrouter.yaml`](/docs/usage/configuration), keyed by server id. Two transports are supported — `stdio` spawns a child process, `http` dials a Streamable HTTP endpoint:
+
+```yaml
+mcp_servers:
+  demo:
+    name: demo
+    transport:
+      type: stdio
+      command: npx
+      args: ["-y", "@modelcontextprotocol/server-filesystem", "/data"]
+      env:
+        LOG_LEVEL: warn
+  vendor:
+    name: vendor
+    transport:
+      type: http
+      url: https://mcp.example.com/v1/mcp
+      headers:
+        Authorization: "Bearer ${MCP_TOKEN}"
+```
+
+A stdio child **inherits the ambient environment**, and `env` adds to it rather than replacing it. HTTP `headers` are static and sent on every request — the seam for an upstream's API key.
+
+The id carries into the URL, so it's constrained: non-empty, no `/`, and not literally `sse` (reserved by the spec's deprecated transport name).
+
+<Callout type="warning">
+**`mcp_servers` is empty by default, and when it's empty the binary doesn't mount the MCP route at all.** A `404` on `/mcp` before you've declared anything is the expected behavior, not a broken build.
+</Callout>
+
+## Two routes: per-server and aggregate
+
+Once servers are declared, the daemon serves them two ways:
+
+| Route | What it is |
+| --- | --- |
+| `POST /mcp/{server}` | One upstream, passed through. The `{server}` segment is the id from `mcp_servers`. |
+| `POST /mcp` | The **aggregate** endpoint — one virtual server fanning out across every participating upstream. |
+
+The aggregate is what makes "connect once" true. A list call queries every participating server and returns the merged catalog; a tool call routes to the server that owns the name. It's on by default and its path is configurable:
+
+```yaml
+mcp:
+  aggregate:
+    enabled: true   # false → only the per-server /mcp/{server} routes are mounted
+    route: /mcp
+```
+
+### Name prefixing and opting out
+
+Merging catalogs means names can collide, so tools and prompts are **prefixed in the aggregate** — the `search` tool on the `demo` server is advertised as `demo__search`. The prefix defaults to `{server_name}__` and is overridable per server. A server can also stay out of the fan-out entirely while remaining reachable on its own route:
+
+```yaml
+mcp_servers:
+  vendor:
+    name: vendor
+    transport: { type: http, url: https://mcp.example.com/v1/mcp }
+    aggregate: false        # reachable at /mcp/vendor only
+  demo:
+    name: demo
+    transport: { type: stdio, command: mcp-demo }
+    tool_prefix: "fs__"     # advertised as fs__search instead of demo__search
+```
+
+Prefixing applies to the aggregate. On `POST /mcp/{server}` you're talking to one upstream, so its tools keep their own names.
+
+## Caching list calls
+
+Discovery calls are cheap individually and expensive in aggregate — fanning `tools/list` out to every upstream on every agent connection adds up fast. The gateway wraps them in a TTL cache, on by default:
+
+| Setting | Default | Method cached |
+| --- | --- | --- |
+| `tools_list_ttl_secs` | `60` | `tools/list` |
+| `resources_list_ttl_secs` | `60` | `resources/list` |
+| `resources_templates_list_ttl_secs` | `300` | `resources/templates/list` |
+| `prompts_list_ttl_secs` | `300` | `prompts/list` |
+| `max_entries_per_server` | `64` | LRU safety bound, per server |
+
+Set any TTL to `0` to disable caching for that method, or `mcp.cache.enabled: false` to skip installing the layer:
+
+```yaml
+mcp:
+  cache:
+    tools_list_ttl_secs: 5   # a server whose tool list changes as you develop it
+```
+
+Only list calls are cached. Tool *execution* is never cached — every `tools/call` goes to the upstream.
+
+## Upstream protocol lifecycle
+
+`mcp.upstream_protocol` chooses how the gateway dials upstreams:
+
+- **`latest`** *(default)* — the legacy `initialize` lifecycle, at the newest version the MCP SDK treats as current (today `2025-11-25`).
+- **`2026-07-28`** — start with `server/discover` and fall back to `initialize` **only** on a JSON-RPC `METHOD_NOT_FOUND`.
+
+The fallback is deliberately narrow: any *other* discovery error fails the connection rather than silently retrying the old way. Opt in per deployment, and only for upstreams you expect to speak the modern lifecycle.
+
+<Callout type="warning">
+Opting into `2026-07-28` also lets an upstream answer `tools/call` with an MRTR `input_required` response or a Tasks `task` handle. Neither is a shape this gateway can carry, so both surface as explicit errors rather than being papered over.
+</Callout>
+
+## Letting BitRouter run the tool loop
+
+Everything above assumes your agent calls the tools. The alternative is to hand the loop to the router: list the servers under `server_tools.mcp_servers` and BitRouter advertises their tools to the model, executes the calls, feeds results back, and re-calls until the model stops asking.
+
+```yaml
+server_tools:
+  mcp_servers: [demo, vendor]
+  max_iterations: 6        # optional override of the loop's round cap
+```
+
+An **empty `mcp_servers` here leaves the pipeline strictly single-shot** — declaring an upstream under `mcp_servers` makes it *reachable*, but only naming it under `server_tools` puts it inside the router's own loop. Each upstream becomes an MCP-backed **toolset**, and the same `demo__search` prefixing applies. The loop's bounds, approval policy, and the model-backed tools that share it are on [Server tools](/docs/agents-and-orchestration/tool-calling/server-tools).
+
+## Introspecting the upstreams
+
+v1.0 keeps **no global tool registry** — these are live, one-shot queries against the servers:
+
+```bash
+bitrouter tools list              # every tool advertised by every configured server
+bitrouter tools status            # health-check each server with a tools/list round-trip
+bitrouter tools discover <server> # print a YAML stub to paste under mcp_servers:
+```
+
+`tools status` is the first thing to run when a tool isn't reaching the model — it separates "the server is down" from "the model was never offered it." `tools discover` is the fastest way to add a server: point it at one and paste the stub it prints.
+
+## Harnesses get the gateway for free
+
+Launch an agent harness through [`bitrouter tui`](/docs/usage/tui) and the aggregate endpoint is injected into it automatically as a streamable-HTTP MCP server (`bitrouter_tools`), alongside the skills server (`bitrouter_skills`). Orchestrators and the subagents they spawn inherit your whole configured tool surface without being set up for it individually — which is the point of declaring servers in one file.
+
+See [Skills](/docs/usage/skills) for the capability layer riding the same rails.
+
+<Cards>
+  <Card title="Agents & Orchestration" href="/docs/agents-and-orchestration/overview" description="How the MCP and ACP gateways fit together." />
+  <Card title="Server tools" href="/docs/agents-and-orchestration/tool-calling/server-tools" description="The loop that runs these tools inside the router." />
+  <Card title="Skills" href="/docs/usage/skills" description="The capability layer riding the same rails." />
+  <Card title="Config (YAML)" href="/docs/usage/configuration" description="The mcp, mcp_servers, and server_tools blocks in context." />
+</Cards>

@@ -32,7 +32,7 @@ This matters when your agent should *pay per request* without you provisioning k
 LiteLLM has shipped MCP, A2A, Skills, and a CLI alongside its horizontal LLM gateway — virtual keys, team budgets, spend dashboards, and an admin UI all included. BitRouter inverts the emphasis: agent primitives *are* the product, and the team-admin stack is intentionally minimal. What you get on the BitRouter surface:
 
 - MCP gateway — proxy MCP servers so agents discover tools across hosts.
-- [ACP gateway](/docs/models-and-routing/acp-gateway) — first-class support for the Agent Client Protocol used by Claude Code, Codex, OpenCode, and others.
+- [ACP gateway](/docs/agents-and-orchestration/acp-gateway) — first-class support for the Agent Client Protocol used by Claude Code, Codex, OpenCode, and others.
 - [Guardrails](/docs/models-and-routing/guardrails) — regex rules on the proxy hop that redact or block matching content inline.
 - [Cloud Tracing](/docs/evals-and-observability/tracing) — built-in spend and request tracing, no external collector required.
 - Agent Skills gateway (coming soon) — install and route capabilities by skill, not by raw model name.
@@ -122,7 +122,7 @@ To skip the local proxy entirely, point clients at `https://api.bitrouter.ai/v1`
 | Guardrails / PII / content filter | Agent firewall on the proxy hop | [Guardrails](/docs/models-and-routing/guardrails) |
 | Callbacks (Langfuse, Datadog, etc.) | Built-in spend + request logs; OTLP export | [OpenTelemetry](/docs/evals-and-observability/opentelemetry) |
 | MCP Gateway | MCP gateway | — |
-| A2A Agent Gateway | ACP gateway | [ACP](/docs/models-and-routing/acp-gateway) |
+| A2A Agent Gateway | ACP gateway | [ACP](/docs/agents-and-orchestration/acp-gateway) |
 | Skills Gateway / `/skills` endpoint | Skills gateway with [agentskills.io](https://agentskills.io) registry | [Agent Skills](/docs/usage/skills) |
 | LiteLLM Proxy CLI | `bitrouter` CLI / TUI | [Headless CLI](/docs/usage/cli) |
 | — (no equivalent) | Autonomous agent payment (x402 / MPP) | x402 / MPP |

@@ -8,6 +8,7 @@
     "usage",
     "models-and-routing",
     "evals-and-observability",
+    "agents-and-orchestration",
     "integrations"
   ]
 }

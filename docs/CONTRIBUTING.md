@@ -75,12 +75,15 @@ the Agent Skills product, so body copy keeps that name).
 ### Unlisted pages are hidden, not retired
 
 A page left out of its section's `pages` list still builds and still answers at
-its URL — it just doesn't appear in the sidebar. Three pages are hidden this
-way on purpose: `models-and-routing/acp-gateway.mdx`, `guardrails.mdx`, and the
-whole `tool-calling/` subfolder. They stay linked from feature pages, the
-migration guides, and `lib/llms-txt.ts`, so **don't delete them and don't add
-301s** — hiding a page changes the nav, not the URL history. Deleting one is a
-separate decision that does need a redirect.
+its URL — it just doesn't appear in the sidebar. One page is hidden this way on
+purpose: `models-and-routing/guardrails.mdx`. It stays linked from feature
+pages, the migration guides, and `lib/llms-txt.ts`, so **don't delete it and
+don't add a 301** — hiding a page changes the nav, not the URL history.
+Deleting it is a separate decision that does need a redirect.
+
+Two other hidden entries were un-hidden in 2026-08 by moving them into the new
+Agents & Orchestration section: `acp-gateway.mdx` and the `tool-calling/`
+subfolder. Those moves *did* need 301s, because they changed the URLs.
 
 ## Authoring contract (import-free MDX)
 
@@ -121,6 +124,22 @@ beyond the whitelisted components. The build enforces this:
 2. Add `<name>` to that section's `meta.json` `pages` list in the position you
    want it to appear in the nav.
 3. Run `pnpm lint:docs` to check the authoring contract.
+
+## Adding a section
+
+A new section is a folder under `content/docs/(guide)/` with its own
+`meta.json` (`title`, a [lucide](https://lucide.dev) `icon`, and `pages`), added
+to the `pages` list in `content/docs/(guide)/meta.json` at the position you want
+in the tab. Never give it `"root": true` — that would make it a fifth tab.
+
+One extra step is easy to miss: **add the folder to `SECTIONS` in
+`scripts/check-docs.mjs`.** That list is hardcoded, so a section left out of it
+is skipped by `pnpm lint:docs` **silently** — the check still prints OK, just
+over fewer files. The printed count ("N doc(s) across M sections") is the way to
+notice; M should match the number of hand-authored sections.
+
+Also resync `lib/llms-txt.ts`, which carries its own hand-maintained copy of
+the section list and page descriptions.
 
 ## Generated reference pages
 

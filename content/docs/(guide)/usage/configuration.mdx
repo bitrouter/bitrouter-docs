@@ -91,10 +91,10 @@ Every block is optional and defaults to something sensible. An empty file is val
 | `server` | Listen address and HTTP server settings |
 | `upstream` | Outbound HTTP client settings (timeouts, retries) |
 | `database` | Database connection |
-| `mcp` | MCP gateway aggregation and caching |
-| `mcp_servers` | Upstream MCP servers, keyed by id |
-| `server_tools` | MCP server ids whose tools BitRouter injects and executes itself. See [Server tools](/docs/models-and-routing/tool-calling/server-tools) |
-| `agents` | Upstream ACP agents. See [ACP gateway](/docs/models-and-routing/acp-gateway) |
+| `mcp` | MCP gateway aggregation, caching, and upstream protocol. See [MCP gateway](/docs/agents-and-orchestration/mcp-gateway) |
+| `mcp_servers` | Upstream MCP servers, keyed by id. See [MCP gateway](/docs/agents-and-orchestration/mcp-gateway) |
+| `server_tools` | MCP server ids whose tools BitRouter injects and executes itself. See [Server tools](/docs/agents-and-orchestration/tool-calling/server-tools) |
+| `agents` | Upstream ACP agents. See [ACP gateway](/docs/agents-and-orchestration/acp-gateway) |
 | `plugins` | Plugin config, keyed by plugin or bundle id |
 | `worktrees` | Worktree isolation for orchestrator-spawned subagents |
 | `tui` | Terminal console settings |

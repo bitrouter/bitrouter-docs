@@ -31,6 +31,7 @@ const SECTIONS = [
   "(guide)/integrations",
   "(guide)/models-and-routing",
   "(guide)/evals-and-observability",
+  "(guide)/agents-and-orchestration",
   "guides",
 ];
 const ROOT = "content/docs";

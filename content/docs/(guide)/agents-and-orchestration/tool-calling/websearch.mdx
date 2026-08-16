@@ -3,7 +3,7 @@ title: Web search
 description: A built-in web_search server tool — give any model routed through BitRouter a web search, served by a search backend you bring keys for.
 ---
 
-`web_search` is a built-in [server tool](/docs/models-and-routing/tool-calling/server-tools): BitRouter runs the search itself, inside the tool-calling loop, and feeds the results back to the model. So **any model routed through BitRouter gains a web search** — even one with no native search of its own — and the engine behind it is one you bring a key for.
+`web_search` is a built-in [server tool](/docs/agents-and-orchestration/tool-calling/server-tools): BitRouter runs the search itself, inside the tool-calling loop, and feeds the results back to the model. So **any model routed through BitRouter gains a web search** — even one with no native search of its own — and the engine behind it is one you bring a key for.
 
 It's the same family as Advisor, SubAgent, and Fusion: off by default, enabled in config, and advertised to the model only on requests that declare it.
 
@@ -31,7 +31,7 @@ A caller turns it on for a request by declaring it in the `tools` array:
 }
 ```
 
-Every per-result field except `url` is optional — no engine fills them all, so the contract is additive. `answer` is present only for the answer-engine `native` backend; the REST engines (Parallel, Exa, Firecrawl, Tavily) return `results` and no `answer`. The loop bounds (`max_iterations`, `tool_timeout`, …) and approval policy from [server tools](/docs/models-and-routing/tool-calling/server-tools#how-the-loop-runs) apply unchanged.
+Every per-result field except `url` is optional — no engine fills them all, so the contract is additive. `answer` is present only for the answer-engine `native` backend; the REST engines (Parallel, Exa, Firecrawl, Tavily) return `results` and no `answer`. The loop bounds (`max_iterations`, `tool_timeout`, …) and approval policy from [server tools](/docs/agents-and-orchestration/tool-calling/server-tools#how-the-loop-runs) apply unchanged.
 
 ## Enabling it
 
@@ -80,6 +80,6 @@ A caller overrides the default by naming a backend in the declaration's `args.ba
 
 ## Learn more
 
-- [Server tools](/docs/models-and-routing/tool-calling/server-tools) — the loop that runs `web_search`, plus Advisor, SubAgent, and Fusion.
-- [Toolsets](/docs/models-and-routing/tool-calling/server-tools#how-tools-are-bundled-toolsets) — how tools advertised on a request are bundled and namespaced.
+- [Server tools](/docs/agents-and-orchestration/tool-calling/server-tools) — the loop that runs `web_search`, plus Advisor, SubAgent, and Fusion.
+- [Toolsets](/docs/agents-and-orchestration/tool-calling/server-tools#how-tools-are-bundled-toolsets) — how tools advertised on a request are bundled and namespaced.
 - [OpenTelemetry](/docs/evals-and-observability/opentelemetry) — every nested search call shows up in your traces like any other.

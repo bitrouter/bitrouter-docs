@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { FAQS } from "./data";
-import { Kicker } from "./primitives";
 
 const FAQ_JSON_LD = {
   "@context": "https://schema.org",
@@ -25,8 +24,7 @@ export function Faq() {
           style={{ display: "grid", gridTemplateColumns: "0.85fr 1.15fr", gap: 56, alignItems: "start" }}
         >
           <div style={{ position: "sticky", top: 88 }}>
-            <Kicker>// faq</Kicker>
-            <h2 className="zed-display" style={{ fontSize: 44, lineHeight: 1.06, margin: "16px 0 0" }}>
+            <h2 className="zed-display" style={{ fontSize: 44, lineHeight: 1.06, margin: 0 }}>
               Questions.
             </h2>
           </div>

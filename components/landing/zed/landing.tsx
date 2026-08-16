@@ -4,7 +4,6 @@ import { BringYourOwn } from "./bring-your-own";
 import { TuiDemo } from "./tui-demo";
 import { Metrics } from "./trusted-metrics";
 import { Benchmark } from "./benchmark";
-import { ControlSurface } from "./control-surface";
 import { Loop } from "./loop";
 import { Faq } from "./faq";
 import { FinalCta } from "./cta";
@@ -22,7 +21,6 @@ export function ZedLanding() {
       <TuiDemo />
       <Metrics />
       <Benchmark />
-      <ControlSurface />
       <Loop />
       <Faq />
       <FinalCta />

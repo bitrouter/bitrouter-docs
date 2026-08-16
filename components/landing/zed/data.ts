@@ -413,130 +413,149 @@ export const BENCH_ROWS = [
   { req: "rank retrieval hits", model: "deepseek-v4", frontier: false, cost: "$0.003", lat: "101ms" },
 ];
 
-// ── Control surface / capabilities ──────────────────────────────────────────
-export type Feature = { name: string; knob: string; desc: string };
-export type CapGroup = { group: string; tint: string; features: Feature[] };
-export const CAPABILITIES: CapGroup[] = [
-  {
-    group: "Route models",
-    tint: "var(--z-blue)",
-    features: [
-      { name: "Policy table", knob: "policies", desc: "fingerprints each loop step → tier → model, deterministically" },
-      { name: "Model fallback", knob: "models: []", desc: "an ordered list, walked until one succeeds — up to 8" },
-      { name: "Provider selection", knob: ":cost", desc: "cheapest, fastest, or highest-throughput provider per call" },
-      { name: "Multi-account failover", knob: "failover", desc: "reroute mid-run — a limit at file 140 never re-pays 1–139" },
-    ],
-  },
-  {
-    group: "Tools & agents",
-    tint: "var(--z-cost)",
-    features: [
-      { name: "MCP gateway", knob: "mcp", desc: "your MCP servers become governed, routable tools" },
-      { name: "ACP gateway", knob: "acp", desc: "sub-agents become first-class routable primitives" },
-      { name: "AgentSkills gateway", knob: "skills", desc: "skills join the registry as routable resources" },
-      { name: "Cross-protocol", knob: "translate", desc: "OpenAI ⇄ Anthropic ⇄ Gemini — any format to any upstream" },
-    ],
-  },
-  {
-    group: "Run unattended",
-    tint: "var(--z-green)",
-    features: [
-      { name: "Guardrails", knob: "custom_patterns", desc: "regex block / redact on prompts and responses, in-router" },
-      { name: "Spend caps + loop guards", knob: "spend_cap", desc: "contain runaway cost per agent or workflow" },
-      { name: "Virtual keys", knob: "brvk_", desc: "scoped per agent — no agent holds an upstream key" },
-      { name: "Telemetry", knob: "otlp", desc: "every hop attributed by cost, tokens, latency → Prometheus" },
-    ],
-  },
-];
-
-// policy-lock.yaml shown in the control-surface panel (indent preserved).
-export const POLICY_LOCK = `# policy-lock.yaml — routing spec, versioned in your repo
-lockfileVersion: 1
-
-policies:
-  coding:
-    key_strategy: workflow_state
-    tiers:
-      economy: moonshotai/kimi-k2.7-code
-      strong: anthropic/claude-opus-4.8
-    default_tier: strong
-    tool_use_tier: strong
-    tool_safe_tiers: [strong]  # never strand a tool call
-
-    adequacy:  # learn cheap routes online
-      enabled: true
-      escalation_tier: strong  # a fail escalates now
-      escalation_threshold: 2
-      explore_enabled: true  # trial economy, lock the wins
-      explore_tier: economy
-      explore_threshold: 3`;
-
 // ── The loop ────────────────────────────────────────────────────────────────
+/**
+ * The loop section replaces two former sections — "control surface"
+ * (policy-lock.yaml beside a 12-cell capability grid) and "how it works" (four
+ * alternating panes) — which described the same object twice.
+ *
+ * The file is sliced *into* the steps rather than pinned beside them: each step
+ * shows only the lines it touches, step 04 shows those same lines changing, and
+ * the whole committed file lands at the end as the result. That ordering is the
+ * point — the diff only reads as a payoff if you met the lines earlier.
+ *
+ * Every key below is real: see `content/docs/(guide)/usage/configuration.mdx`
+ * ("The policy table" / "The adaptive loop"). Don't invent knobs here.
+ */
+
+/**
+ * The inline artifact beside a step. `yaml` is highlighted as config, `trace`
+ * is router output (indented lines recede), `diff` colours by leading +/-.
+ */
+export type Artifact = {
+  kind: "yaml" | "trace" | "diff";
+  caption: string;
+  lines: string[];
+};
+
+/**
+ * A containment detail folded into the step it actually belongs to. These used
+ * to be a separate "safe to leave running" grid; they answer "so it rewrites
+ * its own routing and runs up my bill", which lands harder next to the step
+ * that raises the worry than in a checklist underneath.
+ */
+export type Aside = { name: string; knob: string; desc: string };
+
 export type Step = {
   n: string;
   kicker: string;
   title: string;
   body: string;
-  paneTitle: string;
-  lines: { text: string; color?: string }[];
-  reverse: boolean;
+  artifact: Artifact;
+  /** An optional two-line verdict, for the step whose output isn't the file. */
+  readout?: string[];
+  asides?: Aside[];
 };
+
+/**
+ * The four steps share one continuous story: the table starts with `after_read`
+ * at `capable` and `midstream` at `cheap`; the trace prices that run at $0.68;
+ * evidence moves each one the opposite way; the diff lands them and the run
+ * drops to $0.41. Change a number in one step and the other three go stale.
+ */
 export const STEPS: Step[] = [
   {
     n: "01",
     kicker: "Act",
-    title: "Route each decision to the option that fits.",
-    body: "Every step picks the cheapest option that clears the bar — which model, which MCP tool or skill, which agent harness — decided per call.",
-    paneTitle: "route · live",
-    lines: [
-      { text: "model  fix auth.py test  → qwen/qwen-3.7", color: "var(--z-ink-4)" },
-      { text: "tool   search repo       → grep", color: "var(--z-ink-4)" },
-      { text: "agent  refactor task     → claude-code" },
-      { text: "✓ cheapest option that clears the bar", color: "var(--z-green)" },
+    title: "Route every step to the cheapest tier that clears the bar.",
+    body: "Each request is fingerprinted by its shape in the agent loop — opening turn, a turn after a given tool, a midstream turn with no tool call — and routed to a tier. Deterministic, no LLM in the path.",
+    artifact: {
+      kind: "yaml",
+      caption: "policy-lock.yaml · policy_table",
+      lines: [
+        "fingerprints:              # agent-loop step → tier",
+        "  opening:    capable",
+        "  after_read: capable",
+        "  midstream:  cheap",
+        'tool_safe_tiers: ["capable"]   # never strand a tool call',
+      ],
+    },
+    asides: [
+      {
+        name: "Guardrails",
+        knob: "custom_patterns",
+        desc: "regex block or redact on prompts and responses, in the same request path",
+      },
+      {
+        name: "Virtual keys",
+        knob: "brvk_",
+        desc: "every agent authenticates with its own scoped key — none hold an upstream credential",
+      },
     ],
-    reverse: false,
   },
   {
     n: "02",
     kicker: "Observe",
-    title: "See every decision, per run.",
-    body: "Cost, latency and outcome traced for every model call, tool invocation and agent hop — attributed to the run, nothing to bolt on.",
-    paneTitle: "trace · run #1428",
-    lines: [
-      { text: "model  qwen/qwen-3.7   $0.002  82ms", color: "var(--z-ink-4)" },
-      { text: "tool   grep · repo     $0.000  14ms", color: "var(--z-ink-4)" },
-      { text: "agent  claude-code     ok · 2 hops" },
-      { text: "✓ total $0.026 · p50 88ms", color: "var(--z-green)" },
-    ],
-    reverse: true,
+    title: "Every hop traced, with the cost already attached.",
+    body: "Ingress, routing, every upstream attempt — including multi-account failover hops — and settlement: one OpenTelemetry trace per request, cost and tokens on the span, over OTLP to a backend you already run.",
+    artifact: {
+      kind: "trace",
+      caption: "trace · run #1428",
+      lines: [
+        "run #1428        31 hops    $0.68   p50 96ms",
+        "  opening      claude-opus-4.8   $0.021  140ms",
+        "  after_read   claude-opus-4.8   $0.019  131ms",
+        "  midstream    kimi-k2.7-code    $0.002   82ms",
+      ],
+    },
   },
   {
     n: "03",
     kicker: "Evaluate",
-    title: "Score what each decision actually needed.",
-    body: "Each decision is scored against the policy — was the model enough, was the tool needed, did the harness solve it — so the next lap knows better.",
-    paneTitle: "eval · floor 0.85",
-    lines: [
-      { text: "model  design migration  cx 0.62  ↑", color: "var(--z-ink-4)" },
-      { text: "tool   semantic-search   used 0/5 ✕", color: "var(--z-ink-4)" },
-      { text: "agent  claude-code       solved  q 0.94" },
-      { text: "→ escalate · prune · keep", color: "var(--z-amber)" },
+    title: "Score whether the cheap route was actually enough.",
+    body: "Asymmetric on purpose: one hard failure escalates immediately, while a cheaper route must succeed repeatedly before it earns traffic. Exploration — trialling cheap on live traffic — stays off until you ask.",
+    artifact: {
+      kind: "yaml",
+      caption: "policy-lock.yaml · adequacy",
+      lines: [
+        "adequacy:",
+        "  enabled: true",
+        "  escalation_threshold: 2    # hard fails before pinning up",
+        "  pin_cooldown_secs: 1800    # then re-try the cheap path",
+        "  explore_enabled: false     # opt-in: trials on live traffic",
+      ],
+    },
+    readout: [
+      "after_read   12 consecutive clean   → earns cheap",
+      "midstream     2 hard failures       → pinned to capable",
     ],
-    reverse: false,
   },
   {
     n: "04",
-    kicker: "Learn",
-    title: "Tune the policy from what it learned.",
-    body: "Every lap folds the traces back into one policy — model mix, tool set and harness routing all shift, and the cost per run keeps dropping.",
-    paneTitle: "policy.yaml · v.7",
-    lines: [
-      { text: "+ model  minimax/m3        share 15%", color: "var(--z-ink-4)" },
-      { text: "- tool   semantic-search   pruned", color: "var(--z-ink-4)" },
-      { text: "+ agent  claude-code       bias +12%" },
-      { text: "+ cost_per_run: $0.41", color: "var(--z-green)" },
+    kicker: "Improve",
+    title: "The router proposes a diff. You commit it.",
+    body: "Under the default writeback: locked the router never publishes on its own — evolve prints the dry run, --apply writes the lock file. One versioned artifact next to your config, reviewed like any other change.",
+    artifact: {
+      kind: "diff",
+      caption: "$ bitrouter policy evolve",
+      lines: [
+        "  fingerprints:",
+        "    opening:    capable",
+        "-   after_read: capable",
+        "+   after_read: cheap       # 12 clean trials",
+        "-   midstream:  cheap",
+        "+   midstream:  capable     # pinned · 2 hard fails",
+        "",
+        "  cost_per_run  $0.68 → $0.41",
+      ],
+    },
+    asides: [
+      {
+        name: "Budgets per key",
+        knob: "--kind budget",
+        desc: "a spend window and rate limit scoped to one agent, so an unattended run can't walk away with the bill",
+      },
     ],
-    reverse: true,
   },
 ];
 

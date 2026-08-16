@@ -1,137 +1,123 @@
-import { STEPS, type Step } from "./data";
+import { STEPS, type Artifact, type Step } from "./data";
+import { highlightYamlLine, TrafficLights } from "./primitives";
 
-function SmallTicks() {
-  const base: React.CSSProperties = { position: "absolute", width: 9, height: 9, pointerEvents: "none" };
+/**
+ * Act → Observe → Evaluate → Improve.
+ *
+ * Merged from the two sections this replaces ("One policy" + "Act. Observe.
+ * Evaluate. Learn."), which described the same object twice.
+ *
+ * Alternating rows: the artifact takes the left column on odd steps and the
+ * right on even ones, so the page zig-zags down the four steps. What changed
+ * from the section this grew out of is the content, not the rhythm — the file
+ * is sliced *into* the steps (each shows only the lines it touches, step 04
+ * shows those same lines changing), and the containment details sit in the step
+ * that raises the worry rather than in a checklist underneath.
+ *
+ * On the stacked breakpoint the artifact always follows its copy: the words
+ * should arrive before the config on a phone, whichever side the row uses on
+ * desktop.
+ */
+
+/** Router output: the summary line leads, the indented hops recede. */
+function TraceLines({ lines }: { lines: string[] }) {
   return (
     <>
-      <span style={{ ...base, top: 7, left: 7, borderTop: "1px solid var(--z-rule-2)", borderLeft: "1px solid var(--z-rule-2)" }} />
-      <span style={{ ...base, top: 7, right: 7, borderTop: "1px solid var(--z-rule-2)", borderRight: "1px solid var(--z-rule-2)" }} />
-      <span style={{ ...base, bottom: 7, left: 7, borderBottom: "1px solid var(--z-rule-2)", borderLeft: "1px solid var(--z-rule-2)" }} />
-      <span style={{ ...base, bottom: 7, right: 7, borderBottom: "1px solid var(--z-rule-2)", borderRight: "1px solid var(--z-rule-2)" }} />
+      {lines.map((l, i) => (
+        <div
+          key={i}
+          style={{ whiteSpace: "pre", color: l.startsWith(" ") ? "var(--z-ink-5)" : "var(--z-ink-2)" }}
+        >
+          {l}
+        </div>
+      ))}
     </>
   );
 }
 
-function StepRow({ s }: { s: Step }) {
-  const visual = (
-    <div
-      style={{
-        position: "relative",
-        border: "1px solid var(--z-rule)",
-        borderRadius: 8,
-        overflow: "hidden",
-        order: s.reverse ? 2 : 1,
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          pointerEvents: "none",
-          background: "radial-gradient(100% 60% at 50% 0%, rgba(255,255,255,0.05), transparent 60%)",
-        }}
-      />
-      <SmallTicks />
-      <div
-        style={{
-          position: "relative",
-          background: "var(--z-panel)",
-          margin: 14,
-          border: "1px solid var(--z-rule)",
-          borderRadius: 6,
-          overflow: "hidden",
-          boxShadow: "0 16px 40px -24px rgba(0,0,0,0.8)",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 7,
-            padding: "8px 12px",
-            background: "var(--z-panel-header)",
-            borderBottom: "1px solid var(--z-rule)",
-            fontFamily: "var(--font-mono)",
-            fontSize: 10.5,
-            color: "var(--z-ink-6)",
-          }}
-        >
-          <span className="zed-lights">
-            <span className="r" />
-            <span className="y" />
-            <span className="g" />
-          </span>
-          <span style={{ marginLeft: 4 }}>{s.paneTitle}</span>
-        </div>
-        <div style={{ padding: "13px 14px", fontFamily: "var(--font-mono)", fontSize: 11.5, lineHeight: 1.85, color: "var(--z-ink-2)" }}>
-          {s.lines.map((ln, i) => (
-            <div key={i} style={{ whiteSpace: "pre", color: ln.color ?? "var(--z-ink-2)" }}>
-              {ln.text}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
-  const copy = (
-    <div style={{ order: s.reverse ? 1 : 2 }}>
-      <div
-        style={{
-          fontFamily: "var(--font-mono)",
-          fontSize: 11,
-          letterSpacing: "0.12em",
-          textTransform: "uppercase",
-          color: "var(--z-ink-6)",
-        }}
-      >
-        <span style={{ color: "var(--z-blue)" }}>{s.n}</span> &nbsp;{s.kicker}
-      </div>
-      <h3
-        style={{
-          fontFamily: "var(--font-display)",
-          fontStyle: "normal",
-          fontWeight: 500,
-          fontSize: 26,
-          lineHeight: 1.2,
-          color: "var(--z-ink)",
-          margin: "12px 0",
-          maxWidth: "22ch",
-        }}
-      >
-        {s.title}
-      </h3>
-      <p style={{ fontFamily: "var(--font-mono)", fontSize: 13, lineHeight: 1.65, color: "var(--z-ink-4)", maxWidth: "46ch" }}>
-        {s.body}
-      </p>
-    </div>
-  );
-
+/** A unified diff: `+` added, `-` removed, everything else context. */
+function DiffLines({ lines }: { lines: string[] }) {
   return (
-    <div
-      className="zed-grid-2 zed-loop-row"
-      style={{
-        display: "grid",
-        gridTemplateColumns: "minmax(0,1.05fr) minmax(0,0.95fr)",
-        gap: 44,
-        alignItems: "center",
-        borderTop: "1px solid var(--z-rule)",
-        padding: "44px 0",
-      }}
-    >
-      {visual}
-      {copy}
+    <>
+      {lines.map((l, i) => {
+        const added = l.startsWith("+");
+        const removed = l.startsWith("-");
+        const cost = !added && !removed && l.includes("→");
+        return (
+          <div
+            key={i}
+            className={added ? "zed-diff add" : removed ? "zed-diff del" : "zed-diff"}
+            style={{ color: cost ? "var(--z-green)" : undefined }}
+          >
+            {l || " "}
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
+function ArtifactPane({ a }: { a: Artifact }) {
+  return (
+    <div className={`zed-artifact ${a.kind}`}>
+      <div className="zed-artifact-head">
+        <TrafficLights />
+        <span style={{ marginLeft: 4 }}>{a.caption}</span>
+      </div>
+      <div className="zed-artifact-body">
+        {a.kind === "yaml" && a.lines.map((l, i) => highlightYamlLine(l, i))}
+        {a.kind === "trace" && <TraceLines lines={a.lines} />}
+        {a.kind === "diff" && <DiffLines lines={a.lines} />}
+      </div>
+    </div>
+  );
+}
+
+function StepRow({ s, reverse }: { s: Step; reverse: boolean }) {
+  return (
+    <div className={reverse ? "zed-step reverse" : "zed-step"}>
+      <div className="zed-step-visual">
+        <ArtifactPane a={s.artifact} />
+        {s.readout && (
+          <div className="zed-readout">
+            {s.readout.map((l, i) => (
+              <div key={i} style={{ whiteSpace: "pre" }}>
+                {l}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="zed-step-main">
+        <div className="zed-step-kicker">
+          <span className="zed-step-n">{s.n}</span> {s.kicker}
+        </div>
+        <h3 className="zed-step-title">{s.title}</h3>
+        <p className="zed-step-body">{s.body}</p>
+        {s.asides && (
+          <div className="zed-asides">
+            {s.asides.map((a) => (
+              <div key={a.name} className="zed-aside">
+                <span className="zed-aside-name">{a.name}</span>
+                <span className="zed-aside-knob">{a.knob}</span>
+                <div className="zed-aside-desc">{a.desc}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
 export function Loop() {
   return (
-    <section className="zed-section">
+    <section className="zed-section" id="loop">
       <div className="zed-wrap" style={{ padding: "88px 34px" }}>
-        <div style={{ maxWidth: 640, marginBottom: 52 }}>
-          <h2 className="zed-display" style={{ fontSize: 46, lineHeight: 1.06 }}>
-            Act. Observe. Evaluate. <span style={{ color: "var(--z-blue)" }}>Learn.</span>
+        <div style={{ maxWidth: 760 }}>
+          <h2 className="zed-display" style={{ fontSize: 46, lineHeight: 1.06, margin: 0 }}>
+            Act. Observe. Evaluate. <span style={{ color: "var(--z-blue)" }}>Improve.</span>
           </h2>
           <p
             style={{
@@ -140,35 +126,18 @@ export function Loop() {
               lineHeight: 1.6,
               color: "var(--z-ink-4)",
               margin: "18px 0 0",
+              maxWidth: "66ch",
             }}
           >
-            Not a static router that decides once and rots. BitRouter runs a closed loop on every
-            decision — which model, which MCP tool or skill, which agent harness — so it gets cheaper and
-            sharper each lap, with no tuning by you.
+            Other routers are tuned once, offline, on somebody else&apos;s benchmark. BitRouter closes
+            the loop against your own traffic — and every lap lands as a diff to one file you own.
           </p>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          {STEPS.map((s) => (
-            <StepRow key={s.n} s={s} />
+        <div className="zed-loop">
+          {STEPS.map((s, i) => (
+            <StepRow key={s.n} s={s} reverse={i % 2 === 1} />
           ))}
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 12,
-            fontFamily: "var(--font-mono)",
-            fontSize: 13.5,
-            color: "var(--z-ink-4)",
-            borderTop: "1px solid var(--z-rule)",
-            paddingTop: 24,
-          }}
-        >
-          <span style={{ color: "var(--z-blue)", fontSize: 20 }}>↻</span> self-tuning — every lap folds
-          traces back into the policy across{" "}
-          <span style={{ color: "var(--z-ink-2)" }}>models, tools &amp; agents</span>, cheaper each run
         </div>
       </div>
     </section>

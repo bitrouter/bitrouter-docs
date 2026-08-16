@@ -5,7 +5,7 @@ description: Move a LiteLLM SDK or Proxy setup to BitRouter — local binary, ho
 
 # Migrating from LiteLLM to BitRouter
 
-LiteLLM is a Python SDK and self-hosted proxy for unifying access to 100+ LLM providers. BitRouter solves the same problem from a different angle: an **agent-native proxy** with a single OpenAI-compatible surface — runnable as a local binary (BYOK, no infra) or as a hosted endpoint with autonomous agent payments. This guide is for teams whose workload has shifted from backend services to agent runtimes and want a leaner, agent-first surface.
+LiteLLM is a Python SDK and self-hosted proxy for unifying access to 100+ LLM providers. BitRouter solves the same problem from a different angle: an **agent-native proxy** with a single OpenAI-compatible surface — runnable as a local binary (BYOK, no infra) or as a hosted endpoint. This guide is for teams whose workload has shifted from backend services to agent runtimes and want a leaner, agent-first surface.
 
 ## Why migrate?
 
@@ -15,8 +15,7 @@ LiteLLM is a Python SDK and self-hosted proxy for unifying access to 100+ LLM pr
 | **Production deps** | Python runtime + web framework + Postgres/Redis | None |
 | **Deployment modes** | Self-hosted, or Enterprise cloud (quote-only) | Local binary **or** self-serve hosted (`api.bitrouter.ai`) — same OpenAI-compatible endpoint |
 | **Provider & endpoint coverage** | 100+ providers, plus embeddings / rerank / audio | SOTA-tier chat models; extend by PR |
-| **Agentic auth & payment** | None | x402 / MPP autonomous payment (cloud mode) |
-| **Design focus** | All-in-one LLM gateway: admin UI, virtual keys, budgets, with agent gateways alongside | Agent-first proxy: MCP / ACP / Skills, agent firewall, agentic payment as the core surface |
+| **Design focus** | All-in-one LLM gateway: admin UI, virtual keys, budgets, with agent gateways alongside | Agent-first proxy: MCP / ACP / Skills and an agent firewall as the core surface |
 | **License** | MIT (SDK) / paid enterprise tier | Apache 2.0 throughout |
 
 ## Two things worth highlighting
@@ -24,8 +23,6 @@ LiteLLM is a Python SDK and self-hosted proxy for unifying access to 100+ LLM pr
 ### 1. Cloud and local share the same surface
 
 With LiteLLM, the proxy is something you operate. With BitRouter, **the hosted cloud and local binary expose the same OpenAI-compatible endpoint** — you can start local during development, then point at `api.bitrouter.ai` for production (or vice versa) without changing client code. The CLI, the wizard, and Agent Skills all work in either mode; toggle with one keypress in the setup TUI. See the [Quick Start](/docs/overview/quickstart) for both flows.
-
-This matters when your agent should *pay per request* without you provisioning keys for it — Cloud mode supports x402 / MPP autonomous payments, which LiteLLM has no equivalent for.
 
 ### 2. Agent-native, not all-in-one
 
@@ -37,9 +34,8 @@ LiteLLM has shipped MCP, A2A, Skills, and a CLI alongside its horizontal LLM gat
 - [Cloud Tracing](/docs/evals-and-observability/tracing) — built-in spend and request tracing, no external collector required.
 - Agent Skills gateway (coming soon) — install and route capabilities by skill, not by raw model name.
 - [Headless CLI](/docs/usage/cli) — TUI wizard plus scriptable commands for setup and ops.
-- **Agentic auth & payment** — x402 / MPP so an agent can pay per request without you provisioning a key for it. LiteLLM has no equivalent.
 
-If you depend on LiteLLM's team-admin UI, virtual keys, and per-user budgets, LiteLLM is still the better fit. If you're building agents — especially agents that should transact autonomously — BitRouter is.
+If you depend on LiteLLM's team-admin UI, virtual keys, and per-user budgets, LiteLLM is still the better fit. If you're building agents, BitRouter is.
 
 ## Migration paths
 
@@ -125,7 +121,6 @@ To skip the local proxy entirely, point clients at `https://api.bitrouter.ai/v1`
 | A2A Agent Gateway | ACP gateway | [ACP](/docs/agents-and-orchestration/acp-gateway) |
 | Skills Gateway / `/skills` endpoint | Skills gateway with [agentskills.io](https://agentskills.io) registry | [Agent Skills](/docs/usage/skills) |
 | LiteLLM Proxy CLI | `bitrouter` CLI / TUI | [Headless CLI](/docs/usage/cli) |
-| — (no equivalent) | Autonomous agent payment (x402 / MPP) | x402 / MPP |
 
 ## What BitRouter intentionally doesn't ship
 
@@ -158,7 +153,7 @@ To set expectations honestly, two gaps are worth checking before you start.
 <Cards>
   <Card title="Quick Start" href="/docs/overview/quickstart" description="Run BitRouter locally or in the cloud in under a minute" />
   <Card title="BitRouter vs LiteLLM" href="/docs/overview/bitrouter-vs-litellm" description="Side-by-side on routing, observability, and operations" />
-  <Card title="Agent features" href="/docs/usage/skills" description="Skills, ACP, agent firewall, x402 payment" />
+  <Card title="Agent features" href="/docs/usage/skills" description="Skills, ACP, and the agent firewall" />
   <Card title="API Reference" href="/docs/reference" description="OpenAI- and Anthropic-compatible endpoints" />
 </Cards>
 

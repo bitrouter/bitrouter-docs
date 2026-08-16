@@ -5,7 +5,7 @@ description: Move a TensorZero gateway setup to BitRouter — drop the ClickHous
 
 # Migrating from TensorZero to BitRouter
 
-[TensorZero](https://github.com/tensorzero/tensorzero) is an open-source **LLMOps platform** — a Rust gateway bundled with observability, evaluations, optimization (fine-tuning, automated prompt engineering), and experimentation, all backed by a ClickHouse data warehouse and driven by a GitOps `tensorzero.toml`. BitRouter solves a narrower problem on purpose: an **agent-native proxy** with a single OpenAI-compatible surface, runnable as a local binary (BYOK, no infra) or as a hosted endpoint with autonomous agent payments.
+[TensorZero](https://github.com/tensorzero/tensorzero) is an open-source **LLMOps platform** — a Rust gateway bundled with observability, evaluations, optimization (fine-tuning, automated prompt engineering), and experimentation, all backed by a ClickHouse data warehouse and driven by a GitOps `tensorzero.toml`. BitRouter solves a narrower problem on purpose: an **agent-native proxy** with a single OpenAI-compatible surface, runnable as a local binary (BYOK, no infra) or as a hosted endpoint.
 
 This guide is for teams who adopted TensorZero mainly as a **gateway** — unified provider access, routing, retries, fallback — and want a leaner, agent-first surface without operating a database. If you lean on TensorZero's optimization and experimentation loop, read [What BitRouter intentionally doesn't ship](#what-bitrouter-intentionally-doesnt-ship) before you commit.
 
@@ -17,9 +17,8 @@ This guide is for teams who adopted TensorZero mainly as a **gateway** — unifi
 | **Production deps** | ClickHouse (observability store) + Docker/Compose | None |
 | **Configuration** | `tensorzero.toml` — functions, variants, models, providers | `bitrouter.yaml` — optional, JSON Schema published, [validates in CI](/docs/usage/configuration#validate-in-ci) |
 | **Deployment modes** | Self-hosted only | Local binary **or** hosted (`api.bitrouter.ai`) — same OpenAI-compatible endpoint |
-| **Design focus** | Full LLMOps loop: gateway + observability + evals + optimization + experimentation | Agent-first proxy: MCP / ACP / Skills, agent firewall, agentic payment |
+| **Design focus** | Full LLMOps loop: gateway + observability + evals + optimization + experimentation | Agent-first proxy: MCP / ACP / Skills and an agent firewall |
 | **Agent protocol surface** | None (gateway is provider-facing) | MCP, ACP, Skills, CLI — the product, not an add-on |
-| **Agentic auth & payment** | None | x402 / MPP autonomous payment (cloud mode) |
 | **License** | Apache 2.0 | Apache 2.0 |
 
 ## Two things worth highlighting
@@ -34,7 +33,7 @@ Configuration is the other difference, and it's one of degree rather than kind. 
 
 ### 2. Agent-native, and cloud/local share one surface
 
-TensorZero's gateway is provider-facing — it unifies the upstreams. BitRouter adds the **agent-facing** half: an MCP gateway for tools, an [ACP gateway](/docs/agents-and-orchestration/acp-gateway) for agent identity and dispatch, a [server-tool loop](/docs/agents-and-orchestration/tool-calling/server-tools), and agentic payment so an agent can pay per request without you provisioning a key for it.
+TensorZero's gateway is provider-facing — it unifies the upstreams. BitRouter adds the **agent-facing** half: an MCP gateway for tools, an [ACP gateway](/docs/agents-and-orchestration/acp-gateway) for agent identity and dispatch, and a [server-tool loop](/docs/agents-and-orchestration/tool-calling/server-tools) that runs those tools inside the request.
 
 And **the hosted cloud and local binary expose the same OpenAI-compatible endpoint** — start local during development, point at `api.bitrouter.ai` for production (or vice versa) without changing client code. See the [Quick Start](/docs/overview/quickstart) for both flows.
 
@@ -128,7 +127,6 @@ To skip the local proxy entirely, point clients at `https://api.bitrouter.ai/v1`
 | OpenTelemetry (OTLP) export | OpenTelemetry (OTLP) export | [OpenTelemetry](/docs/evals-and-observability/opentelemetry) |
 | Embedded structured outputs (JSON functions) | Structured outputs across all providers | [Structured outputs](/docs/models-and-routing/structured-outputs) |
 | — (no equivalent) | MCP / ACP / Skills agent gateways | [Agent Skills](/docs/usage/skills), [Agents](/docs/agents-and-orchestration/acp-gateway) |
-| — (no equivalent) | Autonomous agent payment (x402 / MPP) | x402 / MPP |
 
 ## What BitRouter intentionally doesn't ship
 
@@ -162,7 +160,7 @@ If your workflow depends on that closed feedback loop — collect inferences and
 <Cards>
   <Card title="Quick Start" href="/docs/overview/quickstart" description="Run BitRouter locally or in the cloud in under a minute" />
   <Card title="BitRouter vs OpenRouter" href="/docs/overview/bitrouter-vs-openrouter" description="Side-by-side with OpenRouter and generic gateways" />
-  <Card title="Agent features" href="/docs/usage/skills" description="Skills, ACP, agent firewall, x402 payment" />
+  <Card title="Agent features" href="/docs/usage/skills" description="Skills, ACP, and the agent firewall" />
   <Card title="API Reference" href="/docs/reference" description="OpenAI- and Anthropic-compatible endpoints" />
 </Cards>
 

@@ -130,3 +130,41 @@ export function headlineOf(item: {
 }): string {
   return item.description?.trim() || item.title;
 }
+
+const SITE = "https://bitrouter.ai";
+
+/**
+ * Entry bodies carry an MDX provenance comment telling a maintainer whether the
+ * sync will overwrite the file. It is build bookkeeping, invisible on the
+ * rendered page — and it must stay invisible on the Markdown surfaces too,
+ * where it would otherwise be the first thing an agent reads about a release.
+ */
+export function stripMdxComments(text: string): string {
+  return text.replace(/\{\/\*[\s\S]*?\*\/\}/g, "").trim();
+}
+
+/** `## v1.0.0-alpha.28 — What shipped`, with no trailing sentence period. */
+export function releaseHeading(item: ChangelogItem): string {
+  const headline = headlineOf(item).replace(/\.$/, "");
+  return item.version && headline !== item.version
+    ? `## ${item.version} — ${headline}`
+    : `## ${headline}`;
+}
+
+/**
+ * One release as a Markdown section: heading, the facts a reader needs to place
+ * it in time, then the notes. Used for /changelog.md and the changelog tail of
+ * llms-full.txt.
+ */
+export function releaseSection(item: ChangelogItem, notes: string): string {
+  const meta = [
+    `Released: ${item.date}`,
+    `Permalink: ${SITE}${item.url}`,
+    item.breaking ? "Breaking: yes" : null,
+  ]
+    .filter(Boolean)
+    .join("  \n");
+  return [releaseHeading(item), meta, stripMdxComments(notes)]
+    .filter(Boolean)
+    .join("\n\n");
+}

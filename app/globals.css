@@ -226,6 +226,7 @@
   --z-panel-header: #21252b; /* terminal titlebar / rail */
   --z-panel-sel: #2e333c; /* selected row */
   --z-inset: #0e1013; /* inset code well */
+  --z-wash: #101216; /* v3 flat well — code blocks, quickstart, search box */
   --z-rule: #20242b; /* section hairline */
   --z-rule-2: #333a44; /* lighter border / corner ticks */
   --z-rule-code: #262b33; /* input / inline-code border */
@@ -255,6 +256,14 @@
   --z-code: #8fb4ff;
   --z-red: #e06c6c; /* traffic light red */
   --z-yellow: #e0b45b; /* traffic light yellow */
+
+  /* ── v3 layout rhythm ──
+     The design drops section hairlines entirely and lets one vertical interval
+     carry the structure: every marketing section is `padding: var(--z-sec) 0 0`.
+     Wrap = 1180px content, 40px gutters (22px below the 900px breakpoint). */
+  --z-sec: 116px;
+  --z-wrap: 1180px;
+  --z-gutter: 40px;
 }
 
 /* ─── Docs inherit the global Zed blue accent (no monochrome override) ───
@@ -413,18 +422,18 @@ pre:has(code) {
    the heading text) and Card blocks. Color is `--accent-brand` (brand blue)
    on both docs and blog. */
 .prose a:not([data-card]),
-#nd-page a:not([data-card]) {
+#nd-page a:not([data-card]):not(.zed-chrome-link) {
   color: var(--accent-brand);
   text-underline-offset: 3px;
 }
 /* Docs links add an underline so the affordance doesn't rest on colour alone.
    Scoped to `#nd-page` (docs article) — blog links stay colour-only, no rule. */
-#nd-page a:not([data-card]) {
+#nd-page a:not([data-card]):not(.zed-chrome-link) {
   text-decoration-line: underline;
   text-decoration-color: oklch(from var(--foreground) l c h / 0.4);
 }
 .prose a:not([data-card]):hover,
-#nd-page a:not([data-card]):hover {
+#nd-page a:not([data-card]):not(.zed-chrome-link):hover {
   opacity: 0.85;
 }
 
@@ -496,6 +505,374 @@ pre:has(code) {
 /* Sidebar border — right edge separator on docs layout */
 #nd-sidebar {
   border-right: 1px solid oklch(from var(--foreground) l c h / 0.06) !important;
+}
+
+/* ═══ Docs · v3 dark ══════════════════════════════════════════════════════
+   Re-skins the fumadocs notebook surface to the "BitRouter Docs dark" file.
+   Layout, sidebar, TOC and prose only — the page header (breadcrumb, title,
+   meta row) is composed in `app/docs/[[...slug]]/page.tsx`.
+
+   Everything below is scoped to `#nd-notebook-layout` / `#nd-page` so the
+   blog, changelog and legal surfaces (which also render `.prose`) are left
+   alone. ══════════════════════════════════════════════════════════════════ */
+
+/* Shell metrics — 282 / content / 232, capped at 1560. */
+#nd-notebook-layout {
+  --fd-sidebar-width: 282px;
+  --fd-toc-width: 232px;
+  max-width: 1560px;
+  margin-inline: auto;
+}
+
+/* ── Sidebar ── */
+#nd-sidebar {
+  /* v3 separates the sidebar by whitespace, not a rule. */
+  border-right: none !important;
+}
+#nd-sidebar [data-radix-scroll-area-viewport] {
+  padding: 40px 28px 60px 40px;
+}
+/* Group labels. fumadocs renders a non-collapsible folder head as a plain
+   `div` carrying the same item classes as the links, so it is matched on
+   `rounded-lg` (which only the heads and links have) and narrowed to divs. */
+#nd-sidebar p:not(:empty),
+#nd-sidebar [data-radix-scroll-area-viewport] div[class~="rounded-lg"] {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--z-ink-6) !important;
+  margin-top: 34px;
+  padding: 0 0 14px !important;
+}
+#nd-sidebar [data-radix-scroll-area-viewport] > * > *:first-child p:not(:empty),
+#nd-sidebar [data-radix-scroll-area-viewport] > * > *:first-child div[class~="rounded-lg"] {
+  margin-top: 0;
+}
+/* v3 labels the groups with type alone — the folder glyphs go. */
+#nd-sidebar [data-radix-scroll-area-viewport] div[class~="rounded-lg"] svg {
+  display: none;
+}
+/* Items — a left tick marks position instead of a filled pill. */
+#nd-sidebar a {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.5;
+  border-radius: 0 !important;
+  border-left: 1px solid var(--z-rule);
+  padding: 6px 0 6px 14px !important;
+  color: var(--z-ink-5);
+  transition: color 150ms ease, border-color 150ms ease;
+}
+#nd-sidebar a:hover {
+  background: transparent !important;
+  border-left-color: var(--z-ink-6);
+  color: var(--z-ink-2) !important;
+}
+#nd-sidebar a[data-active="true"] {
+  background: transparent !important;
+  border-left-color: var(--z-ink);
+  color: var(--z-ink) !important;
+  font-weight: 400;
+}
+#nd-sidebar button[data-open] {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+}
+
+/* ── Table of contents ── */
+#nd-toc {
+  padding-top: 56px;
+  padding-inline-end: 40px;
+}
+#nd-toc h3,
+#nd-toc [data-toc-header] {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--z-ink-6);
+  padding-bottom: 16px;
+}
+#nd-toc a {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.55;
+  border-left: 1px solid var(--z-rule);
+  padding: 6px 0 6px 14px;
+  color: var(--z-ink-6);
+  transition: color 150ms ease, border-color 150ms ease;
+}
+#nd-toc a:hover {
+  color: var(--z-ink-3);
+}
+#nd-toc a[data-active="true"] {
+  border-left-color: var(--z-ink);
+  color: var(--z-ink) !important;
+}
+/* fumadocs draws its own moving thumb down the TOC; the per-item tick above
+   replaces it, and the two together read as a double rule. */
+#nd-toc [role="none"][style*="--fd-top"] {
+  display: none;
+}
+
+/* ── Article column ── */
+#nd-page {
+  padding-inline: 64px;
+  padding-top: 56px;
+  padding-bottom: 120px;
+}
+#nd-page > * {
+  max-width: none;
+}
+
+/* Breadcrumb. */
+#nd-page > div:first-child {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--z-ink-6);
+}
+#nd-page > div:first-child > *:last-child {
+  color: var(--z-ink-3);
+}
+
+/* Title + description. */
+.zed-doc-title {
+  font-family: var(--font-display) !important;
+  font-style: italic !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.015em;
+  font-size: 44px !important;
+  line-height: 1.06;
+  margin: 26px 0 0;
+}
+.zed-doc-desc {
+  font-family: var(--font-mono) !important;
+  font-size: 14.5px !important;
+  line-height: 1.75;
+  color: var(--z-ink-5) !important;
+  margin: 20px 0 0 !important;
+  max-width: 68ch;
+  text-wrap: pretty;
+}
+
+/* ── Prose ──
+   Body copy is mono at 14/1.85 over a 72ch measure; headings are Newsreader
+   *upright* (the italic is reserved for the page title) and each `h2` opens
+   on a hairline. */
+.zed-docs {
+  font-family: var(--font-mono);
+  margin-top: 52px;
+}
+.zed-docs :is(p, li) {
+  font-family: var(--font-mono) !important;
+  font-size: 14px;
+  line-height: 1.85;
+  color: var(--z-ink-2);
+  max-width: 72ch;
+  text-wrap: pretty;
+}
+.zed-docs :is(h1, h2, h3, h4) {
+  font-family: var(--font-display) !important;
+  font-style: normal !important;
+  font-weight: 500 !important;
+  letter-spacing: normal;
+  color: var(--z-ink);
+}
+.zed-docs h2 {
+  font-size: 26px !important;
+  line-height: 1.25;
+  margin: 68px 0 0 !important;
+  padding-top: 22px;
+  border-top: 1px solid var(--z-rule);
+}
+.zed-docs h3 {
+  font-size: 20px !important;
+  line-height: 1.3;
+  margin: 44px 0 0 !important;
+}
+.zed-docs h4 {
+  font-size: 16px !important;
+  margin: 32px 0 0 !important;
+}
+.zed-docs strong,
+.zed-docs b {
+  color: var(--z-ink);
+  font-weight: 500;
+}
+
+/* Inline code — tan, so it never reads as a link. */
+.zed-docs :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--z-cost);
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+.zed-docs a :not(pre) > code,
+.zed-docs a code {
+  color: inherit;
+}
+
+/* Code wells — flat --z-wash, no border, no radius. Shiki keeps painting the
+   tokens inside. */
+.zed-docs figure:has(pre),
+.zed-docs pre {
+  background: var(--z-wash) !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.zed-docs pre {
+  font-size: 13px;
+  line-height: 1.9;
+}
+
+/* Callouts — a left rule and an uppercase label, not a filled box.
+   fumadocs' CalloutContainer is the only element carrying `--callout-color`,
+   which makes it a stable hook across its Tailwind classes. */
+.zed-docs div[style*="--callout-color"] {
+  background: transparent !important;
+  border: none !important;
+  border-left: 1px solid var(--callout-color, var(--z-blue)) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 2px 0 2px 18px !important;
+  margin: 28px 0 !important;
+  gap: 0 !important;
+  max-width: 72ch;
+}
+/* Its accent bar and icon are the filled-box vocabulary; the rule replaces both. */
+.zed-docs div[style*="--callout-color"] > div[role="none"],
+.zed-docs div[style*="--callout-color"] > svg {
+  display: none !important;
+}
+.zed-docs div[style*="--callout-color"] > p:first-of-type {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--callout-color, var(--z-blue));
+  padding-bottom: 8px;
+}
+.zed-docs div[style*="--callout-color"] :is(p, li) {
+  font-size: 13.5px;
+  line-height: 1.8;
+  color: var(--z-ink-3);
+}
+
+/* Cards — a 1px grid drawn by the rule colour showing between cells. */
+.zed-docs div[class~="@container"]:has(> [data-card]) {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px !important;
+  background: var(--z-rule);
+  border: 1px solid var(--z-rule);
+  border-radius: 0 !important;
+  margin-top: 26px;
+  max-width: 72ch;
+}
+.zed-docs [data-card][class~="rounded-xl"] {
+  background: var(--z-bg) !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 22px 22px 24px !important;
+  box-shadow: none !important;
+}
+.zed-docs [data-card][class~="rounded-xl"]:hover {
+  background: var(--z-wash) !important;
+}
+.zed-docs [data-card][class~="rounded-xl"] h3 {
+  font-family: var(--font-sans) !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: var(--z-ink);
+  margin: 0 0 8px !important;
+  padding: 0;
+  border: none;
+}
+.zed-docs [data-card][class~="rounded-xl"] p {
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--z-ink-5);
+}
+
+/* Tables — ruled rows under a bright head, no cell chrome. */
+.zed-docs table {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  border-collapse: collapse;
+}
+.zed-docs :is(th, td) {
+  border: none !important;
+  border-bottom: 1px solid var(--z-rule) !important;
+  padding: 11px 20px 11px 0 !important;
+  background: transparent !important;
+}
+.zed-docs th {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--z-ink-6);
+  border-bottom: 1px solid var(--z-ink) !important;
+}
+
+/* Prev/next footer — a two-column ruled grid, not a pair of cards. The
+   article's card grid lives inside `.zed-docs`, so scoping to a direct child
+   of `#nd-page` picks out the footer alone. */
+#nd-page > div[class~="@container"] {
+  display: grid;
+  gap: 1px !important;
+  background: var(--z-rule);
+  border-top: 1px solid var(--z-rule);
+  margin-top: 80px;
+}
+#nd-page > div[class~="@container"] > a {
+  background: var(--z-bg);
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 24px 0 !important;
+  color: var(--z-ink-2) !important;
+  text-decoration: none !important;
+  transition: background 150ms ease;
+}
+#nd-page > div[class~="@container"] > a:hover {
+  background: var(--z-wash);
+}
+#nd-page > div[class~="@container"] > a > div {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--z-ink-6);
+}
+#nd-page > div[class~="@container"] > a > div p {
+  font-family: inherit;
+  font-size: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+}
+/* The truncated description under each title is noise beside the label. */
+#nd-page > div[class~="@container"] > a > p {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  #nd-page {
+    padding-inline: 24px;
+  }
+  .zed-docs div[class~="@container"]:has(> [data-card]) {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ─── Docs layout: viewport-locked / app-shell scroll ───

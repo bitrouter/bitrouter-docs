@@ -40,9 +40,9 @@ function LatestBadge() {
         fontSize: 9.5,
         letterSpacing: "0.1em",
         textTransform: "uppercase",
-        color: "var(--z-blue)",
-        border: "1px solid #2a3550",
-        borderRadius: 5,
+        color: "var(--z-ink-2)",
+        border: "1px solid var(--z-rule-2)",
+        borderRadius: 0,
         padding: "2px 6px",
       }}
     >
@@ -57,7 +57,7 @@ function BreakingBadge({ label = "Breaking" }: { label?: string }) {
       style={{
         color: "var(--z-red)",
         border: "1px solid rgba(224,108,108,0.35)",
-        borderRadius: 5,
+        borderRadius: 0,
         padding: "2px 7px",
         textTransform: "uppercase",
         letterSpacing: "0.06em",
@@ -75,7 +75,7 @@ function TagChip({ children }: { children: ReactNode }) {
       style={{
         color: "var(--z-ink-5)",
         border: ROW_BORDER,
-        borderRadius: 5,
+        borderRadius: 0,
         padding: "2px 8px",
         fontSize: 11.5,
       }}
@@ -243,8 +243,10 @@ function TrainGroup({
             style={{
               marginLeft: "auto",
               ...MONO,
-              fontSize: 12,
-              color: "var(--z-blue)",
+              fontSize: 11,
+              letterSpacing: "0.14em",
+              textTransform: "uppercase",
+              color: "var(--z-ink-5)",
               background: "none",
               border: "none",
               padding: 0,

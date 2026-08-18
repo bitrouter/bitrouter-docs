@@ -9,11 +9,12 @@ import { useChangelogUnseen } from "@/components/changelog/use-changelog-unseen"
 /**
  * Auth-aware site header for the marketing/docs website.
  *
- * Design language: the "Zed dark" nav. A blue-bordered ≋ mark + IBM Plex Sans
- * `bitrouter.` wordmark, IBM Plex Sans nav links (muted → ink on hover), and two
- * IBM Plex Mono CTAs — a bordered "book demo" and the blue "get api key →". The
- * shell is sticky + translucent (`rgba(12,13,16,0.85)`) with a `--z-rule` hairline.
- * All colours come from the global Zed tokens (`--z-*`), so it matches every page.
+ * Design language: the v3 dark nav. A bare ≋ mask mark + lowercase mono
+ * `bitrouter` wordmark, a centred row of uppercase mono nav links
+ * (11.5px / 0.16em, ink-3 → ink on hover), then the utility cluster — the
+ * "Ask AI…" search box, GitHub, "book demo" and "Get API key". The shell is
+ * sticky + translucent (`rgba(12,13,16,0.85)`) with a `--z-rule` hairline. All
+ * colours come from the global Zed tokens (`--z-*`), so it matches every page.
  *
  * Takes `session`, `pathname`, and `onSignOut` as props supplied by the web
  * app, plus slots for app-specific content. Imports nothing app-local.
@@ -41,6 +42,11 @@ export interface SiteHeaderProps {
   searchSlot?: React.ReactNode;
   /** web: GitHub stars. */
   utilitySlot?: React.ReactNode;
+  /**
+   * Small uppercase label after the wordmark — the docs shell renders
+   * `bitrouter docs`, marketing pages render the wordmark alone.
+   */
+  wordmarkSuffix?: string;
 }
 
 // ── internal helpers ─────────────────────────────────────
@@ -49,8 +55,16 @@ function cn(...parts: Array<string | false | null | undefined>): string {
   return parts.filter(Boolean).join(" ");
 }
 
-// Shared nav-item base: IBM Plex Sans, muted → ink on hover (Zed nav).
-const NAV_ITEM = "px-3 py-2 font-sans text-sm transition-colors";
+// Shared nav-item base: uppercase mono at the v3 label size, muted → ink on
+// hover. The tracking is what makes the row read as a rule of labels rather
+// than a list of words, so it stays on every nav link.
+const NAV_ITEM =
+  "whitespace-nowrap font-mono text-[11.5px] uppercase tracking-[0.16em] transition-colors";
+
+// The right-hand utility links share the nav's type, one step brighter so the
+// cluster reads as actions rather than navigation.
+const UTIL_LINK =
+  "shrink-0 whitespace-nowrap font-mono text-[11.5px] uppercase tracking-[0.16em] transition-colors";
 
 /**
  * "book demo" — the secondary header CTA that opens the founder-call Cal.com
@@ -124,47 +138,53 @@ export function SiteHeaderBody({
   leadingSlot,
   searchSlot,
   utilitySlot,
+  wordmarkSuffix,
 }: SiteHeaderProps): React.ReactElement {
   const isAuthed = Boolean(session);
   const items = navItemsFor(isAuthed);
   const changelogUnseen = useChangelogUnseen();
   useCalFounderCall();
   return (
-    <div className="flex h-12 w-full items-center gap-1 px-4 sm:px-6 lg:px-[34px]">
-      {leadingSlot ? <div className="flex items-center pr-1">{leadingSlot}</div> : null}
+    <div className="flex h-[62px] w-full items-center gap-6 px-[22px] sm:px-6 lg:px-10">
+      {leadingSlot ? <div className="flex shrink-0 items-center">{leadingSlot}</div> : null}
 
-      {/* Logo — official routing mark in a blue-bordered box + IBM Plex Sans wordmark */}
+      {/* Logo — bare ≋ mask mark + lowercase mono wordmark. v3 drops the
+          blue-bordered box: the mark carries ink, not accent. */}
       <a
         href={config.webBaseUrl}
         aria-label="BitRouter home"
-        className="flex shrink-0 items-center gap-2.5 py-1.5 pr-2.5 transition-opacity hover:opacity-90"
+        className="flex shrink-0 items-center gap-[9px] transition-opacity hover:opacity-80"
       >
-        <span className="flex size-[26px] shrink-0 items-center justify-center rounded-md border border-[var(--z-blue)] text-[var(--z-blue)]">
-          <span
-            aria-hidden
-            className="block size-4 bg-current"
-            style={{
-              WebkitMaskImage: "url(/bitrouter-mark.png)",
-              maskImage: "url(/bitrouter-mark.png)",
-              WebkitMaskRepeat: "no-repeat",
-              maskRepeat: "no-repeat",
-              WebkitMaskPosition: "center",
-              maskPosition: "center",
-              WebkitMaskSize: "contain",
-              maskSize: "contain",
-            }}
-          />
-        </span>
+        <span
+          aria-hidden
+          className="block size-5 bg-[var(--z-ink)]"
+          style={{
+            WebkitMaskImage: "url(/bitrouter-mark.png)",
+            maskImage: "url(/bitrouter-mark.png)",
+            WebkitMaskRepeat: "no-repeat",
+            maskRepeat: "no-repeat",
+            WebkitMaskPosition: "center",
+            maskPosition: "center",
+            WebkitMaskSize: "contain",
+            maskSize: "contain",
+          }}
+        />
         {/* Wordmark drops below `sm`: the row is logo + search + CTA + menu,
             which overflows a 375px viewport and pushes the CTA over the search
             trigger. The mark alone still identifies and links home. */}
-        <span className="hidden font-sans text-[17px] font-semibold tracking-[-0.01em] text-[var(--z-ink)] sm:inline">
-          bitrouter.
+        <span className="hidden font-mono text-[13px] tracking-[0.02em] text-[var(--z-ink)] sm:inline">
+          bitrouter
         </span>
+        {wordmarkSuffix ? (
+          <span className="ml-1 hidden font-mono text-[11.5px] uppercase tracking-[0.16em] text-[var(--z-ink-6)] sm:inline">
+            {wordmarkSuffix}
+          </span>
+        ) : null}
       </a>
 
-      {/* Primary nav — hidden on small screens (mobile menu below) */}
-      <nav className="ml-1 hidden items-center gap-0.5 lg:flex">
+      {/* Primary nav — centred in the leftover space. Hidden below `lg`, where
+          the mobile menu takes over. */}
+      <nav className="hidden flex-1 items-center justify-center gap-11 lg:flex">
         {items.map((item) => {
           const href = resolveHref(item, config);
           const active = isActive(pathname, item.webPath);
@@ -188,49 +208,53 @@ export function SiteHeaderBody({
         })}
       </nav>
 
-      {/* Flexible spacer — also holds the ⌘K search slot when present */}
-      <div className="flex min-w-0 flex-1 items-center gap-2 px-2">{searchSlot}</div>
+      {/* Utility cluster — search, GitHub, demo, auth. `ml-auto` keeps it right
+          even when the nav is hidden and the centring flex-1 is gone. */}
+      <div className="ml-auto flex min-w-0 shrink-0 items-center gap-[22px]">
+        {searchSlot ? <div className="flex min-w-0 items-center">{searchSlot}</div> : null}
 
-      {/* Utility slot (GitHub stars on web) */}
-      {utilitySlot ? (
-        <div className="hidden items-center gap-2 px-1 sm:flex">{utilitySlot}</div>
-      ) : null}
+        {utilitySlot ? (
+          <div className="hidden items-center sm:flex">{utilitySlot}</div>
+        ) : null}
 
-      {/* Secondary CTA — book a founder call. Shown for all visitors. */}
-      <BookDemoButton
-        location="header"
-        className="hidden shrink-0 whitespace-nowrap rounded-[7px] border border-[var(--z-rule-2)] px-3.5 py-2 font-mono text-[13px] lowercase text-[var(--z-ink)] transition-colors hover:border-[var(--z-ink-6)] hover:bg-white/[0.03] sm:inline-flex"
-      />
+        {/* Secondary CTA — book a founder call. Shown for all visitors. */}
+        <BookDemoButton
+          location="header"
+          className={cn(
+            UTIL_LINK,
+            "hidden cursor-pointer text-[var(--z-ink-3)] hover:text-[var(--z-ink)] lg:inline-flex",
+          )}
+        />
 
-      {/* Auth zone */}
-      {isAuthed && session ? (
-        <AccountMenu
+        {/* Auth zone */}
+        {isAuthed && session ? (
+          <AccountMenu
+            config={config}
+            session={session}
+            onSignOut={onSignOut}
+            showSignOut={showSignOut}
+          />
+        ) : (
+          // Single auth CTA — "Get API key" routes to the console's sign-in
+          // (social sign-in auto-creates the account, so it is sign-in/sign-up).
+          <a
+            href={`${config.consoleBaseUrl}/sign-in`}
+            className={cn(UTIL_LINK, "text-[var(--z-ink)] hover:text-[var(--z-ink-3)]")}
+          >
+            Get API key
+          </a>
+        )}
+
+        {/* Mobile nav trigger */}
+        <MobileMenu
           config={config}
           session={session}
+          pathname={pathname}
           onSignOut={onSignOut}
           showSignOut={showSignOut}
+          utilitySlot={utilitySlot}
         />
-      ) : (
-        // Single auth CTA — "get api key" routes to the console's sign-in
-        // (social sign-in auto-creates the account, so it is sign-in/sign-up).
-        <a
-          href={`${config.consoleBaseUrl}/sign-in`}
-          className="ml-1 inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-[7px] bg-[var(--z-cta)] px-3.5 py-2 font-mono text-[13px] font-medium lowercase text-white transition-colors hover:bg-[#1a56f0]"
-        >
-          get api key
-          <span aria-hidden>→</span>
-        </a>
-      )}
-
-      {/* Mobile nav trigger */}
-      <MobileMenu
-        config={config}
-        session={session}
-        pathname={pathname}
-        onSignOut={onSignOut}
-        showSignOut={showSignOut}
-        utilitySlot={utilitySlot}
-      />
+      </div>
     </div>
   );
 }
@@ -244,7 +268,7 @@ export function SiteHeader(props: SiteHeaderProps): React.ReactElement {
   return (
     <header
       className="sticky top-0 z-40 w-full border-b border-[var(--z-rule)] bg-[rgba(12,13,16,0.85)] backdrop-blur-lg"
-      style={{ ["--fd-nav-height" as string]: "48px" }}
+      style={{ ["--fd-nav-height" as string]: "62px" }}
     >
       <SiteHeaderBody {...props} />
     </header>
@@ -403,7 +427,7 @@ function MobileMenu({
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-label="Toggle menu"
-        className="ml-1 flex items-center rounded-[9px] px-3 py-2 text-[var(--z-ink-4)] transition-colors hover:bg-white/[0.05] hover:text-[var(--z-ink)]"
+        className="flex cursor-pointer items-center p-0.5 text-[var(--z-ink-3)] transition-colors hover:text-[var(--z-ink)]"
       >
         <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden>
           {open ? (
@@ -425,14 +449,14 @@ function MobileMenu({
       </button>
 
       {open ? (
-        <div className="absolute inset-x-0 top-12 z-50 border-b border-[var(--z-rule)] bg-[rgba(12,13,16,0.95)] p-3 backdrop-blur-lg">
+        <div className="absolute inset-x-0 top-[62px] z-50 border-b border-[var(--z-rule)] bg-[rgba(12,13,16,0.95)] px-[22px] pb-6 pt-2 backdrop-blur-lg">
           <nav className="flex flex-col gap-0.5">
             {items.map((item) => (
               <a
                 key={item.key}
                 href={resolveHref(item, config)}
                 onClick={() => setOpen(false)}
-                className="rounded-[9px] px-3 py-2.5 font-sans text-sm text-[var(--z-ink-3)] transition-colors hover:bg-white/[0.04] hover:text-[var(--z-ink)]"
+                className="py-[11px] font-mono text-xs uppercase tracking-[0.16em] text-[var(--z-ink-3)] transition-colors hover:text-[var(--z-ink)]"
               >
                 {item.label}
                 {item.key === "changelog" && changelogUnseen && (
@@ -447,7 +471,7 @@ function MobileMenu({
             ) : null}
             <BookDemoButton
               location="header_mobile"
-              className="mt-2 flex items-center justify-center rounded-[7px] border border-[var(--z-rule-2)] px-4 py-2.5 font-mono text-[13px] lowercase text-[var(--z-ink)] transition-colors hover:bg-white/[0.04]"
+              className="mt-2 flex cursor-pointer items-center justify-center border border-[var(--z-rule)] px-4 py-3 font-mono text-[11.5px] uppercase tracking-[0.16em] text-[var(--z-ink)] transition-colors hover:border-[var(--z-rule-2)] hover:bg-white/[0.02]"
             />
             <div className="mt-2 flex items-center gap-2">
               {isAuthed && session ? (
@@ -458,7 +482,7 @@ function MobileMenu({
                       setOpen(false);
                       onSignOut();
                     }}
-                    className="flex flex-1 items-center justify-center rounded-[10px] border border-[var(--z-rule-2)] px-4 py-2.5 font-mono text-[13px] lowercase tracking-tight text-[var(--z-ink-3)] transition-colors hover:bg-white/[0.05]"
+                    className="flex flex-1 cursor-pointer items-center justify-center border border-[var(--z-rule)] px-4 py-3 font-mono text-[11.5px] uppercase tracking-[0.16em] text-[var(--z-ink-3)] transition-colors hover:bg-white/[0.03]"
                   >
                     Sign out
                   </button>
@@ -466,10 +490,9 @@ function MobileMenu({
               ) : (
                 <a
                   href={`${config.consoleBaseUrl}/sign-in`}
-                  className="flex flex-1 items-center justify-center gap-1.5 rounded-[7px] bg-[var(--z-cta)] px-4 py-2.5 font-mono text-[13px] lowercase text-white transition-colors hover:bg-[#1a56f0]"
+                  className="flex flex-1 items-center justify-center rounded-[2px] bg-[var(--z-cta)] px-4 py-3 font-mono text-[11.5px] uppercase tracking-[0.16em] text-white transition-colors hover:bg-[#1a56f0]"
                 >
-                  get api key
-                  <span aria-hidden>→</span>
+                  Get API key
                 </a>
               )}
             </div>

@@ -122,11 +122,10 @@ export default function AboutPage() {
     <div className="zed-bg">
       <style>{`.zed-about-social{color:var(--z-ink-6);transition:color .15s ease}.zed-about-social:hover{color:var(--z-ink)}`}</style>
       <section style={{ position: "relative" }}>
-        <div className="zed-glow" />
-        <main className="zed-wrap" style={{ maxWidth: 960, padding: "72px 34px 96px" }}>
+        <main className="zed-wrap" style={{ maxWidth: 960, padding: "72px var(--z-gutter) 96px" }}>
           {/* Page header */}
           <header style={{ marginBottom: 72, borderBottom: RULE, paddingBottom: 56 }}>
-            <Kicker>// who we are</Kicker>
+            <Kicker>who we are</Kicker>
             <h1
               className="zed-display"
               style={{
@@ -229,10 +228,10 @@ export default function AboutPage() {
                   <div
                     style={{
                       fontFamily: MONO,
-                      fontSize: 10,
+                      fontSize: 10.5,
                       letterSpacing: "0.16em",
                       textTransform: "uppercase",
-                      color: "var(--z-blue)",
+                      color: "var(--z-ink-6)",
                     }}
                   >
                     {String(i + 1).padStart(2, "0")}
@@ -240,9 +239,8 @@ export default function AboutPage() {
                   <div
                     style={{
                       marginTop: 12,
-                      fontFamily: "var(--font-sans)",
-                      fontSize: 15,
-                      fontWeight: 600,
+                      fontFamily: MONO,
+                      fontSize: 14,
                       color: "var(--z-ink)",
                     }}
                   >
@@ -252,9 +250,9 @@ export default function AboutPage() {
                     style={{
                       margin: "8px 0 0",
                       fontFamily: MONO,
-                      fontSize: 13,
-                      lineHeight: 1.65,
-                      color: "var(--z-ink-4)",
+                      fontSize: 12.5,
+                      lineHeight: 1.7,
+                      color: "var(--z-ink-5)",
                     }}
                   >
                     {v.body}
@@ -287,17 +285,8 @@ export default function AboutPage() {
                 href={`mailto:${CONTACT_EMAIL}`}
                 style={{
                   alignSelf: "flex-start",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 12,
-                  padding: "11px 20px",
-                  borderRadius: 8,
-                  background: "var(--z-cta)",
-                  color: "#fff",
-                  fontFamily: MONO,
-                  fontSize: 13,
-                  fontWeight: 500,
                 }}
+                className="zed-btn zed-btn-primary"
               >
                 Email us
                 <span style={{ opacity: 0.8, fontWeight: 400 }}>{CONTACT_EMAIL}</span>

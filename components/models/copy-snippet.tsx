@@ -30,10 +30,10 @@ export function CopySnippet({
       title={copied ? "Copied" : label}
       aria-label={copied ? "Copied" : label}
       className={cn(
-        "inline-flex items-center gap-1.5 border border-border px-2 py-1 font-mono text-[10px] uppercase tracking-widest transition-colors",
+        "inline-flex cursor-pointer items-center gap-1.5 border-b border-[var(--z-rule-2)] pb-0.5 font-mono text-[10.5px] uppercase tracking-[0.14em] transition-colors",
         copied
-          ? "border-foreground bg-foreground text-background"
-          : "text-muted-foreground hover:border-foreground hover:text-foreground",
+          ? "border-[var(--z-ink)] text-[var(--z-ink)]"
+          : "text-[var(--z-ink-5)] hover:border-[var(--z-ink-3)] hover:text-[var(--z-ink-2)]",
         className,
       )}
     >

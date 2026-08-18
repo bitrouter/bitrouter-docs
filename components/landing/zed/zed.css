@@ -6,53 +6,38 @@
  * any client/server component.
  * ========================================================================== */
 
-/* ── Page backdrop: 44px grid + left-edge ruler ── */
+/* ── Page backdrop ──
+   v3 is flat. The 44px grid, the left-edge ruler and the hero glow are gone:
+   the design carries structure with the --z-sec interval and type scale alone,
+   so any texture here reads as noise against it. */
 .zed-bg {
   position: relative;
   background-color: var(--z-bg);
-  background-image: linear-gradient(rgba(255, 255, 255, 0.014) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.014) 1px, transparent 1px);
-  background-size: 44px 44px;
   color: var(--z-ink);
   width: 100%;
   overflow-x: hidden;
   font-family: var(--font-mono);
 }
-.zed-bg::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 16px;
-  pointer-events: none;
-  z-index: 0;
-  background: repeating-linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.09) 0 1px,
-    transparent 1px 12px
-  );
-}
 
 /* ── Layout ── */
 .zed-wrap {
   position: relative;
-  max-width: 1180px;
+  max-width: var(--z-wrap);
   margin: 0 auto;
-  padding: 0 34px;
+  padding: 0 var(--z-gutter);
 }
+/* One section interval. v3 pads only the top, so consecutive sections sit a
+   single --z-sec apart rather than stacking two paddings. */
+.zed-sec {
+  padding-top: var(--z-sec);
+}
+.zed-sec-b {
+  padding-bottom: var(--z-sec);
+}
+/* Retained for surfaces that still rule off their sections (docs, legal). The
+   landing no longer uses it — v3 has no section hairlines. */
 .zed-section {
   border-top: 1px solid var(--z-rule);
-}
-.zed-glow {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(
-    64% 40% at 50% 0%,
-    rgba(107, 155, 255, 0.07),
-    transparent 60%
-  );
 }
 
 /* ── Typography helpers ── */
@@ -60,16 +45,25 @@
   font-family: var(--font-display);
   font-style: italic;
   font-weight: 500;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
+  color: var(--z-ink);
+  margin: 0;
+}
+/* Section headings inside docs/loop steps: Newsreader *upright*, not italic.
+   v3 reserves the italic for page-level display type. */
+.zed-display-up {
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 500;
   color: var(--z-ink);
   margin: 0;
 }
 .zed-kicker {
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.2em;
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--z-blue);
+  color: var(--z-ink-6);
 }
 .zed-label {
   font-family: var(--font-mono);
@@ -77,6 +71,15 @@
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--z-ink-7);
+}
+/* v3's workhorse label: 11.5px / 0.16em uppercase mono. Used by the nav, the
+   hero eyebrow, section kickers, footer column heads and the docs breadcrumb. */
+.zed-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--z-ink-6);
 }
 .zed-mono {
   font-family: var(--font-mono);
@@ -87,38 +90,6 @@
 }
 .zed-link:hover {
   color: var(--z-blue-hi);
-}
-
-/* ── Corner ticks (L-shaped brackets) ── */
-.zed-tick {
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  pointer-events: none;
-}
-.zed-tick.tl {
-  top: 12px;
-  left: 12px;
-  border-top: 1px solid var(--z-rule-2);
-  border-left: 1px solid var(--z-rule-2);
-}
-.zed-tick.tr {
-  top: 12px;
-  right: 12px;
-  border-top: 1px solid var(--z-rule-2);
-  border-right: 1px solid var(--z-rule-2);
-}
-.zed-tick.bl {
-  bottom: 12px;
-  left: 12px;
-  border-bottom: 1px solid var(--z-rule-2);
-  border-left: 1px solid var(--z-rule-2);
-}
-.zed-tick.br {
-  bottom: 12px;
-  right: 12px;
-  border-bottom: 1px solid var(--z-rule-2);
-  border-right: 1px solid var(--z-rule-2);
 }
 
 /* ── Terminal / One-Dark panel chrome ── */
@@ -160,19 +131,24 @@
   background: var(--z-green-dot);
 }
 
-/* ── Buttons ── */
+/* ── Buttons ──
+   v3 buttons are typographic: uppercase mono at 12px / 0.14em, a 2px corner
+   (near-square, not the old 8px pill) and no icon affordances. */
 .zed-btn {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-family: var(--font-sans);
-  font-size: 15px;
-  font-weight: 500;
-  padding: 12px 20px;
-  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 14px 26px;
+  border-radius: 2px;
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
   text-decoration: none;
+  white-space: nowrap;
 }
 .zed-btn-primary {
   background: var(--z-cta);
@@ -192,6 +168,25 @@
   color: var(--z-ink);
   border-color: var(--z-rule-2);
   background: rgba(255, 255, 255, 0.02);
+}
+/* The design's secondary CTA — a ruled text link, not a box. Pairs with
+   .zed-btn-primary in the hero and the closing CTA. */
+.zed-btn-underline {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--z-ink-3);
+  border-bottom: 1px solid var(--z-rule-2);
+  padding-bottom: 3px;
+  text-decoration: none;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.zed-btn-underline:hover {
+  color: var(--z-ink);
+  border-color: var(--z-ink);
 }
 .zed-key {
   font-family: var(--font-mono);
@@ -357,7 +352,7 @@
   width: 0.5em;
   height: 1.05em;
   transform: translateY(0.16em);
-  background: var(--z-blue);
+  background: var(--z-ink-3);
   animation: zed-blink 1.05s steps(1) infinite;
 }
 /* Block caret inside the hero terminal. Colour is set per call site, because
@@ -380,49 +375,7 @@
   }
 }
 
-/* ── Marquee (bring-your-own logo strips) ── */
-.zed-marq-mask {
-  position: relative;
-  overflow: hidden;
-  margin-top: 16px;
-  -webkit-mask-image: linear-gradient(
-    90deg,
-    transparent,
-    #000 12%,
-    #000 88%,
-    transparent
-  );
-  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
-}
-.zed-marq-track {
-  display: inline-flex;
-  gap: 26px;
-  padding-right: 26px;
-  animation: zed-marq 22s linear infinite;
-  white-space: nowrap;
-}
-.zed-marq-logo {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--z-ink-5);
-  white-space: nowrap;
-}
-@keyframes zed-marq {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
 @media (prefers-reduced-motion: reduce) {
-  .zed-marq-track {
-    animation: none;
-  }
   .zed-ck,
   .zed-tui-caret {
     animation: none;
@@ -430,41 +383,38 @@
 }
 
 /* ── The loop (act → observe → evaluate → improve) ──
-   Alternating rows: the artifact takes the left column on odd steps, the right
-   on even ones. Stacked, the artifact always follows its copy — the words
-   should arrive before the config on a phone, whichever side the desktop row
-   uses. (Ordering is set on the children, so `order` has to be reset at the
-   breakpoint rather than inherited from the reversed row.) */
+   Alternating rows: the copy takes the left column on odd steps, the right on
+   even ones. Stacked, the artifact always follows its copy — the words should
+   arrive before the config on a phone, whichever side the desktop row uses.
+   (Ordering is set on the children, so `order` has to be reset at the
+   breakpoint rather than inherited from the reversed row.)
+
+   v3 takes the window chrome off the artifacts: each is a ruled caption over
+   bare code, so the four steps read as one document rather than a stack of
+   screenshots. */
 .zed-loop {
   display: flex;
   flex-direction: column;
 }
 .zed-step {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 48px;
-  align-items: center;
-  padding: 40px 0;
+  grid-template-columns: 0.85fr 1.15fr;
+  column-gap: 72px;
+  align-items: start;
+  margin-top: 88px;
 }
-/* No dividers anywhere in the run — not between the steps, not above 01, not
-   under 04. The alternating sides already separate the rows, and rules boxing
-   them in read as a table. The section that follows drops its own top rule too
-   (see below) so the four steps aren't fenced at the bottom either. */
-.zed-step:first-child {
-  margin-top: 44px;
-}
-.zed-step-visual {
+.zed-step-main {
   order: 1;
   min-width: 0;
 }
-.zed-step-main {
+.zed-step-visual {
   order: 2;
   min-width: 0;
 }
-.zed-step.reverse .zed-step-visual {
+.zed-step.reverse .zed-step-main {
   order: 2;
 }
-.zed-step.reverse .zed-step-main {
+.zed-step.reverse .zed-step-visual {
   order: 1;
 }
 
@@ -472,88 +422,78 @@
 .zed-step-kicker {
   font-family: var(--font-mono);
   font-size: 11px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--z-ink-5);
+  color: var(--z-ink-6);
 }
+/* The step number sits in the label, not against it — v3 spends no accent
+   here, so it is spaced rather than coloured. */
 .zed-step-n {
-  color: var(--z-blue);
-  margin-right: 6px;
+  margin-right: 10px;
 }
 .zed-step-title {
   font-family: var(--font-display);
   font-style: normal;
   font-weight: 500;
-  font-size: 25px;
-  line-height: 1.2;
+  font-size: 24px;
+  line-height: 1.25;
   color: var(--z-ink);
-  margin: 12px 0 0;
-  max-width: 24ch;
+  margin: 16px 0 0;
+  max-width: 26ch;
 }
 .zed-step-body {
   font-family: var(--font-mono);
   font-size: 13px;
-  line-height: 1.65;
-  color: var(--z-ink-4);
-  margin: 12px 0 0;
-  max-width: 50ch;
+  line-height: 1.75;
+  color: var(--z-ink-5);
+  margin: 16px 0 0;
+  max-width: 48ch;
 }
 
 /* Containment details, folded into the step that raises the worry. */
 .zed-asides {
-  border-top: 1px solid var(--z-rule);
-  margin-top: 18px;
-  padding-top: 14px;
+  margin-top: 24px;
   display: flex;
   flex-direction: column;
-  gap: 11px;
-  max-width: 52ch;
+  gap: 16px;
+  max-width: 50ch;
 }
 .zed-aside-name {
-  font-family: var(--font-sans);
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--z-ink-2);
-  margin-right: 7px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--z-ink);
+  margin-right: 8px;
 }
 .zed-aside-knob {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--z-ink-7);
-}
-.zed-aside-desc {
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  line-height: 1.55;
-  color: var(--z-ink-6);
-  margin-top: 3px;
-}
-
-/* The slice of the file (or the trace) this step touches. */
-.zed-artifact {
-  background: var(--z-panel);
-  border: 1px solid var(--z-rule);
-  border-radius: 9px;
-  overflow: hidden;
-  box-shadow: 0 20px 50px -30px rgba(0, 0, 0, 0.8);
-}
-.zed-artifact-head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 13px;
-  background: var(--z-panel-header);
-  border-bottom: 1px solid var(--z-rule);
   font-family: var(--font-mono);
   font-size: 11px;
   color: var(--z-ink-6);
 }
+.zed-aside-desc {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--z-ink-5);
+  margin-top: 5px;
+}
+
+/* The slice of the file (or the trace) this step touches. */
+.zed-artifact-head {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--z-ink-6);
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--z-rule);
+}
 .zed-artifact-body {
   font-family: var(--font-mono);
-  font-size: 11.5px;
-  line-height: 1.85;
+  font-size: 12.5px;
+  line-height: 2;
   color: var(--z-ink-2);
-  padding: 13px 15px 15px;
+  padding-top: 14px;
   overflow-x: auto;
 }
 .zed-diff {
@@ -570,26 +510,20 @@
 }
 .zed-readout {
   font-family: var(--font-mono);
-  font-size: 11.5px;
+  font-size: 12px;
   line-height: 1.8;
-  color: var(--z-ink-4);
+  color: var(--z-ink-5);
   border-left: 1px solid var(--z-rule-2);
   padding-left: 13px;
-  margin-top: 16px;
+  margin-top: 20px;
   overflow-x: auto;
-}
-
-/* The loop's steps end open — the next section's divider would fence them in.
-   Every other section boundary on the page keeps its rule. */
-#loop + .zed-section {
-  border-top: none;
 }
 
 @media (max-width: 900px) {
   .zed-step {
     grid-template-columns: 1fr;
-    gap: 26px;
-    padding: 34px 0;
+    row-gap: 24px;
+    margin-top: 56px;
   }
   /* Copy first, artifact second — on every row, reversed or not. */
   .zed-step .zed-step-main,
@@ -647,57 +581,78 @@
 /* ── Article body (blog / changelog MDX via fumadocs DocsBody) ──
    Layered over fumadocs prose: Newsreader italic headings, IBM Plex Mono body,
    blue links, blue inline code, blue-rule blockquotes. */
+/* ── Long-form prose (legal pages, blog posts, changelog permalinks) ──
+   Matches the docs surface in app/globals.css: mono body at 14/1.85 over a
+   72ch measure, Newsreader *upright* headings with a hairline opening each h2,
+   and tan inline code. The italic stays on page titles only. */
 .zed-article {
   font-family: var(--font-mono) !important;
-  color: var(--z-ink-3);
+  color: var(--z-ink-2);
 }
 .zed-article :is(h1, h2, h3, h4) {
   font-family: var(--font-display) !important;
-  font-style: italic;
+  font-style: normal;
   font-weight: 500;
   color: var(--z-ink);
-  letter-spacing: -0.01em;
+  letter-spacing: normal;
 }
 .zed-article h2 {
-  font-size: 28px;
-  line-height: 1.15;
-  margin: 38px 0 16px;
+  font-size: 26px;
+  line-height: 1.25;
+  margin: 68px 0 0;
+  padding-top: 22px;
+  border-top: 1px solid var(--z-rule);
 }
 .zed-article h3 {
-  font-size: 22px;
-  margin: 30px 0 12px;
+  font-size: 20px;
+  line-height: 1.3;
+  margin: 44px 0 0;
+}
+.zed-article h4 {
+  font-size: 16px;
+  margin: 32px 0 0;
 }
 .zed-article p,
 .zed-article li {
   font-family: var(--font-mono) !important;
   font-size: 14px;
-  line-height: 1.75;
-  color: var(--z-ink-3);
+  line-height: 1.85;
+  color: var(--z-ink-2);
+  max-width: 72ch;
+  text-wrap: pretty;
 }
 .zed-article p {
-  margin: 0 0 18px;
+  margin: 20px 0 0;
 }
 .zed-article ul,
 .zed-article ol {
-  margin: 0 0 18px;
+  margin: 20px 0 0;
   padding-left: 1.4em;
 }
 .zed-article li {
   margin: 0 0 7px;
 }
 .zed-article li::marker {
-  color: var(--z-ink-7);
+  color: var(--z-ink-6);
 }
 .zed-article img {
   max-width: 100%;
   height: auto;
-  border-radius: 9px;
+  border-radius: 0;
   border: 1px solid var(--z-rule);
+  margin-top: 24px;
 }
 .zed-article strong {
-  color: var(--z-ink-bright);
-  font-weight: 600;
+  color: var(--z-ink);
+  font-weight: 500;
 }
+/* The changelog feed re-renders these bodies at feed density (see below), where
+   the h2 rule would fence every release — so it is dropped there. */
+.zed-changelog-body h2 {
+  border-top: none;
+  padding-top: 0;
+}
+
 /* Release notes rendered inline on the changelog index. The standalone article
    styling sets h3 as 22px serif italic, which is right for one entry on its own
    page but shouts when ~50 of them ("Features", "Bug Fixes") stack down a feed —
@@ -752,25 +707,36 @@
 .zed-article a:hover {
   color: var(--z-blue-hi);
 }
+/* Inline code is tan and unboxed, matching the docs surface — the colour does
+   the work the border used to. */
 .zed-article :not(pre) > code {
   font-family: var(--font-mono);
-  font-size: 0.86em;
-  background: #1a1e24;
-  border: 1px solid var(--z-rule-code);
-  border-radius: 5px;
-  padding: 1px 6px;
-  color: var(--z-code);
+  font-size: 13px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: var(--z-cost);
+}
+.zed-article a :not(pre) > code,
+.zed-article a code {
+  color: inherit;
 }
 .zed-article pre {
-  border: 1px solid var(--z-rule);
-  border-radius: 9px;
-  /* background comes from the One-Dark Shiki theme (#282c34). */
+  background: var(--z-wash);
+  border: none;
+  border-radius: 0;
+  padding: 16px 18px;
+  font-size: 13px;
+  line-height: 1.9;
+  overflow-x: auto;
+  margin: 24px 0 0;
 }
 .zed-article blockquote {
-  border-left: 2px solid var(--z-blue);
-  background: var(--z-inset);
-  border-radius: 8px;
-  padding: 2px 20px;
+  border-left: 1px solid var(--z-blue);
+  background: transparent;
+  border-radius: 0;
+  padding: 2px 0 2px 18px;
+  margin: 28px 0 0;
   color: var(--z-ink-3);
 }
 .zed-article hr {
@@ -779,33 +745,8 @@
   margin: 32px 0;
 }
 
-/* ── Docs (fumadocs DocsBody / DocsTitle / DocsDescription) ──
-   Zed prose on the fumadocs surface: Newsreader italic headings + IBM Plex Mono
-   body. Code blocks + callouts + cards stay fumadocs-styled (already dark/blue),
-   with the One-Dark Shiki theme. */
-.zed-doc-title {
-  font-family: var(--font-display) !important;
-  font-style: italic !important;
-  font-weight: 500 !important;
-  letter-spacing: -0.01em;
-}
-.zed-doc-desc {
-  font-family: var(--font-mono) !important;
-  color: var(--z-ink-4) !important;
-}
-.zed-docs :is(h1, h2, h3, h4) {
-  font-family: var(--font-display) !important;
-  font-style: italic;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-}
-.zed-docs :is(p, li) {
-  font-family: var(--font-mono) !important;
-}
-.zed-docs :not(pre) > code {
-  font-family: var(--font-mono);
-  color: var(--z-code);
-}
+/* Docs prose lives in app/globals.css (the "Docs · v3 dark" block) — it has to
+   sit after the fumadocs preset imports to win, so it is not duplicated here. */
 
 /* Meta-rail row (blog posts, changelog releases): 180px rail + content. */
 .zed-metagrid {
@@ -832,7 +773,7 @@
 /* ── Responsive ── */
 @media (max-width: 900px) {
   .zed-wrap {
-    padding: 0 20px;
+    padding: 0 22px;
   }
   .zed-grid-3,
   .zed-grid-2 {

@@ -9,11 +9,13 @@ import * as React from "react";
 import posthog from "posthog-js";
 import { getCalApi } from "@calcom/embed-react";
 import "@/components/landing/zed/zed.css";
-import { Kicker, CornerTicks } from "@/components/landing/zed/primitives";
+import { Kicker } from "@/components/landing/zed/primitives";
 
-const WRAP: React.CSSProperties = { padding: "88px 34px" };
-const H2: React.CSSProperties = { fontSize: "clamp(30px,4.5vw,46px)", lineHeight: 1.06, margin: "16px 0 0" };
-const LEAD: React.CSSProperties = { fontFamily: "var(--font-mono)", fontSize: 14.5, lineHeight: 1.6, color: "var(--z-ink-4)", margin: "18px 0 0", maxWidth: "64ch" };
+// v3 pads only the top, so consecutive sections sit one --z-sec apart rather
+// than stacking two paddings, and no section carries a hairline.
+const WRAP: React.CSSProperties = { padding: "var(--z-sec) var(--z-gutter) 0" };
+const H2: React.CSSProperties = { fontSize: 40, lineHeight: 1.08, margin: "20px 0 0" };
+const LEAD: React.CSSProperties = { fontFamily: "var(--font-mono)", fontSize: 14, lineHeight: 1.7, color: "var(--z-ink-5)", margin: "20px 0 0", maxWidth: "64ch" };
 
 function FounderCTA({ location, children }: { location: string; children: React.ReactNode }) {
   return (
@@ -32,7 +34,7 @@ function FounderCTA({ location, children }: { location: string; children: React.
 function SecHead({ kicker, title, lead }: { kicker: string; title: string; lead?: string }) {
   return (
     <div style={{ maxWidth: 720, marginBottom: 40 }}>
-      <Kicker>// {kicker}</Kicker>
+      <Kicker>{kicker}</Kicker>
       <h2 className="zed-display" style={H2}>{title}</h2>
       {lead && <p style={LEAD}>{lead}</p>}
     </div>
@@ -43,21 +45,19 @@ function SecHead({ kicker, title, lead }: { kicker: string; title: string; lead?
 function Hero() {
   return (
     <section style={{ position: "relative", overflow: "hidden" }}>
-      <div className="zed-glow" />
-      <CornerTicks />
-      <div className="zed-wrap" style={{ padding: "64px 34px 40px" }}>
-        <Kicker>// startup · series a</Kicker>
-        <h1 className="zed-display" style={{ fontSize: "clamp(40px,7vw,68px)", lineHeight: 1.0, margin: "18px 0 0", maxWidth: "19ch" }}>
+      <div className="zed-wrap" style={{ padding: "64px var(--z-gutter) 40px" }}>
+        <Kicker>startup · series a</Kicker>
+        <h1 className="zed-display" style={{ fontSize: "clamp(38px,6.4vw,68px)", lineHeight: 1.04, margin: "30px 0 0", maxWidth: "19ch" }}>
           Protect your margin on every user.
         </h1>
-        <p style={{ ...LEAD, fontSize: 16 }}>
+        <p style={{ ...LEAD, fontSize: 16, lineHeight: 1.65 }}>
           You sell an agentic product on a subscription, usage, or outcome price. Frontier-model bills eat the
           margin on your heaviest users first. BitRouter optimizes your production loop so cost-per-user drops —
           and bundles open-weight model credits to stretch your runway while you grow.
         </p>
         <div style={{ display: "flex", gap: 14, marginTop: 32, flexWrap: "wrap" }}>
           <FounderCTA location="startup_hero">Talk to the founders →</FounderCTA>
-          <a href="#oss-credits" className="zed-btn zed-btn-ghost">See the credits program</a>
+          <a href="#oss-credits" className="zed-btn-underline">See the credits program</a>
         </div>
       </div>
     </section>
@@ -73,11 +73,11 @@ function MarginProblem() {
     </div>
   );
   return (
-    <section className="zed-section">
+    <section>
       <div className="zed-wrap" style={WRAP}>
         <div className="zed-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 0.8fr", gap: 56, alignItems: "center" }}>
           <div>
-            <Kicker>// the margin problem</Kicker>
+            <Kicker>the margin problem</Kicker>
             <h2 className="zed-display" style={H2}>Your revenue per user is capped. Your token cost isn&rsquo;t.</h2>
             <p style={LEAD}>
               A plan price is fixed, but token cost scales with how hard each user leans on the agent. Run
@@ -114,16 +114,16 @@ const PROVIDERS = [
 ];
 function OssCredits() {
   return (
-    <section className="zed-section" id="oss-credits">
+    <section id="oss-credits">
       <div className="zed-wrap" style={WRAP}>
         <SecHead kicker="oss credits · apply" title="Open-weight credits to extend your runway."
           lead="Our startup program bundles credits toward open-weight models from six labs — GLM, Kimi, MiniMax, DeepSeek, StepFun, and MiMo — so you can run frontier-class coding and agentic workloads at a fraction of the per-token cost. Route your loop through them and stretch every dollar of runway. Apply to qualify." />
         <div className="zed-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14 }}>
           {PROVIDERS.map((p) => (
-            <div key={p.name} style={{ border: "1px solid var(--z-rule)", borderRadius: 9, padding: "18px 20px" }}>
+            <div key={p.name} style={{ borderTop: "1px solid var(--z-rule)", paddingTop: 18 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <span style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--z-ink)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.name}</span>
-                <span style={{ marginLeft: "auto", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--z-blue)", border: "1px solid var(--z-blue-chip-border)", borderRadius: 4, padding: "2px 6px", whiteSpace: "nowrap" }}>open-weight</span>
+                <span style={{ marginLeft: "auto", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--z-ink-5)", border: "1px solid var(--z-rule-2)", padding: "2px 6px", whiteSpace: "nowrap" }}>open-weight</span>
               </div>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--z-ink-6)", marginTop: 8 }}>{p.lab}</div>
             </div>
@@ -149,13 +149,13 @@ const STEPS = [
 ];
 function HowWeCut() {
   return (
-    <section className="zed-section">
+    <section>
       <div className="zed-wrap" style={WRAP}>
         <SecHead kicker="how we cut it" title="Lower cost per user, same product." />
         <div className="zed-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 24 }}>
           {STEPS.map((s) => (
-            <div key={s.n} style={{ border: "1px solid var(--z-rule)", borderRadius: 9, padding: "24px 22px" }}>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--z-blue)" }}>{s.n}</div>
+            <div key={s.n} style={{ borderTop: "1px solid var(--z-rule)", paddingTop: 20 }}>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--z-ink-6)" }}>{s.n}</div>
               <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontWeight: 500, fontSize: 24, color: "var(--z-ink)", margin: "10px 0 10px" }}>{s.h}</h3>
               <p style={{ fontFamily: "var(--font-mono)", fontSize: 13, lineHeight: 1.65, color: "var(--z-ink-4)" }}>{s.b}</p>
             </div>
@@ -181,27 +181,27 @@ const SROWS: { feat: string; self: Mark; st: Mark; hi?: boolean }[] = [
   { feat: "Support", self: "Community", st: "Founders" },
 ];
 function SCell({ v, accent }: { v: Mark; accent?: boolean }) {
-  if (v === "yes") return <span style={{ color: "var(--z-blue)" }}>✓</span>;
+  if (v === "yes") return <span style={{ color: "var(--z-ink)" }}>✓</span>;
   if (v === "no") return <span style={{ color: "var(--z-ink-8)" }}>—</span>;
-  return <span style={{ color: accent ? "var(--z-blue)" : "var(--z-ink-2)" }}>{v}</span>;
+  return <span style={{ color: accent ? "var(--z-ink-2)" : "var(--z-ink-5)" }}>{v}</span>;
 }
 function StartupCompare() {
   return (
-    <section className="zed-section">
+    <section>
       <div className="zed-wrap" style={WRAP}>
         <SecHead kicker="self-serve vs startup" title="What the startup program adds."
           lead="Everything in self-serve, plus the OSS models credits, per-user cost analytics, and founder onboarding to get your production loop optimized fast." />
         <div style={{ overflowX: "auto" }}>
-          <div style={{ minWidth: 620, border: "1px solid var(--z-rule)", borderRadius: 11, overflow: "hidden" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr 1fr", background: "var(--z-inset)", borderBottom: "1px solid var(--z-rule)", fontFamily: "var(--font-mono)", fontSize: 11.5 }}>
+          <div style={{ minWidth: 620, borderTop: "1px solid var(--z-ink)" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr 1fr", borderBottom: "1px solid var(--z-rule)", fontFamily: "var(--font-mono)", fontSize: 10.5, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--z-ink-6)" }}>
               <div style={{ padding: "13px 18px", color: "var(--z-ink-6)" }}>Feature</div>
               <div style={{ padding: "13px 14px", color: "var(--z-ink-2)" }}>Self-serve</div>
-              <div style={{ padding: "13px 14px", color: "var(--z-blue)" }}>Startup</div>
+              <div style={{ padding: "13px 14px 13px 0", color: "var(--z-ink)" }}>Startup</div>
             </div>
             {SROWS.map((r) => (
               <div key={r.feat} style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr 1fr", borderBottom: "1px solid var(--z-rule-faint)", background: r.hi ? "rgba(107,155,255,0.04)" : "transparent" }}>
                 <div style={{ padding: "12px 18px", fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--z-ink-4)" }}>
-                  {r.hi && <span style={{ color: "var(--z-blue)", fontSize: 8, marginRight: 6 }}>●</span>}{r.feat}
+                  {r.feat}
                 </div>
                 <div style={{ padding: "12px 14px", fontFamily: "var(--font-mono)", fontSize: 12.5 }}><SCell v={r.self} /></div>
                 <div style={{ padding: "12px 14px", fontFamily: "var(--font-mono)", fontSize: 12.5, borderLeft: "1px solid var(--z-rule-faint)" }}><SCell v={r.st} accent={r.hi} /></div>
@@ -217,14 +217,13 @@ function StartupCompare() {
 // ── CTA ──
 function StartupCta() {
   return (
-    <section className="zed-section">
-      <div className="zed-wrap" style={{ padding: "80px 34px" }}>
-        <div style={{ position: "relative", border: "1px solid var(--z-rule)", borderRadius: 14, overflow: "hidden", padding: "60px 34px", textAlign: "center" }}>
+    <section>
+      <div className="zed-wrap" style={{ padding: "var(--z-sec) var(--z-gutter)" }}>
+        <div style={{ position: "relative", padding: "60px 0", textAlign: "center" }}>
           <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "radial-gradient(60% 70% at 50% 0%, rgba(107,155,255,0.08), transparent 60%)" }} />
-          <CornerTicks />
           <div style={{ position: "relative" }}>
-            <Kicker>// apply</Kicker>
-            <h2 className="zed-display" style={{ fontSize: "clamp(30px,4.5vw,44px)", lineHeight: 1.04, margin: "16px auto 0", maxWidth: "20ch", color: "var(--z-blue)" }}>
+            <Kicker>apply</Kicker>
+            <h2 className="zed-display" style={{ fontSize: "clamp(32px,5vw,48px)", lineHeight: 1.06, margin: "20px auto 0", maxWidth: "20ch" }}>
               Turn your heaviest users into your best margin.
             </h2>
             <p style={{ ...LEAD, margin: "18px auto 0", maxWidth: "52ch", textAlign: "left" }}>
@@ -251,12 +250,12 @@ const FAQS = [
 function Faq() {
   const [open, setOpen] = React.useState(0);
   return (
-    <section className="zed-section">
+    <section>
       <div className="zed-wrap" style={WRAP}>
         <div className="zed-grid-2" style={{ display: "grid", gridTemplateColumns: "0.85fr 1.15fr", gap: 56, alignItems: "start" }}>
           <div style={{ position: "sticky", top: 88 }}>
-            <Kicker>// faq</Kicker>
-            <h2 className="zed-display" style={{ fontSize: 38, lineHeight: 1.06, margin: "16px 0 0" }}>Questions from founders.</h2>
+            <Kicker>faq</Kicker>
+            <h2 className="zed-display" style={{ fontSize: 40, lineHeight: 1.08, margin: "20px 0 0" }}>Questions from founders.</h2>
             <p style={LEAD}>If yours isn&rsquo;t here, put it to us on the call.</p>
           </div>
           <div style={{ borderTop: "1px solid var(--z-rule)" }}>
@@ -265,7 +264,7 @@ function Faq() {
               return (
                 <div key={f.q} style={{ borderBottom: "1px solid var(--z-rule)" }}>
                   <button onClick={() => setOpen(isOpen ? -1 : i)} style={{ display: "flex", gap: 14, width: "100%", background: "none", border: "none", textAlign: "left", padding: "22px 0", cursor: "pointer", fontFamily: "var(--font-mono)", fontSize: 15, color: isOpen ? "var(--z-ink)" : "var(--z-ink-2)" }}>
-                    <span style={{ color: "var(--z-blue)", width: 12, flex: "0 0 auto" }}>{isOpen ? "−" : "+"}</span>{f.q}
+                    <span style={{ color: "var(--z-ink-6)", width: 12, flex: "0 0 auto" }}>{isOpen ? "−" : "+"}</span>{f.q}
                   </button>
                   <div className={`zed-faq-ans${isOpen ? " open" : ""}`}>
                     <div><div style={{ padding: "0 0 22px 26px", fontFamily: "var(--font-mono)", fontSize: 13, lineHeight: 1.7, color: "var(--z-ink-4)" }}>{f.a}</div></div>
@@ -304,6 +303,7 @@ export function StartupPage() {
       <StartupCompare />
       <StartupCta />
       <Faq />
+      <div style={{ height: "var(--z-sec)" }} />
     </div>
   );
 }

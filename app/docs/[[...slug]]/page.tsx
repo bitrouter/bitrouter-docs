@@ -3,7 +3,7 @@ import { DocsBody, DocsDescription, DocsPage, DocsTitle } from "fumadocs-ui/page
 import { notFound } from "next/navigation";
 import { getMDXComponents } from "@/mdx-components";
 import { createRelativeLink } from "fumadocs-ui/mdx";
-import { LLMCopyButton, ViewOptions } from "@/components/page-actions";
+import { DocsMeta, readingMinutes } from "@/components/docs-meta";
 import { Feedback } from "@/components/feedback/client";
 import { onPageFeedbackAction } from "@/lib/github";
 import type { Metadata } from "next";
@@ -27,6 +27,11 @@ export default async function Page({ params }: Props) {
   // used here, since folder groups like `(guide)/` are stripped from the URL and
   // pages are a mix of `<name>.md` and `<name>/index.mdx`.
   const githubUrl = `${GITHUB_REPO}/blob/main/content/docs/${page.path}`;
+
+  // `postprocess.includeProcessedMarkdown` is on in source.config.ts, so the
+  // rendered Markdown is available here without a remark plugin or a new dep.
+  // fumadocs has no built-in read-time estimate.
+  const minutes = readingMinutes(await page.data.getText("processed"));
 
   const isFaqPage =
     slug?.length === 2 && slug[0] === "overview" && slug[1] === "faqs";
@@ -60,15 +65,10 @@ export default async function Page({ params }: Props) {
     <DocsPage
       toc={page.data.toc}
       full={page.data.full}
-      lastUpdate={page.data.lastModified}
-      tableOfContent={{
-        footer: (
-          <div className="flex flex-col gap-2 mt-4">
-            <LLMCopyButton markdownUrl={markdownUrl} />
-            <ViewOptions markdownUrl={markdownUrl} githubUrl={githubUrl} />
-          </div>
-        ),
-      }}
+      // The date and the GitHub link move into the meta row under the title
+      // (see DocsMeta) — passing `lastUpdate`/`editOnGithub` here would render
+      // fumadocs' own pair at the foot of the article instead.
+      breadcrumb={{ includePage: true }}
     >
       {faqJsonLd && (
         <script
@@ -78,6 +78,12 @@ export default async function Page({ params }: Props) {
       )}
       <DocsTitle className="zed-doc-title">{page.data.title}</DocsTitle>
       <DocsDescription className="zed-doc-desc">{page.data.description}</DocsDescription>
+      <DocsMeta
+        lastModified={page.data.lastModified}
+        minutes={minutes}
+        githubUrl={githubUrl}
+        markdownUrl={markdownUrl}
+      />
       <DocsBody className="zed-docs">
         <MDX
           components={getMDXComponents({

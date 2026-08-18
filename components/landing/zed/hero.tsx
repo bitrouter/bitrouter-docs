@@ -1,82 +1,66 @@
 import { HERO } from "./data";
-import { CornerTicks, ZED_LINKS } from "./primitives";
+import { ZED_LINKS } from "./primitives";
 import { HeroQuickstart } from "./hero-quickstart";
 
+/**
+ * v3 hero. Three changes from the previous cut, all from the design file:
+ * the headline is Newsreader italic in ink (not blue), the eyebrow is a dim
+ * uppercase label (not a blue "New: … →" line), and the CTA pair is one solid
+ * button plus a ruled text link — the K/D keycaps are gone.
+ *
+ * No glow, no corner ticks: v3 sits on the flat page.
+ */
 export function Hero() {
   return (
-    <section style={{ position: "relative", overflow: "hidden" }}>
+    <section className="zed-wrap" style={{ padding: "120px 40px 0", textAlign: "center" }}>
+      <div className="zed-eyebrow">New · {HERO.announcement}</div>
+
+      <h1
+        className="zed-display"
+        style={{
+          fontSize: "clamp(38px, 6.4vw, 68px)",
+          lineHeight: 1.04,
+          margin: "30px auto 0",
+          maxWidth: "17ch",
+          textWrap: "pretty",
+        }}
+      >
+        {HERO.headline}
+      </h1>
+
+      <p
+        style={{
+          fontFamily: "var(--font-mono)",
+          fontSize: 16,
+          lineHeight: 1.65,
+          color: "var(--z-ink-5)",
+          margin: "28px auto 0",
+          maxWidth: "52ch",
+          textWrap: "pretty",
+        }}
+      >
+        {HERO.sub}
+      </p>
+
       <div
         style={{
-          position: "absolute",
-          inset: 0,
-          pointerEvents: "none",
-          background:
-            "radial-gradient(70% 44% at 50% 0%, rgba(107,155,255,0.08), transparent 60%)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 28,
+          marginTop: 40,
+          flexWrap: "wrap",
         }}
-      />
-      <CornerTicks />
-
-      <div className="zed-wrap">
-        <div style={{ textAlign: "center", padding: "52px 0 60px" }}>
-          <div
-            style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: 13,
-              marginBottom: 24,
-            }}
-          >
-            <span style={{ color: "var(--z-blue)" }}>New:</span>{" "}
-            <span style={{ color: "var(--z-ink-2)" }}>{HERO.announcement}</span>{" "}
-            <span style={{ color: "var(--z-blue)" }}>→</span>
-          </div>
-
-          <h1
-            className="zed-display"
-            style={{
-              fontSize: "clamp(40px, 7vw, 74px)",
-              lineHeight: 1.0,
-              color: "var(--z-blue)",
-              margin: "0 auto",
-              maxWidth: "16ch",
-            }}
-          >
-            {HERO.headline}
-          </h1>
-
-          <p
-            style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: 17,
-              lineHeight: 1.6,
-              color: "var(--z-ink-4)",
-              margin: "26px auto 0",
-              maxWidth: "54ch",
-            }}
-          >
-            {HERO.sub}
-          </p>
-
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 14,
-              marginTop: 34,
-              flexWrap: "wrap",
-            }}
-          >
-            <a className="zed-btn zed-btn-primary" href={ZED_LINKS.apiKey}>
-              Get API key <span className="zed-key on-primary">K</span>
-            </a>
-            <a className="zed-btn zed-btn-ghost" href={ZED_LINKS.docs}>
-              Read the docs <span className="zed-key on-ghost">D</span>
-            </a>
-          </div>
-
-          <HeroQuickstart />
-        </div>
+      >
+        <a className="zed-btn zed-btn-primary" href={ZED_LINKS.apiKey}>
+          Get API key
+        </a>
+        <a className="zed-btn-underline" href={ZED_LINKS.docs}>
+          Read the docs
+        </a>
       </div>
+
+      <HeroQuickstart />
     </section>
   );
 }

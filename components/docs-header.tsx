@@ -39,8 +39,8 @@ export function DocsHeader() {
         // The `layout:` variant sets the var on the layout container so the
         // sidebar/TOC siblings (which read `--fd-docs-row-2`) get the right
         // offset. Setting it directly on the header would only scope it here.
-        "layout:[--fd-header-height:48px]",
-        showTabs && "lg:layout:[--fd-header-height:88px]",
+        "layout:[--fd-header-height:62px]",
+        showTabs && "lg:layout:[--fd-header-height:102px]",
       )}
     >
       {/* Below `md` the sidebar becomes a drawer, and the drawer is the only
@@ -62,7 +62,7 @@ export function DocsHeader() {
       />
 
       {showTabs && (
-        <div className="flex h-10 flex-row items-end gap-6 overflow-x-auto border-t border-[var(--z-rule)] px-6 max-lg:hidden">
+        <div className="flex h-10 flex-row items-end gap-[34px] overflow-x-auto border-t border-[var(--z-rule)] px-10 max-lg:hidden">
           {tabs.map((tab, i) => {
             const isSelected = selectedIdx === i;
             return (
@@ -70,9 +70,11 @@ export function DocsHeader() {
                 key={i}
                 href={tab.url}
                 className={cn(
-                  "inline-flex items-center gap-2 text-nowrap border-b-2 border-transparent pb-1.5 text-sm font-medium text-fd-muted-foreground transition-colors hover:text-fd-accent-foreground",
+                  // v3 marks the active tab with ink, not an accent underline —
+                  // the strip reads as the same label row as the nav above it.
+                  "inline-flex items-center gap-2 text-nowrap border-b border-transparent pb-2 font-mono text-[11.5px] uppercase tracking-[0.16em] text-[var(--z-ink-5)] transition-colors hover:text-[var(--z-ink-2)]",
                   tab.unlisted && !isSelected && "hidden",
-                  isSelected && "border-fd-primary text-fd-primary",
+                  isSelected && "border-[var(--z-ink)] text-[var(--z-ink)]",
                 )}
               >
                 {tab.title}

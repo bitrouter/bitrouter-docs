@@ -25,14 +25,6 @@ export default async function ChangelogEntryPage({ params }: Props) {
   return (
     <div className="zed-bg">
       <section style={{ position: "relative" }}>
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            pointerEvents: "none",
-            background: "radial-gradient(60% 34% at 50% 0%, rgba(107,155,255,0.06), transparent 60%)",
-          }}
-        />
         <div className="zed-wrap" style={{ maxWidth: 760 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 9, padding: "34px 0 0", fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--z-ink-6)" }}>
             <Link href="/changelog" className="zed-link" style={{ color: "var(--z-ink-4)" }}>
@@ -45,12 +37,12 @@ export default async function ChangelogEntryPage({ params }: Props) {
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, margin: "22px 0 0", fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--z-ink-6)" }}>
             <time>{date}</time>
             {page.data.version && (
-              <span style={{ color: "var(--z-ink-3)", border: "1px solid var(--z-rule-2)", borderRadius: 5, padding: "2px 8px" }}>
+              <span style={{ color: "var(--z-ink-2)", border: "1px solid var(--z-rule-2)", padding: "2px 8px" }}>
                 {page.data.version}
               </span>
             )}
             {page.data.breaking && (
-              <span style={{ color: "var(--z-red)", border: "1px solid rgba(224,108,108,0.35)", borderRadius: 5, padding: "2px 8px", textTransform: "uppercase", letterSpacing: "0.06em", fontSize: 10 }}>
+              <span style={{ color: "var(--z-red)", border: "1px solid rgba(224,108,108,0.35)", padding: "2px 8px", textTransform: "uppercase", letterSpacing: "0.06em", fontSize: 10 }}>
                 Breaking
               </span>
             )}
@@ -63,7 +55,7 @@ export default async function ChangelogEntryPage({ params }: Props) {
             {headlineOf(page.data)}
           </h1>
 
-          <div className="zed-article" style={{ marginTop: 28, paddingBottom: 76 }}>
+          <div className="zed-article" style={{ marginTop: 28, paddingBottom: "var(--z-sec)" }}>
             <MDX components={getMDXComponents({})} />
           </div>
         </div>

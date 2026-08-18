@@ -158,29 +158,28 @@ export default function OpenPage() {
   return (
     <div className="zed-bg">
       <section style={{ position: "relative" }}>
-        <div className="zed-glow" />
-        <main className="zed-wrap" style={{ maxWidth: 1040, padding: "72px 34px 96px" }}>
+        <main className="zed-wrap" style={{ maxWidth: 1040, padding: "72px var(--z-gutter) 96px" }}>
           {/* Page header */}
           <header style={{ marginBottom: 72, borderBottom: RULE, paddingBottom: 56 }}>
-            <Kicker>// open startup</Kicker>
+            <Kicker>open startup</Kicker>
             <h1
               className="zed-display"
               style={{
-                fontSize: "clamp(40px, 6vw, 60px)",
-                lineHeight: 1.0,
-                margin: "16px 0 0",
+                fontSize: "clamp(34px, 5.2vw, 48px)",
+                lineHeight: 1.06,
+                margin: "20px 0 0",
               }}
             >
-              Open <span style={{ color: "var(--z-blue)" }}>at the core.</span>
+              Open at the core.
             </h1>
             <p
               style={{
-                marginTop: 22,
+                marginTop: 20,
                 maxWidth: "62ch",
                 fontFamily: MONO,
-                fontSize: 15,
+                fontSize: 14.5,
                 lineHeight: 1.7,
-                color: "var(--z-ink-4)",
+                color: "var(--z-ink-5)",
               }}
             >
               BitRouter is open at the core. The router is Apache-2.0 and runs on
@@ -192,18 +191,9 @@ export default function OpenPage() {
               target="_blank"
               rel="noopener noreferrer"
               style={{
-                marginTop: 28,
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 10,
-                padding: "11px 20px",
-                borderRadius: 8,
-                background: "var(--z-cta)",
-                color: "#fff",
-                fontFamily: MONO,
-                fontSize: 13,
-                fontWeight: 500,
+                marginTop: 32,
               }}
+              className="zed-btn zed-btn-primary"
             >
               <Star className="size-3.5" />
               Star on GitHub
@@ -243,11 +233,7 @@ export default function OpenPage() {
                   style={{
                     fontFamily: MONO,
                     fontSize: 13,
-                    color: "var(--z-code)",
-                    background: "#1a1e24",
-                    border: "1px solid var(--z-rule-code)",
-                    borderRadius: 5,
-                    padding: "1px 6px",
+                    color: "var(--z-cost)",
                   }}
                 >
                   bitrouter serve
@@ -388,14 +374,14 @@ export default function OpenPage() {
                 title="Mark"
                 description="One routing mark, one wordmark. Download the SVG/PNG logos and the full guidelines from the kit."
               >
-                <div style={{ border: RULE, borderRadius: 11, overflow: "hidden" }}>
+                <div style={{ border: RULE }}>
                   <div
                     style={{
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       padding: "52px 24px",
-                      background: "var(--z-inset)",
+                      background: "var(--z-wash)",
                     }}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -484,8 +470,7 @@ export default function OpenPage() {
                     justifyContent: "space-between",
                     gap: 12,
                     border: RULE,
-                    borderRadius: 8,
-                    background: "var(--z-inset)",
+                    background: "var(--z-wash)",
                     padding: "12px 16px",
                   }}
                 >
@@ -641,8 +626,8 @@ function ModelCard({
       </p>
       <ul style={{ margin: "20px 0 0", padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
         {points.map((p) => (
-          <li key={p} style={{ display: "flex", gap: 9, fontFamily: MONO, fontSize: 13, color: "var(--z-ink-4)" }}>
-            <span style={{ color: "var(--z-blue)" }}>▸</span>
+          <li key={p} style={{ display: "flex", gap: 12, fontFamily: MONO, fontSize: 13, lineHeight: 1.7, color: "var(--z-ink-2)" }}>
+            <span style={{ color: "var(--z-ink-6)" }}>—</span>
             {p}
           </li>
         ))}

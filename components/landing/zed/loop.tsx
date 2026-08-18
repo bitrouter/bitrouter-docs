@@ -1,5 +1,5 @@
 import { STEPS, type Artifact, type Step } from "./data";
-import { highlightYamlLine, TrafficLights } from "./primitives";
+import { highlightYamlLine } from "./primitives";
 
 /**
  * Act → Observe → Evaluate → Improve.
@@ -59,11 +59,9 @@ function DiffLines({ lines }: { lines: string[] }) {
 
 function ArtifactPane({ a }: { a: Artifact }) {
   return (
-    <div className={`zed-artifact ${a.kind}`}>
-      <div className="zed-artifact-head">
-        <TrafficLights />
-        <span style={{ marginLeft: 4 }}>{a.caption}</span>
-      </div>
+    <div className={a.kind}>
+      {/* v3: a ruled caption, not a titlebar — the artifact sits on the page. */}
+      <div className="zed-artifact-head">{a.caption}</div>
       <div className="zed-artifact-body">
         {a.kind === "yaml" && a.lines.map((l, i) => highlightYamlLine(l, i))}
         {a.kind === "trace" && <TraceLines lines={a.lines} />}
@@ -113,32 +111,29 @@ function StepRow({ s, reverse }: { s: Step; reverse: boolean }) {
 
 export function Loop() {
   return (
-    <section className="zed-section" id="loop">
-      <div className="zed-wrap" style={{ padding: "88px 34px" }}>
-        <div style={{ maxWidth: 760 }}>
-          <h2 className="zed-display" style={{ fontSize: 46, lineHeight: 1.06, margin: 0 }}>
-            Act. Observe. Evaluate. <span style={{ color: "var(--z-blue)" }}>Improve.</span>
-          </h2>
-          <p
-            style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: 14.5,
-              lineHeight: 1.6,
-              color: "var(--z-ink-4)",
-              margin: "18px 0 0",
-              maxWidth: "66ch",
-            }}
-          >
-            Other routers are tuned once, offline, on somebody else&apos;s benchmark. BitRouter closes
-            the loop against your own traffic — and every lap lands as a diff to one file you own.
-          </p>
-        </div>
+    <section className="zed-wrap zed-sec" id="loop">
+      <h2 className="zed-display" style={{ fontSize: 40, lineHeight: 1.08, maxWidth: "24ch" }}>
+        Act. Observe. Evaluate. Improve.
+      </h2>
+      <p
+        style={{
+          fontFamily: "var(--font-mono)",
+          fontSize: 14,
+          lineHeight: 1.7,
+          color: "var(--z-ink-5)",
+          margin: "22px 0 0",
+          maxWidth: "62ch",
+          textWrap: "pretty",
+        }}
+      >
+        Other routers are tuned once, offline, on somebody else&apos;s benchmark. BitRouter closes
+        the loop against your own traffic — and every lap lands as a diff to one file you own.
+      </p>
 
-        <div className="zed-loop">
-          {STEPS.map((s, i) => (
-            <StepRow key={s.n} s={s} reverse={i % 2 === 1} />
-          ))}
-        </div>
+      <div className="zed-loop">
+        {STEPS.map((s, i) => (
+          <StepRow key={s.n} s={s} reverse={i % 2 === 1} />
+        ))}
       </div>
     </section>
   );

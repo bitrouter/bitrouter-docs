@@ -392,8 +392,6 @@ export const HARNESSES: Harness[] = [
 ];
 
 // ── Trusted / metrics ───────────────────────────────────────────────────────
-export const TRUSTED = ["Anthropic", "Vercel", "Ramp", "Linear", "Sourcegraph", "Retool"];
-
 export const METRICS = [
   { stat: "30% cheaper", desc: "Routes routine calls to open models and escalates only the hard ones to frontier." },
   { stat: "30% faster", desc: "Biases every hop to the fastest model that still clears your quality bar." },

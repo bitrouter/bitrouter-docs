@@ -1,7 +1,7 @@
 import "@/components/landing/zed/zed.css";
 import { changelogSource, getChangelogItems } from "@/lib/source";
 import { ChangelogFeed } from "@/components/changelog/changelog-feed";
-import { Kicker } from "@/components/landing/zed/primitives";
+import { PageHead } from "@/components/landing/zed/primitives";
 import { getMDXComponents } from "@/mdx-components";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
@@ -23,56 +23,18 @@ export default async function ChangelogIndexPage() {
   return (
     <div className="zed-bg">
       <section style={{ position: "relative" }}>
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            pointerEvents: "none",
-            background: "radial-gradient(60% 36% at 50% 0%, rgba(107,155,255,0.06), transparent 60%)",
-          }}
-        />
         <div className="zed-wrap" style={{ maxWidth: 1000 }}>
-          <div
-            style={{
-              padding: "56px 0 30px",
-              borderBottom: "1px solid var(--z-rule)",
-              display: "flex",
-              alignItems: "flex-end",
-              gap: 20,
-              flexWrap: "wrap",
-            }}
-          >
-            <div>
-              <Kicker>// changelog</Kicker>
-              <h1
-                className="zed-display"
-                style={{ fontSize: "clamp(38px, 6vw, 56px)", lineHeight: 1.0, margin: "16px 0 0" }}
-              >
-                What&apos;s <span style={{ color: "var(--z-blue)" }}>new.</span>
-              </h1>
-              <p style={{ fontFamily: "var(--font-mono)", fontSize: 15, lineHeight: 1.6, color: "var(--z-ink-4)", margin: "16px 0 0", maxWidth: "52ch" }}>
-                Every release, with the routing, tracing and policy changes that shipped in it.
-              </p>
-            </div>
-            <a
-              href="/changelog/rss.xml"
-              style={{
-                marginLeft: "auto",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                fontFamily: "var(--font-mono)",
-                fontSize: 13,
-                color: "var(--z-ink)",
-                padding: "8px 14px",
-                borderRadius: 7,
-                border: "1px solid var(--z-rule-2)",
-                whiteSpace: "nowrap",
-              }}
-            >
-              <span style={{ color: "var(--z-amber)" }}>◈</span> RSS
-            </a>
-          </div>
+          <PageHead
+            eyebrow="Changelog"
+            title="What's new."
+            sub="Every release, with the routing, tracing and policy changes that shipped in it."
+            maxWidth="52ch"
+            aside={
+              <a className="zed-btn zed-btn-ghost" href="/changelog/rss.xml">
+                RSS
+              </a>
+            }
+          />
 
           {items.length === 0 ? (
             <p style={{ padding: "64px 0", textAlign: "center", fontFamily: "var(--font-mono)", color: "var(--z-ink-5)" }}>
@@ -81,7 +43,7 @@ export default async function ChangelogIndexPage() {
           ) : (
             <ChangelogFeed items={items} bodies={bodies} />
           )}
-          <div style={{ height: 60 }} />
+          <div style={{ height: "var(--z-sec)" }} />
         </div>
       </section>
     </div>

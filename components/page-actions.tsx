@@ -1,9 +1,7 @@
 'use client';
 import { useMemo, useState } from 'react';
-import { Check, ChevronDown, Copy, ExternalLinkIcon, TextIcon } from 'lucide-react';
-import { cn } from '../lib/cn';
+import { ChevronDown, ExternalLinkIcon, TextIcon } from 'lucide-react';
 import { useCopyButton } from 'fumadocs-ui/utils/use-copy-button';
-import { buttonVariants } from 'fumadocs-ui/components/ui/button';
 import {
   Popover,
   PopoverContent,
@@ -12,25 +10,25 @@ import {
 
 const cache = new Map<string, string>();
 
-export function LLMCopyButton({
-  markdownUrl,
-}: {
-  markdownUrl: string;
-}) {
+/**
+ * "Copy page" for the v3 docs meta row — the same clipboard behaviour as
+ * `LLMCopyButton`, wearing the row's type (uppercase mono, ruled underline)
+ * instead of a secondary button. Shares the cache above, so hitting either one
+ * warms the other.
+ */
+export function CopyPageButton({ markdownUrl }: { markdownUrl: string }) {
   const [isLoading, setLoading] = useState(false);
   const [checked, onClick] = useCopyButton(async () => {
     const cached = cache.get(markdownUrl);
     if (cached) return navigator.clipboard.writeText(cached);
 
     setLoading(true);
-
     try {
       await navigator.clipboard.write([
         new ClipboardItem({
           'text/plain': fetch(markdownUrl).then(async (res) => {
             const content = await res.text();
             cache.set(markdownUrl, content);
-
             return content;
           }),
         }),
@@ -42,18 +40,12 @@ export function LLMCopyButton({
 
   return (
     <button
+      type="button"
       disabled={isLoading}
-      className={cn(
-        buttonVariants({
-          color: 'secondary',
-          size: 'sm',
-          className: 'gap-2 [&_svg]:size-3.5 [&_svg]:text-fd-muted-foreground',
-        }),
-      )}
       onClick={onClick}
+      className="cursor-pointer border-b border-[var(--z-rule-2)] pb-0.5 font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--z-ink-5)] transition-colors hover:border-[var(--z-ink-3)] hover:text-[var(--z-ink-2)] disabled:opacity-60"
     >
-      {checked ? <Check /> : <Copy />}
-      Copy Markdown
+      {checked ? 'Copied' : 'Copy page'}
     </button>
   );
 }
@@ -110,30 +102,22 @@ export function ViewOptions({
 
   return (
     <Popover>
-      <PopoverTrigger
-        className={cn(
-          buttonVariants({
-            color: 'secondary',
-            size: 'sm',
-            className: 'gap-2',
-          }),
-        )}
-      >
-        Open
-        <ChevronDown className="size-3.5 text-fd-muted-foreground" />
+      <PopoverTrigger className="inline-flex cursor-pointer items-center gap-1.5 border-b border-[var(--z-rule-2)] pb-0.5 font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--z-ink-5)] transition-colors hover:border-[var(--z-ink-3)] hover:text-[var(--z-ink-2)]">
+        Open in…
+        <ChevronDown className="size-3" />
       </PopoverTrigger>
-      <PopoverContent className="flex flex-col">
+      <PopoverContent className="flex w-56 flex-col gap-0 rounded-none border-[var(--z-rule)] bg-[var(--z-bg)] p-1">
         {items.map((item) => (
           <a
             key={item.href}
             href={item.href}
             rel="noreferrer noopener"
             target="_blank"
-            className="text-sm p-2 rounded-lg inline-flex items-center gap-2 hover:text-fd-accent-foreground hover:bg-fd-accent [&_svg]:size-4"
+            className="zed-chrome-link inline-flex items-center gap-2.5 p-2 font-mono text-[12.5px] text-[var(--z-ink-3)] no-underline transition-colors hover:bg-[var(--z-wash)] hover:text-[var(--z-ink)] [&_svg]:size-3.5"
           >
             {item.icon}
             {item.title}
-            <ExternalLinkIcon className="text-fd-muted-foreground size-3.5 ms-auto" />
+            <ExternalLinkIcon className="ms-auto size-3 text-[var(--z-ink-6)]" />
           </a>
         ))}
       </PopoverContent>

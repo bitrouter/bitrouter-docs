@@ -285,11 +285,11 @@ export function TuiDemo() {
   }
 
   return (
-    <section className="zed-section">
+    <section>
       {/* Vertical only — `.zed-wrap` owns the horizontal padding, and drops it
-          to 20px under 900px. Hard-coding 34px here cost the terminal 28px of
-          width on a phone, which is 28px it does not have. */}
-      <div className="zed-wrap" style={{ paddingTop: 44, paddingBottom: 44 }}>
+          to 22px under 900px. Hard-coding the gutter here cost the terminal
+          width on a phone, which is width it does not have. */}
+      <div className="zed-wrap zed-sec">
         <div ref={outer} style={{ overflowX: "auto" }}>
           {/* Occupies the scaled box so the transform doesn't leave a gap. */}
           <div style={fit ? { width: fit.w, height: fit.h, margin: "0 auto" } : undefined}>
@@ -654,12 +654,12 @@ export function TuiDemo() {
               </div>
             </div>
 
-            <div style={{ textAlign: "center", marginTop: 18 }}>
-              <div style={{ fontSize: 12.5, color: "var(--z-ink-4)" }}>
-                Five tiers, set once in <span style={{ color: "var(--z-ink-2)" }}>bitrouter.yaml</span> — every harness
-                only ever sees the id <span style={{ color: "var(--z-blue)" }}>bitrouter/auto</span>.
+            <div style={{ textAlign: "center", marginTop: 22 }}>
+              <div style={{ fontSize: 12.5, color: "var(--z-ink-5)" }}>
+                Five tiers, set once in <span style={{ color: "var(--z-ink)" }}>bitrouter.yaml</span> — every harness
+                only ever sees the id <span style={{ color: "var(--z-ink-2)" }}>bitrouter/auto</span>.
               </div>
-              <div style={{ fontSize: 11.5, color: "var(--z-ink-7)", marginTop: 7 }}>
+              <div style={{ fontSize: 11.5, color: "var(--z-ink-6)", marginTop: 8 }}>
                 {cur.id} · {cur.workflow} · {cur.tierShape}
               </div>
               {narrow && (

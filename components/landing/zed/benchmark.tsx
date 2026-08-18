@@ -1,108 +1,131 @@
 import { BENCH_STATS, BENCH_ROWS } from "./data";
 
 const COLS = "1.6fr 1fr 0.8fr 0.7fr";
+const MONO = "var(--font-mono)";
 
+/** Uppercase micro-label used by the stat captions and the table head. */
+const microLabel = {
+  fontFamily: MONO,
+  fontSize: 11,
+  letterSpacing: "0.1em",
+  textTransform: "uppercase" as const,
+  color: "var(--z-ink-6)",
+};
+
+/**
+ * "Proof, not promises" — the headline outcome numbers beside the run that
+ * produced them.
+ *
+ * v3 takes the terminal chrome off the run: it's a plain ruled table with a
+ * bright top rule, which puts the numbers rather than the window first. Blue is
+ * spent once, on the cost saving.
+ */
 export function Benchmark() {
   return (
-    <section className="zed-section" id="benchmark">
-      <div className="zed-wrap" style={{ padding: "88px 34px" }}>
-        <div
-          className="zed-grid-2"
-          style={{ display: "grid", gridTemplateColumns: "0.9fr 1.1fr", gap: 56, alignItems: "center" }}
-        >
-          <div>
-            <h2 className="zed-display" style={{ fontSize: 46, lineHeight: 1.06, color: "var(--z-ink)" }}>
-              Proof, <span style={{ color: "var(--z-blue)" }}>not promises.</span>
-            </h2>
-            <p
-              style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: 14.5,
-                lineHeight: 1.6,
-                color: "var(--z-ink-4)",
-                margin: "18px 0 26px",
-                maxWidth: "46ch",
-              }}
-            >
-              Every number here is a real routed run against an all-frontier baseline on the same
-              workload — not a projection.
-            </p>
-            <div style={{ display: "flex", gap: 40, flexWrap: "wrap" }}>
-              {BENCH_STATS.map((s) => (
-                <div key={s.label}>
-                  <div
-                    className="zed-display"
-                    style={{ fontSize: 44, lineHeight: 1, color: s.blue ? "var(--z-blue)" : "var(--z-ink)" }}
-                  >
-                    {s.value}
-                  </div>
-                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--z-ink-6)", marginTop: 6 }}>
-                    {s.label}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div
-            className="zed-term"
-            style={{ boxShadow: "0 24px 60px -30px rgba(0,0,0,0.7)" }}
+    <section className="zed-wrap zed-sec" id="benchmark">
+      <div
+        className="zed-grid-2"
+        style={{
+          display: "grid",
+          gridTemplateColumns: "0.9fr 1.1fr",
+          columnGap: 72,
+          rowGap: 44,
+          alignItems: "start",
+        }}
+      >
+        <div>
+          <h2 className="zed-display" style={{ fontSize: 40, lineHeight: 1.08 }}>
+            Proof, not promises.
+          </h2>
+          <p
+            style={{
+              fontFamily: MONO,
+              fontSize: 14,
+              lineHeight: 1.7,
+              color: "var(--z-ink-5)",
+              margin: "22px 0 34px",
+              maxWidth: "44ch",
+            }}
           >
+            Every number here is a real routed run against an all-frontier baseline on the same
+            workload — not a projection.
+          </p>
+          <div style={{ display: "flex", gap: 48, flexWrap: "wrap" }}>
+            {BENCH_STATS.map((s) => (
+              <div key={s.label}>
+                <div
+                  className="zed-display"
+                  style={{
+                    fontSize: 42,
+                    lineHeight: 1,
+                    color: s.blue ? "var(--z-blue)" : "var(--z-ink)",
+                  }}
+                >
+                  {s.value}
+                </div>
+                <div style={{ ...microLabel, marginTop: 8 }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <div style={{ ...microLabel, display: "flex", alignItems: "center", paddingBottom: 12 }}>
+            run #1428 · coding agent
+            <span style={{ marginLeft: "auto" }}>12 calls</span>
+          </div>
+          <div style={{ fontFamily: MONO, fontSize: 12.5, borderTop: "1px solid var(--z-ink)" }}>
             <div
               style={{
-                display: "flex",
-                alignItems: "center",
-                padding: "10px 14px",
-                background: "var(--z-panel-header)",
+                ...microLabel,
+                display: "grid",
+                gridTemplateColumns: COLS,
+                padding: "12px 0",
                 borderBottom: "1px solid var(--z-rule)",
-                fontFamily: "var(--font-mono)",
-                fontSize: 11,
-                color: "var(--z-ink-6)",
+                fontSize: 10.5,
               }}
             >
-              ┌ run #1428 · coding agent
-              <span style={{ marginLeft: "auto", color: "var(--z-ink-7)" }}>12 calls</span>
+              <span>request</span>
+              <span>routed</span>
+              <span>cost</span>
+              <span>lat</span>
             </div>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 12 }}>
+            {BENCH_ROWS.map((b) => (
               <div
+                key={b.req}
                 style={{
                   display: "grid",
                   gridTemplateColumns: COLS,
-                  padding: "10px 15px",
-                  color: "var(--z-ink-7)",
-                  borderBottom: "1px solid var(--z-rule-faint)",
-                  fontSize: 10,
-                  letterSpacing: "0.08em",
-                  textTransform: "uppercase",
+                  padding: "13px 0",
+                  borderBottom: "1px solid var(--z-rule)",
                 }}
               >
-                <span>request</span>
-                <span>routed</span>
-                <span>cost</span>
-                <span>lat</span>
+                <span style={{ color: "var(--z-ink)" }}>{b.req}</span>
+                {/* Frontier picks read one step brighter than the economy ones —
+                    enough to spot the escalation without spending a hue on it. */}
+                <span style={{ color: b.frontier ? "var(--z-ink-2)" : "var(--z-ink-3)" }}>
+                  {b.model}
+                </span>
+                <span style={{ color: "var(--z-ink-3)" }}>{b.cost}</span>
+                <span style={{ color: "var(--z-ink-5)" }}>{b.lat}</span>
               </div>
-              {BENCH_ROWS.map((b) => (
-                <div
-                  key={b.req}
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: COLS,
-                    padding: "9px 15px",
-                    borderBottom: "1px solid var(--z-rule-faint)",
-                    alignItems: "center",
-                  }}
-                >
-                  <span style={{ color: "var(--z-ink-2)" }}>{b.req}</span>
-                  <span style={{ color: b.frontier ? "var(--z-amber)" : "var(--z-ink-2)" }}>{b.model}</span>
-                  <span style={{ color: "var(--z-cost)" }}>{b.cost}</span>
-                  <span style={{ color: "var(--z-ink-4)" }}>{b.lat}</span>
-                </div>
-              ))}
-              <div style={{ display: "flex", gap: 16, padding: "12px 15px", color: "var(--z-ink-4)", flexWrap: "wrap" }}>
-                <span>total <b style={{ color: "var(--z-green)" }}>$0.026</b></span>
-                <span>p50 <b style={{ color: "var(--z-ink-bright)" }}>88ms</b></span>
-                <span style={{ marginLeft: "auto", color: "var(--z-blue)" }}>saved −80%</span>
-              </div>
+            ))}
+            <div
+              style={{
+                display: "flex",
+                gap: 20,
+                padding: "16px 0 0",
+                color: "var(--z-ink-5)",
+                flexWrap: "wrap",
+              }}
+            >
+              <span>
+                total <b style={{ color: "var(--z-ink)", fontWeight: 500 }}>$0.026</b>
+              </span>
+              <span>
+                p50 <b style={{ color: "var(--z-ink)", fontWeight: 500 }}>88ms</b>
+              </span>
+              <span style={{ marginLeft: "auto", color: "var(--z-ink-2)" }}>saved −80%</span>
             </div>
           </div>
         </div>

@@ -9,16 +9,20 @@ import { Faq } from "./faq";
 import { FinalCta } from "./cta";
 
 /**
- * "Zed dark" landing — full rebuild from the design file. The shared site header
- * (nav) and footer are mounted by the (home) layout; this renders the page body
- * from the hero down to the final CTA on the Zed grid backdrop.
+ * v3 dark landing — rebuilt from the design file. The shared site header (nav)
+ * and footer are mounted by the (home) layout; this renders the page body from
+ * the hero down to the final CTA on the flat backdrop.
+ *
+ * Order matters here: the terminal comes straight after the hero, so the first
+ * thing under the claim is the product running. The "bring your own" and
+ * outcome bands then qualify what was just shown, rather than delaying it.
  */
 export function ZedLanding() {
   return (
     <div className="zed-bg">
       <Hero />
-      <BringYourOwn />
       <TuiDemo />
+      <BringYourOwn />
       <Metrics />
       <Benchmark />
       <Loop />

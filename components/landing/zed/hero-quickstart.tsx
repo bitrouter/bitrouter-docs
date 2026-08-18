@@ -4,10 +4,11 @@ import { Check, Copy } from "lucide-react";
 import { useState } from "react";
 
 /**
- * Hero quickstart — one card: an underlined tab strip on top, the command for the
- * active tab below the rule. Four ways to point an agent at BitRouter; the CLI /
- * MCP / Agent Skills commands are carried over verbatim from the previous (main)
- * hero quickstart, and Wizard is the interactive `bitrouter init` setup.
+ * Hero quickstart — four ways to point an agent at BitRouter.
+ *
+ * v3 drops the bordered card: the tab strip is bare uppercase labels marked by
+ * an underline, the command sits in a flat --z-wash well with no border or
+ * radius, and the hint line hangs below the well rather than inside it.
  */
 type Tab = { key: string; label: string; cmd: string; sub: string };
 
@@ -54,28 +55,11 @@ export function HeroQuickstart() {
   };
 
   return (
-    <div
-      style={{
-        maxWidth: 580,
-        margin: "36px auto 0",
-        textAlign: "left",
-        border: "1px solid var(--z-rule)",
-        borderRadius: 10,
-        background: "var(--z-inset)",
-        overflow: "hidden",
-      }}
-    >
-      {/* tab strip — inside the card, underline marks the active tab */}
+    <div style={{ maxWidth: 560, margin: "64px auto 0", textAlign: "left" }}>
       <div
         role="tablist"
         aria-label="Quickstart method"
-        style={{
-          display: "flex",
-          gap: 4,
-          padding: "0 8px",
-          borderBottom: "1px solid var(--z-rule)",
-          overflowX: "auto",
-        }}
+        style={{ display: "flex", gap: 26, justifyContent: "center", flexWrap: "wrap" }}
       >
         {TABS.map((t) => {
           const on = t.key === active;
@@ -86,49 +70,41 @@ export function HeroQuickstart() {
               aria-selected={on}
               onClick={() => setActive(t.key)}
               style={{
-                position: "relative",
                 cursor: "pointer",
-                fontFamily: MONO,
-                fontSize: 12.5,
-                padding: "11px 12px",
                 border: "none",
                 background: "transparent",
-                color: on ? "var(--z-ink)" : "var(--z-ink-5)",
-                transition: "color .15s ease",
+                padding: "0 0 6px",
+                fontFamily: MONO,
+                fontSize: 11,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
                 whiteSpace: "nowrap",
+                color: on ? "var(--z-ink)" : "var(--z-ink-6)",
+                borderBottom: `1px solid ${on ? "var(--z-ink)" : "transparent"}`,
+                transition: "color .15s ease, border-color .15s ease",
               }}
             >
               {t.label}
-              <span
-                aria-hidden
-                style={{
-                  position: "absolute",
-                  left: 12,
-                  right: 12,
-                  bottom: -1,
-                  height: 2,
-                  background: on ? "var(--z-blue)" : "transparent",
-                }}
-              />
             </button>
           );
         })}
       </div>
 
-      {/* command for the active tab */}
-      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "13px 15px 4px" }}>
-        <span style={{ color: "var(--z-green)", fontFamily: MONO, fontSize: 13.5, flex: "0 0 auto" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+          marginTop: 26,
+          padding: "16px 18px",
+          background: "var(--z-wash)",
+        }}
+      >
+        <span style={{ color: "var(--z-ink-6)", fontFamily: MONO, fontSize: 13, flex: "0 0 auto" }}>
           $
         </span>
         <div style={{ flex: 1, minWidth: 0, overflowX: "auto" }}>
-          <code
-            style={{
-              fontFamily: MONO,
-              fontSize: 13.5,
-              color: "var(--z-ink-2)",
-              whiteSpace: "nowrap",
-            }}
-          >
+          <code style={{ fontFamily: MONO, fontSize: 13, color: "var(--z-ink)", whiteSpace: "nowrap" }}>
             {tab.cmd}
           </code>
         </div>
@@ -146,14 +122,16 @@ export function HeroQuickstart() {
             transition: "color .15s ease",
           }}
         >
-          {copied ? <Check size={15} /> : <Copy size={15} />}
+          {copied ? <Check size={14} /> : <Copy size={14} />}
         </button>
       </div>
+
       <div
         style={{
-          padding: "0 15px 12px 33px",
+          marginTop: 10,
+          paddingLeft: 2,
           fontFamily: MONO,
-          fontSize: 12.5,
+          fontSize: 12,
           color: "var(--z-ink-6)",
         }}
       >

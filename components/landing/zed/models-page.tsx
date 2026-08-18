@@ -10,14 +10,17 @@ import {
   type Modality, type ModelRow,
 } from "./models-data";
 import { formatTokens, type UsageStats } from "@/lib/usage-stats-types";
+import { PageHead } from "./primitives";
 
 type SortKey = "input" | "output" | "name";
 type View = "table" | "cards";
 
+// v3 marks selection with ink over a flat wash rather than a blue-tinted fill —
+// the accent stays reserved for data (price bars, the routed model).
 const optStyle = (on: boolean) =>
-  on ? { background: "#12161d", color: "#8fb4ff" } : { color: "var(--z-ink-4)" };
+  on ? { background: "var(--z-wash)", color: "var(--z-ink)" } : { color: "var(--z-ink-5)" };
 const segStyle = (on: boolean) =>
-  on ? { background: "#12161d", color: "#8fb4ff" } : { background: "transparent", color: "var(--z-ink-5)" };
+  on ? { background: "var(--z-wash)", color: "var(--z-ink)" } : { background: "transparent", color: "var(--z-ink-6)" };
 
 function decorate(m: ModelRow, maxIn: number, maxOut: number) {
   return {
@@ -100,11 +103,15 @@ export function ZedModelsPage({ models, stats }: { models: ModelRow[]; stats: Us
   return (
     <div className="zed-bg">
       <section style={{ position: "relative" }}>
-        <div className="zed-glow" />
         <div className="zed-wrap" style={{ maxWidth: 1180 }}>
-          <div style={{ height: 44 }} />
+          <PageHead
+            eyebrow="Models"
+            title="Every model the router can reach."
+            sub="Context window, price per million tokens and modality for the whole catalog — the same registry bitrouter/auto picks from."
+            maxWidth="64ch"
+          />
 
-          <div style={{ border: "1px solid var(--z-rule)" }}>
+          <div style={{ marginTop: 56, borderTop: "1px solid var(--z-ink)" }}>
             {stats && <UsageChart stats={stats} />}
 
             {/* ── registry: rail + main ── */}
@@ -157,19 +164,19 @@ export function ZedModelsPage({ models, stats }: { models: ModelRow[]; stats: Us
               <div style={{ minWidth: 0 }}>
                 {/* toolbar */}
                 <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", padding: "14px 16px", borderBottom: "1px solid var(--z-rule)" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 9, background: "var(--z-inset)", border: "1px solid var(--z-rule)", borderRadius: 7, padding: "7px 11px", flex: 1, minWidth: 180 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 9, background: "var(--z-wash)", border: "1px solid var(--z-rule)", borderRadius: 0, padding: "7px 11px", flex: 1, minWidth: 180 }}>
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6b727e" strokeWidth="2" style={{ flex: "0 0 auto" }}><circle cx="11" cy="11" r="7" /><path d="M21 21l-4-4" /></svg>
                     <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search models…" style={{ flex: 1, background: "none", border: "none", outline: "none", fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--z-ink)", minWidth: 0 }} />
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
                     <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--z-ink-7)" }}>sort</span>
-                    <div style={{ display: "flex", border: "1px solid var(--z-rule)", borderRadius: 7, overflow: "hidden" }}>
+                    <div style={{ display: "flex", border: "1px solid var(--z-rule)", borderRadius: 0, overflow: "hidden" }}>
                       {([["input", "input $"], ["output", "output $"], ["name", "name"]] as [SortKey, string][]).map(([k, l]) => (
                         <button key={k} onClick={() => setSort(k)} style={{ cursor: "pointer", fontFamily: "var(--font-mono)", fontSize: 11.5, padding: "6px 11px", border: "none", ...segStyle(sort === k) }}>{l}</button>
                       ))}
                     </div>
                   </div>
-                  <div style={{ display: "flex", border: "1px solid var(--z-rule)", borderRadius: 7, overflow: "hidden" }}>
+                  <div style={{ display: "flex", border: "1px solid var(--z-rule)", borderRadius: 0, overflow: "hidden" }}>
                     <button onClick={() => setView("table")} title="Table" style={{ cursor: "pointer", display: "flex", padding: "6px 10px", border: "none", ...segStyle(view === "table") }}>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="16" rx="1" /><path d="M3 10h18M9 4v16" /></svg>
                     </button>
@@ -224,7 +231,7 @@ function UsageChart({ stats }: { stats: UsageStats }) {
   const days = stats.window.days;
 
   return (
-    <div style={{ background: "var(--z-inset)", borderBottom: "1px solid var(--z-rule)" }}>
+    <div style={{ borderBottom: "1px solid var(--z-rule)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap", padding: "16px 20px", borderBottom: "1px solid var(--z-rule)" }}>
         <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--z-ink-6)" }}>
           token usage · last {days} days
@@ -304,7 +311,7 @@ function FilterGroup({ title, children }: { title: string; children: React.React
 
 function FilterBtn({ label, count, dot, icon, check, active, onClick }: { label: string; count?: string; dot?: string; icon?: string; check?: string; active: boolean; onClick: () => void }) {
   return (
-    <button onClick={onClick} style={{ display: "flex", alignItems: "center", gap: 9, width: "100%", background: "none", border: "none", cursor: "pointer", textAlign: "left", padding: "6px 8px", borderRadius: 6, fontFamily: "var(--font-mono)", fontSize: 12.5, ...optStyle(active) }}>
+    <button onClick={onClick} style={{ display: "flex", alignItems: "center", gap: 9, width: "100%", background: "none", border: "none", cursor: "pointer", textAlign: "left", padding: "6px 8px", borderRadius: 0, fontFamily: "var(--font-mono)", fontSize: 12.5, ...optStyle(active) }}>
       {icon ? <BrandIcon name={icon} size={14} color={dot} /> : dot && <span style={{ width: 7, height: 7, borderRadius: 2, background: dot, flex: "0 0 auto" }} />}
       {check && <span style={{ width: 12, flex: "0 0 auto", color: "#6b9bff" }}>{check}</span>}
       <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{label}</span>
@@ -320,7 +327,7 @@ function TableView({ rows }: { rows: DecoratedRow[] }) {
   return (
     <div style={{ overflowX: "auto" }}>
       <div style={{ minWidth: 620 }}>
-        <div style={{ display: "grid", gridTemplateColumns: TABLE_COLS, background: "var(--z-inset)", borderBottom: "1px solid var(--z-rule)", fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--z-ink-7)" }}>
+        <div style={{ display: "grid", gridTemplateColumns: TABLE_COLS, borderBottom: "1px solid var(--z-rule)", fontFamily: "var(--font-mono)", fontSize: 10.5, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--z-ink-6)" }}>
           <div style={{ padding: "11px 16px" }}>model</div><div style={{ padding: "11px 10px" }}>ctx</div><div style={{ padding: "11px 10px" }}>in /1M</div><div style={{ padding: "11px 10px" }}>out /1M</div><div style={{ padding: "11px 10px" }}>modality</div>
         </div>
         {rows.map((r) => (
@@ -328,7 +335,7 @@ function TableView({ rows }: { rows: DecoratedRow[] }) {
             <div style={{ padding: "12px 16px", display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
               <BrandIcon name={r.p} size={15} color={r.dot} />
               <span style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--z-ink-2)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.id}</span>
-              {r.tag && <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.06em", textTransform: "uppercase", color: r.tagColor, border: `1px solid ${r.tagBorder}`, borderRadius: 4, padding: "2px 5px", flex: "0 0 auto" }}>{r.tag}</span>}
+              {r.tag && <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.06em", textTransform: "uppercase", color: r.tagColor, border: `1px solid ${r.tagBorder}`, borderRadius: 0, padding: "2px 5px", flex: "0 0 auto" }}>{r.tag}</span>}
             </div>
             <div style={{ padding: "12px 10px", fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--z-ink-5)" }}>{r.ctx}</div>
             <PriceCell txt={r.inTxt} w={r.inW} color={r.inColor} />
@@ -355,18 +362,18 @@ function PriceCell({ txt, w, color }: { txt: string; w: string; color: string })
 }
 
 function ModTag({ m }: { m: Modality }) {
-  return <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.05em", color: MODC[m], border: "1px solid var(--z-rule)", borderRadius: 3, padding: "1px 4px" }}>{m}</span>;
+  return <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.05em", color: MODC[m], border: "1px solid var(--z-rule)", borderRadius: 0, padding: "1px 4px" }}>{m}</span>;
 }
 
 function CardView({ rows }: { rows: DecoratedRow[] }) {
   return (
     <div className="zed-grid-2" style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", padding: 16, gap: 14 }}>
       {rows.map((r) => (
-        <Link key={r.id} href={`/models/${r.id}`} className="zed-row-hover" style={{ border: "1px solid var(--z-rule)", borderRadius: 9, padding: "18px 18px", textDecoration: "none", display: "block" }}>
+        <Link key={r.id} href={`/models/${r.id}`} className="zed-row-hover" style={{ border: "1px solid var(--z-rule)", borderRadius: 0, padding: "18px", textDecoration: "none", display: "block" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
             <BrandIcon name={r.p} size={16} color={r.dot} />
             <span style={{ fontFamily: "var(--font-sans)", fontSize: 11.5, color: "var(--z-ink-5)" }}>{r.p}</span>
-            {r.tag && <span style={{ marginLeft: "auto", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.06em", textTransform: "uppercase", color: r.tagColor, border: `1px solid ${r.tagBorder}`, borderRadius: 4, padding: "2px 6px" }}>{r.tag}</span>}
+            {r.tag && <span style={{ marginLeft: "auto", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.06em", textTransform: "uppercase", color: r.tagColor, border: `1px solid ${r.tagBorder}`, borderRadius: 0, padding: "2px 6px" }}>{r.tag}</span>}
           </div>
           <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--z-ink)", marginTop: 10, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.id}</div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginTop: 16 }}>

@@ -1,17 +1,5 @@
 import type { ReactNode } from "react";
 
-/** Four L-shaped corner brackets, absolutely positioned in a `position:relative` parent. */
-export function CornerTicks() {
-  return (
-    <>
-      <span className="zed-tick tl" />
-      <span className="zed-tick tr" />
-      <span className="zed-tick bl" />
-      <span className="zed-tick br" />
-    </>
-  );
-}
-
 /** macOS-style traffic lights for terminal titlebars. */
 export function TrafficLights() {
   return (
@@ -28,52 +16,76 @@ export function Cursor({ style }: { style?: React.CSSProperties }) {
   return <span className="zed-ck" style={style} />;
 }
 
-/**
- * The official BitRouter mark (two-way routing arrow) in a blue app-icon tile.
- * Used in the nav + footer. The mark is the brand artwork served from
- * `/bitrouter-mark.png`, painted via CSS mask so it inherits `currentColor`
- * (blue here) and stays crisp at any tile size.
- */
-export function BrandMark({ size = 26 }: { size?: number }) {
-  const glyph = Math.round(size * 0.62);
-  return (
-    <span
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        width: size,
-        height: size,
-        border: "1px solid var(--z-blue)",
-        borderRadius: 6,
-        color: "var(--z-blue)",
-        flex: "0 0 auto",
-      }}
-    >
-      <span
-        aria-hidden
-        style={{
-          display: "block",
-          width: glyph,
-          height: glyph,
-          background: "currentColor",
-          WebkitMaskImage: "url(/bitrouter-mark.png)",
-          maskImage: "url(/bitrouter-mark.png)",
-          WebkitMaskRepeat: "no-repeat",
-          maskRepeat: "no-repeat",
-          WebkitMaskPosition: "center",
-          maskPosition: "center",
-          WebkitMaskSize: "contain",
-          maskSize: "contain",
-        }}
-      />
-    </span>
-  );
-}
-
-/** `// section` mono kicker. */
 export function Kicker({ children }: { children: ReactNode }) {
   return <div className="zed-kicker">{children}</div>;
+}
+
+/**
+ * The v3 page header shared by the index surfaces (models, pricing, blog,
+ * changelog): a dim uppercase eyebrow, a Newsreader-italic title, and a mono
+ * standfirst — the same three-part opening the landing hero uses, one size down.
+ *
+ * The title stays monochrome. v3 spends blue on state and data, not on headline
+ * fragments, so the "…in production." half-sentence highlights are gone.
+ */
+export function PageHead({
+  eyebrow,
+  title,
+  sub,
+  aside,
+  maxWidth,
+}: {
+  eyebrow: string;
+  title: ReactNode;
+  sub?: ReactNode;
+  /** Optional trailing cell, right-aligned on the title row (e.g. an RSS link). */
+  aside?: ReactNode;
+  /** Measure for the standfirst, in ch. */
+  maxWidth?: string;
+}) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "flex-end",
+        gap: 20,
+        flexWrap: "wrap",
+        padding: "72px 0 0",
+      }}
+    >
+      <div style={{ minWidth: 0 }}>
+        <div className="zed-eyebrow">{eyebrow}</div>
+        <h1
+          className="zed-display"
+          style={{
+            fontSize: "clamp(34px, 5.2vw, 48px)",
+            lineHeight: 1.06,
+            margin: "20px 0 0",
+            maxWidth: "20ch",
+            textWrap: "pretty",
+          }}
+        >
+          {title}
+        </h1>
+        {sub && (
+          <p
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: 14.5,
+              lineHeight: 1.7,
+              color: "var(--z-ink-5)",
+              margin: "20px 0 0",
+              maxWidth: maxWidth ?? "58ch",
+              textWrap: "pretty",
+            }}
+          >
+            {sub}
+          </p>
+        )}
+      </div>
+      {aside ? <div style={{ marginLeft: "auto" }}>{aside}</div> : null}
+    </div>
+  );
 }
 
 // ── YAML / policy syntax highlighter ────────────────────────────────────────
@@ -90,7 +102,7 @@ export function highlightYamlLine(raw: string, key: number): ReactNode {
   // Divider row.
   if (/^\s*─+\s*$/.test(raw)) {
     return (
-      <div key={key} style={{ whiteSpace: "pre", color: "var(--z-ink-8)" }}>
+      <div key={key} style={{ whiteSpace: "pre", color: "var(--z-rule-2)" }}>
         {raw}
       </div>
     );
@@ -111,7 +123,7 @@ export function highlightYamlLine(raw: string, key: number): ReactNode {
   // List item.
   if (rest.startsWith("- ")) {
     return (
-      <div key={key} style={{ whiteSpace: "pre", color: "var(--z-ink-4)" }}>
+      <div key={key} style={{ whiteSpace: "pre", color: "var(--z-ink-5)" }}>
         {raw}
       </div>
     );
@@ -120,7 +132,7 @@ export function highlightYamlLine(raw: string, key: number): ReactNode {
   // Stat / summary line (no key:value, contains a middot).
   if (!rest.includes(":") && rest.includes("·")) {
     return (
-      <div key={key} style={{ whiteSpace: "pre", color: "var(--z-ink-bright)" }}>
+      <div key={key} style={{ whiteSpace: "pre", color: "var(--z-ink-2)" }}>
         {raw}
       </div>
     );
@@ -130,7 +142,7 @@ export function highlightYamlLine(raw: string, key: number): ReactNode {
   const colon = rest.indexOf(":");
   if (colon === -1) {
     return (
-      <div key={key} style={{ whiteSpace: "pre", color: "var(--z-ink-4)" }}>
+      <div key={key} style={{ whiteSpace: "pre", color: "var(--z-ink-5)" }}>
         {raw}
       </div>
     );
@@ -149,18 +161,21 @@ export function highlightYamlLine(raw: string, key: number): ReactNode {
 
   return (
     <div key={key} style={{ whiteSpace: "pre" }}>
-      <span style={{ color: "var(--z-ink-8)" }}>{indent}</span>
-      <span style={{ color: "var(--z-blue)" }}>{keyText}</span>
-      <span style={{ color: "var(--z-ink-7)" }}>:</span>
-      <span style={{ color: "var(--z-ink-7)" }}>{valSpace}</span>
+      {/* v3 renders config monochrome: the key/value split is carried by two
+          steps of ink, not by hue. Only a threshold keeps its tan, because it
+          is a number the reader is meant to hunt for. */}
+      <span style={{ color: "var(--z-ink-2)" }}>{indent}</span>
+      <span style={{ color: "var(--z-ink-2)" }}>{keyText}</span>
+      <span style={{ color: "var(--z-ink-6)" }}>:</span>
+      <span style={{ color: "var(--z-ink-6)" }}>{valSpace}</span>
       {value && (
-        <span style={{ color: isThreshold(value) ? "var(--z-cost)" : "var(--z-green)" }}>
+        <span style={{ color: isThreshold(value) ? "var(--z-cost)" : "var(--z-ink)" }}>
           {value}
         </span>
       )}
       <span>{valTrail}</span>
       {comment && (
-        <span style={{ color: "var(--z-ink-8)", fontStyle: "italic" }}>{comment}</span>
+        <span style={{ color: "var(--z-ink-6)", fontStyle: "italic" }}>{comment}</span>
       )}
     </div>
   );

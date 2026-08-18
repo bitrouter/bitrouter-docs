@@ -59,5 +59,5 @@ export function WebHeader() {
  * nav (and the tabs dropdown inside it) is reachable on small screens.
  */
 export function WebHeaderBody({ leadingSlot }: { leadingSlot?: React.ReactNode }) {
-  return <SiteHeaderBody {...useWebHeaderProps(leadingSlot)} />;
+  return <SiteHeaderBody {...useWebHeaderProps(leadingSlot)} wordmarkSuffix="docs" />;
 }

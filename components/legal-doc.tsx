@@ -20,18 +20,17 @@ export function renderLegalPage(slug: string, components: MDXComponents = {}) {
   return (
     <div className="zed-bg">
       <section style={{ position: "relative" }}>
-        <div className="zed-glow" />
         <article
           className="zed-wrap"
-          style={{ maxWidth: 820, padding: "64px 34px 96px" }}
+          style={{ maxWidth: 820, padding: "64px var(--z-gutter) 96px" }}
         >
-          <Kicker>// legal</Kicker>
+          <Kicker>legal</Kicker>
           <h1
             className="zed-display"
             style={{
-              fontSize: "clamp(32px, 5vw, 46px)",
-              lineHeight: 1.04,
-              margin: "14px 0 0",
+              fontSize: "clamp(32px, 5vw, 44px)",
+              lineHeight: 1.06,
+              margin: "20px 0 0",
             }}
           >
             {page.data.title}
@@ -41,10 +40,10 @@ export function renderLegalPage(slug: string, components: MDXComponents = {}) {
               style={{
                 fontFamily: "var(--font-mono)",
                 fontSize: 14.5,
-                lineHeight: 1.65,
-                color: "var(--z-ink-4)",
-                margin: "16px 0 0",
-                maxWidth: "64ch",
+                lineHeight: 1.75,
+                color: "var(--z-ink-5)",
+                margin: "20px 0 0",
+                maxWidth: "68ch",
               }}
             >
               {page.data.description}
@@ -54,8 +53,8 @@ export function renderLegalPage(slug: string, components: MDXComponents = {}) {
           {page.data.lastModified && (
             <div
               style={{
-                marginTop: 22,
-                paddingTop: 16,
+                marginTop: 28,
+                paddingTop: 20,
                 borderTop: "1px solid var(--z-rule)",
                 fontFamily: "var(--font-mono)",
                 fontSize: 10,

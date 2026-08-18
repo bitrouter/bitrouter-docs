@@ -16,18 +16,22 @@ const FAQ_JSON_LD = {
 export function Faq() {
   const [open, setOpen] = useState(0);
   return (
-    <section className="zed-section">
+    <section className="zed-wrap zed-sec">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSON_LD) }} />
-      <div className="zed-wrap" style={{ padding: "88px 34px" }}>
+      <div>
         <div
           className="zed-grid-2"
-          style={{ display: "grid", gridTemplateColumns: "0.85fr 1.15fr", gap: 56, alignItems: "start" }}
+          style={{
+            display: "grid",
+            gridTemplateColumns: "0.85fr 1.15fr",
+            columnGap: 72,
+            rowGap: 32,
+            alignItems: "start",
+          }}
         >
-          <div style={{ position: "sticky", top: 88 }}>
-            <h2 className="zed-display" style={{ fontSize: 44, lineHeight: 1.06, margin: 0 }}>
-              Questions.
-            </h2>
-          </div>
+          <h2 className="zed-display" style={{ fontSize: 40, lineHeight: 1.08 }}>
+            Questions.
+          </h2>
           <div style={{ borderTop: "1px solid var(--z-rule)" }}>
             {FAQS.map((f, i) => {
               const isOpen = i === open;
@@ -37,30 +41,31 @@ export function Faq() {
                     onClick={() => setOpen(isOpen ? -1 : i)}
                     style={{
                       display: "flex",
-                      gap: 14,
+                      gap: 16,
                       width: "100%",
                       background: "none",
                       border: "none",
                       textAlign: "left",
-                      padding: "22px 0",
+                      padding: "24px 0",
                       cursor: "pointer",
                       fontFamily: "var(--font-mono)",
-                      fontSize: 15,
+                      fontSize: 14.5,
                       color: isOpen ? "var(--z-ink)" : "var(--z-ink-2)",
                     }}
                   >
-                    <span style={{ color: "var(--z-blue)", width: 12, flex: "0 0 auto" }}>{isOpen ? "−" : "+"}</span>
+                    <span style={{ color: "var(--z-ink-6)", width: 12, flex: "0 0 auto" }}>{isOpen ? "−" : "+"}</span>
                     {f.q}
                   </button>
                   <div className={`zed-faq-ans${isOpen ? " open" : ""}`}>
                     <div>
                       <div
                         style={{
-                          padding: "0 0 22px 26px",
+                          padding: "0 0 24px 28px",
                           fontFamily: "var(--font-mono)",
                           fontSize: 13,
-                          lineHeight: 1.7,
-                          color: "var(--z-ink-4)",
+                          lineHeight: 1.8,
+                          color: "var(--z-ink-5)",
+                          maxWidth: "62ch",
                         }}
                       >
                         {f.a}

@@ -10,12 +10,14 @@ import Link from "next/link";
 import posthog from "posthog-js";
 import { getCalApi } from "@calcom/embed-react";
 import "@/components/landing/zed/zed.css";
-import { Kicker, CornerTicks } from "@/components/landing/zed/primitives";
+import { Kicker } from "@/components/landing/zed/primitives";
 
-const WRAP: React.CSSProperties = { padding: "88px 34px" };
-const H2: React.CSSProperties = { fontSize: "clamp(30px,4.5vw,46px)", lineHeight: 1.06, margin: "16px 0 0" };
+// v3 pads only the top, so consecutive sections sit one --z-sec apart rather
+// than stacking two paddings, and no section carries a hairline.
+const WRAP: React.CSSProperties = { padding: "var(--z-sec) var(--z-gutter) 0" };
+const H2: React.CSSProperties = { fontSize: 40, lineHeight: 1.08, margin: "20px 0 0" };
 const LEAD: React.CSSProperties = {
-  fontFamily: "var(--font-mono)", fontSize: 14.5, lineHeight: 1.6, color: "var(--z-ink-4)", margin: "18px 0 0", maxWidth: "64ch",
+  fontFamily: "var(--font-mono)", fontSize: 14, lineHeight: 1.7, color: "var(--z-ink-5)", margin: "20px 0 0", maxWidth: "64ch",
 };
 
 function FounderCTA({ className, location, children }: { className: string; location: string; children: React.ReactNode }) {
@@ -34,8 +36,8 @@ function FounderCTA({ className, location, children }: { className: string; loca
 
 function SecHead({ kicker, title, lead }: { kicker: string; title: string; lead?: string }) {
   return (
-    <div style={{ maxWidth: 720, marginBottom: 40 }}>
-      <Kicker>// {kicker}</Kicker>
+    <div style={{ maxWidth: 720, marginBottom: 44 }}>
+      <Kicker>{kicker}</Kicker>
       <h2 className="zed-display" style={H2}>{title}</h2>
       {lead && <p style={LEAD}>{lead}</p>}
     </div>
@@ -46,21 +48,19 @@ function SecHead({ kicker, title, lead }: { kicker: string; title: string; lead?
 function Hero() {
   return (
     <section style={{ position: "relative", overflow: "hidden" }}>
-      <div className="zed-glow" />
-      <CornerTicks />
-      <div className="zed-wrap" style={{ padding: "64px 34px 40px" }}>
-        <Kicker>// finops · enterprise</Kicker>
-        <h1 className="zed-display" style={{ fontSize: "clamp(40px,7vw,68px)", lineHeight: 1.0, margin: "18px 0 0", maxWidth: "18ch" }}>
+      <div className="zed-wrap" style={{ padding: "72px var(--z-gutter) 0" }}>
+        <Kicker>finops · enterprise</Kicker>
+        <h1 className="zed-display" style={{ fontSize: "clamp(38px,6.4vw,68px)", lineHeight: 1.04, margin: "30px 0 0", maxWidth: "18ch" }}>
           Govern token spend across the org.
         </h1>
-        <p style={{ ...LEAD, fontSize: 16 }}>
+        <p style={{ ...LEAD, fontSize: 16, lineHeight: 1.65 }}>
           FinOps for AI. BitRouter puts every team&rsquo;s token spend under one budget &mdash; real-time
           attribution, showback and chargeback, and quota governance &mdash; behind a router that holds each
           workload under the cap. We tie our fee to what we save you, so governance pays for itself.
         </p>
-        <div style={{ display: "flex", gap: 14, marginTop: 32, flexWrap: "wrap" }}>
-          <FounderCTA className="zed-btn zed-btn-primary" location="enterprise_hero">Talk to the founders →</FounderCTA>
-          <Link href="/pricing" className="zed-btn zed-btn-ghost">See all pricing</Link>
+        <div style={{ display: "flex", alignItems: "center", gap: 28, marginTop: 40, flexWrap: "wrap" }}>
+          <FounderCTA className="zed-btn zed-btn-primary" location="enterprise_hero">Talk to the founders</FounderCTA>
+          <Link href="/pricing" className="zed-btn-underline">See all pricing</Link>
         </div>
       </div>
     </section>
@@ -76,14 +76,14 @@ const FAILS = [
 ];
 function FailureBand() {
   return (
-    <section className="zed-section">
+    <section>
       <div className="zed-wrap" style={WRAP}>
         <SecHead kicker="the tokenmaxxing trap" title="Token spend scales faster than anyone forecasts."
           lead="Agentic loops re-send their whole context every turn, so cost compounds with the task — not the price list. Roll that across every team and the bill outruns the budget before finance sees it." />
         <div className="zed-grid-4" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", border: "1px solid var(--z-rule)" }}>
           {FAILS.map((f, i) => (
             <div key={f.src} style={{ padding: "26px 22px", borderRight: i === FAILS.length - 1 ? "none" : "1px solid var(--z-rule)" }}>
-              <div className="zed-display" style={{ fontSize: 40, lineHeight: 1, color: "var(--z-blue)" }}>{f.n}</div>
+              <div className="zed-display" style={{ fontSize: 34, lineHeight: 1 }}>{f.n}</div>
               <p style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, lineHeight: 1.6, color: "var(--z-ink-4)", margin: "14px 0 14px" }}>{f.b}</p>
               <a href={f.href} target="_blank" rel="noopener noreferrer" style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--z-ink-6)" }}>{f.src}</a>
             </div>
@@ -110,16 +110,16 @@ const CONTROLS = [
 ];
 function Govern() {
   return (
-    <section className="zed-section">
+    <section>
       <div className="zed-wrap" style={WRAP}>
         <SecHead kicker="what we govern" title="The controls a token bill needs." />
         <div className="zed-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "26px 40px" }}>
           {CONTROLS.map((c) => (
             <div key={c.k}>
-              <div style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 600, color: "var(--z-ink)" }}>
-                <span style={{ color: "var(--z-blue)", fontSize: 9 }}>●</span> {c.k}
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--z-ink-6)" }}>
+                {c.k}
               </div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, lineHeight: 1.55, color: "var(--z-ink-5)", marginTop: 6 }}>{c.v}</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 13, lineHeight: 1.7, color: "var(--z-ink-2)", marginTop: 12 }}>{c.v}</div>
             </div>
           ))}
         </div>
@@ -137,11 +137,11 @@ function Guarantee() {
     </div>
   );
   return (
-    <section className="zed-section">
+    <section>
       <div className="zed-wrap" style={WRAP}>
         <div className="zed-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 0.8fr", gap: 56, alignItems: "center" }}>
           <div>
-            <Kicker>// the guarantee</Kicker>
+            <Kicker>the guarantee</Kicker>
             <h2 className="zed-display" style={H2}>Guaranteed under budget.</h2>
             <p style={LEAD}>
               You set a monthly budget and a measurable quality floor. We hold your loop under budget — or credit
@@ -176,13 +176,13 @@ const STEPS = [
 ];
 function HowItWorks() {
   return (
-    <section className="zed-section">
+    <section>
       <div className="zed-wrap" style={WRAP}>
         <SecHead kicker="how it works" title="Measure. Route. Bill on results." />
         <div className="zed-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 24 }}>
           {STEPS.map((s) => (
-            <div key={s.n} style={{ border: "1px solid var(--z-rule)", borderRadius: 9, padding: "24px 22px" }}>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--z-blue)" }}>{s.n}</div>
+            <div key={s.n} style={{ borderTop: "1px solid var(--z-rule)", paddingTop: 20 }}>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--z-ink-6)" }}>{s.n}</div>
               <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontWeight: 500, fontSize: 24, color: "var(--z-ink)", margin: "10px 0 10px" }}>{s.h}</h3>
               <p style={{ fontFamily: "var(--font-mono)", fontSize: 13, lineHeight: 1.65, color: "var(--z-ink-4)" }}>{s.b}</p>
             </div>
@@ -196,14 +196,13 @@ function HowItWorks() {
 // ── free audit CTA ──
 function AuditCta() {
   return (
-    <section className="zed-section">
-      <div className="zed-wrap" style={{ padding: "80px 34px" }}>
-        <div style={{ position: "relative", border: "1px solid var(--z-rule)", borderRadius: 14, overflow: "hidden", padding: "60px 34px", textAlign: "center" }}>
+    <section>
+      <div className="zed-wrap" style={{ padding: "var(--z-sec) var(--z-gutter)" }}>
+        <div style={{ position: "relative", padding: "60px 0", textAlign: "center" }}>
           <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "radial-gradient(60% 70% at 50% 0%, rgba(107,155,255,0.08), transparent 60%)" }} />
-          <CornerTicks />
           <div style={{ position: "relative" }}>
-            <Kicker>// start free</Kicker>
-            <h2 className="zed-display" style={{ fontSize: "clamp(30px,4.5vw,44px)", lineHeight: 1.04, margin: "16px auto 0", maxWidth: "20ch", color: "var(--z-blue)" }}>
+            <Kicker>start free</Kicker>
+            <h2 className="zed-display" style={{ fontSize: "clamp(32px,5vw,48px)", lineHeight: 1.06, margin: "20px auto 0", maxWidth: "20ch" }}>
               Start with a free audit of your real traffic.
             </h2>
             <p style={{ ...LEAD, margin: "18px auto 0", maxWidth: "52ch", textAlign: "left" }}>
@@ -211,7 +210,7 @@ function AuditCta() {
               overpaying, where it&rsquo;s going, and what we can give back — with no commitment to continue.
             </p>
             <div style={{ marginTop: 28 }}>
-              <FounderCTA className="zed-btn zed-btn-primary" location="enterprise_audit">Book a founder call →</FounderCTA>
+              <FounderCTA className="zed-btn zed-btn-primary" location="enterprise_audit">Book a founder call</FounderCTA>
             </div>
           </div>
         </div>
@@ -238,27 +237,27 @@ const EROWS: { feat: string; self: Mark; ent: Mark; hi?: boolean }[] = [
   { feat: "Support", self: "Community", ent: "Founders + SLA" },
 ];
 function ECell({ v, accent }: { v: Mark; accent?: boolean }) {
-  if (v === "yes") return <span style={{ color: "var(--z-blue)" }}>✓</span>;
+  if (v === "yes") return <span style={{ color: "var(--z-ink)" }}>✓</span>;
   if (v === "no") return <span style={{ color: "var(--z-ink-8)" }}>—</span>;
-  return <span style={{ color: accent ? "var(--z-blue)" : "var(--z-ink-2)" }}>{v}</span>;
+  return <span style={{ color: accent ? "var(--z-ink-2)" : "var(--z-ink-5)" }}>{v}</span>;
 }
 function EnterpriseCompare() {
   return (
-    <section className="zed-section">
+    <section>
       <div className="zed-wrap" style={WRAP}>
         <SecHead kicker="self-serve vs enterprise" title="What enterprise adds."
           lead="Everything in self-serve, plus the budget guarantee, org-wide budgets and chargeback, volume discounts, and hands-on onboarding to run production loops at scale." />
         <div style={{ overflowX: "auto" }}>
-          <div style={{ minWidth: 620, border: "1px solid var(--z-rule)", borderRadius: 11, overflow: "hidden" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr 1fr", background: "var(--z-inset)", borderBottom: "1px solid var(--z-rule)", fontFamily: "var(--font-mono)", fontSize: 11.5 }}>
+          <div style={{ minWidth: 620, borderTop: "1px solid var(--z-ink)" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr 1fr", borderBottom: "1px solid var(--z-rule)", fontFamily: "var(--font-mono)", fontSize: 10.5, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--z-ink-6)" }}>
               <div style={{ padding: "13px 18px", color: "var(--z-ink-6)" }}>Feature</div>
               <div style={{ padding: "13px 14px", color: "var(--z-ink-2)" }}>Self-serve</div>
-              <div style={{ padding: "13px 14px", color: "var(--z-blue)" }}>Enterprise</div>
+              <div style={{ padding: "13px 14px 13px 0", color: "var(--z-ink)" }}>Enterprise</div>
             </div>
             {EROWS.map((r) => (
               <div key={r.feat} style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr 1fr", borderBottom: "1px solid var(--z-rule-faint)", background: r.hi ? "rgba(107,155,255,0.04)" : "transparent" }}>
                 <div style={{ padding: "12px 18px", fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--z-ink-4)" }}>
-                  {r.hi && <span style={{ color: "var(--z-blue)", fontSize: 8, marginRight: 6 }}>●</span>}{r.feat}
+                  {r.feat}
                 </div>
                 <div style={{ padding: "12px 14px", fontFamily: "var(--font-mono)", fontSize: 12.5 }}><ECell v={r.self} /></div>
                 <div style={{ padding: "12px 14px", fontFamily: "var(--font-mono)", fontSize: 12.5, borderLeft: "1px solid var(--z-rule-faint)" }}><ECell v={r.ent} accent={r.hi} /></div>
@@ -282,12 +281,12 @@ const FAQS = [
 function Faq() {
   const [open, setOpen] = React.useState(0);
   return (
-    <section className="zed-section">
+    <section>
       <div className="zed-wrap" style={WRAP}>
         <div className="zed-grid-2" style={{ display: "grid", gridTemplateColumns: "0.85fr 1.15fr", gap: 56, alignItems: "start" }}>
           <div style={{ position: "sticky", top: 88 }}>
-            <Kicker>// faq</Kicker>
-            <h2 className="zed-display" style={{ fontSize: 38, lineHeight: 1.06, margin: "16px 0 0" }}>Before you hand us the loop.</h2>
+            <Kicker>faq</Kicker>
+            <h2 className="zed-display" style={{ fontSize: 40, lineHeight: 1.08, margin: "20px 0 0" }}>Before you hand us the loop.</h2>
             <p style={LEAD}>The questions every team asks. If yours isn&rsquo;t here, put it to us on the call.</p>
           </div>
           <div style={{ borderTop: "1px solid var(--z-rule)" }}>
@@ -296,7 +295,7 @@ function Faq() {
               return (
                 <div key={f.q} style={{ borderBottom: "1px solid var(--z-rule)" }}>
                   <button onClick={() => setOpen(isOpen ? -1 : i)} style={{ display: "flex", gap: 14, width: "100%", background: "none", border: "none", textAlign: "left", padding: "22px 0", cursor: "pointer", fontFamily: "var(--font-mono)", fontSize: 15, color: isOpen ? "var(--z-ink)" : "var(--z-ink-2)" }}>
-                    <span style={{ color: "var(--z-blue)", width: 12, flex: "0 0 auto" }}>{isOpen ? "−" : "+"}</span>{f.q}
+                    <span style={{ color: "var(--z-ink-6)", width: 12, flex: "0 0 auto" }}>{isOpen ? "−" : "+"}</span>{f.q}
                   </button>
                   <div className={`zed-faq-ans${isOpen ? " open" : ""}`}>
                     <div><div style={{ padding: "0 0 22px 26px", fontFamily: "var(--font-mono)", fontSize: 13, lineHeight: 1.7, color: "var(--z-ink-4)" }}>{f.a}</div></div>
@@ -336,6 +335,7 @@ export function EnterprisePage() {
       <AuditCta />
       <EnterpriseCompare />
       <Faq />
+      <div style={{ height: "var(--z-sec)" }} />
     </div>
   );
 }

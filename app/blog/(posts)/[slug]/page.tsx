@@ -30,31 +30,23 @@ export default async function BlogPostPage({ params }: Props) {
   return (
     <div className="zed-bg">
       <section style={{ position: "relative" }}>
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            pointerEvents: "none",
-            background: "radial-gradient(60% 34% at 50% 0%, rgba(107,155,255,0.06), transparent 60%)",
-          }}
-        />
         <div className="zed-wrap" style={{ maxWidth: 760 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 9, padding: "34px 0 0", fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--z-ink-6)" }}>
-            <Link href="/blog" className="zed-link" style={{ color: "var(--z-ink-4)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "48px 0 0", fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--z-ink-6)" }}>
+            <Link href="/blog" style={{ color: "var(--z-ink-6)" }}>
               Blog
             </Link>
-            <span>/</span>
-            <span>post</span>
+            <span style={{ color: "var(--z-rule-2)" }}>/</span>
+            <span style={{ color: "var(--z-ink-3)" }}>Post</span>
           </div>
 
           <h1
             className="zed-display"
-            style={{ fontSize: "clamp(32px, 5vw, 46px)", lineHeight: 1.08, margin: "22px 0 0" }}
+            style={{ fontSize: "clamp(32px, 5vw, 44px)", lineHeight: 1.06, margin: "26px 0 0" }}
           >
             {page.data.title}
           </h1>
           {page.data.description && (
-            <p style={{ fontFamily: "var(--font-mono)", fontSize: 16, lineHeight: 1.6, color: "var(--z-ink-4)", margin: "18px 0 0" }}>
+            <p style={{ fontFamily: "var(--font-mono)", fontSize: 14.5, lineHeight: 1.75, color: "var(--z-ink-5)", margin: "20px 0 0", maxWidth: "68ch", textWrap: "pretty" }}>
               {page.data.description}
             </p>
           )}
@@ -64,12 +56,13 @@ export default async function BlogPostPage({ params }: Props) {
               display: "flex",
               alignItems: "center",
               gap: 12,
-              margin: "26px 0",
-              padding: "20px 0",
+              margin: "28px 0 0",
+              paddingTop: 20,
               borderTop: "1px solid var(--z-rule)",
-              borderBottom: "1px solid var(--z-rule)",
               fontFamily: "var(--font-mono)",
-              fontSize: 12.5,
+              fontSize: 11,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
               color: "var(--z-ink-6)",
             }}
           >
@@ -80,12 +73,13 @@ export default async function BlogPostPage({ params }: Props) {
                     display: "inline-flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    width: 30,
-                    height: 30,
+                    width: 26,
+                    height: 26,
                     borderRadius: "50%",
-                    background: "var(--z-rule)",
+                    background: "var(--z-wash)",
                     color: "var(--z-ink-2)",
-                    fontSize: 12,
+                    fontSize: 10,
+                    letterSpacing: 0,
                   }}
                 >
                   {author.initials}
@@ -104,7 +98,7 @@ export default async function BlogPostPage({ params }: Props) {
           {(newer || older) && (
             <div
               className="zed-grid-2"
-              style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, margin: "40px 0 76px" }}
+              style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1, background: "var(--z-rule)", borderTop: "1px solid var(--z-rule)", margin: "80px 0 var(--z-sec)" }}
             >
               {older ? (
                 <Link href={older.url} style={navCard()}>
@@ -131,13 +125,13 @@ export default async function BlogPostPage({ params }: Props) {
 }
 
 function navCard(): React.CSSProperties {
-  return { border: "1px solid var(--z-rule)", borderRadius: 9, padding: "18px 20px", display: "block" };
+  return { background: "var(--z-bg)", padding: "24px 0", display: "block" };
 }
 function navKick(): React.CSSProperties {
-  return { fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--z-ink-6)" };
+  return { fontFamily: "var(--font-mono)", fontSize: 10.5, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--z-ink-6)" };
 }
 function navTitle(): React.CSSProperties {
-  return { fontFamily: "var(--font-sans)", fontWeight: 600, fontSize: 14, color: "var(--z-ink)", marginTop: 6 };
+  return { fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--z-ink-2)", marginTop: 10 };
 }
 
 export function generateStaticParams() {

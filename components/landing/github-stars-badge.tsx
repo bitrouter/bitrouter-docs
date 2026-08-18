@@ -38,11 +38,11 @@ export function GitHubStarsBadge({ className }: { className?: string }) {
           : "BitRouter on GitHub"
       }
       className={cn(
-        "inline-flex items-center gap-1.5 px-2 text-[var(--z-ink-4)] transition-colors hover:text-[var(--z-ink)]",
+        "inline-flex shrink-0 items-center gap-1.5 text-[var(--z-ink-4)] transition-colors hover:text-[var(--z-ink)]",
         className,
       )}
     >
-      <GitHubIcon className="size-4" />
+      <GitHubIcon className="size-[15px]" />
       {stars !== null && (
         <span className="font-mono text-[11px] tabular-nums">
           {formatStars(stars)}

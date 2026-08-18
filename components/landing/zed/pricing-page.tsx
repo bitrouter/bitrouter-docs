@@ -1,5 +1,5 @@
 import "./zed.css";
-import { Kicker } from "./primitives";
+import { Kicker, PageHead } from "./primitives";
 import { PricingFaq } from "./pricing-faq";
 import { ZED_LINKS } from "./primitives";
 /* Billing is tokens at provider list price, 0% markup. Anything expressed
@@ -71,27 +71,27 @@ export function ZedPricingPage() {
   return (
     <div className="zed-bg">
       <section style={{ position: "relative" }}>
-        <div className="zed-glow" />
         <div className="zed-wrap" style={{ maxWidth: 1180 }}>
           {/* header */}
-          <div style={{ padding: "56px 0 34px", textAlign: "center" }}>
-            <Kicker>// pricing</Kicker>
-            <h1 className="zed-display" style={{ fontSize: "clamp(38px, 6vw, 56px)", lineHeight: 1.0, margin: "16px auto 0", maxWidth: "22ch" }}>
-              Every gateway adds a line to your bill. <span style={{ color: "var(--z-blue)" }}>We take one off.</span>
-            </h1>
-            <p style={{ fontFamily: "var(--font-mono)", fontSize: 15, lineHeight: 1.6, color: "var(--z-ink-4)", margin: "16px auto 0", maxWidth: "62ch" }}>
-              0% markup on every token, on every model. The savings come from{" "}
-              <code style={{ color: "var(--z-blue)" }}>bitrouter/auto</code> choosing the model for each call —
-              not from shaving a percentage off the fee.
-            </p>
-          </div>
+          <PageHead
+            eyebrow="Pricing"
+            title="Every gateway adds a line to your bill. We take one off."
+            maxWidth="62ch"
+            sub={
+              <>
+                0% markup on every token, on every model. The savings come from{" "}
+                <code style={{ color: "var(--z-ink-2)" }}>bitrouter/auto</code> choosing the model for
+                each call — not from shaving a percentage off the fee.
+              </>
+            }
+          />
 
-          {/* plans */}
-          <div className="zed-grid-2" style={{ display: "grid", gridTemplateColumns: "1.05fr 0.95fr", gap: 22 }}>
-            <div style={{ border: "1px solid var(--z-rule)", borderRadius: 12, padding: "28px 30px", background: "#0e1220", display: "flex", flexDirection: "column" }}>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--z-ink-7)" }}>usage-based</div>
+          {/* plans — two ruled columns rather than a pair of filled cards. */}
+          <div className="zed-grid-2 zed-sec" style={{ display: "grid", gridTemplateColumns: "1.05fr 0.95fr", columnGap: 72, rowGap: 48 }}>
+            <div style={{ display: "flex", flexDirection: "column", borderTop: "1px solid var(--z-ink)", paddingTop: 22 }}>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--z-ink-6)" }}>usage-based</div>
               <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginTop: 12 }}>
-                <span style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontWeight: 500, fontSize: 42, lineHeight: 1, color: "var(--z-blue)" }}>0%</span>
+                <span className="zed-display" style={{ fontSize: 42, lineHeight: 1, color: "var(--z-blue)" }}>0%</span>
                 <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--z-ink-6)" }}>markup · pay-as-you-go</span>
               </div>
               <p style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, lineHeight: 1.65, color: "var(--z-ink-4)", margin: "14px 0 18px" }}>
@@ -101,20 +101,20 @@ export function ZedPricingPage() {
               <div style={{ display: "flex", flexDirection: "column", gap: 9, marginBottom: 24 }}>
                 {INCLUDED.map((f) => (
                   <div key={f} style={{ display: "flex", gap: 9, fontFamily: "var(--font-mono)", fontSize: 12.5, lineHeight: 1.5, color: "var(--z-ink-3)" }}>
-                    <span style={{ color: "var(--z-blue)" }}>▸</span>
+                    <span style={{ color: "var(--z-ink-6)" }}>—</span>
                     <span>{f}</span>
                   </div>
                 ))}
               </div>
-              <a href={ZED_LINKS.apiKey} style={{ marginTop: "auto", display: "block", textAlign: "center", fontFamily: "var(--font-mono)", fontSize: 13, padding: "10px 14px", borderRadius: 7, background: "var(--z-cta)", color: "#fff", fontWeight: 500 }}>
-                Get API key →
+              <a className="zed-btn zed-btn-primary" href={ZED_LINKS.apiKey} style={{ marginTop: "auto", justifyContent: "center" }}>
+                Get API key
               </a>
             </div>
 
-            <div style={{ border: "1px solid var(--z-rule)", borderRadius: 12, padding: "28px 30px", display: "flex", flexDirection: "column" }}>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--z-ink-7)" }}>outcome-based</div>
+            <div style={{ display: "flex", flexDirection: "column", borderTop: "1px solid var(--z-rule)", paddingTop: 22 }}>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--z-ink-6)" }}>outcome-based</div>
               <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginTop: 12 }}>
-                <span style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontWeight: 500, fontSize: 42, lineHeight: 1, color: "var(--z-ink)" }}>Custom</span>
+                <span className="zed-display" style={{ fontSize: 42, lineHeight: 1 }}>Custom</span>
                 <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--z-ink-6)" }}>on savings · enterprise</span>
               </div>
               <p style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, lineHeight: 1.65, color: "var(--z-ink-4)", margin: "14px 0 18px" }}>
@@ -124,44 +124,44 @@ export function ZedPricingPage() {
               <div style={{ display: "flex", flexDirection: "column", gap: 9, marginBottom: 24 }}>
                 {ENTERPRISE.map((f) => (
                   <div key={f} style={{ display: "flex", gap: 9, fontFamily: "var(--font-mono)", fontSize: 12.5, lineHeight: 1.5, color: "var(--z-ink-3)" }}>
-                    <span style={{ color: "var(--z-blue)" }}>▸</span>
+                    <span style={{ color: "var(--z-ink-6)" }}>—</span>
                     <span>{f}</span>
                   </div>
                 ))}
               </div>
-              <a href="mailto:contact@bitrouter.ai" style={{ marginTop: "auto", display: "block", textAlign: "center", fontFamily: "var(--font-mono)", fontSize: 13, padding: "10px 14px", borderRadius: 7, color: "var(--z-ink)", border: "1px solid var(--z-rule-2)" }}>
-                Talk to the founders →
+              <a className="zed-btn zed-btn-ghost" href="mailto:contact@bitrouter.ai" style={{ marginTop: "auto", justifyContent: "center" }}>
+                Talk to the founders
               </a>
             </div>
           </div>
 
           {/* comparison */}
-          <div style={{ marginTop: 72, borderTop: "1px solid var(--z-rule)", paddingTop: 44, overflowX: "auto" }}>
-            <Kicker>// versus other gateways</Kicker>
-            <h2 className="zed-display" style={{ fontSize: 38, lineHeight: 1.06, margin: "14px 0 0", maxWidth: "26ch" }}>
+          <div className="zed-sec" style={{ overflowX: "auto" }}>
+            <Kicker>versus other gateways</Kicker>
+            <h2 className="zed-display" style={{ fontSize: 40, lineHeight: 1.08, margin: "20px 0 0", maxWidth: "26ch" }}>
               A markup, a sales call, or a router that lowers the bill.
             </h2>
-            <p style={{ fontFamily: "var(--font-mono)", fontSize: 14, lineHeight: 1.6, color: "var(--z-ink-4)", margin: "14px 0 26px", maxWidth: "70ch" }}>
+            <p style={{ fontFamily: "var(--font-mono)", fontSize: 14, lineHeight: 1.7, color: "var(--z-ink-5)", margin: "20px 0 34px", maxWidth: "70ch" }}>
               Picking the <em>provider</em> for a model you chose moves cost by single digits — same model,
               cheaper host. Picking the <em>model</em> moves it by multiples. That is why we don&apos;t need a percentage.
             </p>
-            <div style={{ minWidth: 720, border: "1px solid var(--z-rule)", borderRadius: 11, overflow: "hidden" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1.15fr 1fr 1fr 1fr", background: "var(--z-inset)", borderBottom: "1px solid var(--z-rule)" }}>
-                <div style={{ padding: "13px 18px" }} />
+            <div style={{ minWidth: 720, borderTop: "1px solid var(--z-ink)" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1.15fr 1fr 1fr 1fr", borderBottom: "1px solid var(--z-rule)" }}>
+                <div style={{ padding: "12px 16px 12px 0" }} />
                 {CMP_COLS.map((n, i) => (
-                  <div key={n} style={{ padding: "13px 16px", fontFamily: "var(--font-mono)", fontSize: 11.5, color: i === 0 ? "var(--z-ink)" : "var(--z-ink-4)" }}>{n}</div>
+                  <div key={n} style={{ padding: "12px 16px 12px 0", fontFamily: "var(--font-mono)", fontSize: 10.5, letterSpacing: "0.14em", textTransform: "uppercase", color: i === 0 ? "var(--z-ink)" : "var(--z-ink-6)" }}>{n}</div>
                 ))}
               </div>
               {CMP_ROWS.map((r) => (
-                <div key={r.label} style={{ display: "grid", gridTemplateColumns: "1.15fr 1fr 1fr 1fr", borderBottom: "1px solid var(--z-rule-faint)", background: r.hi ? "var(--z-inset)" : "transparent" }}>
-                  <div style={{ padding: "13px 18px", fontFamily: "var(--font-mono)", fontSize: 12.5, color: r.hi ? "var(--z-ink-2)" : "var(--z-ink-4)" }}>{r.label}</div>
+                <div key={r.label} style={{ display: "grid", gridTemplateColumns: "1.15fr 1fr 1fr 1fr", borderBottom: "1px solid var(--z-rule)" }}>
+                  <div style={{ padding: "13px 16px 13px 0", fontFamily: "var(--font-mono)", fontSize: 12.5, color: r.hi ? "var(--z-ink)" : "var(--z-ink-5)" }}>{r.label}</div>
                   {r.row.map((v, i) => (
-                    <div key={i} style={{ padding: "13px 16px", fontFamily: "var(--font-mono)", fontSize: 12.5, lineHeight: 1.5, color: i === 0 ? "var(--z-blue)" : "var(--z-ink-5)" }}>{v}</div>
+                    <div key={i} style={{ padding: "13px 16px 13px 0", fontFamily: "var(--font-mono)", fontSize: 12.5, lineHeight: 1.5, color: i === 0 ? "var(--z-ink-2)" : "var(--z-ink-5)" }}>{v}</div>
                   ))}
                 </div>
               ))}
             </div>
-            <p style={{ fontFamily: "var(--font-mono)", fontSize: 11.5, lineHeight: 1.6, color: "var(--z-ink-6)", margin: "14px 0 0", maxWidth: "82ch" }}>
+            <p style={{ fontFamily: "var(--font-mono)", fontSize: 11.5, lineHeight: 1.7, color: "var(--z-ink-6)", margin: "18px 0 0", maxWidth: "82ch" }}>
               Competitor figures are their published rates at time of writing; LiteLLM Enterprise is quote-only, so
               there is no rate to compare. See the{" "}
               <a href="/docs/guides/migrate-from-openrouter" className="zed-link">OpenRouter</a> and{" "}
@@ -170,35 +170,35 @@ export function ZedPricingPage() {
           </div>
 
           {/* your numbers */}
-          <div style={{ marginTop: 72, borderTop: "1px solid var(--z-rule)", paddingTop: 44 }}>
-            <Kicker>// your numbers, not ours</Kicker>
-            <h2 className="zed-display" style={{ fontSize: 38, lineHeight: 1.06, margin: "14px 0 0", maxWidth: "24ch" }}>
+          <div className="zed-sec">
+            <Kicker>your numbers, not ours</Kicker>
+            <h2 className="zed-display" style={{ fontSize: 40, lineHeight: 1.08, margin: "20px 0 0", maxWidth: "24ch" }}>
               You set the target. We report against it.
             </h2>
-            <p style={{ fontFamily: "var(--font-mono)", fontSize: 14, lineHeight: 1.6, color: "var(--z-ink-4)", margin: "14px 0 26px", maxWidth: "72ch" }}>
+            <p style={{ fontFamily: "var(--font-mono)", fontSize: 14, lineHeight: 1.7, color: "var(--z-ink-5)", margin: "20px 0 34px", maxWidth: "72ch" }}>
               We&apos;d rather show you your own numbers than a projection of them. Each workload declares what
               it is optimizing for, and every session is measured against that. Routing you can&apos;t hold to a
               number is just a black box with opinions.
             </p>
-            <div style={{ border: "1px solid var(--z-rule)", borderRadius: 11, overflow: "hidden" }}>
-              <div className="zed-hide-sm" style={{ display: "grid", gridTemplateColumns: "0.5fr 1.1fr 1.9fr", background: "var(--z-inset)", borderBottom: "1px solid var(--z-rule)" }}>
+            <div style={{ borderTop: "1px solid var(--z-ink)" }}>
+              <div className="zed-hide-sm" style={{ display: "grid", gridTemplateColumns: "0.5fr 1.1fr 1.9fr", borderBottom: "1px solid var(--z-rule)" }}>
                 {["Axis", "What you define", "What we report"].map((h) => (
-                  <div key={h} style={{ padding: "11px 20px", fontFamily: "var(--font-mono)", fontSize: 9.5, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--z-ink-6)" }}>{h}</div>
+                  <div key={h} style={{ padding: "12px 20px 12px 0", fontFamily: "var(--font-mono)", fontSize: 10.5, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--z-ink-6)" }}>{h}</div>
                 ))}
               </div>
               {REPORT_DIMS.map((d, i) => (
                 <div
                   key={d.dim}
                   className="zed-grid-3"
-                  style={{ display: "grid", gridTemplateColumns: "0.5fr 1.1fr 1.9fr", alignItems: "baseline", borderBottom: i === REPORT_DIMS.length - 1 ? "none" : "1px solid var(--z-rule-faint)" }}
+                  style={{ display: "grid", gridTemplateColumns: "0.5fr 1.1fr 1.9fr", alignItems: "baseline", borderBottom: i === REPORT_DIMS.length - 1 ? "none" : "1px solid var(--z-rule)" }}
                 >
-                  <div style={{ padding: "15px 20px", fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--z-ink)" }}>{d.dim}</div>
-                  <div style={{ padding: "15px 20px", fontFamily: "var(--font-mono)", fontSize: 12, lineHeight: 1.6, color: "var(--z-blue)" }}>{d.define}</div>
-                  <div style={{ padding: "15px 20px", fontFamily: "var(--font-mono)", fontSize: 12, lineHeight: 1.6, color: "var(--z-ink-5)" }}>{d.report}</div>
+                  <div style={{ padding: "15px 20px 15px 0", fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--z-ink)" }}>{d.dim}</div>
+                  <div style={{ padding: "15px 20px 15px 0", fontFamily: "var(--font-mono)", fontSize: 12, lineHeight: 1.6, color: "var(--z-ink-2)" }}>{d.define}</div>
+                  <div style={{ padding: "15px 20px 15px 0", fontFamily: "var(--font-mono)", fontSize: 12, lineHeight: 1.6, color: "var(--z-ink-5)" }}>{d.report}</div>
                 </div>
               ))}
             </div>
-            <p style={{ fontFamily: "var(--font-mono)", fontSize: 11.5, lineHeight: 1.65, color: "var(--z-ink-6)", margin: "14px 0 0", maxWidth: "84ch" }}>
+            <p style={{ fontFamily: "var(--font-mono)", fontSize: 11.5, lineHeight: 1.7, color: "var(--z-ink-6)", margin: "18px 0 0", maxWidth: "84ch" }}>
               None of the three costs extra, and none of them waits on us. Success rate ships as the default
               quality metric — outcome classification is deterministic, with no judge in the request path — so a
               route has to earn its traffic before it keeps it. An eval only refines that bar where your
@@ -209,7 +209,7 @@ export function ZedPricingPage() {
           </div>
 
           <PricingFaq />
-          <div style={{ height: 76 }} />
+          <div style={{ height: "var(--z-sec)" }} />
         </div>
       </section>
     </div>

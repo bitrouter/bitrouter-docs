@@ -94,7 +94,11 @@ Most endpoints need nothing beyond `api_base` and a model id. When an upstream i
             supports_stream_options: false
 ```
 
-`token_limit_field` picks the output-token field the upstream expects — current OpenAI models want `max_completion_tokens`, while some older compatible servers still require `max_tokens`. BitRouter otherwise preserves the caller's spelling and translates the semantic limit across the Chat, Messages, Responses, and Generate Content surfaces for you.
+| Field | Description |
+| --- | --- |
+| `token_limit_field` | Picks the output-token field the upstream expects — current OpenAI models want `max_completion_tokens`, while some older compatible servers still require `max_tokens`. BitRouter otherwise preserves the caller's spelling and translates the semantic limit across the Chat, Messages, Responses, and Generate Content surfaces for you. |
+| `supports_store` | Whether the upstream supports the `store` field. Set to `false` for strict upstreams that reject this field. |
+| `supports_stream_options` | Whether the upstream supports the `stream_options` field. Set to `false` for strict upstreams that reject this field. |
 
 ## Serving your model to others
 

@@ -1,12 +1,12 @@
 {
-  "version": "bitrouter 1.0.0-alpha.26",
-  "capturedAt": "2026-07-26",
-  "binary": "bitrouter",
+  "version": "bitrouter 1.0.0-alpha.27",
+  "capturedAt": "2026-09-03",
+  "binary": "/tmp/bitrouter-release/bitrouter-x86_64-unknown-linux-gnu/bitrouter",
   "commands": [
     {
       "path": [],
       "about": "BitRouter: an LLM API router. CLI + TUI + assembly library.",
-      "usage": "bitrouter [OPTIONS] <COMMAND>",
+      "usage": "bitrouter [OPTIONS] [COMMAND]",
       "args": [],
       "options": [
         {
@@ -210,13 +210,13 @@
       "path": [
         "init"
       ],
-      "about": "Write a starter `bitrouter.yaml` (with `skip_auth: true`)",
+      "about": "Guided onboarding wizard that sequences credential, harness, and finish steps to first value. Interactive by default; `--yes` (or no TTY) runs it headlessly, emitting the JSON result envelope and never blocking on a human. Every prompt has a flag equivalent (below) so an agent can drive the whole thing. With `--yes` this also reproduces the classic starter-`bitrouter.yaml` scaffold (refusing to overwrite unless `--force`)",
       "usage": "bitrouter init [OPTIONS]",
       "args": [],
       "options": [
         {
           "payload": "-c, --config <CONFIG>",
-          "help": "Path to write [default: bitrouter.yaml]"
+          "help": "Path for the starter `bitrouter.yaml` write [default: bitrouter.yaml]"
         },
         {
           "payload": "-j, --json",
@@ -225,6 +225,78 @@
         {
           "payload": "--human",
           "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "-y, --yes",
+          "help": "Run non-interactively: process the flags below, never block, emit the JSON envelope, and scaffold the starter config"
+        },
+        {
+          "payload": "--force",
+          "help": "Allow overwriting an existing `bitrouter.yaml` when scaffolding"
+        },
+        {
+          "payload": "--reset",
+          "help": "Clear stored onboarding credentials (cloud session always; provider credentials after a confirm, or unconditionally under `--yes`) before running"
+        },
+        {
+          "payload": "--cloud-login",
+          "help": "(Step 1) Sign in to BitRouter Cloud via device-flow OAuth. Skipped and reported under `--yes` (a machine can't complete the device flow)"
+        },
+        {
+          "payload": "--api-key <BRK_KEY>",
+          "help": "(Step 1) Seed the cloud credential from a `brk_` API key (non-interactive)"
+        },
+        {
+          "payload": "--provider <ID>",
+          "help": "(Step 1) Log in to an upstream provider by id (repeatable). A paired `--provider-api-key` seeds it non-interactively; otherwise it is reported-and-skipped under `--yes`"
+        },
+        {
+          "payload": "--provider-api-key <KEY>",
+          "help": "(Step 1) API key for the `--provider` at the same position (repeatable)"
+        },
+        {
+          "payload": "--use-detected",
+          "help": "(Step 1) Accept the auto-detected credential(s) without prompting"
+        },
+        {
+          "payload": "--harness <HARNESSES>",
+          "help": "(Step 2) Harness to drive: `claude` or `codex` (repeatable) Possible values:"
+        },
+        {
+          "payload": "- claude: Anthropic's Claude Code CLI (`claude`)",
+          "help": ""
+        },
+        {
+          "payload": "- codex:",
+          "help": "OpenAI's Codex CLI (`codex`)"
+        },
+        {
+          "payload": "--no-install",
+          "help": "(Step 2) Never install a missing harness"
+        },
+        {
+          "payload": "--after <AFTER>",
+          "help": "(Step 3) What to do at the end: `launch` | `serve` | `exit` Possible values:"
+        },
+        {
+          "payload": "- launch: Launch the harness's native TUI now (`bitrouter launch`)",
+          "help": ""
+        },
+        {
+          "payload": "- serve:",
+          "help": "Start the daemon and print a paste-in snippet for an existing tool"
+        },
+        {
+          "payload": "- exit:",
+          "help": "Do nothing further"
+        },
+        {
+          "payload": "--model <ID>",
+          "help": "(Step 3) Model handed to the harness for this session only (not persisted)"
+        },
+        {
+          "payload": "--write-config",
+          "help": "(Step 3) Write a starter `bitrouter.yaml` (the one sanctioned config write)"
         }
       ]
     },
@@ -815,6 +887,14 @@
         {
           "payload": "--no-browser",
           "help": "Do not run a browser-based provider OAuth flow"
+        },
+        {
+          "payload": "--api-key <KEY>",
+          "help": "Seed a BYOK provider non-interactively from this API key — skips the method menu and the stdin paste. The provider must accept a pasted key (OAuth-only backends reject it)"
+        },
+        {
+          "payload": "--key-stdin",
+          "help": "Read the API key from stdin (one line) instead of prompting — for pipelines, e.g. `printf %s \"$KEY\" | bitrouter providers login openai --key-stdin`"
         }
       ]
     },
@@ -1061,6 +1141,10 @@
         {
           "payload": "--no-wait",
           "help": "(with `-p`) Return immediately after submitting the prompt"
+        },
+        {
+          "payload": "--result-schema <JSON|@PATH>",
+          "help": "(with `-p`) JSON Schema — inline JSON or `@path` — the subagent's final reply must satisfy. The schema rides the prompt; the terminal NDJSON `result` line gains `result`/`schema_ok` fields, with one repair re-prompt on invalid output (then `schema_ok:false` + raw)"
         },
         {
           "payload": "--warm",
@@ -2549,14 +2633,22 @@
         },
         {
           "payload": "--backend <BACKEND>",
-          "help": "`local` or `cloud`. Defaults: stdio→local, http→cloud Possible values:"
+          "help": "`local`, `cloud`, `fleet`, or `skills`. Defaults: stdio→local, http→cloud Possible values:"
         },
         {
-          "payload": "- local: The local BYOK daemon at `127.0.0.1:4356`",
-          "help": ""
+          "payload": "- local:",
+          "help": "The local BYOK daemon at `127.0.0.1:4356`"
         },
         {
-          "payload": "- cloud: BitRouter Cloud at `api.bitrouter.ai`",
+          "payload": "- cloud:",
+          "help": "BitRouter Cloud at `api.bitrouter.ai`"
+        },
+        {
+          "payload": "- fleet:",
+          "help": "The fleet bridge: tools that spawn/manage worktree-isolated ACP subagents for an orchestrating harness (TUI_SPEC §4). Stdio only"
+        },
+        {
+          "payload": "- skills: The origin AgentSkills server: `skills_search`/`skills_get` over the installed-skills root (the `bitrouter_skills` gateway server every TUI-launched harness gets). Stdio only",
           "help": ""
         },
         {
@@ -2578,6 +2670,14 @@
         {
           "payload": "--bind <BIND>",
           "help": "HTTP bind address [default: 127.0.0.1:4357]"
+        },
+        {
+          "payload": "--allow-writes",
+          "help": "(fleet backend only) Grant the orchestrator write autonomy: apply_subagent/merge_subagent may integrate into the base repo. Off by default — writes are human-gated"
+        },
+        {
+          "payload": "--budget-usd <BUDGET_USD>",
+          "help": "(fleet backend only) Spend ceiling in USD. spawn_subagent/ prompt_subagent refuse once today's machine-wide spend reaches it. Unset = unlimited"
         }
       ]
     },
@@ -3001,6 +3101,36 @@
         {
           "payload": "--human",
           "help": "Render the human-readable view to stdout instead of JSON"
+        }
+      ]
+    },
+    {
+      "path": [
+        "tui"
+      ],
+      "about": "Launch the composite multi-agent TUI: a left rail (roster sorted by who needs you, radar strip, decision + review queues) beside the primary pane. `--agent claude|codex|opencode|pi|hermes|openclaw|grok|agy` hosts that harness's REAL native TUI in a PTY pane (the orchestrator — keys pass through; `Ctrl-A` is the one manager leader; `Ctrl-C` interrupts the agent, not the TUI) with the fleet MCP bridge injected where the harness supports MCP (pi/openclaw/grok/agy have no mechanism). grok and agy launch with their own subscription auth (the daemon borrows those same sessions as providers). A configured `agents:` id instead renders that ACP agent from typed events. `Ctrl-A n` spawns worktree-isolated ACP subagents either way",
+      "usage": "bitrouter tui [OPTIONS] --agent <AGENT>",
+      "args": [],
+      "options": [
+        {
+          "payload": "-a, --agent <AGENT>",
+          "help": "The primary agent: a native harness (`claude`, `codex`, `opencode`, `pi`, `grok`, `agy`/`antigravity`) hosted in a PTY as the orchestrator, or a configured `agents:` entry rendered from ACP events"
+        },
+        {
+          "payload": "-j, --json",
+          "help": "Force JSON output (the default; agent-native). Conflicts with `--human`"
+        },
+        {
+          "payload": "--human",
+          "help": "Render the human-readable view to stdout instead of JSON"
+        },
+        {
+          "payload": "-w, --worktree <WORKTREE>",
+          "help": "Optional git worktree name for the first session (ACP agents only)"
+        },
+        {
+          "payload": "-m, --model <MODEL>",
+          "help": "Pin the orchestrator's model (a daemon-routable id, e.g. `anthropic/claude-sonnet-5` or the explicit `provider:model` form). Defaults to the harness's own configuration (claude, codex) or the daemon's first advertised model (opencode, pi)"
         }
       ]
     }

@@ -2,7 +2,7 @@
 title: Harnesses
 ---
 
-Three ways to run a harness on top of the daemon: `launch` for an interactive session, `spawn` for a headless sub-agent, and `tui` for the orchestrator console — supervise multiple agent sessions, inspect per-session cost, and delegate work to sub-agents, backed by the `fleet` MCP backend. `tui` is not in the binary's own `--help` listing, so it has no generated subsection below.
+Three ways to run a harness on top of the daemon: `launch` for an interactive session, `spawn` for a headless sub-agent, and `tui` for the orchestrator console — supervise multiple agent sessions, inspect per-session cost, and delegate work to sub-agents, backed by the `fleet` MCP backend.
 
 ## @launch
 

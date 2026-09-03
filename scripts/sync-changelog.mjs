@@ -5,6 +5,11 @@
  * content/changelog/. It never overwrites an existing entry, so once an entry is
  * hand-edited and merged it is frozen.
  *
+ * Release bodies come in two shapes and lib/release-notes.mjs reads both — see
+ * its header. From v1.0.0-alpha.28 the source repo folds per-PR change files in
+ * before publishing, so the body leads with curated prose and the generated
+ * bullets arrive in a collapsed block that is dropped here.
+ *
  * Entries are tiered by `significance` (see lib/release-version.mjs), and the
  * tier decides how much human attention the entry needs:
  *   routine (prereleases, patches) → published as-is; no curation expected
@@ -31,7 +36,12 @@
 import { readdir, writeFile, appendFile } from "node:fs/promises";
 import { join } from "node:path";
 import { significanceFor, compareVersionsAsc } from "../lib/release-version.mjs";
-import { escapeMdxText } from "../lib/mdx-escape.mjs";
+import {
+  cleanReleaseBody,
+  deriveTags,
+  headlineFor,
+  isBreaking,
+} from "../lib/release-notes.mjs";
 
 const SOURCE_REPO = process.env.SOURCE_REPO ?? "bitrouter/bitrouter";
 const ONLY_TAG = process.env.CHANGELOG_TAG?.trim() || null;
@@ -70,57 +80,6 @@ function slugForTag(tag) {
   return tag.replace(/[^\w.-]/g, "").replace(/\./g, "-").toLowerCase();
 }
 
-// git-cliff release notes group bullets under "### ⛰️ Features" etc. and end
-// each line with " - ([hash](url))". Strip the commit-hash tail (keeping the PR
-// link) so the draft reads less like a raw commit log.
-function cleanBody(body) {
-  return escapeMdxText(
-    (body ?? "")
-      // strip the trailing " - ([hash](url))" without crossing line boundaries
-      .replace(/[^\S\n]*-[^\S\n]*\(\[[0-9a-f]{7,}\]\([^)]+\)\)[^\S\n]*$/gim, "")
-      .replace(/\n{3,}/g, "\n\n")
-      .trim(),
-  );
-}
-
-function firstFeatureLine(body) {
-  for (const raw of (body ?? "").split("\n")) {
-    const line = raw.trim();
-    if (line.startsWith("- ")) {
-      return line
-        .replace(/^- /, "")
-        .replace(/\*\(([^)]+)\)\*\s*/, "") // drop the *(scope)* prefix
-        // git-cliff marks breaking commits inline. That belongs in the
-        // `breaking` frontmatter flag (see isBreaking), not in the prose —
-        // left in, it rendered as literal "[**breaking**]" in the headline.
-        .replace(/\[\*\*breaking\*\*\]\s*/i, "")
-        .replace(/\s*\(\[#\d+\][^)]*\)\s*.*$/, "") // drop PR/commit refs + tail
-        .trim();
-    }
-  }
-  return null;
-}
-
-function deriveTags(body) {
-  const tags = [];
-  if (/###.*Features/i.test(body)) tags.push("features");
-  if (/###.*(Bug Fixes|Fixes)/i.test(body)) tags.push("fixes");
-  if (/###.*(Performance|Perf)/i.test(body)) tags.push("performance");
-  if (/###.*(Documentation|Docs)/i.test(body)) tags.push("docs");
-  return tags;
-}
-
-function isBreaking(body) {
-  return (
-    /breaking change/i.test(body) ||
-    /^#+.*!:/m.test(body) ||
-    /\bfeat!|\bfix!/i.test(body) ||
-    // git-cliff's own inline marker — the form actually used in these releases,
-    // and the one the original three patterns all missed.
-    /\[\*\*breaking\*\*\]/i.test(body)
-  );
-}
-
 function yaml(v) {
   return JSON.stringify(v); // JSON scalars/arrays are valid YAML flow syntax
 }
@@ -128,14 +87,21 @@ function yaml(v) {
 function buildMdx(release) {
   const tag = release.tag_name;
   const date = (release.published_at ?? release.created_at ?? "").slice(0, 10);
-  const cleaned = cleanBody(release.body);
-  const lead = firstFeatureLine(release.body);
-  const tags = deriveTags(cleaned);
-  const breaking = isBreaking(cleaned);
+  // Tags and the breaking flag read the raw body — a curated release still
+  // carries its commit groups and any inline `[**breaking**]` marker inside the
+  // collapsed list, and that is signal the cleaned prose no longer has.
+  const cleaned = cleanReleaseBody(release.body);
+  const lead = headlineFor(release.body);
+  const tags = deriveTags(release.body);
+  const breaking = isBreaking(release.body);
 
   const significance = significanceFor(tag);
   const title = release.name?.trim() || tag;
-  const description = lead ? `${lead}.` : `BitRouter ${tag} release.`;
+  const description = lead
+    ? /[.!?]$/.test(lead)
+      ? lead
+      : `${lead}.`
+    : `BitRouter ${tag} release.`;
   const body = cleaned || "_No release notes._";
 
   const fm = [

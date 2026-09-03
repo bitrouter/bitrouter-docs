@@ -55,6 +55,12 @@ export const changelog = defineDocs({
       // to promote a release the version shape would otherwise call routine.
       significance: z.enum(["highlight", "notable", "routine"]).optional(),
     }),
+    // Release notes are served as plain Markdown too (/changelog.md, and the
+    // tail of /api/docs/llms-full.txt), so the processed body has to survive
+    // alongside the compiled MDX.
+    postprocess: {
+      includeProcessedMarkdown: true,
+    },
   },
   meta: {
     schema: metaSchema,

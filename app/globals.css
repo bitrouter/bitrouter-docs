@@ -3,18 +3,20 @@
 @import "fumadocs-ui/css/preset.css";
 @import "fumadocs-openapi/css/preset.css";
 /* ─────────────────────────────────────────────────────────────────────────
- * Design tokens (formerly theme.css, now inlined — single home for the palette).
- * One themeable system: --bp-* raw tokens defined per theme (:root light /
- * .dark dark) → shadcn names → @theme inline Tailwind utilities. The website
- * brand overrides (Geist --font-sans, 7px radius, blue accent) live below
- * and intentionally win. The terminal skin (.br-mono) aliases these tokens.
+ * Design tokens — the single home for the palette.
+ * One chain, one direction: the --z-* Zed tokens (defined in :root below) are
+ * the source of truth; the shadcn semantic names alias them; @theme inline
+ * exposes those to Tailwind. The brand overrides (IBM Plex --font-sans, 7px
+ * radius, blue accent) sit after the base tokens and intentionally win.
+ * The site is dark-only (forcedTheme in components/site-providers.tsx), so
+ * there is no light branch and no .dark twin to keep in sync.
  * ───────────────────────────────────────────────────────────────────────── */
 @theme inline {
   /* Fonts — --font-sans / --font-display set by the brand override below. */
   --font-mono: var(--font-ibm-plex-mono), ui-monospace, "SF Mono", Menlo,
     monospace;
 
-  /* shadcn surface tokens → resolve to --bp-* via :root / .dark below. */
+  /* shadcn surface tokens → resolve to --z-* via :root below. */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -35,36 +37,6 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  /* Drafting-board short names — bg-paper, text-ink, border-rule, … */
-  --color-bg: var(--bp-bg);
-  --color-paper: var(--bp-paper);
-  --color-paper-dark: var(--bp-paper-dark);
-  --color-ink: var(--bp-ink);
-  --color-ink-mid: var(--bp-ink-mid);
-  --color-ink-dim: var(--bp-ink-dim);
-  --color-ink-faint: var(--bp-ink-faint);
-  --color-rule: var(--bp-rule);
-  --color-rule-soft: var(--bp-rule-soft);
-  --color-amber: var(--bp-amber);
-  --color-amber-soft: var(--bp-amber-soft);
-  --color-amber-hi: var(--bp-amber-hi);
-  --color-stop: var(--bp-red);
-
-  /* Semantic status — survive the mono collapse. */
-  --color-ok: var(--bp-ok);
-  --color-ok-soft: var(--bp-ok-soft);
-  --color-warn: var(--bp-warn);
-  --color-warn-soft: var(--bp-warn-soft);
-  --color-danger: var(--bp-red);
-  --color-danger-soft: var(--bp-danger-soft);
-
-  /* Tracking presets. */
-  --tracking-eyebrow: 0.28em;
-  --tracking-hud: 0.22em;
-  --tracking-label: 0.18em;
-  --tracking-button: 0.14em;
-  --tracking-tabular: 0.04em;
-
   /* Sidebar slots. */
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
@@ -80,49 +52,26 @@
    The site is dark-only; :root and .dark carry the SAME Zed values so every
    surface resolves to the Zed palette regardless of the theme class. */
 :root {
-  --bp-bg: #0c0d10; /* page */
-  --bp-paper: #101216; /* raised surface / card */
-  --bp-paper-dark: #0e1013; /* inset code well */
-  --bp-ink: #f3f5f7;
-  --bp-ink-mid: #aab1bc;
-  --bp-ink-dim: #9aa2af;
-  --bp-ink-faint: #6b7180;
-  --bp-rule: #20242b;
-  --bp-rule-soft: #181c22;
-  --bp-amber: #6b9bff; /* accent → Zed blue (repurposed "primary accent") */
-  --bp-amber-soft: rgba(107, 155, 255, 0.1);
-  --bp-amber-hi: #8fb4ff;
-  --bp-red: #e06c6c;
-  --bp-ok: #5bbf6a;
-  --bp-ok-soft: rgba(91, 191, 106, 0.18);
-  --bp-warn: #e0a955; /* frontier amber — the one reserved signal */
-  --bp-warn-soft: rgba(224, 169, 85, 0.18);
-  --bp-danger-soft: rgba(224, 108, 108, 0.18);
-  /* terminal-skin steps */
-  --bp-info: #6b9bff;
-  --bp-panel-3: #21252b;
-  --bp-line-bright: #333a44;
-  --bp-ghost: #565d6b;
 
-  --background: var(--bp-bg);
-  --foreground: var(--bp-ink);
-  --card: var(--bp-paper);
-  --card-foreground: var(--bp-ink);
-  --popover: var(--bp-paper);
-  --popover-foreground: var(--bp-ink);
-  --primary: var(--bp-amber);
-  --primary-foreground: var(--bp-bg);
-  --secondary: var(--bp-paper-dark);
-  --secondary-foreground: var(--bp-ink);
-  --muted: var(--bp-paper-dark);
-  --muted-foreground: var(--bp-ink-dim);
-  --accent: var(--bp-amber-soft);
-  --accent-foreground: var(--bp-ink);
-  --destructive: var(--bp-red);
-  --destructive-foreground: var(--bp-bg);
-  --border: var(--bp-rule);
-  --input: var(--bp-rule);
-  --ring: var(--bp-amber);
+  --background: var(--z-bg);
+  --foreground: var(--z-ink);
+  --card: var(--z-wash);
+  --card-foreground: var(--z-ink);
+  --popover: var(--z-wash);
+  --popover-foreground: var(--z-ink);
+  --primary: var(--z-blue);
+  --primary-foreground: var(--z-bg);
+  --secondary: var(--z-inset);
+  --secondary-foreground: var(--z-ink);
+  --muted: var(--z-inset);
+  --muted-foreground: var(--z-ink-4);
+  --accent: rgba(107, 155, 255, 0.1);
+  --accent-foreground: var(--z-ink);
+  --destructive: var(--z-red);
+  --destructive-foreground: var(--z-bg);
+  --border: var(--z-rule);
+  --input: var(--z-rule);
+  --ring: var(--z-blue);
 
   --sidebar: var(--background);
   --sidebar-foreground: var(--foreground);
@@ -134,61 +83,25 @@
   --sidebar-ring: var(--ring);
 }
 
-/* ─── Dark · identical to :root (site is dark-only) ─── */
-.dark {
-  --bp-bg: #0c0d10;
-  --bp-paper: #101216;
-  --bp-paper-dark: #0e1013;
-  --bp-ink: #f3f5f7;
-  --bp-ink-mid: #aab1bc;
-  --bp-ink-dim: #9aa2af;
-  --bp-ink-faint: #6b7180;
-  --bp-rule: #20242b;
-  --bp-rule-soft: #181c22;
-  --bp-amber: #6b9bff;
-  --bp-amber-soft: rgba(107, 155, 255, 0.1);
-  --bp-amber-hi: #8fb4ff;
-  --bp-red: #e06c6c;
-  --bp-ok: #5bbf6a;
-  --bp-ok-soft: rgba(91, 191, 106, 0.18);
-  --bp-warn: #e0a955; /* frontier amber — the one reserved signal */
-  --bp-warn-soft: rgba(224, 169, 85, 0.18);
-  --bp-danger-soft: rgba(224, 108, 108, 0.18);
-  /* terminal-skin steps */
-  --bp-info: #6b9bff;
-  --bp-panel-3: #21252b;
-  --bp-line-bright: #333a44;
-  --bp-ghost: #565d6b;
-}
 
-/* The legacy `.br-mono` terminal-skin alias layer (+ mono.css) has been fully
-   retired — every surface is now on the Zed system (globals here + zed.css). */
+/* Every surface is on the Zed system: tokens + docs re-skin here, marketing
+   component CSS in components/landing/zed/zed.css. */
 
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Website global styles — "mono" redesign brand, globalized.
- * The redesign brand (previously scoped to .br-mono landing surfaces) is now
- * the site default for every surface incl. docs + blog: Geist sans as the
- * default UI face, a blue accent (--accent-brand #6b9bff) for focus rings +
- * content links, and a soft 7px radius scale. Semantic status stays ANSI
- * (green/amber/red). Mono (JetBrains) is retained for the celled header/nav
- * and terminals via --font-mono.
+ * Website global styles — the Zed dark brand, applied to every surface.
+ * IBM Plex Sans is the default UI face, Newsreader the display serif, and IBM
+ * Plex Mono carries the celled header/nav and every terminal via --font-mono.
+ * A blue accent (--accent-brand #6b9bff) drives focus rings and content links;
+ * semantic status stays ANSI (green/amber/red); radius scale tops out at 7px.
  *
  * Token chain:
- *   --bp-* + shadcn semantic tokens   ← defined above (formerly theme.css)
+ *   --z-* raw tokens + shadcn semantic aliases  ← defined above
  *   brand overrides (font-sans, radius, ring, --color-fd-primary) ← this file,
  *     placed after the base tokens so they win for docs/blog/chrome too.
- *   .br-mono aliases those tokens (above); its component CSS lives in mono.css.
  */
 @theme inline {
-  /* Web-only accent + animations (keyframes are defined later in this file). */
-  --color-violet: var(--bp-violet);
-  --animate-fade-in: fade-in 0.3s ease-out;
-  --animate-fade-in-up: fade-in-up 0.4s ease-out;
-  --animate-slide-in-left: slide-in-left 0.3s ease-out;
-  --animate-marquee: marquee var(--duration) linear infinite;
-  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
   /* ── Zed dark brand: IBM Plex Sans default + Newsreader display, 7px radius ── */
   --font-sans: var(--font-ibm-plex-sans), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-newsreader), Georgia, "Times New Roman", serif;
@@ -201,21 +114,18 @@
   --radius-3xl: 1.25rem; /* 20px */
 }
 
-/* ─── Web-only token: violet (decorative, used by some landing visuals) ─── */
+/* ─── Zed dark brand overrides (win over the base aliases above) ─── */
 :root,
 .dark {
-  --bp-violet: #b79bd0;
-
   /* ── Zed dark brand (globalized — blue accent everywhere) ── */
   --accent-brand: #6b9bff;
-  --accent-brand-dim: rgba(107, 155, 255, 0.12); /* active sidebar pill fill */
   /* Blue focus ring everywhere. */
   --ring: var(--accent-brand);
   --sidebar-ring: var(--accent-brand);
   /* fumadocs link/accent token → Zed blue (docs + blog). */
   --color-fd-primary: var(--accent-brand);
   /* Primary button = the deep Zed CTA blue with white text (overrides the
-     --bp-amber chain so shadcn/fumadocs buttons match the design's CTA). */
+     --z-blue alias above so shadcn/fumadocs buttons match the design's CTA). */
   --primary: #1348dc;
   --primary-foreground: #ffffff;
 
@@ -291,15 +201,6 @@
 }
 
 /* ─── Fixed header offset ─── */
-/* CustomNav (id="nd-nav") is position:fixed, so it doesn't take up space in
-   the document flow. Layouts that mount it (HomeLayout / BlogLayout) need
-   body padding so content isn't hidden beneath. The docs layout uses a
-   sticky DocsHeader (id="nd-subnav") instead — sticky participates in flow,
-   no offset needed. */
-body:has(#nd-nav) {
-  padding-top: 48px;
-}
-
 /* ─── Zed code panels ───
    Rounded One-Dark surfaces. The background comes from the Shiki `one-dark-pro`
    theme (#282c34, configured in source.config.ts) — do NOT force a background
@@ -320,98 +221,6 @@ pre:has(code) {
 
 /* ─── Drafting-board typography ───
    Plain CSS classes (in @layer components so Tailwind utilities can override).
-   Spec sheet 03 — see design-system.html. */
-@layer components {
-  .h-display {
-    font-family: var(--font-sans);
-    font-weight: 500;
-    font-size: 80px;
-    line-height: 0.95;
-    letter-spacing: -0.02em;
-  }
-  .h-section {
-    font-family: var(--font-sans);
-    font-weight: 500;
-    font-size: 38px;
-    line-height: 1.05;
-    letter-spacing: -0.018em;
-  }
-  .h-card {
-    font-family: var(--font-sans);
-    font-weight: 500;
-    font-size: 24px;
-    line-height: 1.15;
-    letter-spacing: -0.01em;
-  }
-  .body-prose {
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--bp-ink-mid);
-  }
-  .body-prose-sm {
-    font-size: 14px;
-    line-height: 1.65;
-    color: var(--bp-ink-mid);
-  }
-  .eyebrow {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: var(--bp-amber);
-  }
-  .hud {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--bp-ink);
-  }
-  .meta-label {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--bp-ink-dim);
-  }
-
-  /* Marker — amber underline for one phrase per headline */
-  .marker {
-    position: relative;
-    display: inline-block;
-  }
-  .marker::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -6px;
-    height: 4px;
-    background: var(--bp-amber);
-  }
-
-  /* Highlight — amber wash for inline emphasis in section headlines */
-  .highlight {
-    background: var(--bp-amber-soft);
-    padding: 0 6px;
-    box-shadow: inset 0 -2px 0 var(--bp-amber);
-  }
-
-  /* Drafting paper grid — decorative bg behind hero illustrations only */
-  .bp-grid {
-    background-color: var(--bp-paper);
-    background-image:
-      linear-gradient(to right, var(--bp-rule-soft) 1px, transparent 1px),
-      linear-gradient(to bottom, var(--bp-rule-soft) 1px, transparent 1px),
-      linear-gradient(to right, var(--bp-rule) 1px, transparent 1px),
-      linear-gradient(to bottom, var(--bp-rule) 1px, transparent 1px);
-    background-size:
-      20px 20px,
-      20px 20px,
-      100px 100px,
-      100px 100px;
-  }
-}
 
 /* ─── Content links ───
    Scoped to long-form bodies only. fumadocs DocsBody renders `.prose`
@@ -462,50 +271,7 @@ pre:has(code) {
   scrollbar-color: var(--border) transparent;
 }
 
-/* ─── Fumadocs sidebar overrides ─── */
-/* Soft 7px corners (brand), soft purple filled-pill active state, mono labels.
-   Radius is left to fumadocs defaults (rounded-lg → --radius-lg = 7px) — we no
-   longer force sharp 0px. */
 
-/* Sidebar items — font refinement */
-#nd-sidebar a {
-  font-size: 13px;
-  transition: background 150ms ease, color 150ms ease;
-}
-
-/* Hover state — ultra-subtle background */
-#nd-sidebar a:hover {
-  background: oklch(from var(--foreground) l c h / 0.04) !important;
-}
-
-/* Active sidebar item — soft neutral filled pill (mono in docs via
-   `--accent-brand-dim`), ink text, medium weight. */
-#nd-sidebar a[data-active="true"] {
-  background: var(--accent-brand-dim) !important;
-  color: var(--foreground) !important;
-  font-weight: 500;
-}
-
-/* Separator / section labels — uppercase mono */
-#nd-sidebar p:not(:empty) {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--muted-foreground);
-  margin-top: 1rem;
-}
-
-/* Folder toggle buttons — mono styling */
-#nd-sidebar button[data-open] {
-  font-size: 13px;
-}
-
-/* Sidebar border — right edge separator on docs layout */
-#nd-sidebar {
-  border-right: 1px solid oklch(from var(--foreground) l c h / 0.06) !important;
-}
 
 /* ═══ Docs · v3 dark ══════════════════════════════════════════════════════
    Re-skins the fumadocs notebook surface to the "BitRouter Docs dark" file.
@@ -906,383 +672,11 @@ body:has(#nd-subnav) #nd-page {
 [data-toc-popover] > header.bg-fd-background\/80 {
   background-color: var(--background) !important;
 }
-
-/* ─── Keyframe animations ─── */
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes fade-in-up {
-  from {
-    opacity: 0;
-    translate: 0 8px;
-  }
-  to {
-    opacity: 1;
-    translate: 0 0;
-  }
-}
-
-@keyframes slide-in-left {
-  from {
-    opacity: 0;
-    translate: -12px 0;
-  }
-  to {
-    opacity: 1;
-    translate: 0 0;
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-@keyframes float {
-  0%,
-  100% {
-    translate: 0 0;
-  }
-  50% {
-    translate: 0 -6px;
-  }
-}
-
-@keyframes bitrouter-dash {
-  to {
-    stroke-dashoffset: -200;
-  }
-}
-
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(calc(-100% - var(--gap)));
-  }
-}
-
-@keyframes marquee-vertical {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(calc(-100% - var(--gap)));
-  }
-}
-
-@keyframes bitrouter-beam {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(200%);
-  }
-}
-
-@keyframes bitrouter-beam-reverse {
-  0% {
-    transform: translateX(200%);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
-}
-
-/* ─── Feature card mini-animations ───
-   Single signal — amber. Same timings/meaning as before, just the one color. */
-@keyframes feat-route-pulse {
-  0%, 100% {
-    box-shadow: 0 0 0 0 transparent;
-    border-color: var(--border);
-  }
-  15%, 30% {
-    box-shadow: 0 0 0 2px var(--bp-amber-soft);
-    border-color: var(--bp-amber);
-  }
-}
-
-@keyframes feat-shimmer {
-  0% {
-    background-position: -150% 0;
-  }
-  100% {
-    background-position: 250% 0;
-  }
-}
-
-@keyframes feat-blink {
-  0%, 49% {
-    opacity: 1;
-  }
-  50%, 100% {
-    opacity: 0;
-  }
-}
-
-@keyframes feat-tab-slide {
-  0%, 25% {
-    transform: translateX(0%);
-  }
-  33%, 58% {
-    transform: translateX(100%);
-  }
-  66%, 91% {
-    transform: translateX(200%);
-  }
-  100% {
-    transform: translateX(0%);
-  }
-}
-
-@keyframes feat-travel {
-  0% {
-    transform: translateX(0);
-    opacity: 0;
-  }
-  8% {
-    opacity: 1;
-  }
-  92% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(calc(100% - 0.5rem));
-    opacity: 0;
-  }
-}
-
-@keyframes feat-spin-slow {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes feat-pill-pulse {
-  0%, 100% {
-    transform: translateY(0) scale(1);
-    filter: brightness(1);
-  }
-  20%, 35% {
-    transform: translateY(-1px) scale(1.04);
-    filter: brightness(1.15);
-  }
-}
-
-@keyframes feat-fade-cycle {
-  0%, 60%, 100% {
-    opacity: 0.25;
-  }
-  75%, 90% {
-    opacity: 1;
-  }
-}
-
-@keyframes feat-node-ping {
-  0% {
-    transform: scale(1);
-    opacity: 0.55;
-  }
-  100% {
-    transform: scale(3.2);
-    opacity: 0;
-  }
-}
-
-@keyframes feat-spark-draw {
-  0% {
-    stroke-dashoffset: 240;
-  }
-  60%, 100% {
-    stroke-dashoffset: 0;
-  }
-}
-
-@keyframes feat-arrow-slide {
-  0%, 100% {
-    transform: translateX(0);
-    opacity: 0.55;
-  }
-  50% {
-    transform: translateX(2px);
-    opacity: 1;
-  }
-}
-
-@keyframes feat-matrix-flash {
-  0% {
-    opacity: 1;
-  }
-  18%, 100% {
-    opacity: 0;
-  }
-}
-
-@keyframes feat-trace-span {
-  0% {
-    transform: scaleX(0);
-    opacity: 0.35;
-  }
-  18% {
-    transform: scaleX(1);
-    opacity: 1;
-  }
-  78% {
-    transform: scaleX(1);
-    opacity: 1;
-  }
-  92% {
-    opacity: 0.25;
-  }
-  100% {
-    transform: scaleX(0);
-    opacity: 0;
-  }
-}
-
-/* ─── Landing-section animations ───
-   Shared by Hero, UseCases, Scenarios, CTA. */
-@keyframes ls-cyclefade {
-  0% {
-    opacity: 0;
-    translate: 0 -4px;
-    filter: blur(2px);
-  }
-  100% {
-    opacity: 1;
-    translate: 0 0;
-    filter: blur(0);
-  }
-}
-
-@keyframes ls-pillpulse {
-  0%, 100% {
-    opacity: 0.7;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.04);
-  }
-}
-
-@keyframes ls-pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.45;
-  }
-}
-
-@keyframes ls-arrowslide {
-  0%, 100% {
-    transform: translateX(0);
-    opacity: 0.55;
-  }
-  50% {
-    transform: translateX(3px);
-    opacity: 1;
-  }
-}
-
-@keyframes ls-matrixflash {
-  0%, 4% { opacity: 0; }
-  7% { opacity: 1; }
-  14% { opacity: 0.5; }
-  22%, 100% { opacity: 0; }
-}
-
-@keyframes ls-marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-@keyframes ls-tracespan {
-  0% { transform: scaleX(0); opacity: 0.4; }
-  30% { transform: scaleX(1); opacity: 0.95; }
-  80% { opacity: 0.8; }
-  100% { transform: scaleX(1); opacity: 0.3; }
-}
-
-/* ─── Glass morphism feature animations ─── */
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideRight {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes flowRight {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(200%);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  [data-feat-anim],
-  [data-feat-anim] *,
-  [data-ls-anim],
-  [data-ls-anim] * {
-    animation: none !important;
-  }
-}
-
 /* ─── Docs sidebar footer controls ───
    The fumadocs notebook layout hard-hides the sidebar footer on desktop
    (its controls are meant for the mobile drawer / navbar). We want the
-   language + theme controls at the bottom of the docs sidebar on desktop,
-   so un-hide just that one row on large screens. */
+   theme control at the bottom of the docs sidebar on desktop, so un-hide
+   just that one row on large screens. */
 @media (min-width: 1024px) {
   div:has(> [data-sidebar-footer-controls]) {
     display: flex !important;

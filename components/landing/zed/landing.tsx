@@ -6,6 +6,7 @@ import { Metrics } from "./trusted-metrics";
 import { Benchmark } from "./benchmark";
 import { Loop } from "./loop";
 import { Faq } from "./faq";
+import { FAQS } from "./data";
 import { FinalCta } from "./cta";
 
 /**
@@ -26,7 +27,9 @@ export function ZedLanding() {
       <Metrics />
       <Benchmark />
       <Loop />
-      <Faq />
+      <section className="zed-wrap zed-sec">
+        <Faq items={FAQS} heading="Questions." jsonLd />
+      </section>
       <FinalCta />
     </div>
   );

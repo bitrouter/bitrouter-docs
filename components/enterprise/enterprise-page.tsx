@@ -1,45 +1,28 @@
-"use client";
-
 /* Enterprise — FinOps token-cost governance, on the Zed design system.
-   hero → tokenmaxxing trap (cited failure band) → what we govern → guarantee +
-   run receipt → how it works → free-audit CTA → self-serve vs enterprise → FAQ.
-   "Talk to the founders" books the Cal.com founder-call embed. */
+   hero → tokenmaxxing trap → what we govern → guarantee + run receipt →
+   how it works (the free audit is step 01) → what enterprise adds → FAQ → CTA.
 
-import * as React from "react";
+   Server component: the only interactive parts are the Cal.com boot, the
+   founder-call buttons and the FAQ accordion, each a client leaf. */
+
+import type * as React from "react";
 import Link from "next/link";
-import posthog from "posthog-js";
-import { getCalApi } from "@calcom/embed-react";
 import "@/components/landing/zed/zed.css";
 import { Kicker } from "@/components/landing/zed/primitives";
+import { Faq } from "@/components/landing/zed/faq";
+import { CalBoot, FounderCallButton } from "@/components/landing/zed/founder-call";
 
 // v3 pads only the top, so consecutive sections sit one --z-sec apart rather
 // than stacking two paddings, and no section carries a hairline.
 const WRAP: React.CSSProperties = { padding: "var(--z-sec) var(--z-gutter) 0" };
 const H2: React.CSSProperties = { fontSize: 40, lineHeight: 1.08, margin: "20px 0 0" };
-const LEAD: React.CSSProperties = {
-  fontFamily: "var(--font-mono)", fontSize: 14, lineHeight: 1.7, color: "var(--z-ink-5)", margin: "20px 0 0", maxWidth: "64ch",
-};
-
-function FounderCTA({ className, location, children }: { className: string; location: string; children: React.ReactNode }) {
-  return (
-    <button
-      data-cal-namespace="founder-call"
-      data-cal-link="kelsenliu/founder-call"
-      data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
-      className={className}
-      onClick={() => posthog.capture("founder_call_booked", { location })}
-    >
-      {children}
-    </button>
-  );
-}
 
 function SecHead({ kicker, title, lead }: { kicker: string; title: string; lead?: string }) {
   return (
     <div style={{ maxWidth: 720, marginBottom: 44 }}>
       <Kicker>{kicker}</Kicker>
       <h2 className="zed-display" style={H2}>{title}</h2>
-      {lead && <p style={LEAD}>{lead}</p>}
+      {lead && <p className="zed-lead">{lead}</p>}
     </div>
   );
 }
@@ -47,19 +30,21 @@ function SecHead({ kicker, title, lead }: { kicker: string; title: string; lead?
 // ── hero ──
 function Hero() {
   return (
-    <section style={{ position: "relative", overflow: "hidden" }}>
+    <section>
       <div className="zed-wrap" style={{ padding: "72px var(--z-gutter) 0" }}>
         <Kicker>finops · enterprise</Kicker>
         <h1 className="zed-display" style={{ fontSize: "clamp(38px,6.4vw,68px)", lineHeight: 1.04, margin: "30px 0 0", maxWidth: "18ch" }}>
           Govern token spend across the org.
         </h1>
-        <p style={{ ...LEAD, fontSize: 16, lineHeight: 1.65 }}>
+        <p className="zed-lead" style={{ fontSize: 16, lineHeight: 1.65 }}>
           FinOps for AI. BitRouter puts every team&rsquo;s token spend under one budget &mdash; real-time
           attribution, showback and chargeback, and quota governance &mdash; behind a router that holds each
           workload under the cap. We tie our fee to what we save you, so governance pays for itself.
         </p>
         <div style={{ display: "flex", alignItems: "center", gap: 28, marginTop: 40, flexWrap: "wrap" }}>
-          <FounderCTA className="zed-btn zed-btn-primary" location="enterprise_hero">Talk to the founders</FounderCTA>
+          <FounderCallButton className="zed-btn zed-btn-primary" location="enterprise_hero">
+            Talk to the founders
+          </FounderCallButton>
           <Link href="/pricing" className="zed-btn-underline">See all pricing</Link>
         </div>
       </div>
@@ -68,31 +53,37 @@ function Hero() {
 }
 
 // ── the tokenmaxxing trap ──
+// Two citations, not four: the Anthropic and Menlo figures carry the argument
+// (loops burn tokens superlinearly; usage, not price, drives the bill). The
+// MIT and FinOps numbers restated "the spend is large" a third and fourth time.
 const FAILS = [
   { n: "15×", b: "Multi-agent systems burn roughly 15× the tokens of a plain chat — and in one eval, token volume alone explained 80% of performance.", src: "Anthropic Engineering, 2025", href: "https://www.anthropic.com/engineering/multi-agent-research-system" },
   { n: "$8.4B", b: "Enterprise model-API spend more than doubled in six months — even as the per-token price kept falling. Usage, not price, is the cost driver.", src: "Menlo Ventures, 2025", href: "https://menlovc.com/perspective/2025-mid-year-llm-market-update/" },
-  { n: "~95%", b: "of enterprise GenAI pilots show no measurable P&L return — spend that never converts into governed, attributable value.", src: "MIT NANDA, 2025", href: "https://fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo/" },
-  { n: "$37B", b: "Enterprise GenAI spend in 2025, up from $1.7B in 2023 — growing ~3× a year, faster than any team can forecast off last quarter's run rate.", src: "FinOps Foundation, 2026", href: "https://www.finops.org/insights/token-economics-the-atomic-unit-of-ai-value/" },
 ];
 function FailureBand() {
   return (
     <section>
       <div className="zed-wrap" style={WRAP}>
-        <SecHead kicker="the tokenmaxxing trap" title="Token spend scales faster than anyone forecasts."
-          lead="Agentic loops re-send their whole context every turn, so cost compounds with the task — not the price list. Roll that across every team and the bill outruns the budget before finance sees it." />
-        <div className="zed-grid-4" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", border: "1px solid var(--z-rule)" }}>
-          {FAILS.map((f, i) => (
-            <div key={f.src} style={{ padding: "26px 22px", borderRight: i === FAILS.length - 1 ? "none" : "1px solid var(--z-rule)" }}>
-              <div className="zed-display" style={{ fontSize: 34, lineHeight: 1 }}>{f.n}</div>
-              <p style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, lineHeight: 1.6, color: "var(--z-ink-4)", margin: "14px 0 14px" }}>{f.b}</p>
-              <a href={f.href} target="_blank" rel="noopener noreferrer" style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--z-ink-6)" }}>{f.src}</a>
+        <SecHead
+          kicker="the tokenmaxxing trap"
+          title="Token spend scales faster than anyone forecasts."
+          lead="Agentic loops re-send their whole context every turn, so cost compounds with the task — not the price list. Roll that across every team and the bill outruns the budget before finance sees it."
+        />
+        <div className="zed-grid-2" style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: "26px 40px" }}>
+          {FAILS.map((f) => (
+            <div key={f.src} style={{ borderTop: "1px solid var(--z-rule)", paddingTop: 20 }}>
+              <div className="zed-display" style={{ fontSize: 38, lineHeight: 1 }}>{f.n}</div>
+              <p className="zed-body" style={{ margin: "14px 0 0", color: "var(--z-ink-4)" }}>{f.b}</p>
+              <a href={f.href} target="_blank" rel="noopener noreferrer" className="zed-cardlabel" style={{ display: "inline-block", marginTop: 12 }}>
+                {f.src}
+              </a>
             </div>
           ))}
         </div>
-        <p style={{ fontFamily: "var(--font-mono)", fontSize: 13.5, lineHeight: 1.7, color: "var(--z-ink-4)", margin: "26px 0 0", maxWidth: "82ch" }}>
-          And the deeper problem: a provider invoice shows spend by API key — <strong style={{ color: "var(--z-ink-2)" }}>never</strong> by
-          team, feature, or customer. You can&rsquo;t govern what you can&rsquo;t attribute, and that instrumentation layer doesn&rsquo;t
-          exist unless someone builds it. That&rsquo;s the layer we are.
+        <p className="zed-lead" style={{ marginTop: 40 }}>
+          And the deeper problem: a provider invoice shows spend by API key &mdash; never by team, feature, or
+          customer. You can&rsquo;t govern what you can&rsquo;t attribute, and that instrumentation layer
+          doesn&rsquo;t exist unless someone builds it. That&rsquo;s the layer we are.
         </p>
       </div>
     </section>
@@ -116,10 +107,8 @@ function Govern() {
         <div className="zed-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "26px 40px" }}>
           {CONTROLS.map((c) => (
             <div key={c.k}>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--z-ink-6)" }}>
-                {c.k}
-              </div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 13, lineHeight: 1.7, color: "var(--z-ink-2)", marginTop: 12 }}>{c.v}</div>
+              <div className="zed-cardlabel">{c.k}</div>
+              <div className="zed-body" style={{ marginTop: 12 }}>{c.v}</div>
             </div>
           ))}
         </div>
@@ -129,13 +118,15 @@ function Govern() {
 }
 
 // ── guarantee + receipt ──
-function Guarantee() {
-  const row = (k: string, v: React.ReactNode, opts: { ok?: boolean; total?: boolean } = {}) => (
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: opts.total ? "12px 0 0" : "7px 0", fontFamily: "var(--font-mono)", fontSize: 12.5 }}>
+function ReceiptRow({ k, v, ok, total }: { k: string; v: React.ReactNode; ok?: boolean; total?: boolean }) {
+  return (
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: total ? "12px 0 0" : "7px 0", fontFamily: "var(--font-mono)", fontSize: 12.5 }}>
       <span style={{ color: "var(--z-ink-5)" }}>{k}</span>
-      <span style={{ color: opts.ok ? "var(--z-green)" : opts.total ? "var(--z-ink)" : "var(--z-ink-2)", fontWeight: opts.total ? 600 : 400 }}>{v}</span>
+      <span style={{ color: ok ? "var(--z-green)" : total ? "var(--z-ink)" : "var(--z-ink-2)", fontWeight: total ? 600 : 400 }}>{v}</span>
     </div>
   );
+}
+function Guarantee() {
   return (
     <section>
       <div className="zed-wrap" style={WRAP}>
@@ -143,7 +134,7 @@ function Guarantee() {
           <div>
             <Kicker>the guarantee</Kicker>
             <h2 className="zed-display" style={H2}>Guaranteed under budget.</h2>
-            <p style={LEAD}>
+            <p className="zed-lead">
               You set a monthly budget and a measurable quality floor. We hold your loop under budget — or credit
               you the difference. The budget is the hard promise; quality is the bar a run has to clear before we
               bill a cent. Every run is settled on an auditable receipt, so there&rsquo;s no reconciliation meeting
@@ -153,13 +144,13 @@ function Guarantee() {
           <div className="zed-term" style={{ padding: 0 }}>
             <div className="zed-term-head"><span>run receipt · run_8x2k</span></div>
             <div style={{ padding: "16px 20px" }}>
-              {row("baseline (measured)", "$2.10")}
-              {row("delivered (routed)", <>$0.38 <span style={{ color: "var(--z-green)", fontSize: 11 }}>✓ under $0.50 cap</span></>)}
-              {row("quality floor", "✓ tests green", { ok: true })}
+              <ReceiptRow k="baseline (measured)" v="$2.10" />
+              <ReceiptRow k="delivered (routed)" v={<>$0.38 <span style={{ color: "var(--z-green)", fontSize: 11 }}>✓ under $0.50 cap</span></>} />
+              <ReceiptRow k="quality floor" v="✓ tests green" ok />
               <hr style={{ border: "none", borderTop: "1px solid var(--z-rule)", margin: "10px 0 2px" }} />
-              {row("you saved", "$1.72")}
-              {row("our share", "$0.34")}
-              {row("you keep", "$1.38", { total: true })}
+              <ReceiptRow k="you saved" v="$1.72" />
+              <ReceiptRow k="our share" v="$0.34" />
+              <ReceiptRow k="you keep" v="$1.38" total />
             </div>
           </div>
         </div>
@@ -169,8 +160,10 @@ function Guarantee() {
 }
 
 // ── how it works ──
+// Step 01 is where the free audit is explained; it used to be repeated verbatim
+// in a standalone CTA section further down.
 const STEPS = [
-  { n: "01", h: "Measure", b: "A free two-week audit runs your real traffic through BitRouter in passthrough — no markup — to measure your true cost-per-run, quality baseline, and where spend is really going. You pay nothing until we beat a number you watched us record." },
+  { n: "01", h: "Measure", b: "A free two-week audit runs your real traffic through BitRouter in passthrough — no markup — to measure your true cost-per-run, quality baseline, and where spend is really going. Metadata only: prompts never leave your infra, and you pay nothing until we beat a number you watched us record." },
   { n: "02", h: "Route", b: "We route every call to the cheapest model that clears your quality floor, keeping each workload under its budget. When quality can't be held cheaply, we fall back to protect it — on our dime, not yours." },
   { n: "03", h: "Bill", b: "A custom share of the savings we actually delivered, only on runs that met your budget and quality bar — never more than we saved you. Each run's baseline, cost, and quality check are itemized on the receipt." },
 ];
@@ -182,9 +175,9 @@ function HowItWorks() {
         <div className="zed-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 24 }}>
           {STEPS.map((s) => (
             <div key={s.n} style={{ borderTop: "1px solid var(--z-rule)", paddingTop: 20 }}>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--z-ink-6)" }}>{s.n}</div>
-              <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontWeight: 500, fontSize: 24, color: "var(--z-ink)", margin: "10px 0 10px" }}>{s.h}</h3>
-              <p style={{ fontFamily: "var(--font-mono)", fontSize: 13, lineHeight: 1.65, color: "var(--z-ink-4)" }}>{s.b}</p>
+              <div className="zed-cardlabel">{s.n}</div>
+              <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontWeight: 500, fontSize: 24, color: "var(--z-ink)", margin: "10px 0" }}>{s.h}</h3>
+              <p className="zed-body" style={{ color: "var(--z-ink-4)", lineHeight: 1.65 }}>{s.b}</p>
             </div>
           ))}
         </div>
@@ -193,74 +186,47 @@ function HowItWorks() {
   );
 }
 
-// ── free audit CTA ──
-function AuditCta() {
-  return (
-    <section>
-      <div className="zed-wrap" style={{ padding: "var(--z-sec) var(--z-gutter)" }}>
-        <div style={{ position: "relative", padding: "60px 0", textAlign: "center" }}>
-          <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "radial-gradient(60% 70% at 50% 0%, rgba(107,155,255,0.08), transparent 60%)" }} />
-          <div style={{ position: "relative" }}>
-            <Kicker>start free</Kicker>
-            <h2 className="zed-display" style={{ fontSize: "clamp(32px,5vw,48px)", lineHeight: 1.06, margin: "20px auto 0", maxWidth: "20ch" }}>
-              Start with a free audit of your real traffic.
-            </h2>
-            <p style={{ ...LEAD, margin: "18px auto 0", maxWidth: "52ch", textAlign: "left" }}>
-              Two weeks, metadata-only, prompts never leave your infra. You get a hard number — what you&rsquo;re
-              overpaying, where it&rsquo;s going, and what we can give back — with no commitment to continue.
-            </p>
-            <div style={{ marginTop: 28 }}>
-              <FounderCTA className="zed-btn zed-btn-primary" location="enterprise_audit">Book a founder call</FounderCTA>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ── self-serve vs enterprise ──
-type Mark = "yes" | "no" | string;
-const EROWS: { feat: string; self: Mark; ent: Mark; hi?: boolean }[] = [
-  { feat: "Pricing", self: "0% markup · individual", ent: "Outcome-based" },
+// ── what enterprise adds ──
+// Trimmed from 13 rows: the two ✓/✓ rows said nothing about enterprise, the
+// pricing row lives on /pricing's outcome card, and SSO/SIEM/DPA collapse into
+// one compliance line that card already spells out.
+const EROWS: { feat: string; self: string; ent: string; hi?: boolean }[] = [
   { feat: "Budget guarantee", self: "no", ent: "yes" },
   { feat: "Org budgets & alerts", self: "no", ent: "yes", hi: true },
   { feat: "Showback / chargeback", self: "no", ent: "yes", hi: true },
   { feat: "Volume discounts", self: "no", ent: "yes" },
   { feat: "Free workload audit", self: "no", ent: "yes" },
   { feat: "Forward-deployed onboarding", self: "no", ent: "yes" },
-  { feat: "Private by default", self: "yes", ent: "yes" },
-  { feat: "Self-host / your VPC", self: "yes", ent: "yes" },
-  { feat: "SSO · SAML · OIDC", self: "no", ent: "yes" },
-  { feat: "SIEM audit-log streaming", self: "no", ent: "yes" },
-  { feat: "DPA", self: "no", ent: "yes" },
+  { feat: "SSO · SIEM streaming · DPA", self: "no", ent: "yes" },
   { feat: "Support", self: "Community", ent: "Founders + SLA" },
 ];
-function ECell({ v, accent }: { v: Mark; accent?: boolean }) {
+function ECell({ v, accent }: { v: string; accent?: boolean }) {
   if (v === "yes") return <span style={{ color: "var(--z-ink)" }}>✓</span>;
   if (v === "no") return <span style={{ color: "var(--z-ink-8)" }}>—</span>;
   return <span style={{ color: accent ? "var(--z-ink-2)" : "var(--z-ink-5)" }}>{v}</span>;
 }
+const ECOLS = "1.6fr 1fr 1fr";
 function EnterpriseCompare() {
   return (
     <section>
       <div className="zed-wrap" style={WRAP}>
-        <SecHead kicker="self-serve vs enterprise" title="What enterprise adds."
-          lead="Everything in self-serve, plus the budget guarantee, org-wide budgets and chargeback, volume discounts, and hands-on onboarding to run production loops at scale." />
+        <SecHead
+          kicker="self-serve vs enterprise"
+          title="What enterprise adds."
+          lead="Everything in self-serve — 0% markup, self-host, private by default — plus the budget guarantee, org-wide budgets and chargeback, and hands-on onboarding to run production loops at scale."
+        />
         <div style={{ overflowX: "auto" }}>
           <div style={{ minWidth: 620, borderTop: "1px solid var(--z-ink)" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr 1fr", borderBottom: "1px solid var(--z-rule)", fontFamily: "var(--font-mono)", fontSize: 10.5, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--z-ink-6)" }}>
+            <div style={{ display: "grid", gridTemplateColumns: ECOLS, borderBottom: "1px solid var(--z-rule)", fontFamily: "var(--font-mono)", fontSize: 10.5, letterSpacing: "0.14em", textTransform: "uppercase" }}>
               <div style={{ padding: "13px 18px", color: "var(--z-ink-6)" }}>Feature</div>
               <div style={{ padding: "13px 14px", color: "var(--z-ink-2)" }}>Self-serve</div>
               <div style={{ padding: "13px 14px 13px 0", color: "var(--z-ink)" }}>Enterprise</div>
             </div>
             {EROWS.map((r) => (
-              <div key={r.feat} style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr 1fr", borderBottom: "1px solid var(--z-rule-faint)", background: r.hi ? "rgba(107,155,255,0.04)" : "transparent" }}>
-                <div style={{ padding: "12px 18px", fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--z-ink-4)" }}>
-                  {r.feat}
-                </div>
+              <div key={r.feat} style={{ display: "grid", gridTemplateColumns: ECOLS, borderBottom: "1px solid var(--z-rule-faint)", background: r.hi ? "rgba(107,155,255,0.04)" : "transparent" }}>
+                <div style={{ padding: "12px 18px", fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--z-ink-4)" }}>{r.feat}</div>
                 <div style={{ padding: "12px 14px", fontFamily: "var(--font-mono)", fontSize: 12.5 }}><ECell v={r.self} /></div>
-                <div style={{ padding: "12px 14px", fontFamily: "var(--font-mono)", fontSize: 12.5, borderLeft: "1px solid var(--z-rule-faint)" }}><ECell v={r.ent} accent={r.hi} /></div>
+                <div style={{ padding: "12px 14px 12px 0", fontFamily: "var(--font-mono)", fontSize: 12.5, borderLeft: "1px solid var(--z-rule-faint)" }}><ECell v={r.ent} accent={r.hi} /></div>
               </div>
             ))}
           </div>
@@ -271,38 +237,33 @@ function EnterpriseCompare() {
 }
 
 // ── FAQ ──
+// "How do you set the baseline you bill against?" retired — step 01 above
+// already answers it, and /pricing covers outcome-based billing in full.
 const FAQS = [
   { q: "Can you attribute spend to specific teams or customers?", a: "Yes — that's the point. Every call is tagged and rolled up into showback or chargeback by team, app, feature, and customer, so finance can bill it back internally. Your provider invoice only shows spend by API key; we rebuild the breakdown it's missing." },
-  { q: "How do you set the baseline you bill against?", a: "We measure it. During the free audit we run your real traffic through BitRouter in passthrough and record your actual cost-per-run and quality pass-rate — that measured number is the agreed baseline, adjusted for volume and re-indexed as model prices move. It's your own before, not a strawman." },
   { q: "What happens if you can't hit my budget?", a: "The budget is a guarantee, not a hope. If we miss it over a billing window, we credit you the difference. And on any single run where we can't hold your quality floor cheaply, we fall back to protect quality and simply don't bill that run — the cost of that is ours." },
   { q: "Do you store my prompts?", a: "No. Prompts and completions are not stored — logs are metadata-only and configurable per project. The audit and ongoing billing run on metadata, so your prompts never leave your infrastructure. SSO, SIEM streaming, and a DPA are available on request." },
   { q: "Why do I have to run the whole loop through BitRouter?", a: "To guarantee a budget and measure real savings, we have to see the whole loop — every call, not a sample. That's also what lets failover, guardrails, and per-run receipts work end-to-end. You can self-host the data plane so traffic stays in your VPC." },
 ];
-function Faq() {
-  const [open, setOpen] = React.useState(0);
+
+// ── closing CTA ──
+function ClosingCta() {
   return (
     <section>
-      <div className="zed-wrap" style={WRAP}>
-        <div className="zed-grid-2" style={{ display: "grid", gridTemplateColumns: "0.85fr 1.15fr", gap: 56, alignItems: "start" }}>
-          <div style={{ position: "sticky", top: 88 }}>
-            <Kicker>faq</Kicker>
-            <h2 className="zed-display" style={{ fontSize: 40, lineHeight: 1.08, margin: "20px 0 0" }}>Before you hand us the loop.</h2>
-            <p style={LEAD}>The questions every team asks. If yours isn&rsquo;t here, put it to us on the call.</p>
-          </div>
-          <div style={{ borderTop: "1px solid var(--z-rule)" }}>
-            {FAQS.map((f, i) => {
-              const isOpen = i === open;
-              return (
-                <div key={f.q} style={{ borderBottom: "1px solid var(--z-rule)" }}>
-                  <button onClick={() => setOpen(isOpen ? -1 : i)} style={{ display: "flex", gap: 14, width: "100%", background: "none", border: "none", textAlign: "left", padding: "22px 0", cursor: "pointer", fontFamily: "var(--font-mono)", fontSize: 15, color: isOpen ? "var(--z-ink)" : "var(--z-ink-2)" }}>
-                    <span style={{ color: "var(--z-ink-6)", width: 12, flex: "0 0 auto" }}>{isOpen ? "−" : "+"}</span>{f.q}
-                  </button>
-                  <div className={`zed-faq-ans${isOpen ? " open" : ""}`}>
-                    <div><div style={{ padding: "0 0 22px 26px", fontFamily: "var(--font-mono)", fontSize: 13, lineHeight: 1.7, color: "var(--z-ink-4)" }}>{f.a}</div></div>
-                  </div>
-                </div>
-              );
-            })}
+      <div className="zed-wrap" style={{ padding: "var(--z-sec) var(--z-gutter)" }}>
+        <div style={{ textAlign: "center" }}>
+          <Kicker>start free</Kicker>
+          <h2 className="zed-display" style={{ fontSize: "clamp(32px,5vw,48px)", lineHeight: 1.06, margin: "20px auto 0", maxWidth: "20ch" }}>
+            Start with a free audit of your real traffic.
+          </h2>
+          <p className="zed-lead" style={{ margin: "18px auto 0", maxWidth: "52ch" }}>
+            Two weeks, metadata-only. You get a hard number &mdash; what you&rsquo;re overpaying, where it&rsquo;s
+            going, and what we can give back &mdash; with no commitment to continue.
+          </p>
+          <div style={{ marginTop: 28 }}>
+            <FounderCallButton className="zed-btn zed-btn-primary" location="enterprise_close">
+              Book a founder call
+            </FounderCallButton>
           </div>
         </div>
       </div>
@@ -310,32 +271,29 @@ function Faq() {
   );
 }
 
-const FAQ_JSONLD = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: FAQS.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
-};
-
 export function EnterprisePage() {
-  React.useEffect(() => {
-    (async function () {
-      const cal = await getCalApi({ namespace: "founder-call" });
-      cal("ui", { hideEventTypeDetails: false, layout: "month_view" });
-    })();
-  }, []);
-
   return (
     <div className="zed-bg">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSONLD) }} />
+      <CalBoot />
       <Hero />
       <FailureBand />
       <Govern />
       <Guarantee />
       <HowItWorks />
-      <AuditCta />
       <EnterpriseCompare />
-      <Faq />
-      <div style={{ height: "var(--z-sec)" }} />
+      <section>
+        <div className="zed-wrap" style={WRAP}>
+          <Faq
+            items={FAQS}
+            heading="Before you hand us the loop."
+            kicker="faq"
+            lead="The questions every team asks. If yours isn’t here, put it to us on the call."
+            sticky
+            jsonLd
+          />
+        </div>
+      </section>
+      <ClosingCta />
     </div>
   );
 }

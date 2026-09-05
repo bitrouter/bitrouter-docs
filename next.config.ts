@@ -94,8 +94,8 @@ pairs.push(
   ["/docs/cloud/payment", "/docs/overview/quickstart#self-host-or-cloud"],
   // CLI + MCP left the API Reference tab for Documentation → Usage (2026-08).
   // These must stay above the /docs/reference wildcards below.
-  ["/docs/reference/cli/:slug*", "/docs/usage/cli/:slug*"],
   ["/docs/reference/cli", "/docs/usage/cli"],
+  ["/docs/reference/cli/:slug*", "/docs/usage/cli/:slug*"],
   ["/docs/reference/mcp", "/docs/usage/mcp"],
   // The CLI reference collapsed from ten pages into one (2026-08). Each retired
   // page lands on its `##` section anchor — keep these in sync with the section
@@ -190,8 +190,8 @@ pairs.push(
   ["/docs/mcp-and-tool-calling/acp-gateway", "/docs/agents-and-orchestration/acp-gateway"],
   ["/docs/mcp-and-tool-calling/:slug*", "/docs/agents-and-orchestration/tool-calling/:slug*"],
   // evals-and-tracing/ → evals-and-observability/ (2026-08): section renamed
-  ["/docs/evals-and-tracing/:slug*", "/docs/evals-and-observability/:slug*"],
   ["/docs/evals-and-tracing", "/docs/evals-and-observability/opentelemetry"],
+  ["/docs/evals-and-tracing/:slug*", "/docs/evals-and-observability/:slug*"],
   // agents-and-orchestration/ added (2026-08) between evals and integrations,
   // and it is where both gateways now live. The ACP gateway leaves
   // models-and-routing/ — where it had been unlisted — so this one needs a 301.
@@ -202,6 +202,7 @@ pairs.push(
   // The tool-calling/ subfolder came along too — it was the other hidden set,
   // and the server-tool loop is the third thing this section is about. All six
   // pages keep their filenames, so one wildcard covers them.
+  ["/docs/models-and-routing/tool-calling", "/docs/agents-and-orchestration/tool-calling/server-tools"],
   ["/docs/models-and-routing/tool-calling/:slug*", "/docs/agents-and-orchestration/tool-calling/:slug*"],
   ["/docs/agents-and-orchestration", "/docs/agents-and-orchestration/overview"],
   // Guides tab trimmed to migration only (2026-08): the Cloud and Extending
@@ -213,7 +214,6 @@ pairs.push(
   ["/docs/usage/mcp-gateway", "/docs/agents-and-orchestration/mcp-gateway"],
   // observability/ → evals-and-observability/ (2026-09)
   ["/docs/observability/:slug*", "/docs/evals-and-observability/:slug*"],
-  ["/docs/observability", "/docs/evals-and-observability/opentelemetry"],
   // tools/agents pages retitled to name their protocol; features/ dissolved —
   // guardrails moved, namespaces and payment retired (2026-08)
   ["/docs/gateway-and-routing/tools", "/docs/usage/mcp"],
@@ -258,16 +258,16 @@ pairs.push(
   ["/docs/guides/self-host", "/docs/self-hosting"],
   ["/docs/self-host", "/docs/self-hosting"],
 );
-const docsRedirects = pairs.flatMap(([source, destination]) => [
-  { source, destination, permanent: true },
-  // Legacy /zh docs URLs fold straight to the English destination (one hop).
-  { source: `/zh${source}`, destination, permanent: true },
-]);
+// Legacy /zh docs URLs are not twinned here: the catch-all `/zh/docs/:path*`
+// rule at the end of redirects() folds them to the English path, which then
+// takes its own 301 to the final destination. One extra hop, on a dead locale.
+const docsRedirects = pairs.map(([source, destination]) => ({
+  source,
+  destination,
+  permanent: true,
+}));
 
 const nextConfig: NextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   skipTrailingSlashRedirect: true,
   async rewrites() {
     return [
@@ -292,11 +292,16 @@ const nextConfig: NextConfig = {
       { source: "/zh", destination: "/", permanent: true },
       { source: "/zh/models", destination: "/models", permanent: true },
       { source: "/zh/models/:slug*", destination: "/models/:slug*", permanent: true },
-      { source: "/zh/providers", destination: "/providers", permanent: true },
-      { source: "/zh/providers/:slug", destination: "/providers/:slug", permanent: true },
-      { source: "/zh/brand", destination: "/brand", permanent: true },
-      { source: "/careers", destination: "/about", permanent: true },
-      { source: "/zh/careers", destination: "/about", permanent: true },
+      // /about, /open and /startup were retired (2026-09). Nothing replaced the
+      // company surface, so every alias folds to the homepage.
+      { source: "/about", destination: "/", permanent: true },
+      { source: "/zh/about", destination: "/", permanent: true },
+      { source: "/open", destination: "/", permanent: true },
+      { source: "/zh/open", destination: "/", permanent: true },
+      { source: "/careers", destination: "/", permanent: true },
+      { source: "/zh/careers", destination: "/", permanent: true },
+      { source: "/startup", destination: "/", permanent: true },
+      { source: "/zh/startup", destination: "/", permanent: true },
       { source: "/zh/enterprise", destination: "/enterprise", permanent: true },
       { source: "/zh/blog", destination: "/blog", permanent: true },
       { source: "/zh/blog/:slug", destination: "/blog/:slug", permanent: true },

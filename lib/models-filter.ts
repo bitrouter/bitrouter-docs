@@ -1,4 +1,4 @@
-import type { Model } from "@/lib/models-data";
+import type { Model } from "@/lib/models-types";
 
 const OPEN_SOURCE_PROVIDERS = new Set([
   "deepseek", "meta", "mistral", "qwen", "zhipu", "moonshot", "moonshotai",

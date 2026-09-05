@@ -556,6 +556,82 @@
   overflow: hidden;
 }
 
+/* ── Shared text roles ──
+   These three were re-declared as inline style objects on every marketing page
+   (the LEAD / label / body triple). Naming them here keeps one definition. */
+.zed-lead {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--z-ink-5);
+  margin: 20px 0 0;
+  max-width: 64ch;
+}
+.zed-cardlabel {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--z-ink-6);
+}
+.zed-body {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--z-ink-2);
+}
+
+/* One accordion serves the landing, pricing, enterprise and startup pages —
+   these were four hand-rolled copies that had drifted on size, leading and
+   ink step. Values below are the landing/pricing pair, which two of the four
+   already used. */
+.zed-faq {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  column-gap: 72px;
+  row-gap: 32px;
+  align-items: start;
+}
+.zed-faq-side-sticky {
+  position: sticky;
+  top: 88px;
+}
+.zed-faq-list {
+  border-top: 1px solid var(--z-rule);
+}
+.zed-faq-item {
+  border-bottom: 1px solid var(--z-rule);
+}
+.zed-faq-q {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  padding: 24px 0;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 14.5px;
+  color: var(--z-ink-2);
+}
+.zed-faq-q[aria-expanded="true"] {
+  color: var(--z-ink);
+}
+.zed-faq-sign {
+  width: 12px;
+  flex: 0 0 auto;
+  color: var(--z-ink-6);
+}
+.zed-faq-a {
+  padding: 0 0 24px 28px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--z-ink-5);
+  max-width: 62ch;
+}
+
 /* ── Prose (blog/long-form reuse later) ── */
 .zed-prose p {
   font-family: var(--font-mono);

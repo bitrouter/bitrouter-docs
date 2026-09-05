@@ -3,7 +3,7 @@
 import * as React from "react";
 import posthog from "posthog-js";
 import { getCalApi } from "@calcom/embed-react";
-import { navItemsFor, resolveHref, type HeaderConfig } from "./nav-config";
+import { NAV_ITEMS, resolveHref, type HeaderConfig } from "./nav-config";
 import { useChangelogUnseen } from "@/components/changelog/use-changelog-unseen";
 
 /**
@@ -141,11 +141,11 @@ export function SiteHeaderBody({
   wordmarkSuffix,
 }: SiteHeaderProps): React.ReactElement {
   const isAuthed = Boolean(session);
-  const items = navItemsFor(isAuthed);
+  const items = NAV_ITEMS;
   const changelogUnseen = useChangelogUnseen();
   useCalFounderCall();
   return (
-    <div className="flex h-[62px] w-full items-center gap-6 px-[22px] sm:px-6 lg:px-10">
+    <div className="flex h-[62px] w-full items-center gap-6 px-[22px] sm:px-6 lg:px-6 xl:px-10">
       {leadingSlot ? <div className="flex shrink-0 items-center">{leadingSlot}</div> : null}
 
       {/* Logo — bare ≋ mask mark + lowercase mono wordmark. v3 drops the
@@ -184,7 +184,7 @@ export function SiteHeaderBody({
 
       {/* Primary nav — centred in the leftover space. Hidden below `lg`, where
           the mobile menu takes over. */}
-      <nav className="hidden flex-1 items-center justify-center gap-11 lg:flex">
+      <nav className="hidden flex-1 items-center justify-center gap-6 lg:flex xl:gap-11">
         {items.map((item) => {
           const href = resolveHref(item, config);
           const active = isActive(pathname, item.webPath);
@@ -418,7 +418,7 @@ function MobileMenu({
 }) {
   const [open, setOpen] = React.useState(false);
   const isAuthed = Boolean(session);
-  const items = navItemsFor(isAuthed);
+  const items = NAV_ITEMS;
   const changelogUnseen = useChangelogUnseen();
 
   return (

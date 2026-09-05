@@ -10,9 +10,6 @@ next-env.d.ts
 !.env.example
 .env.local
 
-# generated during URL-sourced OpenAPI fetch
-.openapi.fetched.yaml
-
 # content/docs/{get-started,concepts,features,guides,integrations} are now
 # first-class, committed docs (relocated from bitrouter/docs, 2026-07). The site
 # owns them here; content/docs/reference/ operation pages are regenerated at build

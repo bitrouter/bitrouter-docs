@@ -14,15 +14,3 @@ export function baseOptions(): BaseLayoutProps {
   };
 }
 
-/**
- * Options for the docs layout — uses the same shared header.
- * Sidebar handles all navigation within docs.
- */
-export function docsOptions(): BaseLayoutProps {
-  return {
-    nav: {
-      component: <WebHeader />,
-    },
-    links: [],
-  };
-}

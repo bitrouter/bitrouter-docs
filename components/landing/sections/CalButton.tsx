@@ -17,7 +17,7 @@ export function CalButton({ children }: { children: React.ReactNode }) {
       data-cal-namespace="founder-call"
       data-cal-link="kelsenliu/founder-call"
       data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
-      className="underline underline-offset-4 decoration-rule hover:decoration-amber hover:text-amber transition-colors cursor-pointer"
+      className="underline underline-offset-4 decoration-[var(--z-rule)] hover:decoration-[var(--z-blue)] hover:text-[var(--z-blue)] transition-colors cursor-pointer"
       onClick={() => posthog.capture("founder_call_booked")}
     >
       {children}

@@ -29,6 +29,9 @@ jobs:
         # Enforces the curation gate: a notable/highlight entry that still has
         # its draft banner fails here rather than shipping raw release notes.
       - run: pnpm lint:changelog
+        # The vitest suite covers the pipeline modules the generators and CI
+        # gates depend on (changelog, docs-sync, llms.txt, x-articles).
+      - run: pnpm test
       - run: pnpm build
         env:
           # Authenticates the docs/changelog sync fetches against GitHub

@@ -1,75 +1,89 @@
 import { describe, it, expect } from "vitest";
-import { buildFooterColumns } from "./footer-nav";
+import { FOOTER_LINKS, LEGAL_LINKS, type FooterLink } from "./footer-nav";
+import { SOCIAL_LINKS } from "./social-links";
+import { NAV_ITEMS } from "../header/nav-config";
 
-describe("buildFooterColumns", () => {
-  it("returns the five text columns in grid order", () => {
-    expect(buildFooterColumns().map((c) => c.title)).toEqual([
-      "Product", "Developers", "Resources", "Company", "Integrations",
-    ]);
+const columnLinks = (): FooterLink[] => FOOTER_LINKS;
+const allLinks = (): FooterLink[] => [...columnLinks(), ...LEGAL_LINKS];
+
+/**
+ * Invariants, not shape. These deliberately do not pin column titles or label
+ * order — the footer gets re-cut regularly, and tests that encode the current
+ * design have to be rewritten every time without ever catching a real defect.
+ * What must hold is that no link is broken, dead, or listed twice.
+ */
+describe("footer links", () => {
+  it("has no duplicate destinations", () => {
+    const hrefs = allLinks().map((l) => l.href);
+    expect(hrefs).toHaveLength(new Set(hrefs).size);
   });
-  it("keeps Compare and Use Cases out as top-level columns", () => {
-    // Compare is now a link under Resources; Use Cases doesn't exist yet.
-    // Community is rendered separately from SOCIAL_LINKS, not from this model.
-    const titles = buildFooterColumns().map((c) => c.title);
-    expect(titles).not.toContain("Compare");
-    expect(titles).not.toContain("Use Cases");
-    expect(titles).not.toContain("Community");
+
+  it("marks every off-site link external, and no on-site link", () => {
+    for (const l of allLinks()) {
+      if (l.href.startsWith("http")) expect(l.external, l.href).toBe(true);
+      else expect(l.external, l.href).toBeUndefined();
+    }
   });
-  it("Integrations column links straight into the docs setup guides", () => {
-    const int = buildFooterColumns().find((c) => c.title === "Integrations")!;
-    expect(int.links.map((l) => l.href)).toEqual([
-      "/docs/integrations/claude-code",
-      "/docs/integrations/codex",
-      "/docs/integrations/opencode",
-      "/docs/integrations/pi",
-      "/docs/integrations/deepseek-harness",
-    ]);
+
+  it("routes internal links from the site root", () => {
+    for (const l of allLinks()) {
+      if (l.external) continue;
+      expect(l.href.startsWith("/"), l.href).toBe(true);
+      expect(l.href.endsWith("/"), `${l.href} has a trailing slash`).toBe(false);
+    }
   });
-  it("Integrations no longer points at the retired per-agent routes", () => {
-    // /claude-code, /codex, /opencode, /openclaw, /hermes-agent were stubs and
-    // are now 301s (next.config.ts). Nothing should link at them directly.
-    const int = buildFooterColumns().find((c) => c.title === "Integrations")!;
-    for (const l of int.links) expect(l.href.startsWith("/docs/")).toBe(true);
+
+  it("never links a retired per-harness marketing route", () => {
+    // /claude-code, /codex, /opencode, /openclaw, /hermes-agent were content-free
+    // stubs, retired 2026-08 and 301'd in next.config.ts. Harness links belong
+    // under /docs/integrations/.
+    const retired = ["/claude-code", "/codex", "/opencode", "/openclaw", "/hermes-agent"];
+    for (const l of allLinks()) expect(retired).not.toContain(l.href);
   });
-  it("Integrations names every documented harness, no More escape hatch", () => {
-    const int = buildFooterColumns().find((c) => c.title === "Integrations")!;
-    expect(int.links.map((l) => l.label)).toEqual([
-      "Claude Code", "Codex", "OpenCode", "Pi", "DeepSeek Harness",
-    ]);
-    expect(int.links.map((l) => l.label)).not.toContain("More");
+
+  it("keeps the compliance links reachable", () => {
+    expect(LEGAL_LINKS.map((l) => l.href)).toEqual(
+      expect.arrayContaining(["/privacy-policy", "/terms-of-service", "/subprocessors"]),
+    );
   });
-  it("Developers lists the docs entry points, no Integrations", () => {
-    const dev = buildFooterColumns().find((c) => c.title === "Developers")!;
-    expect(dev.links.map((l) => l.label)).toEqual([
-      "Docs", "API", "CLI", "MCP", "Agent Skills",
-    ]);
+
+  it("keeps compliance links out of the nav columns", () => {
+    // They live in the bottom bar; listing them twice was the old Status bug.
+    const legal = new Set(LEGAL_LINKS.map((l) => l.href));
+    for (const l of columnLinks()) expect(legal.has(l.href)).toBe(false);
   });
-  it("CLI, MCP, and Agent Skills point at the Usage section", () => {
-    const dev = buildFooterColumns().find((c) => c.title === "Developers")!;
-    const byLabel = Object.fromEntries(dev.links.map((l) => [l.label, l.href]));
-    expect(byLabel["CLI"]).toBe("/docs/usage/cli");
-    expect(byLabel["MCP"]).toBe("/docs/usage/mcp");
-    expect(byLabel["Agent Skills"]).toBe("/docs/usage/skills");
+
+  it("does not duplicate the status page, which the bottom bar owns", () => {
+    for (const l of columnLinks()) expect(l.href).not.toMatch(/status\.bitrouter\.ai/);
   });
-  it("Product lists Enterprise and Startup, not Providers", () => {
-    const product = buildFooterColumns().find((c) => c.title === "Product")!;
-    const labels = product.links.map((l) => l.label);
-    expect(labels).toContain("Enterprise");
-    expect(labels).toContain("Startup");
-    expect(labels).not.toContain("Providers");
+
+  it("keeps the footer to a single row of cells", () => {
+    // The grid is lg:grid-cols-6. More than six cells wraps to a second row and
+    // the design stops being the one-strip footer it was cut down to.
+    expect(FOOTER_LINKS.length).toBeLessThanOrEqual(6);
   });
-  it("Resources folds in Compare alongside its static links", () => {
-    const res = buildFooterColumns().find((c) => c.title === "Resources")!;
-    expect(res.links.map((l) => l.label)).toEqual([
-      "Blog", "Changelog", "Compare", "Status",
-    ]);
-    expect(res.links.find((l) => l.label === "Compare")!.href).toBe("/docs/overview/bitrouter-vs-openrouter");
+
+  it("carries at least one internal page the header does not", () => {
+    // Repeating a header link is harmless but earns nothing, so the footer has
+    // to justify itself with something only it links — today that is /blog,
+    // which would otherwise have no internal link anywhere on the site.
+    const header = new Set(NAV_ITEMS.map((i) => i.webPath));
+    const only = FOOTER_LINKS.filter((l) => !l.external && !header.has(l.href));
+    expect(only.length).toBeGreaterThan(0);
   });
-  it("Status lives in Resources, not Product", () => {
-    const cols = buildFooterColumns();
-    const product = cols.find((c) => c.title === "Product")!;
-    const res = cols.find((c) => c.title === "Resources")!;
-    expect(product.links.map((l) => l.label)).not.toContain("Status");
-    expect(res.links.map((l) => l.label)).toContain("Status");
+
+  it("takes its social hrefs from the one social-links source", () => {
+    const known = new Set(SOCIAL_LINKS.map((s) => s.href));
+    for (const l of FOOTER_LINKS) {
+      if (l.external) expect(known.has(l.href), l.href).toBe(true);
+    }
+  });
+
+  it("does not link a page that was retired", () => {
+    // /about and /startup were removed in 2026-09 and now 301 to the homepage.
+    const retired = ["/about", "/startup", "/open"];
+    for (const l of [...columnLinks(), ...LEGAL_LINKS]) {
+      expect(retired).not.toContain(l.href);
+    }
   });
 });

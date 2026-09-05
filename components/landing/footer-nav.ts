@@ -1,54 +1,31 @@
-export type FooterLink = { label: string; href: string; external?: boolean };
-export type FooterColumn = { title: string; links: FooterLink[] };
+import { socialHref } from "./social-links";
 
-const PRODUCT: FooterLink[] = [
-  { label: "Models", href: "/models" },
-  { label: "Pricing", href: "/pricing" },
-  { label: "Enterprise", href: "/enterprise" },
-  { label: "Startup", href: "/startup" },
-];
-const DEVELOPERS: FooterLink[] = [
+export type FooterLink = { label: string; href: string; external?: boolean };
+
+/**
+ * The footer, as one row of cells.
+ *
+ * It carried six titled columns and 29 links; everything that repeats in the
+ * header (Models, Pricing, Enterprise) came out, because a link already in the
+ * sitewide nav is recognised as a link from across the site rather than as a
+ * second, separately valuable one — so the footer copy earned nothing.
+ *
+ * What is left is what the header does NOT carry: the three reading surfaces
+ * and the three places to find us. Blog stays even while it has no posts —
+ * without it the page would have no internal links at all.
+ */
+export const FOOTER_LINKS: FooterLink[] = [
   { label: "Docs", href: "/docs" },
-  { label: "API", href: "/docs/reference" },
-  { label: "CLI", href: "/docs/usage/cli" },
-  { label: "MCP", href: "/docs/usage/mcp" },
-  { label: "Agent Skills", href: "/docs/usage/skills" },
-];
-const RESOURCES: FooterLink[] = [
-  { label: "Blog", href: "/blog" },
   { label: "Changelog", href: "/changelog" },
-  { label: "Compare", href: "/docs/overview/bitrouter-vs-openrouter" },
-  { label: "Status", href: "https://status.bitrouter.ai", external: true },
+  { label: "Blog", href: "/blog" },
+  { label: "GitHub", href: socialHref("github"), external: true },
+  { label: "Discord", href: socialHref("discord"), external: true },
+  { label: "X", href: socialHref("x"), external: true },
 ];
-const COMPANY: FooterLink[] = [
-  { label: "About", href: "/about" },
-  { label: "Open Startup", href: "/open" },
-  { label: "Subprocessors", href: "/subprocessors" },
+
+/** Compliance links for the bottom row — these are not navigation. */
+export const LEGAL_LINKS: FooterLink[] = [
   { label: "Privacy", href: "/privacy-policy" },
   { label: "Terms", href: "/terms-of-service" },
+  { label: "Subprocessors", href: "/subprocessors" },
 ];
-// Straight to the setup guide in docs — the per-harness marketing routes
-// (/claude-code, /codex, …) were content-free stubs and were retired (2026-08);
-// next.config.ts 301s them here. The column is now the full harness set: the
-// generic "More" escape hatch gave way to DeepSeek Harness when the Hermes and
-// OpenClaw pages were retired, so every harness we document is named here.
-const INTEGRATIONS: FooterLink[] = [
-  { label: "Claude Code", href: "/docs/integrations/claude-code" },
-  { label: "Codex", href: "/docs/integrations/codex" },
-  { label: "OpenCode", href: "/docs/integrations/opencode" },
-  { label: "Pi", href: "/docs/integrations/pi" },
-  { label: "DeepSeek Harness", href: "/docs/integrations/deepseek-harness" },
-];
-
-// Text columns only. The Community column (social links, which carry icons) is
-// rendered separately in the footer component from SOCIAL_LINKS. Together they
-// make the six sections of the 3×2 footer grid.
-export function buildFooterColumns(): FooterColumn[] {
-  return [
-    { title: "Product", links: PRODUCT },
-    { title: "Developers", links: DEVELOPERS },
-    { title: "Resources", links: RESOURCES },
-    { title: "Company", links: COMPANY },
-    { title: "Integrations", links: INTEGRATIONS },
-  ];
-}

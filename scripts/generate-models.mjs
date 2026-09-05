@@ -1,9 +1,8 @@
-// Regenerates the committed catalog snapshots:
+// Regenerates the committed catalog snapshot:
 //   .models-snapshot.json     — the live /v1/models catalog (routable supply)
-//   .providers-snapshot.json  — the registry's provider list
 //
 // This script owns all network access for the catalog pipeline;
-// `generate-supported-tables.mjs` renders the docs tables from these snapshots
+// `generate-supported-tables.mjs` renders the docs table from this snapshot
 // offline, so its `--check` drift gate is deterministic in CI.
 //
 // Usage: node scripts/generate-models.mjs
@@ -13,13 +12,6 @@ import { join } from "node:path";
 
 const BASE = process.env.BITROUTER_API_URL ?? "https://api.bitrouter.ai";
 const OUT = join(process.cwd(), ".models-snapshot.json");
-const PROVIDERS_OUT = join(process.cwd(), ".providers-snapshot.json");
-// The providers page documents the *registry* — every provider anyone can
-// register, including BYOK-only supply the platform holds no key for — so it is
-// sourced from the registry artifact rather than from routable /v1/providers.
-const REGISTRY_PROVIDERS_URL =
-  process.env.BITROUTER_REGISTRY_PROVIDERS_URL ??
-  "https://raw.githubusercontent.com/bitrouter/bitrouter/main/dist/registry/providers.json";
 // Open-weight licensing is editorial metadata owned by the registry. `/v1/models`
 // serves it, but older deployments predate that field, so the registry's own
 // published artifact is the backstop — it is the same source the API reads.
@@ -83,56 +75,9 @@ async function fetchRegistryOpenWeights() {
   }
 }
 
-/**
- * Provider rows for the docs providers table, projected from the registry so
- * the snapshot carries only what the table renders. Failure keeps the committed
- * snapshot — same contract as the model catalog.
- */
-async function writeProvidersSnapshot() {
-  let providers;
-  try {
-    const res = await fetch(REGISTRY_PROVIDERS_URL, { signal: AbortSignal.timeout(20000) });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const body = await res.json();
-    providers = (body.data ?? [])
-      .map((p) => ({
-        id: p.id,
-        name: p.metadata?.name ?? p.display_name ?? p.id,
-        headquarters: p.metadata?.headquarters ?? "",
-        billing: p.billing ?? "",
-        // Union of the protocols this provider's own model entries advertise.
-        protocols: [
-          ...new Set(
-            (p.models ?? []).flatMap((m) =>
-              Array.isArray(m.api_protocol) ? m.api_protocol : [m.api_protocol],
-            ),
-          ),
-        ]
-          .filter(Boolean)
-          .sort(),
-        models: (p.models ?? []).length,
-      }))
-      .sort((a, b) => a.id.localeCompare(b.id));
-  } catch (err) {
-    console.warn(
-      `[generate-models] providers fetch failed (${err.message}); keeping committed snapshot.`,
-    );
-    if (!existsSync(PROVIDERS_OUT)) {
-      writeFileSync(PROVIDERS_OUT, JSON.stringify({ count: 0, providers: [] }, null, 2) + "\n");
-    }
-    return;
-  }
-  writeFileSync(
-    PROVIDERS_OUT,
-    JSON.stringify({ count: providers.length, providers }, null, 2) + "\n",
-  );
-  console.log(`[generate-models] wrote ${providers.length} providers to .providers-snapshot.json`);
-}
-
 async function main() {
   let models;
   const registryOpenWeights = await fetchRegistryOpenWeights();
-  await writeProvidersSnapshot();
   try {
     const res = await fetch(`${BASE}/v1/models`, { signal: AbortSignal.timeout(20000) });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);

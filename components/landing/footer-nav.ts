@@ -10,14 +10,13 @@ export type FooterLink = { label: string; href: string; external?: boolean };
  * sitewide nav is recognised as a link from across the site rather than as a
  * second, separately valuable one — so the footer copy earned nothing.
  *
- * What is left is what the header does NOT carry: the three reading surfaces
- * and the three places to find us. Blog stays even while it has no posts —
- * without it the page would have no internal links at all.
+ * What is left is what the header does not carry directly: Docs' release
+ * companion and the three places to find us. Docs stays as a convenient footer
+ * entry even though it is also in the header; Blog now lives only in the header.
  */
 export const FOOTER_LINKS: FooterLink[] = [
   { label: "Docs", href: "/docs" },
   { label: "Changelog", href: "/changelog" },
-  { label: "Blog", href: "/blog" },
   { label: "GitHub", href: socialHref("github"), external: true },
   { label: "Discord", href: socialHref("discord"), external: true },
   { label: "X", href: socialHref("x"), external: true },

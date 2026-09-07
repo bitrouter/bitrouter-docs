@@ -279,15 +279,30 @@ pre:has(code) {
    meta row) is composed in `app/docs/[[...slug]]/page.tsx`.
 
    Everything below is scoped to `#nd-notebook-layout` / `#nd-page` so the
-   blog, changelog and legal surfaces (which also render `.prose`) are left
-   alone. ══════════════════════════════════════════════════════════════════ */
+   blog and legal surfaces (which also render `.prose`) are left alone.
+   Changelog now intentionally shares this notebook shell. ═════════════════ */
 
-/* Shell metrics — 282 / content / 232, capped at 1560. */
+/* Shell metrics — 282 / content / 232, capped at 1560.
+   Keep the columns at zero until their native Fumadocs breakpoints. The
+   sidebar and TOC elements are hidden below md/xl; reserving their desktop
+   widths there squeezes the article into a narrow strip on tablets. */
 #nd-notebook-layout {
-  --fd-sidebar-width: 282px;
-  --fd-toc-width: 232px;
+  --fd-sidebar-width: 0px;
+  --fd-toc-width: 0px;
   max-width: 1560px;
   margin-inline: auto;
+}
+
+@media (min-width: 768px) {
+  #nd-notebook-layout {
+    --fd-sidebar-width: 282px;
+  }
+}
+
+@media (min-width: 1280px) {
+  #nd-notebook-layout {
+    --fd-toc-width: 232px;
+  }
 }
 
 /* ── Sidebar ── */
@@ -682,4 +697,3 @@ body:has(#nd-subnav) #nd-page {
     display: flex !important;
   }
 }
-

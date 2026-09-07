@@ -65,8 +65,8 @@ describe("footer links", () => {
 
   it("carries at least one internal page the header does not", () => {
     // Repeating a header link is harmless but earns nothing, so the footer has
-    // to justify itself with something only it links — today that is /blog,
-    // which would otherwise have no internal link anywhere on the site.
+    // to justify itself with something only it links — today that is the
+    // changelog, which is nested under Docs in the header's information model.
     const header = new Set(NAV_ITEMS.map((i) => i.webPath));
     const only = FOOTER_LINKS.filter((l) => !l.external && !header.has(l.href));
     expect(only.length).toBeGreaterThan(0);

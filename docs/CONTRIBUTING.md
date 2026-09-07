@@ -6,8 +6,9 @@ is rendered from this repo — docs are committed directly here under
 
 ## What publishes
 
-The docs site has four **tabs**, and each is a folder marked `"root": true` in
-its `meta.json`. Tab order is the `pages` list in `content/docs/meta.json`:
+The docs-family navigation has five **tabs**. Four are content roots marked
+`"root": true` in their `meta.json`; their order is the `pages` list in
+`content/docs/meta.json`:
 
 - **Documentation** — `content/docs/(guide)/`. The parentheses make it a
   *folder group*: fumadocs strips it from the URL, so `(guide)/overview/quickstart.mdx`
@@ -22,6 +23,12 @@ its `meta.json`. Tab order is the `pages` list in `content/docs/meta.json`:
 - **API Reference** — `content/docs/reference/`, generated from the BitRouter
   Cloud OpenAPI spec.
 
+The fifth tab is **Changelog**. It is appended explicitly in
+`lib/docs-tabs.tsx`, keeps its canonical `/changelog` routes and separate
+`content/changelog/` source. Its native docs sidebar is built from the release
+metadata, newest first, so each item is labeled with its version tag. Do not
+move its release files into `content/docs/` just to make the tab automatic.
+
 Two rules follow from that, and breaking either one silently deletes a tab:
 
 1. A root folder needs a landing URL. Fumadocs takes it from `pagesIndex` in
@@ -29,7 +36,7 @@ Two rules follow from that, and breaking either one silently deletes a tab:
    whose children are all folders resolves to nothing and is dropped from the
    tab bar without an error.
 2. Only these four folders carry `"root": true`. Adding it to a section would
-   turn that section into a fifth tab.
+   create another generated tab in addition to the explicit Changelog tab.
 
 ### Integrations is a section, not a tab
 

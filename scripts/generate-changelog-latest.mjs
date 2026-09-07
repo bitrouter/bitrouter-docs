@@ -1,5 +1,6 @@
 // Emits the date of the newest changelog entry worth interrupting someone for,
-// which drives the nav's unseen dot (components/changelog/use-changelog-unseen.ts).
+// which drives the docs-section tab's unseen dot
+// (components/changelog/use-changelog-unseen.ts).
 //
 // Routine releases are excluded on purpose: the dot used to fire off the newest
 // entry of any kind, so an alpha bump pinged every visitor exactly as loudly as

@@ -3,8 +3,12 @@
 import * as React from "react";
 import posthog from "posthog-js";
 import { getCalApi } from "@calcom/embed-react";
-import { NAV_ITEMS, resolveHref, type HeaderConfig } from "./nav-config";
-import { useChangelogUnseen } from "@/components/changelog/use-changelog-unseen";
+import {
+  NAV_ITEMS,
+  isNavItemActive,
+  resolveHref,
+  type HeaderConfig,
+} from "./nav-config";
 
 /**
  * Auth-aware site header for the marketing/docs website.
@@ -116,12 +120,6 @@ function initials(session: HeaderSession): string {
   return (a + b).toUpperCase();
 }
 
-function isActive(pathname: string | undefined, localPath: string | undefined): boolean {
-  if (!pathname || !localPath) return false;
-  const p = pathname || "/";
-  return localPath === "/" ? p === "/" : p.startsWith(localPath);
-}
-
 // ── component ────────────────────────────────────────────
 
 /**
@@ -142,7 +140,6 @@ export function SiteHeaderBody({
 }: SiteHeaderProps): React.ReactElement {
   const isAuthed = Boolean(session);
   const items = NAV_ITEMS;
-  const changelogUnseen = useChangelogUnseen();
   useCalFounderCall();
   return (
     <div className="flex h-[62px] w-full items-center gap-6 px-[22px] sm:px-6 lg:px-6 xl:px-10">
@@ -187,11 +184,12 @@ export function SiteHeaderBody({
       <nav className="hidden flex-1 items-center justify-center gap-6 lg:flex xl:gap-11">
         {items.map((item) => {
           const href = resolveHref(item, config);
-          const active = isActive(pathname, item.webPath);
+          const active = isNavItemActive(pathname, item);
           return (
             <a
               key={item.key}
               href={href}
+              aria-current={active ? "page" : undefined}
               className={cn(
                 NAV_ITEM,
                 active
@@ -200,9 +198,6 @@ export function SiteHeaderBody({
               )}
             >
               {item.label}
-              {item.key === "changelog" && changelogUnseen && (
-                <span className="ml-1.5 inline-block size-1.5 rounded-full bg-[var(--z-blue)] align-middle" aria-label="New" />
-              )}
             </a>
           );
         })}
@@ -405,6 +400,7 @@ function AccountMenu({
 function MobileMenu({
   config,
   session,
+  pathname,
   onSignOut,
   showSignOut,
   utilitySlot,
@@ -419,7 +415,6 @@ function MobileMenu({
   const [open, setOpen] = React.useState(false);
   const isAuthed = Boolean(session);
   const items = NAV_ITEMS;
-  const changelogUnseen = useChangelogUnseen();
 
   return (
     <div className="flex items-center lg:hidden">
@@ -451,19 +446,23 @@ function MobileMenu({
       {open ? (
         <div className="absolute inset-x-0 top-[62px] z-50 border-b border-[var(--z-rule)] bg-[rgba(12,13,16,0.95)] px-[22px] pb-6 pt-2 backdrop-blur-lg">
           <nav className="flex flex-col gap-0.5">
-            {items.map((item) => (
-              <a
-                key={item.key}
-                href={resolveHref(item, config)}
-                onClick={() => setOpen(false)}
-                className="py-[11px] font-mono text-xs uppercase tracking-[0.16em] text-[var(--z-ink-3)] transition-colors hover:text-[var(--z-ink)]"
-              >
-                {item.label}
-                {item.key === "changelog" && changelogUnseen && (
-                  <span className="ml-1.5 inline-block size-1.5 rounded-full bg-[var(--z-blue)] align-middle" aria-label="New" />
-                )}
-              </a>
-            ))}
+            {items.map((item) => {
+              const active = isNavItemActive(pathname, item);
+              return (
+                <a
+                  key={item.key}
+                  href={resolveHref(item, config)}
+                  onClick={() => setOpen(false)}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "py-[11px] font-mono text-xs uppercase tracking-[0.16em] transition-colors hover:text-[var(--z-ink)]",
+                    active ? "text-[var(--z-ink)]" : "text-[var(--z-ink-3)]",
+                  )}
+                >
+                  {item.label}
+                </a>
+              );
+            })}
             {utilitySlot ? (
               <div className="mt-1 flex items-center border-t border-[var(--z-rule)] px-1 pt-2.5">
                 {utilitySlot}

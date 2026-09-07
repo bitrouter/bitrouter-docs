@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { PanelLeft } from "lucide-react";
@@ -29,6 +30,13 @@ export function DocsHeader() {
   const selectedIdx = tabs.findLastIndex((tab) =>
     isLayoutTabActive(tab, pathname),
   );
+
+  // The docs shell scrolls #nd-page instead of the window. Next.js resets the
+  // window on navigation, so without this a newly opened page can inherit the
+  // previous article's scroll offset and appear tucked under the header.
+  useEffect(() => {
+    document.getElementById("nd-page")?.scrollTo({ top: 0 });
+  }, [pathname]);
 
   return (
     <header
@@ -69,6 +77,7 @@ export function DocsHeader() {
               <Link
                 key={i}
                 href={tab.url}
+                aria-current={isSelected ? "page" : undefined}
                 className={cn(
                   // v3 marks the active tab with ink, not an accent underline —
                   // the strip reads as the same label row as the nav above it.

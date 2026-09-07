@@ -120,8 +120,8 @@ pairs.push(
   // reference wildcards (api-reference unwrapped into /docs/reference)
   ["/docs/api-reference/:slug*", "/docs/reference/:slug*"],
   ["/docs/reference/api-reference/:slug*", "/docs/reference/:slug*"],
-  // The changelog is a top-level route (app/changelog), not a docs section —
-  // /docs/reference/changelog has never existed.
+  // Changelog is a docs-family navigation tab but keeps its established
+  // top-level route (app/changelog); /docs/reference/changelog never existed.
   ["/docs/changelog/:slug*", "/changelog/:slug*"],
   ["/docs/changelog", "/changelog"],
   // moved/removed pages (2026-06 refactor) → live destinations

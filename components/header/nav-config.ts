@@ -20,22 +20,44 @@ export interface NavItem {
   label: string;
   /** Path on the web app. */
   webPath: string;
+  /** Additional route families that keep this item active. */
+  activePaths?: string[];
 }
 
 // Marketing/docs links — they always point at the website. Ordered as the
 // decision path a visitor walks: what it routes to, what it costs, the
-// outcome-based tier, what shipped, how to build on it.
-//
-// Blog is intentionally absent while it has no posts — it is a link to an empty
-// page, and it is already reachable from the footer's Resources column. Add it
-// back here the day the first post lands.
+// outcome-based tier, product writing, then how to build on it. Changelog
+// belongs to the docs-family section nav instead of competing with product
+// navigation here.
 export const NAV_ITEMS: NavItem[] = [
   { key: "models", label: "Models", webPath: "/models" },
   { key: "pricing", label: "Pricing", webPath: "/pricing" },
   { key: "enterprise", label: "Enterprise", webPath: "/enterprise" },
-  { key: "changelog", label: "Changelog", webPath: "/changelog" },
-  { key: "docs", label: "Docs", webPath: "/docs" },
+  { key: "blog", label: "Blog", webPath: "/blog" },
+  {
+    key: "docs",
+    label: "Docs",
+    webPath: "/docs",
+    activePaths: ["/docs", "/changelog"],
+  },
 ];
+
+function matchesPath(pathname: string, route: string): boolean {
+  return route === "/"
+    ? pathname === "/"
+    : pathname === route || pathname.startsWith(`${route}/`);
+}
+
+/** Whether a global-nav item owns the current route family. */
+export function isNavItemActive(
+  pathname: string | undefined,
+  item: NavItem,
+): boolean {
+  if (!pathname) return false;
+  return (item.activePaths ?? [item.webPath]).some((route) =>
+    matchesPath(pathname, route),
+  );
+}
 
 /** Resolve an item's absolute href on the website. */
 export function resolveHref(item: NavItem, config: HeaderConfig): string {

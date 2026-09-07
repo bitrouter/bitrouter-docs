@@ -1,8 +1,8 @@
 import "@/components/landing/zed/zed.css";
 import { changelogSource, getChangelogItems } from "@/lib/source";
 import { ChangelogFeed } from "@/components/changelog/changelog-feed";
-import { PageHead } from "@/components/landing/zed/primitives";
 import { getMDXComponents } from "@/mdx-components";
+import { DocsBody, DocsDescription, DocsPage, DocsTitle } from "fumadocs-ui/page";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
@@ -21,32 +21,30 @@ export default async function ChangelogIndexPage() {
   }
 
   return (
-    <div className="zed-bg">
-      <section style={{ position: "relative" }}>
-        <div className="zed-wrap" style={{ maxWidth: 1000 }}>
-          <PageHead
-            eyebrow="Changelog"
-            title="What's new."
-            sub="Every release, with the routing, tracing and policy changes that shipped in it."
-            maxWidth="52ch"
-            aside={
-              <a className="zed-btn zed-btn-ghost" href="/changelog/rss.xml">
-                RSS
-              </a>
-            }
-          />
-
-          {items.length === 0 ? (
-            <p style={{ padding: "64px 0", textAlign: "center", fontFamily: "var(--font-mono)", color: "var(--z-ink-5)" }}>
-              No entries yet. Check back soon.
-            </p>
-          ) : (
-            <ChangelogFeed items={items} bodies={bodies} />
-          )}
-          <div style={{ height: "var(--z-sec)" }} />
+    <DocsPage toc={[]} full breadcrumb={{ includePage: true }}>
+      <div className="flex items-start justify-between gap-6">
+        <div>
+          <DocsTitle className="zed-doc-title">Changelog</DocsTitle>
+          <DocsDescription className="zed-doc-desc">
+            Every release, with the routing, tracing and policy changes that shipped in it.
+          </DocsDescription>
         </div>
-      </section>
-    </div>
+        <a
+          className="mt-2 shrink-0 font-mono text-xs text-fd-muted-foreground hover:text-fd-foreground"
+          href="/changelog/rss.xml"
+        >
+          RSS
+        </a>
+      </div>
+
+      <DocsBody>
+        {items.length === 0 ? (
+          <p>No entries yet. Check back soon.</p>
+        ) : (
+          <ChangelogFeed items={items} bodies={bodies} />
+        )}
+      </DocsBody>
+    </DocsPage>
   );
 }
 

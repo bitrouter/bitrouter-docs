@@ -96,8 +96,8 @@ References:
 ## Integrations (Harness Setup Guides)
 
 - [Harnesses overview](${BASE_URL}/docs/integrations/harnesses): Harness vs. model source, and every runtime with a recipe
-- [Claude Code](${BASE_URL}/docs/integrations/claude-code): Route Claude Code via ANTHROPIC_BASE_URL
-- [Codex](${BASE_URL}/docs/integrations/codex): Route OpenAI Codex through BitRouter
+- [Claude Code](${BASE_URL}/docs/integrations/claude-code): Route a Claude Code run — model slots, effort, and loop-step routing on your Claude plan
+- [Codex](${BASE_URL}/docs/integrations/codex): Route a Codex run — bitrouter/auto, per-role models, and reasoning effort
 - [OpenCode](${BASE_URL}/docs/integrations/opencode): Provider block in opencode.json
 - [Pi](${BASE_URL}/docs/integrations/pi): Minimal terminal coding harness via models.json
 - [DeepSeek Harness](${BASE_URL}/docs/integrations/deepseek-harness): Custom provider route in dsh settings.yaml

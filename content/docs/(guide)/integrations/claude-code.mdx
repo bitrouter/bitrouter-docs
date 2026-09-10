@@ -1,14 +1,23 @@
 ---
 title: Claude Code
-description: Route Anthropic's Claude Code through BitRouter — every model in the registry, behind the Anthropic Messages API it already speaks.
+description: Route a Claude Code run through BitRouter — one environment variable hands every step of the loop to a routing policy, with /model still available as an override.
 ---
 
-Claude Code talks to an Anthropic Messages endpoint. Point it at BitRouter instead of `api.anthropic.com` and every request flows through the [registry](/docs/overview/supported-models#how-model-ids-work) — so the same agent can run on Anthropic, OpenAI, Google, or an open model, with provider selection and fallback underneath.
+Claude Code drives the loop; BitRouter decides what serves each step of it. Set the model to `bitrouter/auto` and every request in the run is projected onto **where it sits in the agent's trajectory and how much risk it carries**, then routed through a [policy](/docs/overview/quickstart#adaptive-routing) you can read and override.
+
+That's one environment variable. Nothing about how you drive Claude Code changes — [`/model`](https://code.claude.com/docs/en/model-config#setting-your-model), `/effort`, plan mode, [subagents](https://code.claude.com/docs/en/sub-agents), and resumed sessions all behave as they do now.
 
 ## Prerequisites
 
-- BitRouter running — local proxy at `http://127.0.0.1:4356`, or [BitRouter Cloud](/docs/overview/quickstart) at `https://api.bitrouter.ai`.
-- Claude Code installed:
+- A [BitRouter Cloud](/docs/overview/quickstart#use-bitrouter-cloud) account and API key. Cloud covers the hosted model network with no upstream provider keys, and ships a default policy — so `bitrouter/auto` resolves from the first request.
+
+  ```bash
+  bitrouter cloud login
+  ```
+
+  Running the proxy yourself instead is a [self-hosting](/docs/self-hosting) topic; every example below works against a local daemon by swapping the base URL.
+
+- [Claude Code](https://code.claude.com/docs/en/setup) installed:
 
   ```bash
   npm install -g @anthropic-ai/claude-code
@@ -18,41 +27,160 @@ Claude Code talks to an Anthropic Messages endpoint. Point it at BitRouter inste
 
 ## Point Claude Code at BitRouter
 
-Claude Code reads three environment variables. Set the base URL to BitRouter's **host root** — it appends `/v1/messages` itself.
+Claude Code reads its endpoint and model from [environment variables](https://code.claude.com/docs/en/env-vars). Both paths below set the same three; the difference is whether they persist.
+
+<Tabs items={['Fast path', 'Configure it yourself']}>
+<Tab value="Fast path">
+
+`bitrouter launch` starts Claude Code with its API base URL already pointed at BitRouter, and **touches no config files** — nothing to undo afterwards.
 
 ```bash
-export ANTHROPIC_BASE_URL=http://127.0.0.1:4356
-export ANTHROPIC_AUTH_TOKEN=local-placeholder        # sent as a bearer token
-export ANTHROPIC_MODEL=anthropic/claude-sonnet-4-6
-claude
+export ANTHROPIC_MODEL=bitrouter/auto
+bitrouter launch -a claude --base-url https://api.bitrouter.ai
 ```
 
-<Callout type="info">
-**No key for the local proxy.** The local proxy accepts loopback requests without auth, so `ANTHROPIC_AUTH_TOKEN` can be any placeholder. For **Cloud**, set `ANTHROPIC_BASE_URL=https://api.bitrouter.ai` and use your BitRouter key (from `bitrouter cloud login` or the dashboard) as the token.
-</Callout>
+Preflight before a long run:
 
-Prefer a file? Put the same values in `.claude/settings.json` so they apply per-project without exporting:
+```bash
+bitrouter launch -a claude --base-url https://api.bitrouter.ai --check
+```
+
+</Tab>
+<Tab value="Configure it yourself">
+
+For a setup that survives restarts, put the values in the `env` block of your **user** [settings file](https://code.claude.com/docs/en/settings) at `~/.claude/settings.json`:
 
 ```json
 {
   "env": {
-    "ANTHROPIC_BASE_URL": "http://127.0.0.1:4356",
-    "ANTHROPIC_AUTH_TOKEN": "local-placeholder",
-    "ANTHROPIC_MODEL": "anthropic/claude-sonnet-4-6"
+    "ANTHROPIC_BASE_URL": "https://api.bitrouter.ai",
+    "ANTHROPIC_AUTH_TOKEN": "brk_...",
+    "ANTHROPIC_MODEL": "bitrouter/auto"
   }
 }
 ```
 
-## Pick a model
+```bash
+claude
+```
 
-`ANTHROPIC_MODEL` takes any registry id in `provider/model` form — `anthropic/claude-sonnet-4-6`, `openai/gpt-4o`, `google/gemini-2.5-pro`. Add a `:cost` or `:latency` suffix to bias provider selection for the session. Switch mid-session with `/model <id>`, or at launch with `claude --model <id>`. See [Models](/docs/overview/supported-models#how-model-ids-work) for the full id scheme.
+<Callout type="warn">
+**Set `ANTHROPIC_MODEL` in the `env` block, not the `model` key.** Claude Code saves your `/model` choice into `model` in this same file, so writing that key yourself means you and Claude Code overwrite each other on every launch. `ANTHROPIC_MODEL` re-asserts itself at each launch instead, which is what you want for a default.
+
+Use **user** settings. A project-level `.claude/settings.json` [outranks it](https://code.claude.com/docs/en/settings#settings-precedence) — keep that scope free as your own per-repo override.
+</Callout>
+
+</Tab>
+</Tabs>
+
+`ANTHROPIC_BASE_URL` is the host root; Claude Code appends `/v1/messages` itself. The token is your BitRouter key, sent as a bearer token.
+
+## What the router does with a run
+
+`bitrouter/auto` is not a model — it's a request to route. Each call is fingerprinted by its position in the agent loop and its risk, then resolved against the policy: ordinary edit and test work to economy, read-only review and long-context execution to balanced, anything guarded or unrecognized to strong.
+
+Three properties matter for a long coding run:
+
+- **It's cache-aware.** Switching models mid-session costs a prompt-cache miss on the whole prefix, so the router accounts for that when deciding whether a switch is worth making.
+- **It's cross-protocol.** A route to a non-Anthropic model is translated from the Messages API on the way out, so Claude Code doesn't know or care which vendor answered.
+- **Tool-carrying requests are clamped up.** A downgrade that mangles a tool call breaks the loop rather than degrading an answer, so those never land on the cheap tier.
+
+The policy starts conservative and widens only when a cheaper route repeatedly succeeds. To see the table, edit it, or bind your own, see [Adaptive routing](/docs/overview/quickstart#adaptive-routing).
+
+## Override for one session
+
+Explicit model ids stay passthrough, so the escape hatch is the one you already use:
+
+```
+/model opus
+```
+
+That pins the session to real Opus and the policy stops choosing for you. Because the override lands in `ANTHROPIC_MODEL`'s territory, Claude Code [returns to `bitrouter/auto` on the next launch](https://code.claude.com/docs/en/model-config#setting-your-model) — an override can't accidentally become permanent.
+
+You can also point a single alias at a [virtual model](/docs/models-and-routing/virtual-model) if you want one picker row to mean something specific:
+
+```json
+{
+  "env": {
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "@deep"
+  }
+}
+```
+
+## Configure effort
+
+Claude Code exposes an [effort level](https://code.claude.com/docs/en/model-config#adjust-effort-level) — `low`, `medium`, `high`, `xhigh`, `max`, defaulting to `high` — controlling how many tokens the model spends across the whole response, tool calls included. It's a separate axis from routing, and it stays yours.
+
+```bash
+bitrouter launch -a claude -- --effort medium
+```
+
+Everything after `--` is forwarded verbatim. To persist it, set `CLAUDE_CODE_EFFORT_LEVEL` alongside `ANTHROPIC_MODEL`. Raise it mid-run with `/effort`.
+
+<Callout type="warn">
+**Pick an effort level per run, not per turn.** Effort isn't a sampling parameter — per Anthropic it [*"shapes the rendered prompt,"*](https://platform.claude.com/docs/en/build-with-claude/effort) so changing it mid-conversation doesn't preserve the cached prefix. On a long session that re-bills your whole context at full input price to save a fraction of one turn's output. BitRouter does not vary effort per request, for that reason.
+</Callout>
+
+## Use your Claude plan
+
+Already paying for Claude Pro or Max? Attach the plan and `bitrouter/auto` routes to it rather than around it — the subscription becomes one of the sources the policy can choose, and your plan's usage covers those tokens.
+
+```bash
+bitrouter providers login claude-code
+```
+
+This adopts your existing Claude Code session (or drives its login flow) and stores a refreshing credential. Only traffic carrying Claude Code's own agent-profile marker reaches the subscription; anything else falls through to your other configured sources — so a run can spend the plan first and continue elsewhere when a limit is reached. Multi-account labels, credential storage, and removal are on [Claude subscription](/docs/guides/claude-subscription).
+
+<Callout type="warn">
+**A fallback off the plan is a real charge.** Inside your subscription, routing is already paid for. When the policy leaves it — because a limit ran out, or because a better route lives elsewhere — those requests bill per request. Check [what actually served a run](#verify) before assuming it stayed on plan.
+</Callout>
+
+## What the router will and won't move
+
+- **Claude Code already ships [`opusplan`](https://code.claude.com/docs/en/model-config#opusplan-model-setting)** — Opus while planning, Sonnet while executing. If that's all you wanted, you don't need a router.
+- **Effort is not routed per request.** See above.
+- **`/model`, `--model`, and a resumed session still win.** BitRouter routes what it's asked for; it doesn't override [Claude Code's precedence rules](https://code.claude.com/docs/en/model-config#setting-your-model). A resumed session keeps the model its transcript was saved with.
+- **The picker shows no prices behind a gateway.** Rows still read "Opus" and "Sonnet" whatever the policy chooses; the [requests view](#verify) is the source of truth.
 
 ## Verify
 
-Launch `claude`, ask it anything, and confirm the response. To see which provider actually answered, read BitRouter's `request finished` log line (`~/.bitrouter/bitrouter.log` for a local install) — it records the `provider` and `model` that served the request.
+Ask the session anything, then check which upstream actually answered. On Cloud, read it in the console or through the management API:
+
+```bash
+curl https://api.bitrouter.ai/v1/namespaces/{nsid}/requests \
+  -H "Authorization: Bearer $BRK_KEY"
+```
+
+Each row carries the provider and model that served the request, plus its `routing_profile`. Self-hosted, the same information is in the `request finished` log line (`~/.bitrouter/bitrouter.log`).
+
+The response body's `model` field echoes what was *asked for* — with `bitrouter/auto` that tells you nothing about what ran, so use the rows.
+
+For full traces rather than rows, see [Tracing](/docs/evals-and-observability/tracing).
+
+## Undo
+
+`bitrouter launch` writes nothing — stop using it.
+
+If you configured it yourself, remove the keys you added from the `env` block in `~/.claude/settings.json` and Claude Code talks to Anthropic directly again. To also detach a subscription:
+
+```bash
+bitrouter providers logout claude-code
+```
 
 ## Learn more
 
-- [Claude Code — LLM gateway config](https://code.claude.com/docs/en/llm-gateway)
-- [Model fallback](/docs/models-and-routing/model-fallback) — pass an ordered model list and walk it on failure.
-- [OpenTelemetry](/docs/evals-and-observability/opentelemetry) — trace every Claude Code request.
+**BitRouter**
+
+- [Adaptive routing](/docs/overview/quickstart#adaptive-routing) — the policy table, loop-step fingerprints, and the evidence loop behind `bitrouter/auto`.
+- [Virtual models](/docs/models-and-routing/virtual-model) — name a route and invoke it with `@name`.
+- [Model fallback](/docs/models-and-routing/model-fallback) — ordered chains and what triggers a hop.
+- [Claude subscription](/docs/guides/claude-subscription) — your plan as a model source.
+- [`bitrouter launch`](/docs/usage/cli#bitrouter-launch) — every flag, including `--check` and `--base-url`.
+
+**Claude Code**
+
+- [Model configuration](https://code.claude.com/docs/en/model-config) — aliases, precedence, effort levels, and fallback chains.
+- [LLM gateways](https://code.claude.com/docs/en/llm-gateway) — how Claude Code behaves against a non-Anthropic base URL.
+- [Settings](https://code.claude.com/docs/en/settings) — the `env` block and settings precedence.
+- [Environment variables](https://code.claude.com/docs/en/env-vars) — every variable Claude Code reads.
+- [Subagents](https://code.claude.com/docs/en/sub-agents) — per-subagent model selection.

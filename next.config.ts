@@ -269,6 +269,7 @@ const docsRedirects = pairs.map(([source, destination]) => ({
 
 const nextConfig: NextConfig = {
   skipTrailingSlashRedirect: true,
+  transpilePackages: ["@wterm/core", "@wterm/dom", "@wterm/react"],
   async rewrites() {
     return [
       {

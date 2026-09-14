@@ -35,6 +35,12 @@ importers:
       '@types/mdx':
         specifier: ^2.0.13
         version: 2.0.14
+      '@wterm/dom':
+        specifier: 0.5.0
+        version: 0.5.0
+      '@wterm/react':
+        specifier: 0.5.0
+        version: 0.5.0(@wterm/dom@0.5.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       ai:
         specifier: ^6.0.116
         version: 6.0.208(zod@4.4.3)
@@ -3102,6 +3108,19 @@ packages:
 
   '@vitest/utils@4.1.9':
     resolution: {integrity: sha512-A51o8ymO5PpqlWNnBP9ZHPXDIpuMtTLlGSjN7la4US+LJzoUMyhwjA5QXlm39JexgwHKW4Xjs8Z2d3dLCXOeuA==}
+
+  '@wterm/core@0.5.0':
+    resolution: {integrity: sha512-2bodU1AK0GmDghJ/GpkQ1v2YHC6j8CI4utXFI6NBPDJ3sU5lvzRYBAEm9fUVOCN2Gjs6fug/+6XRDtWre9lYMA==}
+
+  '@wterm/dom@0.5.0':
+    resolution: {integrity: sha512-vMIaca+p6uytiIL86Dxu7lFsx2eiOmg4JnL/rCnwdapAoPuVEVV24SyecdaoQXSaQg8HoAx4misKT73goYRWHQ==}
+
+  '@wterm/react@0.5.0':
+    resolution: {integrity: sha512-N4fMCNC+d3foaALPDGGdWWkEM451ZK0LmO8HF8R0xsmybKdnRy9sr9M3kYh+dnREPgxlh8/8Ye4KKTDYC4qNCQ==}
+    peerDependencies:
+      '@wterm/dom': 0.5.0
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
 
   accepts@2.0.0:
     resolution: {integrity: sha512-5cvg6CtKwfgdmVqY1WIiXKc3Q1bkRqGLi+2W/6ao+6Y7gu/RCwRuAhGEzh5B4KlszSuTLgZYuqFqo5bImjNKng==}
@@ -8707,6 +8726,18 @@ snapshots:
       '@vitest/pretty-format': 4.1.9
       convert-source-map: 2.0.0
       tinyrainbow: 3.1.0
+
+  '@wterm/core@0.5.0': {}
+
+  '@wterm/dom@0.5.0':
+    dependencies:
+      '@wterm/core': 0.5.0
+
+  '@wterm/react@0.5.0(@wterm/dom@0.5.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+    dependencies:
+      '@wterm/dom': 0.5.0
+      react: 19.2.3
+      react-dom: 19.2.3(react@19.2.3)
 
   accepts@2.0.0:
     dependencies:

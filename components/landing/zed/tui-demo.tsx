@@ -1,15 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from "react";
+import { Terminal as WTerm, useTerminal as useWTerm } from "@wterm/react";
+import "@wterm/react/css";
 import {
   HARNESSES,
   MASCOT,
   SHELL_PROMPT,
   TERM,
-  TIER_COLOR,
   type Harness,
   type Seg,
-  type Tier,
 } from "./data";
 
 /* ============================================================================
@@ -104,23 +104,318 @@ function useFitToWidth(deps: unknown[]) {
   return { outer, inner, fit };
 }
 
-function segStyle(s: Seg): React.CSSProperties {
-  return { color: s.c, fontWeight: s.b ? 600 : 400, fontStyle: s.i ? "italic" : "normal" };
+const DESKTOP_COLS = 112;
+const NARROW_COLS = 44;
+const TERM_ROWS = 30;
+// wterm currently maps RGB channels onto its compact colour cube. These values
+// intentionally resolve to a deep navy instead of the greener nearest step.
+const STATUS_BG = "#10102e";
+
+type AnsiPart = {
+  text: string;
+  color?: string;
+  background?: string;
+  bold?: boolean;
+  italic?: boolean;
+};
+type AnsiLine = AnsiPart[];
+
+function rgbSequence(kind: 38 | 48, color: string): string {
+  const hex = color.replace("#", "");
+  const value = Number.parseInt(hex, 16);
+  return `\x1b[${kind};2;${(value >> 16) & 255};${(value >> 8) & 255};${value & 255}m`;
 }
 
-function Line({ segs }: { segs: Seg[] }) {
+function visibleLength(text: string): number {
+  return Array.from(text).length;
+}
+
+function takeColumns(text: string, columns: number): string {
+  return Array.from(text).slice(0, Math.max(0, columns)).join("");
+}
+
+function lineLength(line: AnsiLine): number {
+  return line.reduce((length, part) => length + visibleLength(part.text), 0);
+}
+
+function renderPart(part: AnsiPart): string {
+  let open = "";
+  if (part.bold) open += "\x1b[1m";
+  if (part.italic) open += "\x1b[3m";
+  if (part.color) open += rgbSequence(38, part.color);
+  if (part.background) open += rgbSequence(48, part.background);
+  return `${open}${part.text}\x1b[0m`;
+}
+
+function renderLine(line: AnsiLine, columns: number): string {
+  let remaining = columns;
+  let output = "";
+  for (const part of line) {
+    if (remaining <= 0) break;
+    const text = takeColumns(part.text, remaining);
+    output += renderPart({ ...part, text });
+    remaining -= visibleLength(text);
+  }
+  return output;
+}
+
+function fromSegments(segments: Seg[]): AnsiLine {
+  return segments.map((segment) => ({
+    text: segment.t,
+    color: segment.c,
+    bold: segment.b,
+    italic: segment.i,
+  }));
+}
+
+function withRight(left: AnsiLine, right: AnsiLine, columns: number): AnsiLine {
+  const gap = Math.max(1, columns - lineLength(left) - lineLength(right));
+  return [...left, { text: " ".repeat(gap) }, ...right];
+}
+
+function transcriptLine(harness: Harness, row: Harness["rows"][number], columns: number): AnsiLine {
+  const bulletColor = row.user
+    ? harness.accent
+    : row.think
+      ? TERM.amber
+      : row.ok
+        ? TERM.ok
+        : TERM.faint;
+  const left: AnsiLine = [{ text: `${row.bullet} `, color: bulletColor }];
+  if (harness.labelW > 0 && !row.user) {
+    left.push({ text: `${(row.label ?? "").padEnd(9)} `, color: TERM.dim });
+  }
+  left.push({
+    text: row.text,
+    color: row.user ? TERM.bright : TERM.body,
+    italic: row.think,
+  });
+  const right: AnsiLine = row.meta
+    ? [{ text: row.meta, color: row.ok ? TERM.ok : TERM.faint }]
+    : [];
+  return right.length ? withRight(left, right, columns - 1) : left;
+}
+
+function harnessHeader(harness: Harness, columns: number): AnsiLine[] {
+  if (harness.mascot) {
+    return Array.from({ length: Math.ceil(MASCOT.length / 2) }, (_, index) => {
+      const upper = MASCOT[index * 2] ?? "0000000";
+      const lower = MASCOT[index * 2 + 1] ?? "0000000";
+      return [
+        ...Array.from(upper, (pixel, column) => ({
+          text: pixel === "1" ? (lower[column] === "1" ? "█" : "▀") : lower[column] === "1" ? "▄" : " ",
+          color: harness.accent,
+        })),
+        { text: "  " },
+        ...fromSegments(harness.header[index] ?? []),
+      ];
+    });
+  }
+
+  if (harness.boxedHeader) {
+    const width = Math.min(76, columns - 1);
+    const border = TERM.faint;
+    return [
+      [{ text: `┌${"─".repeat(width - 2)}┐`, color: border }],
+      ...harness.header.map((segments) => {
+        const content = fromSegments(segments);
+        const padding = Math.max(0, width - 2 - lineLength(content));
+        return [
+          { text: "│", color: border },
+          ...content,
+          { text: " ".repeat(padding) },
+          { text: "│", color: border },
+        ];
+      }),
+      [{ text: `└${"─".repeat(width - 2)}┘`, color: border }],
+    ];
+  }
+
+  return harness.header.map(fromSegments);
+}
+
+function inputLines(harness: Harness, last: Harness["rows"][number] | null, columns: number): AnsiLine[] {
+  const lines: AnsiLine[] = [];
+  if (harness.input.rule) lines.push([{ text: "─".repeat(columns - 1), color: TERM.ghost }]);
+
+  const input: AnsiLine = [];
+  if (harness.input.glyph) input.push({ text: `${harness.input.glyph} `, color: TERM.dim });
+  input.push({ text: " ", background: TERM.dim });
+  input.push({ text: ` ${harness.input.hint}`, color: TERM.faint });
+  if (harness.input.boxed) {
+    const background = harness.input.boxBg ?? harness.bg;
+    for (const part of input) part.background = part.background ?? background;
+    input.push({
+      text: " ".repeat(Math.max(0, columns - 1 - lineLength(input))),
+      background,
+    });
+  }
+  lines.push(input);
+
+  if (harness.input.ruleBelow) lines.push([{ text: "─".repeat(columns - 1), color: TERM.ghost }]);
+
+  const after = harness.after.map((line) => [...line]);
+  const afterRight = (harness.afterRight ?? []).map((line) => [...line]);
+  if (harness.afterLive) {
+    const live = last
+      ? [last.model, last.effort === "—" ? "" : last.effort].join(" ").trim()
+      : "bitrouter/auto";
+    after.push([{ t: `  ${live} · ${harness.cwd}`, c: TERM.dim }]);
+    afterRight.push([]);
+  }
+  if (harness.afterLiveRight) {
+    afterRight[1] = [{ t: last ? last.model : "unknown", c: TERM.dim }];
+  }
+  after.forEach((line, index) => {
+    const left = fromSegments(line);
+    const right = fromSegments(afterRight[index] ?? []);
+    lines.push(right.length ? withRight(left, right, columns - 1) : left);
+  });
+  return lines;
+}
+
+function fillStatus(line: AnsiLine, columns: number): AnsiLine {
+  for (const item of line) item.background = STATUS_BG;
+  line.push({
+    text: " ".repeat(Math.max(0, columns - 1 - lineLength(line))),
+    background: STATUS_BG,
+  });
+  return line;
+}
+
+function statusLines(harness: Harness, rows: Harness["rows"], switches: number, columns: number): AnsiLine[] {
+  const last = rows.at(-1) ?? null;
+  const background = STATUS_BG;
+  const part = (text: string, color: string): AnsiPart => ({ text, color, background });
+  const tiers: AnsiLine = [];
+  harness.ladder.forEach((rung, index) => {
+    const active = rung.name === last?.tier;
+    const color = active
+      ? {
+          low: "#a1c181",
+          medium: "#6b9bff",
+          high: "#bf956a",
+          extra: "#e0a955",
+          max: "#b79bd0",
+        }[rung.name]
+      : "#565d6b";
+    tiers.push(part(`${index ? " " : ""}${rung.name}`, color));
+  });
+
+  const rightText = switches ? `switched ${switches}× this session` : last ? "no switch yet" : "";
+  if (columns < 70) {
+    const identity = [part("bitrouter/auto", "#6b9bff")];
+    const right = rightText ? [part(rightText, "#565d6b")] : [];
+    const model = [
+      part(last ? last.model : "waiting for the session", "#c8ccd4"),
+      part(" · ", "#565d6b"),
+      part(last ? last.effort : "—", "#6b7180"),
+    ];
+    return [
+      fillStatus(right.length ? withRight(identity, right, columns - 1) : identity, columns),
+      fillStatus(tiers, columns),
+      fillStatus(model, columns),
+    ];
+  }
+
+  const left: AnsiLine = [
+    part("bitrouter/auto", "#6b9bff"),
+    part(" │ ", "#1c2b45"),
+    ...tiers,
+  ];
+  left.push(
+    part(" │ ", "#1c2b45"),
+    part(last ? last.model : "waiting for the session", "#c8ccd4"),
+    part(" · ", "#565d6b"),
+    part(last ? last.effort : "—", "#6b7180"),
+  );
+  const right = rightText ? [part(rightText, "#565d6b")] : [];
+  return [fillStatus(right.length ? withRight(left, right, columns - 1) : left, columns)];
+}
+
+function renderTerminalFrame(harness: Harness, frame: Frame, columns: number): string {
+  const inTui = frame.phase === "tui";
+  const rows = harness.rows.slice(0, frame.reveal);
+  const last = rows.at(-1) ?? null;
+  const lines: AnsiLine[] = [];
+
+  harness.boot.slice(0, frame.committed).forEach((command) => {
+    lines.push([
+      { text: SHELL_PROMPT, color: TERM.bright, bold: true },
+      { text: ` ${command}`, color: TERM.bright },
+    ]);
+  });
+
+  if (!inTui) {
+    lines.push([
+      { text: SHELL_PROMPT, color: TERM.bright, bold: true },
+      { text: ` ${(harness.boot[frame.bootIdx] ?? "").slice(0, frame.typedLen)}`, color: TERM.bright },
+      { text: " ", background: TERM.bright },
+    ]);
+  } else {
+    lines.push([], ...harnessHeader(harness, columns));
+    harness.notes.forEach((line) => lines.push(fromSegments(line)));
+    lines.push([]);
+    rows.forEach((row) => {
+      lines.push(transcriptLine(harness, row, columns));
+      if (row.sub) lines.push([{ text: `    ${row.sub.trimStart()}`, color: TERM.faint }]);
+    });
+    if (frame.reveal > 0 && frame.reveal < harness.rows.length) {
+      lines.push([
+        { text: `${SPIN[Math.max(0, spinAt(harness, frame))]} `, color: harness.accent },
+        { text: harness.working, color: TERM.faint, italic: true },
+      ]);
+    }
+  }
+
+  let switches = 0;
+  for (let index = 1; index < rows.length; index++) {
+    if (rows[index].tier !== rows[index - 1].tier) switches++;
+  }
+
+  const status = statusLines(harness, rows, switches, columns);
+  const bottom = inTui ? inputLines(harness, last, columns) : [];
+  const available = Math.max(0, TERM_ROWS - status.length - bottom.length);
+  const content = lines.slice(0, available);
+  while (content.length < available) content.push([]);
+  content.push(...bottom.slice(0, TERM_ROWS - status.length - content.length));
+
+  const statusStart = content.length;
+  const screen = [...content, ...status];
+  const output = screen
+    .map((line, index) =>
+      `\x1b[${index + 1};1H${renderLine(line, columns)}${
+        index >= statusStart ? `${rgbSequence(48, STATUS_BG)}\x1b[K\x1b[0m` : "\x1b[K"
+      }`,
+    )
+    .join("");
+  return `\x1b[?2026h\x1b[0m\x1b[2J\x1b[H\x1b[?25l${output}\x1b[?2026l`;
+}
+
+function WTermFrame({ harness, frame, narrow }: { harness: Harness; frame: Frame; narrow: boolean }) {
+  const { ref, write } = useWTerm();
+  const [ready, setReady] = useState(false);
+  const columns = narrow ? NARROW_COLS : DESKTOP_COLS;
+  const output = useMemo(() => renderTerminalFrame(harness, frame, columns), [columns, harness, frame]);
+
+  useEffect(() => {
+    if (ready) write(output);
+  }, [output, ready, write]);
+
   return (
-    <div className="zed-tui-line" style={{ whiteSpace: "pre" }}>
-      {segs.length === 0 ? (
-        " "
-      ) : (
-        segs.map((s, i) => (
-          <span key={i} style={segStyle(s)}>
-            {s.t}
-          </span>
-        ))
-      )}
-    </div>
+    <WTerm
+      ref={ref}
+      cols={columns}
+      rows={TERM_ROWS}
+      onReady={() => setReady(true)}
+      onData={() => {}}
+      onError={(error) => console.error("Unable to initialize the landing terminal", error)}
+      aria-label={`${harness.tab} session routed through BitRouter`}
+      aria-readonly="true"
+      tabIndex={-1}
+      className="zed-wterm"
+      style={{ "--term-bg": harness.bg } as React.CSSProperties}
+    />
   );
 }
 
@@ -177,7 +472,7 @@ function spinAt(cur: Harness, f: Frame): number {
   return streaming ? Math.floor(Date.now() / SPIN_MS) % SPIN.length : -1;
 }
 
-function useTerminal() {
+function useDemoClock() {
   const [h, setH] = useState(0);
   const [, bump] = useReducer((x: number) => x + 1, 0);
   const reduced = useMediaQuery("(prefers-reduced-motion: reduce)");
@@ -254,35 +549,9 @@ function useTerminal() {
 /* ── the section ─────────────────────────────────────────────────────────── */
 
 export function TuiDemo() {
-  const { h, cur, frame, narrow, select } = useTerminal();
-
-  const inTui = frame.phase === "tui";
-  const rows = cur.rows.slice(0, frame.reveal);
-  const last = rows.length ? rows[rows.length - 1] : null;
-  const streaming = inTui && frame.reveal > 0 && frame.reveal < cur.rows.length;
-
-  let switches = 0;
-  for (let i = 1; i < rows.length; i++) if (rows[i].tier !== rows[i - 1].tier) switches++;
-
-  const activeTier: Tier | null = last ? last.tier : null;
-  const spin = SPIN[Math.max(0, spinAt(cur, frame))];
+  const { h, cur, frame, narrow, select } = useDemoClock();
   // Re-measure when the harness changes: `dsh` and `claude` are different widths.
   const { outer, inner, fit } = useFitToWidth([h, narrow]);
-
-  // codex prints the serving model under its input; pi prints it bottom-right,
-  // where it otherwise prints `unknown`.
-  const after: Seg[][] = cur.after.map((l) => [...l]);
-  const afterRight: Seg[][] = (cur.afterRight ?? []).map((l) => [...l]);
-  if (cur.afterLive) {
-    // `—` is the statusline's placeholder for "this harness has no effort knob";
-    // inline in the harness's own output it would just read as a stray dash.
-    const live = last ? [last.model, last.effort === "—" ? "" : last.effort].join(" ").trim() : "bitrouter/auto";
-    after.push([{ t: `  ${live} · ${cur.cwd}`, c: TERM.dim }]);
-    afterRight.push([]);
-  }
-  if (cur.afterLiveRight) {
-    afterRight[1] = [{ t: last ? last.model : "unknown", c: TERM.dim }];
-  }
 
   return (
     <section>
@@ -397,261 +666,7 @@ export function TuiDemo() {
                 })}
               </div>
 
-              {/* ── terminal body ─────────────────────────────────────── */}
-              <div
-                className="zed-tui-body"
-                style={{
-                  background: cur.bg,
-                  display: "flex",
-                  flexDirection: "column",
-                  padding: "12px 16px 10px",
-                  fontFamily: "var(--font-mono)",
-                  fontSize: 12.5,
-                  lineHeight: 1.62,
-                  overflow: "hidden",
-                }}
-              >
-                {/* Clips rather than colliding with the input widget below if a
-                    harness ever outgrows the body. */}
-                <div style={{ flex: 1, minHeight: 0, overflow: "hidden" }}>
-                  {/* shell prologue */}
-                  {cur.boot.slice(0, frame.committed).map((t, i) => (
-                    <div key={i} className="zed-tui-line" style={{ whiteSpace: "pre" }}>
-                      <span style={{ color: TERM.bright, fontWeight: 600 }}>{SHELL_PROMPT}</span>
-                      <span style={{ color: TERM.bright }}> {t}</span>
-                    </div>
-                  ))}
-                  {!inTui && (
-                    <div className="zed-tui-line" style={{ whiteSpace: "pre" }}>
-                      <span style={{ color: TERM.bright, fontWeight: 600 }}>{SHELL_PROMPT}</span>
-                      <span style={{ color: TERM.bright }}>
-                        {" "}
-                        {(cur.boot[frame.bootIdx] ?? "").slice(0, frame.typedLen)}
-                      </span>
-                      <span className="zed-tui-caret" style={{ background: "#d4d4d4" }} />
-                    </div>
-                  )}
-
-                  {inTui && (
-                    <div>
-                      {/* harness header */}
-                      <div
-                        style={
-                          cur.boxedHeader
-                            ? {
-                                display: "flex",
-                                alignItems: "flex-start",
-                                marginTop: 10,
-                                padding: "10px 14px",
-                                border: "1px solid #5a5a5a",
-                                borderRadius: 6,
-                                alignSelf: "flex-start",
-                              }
-                            : { display: "flex", alignItems: "flex-start", marginTop: 10 }
-                        }
-                      >
-                        {cur.mascot && (
-                          <div
-                            aria-hidden
-                            style={{
-                              display: "grid",
-                              gridTemplateColumns: "repeat(7, 6px)",
-                              gridAutoRows: 6,
-                              gap: 1,
-                              flex: "0 0 auto",
-                              marginRight: 14,
-                              marginTop: 2,
-                            }}
-                          >
-                            {MASCOT.join("")
-                              .split("")
-                              .map((c, i) => (
-                                <span
-                                  key={i}
-                                  style={{ width: 6, height: 6, background: c === "1" ? TERM.claude : "transparent" }}
-                                />
-                              ))}
-                          </div>
-                        )}
-                        <div style={{ minWidth: 0 }}>
-                          {cur.header.map((l, i) => (
-                            <Line key={i} segs={l} />
-                          ))}
-                        </div>
-                      </div>
-
-                      {cur.notes.map((l, i) => (
-                        <div key={i} style={{ marginTop: 6 }}>
-                          <Line segs={l} />
-                        </div>
-                      ))}
-
-                      <div style={{ height: 10 }} />
-
-                      {/* transcript */}
-                      {rows.map((r, i) => (
-                        <div key={i}>
-                          <div style={{ display: "flex", gap: 8, alignItems: "baseline", whiteSpace: "pre" }}>
-                            <span
-                              style={{
-                                flex: "0 0 auto",
-                                width: 10,
-                                color: r.user
-                                  ? cur.accent
-                                  : r.think
-                                    ? TERM.amber
-                                    : r.ok
-                                      ? TERM.ok
-                                      : TERM.faint,
-                              }}
-                            >
-                              {r.bullet}
-                            </span>
-                            {/* The user's own row starts hard left — no label column. */}
-                            {cur.labelW > 0 && !r.user && (
-                              <span className="zed-tui-label" style={{ flex: "0 0 auto", width: cur.labelW, color: TERM.dim }}>
-                                {r.label ?? ""}
-                              </span>
-                            )}
-                            <span
-                              style={{
-                                flex: "1 1 auto",
-                                minWidth: 0,
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                color: r.user ? TERM.bright : TERM.body,
-                                fontStyle: r.think ? "italic" : "normal",
-                              }}
-                            >
-                              {r.text}
-                            </span>
-                            <span style={{ flex: "0 0 auto", color: r.ok ? TERM.ok : TERM.faint }}>{r.meta ?? ""}</span>
-                          </div>
-                          {r.sub && (
-                            <div style={{ whiteSpace: "pre", paddingLeft: 18, color: TERM.faint }}>{r.sub}</div>
-                          )}
-                        </div>
-                      ))}
-
-                      {streaming && (
-                        <div style={{ display: "flex", gap: 8, alignItems: "baseline", whiteSpace: "pre" }}>
-                          <span style={{ color: cur.accent, flex: "0 0 auto", width: 10 }}>{spin}</span>
-                          <span style={{ color: TERM.faint, fontStyle: "italic" }}>{cur.working}</span>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                {/* the harness's own input widget, pinned to the bottom */}
-                {inTui && (
-                  <div>
-                    {cur.input.rule && <div style={{ height: 1, background: "#4a4a4a", margin: "8px 0" }} />}
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 8,
-                        padding: cur.input.boxed ? "9px 12px" : "2px 0",
-                        background: cur.input.boxed ? cur.input.boxBg : "transparent",
-                        borderLeft: cur.input.bar ? `3px solid ${cur.input.bar}` : "none",
-                        marginTop: cur.input.boxed ? 8 : 0,
-                      }}
-                    >
-                      {cur.input.glyph && <span style={{ color: TERM.dim, flex: "0 0 auto" }}>{cur.input.glyph}</span>}
-                      <span className="zed-tui-caret" style={{ background: "#8a8a8a", flex: "0 0 auto" }} />
-                      <span
-                        style={{
-                          color: "#6e6e6e",
-                          flex: "1 1 auto",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {cur.input.hint}
-                      </span>
-                    </div>
-                    {cur.input.ruleBelow && <div style={{ height: 1, background: "#4a4a4a", margin: "8px 0" }} />}
-                    {after.map((l, i) => (
-                      <div
-                        key={i}
-                        style={{ display: "flex", justifyContent: "space-between", gap: 16, marginTop: 4, fontSize: 12 }}
-                      >
-                        <span style={{ whiteSpace: "pre" }}>
-                          {l.map((s, j) => (
-                            <span key={j} style={segStyle(s)}>
-                              {s.t}
-                            </span>
-                          ))}
-                        </span>
-                        <span style={{ whiteSpace: "pre" }}>
-                          {(afterRight[i] ?? []).map((s, j) => (
-                            <span key={j} style={segStyle(s)}>
-                              {s.t}
-                            </span>
-                          ))}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* ── BitRouter statusline — the only non-native element ── */}
-              <div
-                className="zed-tui-status"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 12,
-                  padding: "0 14px",
-                  background: "var(--z-blue-chip-bg)",
-                  borderTop: "1px solid var(--z-blue-chip-border)",
-                  fontFamily: "var(--font-mono)",
-                  fontSize: 11.5,
-                  color: "var(--z-ink-6)",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <span className="zed-tui-id" style={{ color: "var(--z-blue)" }}>
-                  bitrouter/auto
-                </span>
-                <span className="zed-tui-sep" style={{ color: "var(--z-blue-chip-border)" }}>
-                  │
-                </span>
-                <span className="zed-tui-rungs" style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                  {cur.ladder.map((r) => {
-                    const on = r.name === activeTier;
-                    return (
-                      <span
-                        key={r.name}
-                        style={{
-                          padding: "1px 6px",
-                          borderRadius: 3,
-                          letterSpacing: "0.04em",
-                          color: on ? TIER_COLOR[r.name] : "var(--z-ink-7)",
-                          background: on ? "rgba(255,255,255,.06)" : "transparent",
-                          transition: "color .2s ease, background .2s ease",
-                        }}
-                      >
-                        {r.name}
-                      </span>
-                    );
-                  })}
-                </span>
-                <span className="zed-tui-sep" style={{ color: "var(--z-blue-chip-border)" }}>
-                  │
-                </span>
-                <span className="zed-tui-model" style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span style={{ color: "var(--z-ink-2)" }}>{last ? last.model : "waiting for the session"}</span>
-                  <span style={{ color: "var(--z-ink-7)" }}>·</span>
-                  <span>{last ? last.effort : "—"}</span>
-                </span>
-                <span className="zed-tui-switches" style={{ marginLeft: "auto", color: "var(--z-ink-7)" }}>
-                  {switches ? `switched ${switches}× this session` : last ? "no switch yet" : ""}
-                </span>
-              </div>
+              <WTermFrame harness={cur} frame={frame} narrow={narrow} />
             </div>
 
             <div style={{ textAlign: "center", marginTop: 22 }}>

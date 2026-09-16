@@ -1,0 +1,60 @@
+---
+title: "v1.0.0-alpha.31"
+description: "Add checkpoints and assessment revisions."
+date: "2026-09-16"
+version: "v1.0.0-alpha.31"
+significance: "routine"
+tags: ["features","fixes","docs"]
+breaking: true
+---
+
+{/* Auto-generated from bitrouter/bitrouter release v1.0.0-alpha.31. Routine release,
+    published as-is. Edit freely — the sync will not overwrite this file. */}
+
+### ⛰️ Features
+
+- *(acp)* Add checkpoints and assessment revisions ([#903](https://github.com/bitrouter/bitrouter/pull/903))
+- *(acp)* Persist canonical session trajectories ([#902](https://github.com/bitrouter/bitrouter/pull/902))
+- *(cli)* [**breaking**] Rename the invocation to `bro`
+- *(config)* Add provider header policies ([#910](https://github.com/bitrouter/bitrouter/pull/910))
+- *(control)* Add remote router administration ([#901](https://github.com/bitrouter/bitrouter/pull/901))
+- *(evolution)* Add checkpoint TS routing ([#907](https://github.com/bitrouter/bitrouter/pull/907))
+- *(mcp)* Add native skills gateway support ([#912](https://github.com/bitrouter/bitrouter/pull/912))
+- *(registry)* Automate canonical model lifecycle ([#876](https://github.com/bitrouter/bitrouter/pull/876))
+- *(tui)* Adopt native scrollback ([#904](https://github.com/bitrouter/bitrouter/pull/904))
+- *(tui)* Replace dashboard with conversation
+- *(tui)* Improve scrollback and transcript rendering ([#899](https://github.com/bitrouter/bitrouter/pull/899))
+
+### 🐛 Bug Fixes
+
+- *(codex)* Preserve ACP tools through Responses ([#892](https://github.com/bitrouter/bitrouter/pull/892))
+- *(update)* Delegate managed installs ([#898](https://github.com/bitrouter/bitrouter/pull/898))
+
+### 🚜 Refactor
+
+- *(mcp)* Remove OSS origin server ([#913](https://github.com/bitrouter/bitrouter/pull/913))
+
+### 📚 Documentation
+
+- Correct MCP spend report command ([#911](https://github.com/bitrouter/bitrouter/pull/911))
+
+### ⚙️ Miscellaneous Tasks
+
+- Sync registry catalog ([#914](https://github.com/bitrouter/bitrouter/pull/914))
+
+- **Breaking (MCP): remove the OSS first-party origin server.** The
+  `bitrouter-mcp` crate, `bro mcp serve`, `bro mcp install`, daemon
+  `/mcp-control` endpoint, and automatic `bitrouter_skills` injection are
+  removed. Local agents operate BitRouter through the shipped Agent Skill and
+  structured `bro` CLI. The upstream MCP client/gateway, aggregate `/mcp`,
+  Skills-over-MCP relay/cache, server-side tool loop, and `bro mcp check`
+  remain.
+
+- **Breaking (CLI): the invocation is now `bro`.** `bitrouter <cmd>` becomes
+  `bro <cmd>`. Only the invocation changed — the product, crate, npm package,
+  Homebrew tap, `bitrouter.yaml`, `~/.bitrouter`, `BITROUTER_*` environment
+  variables, `brk_` key prefix, and telemetry identifiers keep their names.
+  Shell, PowerShell, npm, and Homebrew installers additionally create a
+  deprecated `bitrouter` alias; invoking it prints one migration note on
+  stderr while preserving structured stdout. The alias is installer-only,
+  release archives contain `bro`, and the alias is removed in 1.0.0.

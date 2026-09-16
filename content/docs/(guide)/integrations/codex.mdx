@@ -1,80 +1,210 @@
 ---
 title: Codex
-description: Route OpenAI's Codex CLI through BitRouter by registering it as a custom model provider.
+description: Route a Codex run through BitRouter — register it as a model provider, set the model to bitrouter/auto, and let a routing policy pick for every step of the loop.
 ---
 
-Codex CLI can run through BitRouter without taking over your Codex config. The quickest path is `bitrouter launch --agent codex`, which injects one-shot Codex config overrides for that child process only; if you prefer a permanent setup, register BitRouter as a custom provider in `~/.codex/config.toml`.
+Codex drives the loop; BitRouter decides what serves each step of it. Register BitRouter as a model provider, set the model to `bitrouter/auto`, and every request in the run is projected onto **where it sits in the agent's trajectory and how much risk it carries**, then routed through a [policy](/docs/overview/quickstart#adaptive-routing) you can read and override.
+
+Nothing about how you drive Codex changes. `/model`, plan mode, [subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents), and `/review` all behave as they do now.
 
 ## Prerequisites
 
-- BitRouter running — local proxy at `http://127.0.0.1:4356`, or [BitRouter Cloud](/docs/overview/quickstart) at `https://api.bitrouter.ai`.
-- Codex installed:
+- A [BitRouter Cloud](/docs/overview/quickstart#use-bitrouter-cloud) account and API key. Cloud covers the hosted model network with no upstream provider keys, and ships a default policy — so `bitrouter/auto` resolves from the first request.
+
+  ```bash
+  bitrouter cloud login
+  ```
+
+  Running the proxy yourself instead is a [self-hosting](/docs/self-hosting) topic; every example below works against a local daemon by swapping the base URL.
+
+- [Codex](https://learn.chatgpt.com/docs/codex/cli) installed:
 
   ```bash
   curl -fsSL https://chatgpt.com/codex/install.sh | sh
   ```
 
-## Launch through BitRouter
+## Point Codex at BitRouter
+
+<Tabs items={['Fast path', 'Configure it yourself']}>
+<Tab value="Fast path">
+
+`bitrouter launch` starts Codex against a transient `bitrouter` provider for that child process only, and **edits no config files**:
 
 ```bash
-bitrouter launch --agent codex
+bitrouter launch --agent codex -- --model bitrouter/auto
 ```
 
-Everything after `--` is forwarded to Codex:
+Everything after `--` is forwarded to Codex verbatim. Preflight before a long run:
 
 ```bash
-bitrouter launch --agent codex -- --model openai/gpt-5-codex
+bitrouter launch --agent codex --check -- --model bitrouter/auto
 ```
 
-Before launching a long run, ask BitRouter to check the route it will use:
-
-```bash
-bitrouter launch --agent codex --check -- --model openai/gpt-5-codex
-```
-
-The check verifies that `codex` is installed, the BitRouter base URL is reachable, and the forwarded model has at least one Responses-compatible endpoint. It does **not** require the provider to be `openai-codex`; any model source that routes over the Responses protocol can be used by the Codex harness.
-
-`spawn` does not edit `~/.codex/config.toml`. It starts from your existing Codex model selection, then points Codex at a transient `bitrouter` provider with `base_url = "<BitRouter>/v1"` and `wire_api = "responses"`. If `BITROUTER_API_KEY` is exported, Codex uses it through `env_key`; otherwise BitRouter injects a local placeholder that works with the `skip_auth: true` default written by `bitrouter init`.
+The check verifies that `codex` is installed, the BitRouter base URL is reachable, and the model has at least one Responses-compatible endpoint.
 
 <Callout type="warn">
-Avoid forwarding Codex `-c` / `--config` flags through `bitrouter launch --agent codex`. Current Codex releases can let those forwarded config flags override the transient provider injection, which means the run may silently stop using BitRouter. `launch` rejects that shape and asks you to move the option into Codex config or inspect the route with `--check`.
+**Don't forward Codex `-c` / `--config` flags through `launch`.** Current Codex releases can let forwarded config flags override the transient provider injection, so the run may silently stop using BitRouter. `launch` rejects that shape and asks you to move the option into Codex config instead.
 </Callout>
 
-## Permanent config
+</Tab>
+<Tab value="Configure it yourself">
 
-Add a provider block to `~/.codex/config.toml`. The `base_url` includes `/v1` — Codex appends the route (`/responses`) itself.
+Add a provider block to your **user** config at `~/.codex/config.toml`. The `base_url` includes `/v1` — Codex appends the route (`/responses`) itself.
 
 ```toml
+model = "bitrouter/auto"
 model_provider = "bitrouter"
 
 [model_providers.bitrouter]
 name = "BitRouter"
-base_url = "http://127.0.0.1:4356/v1"
+base_url = "https://api.bitrouter.ai/v1"
 wire_api = "responses"
-# env_key = "BITROUTER_API_KEY"  # Cloud or authenticated local daemon
+env_key = "BITROUTER_API_KEY"
 ```
 
 ```bash
+export BITROUTER_API_KEY=brk_...
 codex
 ```
 
-<Callout type="info">
-**No key for the local proxy** — omit `env_key` and Codex sends no auth, which the loopback proxy accepts under `skip_auth: true`. For **Cloud**, set `base_url = "https://api.bitrouter.ai/v1"`, add `env_key = "BITROUTER_API_KEY"` to the block, and export that variable with your BitRouter key.
+<Callout type="warn">
+**`model_provider` and `model_providers` only take effect in the user-level `~/.codex/config.toml`.** Codex ignores them in a project-local `.codex/config.toml` — put provider keys in user config.
 </Callout>
+
+</Tab>
+</Tabs>
+
+### Keep it beside your existing setup
+
+To route through BitRouter without changing what a bare `codex` does, put the selection in a [profile](https://learn.chatgpt.com/docs/config-file/config-advanced) instead. A profile is its own file at `~/.codex/<name>.config.toml`, holding **top-level keys** — not a `[profiles.<name>]` table:
+
+```toml
+# ~/.codex/bitrouter.config.toml
+model = "bitrouter/auto"
+model_provider = "bitrouter"
+```
+
+```bash
+codex --profile bitrouter
+```
+
+Keep the `[model_providers.bitrouter]` block in `~/.codex/config.toml`; the profile only selects it. Undoing the whole setup is then one file to delete.
+
+<Callout type="info">
+In Codex 0.134.0 and later, `--profile` no longer reads `[profiles.<name>]` from `config.toml`, and the top-level `profile = "<name>"` selector is gone. If you have an older inline profile, move it into its own file.
+</Callout>
+
+## What the router does with a run
+
+`bitrouter/auto` is not a model — it's a request to route. Each call is fingerprinted by its position in the agent loop and its risk, then resolved against the policy: ordinary edit and test work to economy, read-only review and long-context execution to balanced, anything guarded or unrecognized to strong.
+
+Three properties matter for a long coding run:
+
+- **It's cache-aware.** Switching models mid-session costs a prompt-cache miss on the whole prefix, so the router accounts for that when deciding whether a switch is worth making.
+- **It's cross-protocol.** Codex speaks the Responses API; a route to a model that doesn't is translated on the way out, so Codex doesn't know or care which vendor answered.
+- **Tool-carrying requests are clamped up.** A downgrade that mangles a tool call breaks the loop rather than degrading an answer, so those never land on the cheap tier.
+
+The policy starts conservative and widens only when a cheaper route repeatedly succeeds. To see the table, edit it, or bind your own, see [Adaptive routing](/docs/overview/quickstart#adaptive-routing).
+
+## Override the router
+
+Explicit model ids stay passthrough, so anything you name specifically is sent as-is.
+
+Per run:
+
+```bash
+codex --model openai/gpt-5.5
+```
+
+Or `/model` in session, the same as always.
+
+### Pin a role to a model
+
+Codex routes several roles separately, and each one can opt out of `bitrouter/auto` by naming a model — or opt into a [virtual model](/docs/models-and-routing/virtual-model) of your own:
+
+```toml
+review_model = "@careful"
+
+[agents]
+default_subagent_model = "bitrouter/auto"
+
+[memories]
+consolidation_model = "openai/gpt-5.4-mini"
+extract_model = "openai/gpt-5.4-mini"
+```
+
+These are worth setting deliberately. Each role starts a fresh context rather than continuing the main conversation, so choosing a different model for one costs nothing in prompt cache — unlike a switch mid-session.
+
+## Configure effort
+
+Codex exposes [`model_reasoning_effort`](https://learn.chatgpt.com/docs/config-file/config-reference) — `minimal`, `low`, `medium`, `high`, `xhigh` — and a separate value for plan mode. It's a different axis from routing, and it stays yours:
+
+```toml
+model_reasoning_effort = "medium"
+plan_mode_reasoning_effort = "high"
+```
 
 <Callout type="warn">
-`model_provider` / `model_providers` only take effect in the **user-level** `~/.codex/config.toml`, not a project-local `.codex/config.toml`.
+**Pick an effort level per run, not per turn.** Reasoning effort can reshape the request prefix, and a mid-conversation change then costs a prompt-cache miss on the whole context — re-billing it at full input price to save a fraction of one turn's output. Set it once for the run and let plan mode carry its own value. BitRouter does not vary effort per request.
 </Callout>
 
-## Pick a model
+## Use your ChatGPT plan
 
-The Codex `model` setting, or a per-run `codex --model <id>`, can use any registry id in `provider/model` form — `openai/gpt-5-codex`, `anthropic/claude-sonnet-4-6`, `google/gemini-2.5-pro` — optionally with a `:cost` or `:latency` variant. See [Models](/docs/overview/supported-models#how-model-ids-work).
+Have a ChatGPT Plus or Pro plan? Attach it and `bitrouter/auto` routes to it rather than around it — the subscription becomes one of the sources the policy can choose, and your plan's usage covers those tokens.
+
+```bash
+bitrouter providers login openai-codex
+```
+
+By default this imports the credential the Codex CLI already stored, with no fresh browser sign-in. Full setup, multi-account labels, and removal are on [Codex subscription](/docs/guides/codex-subscription).
+
+<Callout type="warn">
+**`openai-codex` is not `openai`.** It reaches ChatGPT's Codex backend, speaks the **Responses API only**, and is authenticated solely by your subscription's OAuth — it shares no endpoints or credentials with the API-key `openai` provider. And a fallback off the plan is a real charge: when the policy leaves your subscription, those requests bill per request. Check [what actually served a run](#verify) before assuming it stayed on plan.
+</Callout>
+
+## What the router will and won't move
+
+- **Codex already splits plan from execution** via `plan_mode_reasoning_effort`, and already routes review, subagents, and memory separately. Routing adds the model choice behind those slots, not the slots themselves.
+- **Effort is not routed per request.** See above.
+- **`--model`, `/model`, and a per-role model still win.** BitRouter routes what it's asked for; anything you name explicitly is passthrough.
+- **The Responses API is the wire.** A model with no Responses-compatible endpoint isn't reachable from Codex — `launch --check` tells you before a run rather than during one.
 
 ## Verify
 
-Run `codex` and issue a prompt; check BitRouter's `request finished` log line (`~/.bitrouter/bitrouter.log` for a local install) to see which `provider` and `model` answered.
+Ask the session anything, then check which upstream actually answered. On Cloud, read it in the console or through the management API:
+
+```bash
+curl https://api.bitrouter.ai/v1/namespaces/{nsid}/requests \
+  -H "Authorization: Bearer $BRK_KEY"
+```
+
+Each row carries the provider and model that served the request, plus its `routing_profile`. Self-hosted, the same information is in the `request finished` log line (`~/.bitrouter/bitrouter.log`).
+
+For full traces rather than rows, see [Tracing](/docs/evals-and-observability/tracing).
+
+## Undo
+
+`bitrouter launch` edits nothing — stop using it.
+
+If you used a profile, delete `~/.codex/bitrouter.config.toml`. If you edited `~/.codex/config.toml` directly, remove `model`, `model_provider`, and the `[model_providers.bitrouter]` block. To also detach a subscription:
+
+```bash
+bitrouter providers logout openai-codex
+```
 
 ## Learn more
 
-- [Codex — configuration reference](https://developers.openai.com/codex/config-reference)
-- [Model fallback](/docs/models-and-routing/model-fallback) · [Provider selection](/docs/models-and-routing/provider-selection)
+**BitRouter**
+
+- [Adaptive routing](/docs/overview/quickstart#adaptive-routing) — the policy table, loop-step fingerprints, and the evidence loop behind `bitrouter/auto`.
+- [Virtual models](/docs/models-and-routing/virtual-model) — name a route and invoke it with `@name`.
+- [Model fallback](/docs/models-and-routing/model-fallback) — ordered chains and what triggers a hop.
+- [Codex subscription](/docs/guides/codex-subscription) — your ChatGPT plan as a model source.
+- [`bitrouter launch`](/docs/usage/cli#bitrouter-launch) — every flag, including `--check` and `--base-url`.
+
+**Codex**
+
+- [Config reference](https://learn.chatgpt.com/docs/config-file/config-reference) — every key, including the reasoning and per-role model settings.
+- [Advanced configuration](https://learn.chatgpt.com/docs/config-file/config-advanced) — profiles and custom model providers.
+- [Subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents) — how spawned agents pick a model.
+- [Codex CLI](https://learn.chatgpt.com/docs/codex/cli) — install and basics.

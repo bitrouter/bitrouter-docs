@@ -1,0 +1,25 @@
+---
+title: Configuration
+description: Configure how BitRouter selects models, applies policy, falls back, and records what happened.
+---
+
+Configuration defines how BitRouter handles a request. It connects the model surface your application calls to selection policy, fallback behavior, output constraints, and the evidence BitRouter records about the run.
+
+Start with [`bitrouter.yaml`](/docs/configuration/config-file), then add only the routing behavior your workflow needs.
+
+<Cards>
+  <Card title="Config file" href="/docs/configuration/config-file" description="Configure providers, policies, routing behavior, and runtime features." />
+  <Card title="Routing" href="/docs/configuration/routing" description="Control provider selection, fallbacks, virtual models, and variants." />
+  <Card title="Guardrails" href="/docs/configuration/guardrails" description="Block or redact matching request and response content." />
+  <Card title="Observability" href="/docs/configuration/observability" description="Trace and evaluate routing decisions across a workflow." />
+</Cards>
+
+## Configure, run, inspect
+
+Configuration documentation follows the same three-step path:
+
+1. **Configure** the intended behavior in `bitrouter.yaml`.
+2. **Run** requests through the local daemon or BitRouter Cloud.
+3. **Inspect** the effective route, outcome, usage, and traces rather than inferring behavior from saved configuration alone.
+
+Use the [CLI](/docs/usage/cli) for exact commands, [Code](/docs/usage/code) for an interactive ACP conversation, and [Observability](/docs/configuration/observability) when you want execution evidence from the running router.

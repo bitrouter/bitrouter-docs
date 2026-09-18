@@ -23,33 +23,33 @@ const model = (over: Partial<Model>): Model => ({
 
 describe("pathToSlug", () => {
   it("strips the /docs base", () => {
-    expect(pathToSlug("/docs/guides/routing/model-fallback")).toEqual([
-      "guides", "routing", "model-fallback",
+    expect(pathToSlug("/docs/configuration/routing#fallback")).toEqual([
+      "configuration", "routing",
     ]);
   });
   it("strips a #hash and a full origin", () => {
-    expect(pathToSlug("https://bitrouter.ai/docs/agents-and-orchestration/tool-calling/advisor#usage")).toEqual([
-      "agents-and-orchestration", "tool-calling", "advisor",
+    expect(pathToSlug("https://bitrouter.ai/docs/customization/tools/model-backed-tools#advisor")).toEqual([
+      "customization", "tools", "model-backed-tools",
     ]);
   });
   it("accepts a bare slug path", () => {
-    expect(pathToSlug("gateway-and-routing/subagent")).toEqual(["gateway-and-routing", "subagent"]);
+    expect(pathToSlug("customization/tools/web-tools")).toEqual(["customization", "tools", "web-tools"]);
   });
 });
 
 describe("formatSearchResults", () => {
   const raw: RawSearchResult[] = [
-    { id: "1", url: "/docs/guides/routing/model-fallback", type: "page", content: "Model Fallback" },
-    { id: "2", url: "/docs/guides/routing/model-fallback#auto", type: "heading", content: "Automatic fallback" },
-    { id: "3", url: "/docs/models-and-routing/bring-your-own-provider", type: "page", content: "BYOK" },
+    { id: "1", url: "/docs/configuration/routing", type: "page", content: "Routing" },
+    { id: "2", url: "/docs/configuration/routing#fallback", type: "heading", content: "Fallback" },
+    { id: "3", url: "/docs/customization/models", type: "page", content: "Models & providers" },
   ];
   it("dedups by page and caps to the limit", () => {
     const hits = formatSearchResults(raw, 1);
     expect(hits).toHaveLength(1);
     expect(hits[0]).toMatchObject({
-      title: "Model Fallback",
-      path: "guides/routing/model-fallback",
-      url: "https://bitrouter.ai/docs/guides/routing/model-fallback",
+      title: "Routing",
+      path: "configuration/routing",
+      url: "https://bitrouter.ai/docs/configuration/routing",
     });
   });
   it("returns one hit per distinct page", () => {
@@ -57,10 +57,10 @@ describe("formatSearchResults", () => {
   });
   it("strips fumadocs <mark> highlight tags from the title", () => {
     const hits = formatSearchResults(
-      [{ id: "1", url: "/docs/models-and-routing/model-fallback", type: "page", content: "Model <mark>Fallback</mark>" }],
+      [{ id: "1", url: "/docs/configuration/routing", type: "page", content: "Model <mark>Routing</mark>" }],
       5,
     );
-    expect(hits[0].title).toBe("Model Fallback");
+    expect(hits[0].title).toBe("Model Routing");
   });
 });
 

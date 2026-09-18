@@ -1,51 +1,50 @@
 ---
 title: Self-hosting BitRouter
-description: Run the Apache-2.0 router on your own infrastructure — one binary, no database required, no container required, and no platform fee.
+description: Run the Apache-2.0 router on your own infrastructure with one binary and your own provider credentials.
 ---
 
-BitRouter self-hosted is **one statically-linked binary**. No Postgres, no Redis, no message broker, no container runtime, no sidecar. You put the binary on a host, give it provider keys, and point your agents at it.
+BitRouter self-hosted is one binary in the request path between your agents and model providers. It needs no external database, queue, container runtime, or sidecar for a local deployment.
 
-That is the whole deployment story, and it is deliberate. A router sits in the hot path of every model call your agents make; the more infrastructure it drags along, the more ways your agent loop can die for reasons that have nothing to do with the models. Everything in this section is about the small number of decisions that remain once the dependency list is empty.
-
-## The whole thing, in three commands
+## Start locally
 
 ```bash
 curl --proto '=https' --tlsv1.2 -LsSf https://github.com/bitrouter/bitrouter/releases/latest/download/bitrouter-installer.sh | sh
 export OPENAI_API_KEY=sk-...        # any provider key in the environment is auto-detected
-bitrouter start                     # http://127.0.0.1:4356
+bro start                           # http://127.0.0.1:4356
 ```
 
-That is a working router. No config file was written, no database was created, and nothing was exposed beyond loopback. Every page that follows exists because production adds one of four things to that picture: a committed config, a process supervisor, a network boundary, and someone other than you making requests.
+This starts a loopback-only router with local authentication skipped. No config or database is required until you opt into features that need them.
 
-## What you get, and what you don't
+## Decide how far to deploy
 
-The routing engine is the same code in both deployment modes — self-hosting is not a stripped build. Cross-protocol routing, model fallback, provider selection, presets and variants, adaptive routing policies, guardrails, structured outputs, the MCP and ACP gateways, and OTLP telemetry all run in the open-source binary against your own keys, at no platform fee.
+| Goal | Add |
+| --- | --- |
+| Use BitRouter on one workstation | Provider credentials and `bro start` |
+| Keep it running on one host | A pinned binary, committed config, and process supervisor |
+| Let another machine call it | TLS, `skip_auth: false`, and virtual keys |
+| Preserve identity, metering, or adaptive evidence | SQLite, Postgres, or MySQL plus backups |
 
-What Cloud adds is the set of things that inherently need a server you don't run: a managed provider network with no upstream signups, team seats, a hosted console, one managed wallet, an uptime SLA, and the agentic payment marketplace. The full capability matrix — and the decision framework for picking one — lives on the [Quickstart](/docs/overview/quickstart#self-host-or-cloud).
+The open-source binary includes protocol translation, routing, guardrails, server tools, MCP/ACP integration, and OpenTelemetry export. BitRouter Cloud adds managed provider access, billing, and a hosted control plane; it does not replace the local binary.
 
 <Callout type="info">
-**It isn't either/or.** Cloud is an *account you attach*, not a different binary. `bitrouter cloud login` from a self-hosted daemon enables the built-in `bitrouter` provider alongside your BYOK keys, so Cloud-managed models and your own keys route from the same process. You can attach and detach it at any time without affecting anything else the binary does.
+You can attach a Cloud account with `bro cloud login` while continuing to route through your own provider accounts from the same process.
 </Callout>
 
-## What actually persists
+## Persistence is optional
 
-Nothing, until you ask for it. The router will happily run forever without writing a byte of state — routing decisions are computed from config, not from a database.
+Routing decisions come from configuration. A database becomes important only when you use:
 
-Three features are backed by a database, and each one is opt-in by use:
-
-- **Virtual keys** — the `users` and `api_keys` tables behind `bitrouter key sign`, when you authenticate callers.
+- **Virtual keys** — the `users` and `api_keys` tables behind `bro key sign`, when you authenticate callers.
 - **Metering** — the `requests` table, per-request cost accounting.
 - **The adequacy ledger** — the evidence tables the adaptive routing loop learns from.
 
-The default is `sqlite://./bitrouter.db`, created on first run next to your config. Postgres and MySQL work from the same binary with no recompile. See [State & backups](/docs/self-hosting/state-and-backups).
+SQLite is the default. Postgres and MySQL use the same binary. See [Operate](/docs/self-hosting/operate#state-and-backups) before depending on stored identity or history.
 
-## Where to go next
+## Production path
 
 <Cards>
-  <Card title="Install & upgrade" href="/docs/self-hosting/install" description="Install methods, version pinning, in-place upgrade and rollback." />
-  <Card title="Production configuration" href="/docs/self-hosting/production-config" description="Commit the config, keep secrets out of it, validate in CI." />
-  <Card title="Run as a service" href="/docs/self-hosting/run-as-a-service" description="serve vs start, a systemd unit, logs, and the control socket." />
-  <Card title="Networking & TLS" href="/docs/self-hosting/networking" description="Bind address, reverse proxy, and the timeouts that break streaming." />
-  <Card title="Authentication" href="/docs/self-hosting/authentication" description="skip_auth, virtual keys, and per-key access policies." />
-  <Card title="Hardening checklist" href="/docs/self-hosting/hardening" description="Everything above, as a list you can run down before you ship." />
+  <Card title="Install" href="/docs/self-hosting/install" description="Choose an install method, pin a version, and upgrade safely." />
+  <Card title="Deploy" href="/docs/self-hosting/deploy" description="Commit configuration, supervise the process, and expose it through TLS." />
+  <Card title="Secure" href="/docs/self-hosting/secure" description="Authenticate callers and check the production boundary." />
+  <Card title="Operate" href="/docs/self-hosting/operate" description="Reload, diagnose, back up, and recover a running router." />
 </Cards>

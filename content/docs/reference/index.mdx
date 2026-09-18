@@ -1,12 +1,58 @@
 ---
 title: API Reference
-description: REST API for the BitRouter Cloud node.
+description: Route inference requests and manage BitRouter Cloud through its public HTTP API.
 ---
 
-import { Callout } from 'fumadocs-ui/components/callout';
-
 <Callout type="warn">
-The BitRouter API is in **early beta**. Endpoints, request/response formats, and behavior may change without notice.
+The BitRouter API is in early beta. Pin your integration to the behavior you test and review release notes before upgrading.
 </Callout>
 
-Base URL: `https://api.bitrouter.ai`. Most endpoints live under `/v1`. Routing endpoints accept either `x-api-key: <api-key>` or `Authorization: Bearer <api-key | JWT>`. Pick an endpoint group from the sidebar.
+Base URL: `https://api.bitrouter.ai`
+
+The reference has two surfaces:
+
+| Need | Start with |
+| --- | --- |
+| Send a model request in an existing SDK format | One of the four inference APIs |
+| Discover available models or providers | Models & providers |
+| Manage Cloud accounts, keys, usage, billing, or policy | Cloud management |
+| Check node health or scrape metrics | Health or Metrics |
+
+## Route a request
+
+Choose the protocol your client already speaks. BitRouter keeps the request and response shape for that protocol while routing the requested model to an eligible upstream.
+
+<Cards>
+  <Card title="OpenAI Chat Completions" href="/docs/reference/openai-compatible/createChatCompletion" description="POST /v1/chat/completions" />
+  <Card title="OpenAI Responses" href="/docs/reference/openai-responses/createResponse" description="POST /v1/responses" />
+  <Card title="Anthropic Messages" href="/docs/reference/anthropic-compatible/createMessage" description="POST /v1/messages" />
+  <Card title="Google GenerateContent" href="/docs/reference/google-compatible/googleGenerateContent" description="POST /v1beta/models/{model}:generateContent" />
+</Cards>
+
+Routing endpoints accept either:
+
+- `Authorization: Bearer <api-key-or-JWT>`
+- `x-api-key: <api-key>` for Anthropic-compatible clients
+
+```bash
+curl https://api.bitrouter.ai/v1/chat/completions \
+  -H "Authorization: Bearer $BITROUTER_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "anthropic/claude-haiku-4.5",
+    "messages": [{"role": "user", "content": "Hello"}]
+  }'
+```
+
+## Platform APIs
+
+Discovery, BYOK encryption bootstrap, health, and metrics are public. Account-bound management endpoints require a credential with the scope named by that endpoint.
+
+<Cards>
+  <Card title="Models & providers" href="/docs/reference/discovery/listModels" description="Inspect the public catalog and aggregate platform usage." />
+  <Card title="Cloud management" href="/docs/reference/management/listNamespaces" description="Manage namespaces, keys, billing, policy, presets, and OAuth clients." />
+  <Card title="BYOK encryption" href="/docs/reference/byok/getEncryptionPubkey" description="Fetch the public key used for client-side provider-key encryption." />
+  <Card title="Health" href="/docs/reference/health/ping" description="Probe whether the Cloud node is alive." />
+</Cards>
+
+This reference describes the hosted Cloud API. For the local daemon lifecycle, configuration, and virtual keys, use [Self-hosting](/docs/self-hosting); for the generated CLI surface, use [CLI](/docs/usage/cli).

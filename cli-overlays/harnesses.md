@@ -1,21 +1,36 @@
 ---
-title: Harnesses
+title: Coding agents
 ---
 
-Three ways to run a harness on top of the daemon: `launch` for an interactive session, `spawn` for a headless sub-agent, and `tui` for the orchestrator console — supervise multiple agent sessions, inspect per-session cost, and delegate work to sub-agents, backed by the `fleet` MCP backend. `tui` is not in the binary's own `--help` listing, so it has no generated subsection below.
+Choose the interaction model that matches the task:
+
+- `bro launch`, `bro claude`, and `bro codex` preserve the harness's native interface.
+- `bro code` opens BitRouter's coding conversation and connects to an ACP agent.
+- `bro run` sends one ACP prompt headlessly and returns NDJSON, text, or only the final answer.
+
+These commands do not imply the durable multi-attempt workflow described in BitRouter's architecture proposals. They run or connect to the selected harness using the released ACP and launch surfaces.
 
 ## @launch
 
 ```bash
-bitrouter launch claude
+bro launch claude
 ```
 
-Points the harness's API base URL at the local daemon — the same wiring the [Integrations](/docs/integrations/harnesses) recipes do by hand — and prints a session spend summary on exit.
+Routed harnesses point their model traffic at the local daemon. Own-auth harnesses launch directly. Use `--check` to verify the executable, endpoint, and route without starting the harness.
 
-## @spawn
+## @code
 
 ```bash
-bitrouter spawn -p "summarize the diff" --model @coding
+bro code
+bro code codex-acp --model openai/gpt-5
 ```
 
-Spawns an ACP-compatible harness as a headless sub-agent, routed through the daemon by default. This is the mechanism behind the [Subagent](/docs/agents-and-orchestration/tool-calling/subagent) feature.
+Omit the agent id to choose inside the conversation, or pass an ACP agent id directly. `--load` replays a native session; `--resume` resumes it without replaying history.
+
+## @run
+
+```bash
+bro run codex-acp "Review the current diff" --format quiet
+```
+
+The default permission policy denies requests. Choose an explicit approval mode or pass a per-tool policy when the task needs tools.

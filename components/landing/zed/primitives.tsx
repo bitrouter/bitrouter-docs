@@ -230,6 +230,8 @@ export const ZED_LINKS = {
   apiKey: "https://cloud.bitrouter.ai/sign-in",
   bookDemo: "https://cal.com/bitrouter/founder-call",
   docs: "/docs",
+  quickstart: "/docs/overview/quickstart",
+  selfHosting: "/docs/self-hosting",
   models: "/models",
   pricing: "/pricing",
   blog: "/blog",

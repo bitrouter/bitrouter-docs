@@ -1,8 +1,9 @@
 {
-  "title": "Discovery",
+  "title": "Models & providers",
   "description": "Public read-only endpoints for inspecting the router's configuration — what models and providers it knows about.",
   "pages": [
     "listModels",
-    "listProviders"
+    "listProviders",
+    "getUsageStats"
   ]
 }

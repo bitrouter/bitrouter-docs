@@ -13,7 +13,7 @@ import { HeroQuickstart } from "./hero-quickstart";
 export function Hero() {
   return (
     <section className="zed-wrap" style={{ padding: "120px 40px 0", textAlign: "center" }}>
-      <div className="zed-eyebrow">New · {HERO.announcement}</div>
+      <div className="zed-eyebrow">{HERO.announcement}</div>
 
       <h1
         className="zed-display"
@@ -21,7 +21,7 @@ export function Hero() {
           fontSize: "clamp(38px, 6.4vw, 68px)",
           lineHeight: 1.04,
           margin: "30px auto 0",
-          maxWidth: "17ch",
+          maxWidth: "15ch",
           textWrap: "pretty",
         }}
       >
@@ -52,12 +52,18 @@ export function Hero() {
           flexWrap: "wrap",
         }}
       >
-        <a className="zed-btn zed-btn-primary" href={ZED_LINKS.apiKey}>
-          Get API key
+        <a className="zed-btn zed-btn-primary" href={ZED_LINKS.quickstart}>
+          Self-host
         </a>
-        <a className="zed-btn-underline" href={ZED_LINKS.docs}>
-          Read the docs
+        <a className="zed-btn-underline" href={ZED_LINKS.apiKey}>
+          Try Cloud
         </a>
+      </div>
+
+      <div className="zed-proofline" aria-label="Open-source product attributes">
+        <span>Apache-2.0</span>
+        <span>Your provider keys</span>
+        <span>Cloud optional</span>
       </div>
 
       <HeroQuickstart />

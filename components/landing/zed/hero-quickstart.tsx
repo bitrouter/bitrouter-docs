@@ -2,100 +2,32 @@
 
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
+import { INSTALL_CMD } from "./data";
 
 /**
- * Hero quickstart — four ways to point an agent at BitRouter.
- *
- * v3 drops the bordered card: the tab strip is bare uppercase labels marked by
- * an underline, the command sits in a flat --z-wash well with no border or
- * radius, and the hint line hangs below the well rather than inside it.
+ * One recommended self-host path. Alternate package managers and agent-specific
+ * setup live in the quickstart instead of competing for attention in the hero.
  */
-type Tab = { key: string; label: string; cmd: string; sub: string };
-
-const TABS: Tab[] = [
-  {
-    key: "cli",
-    label: "CLI",
-    cmd: "curl -fsSL https://bitrouter.ai/install.sh | sh",
-    sub: "then  bitrouter run claude-code",
-  },
-  {
-    key: "mcp",
-    label: "MCP",
-    cmd: "npx bitrouter mcp install --client claude",
-    sub: "registers bitrouter as an MCP server",
-  },
-  {
-    key: "skills",
-    label: "Agent Skills",
-    cmd: "npx skills add bitrouter/bitrouter",
-    sub: "drop-in skill for any agent",
-  },
-  {
-    key: "wizard",
-    label: "Wizard",
-    cmd: "bitrouter init",
-    sub: "interactive setup · scaffolds bitrouter.yaml",
-  },
-];
-
 const MONO = "var(--font-mono)";
 
 export function HeroQuickstart() {
-  const [active, setActive] = useState("cli");
   const [copied, setCopied] = useState(false);
-  const tab = TABS.find((t) => t.key === active) ?? TABS[0];
 
   const copy = () => {
     if (!navigator.clipboard) return;
-    void navigator.clipboard.writeText(tab.cmd).then(() => {
+    void navigator.clipboard.writeText(INSTALL_CMD).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     });
   };
 
   return (
-    <div style={{ maxWidth: 560, margin: "64px auto 0", textAlign: "left" }}>
-      <div
-        role="tablist"
-        aria-label="Quickstart method"
-        style={{ display: "flex", gap: 26, justifyContent: "center", flexWrap: "wrap" }}
-      >
-        {TABS.map((t) => {
-          const on = t.key === active;
-          return (
-            <button
-              key={t.key}
-              role="tab"
-              aria-selected={on}
-              onClick={() => setActive(t.key)}
-              style={{
-                cursor: "pointer",
-                border: "none",
-                background: "transparent",
-                padding: "0 0 6px",
-                fontFamily: MONO,
-                fontSize: 11,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                whiteSpace: "nowrap",
-                color: on ? "var(--z-ink)" : "var(--z-ink-6)",
-                borderBottom: `1px solid ${on ? "var(--z-ink)" : "transparent"}`,
-                transition: "color .15s ease, border-color .15s ease",
-              }}
-            >
-              {t.label}
-            </button>
-          );
-        })}
-      </div>
-
+    <div style={{ maxWidth: 720, margin: "58px auto 0", textAlign: "left" }}>
       <div
         style={{
           display: "flex",
           alignItems: "center",
           gap: 12,
-          marginTop: 26,
           padding: "16px 18px",
           background: "var(--z-wash)",
         }}
@@ -105,7 +37,7 @@ export function HeroQuickstart() {
         </span>
         <div style={{ flex: 1, minWidth: 0, overflowX: "auto" }}>
           <code style={{ fontFamily: MONO, fontSize: 13, color: "var(--z-ink)", whiteSpace: "nowrap" }}>
-            {tab.cmd}
+            {INSTALL_CMD}
           </code>
         </div>
         <button
@@ -135,7 +67,7 @@ export function HeroQuickstart() {
           color: "var(--z-ink-6)",
         }}
       >
-        ↳ {tab.sub}
+        ↳ install the binary, then run <span style={{ color: "var(--z-ink-3)" }}>bitrouter</span> to configure a provider and route
       </div>
     </div>
   );

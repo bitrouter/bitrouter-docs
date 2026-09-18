@@ -1,17 +1,30 @@
 ---
-title: Tools, agents, and ACP
+title: Agents, ACP, and MCP
 ---
 
-The command surfaces behind the Tools and [Agents](/docs/agents-and-orchestration/acp-gateway) gateways: `tools` introspects the MCP upstreams declared under `mcp_servers`, `agents` manages the ACP agent catalog, and `acp` runs per-session headless agent sessions.
-
-## @tools discover
-
-Probes each configured MCP server and reports the tools it actually exposes — the debugging step when a tool isn't reaching the model.
+`agents` inspects ACP adapters, `acp serve` exposes one adapter over protocol-pure stdio, and `mcp check` verifies the upstream MCP servers declared in `bitrouter.yaml`. These are distinct directions: ACP connects a client to an agent; MCP connects BitRouter to upstream tools.
 
 ## @agents check
 
-Spawns each configured agent and verifies it responds to `initialize`, printing latency or the error per agent.
+```bash
+bro agents check codex-acp
+```
+
+Spawns the adapter, performs ACP initialization, and reports whether the configured route is usable.
 
 ## @acp serve
 
-Exposes one agent session as a vanilla ACP Agent over stdio — how a parent agent delegates to a BitRouter-managed sub-agent.
+```bash
+bro acp serve codex-acp
+```
+
+Exposes the selected adapter over stdio for an ACP client. It preserves the selected harness's session semantics; it does not create a durable BitRouter workflow.
+
+## @mcp check
+
+```bash
+bro mcp check
+bro mcp check docs
+```
+
+Connects to one or every configured upstream, negotiates MCP capabilities, and lists the tools each server advertises.

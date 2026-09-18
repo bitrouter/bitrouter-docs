@@ -20,7 +20,7 @@ export function FinalCta() {
           maxWidth: "18ch",
         }}
       >
-        Stop overpaying for tokens.
+        Start routing. Spend less.
       </h2>
       <p
         style={{
@@ -33,8 +33,7 @@ export function FinalCta() {
           textWrap: "pretty",
         }}
       >
-        Point your agent at bitrouter and cut cost on the next run — quality held, nothing to
-        rewrite.
+        Run the Apache-2.0 router yourself, or use the same routing engine through BitRouter Cloud.
       </p>
 
       <div
@@ -79,11 +78,11 @@ export function FinalCta() {
           flexWrap: "wrap",
         }}
       >
-        <a className="zed-btn zed-btn-primary" href={ZED_LINKS.apiKey}>
-          Get API key
+        <a className="zed-btn zed-btn-primary" href={ZED_LINKS.quickstart}>
+          Self-host BitRouter
         </a>
-        <a className="zed-btn-underline" href={ZED_LINKS.cloneSource}>
-          Clone source
+        <a className="zed-btn-underline" href={ZED_LINKS.apiKey}>
+          Try Cloud
         </a>
       </div>
     </section>

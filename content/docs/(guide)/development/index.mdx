@@ -1,0 +1,36 @@
+---
+title: Development
+description: Find the source repository and contribution path for the part of BitRouter you want to change.
+---
+
+BitRouter is developed in the open. Use this page when you intend to change the product, its documentation, or its agent-facing setup rather than operate an existing deployment.
+
+## Choose the repository
+
+| Change | Repository |
+| --- | --- |
+| Router, CLI, protocols, providers, policies, or generated OpenAPI source | [`bitrouter/bitrouter`](https://github.com/bitrouter/bitrouter) |
+| Website, guides, API reference presentation, blog, or changelog | [`bitrouter/bitrouter-docs`](https://github.com/bitrouter/bitrouter-docs) |
+| Agent-install and setup skills | [`bitrouter/agent-skills`](https://github.com/bitrouter/agent-skills) |
+
+<Cards>
+  <Card title="Router contribution guide" href="https://github.com/bitrouter/bitrouter/blob/main/CONTRIBUTING.md" description="Build, test, and submit changes to the Rust workspace." />
+  <Card title="Documentation guide" href="https://github.com/bitrouter/bitrouter-docs/blob/main/docs/CONTRIBUTING.md" description="Follow the MDX, navigation, generation, and validation contract." />
+</Cards>
+
+## Documentation workflow
+
+Most documentation is hand-authored `.mdx`. Two surfaces are generated and must be changed at their source:
+
+- API endpoint pages come from `openapi.yaml` through `pnpm generate:openapi`.
+- The CLI page comes from the binary snapshot and `cli-overlays/` through `pnpm generate:cli`.
+
+Before opening a documentation change, run:
+
+```bash
+pnpm lint:docs
+pnpm test
+pnpm build
+```
+
+For operating an existing binary, start with [Self-hosting](/docs/self-hosting). For adding a model, provider, or router-owned tool without changing core behavior, start with [Customization](/docs/customization).

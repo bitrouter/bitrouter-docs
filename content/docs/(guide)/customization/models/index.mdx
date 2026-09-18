@@ -1,0 +1,114 @@
+---
+title: Models & providers
+description: Connect a provider account, declare a private endpoint, or contribute a provider to the open registry.
+---
+
+A **provider** tells BitRouter where and how to call an upstream. A **model** is a routable id declared by one or more providers. Customize this layer only when the built-in registry or the existing model-source guides do not cover your endpoint.
+
+## Choose the path
+
+| Need | Use |
+| --- | --- |
+| A supported provider with your API key | Environment variable or an empty built-in provider block |
+| Claude/Codex subscription or local inference | [Model sources](/docs/usage/model-sources) |
+| A private or OpenAI-compatible endpoint | A custom `providers` entry below |
+| A provider everyone should discover | A pull request to the open registry |
+| Your provider key on BitRouter Cloud | Cloud BYOK |
+
+## Built-in providers with your own key
+
+The local binary detects common provider credentials without a config file:
+
+```bash
+export OPENAI_API_KEY=sk-...
+export ANTHROPIC_API_KEY=sk-ant-...
+export GEMINI_API_KEY=...
+
+bro providers list
+bro start
+```
+
+To make the enabled set explicit, add empty provider blocks and let them inherit the bundled registry definition:
+
+```yaml
+providers:
+  openai: {}
+  anthropic: {}
+  google: {}
+```
+
+Keep credentials in environment variables. Run `bro reload` after rotating a key and `bro providers list` to confirm which sources are active.
+
+## Custom endpoints and models
+
+Any endpoint using a supported outbound protocol can become a provider:
+
+```yaml
+providers:
+  my-cluster:
+    api_base: "https://llm.internal.example/v1"
+    api_key: "${MY_CLUSTER_TOKEN}"
+    api_protocol:
+      - "*": chat_completions
+    models:
+      - id: team/llama-3.1-8b
+        capabilities: [tools, structured_outputs]
+```
+
+| Field | Purpose |
+| --- | --- |
+| `api_base` | Upstream base URL |
+| `api_key` | Optional credential; use an environment reference |
+| `api_protocol` | Model-pattern to ordered protocol mapping |
+| `models[].id` | Canonical model id the provider declares |
+| `models[].capabilities` | Positively verified features used during route filtering |
+| `priority` / `tags` | Deterministic ordering and routing filters |
+
+Supported built-in protocol names are `chat_completions`, `responses`, `messages`, and `generate_content`. A model-specific `api_protocol` overrides the provider pattern.
+
+Do not advertise a capability merely because the protocol can encode it. Declare only behavior verified for that exact provider/model route.
+
+### Validate and route
+
+```bash
+bro config validate -c bitrouter.yaml
+bro models --provider my-cluster
+bro route my-cluster:team/llama-3.1-8b -c bitrouter.yaml
+```
+
+The `provider:model` selector pins one provider. The bare model id joins every active provider that declares that id; use [Routing](/docs/configuration/routing) to control its order and fallback.
+
+For Ollama, vLLM, Unsloth, and similar servers, use the shorter [Local inference](/docs/usage/model-sources/local-inference) recipe.
+
+## Multiple accounts
+
+One provider can expose several credentials:
+
+```yaml
+providers:
+  openai:
+    account_strategy: failover
+    accounts:
+      - label: primary
+        api_key: "${OPENAI_KEY_PRIMARY}"
+      - label: backup
+        api_key: "${OPENAI_KEY_BACKUP}"
+```
+
+`failover` preserves declared order and advances after retryable or credit-exhaustion failures. `balance` rotates the first account, while the remaining accounts still form the request's fallback chain.
+
+## BitRouter Cloud BYOK
+
+Cloud BYOK stores a provider credential for your account and routes eligible calls through it. The recommended path is the Cloud console, which fetches the node's encryption public key and seals the provider key in the browser before upload.
+
+For automated onboarding, start with the [BYOK API reference](/docs/reference/byok/getEncryptionPubkey). Keep encryption and upload code in the client; never send a plaintext provider key to a logging or application endpoint.
+
+## Contribute a provider
+
+Private config affects only your deployment. To make a provider discoverable to every BitRouter installation, add its manifest to the [open provider registry](https://github.com/bitrouter/bitrouter/tree/main/registry) and submit a pull request. Registry data can describe endpoints, protocols, models, capabilities, pricing, and authentication conventions; provider-specific executors or OAuth flows still require code.
+
+<Cards>
+  <Card title="Model sources" href="/docs/usage/model-sources" description="Connect subscriptions, local inference, and hosted sources." />
+  <Card title="Routing" href="/docs/configuration/routing" description="Control selectors, ordering, and fallback after a source is connected." />
+  <Card title="Config file" href="/docs/configuration/config-file" description="Validate and operate the complete bitrouter.yaml file." />
+</Cards>

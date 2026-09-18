@@ -1,0 +1,10 @@
+{
+  "title": "Overview",
+  "pagesIndex": "[Overview](/docs/overview/what-is-bitrouter)",
+  "pages": [
+    "[Quickstart](/docs/overview/quickstart)",
+    "[Supported Models](/docs/overview/supported-models)",
+    "[Self-hosting](/docs/self-hosting)",
+    "[Comparisons](/docs/overview/comparisons)"
+  ]
+}

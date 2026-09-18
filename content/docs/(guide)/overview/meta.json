@@ -1,12 +1,9 @@
 {
   "title": "Overview",
-  "icon": "Telescope",
-  "collapsible": false,
+  "pagesIndex": "what-is-bitrouter",
   "pages": [
     "quickstart",
-    "what-is-bitrouter",
     "supported-models",
-    "bitrouter-vs-openrouter",
-    "bitrouter-vs-litellm"
+    "comparisons"
   ]
 }

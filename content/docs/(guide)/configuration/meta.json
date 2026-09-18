@@ -1,0 +1,11 @@
+{
+  "title": "Configuration",
+  "pagesIndex": "index",
+  "pages": [
+    "config-file",
+    "routing",
+    "guardrails",
+    "structured-outputs",
+    "observability"
+  ]
+}

@@ -36,7 +36,7 @@ describe("footer links", () => {
   it("never links a retired per-harness marketing route", () => {
     // /claude-code, /codex, /opencode, /openclaw, /hermes-agent were content-free
     // stubs, retired 2026-08 and 301'd in next.config.ts. Harness links belong
-    // under /docs/integrations/.
+    // under /docs/usage/.
     const retired = ["/claude-code", "/codex", "/opencode", "/openclaw", "/hermes-agent"];
     for (const l of allLinks()) expect(retired).not.toContain(l.href);
   });

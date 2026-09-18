@@ -1,0 +1,13 @@
+{
+  "title": "Usage",
+  "pagesIndex": "[Usage](/docs/usage)",
+  "pages": [
+    "[CLI](/docs/usage/cli)",
+    "[Code](/docs/usage/code)",
+    "[Coding agents](/docs/usage/coding-agents)",
+    "[MCP & ACP](/docs/usage/protocols)",
+    "[Skills](/docs/usage/skills)",
+    "[Model sources](/docs/usage/model-sources)",
+    "[Migrate](/docs/usage/migrate)"
+  ]
+}

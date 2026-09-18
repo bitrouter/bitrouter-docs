@@ -1,0 +1,59 @@
+---
+title: Server tools
+description: Enable bounded router-owned tool execution and opt individual requests into the tools they need.
+---
+
+Normally the calling harness owns the tool loop. With server tools, BitRouter advertises selected tools, intercepts their calls, executes them, appends the results, and calls the model again. The caller receives one final response.
+
+## Two gates
+
+A server tool runs only when both conditions are true:
+
+1. The deployment enables its implementation under `server_tools`.
+2. The request declares that tool.
+
+This prevents a configured capability from appearing on every request and prevents a caller from invoking an implementation the operator did not enable.
+
+```yaml
+server_tools:
+  max_iterations: 8
+  advisor: true
+  subagent: true
+  mcp_servers: [workspace]
+```
+
+```json
+{
+  "tools": [
+    {"type": "bitrouter:advisor", "args": {"model": "anthropic:claude-opus-4.8"}}
+  ]
+}
+```
+
+Provider-defined declarations are carried by APIs that preserve provider tools, including Responses and Messages. Chat Completions accepts function tools only; use the `bitrouter/fusion` model alias when you need the Fusion shorthand on that surface.
+
+## Loop bounds
+
+The default loop permits 10 tool rounds, 30 seconds per tool, 120 seconds for the turn, and three consecutive tool-error rounds. `server_tools.max_iterations` is the deployment-level override exposed in `bitrouter.yaml`.
+
+Reaching a bound stops the loop instead of allowing unbounded model calls. Nested calls, searches, and fetches still consume their normal provider or backend quota.
+
+## Tool families
+
+| Family | Implementations | Ownership |
+| --- | --- | --- |
+| MCP-backed | Tools from configured `mcp_servers` | The upstream MCP server performs the action |
+| Model-backed | Advisor, Sub-agent, Fusion | BitRouter runs nested model calls |
+| Web | Web Search, Web Fetch | BitRouter calls configured BYOK backends |
+
+Toolsets keep those implementations provider-agnostic. Each toolset decides whether to advertise on a request and owns calls to its names; tools from different MCP servers are namespaced to avoid collisions.
+
+<Callout type="warning">
+Enabling a tool is not authorization by itself. Keep virtual-key policy, upstream credentials, network reachability, and the tool's own approval rules scoped to the callers that need them.
+</Callout>
+
+<Cards>
+  <Card title="Model-backed tools" href="/docs/customization/tools/model-backed-tools" description="Choose Advisor, Sub-agent, or Fusion." />
+  <Card title="Web tools" href="/docs/customization/tools/web-tools" description="Configure search and extraction backends." />
+  <Card title="MCP gateway" href="/docs/usage/mcp-gateway" description="Proxy upstream MCP servers without moving the model loop." />
+</Cards>

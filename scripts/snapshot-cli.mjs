@@ -1,18 +1,18 @@
-// Captures the `bitrouter` CLI command tree as structured JSON by walking
+// Captures the `bro` CLI command tree as structured JSON by walking
 // `<cmd> --help` output. Run locally when the binary changes:
 //
-//   node scripts/snapshot-cli.mjs            # uses `bitrouter` from PATH
-//   BITROUTER_BIN=/path/to/bitrouter node scripts/snapshot-cli.mjs
+//   node scripts/snapshot-cli.mjs       # uses `bro` from PATH
+//   BITROUTER_BIN=/path/to/bro node scripts/snapshot-cli.mjs
 //
 // Output: .cli-snapshot.json (committed) — the build-time CLI reference
 // generator (scripts/generate-cli.mjs) reads this snapshot, never the binary,
-// so CI doesn't need bitrouter installed. Re-run and commit when you bump the
+// so CI doesn't need bro installed. Re-run and commit when you bump the
 // documented version.
 import { execFileSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-const BIN = process.env.BITROUTER_BIN ?? "bitrouter";
+const BIN = process.env.BITROUTER_BIN ?? "bro";
 const OUT = join(process.cwd(), ".cli-snapshot.json");
 
 // Wide, colorless, deterministic help output (no terminal-width wrapping).
@@ -32,7 +32,7 @@ function parseHelp(text) {
   const sections = {};
   let current = "_about";
   for (const line of lines) {
-    // Section headers may carry inline content ("Usage: bitrouter serve ...").
+    // Section headers may carry inline content ("Usage: bro serve ...").
     const m = /^(Usage|Arguments|Options|Commands):(.*)$/.exec(line.trimEnd());
     if (m) {
       current = m[1].toLowerCase();
@@ -103,7 +103,9 @@ const commands = walk([]);
 const doc = {
   version,
   capturedAt: new Date().toISOString().slice(0, 10),
-  binary: BIN,
+  // Keep the committed snapshot reproducible when BITROUTER_BIN points at a
+  // downloaded release in a temporary directory.
+  binary: version.split(/\s+/)[0],
   commands,
 };
 writeFileSync(OUT, JSON.stringify(doc, null, 2) + "\n");

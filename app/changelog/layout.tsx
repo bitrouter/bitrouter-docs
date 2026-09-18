@@ -1,12 +1,13 @@
 import "@/components/landing/zed/zed.css";
 import { DocsLayout } from "fumadocs-ui/layouts/notebook";
-import { DocsHeader } from "@/components/docs-header";
+import { ChangelogHeader } from "@/components/docs-header";
 import { SiteProviders } from "@/components/site-providers";
-import { getChangelogTree, getDocsTabs } from "@/lib/docs-tabs";
+import { getChangelogTree } from "@/lib/docs-tabs";
 
-// Changelog keeps its established top-level URLs, but uses the same native
-// Fumadocs notebook shell as the documentation. Its page tree is assembled from
-// release metadata so the sidebar can use version tags instead of file names.
+// Changelog is a standalone top-level section that keeps the native Fumadocs
+// notebook shell. Its page tree is assembled from release metadata so the
+// sidebar can use version tags instead of file names; it intentionally receives
+// no documentation-family tabs.
 export default function ChangelogLayout({
   children,
 }: {
@@ -16,11 +17,9 @@ export default function ChangelogLayout({
     <SiteProviders>
       <DocsLayout
         tree={getChangelogTree()}
-        tabs={getDocsTabs()}
-        tabMode="navbar"
+        tabs={false}
         nav={{ mode: "top" }}
-        slots={{ header: DocsHeader }}
-        sidebar={{ defaultOpenLevel: 1, collapsible: false }}
+        slots={{ header: ChangelogHeader }}
       >
         {children}
       </DocsLayout>

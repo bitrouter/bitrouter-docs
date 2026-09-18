@@ -1,0 +1,63 @@
+---
+title: Codex
+description: Use Codex through BitRouter as an ACP adapter, a headless agent, or its native terminal interface.
+---
+
+Codex is a harness: it owns the agent loop and tools. BitRouter supplies its model route, fallback, policy, and metering.
+
+## Pick a mode
+
+```bash
+bro code codex                         # BitRouter conversation
+bro run codex "Summarize this repo"   # headless ACP turn
+bro codex                              # Codex's native interface
+```
+
+`bro launch codex` is the generic spelling of `bro codex`. It injects a temporary `bitrouter` model provider into the child process and does not edit `~/.codex/config.toml`.
+
+Verify the executable, daemon, and route before a long run:
+
+```bash
+bro launch codex --check
+```
+
+## Select a model
+
+Pin a daemon-routable model with BitRouter's option:
+
+```bash
+bro codex --model bitrouter/auto
+bro launch codex --model openai/gpt-5-codex
+```
+
+Arguments after `--` go directly to Codex. Avoid forwarding Codex `-c` or `--config` overrides that replace the injected provider; `bro launch` rejects known conflicting shapes.
+
+## Permanent configuration
+
+Use a permanent provider block only when Codex must start outside `bro launch`:
+
+```toml
+model_provider = "bitrouter"
+
+[model_providers.bitrouter]
+name = "BitRouter"
+base_url = "http://127.0.0.1:4356/v1"
+wire_api = "responses"
+# env_key = "BITROUTER_API_KEY"
+```
+
+For Cloud, use `https://api.bitrouter.ai/v1`, set `env_key = "BITROUTER_API_KEY"`, and export a BitRouter key. An authenticated self-hosted daemon requires the same.
+
+<Callout type="warning">
+Codex model-provider configuration belongs in the user-level `~/.codex/config.toml`. Project-local Codex configuration does not define model providers.
+</Callout>
+
+## Harness versus subscription
+
+This page routes the **Codex application** through BitRouter. To use a ChatGPT Plus or Pro plan as the source of tokens, configure the separate [`openai-codex` subscription provider](/docs/usage/model-sources/codex-subscription).
+
+<Cards>
+  <Card title="Codex subscription" href="/docs/usage/model-sources/codex-subscription" description="Use a ChatGPT login as a model source." />
+  <Card title="Coding agents" href="/docs/usage/coding-agents" description="Compare interactive, headless, and native launch modes." />
+  <Card title="CLI reference" href="/docs/usage/cli#bro-launch" description="All native launch flags." />
+</Cards>

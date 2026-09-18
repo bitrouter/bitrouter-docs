@@ -195,7 +195,7 @@ export function Feedback({
 /**
  * A feedback component for each content block in page, should be used with `remark-feedback-block`.
  *
- * See https://fumadocs.dev/docs/integrations/feedback.
+ * See https://fumadocs.dev/docs/usage/feedback.
  */
 export function FeedbackBlock({
   id,

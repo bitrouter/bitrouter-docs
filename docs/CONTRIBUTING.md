@@ -6,55 +6,60 @@ is rendered from this repo — docs are committed directly here under
 
 ## What publishes
 
-The docs-family navigation has five **tabs**. Four are content roots marked
-`"root": true` in their `meta.json`; their order is the `pages` list in
-`content/docs/meta.json`:
+Documentation uses one unified Fumadocs page tree with no layout tabs. Its
+top-level order is the `pages` list in `content/docs/meta.json`:
 
-- **Documentation** — `content/docs/(guide)/`. The parentheses make it a
-  *folder group*: fumadocs strips it from the URL, so `(guide)/overview/quickstart.mdx`
-  still publishes at `/docs/overview/quickstart`. It exists only to give the tab
-  something to hang off.
-- **Self-hosting** — `content/docs/self-hosting/`, the operator's lifecycle:
-  install, configure, run under a supervisor, expose, secure, operate. Lands on
-  its `index.mdx`.
-- **Guides** — `content/docs/guides/`, the model sources (subscriptions,
-  Ollama, vLLM, Unsloth) and the end-to-end migration walkthroughs. It has no
-  `index.mdx`, so its landing URL comes from `pagesIndex`.
-- **API Reference** — `content/docs/reference/`, generated from the BitRouter
-  Cloud OpenAPI spec.
+1. **Overview** — quickstart, product explanation, models, comparisons, and
+   the Self-hosting entry.
+2. **Usage** — CLI/Code, coding agents, ACP/MCP, Skills, model sources, and
+   migration walkthroughs.
+3. **Configuration** — config file, routing behavior, guardrails, and observability.
+4. **Customization** — model/provider customization and router-owned tool
+   capabilities.
+5. **Reference** — the generated Cloud API reference.
+6. **Development** — source and contribution entry points.
 
-The fifth tab is **Changelog**. It is appended explicitly in
-`lib/docs-tabs.tsx`, keeps its canonical `/changelog` routes and separate
-`content/changelog/` source. Its native docs sidebar is built from the release
-metadata, newest first, so each item is labeled with its version tag. Do not
-move its release files into `content/docs/` just to make the tab automatic.
+Five meta-only folders — `content/docs/(overview-nav)/`, `(usage-nav)/`,
+`(configuration-nav)/`, `(customization-nav)/`, and `(development-nav)/` — define
+the first, second, third, fourth, and sixth groups. They contain links to the
+canonical pages rather than copies of those pages. `content/docs/reference/`
+is the only native content folder in the top-level list because the OpenAPI
+generator owns its nested endpoint tree.
 
-Two rules follow from that, and breaking either one silently deletes a tab:
+**Changelog is not part of the documentation tree.** It is a top-level `/changelog`
+section with a separate `content/changelog/` source. It still uses the native
+Fumadocs notebook layout, and its sidebar is built from release metadata,
+newest first, so each item is labeled with its version tag. Do not move its
+release files into `content/docs/`.
 
-1. A root folder needs a landing URL. Fumadocs takes it from `pagesIndex` in
-   `meta.json`, or from the folder's first direct *page* child — a root folder
-   whose children are all folders resolves to nothing and is dropped from the
-   tab bar without an error.
-2. Only these four folders carry `"root": true`. Adding it to a section would
-   create another generated tab in addition to the explicit Changelog tab.
+Three rules keep the unified navigation intact:
 
-### Integrations is a section, not a tab
+1. Do not add `"root": true`; Fumadocs root folders isolate content into layout
+   tabs and would split the page tree again.
+2. Keep source paths aligned with the information architecture. When a page
+   changes jobs, move it and update its internal links and URL-history target.
+3. A page should appear in one user-facing group. Cross-link it from content
+   when another journey needs it instead of duplicating the navigation entry.
 
-Integrations was its own tab until 2026-08. The harness recipes now live in
-`content/docs/(guide)/integrations/` as a section of the Documentation tab, and
-they still publish at `/docs/integrations/*` — the `(guide)` group is stripped
-from the URL, so the folder path and the URL disagree by design. Don't "fix" it:
-those URLs are load-bearing (the retired `/claude-code`-style marketing routes
-301 into them, and the landing footer links straight at them).
+### Keep Usage shallow
 
-The other half of that tab — the model sources — moved to **Guides**, where
-`/docs/guides/models` and its five siblings sit above the migration group. Every
-old `/docs/integrations/<model-source>` URL 301s there from `next.config.ts`.
+Usage source pages live together under `content/docs/(guide)/usage/`. The
+sidebar shows task-level entry points only: CLI, Code, coding agents, MCP & ACP,
+Skills, model sources, and migration. Product-specific recipes live one level
+deeper and are discovered from cards on those overview pages, not by expanding
+another sidebar tree.
+
+Use this boundary when classifying new pages:
+
+- **Usage** explains how to operate BitRouter from an interface, agent,
+  protocol, skill, or model source.
+- **Customization** adds or replaces a capability in the router's execution path.
+- **Configuration** explains built-in routing behavior and observation.
 
 ### Documentation vs Self-hosting
 
-These two tabs slice the same product differently, so the boundary has to be
-held deliberately or they rot into two half-answers per topic:
+These two sidebar areas slice the same product differently, so the content
+boundary has to be held deliberately or they rot into two half-answers per topic:
 
 - **Documentation** answers *what the router does* — feature semantics, routing
   behaviour, and the `bitrouter.yaml` block reference.
@@ -63,34 +68,20 @@ held deliberately or they rot into two half-answers per topic:
   upgrades, state.
 
 Self-hosting **links** to feature pages rather than restating them. The
-`bitrouter.yaml` block reference stays in `usage/configuration.mdx`; the
+`bitrouter.yaml` block reference stays in `configuration/config-file.mdx`; the
 Self-hosting page about config covers only the operational contract around it
 (resolution, secrets, CI validation).
 
-Each folder under `content/docs/(guide)/` (`overview`, `usage`,
-`gateway-and-routing`, `observability`) is a section within the Documentation
-tab. Page order within a section is the `pages` list in that section's
-`meta.json`; the section order is the `pages` list in
-`content/docs/(guide)/meta.json`.
+Folders under `content/docs/(guide)/` own their routes and local source
+ordering. Public sidebar order comes from the `*-nav/meta.json` files, which
+intentionally expose fewer entries than the complete source tree.
 
-`usage/` is how you drive BitRouter, in nav order: `configuration.mdx` (the
-`bitrouter.yaml` reference, titled "Config (YAML)"), `cli.mdx` (generated —
-don't hand-author it), `tui.mdx`, `agent.mdx` (the `@bitrouter/agent` adoption
-wizard), `mcp.mdx`, and `skills.mdx` (titled "Skills"; the page is still about
-the Agent Skills product, so body copy keeps that name).
+### Unlisted pages are details, not orphans
 
-### Unlisted pages are hidden, not retired
-
-A page left out of its section's `pages` list still builds and still answers at
-its URL — it just doesn't appear in the sidebar. One page is hidden this way on
-purpose: `models-and-routing/guardrails.mdx`. It stays linked from feature
-pages, the migration guides, and `lib/llms-txt.ts`, so **don't delete it and
-don't add a 301** — hiding a page changes the nav, not the URL history.
-Deleting it is a separate decision that does need a redirect.
-
-Two other hidden entries were un-hidden in 2026-08 by moving them into the new
-Agents & Orchestration section: `acp-gateway.mdx` and the `tool-calling/`
-subfolder. Those moves *did* need 301s, because they changed the URLs.
+A page left out of a public `*-nav/meta.json` still builds and answers at its
+URL. It must be linked from its task overview page and included in its source
+folder's `meta.json`. This is how detailed recipes stay discoverable without
+making the sidebar a complete file browser.
 
 ## Authoring contract (import-free MDX)
 
@@ -128,16 +119,18 @@ beyond the whitelisted components. The build enforces this:
 ## Adding a page
 
 1. Create `content/docs/(guide)/<section>/<name>.mdx`.
-2. Add `<name>` to that section's `meta.json` `pages` list in the position you
-   want it to appear in the nav.
-3. Run `pnpm lint:docs` to check the authoring contract.
+2. Add it to the source section's `meta.json` when that local ordering is used.
+3. Add a canonical URL link to the appropriate `*-nav/meta.json` if it should
+   appear in the public sidebar.
+4. Run `pnpm lint:docs` to check the authoring contract.
 
 ## Adding a section
 
-A new section is a folder under `content/docs/(guide)/` with its own
-`meta.json` (`title`, a [lucide](https://lucide.dev) `icon`, and `pages`), added
-to the `pages` list in `content/docs/(guide)/meta.json` at the position you want
-in the tab. Never give it `"root": true` — that would make it a fifth tab.
+A new source section is a folder under `content/docs/(guide)/` with its own
+`meta.json` (`title`, a [lucide](https://lucide.dev) `icon`, and `pages`). Add
+its pages to the appropriate user-facing `*-nav/meta.json`; do not add another
+top-level group without an information-architecture decision. Never give it
+`"root": true`.
 
 One extra step is easy to miss: **add the folder to `SECTIONS` in
 `scripts/check-docs.mjs`.** That list is hardcoded, so a section left out of it
@@ -156,8 +149,9 @@ output:
 - **API reference** (`content/docs/reference/<tag>/`) — `pnpm generate:openapi`
   regenerates from `openapi.yaml`. The hand-authored `index.mdx` survives; every
   other subdirectory is wiped, and the section `meta.json` is rewritten from
-  `REFERENCE_META` in the script — including the `"root": true` that makes it a
-  tab, so edit the script, not the file.
+  `REFERENCE_META` in the script. The index is included in `pnpm lint:docs` as
+  a standalone hand-authored page. Reference remains a regular collapsible
+  folder in the unified sidebar, so edit the script, not the generated files.
 - **CLI reference** (`content/docs/(guide)/usage/cli.mdx`) — `pnpm generate:cli`
   builds the whole page from `.cli-snapshot.json` plus the hand-authored
   overlays in `cli-overlays/`. It is **one page**: `cli-overlays/index.md`
@@ -167,5 +161,5 @@ output:
   to that command's subsection). Section headings are anchor targets that
   `next.config.ts` redirects at, so renaming one means updating those
   redirects. When the documented binary changes, re-capture the snapshot
-  locally with `pnpm snapshot:cli` (needs `bitrouter` on PATH, or
+  locally with `pnpm snapshot:cli` (needs `bro` on PATH, or
   `BITROUTER_BIN=...`), review the diff, and commit both files.

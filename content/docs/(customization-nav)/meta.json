@@ -1,0 +1,8 @@
+{
+  "title": "Customization",
+  "pagesIndex": "[Customization](/docs/customization)",
+  "pages": [
+    "[Models & providers](/docs/customization/models)",
+    "[Tool calling](/docs/customization/tools)"
+  ]
+}

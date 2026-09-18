@@ -18,7 +18,7 @@ The full onboarding walkthrough — wizard steps, headless flags, recipes — is
 Re-runs the wizard interactively; with `--yes` it never blocks and emits a JSON result envelope — the form an agent or CI should drive. Refuses to overwrite an existing `bitrouter.yaml` unless `--force`.
 
 ```bash
-bitrouter init --yes --use-detected --harness claude --after serve
+bro init --yes --use-detected --harness claude --after serve
 ```
 
 ## @config validate
@@ -26,5 +26,5 @@ bitrouter init --yes --use-detected --harness claude --after serve
 The CI-safe check: exits non-zero when the config doesn't match the schema.
 
 ```bash
-bitrouter config validate -c ./bitrouter.yaml
+bro config validate -c ./bitrouter.yaml
 ```

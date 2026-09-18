@@ -16,7 +16,7 @@ import {
  * Design language: the v3 dark nav. A bare ≋ mask mark + lowercase mono
  * `bitrouter` wordmark, a centred row of uppercase mono nav links
  * (11.5px / 0.16em, ink-3 → ink on hover), then the utility cluster — the
- * "Ask AI…" search box, GitHub, "book demo" and "Get API key". The shell is
+ * "Ask AI…" search box, GitHub, "book demo" and "Try Cloud". The shell is
  * sticky + translucent (`rgba(12,13,16,0.85)`) with a `--z-rule` hairline. All
  * colours come from the global Zed tokens (`--z-*`), so it matches every page.
  *
@@ -46,11 +46,6 @@ export interface SiteHeaderProps {
   searchSlot?: React.ReactNode;
   /** web: GitHub stars. */
   utilitySlot?: React.ReactNode;
-  /**
-   * Small uppercase label after the wordmark — the docs shell renders
-   * `bitrouter docs`, marketing pages render the wordmark alone.
-   */
-  wordmarkSuffix?: string;
 }
 
 // ── internal helpers ─────────────────────────────────────
@@ -72,8 +67,7 @@ const UTIL_LINK =
 
 /**
  * "book demo" — the secondary header CTA that opens the founder-call Cal.com
- * embed (the same `founder-call` event the enterprise page books). Always
- * shown, for prospects and customers alike. Cal's `getCalApi("ui")` must be
+ * embed. Always shown, for prospects and customers alike. Cal's `getCalApi("ui")` must be
  * initialised once on the page (see `useCalFounderCall`) for the data-cal
  * attributes to take over the click.
  */
@@ -136,7 +130,6 @@ export function SiteHeaderBody({
   leadingSlot,
   searchSlot,
   utilitySlot,
-  wordmarkSuffix,
 }: SiteHeaderProps): React.ReactElement {
   const isAuthed = Boolean(session);
   const items = NAV_ITEMS;
@@ -172,11 +165,6 @@ export function SiteHeaderBody({
         <span className="hidden font-mono text-[13px] tracking-[0.02em] text-[var(--z-ink)] sm:inline">
           bitrouter
         </span>
-        {wordmarkSuffix ? (
-          <span className="ml-1 hidden font-mono text-[11.5px] uppercase tracking-[0.16em] text-[var(--z-ink-6)] sm:inline">
-            {wordmarkSuffix}
-          </span>
-        ) : null}
       </a>
 
       {/* Primary nav — centred in the leftover space. Hidden below `lg`, where
@@ -230,13 +218,13 @@ export function SiteHeaderBody({
             showSignOut={showSignOut}
           />
         ) : (
-          // Single auth CTA — "Get API key" routes to the console's sign-in
+          // Single auth CTA — "Try Cloud" routes to the console's sign-in
           // (social sign-in auto-creates the account, so it is sign-in/sign-up).
           <a
             href={`${config.consoleBaseUrl}/sign-in`}
             className={cn(UTIL_LINK, "text-[var(--z-ink)] hover:text-[var(--z-ink-3)]")}
           >
-            Get API key
+            Try Cloud
           </a>
         )}
 
@@ -491,7 +479,7 @@ function MobileMenu({
                   href={`${config.consoleBaseUrl}/sign-in`}
                   className="flex flex-1 items-center justify-center rounded-[2px] bg-[var(--z-cta)] px-4 py-3 font-mono text-[11.5px] uppercase tracking-[0.16em] text-white transition-colors hover:bg-[#1a56f0]"
                 >
-                  Get API key
+                  Try Cloud
                 </a>
               )}
             </div>

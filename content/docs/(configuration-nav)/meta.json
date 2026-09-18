@@ -1,0 +1,10 @@
+{
+  "title": "Configuration",
+  "pagesIndex": "[Configuration](/docs/configuration)",
+  "pages": [
+    "[Config file](/docs/configuration/config-file)",
+    "[Routing](/docs/configuration/routing)",
+    "[Guardrails](/docs/configuration/guardrails)",
+    "[Observability](/docs/configuration/observability)"
+  ]
+}

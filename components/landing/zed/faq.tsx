@@ -23,8 +23,8 @@ interface FaqProps {
 }
 
 /**
- * The site's one FAQ accordion — landing, pricing, enterprise and startup all
- * render this. Presentation lives in zed.css (.zed-faq*); only the copy and the
+ * The site's one FAQ accordion — landing and pricing both render this.
+ * Presentation lives in zed.css (.zed-faq*); only the copy and the
  * left-column shape differ per page.
  */
 export function Faq({ items, heading, kicker, lead, sticky, jsonLd }: FaqProps) {

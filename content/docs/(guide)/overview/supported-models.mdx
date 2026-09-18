@@ -5,13 +5,14 @@ description: The models hosted BitRouter routes to natively — a curated SOTA s
 
 These are the models **hosted BitRouter** supports natively for context-aware routing: the ones the router can score, downgrade, and fail over between without any setup on your side. It is a curated set, not an everything-catalog — we track the best SOTA models for **agentic and coding** workloads, so the router always has a strong frontier option and a strong cheap option for every step of a loop.
 
-You are never limited to this list. Any model you run yourself — local or remote, a fine-tune, a private cluster — routes alongside these with the same ids, fallbacks, and variants: see [bring your own model](/docs/models-and-routing/bring-your-own-model). To reach a model on your own provider account instead of ours, see [bring your own provider](/docs/models-and-routing/bring-your-own-provider).
+You are never limited to this list. Any model you run yourself — local or remote, a fine-tune, a private cluster — routes alongside these with the same ids, fallbacks, and variants: see [bring your own model](/docs/customization/models#custom-endpoints-and-models). To reach a model on your own provider account instead of ours, see [bring your own provider](/docs/customization/models#built-in-providers-with-your-own-key).
 
 ## Model catalog
 
 | Model | Context | Modalities | Open weights | Input $/M | Cached input $/M | Output $/M |
 | --- | --- | --- | --- | --- | --- | --- |
 | `anthropic/claude-fable-5` | 1M | text, image | — | $10 | $1 | $50 |
+| `anthropic/claude-fable-5.1` | 1M | file, image, text | — | $10 | $0.25 | $50 |
 | `anthropic/claude-haiku-4.5` | 200K | text, image | — | $1 | $0.1 | $5 |
 | `anthropic/claude-opus-4.6` | 200K | text, image | — | $5 | $0.5 | $25 |
 | `anthropic/claude-opus-4.7` | 200K | text, image | — | $4.5 | $0.45 | $22.5 |
@@ -24,14 +25,13 @@ You are never limited to this list. Any model you run yourself — local or remo
 | `deepseek/deepseek-v4-flash-0731` | 1M | text | ✅ | $0.14 | $0.0028 | $0.28 |
 | `deepseek/deepseek-v4-pro` | 256K | text | ✅ | $1.305 | $0.10875 | $2.61 |
 | `deepseek/deepseek-v4-pro-0813` | 1M | text | — | $0.435 | $0.003625 | $0.87 |
-| `google/gemini-3.1-flash-lite-preview` | 1M | text, image | — | $0.25 | $0.025 | $1.5 |
-| `google/gemini-3.1-pro-preview` | 2M | text, image | — | $2 | $0.2 | $12 |
+| `deepseek/deepseek-v4.1-flash` | 1M | image, text | — | $0.65 | $0.13 | $1.45 |
 | `google/gemini-3.5-flash` | 1M | text, image, audio | — | $1.5 | $0.15 | $9 |
 | `google/gemini-3.6-flash` | 1M | text, image, audio, video | — | $1.5 | $0.15 | $7.5 |
-| `minimax/minimax-m2.5` | 192K | text | ✅ | $0.225 | $0.0225 | $0.9 |
+| `google/gemini-3.7-flash` | 1M | audio, file, image, text, video | — | $0.75 | $0.075 | $3.75 |
+| `google/gemini-3.8-flash` | 1M | audio, file, image, text, video | — | $0.75 | $0.075 | $3.75 |
 | `minimax/minimax-m2.7` | 192K | text | ✅ | $0.225 | $0.045 | $0.9 |
 | `minimax/minimax-m3` | 1M | text, image | ✅ | $0.3 | $0.06 | $1.2 |
-| `moonshotai/kimi-k2.5` | 256K | text, image | ✅ | $0.44 | $0.22 | $2 |
 | `moonshotai/kimi-k2.6` | 256K | text | ✅ | $0.7125 | $0.12 | $3 |
 | `moonshotai/kimi-k2.7-code` | 256K | text, image | ✅ | $0.7125 | $0.1425 | $3 |
 | `moonshotai/kimi-k3` | 1M | text, image | ✅ | $2 | — | $6 |
@@ -41,13 +41,17 @@ You are never limited to this list. Any model you run yourself — local or remo
 | `openai/gpt-5.6-luna` | 400K | text, image | — | $0.2 | $0.02 | $1.2 |
 | `openai/gpt-5.6-sol` | 1M | text, image | — | $5 | $0.5 | $30 |
 | `openai/gpt-5.6-terra` | 1M | text, image | — | $2 | $0.2 | $12 |
+| `openai/gpt-6-astra` | 1.1M | file, image, text | — | $10 | $1 | $50 |
 | `qwen/qwen3.5-122b-a10b` | 256K | text, image | ✅ | $0.26 | — | $2.08 |
 | `qwen/qwen3.5-27b` | 256K | text, image | ✅ | $0.25 | — | $2 |
 | `qwen/qwen3.6-27b` | 256K | text, image | ✅ | $0.3 | — | $3.2 |
 | `qwen/qwen3.6-35b-a3b` | 256K | text, image | ✅ | $0.248 | — | $1.485 |
-| `qwen/qwen3.6-flash` | 1M | text, image | — | $0.1875 | $0.01875 | $1.125 |
+| `qwen/qwen3.6-flash` | 1M | text, image | — | $0.1875 | — | $1.125 |
 | `qwen/qwen3.7-max` | 1M | text | — | $1.875 | $0.375 | $5.625 |
 | `qwen/qwen3.7-plus` | 1M | text, image | — | $0.4 | $0.08 | $1.6 |
+| `qwen/qwen3.8-2.4t-a95b` | 1M | text | ✅ | $2 | $0.17 | $6 |
+| `qwen/qwen3.8-27b` | 1M | text, image, video | ✅ | $0.99 | — | $1.49 |
+| `qwen/qwen3.8-flash` | 1M | image, text, video | — | $0.15 | $0.016 | $0.47 |
 | `qwen/qwen3.8-max` | 1M | text, image, video | — | $2 | $0.25 | $6 |
 | `x-ai/grok-4.20` | 128K | text, image | — | $1.25 | $0.2 | $2.5 |
 | `x-ai/grok-4.20-multi-agent` | 1M | text, image | — | $1.25 | $0.2 | $2.5 |
@@ -58,9 +62,10 @@ You are never limited to this list. Any model you run yourself — local or remo
 | `xiaomi/mimo-v2.5` | 256K | text | ✅ | $0.14 | $0.0028 | $0.28 |
 | `xiaomi/mimo-v2.5-pro` | 256K | text | ✅ | $0.435 | $0.0036 | $0.87 |
 | `z-ai/glm-4.7` | 200K | text | ✅ | $0.6 | $0.11 | $2.2 |
-| `z-ai/glm-5` | 198K | text | ✅ | $0.6 | $0.12 | $1.92 |
 | `z-ai/glm-5.1` | 128K | text | ✅ | $0.98 | $0.49 | $3.08 |
 | `z-ai/glm-5.2` | 1M | text | ✅ | $0.979 | $0.182 | $3.08 |
+| `z-ai/glm-5.3` | 1M | text | — | $1.4 | $0.26 | $4.4 |
+| `z-ai/glm-5.3-flash` | 1M | text, image, video | ✅ | $0.075 | $0.015 | $0.25 |
 
 Prices are USD per **million tokens** — what a hosted [BitRouter](/docs/overview/quickstart) request costs today, from the cheapest provider actually serving that model (`—` means no per-token provider is currently serving it; cached input is `—` where the model prices no cache tier). **Modalities** are the inputs a model accepts; every model returns text. A provider listed in the public, open-source [registry](https://github.com/bitrouter/bitrouter/tree/main/registry) but not currently reachable isn't priced here, so bringing your own key to one of them can beat these rates — and anyone can register a provider by opening a PR against it.
 
@@ -68,13 +73,13 @@ Prices are USD per **million tokens** — what a hosted [BitRouter](/docs/overvi
 
 On BitRouter a "model" is not a single endpoint. It's an **aggregate**: one logical model — say `openai/gpt-4o` or `anthropic/claude-sonnet-4.6` — that can be served by many providers at once. You address it by the stable **model id** in the catalog above, and BitRouter decides which underlying provider endpoint actually answers each request. That indirection is the point: you write your agent against `anthropic/claude-sonnet-4.6`, and the set of providers behind it can grow, shrink, or re-price without you changing a line of code.
 
-Because a model is an aggregate, requesting one kicks off a [provider selection](/docs/models-and-routing/provider-selection) step — BitRouter ranks the eligible providers on a blend of cost, latency, throughput, and uptime, and sends your request to the best one. A transient failure falls through to the next-ranked provider, or to the next model you listed via [fallback](/docs/models-and-routing/model-fallback). Append a [variant](/docs/models-and-routing/model-variants) suffix — `:cost`, `:latency`, `:throughput` — to re-rank the eligible providers along one axis for a single request; a bare id is the balanced default.
+Because a model is an aggregate, requesting one starts [route resolution](/docs/configuration/routing): BitRouter filters eligible providers by the request's protocol and capabilities, then applies the configured priority order. Retryable failures advance through that chain. Presets and variants can further restrict providers or select a named policy, but alpha.31 does not yet use live cost or latency measurements to rank them.
 
 ## Calling these models
 
 Every model above is reachable on hosted **BitRouter** — one account against `api.bitrouter.ai`, no upstream provider keys, no per-provider signups. You pay BitRouter directly at the prices listed here, billed per request; failed requests aren't billed.
 
 ```bash
-bitrouter cloud login   # one-time device-flow sign-in
-bitrouter start         # the `bitrouter` provider auto-enables once signed in
+bro cloud login   # one-time device-flow sign-in
+bro start         # the `bitrouter` provider auto-enables once signed in
 ```

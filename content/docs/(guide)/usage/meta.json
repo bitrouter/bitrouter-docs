@@ -1,6 +1,17 @@
 {
   "title": "Usage",
-  "icon": "Terminal",
-  "collapsible": false,
-  "pages": ["configuration", "cli", "tui", "agent", "mcp", "skills"]
+  "pagesIndex": "index",
+  "pages": [
+    "cli",
+    "code",
+    "coding-agents",
+    "protocols",
+    "mcp",
+    "mcp-gateway",
+    "acp",
+    "skills",
+    "model-sources",
+    "migrate",
+    "agent"
+  ]
 }

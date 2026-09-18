@@ -2,7 +2,7 @@
 title: Cloud
 ---
 
-`bitrouter cloud login` either runs the RFC 8628 Device Authorization Grant or stores an existing BitRouter API key. Both credential types live under `$XDG_DATA_HOME/bitrouter/account-credentials.json` (mode `0600` on Unix). The API-key form performs no network request, which makes it suitable for CI. Interactive OAuth lets you pick the workspace this session is bound to; tokens refresh automatically within 60 s of expiry.
+`bro cloud login` either runs the RFC 8628 Device Authorization Grant or stores an existing BitRouter API key. Both credential types live under `$XDG_DATA_HOME/bitrouter/account-credentials.json` (mode `0600` on Unix). The API-key form performs no network request, which makes it suitable for CI. Interactive OAuth lets you pick the workspace this session is bound to; tokens refresh automatically within 60 s of expiry.
 
 The default scope set covers `inference:invoke`, `usage:read`, `keys:read`/`keys:write`, `billing:read`, `policy:read`/`policy:write`, `byok:read`/`byok:write`, and `namespace:read`. Sensitive scopes such as `billing:write` are opt-in via `--scope`. After either login form, the `bitrouter` provider auto-enables in zero-config mode — every model your account is entitled to is routable as `bitrouter:<model-id>`.
 
@@ -11,8 +11,8 @@ Every leaf accepts `--json` for raw output; the default is a `systemctl`-style k
 ## @cloud login
 
 ```bash
-bitrouter cloud login                              # device flow, pick a workspace
-bitrouter cloud login --api-key "$BITROUTER_API_KEY"   # CI: no network, no browser
+bro cloud login                              # device flow, pick a workspace
+bro cloud login --api-key "$BITROUTER_API_KEY"   # CI: no network, no browser
 ```
 
 ## @cloud api
@@ -20,9 +20,9 @@ bitrouter cloud login --api-key "$BITROUTER_API_KEY"   # CI: no network, no brow
 Modeled after `gh api`: injects the stored bearer against the logged-in origin and streams the response. Absolute URLs and redirect following are rejected, so the credential never leaves its login origin.
 
 ```bash
-bitrouter cloud api /v1/models
-bitrouter cloud api /v1/chat/completions --input request.json
-bitrouter cloud api /v1/responses -f model=openai/gpt-5 -F stream=true
+bro cloud api /v1/models
+bro cloud api /v1/chat/completions --input request.json
+bro cloud api /v1/responses -f model=openai/gpt-5 -F stream=true
 ```
 
 ## @cloud keys mint
@@ -30,7 +30,7 @@ bitrouter cloud api /v1/responses -f model=openai/gpt-5 -F stream=true
 Returns the plaintext `brk_…` token **exactly once** — the server keeps only the SHA-256 hash. Requested scopes must be a subset of your effective scopes.
 
 ```bash
-bitrouter cloud keys mint --name ci --scope "policy:read usage:read"
+bro cloud keys mint --name ci --scope "policy:read usage:read"
 ```
 
 ## @cloud policy

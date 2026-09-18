@@ -1,0 +1,80 @@
+---
+title: Web tools
+description: Configure Web Search and Web Fetch as explicit, BYOK server tools.
+---
+
+Web Search and Web Fetch use the same server-tool loop but solve different tasks:
+
+| Tool | Input | Output |
+| --- | --- | --- |
+| `bitrouter:web_search` | Search query | Normalized result list or backend answer |
+| `bitrouter:web_fetch` | URL | Normalized page content |
+
+Both are off by default. The deployment configures ordered backends, and each request explicitly declares the tool.
+
+## Configure backends
+
+```yaml
+server_tools:
+  web_search:
+    max_results: 5
+    backends:
+      - kind: parallel
+      - kind: exa
+      - kind: firecrawl
+      - kind: tavily
+
+  web_fetch:
+    max_content_tokens: 4000
+    backends:
+      - kind: exa
+      - kind: firecrawl
+      - kind: tavily
+```
+
+Each HTTP backend reads an explicit `api_key` or its conventional environment variable:
+
+| Backend | Search | Fetch | Environment variable |
+| --- | --- | --- | --- |
+| Parallel | Yes | No | `PARALLEL_API_KEY` |
+| Exa | Yes | Yes | `EXA_API_KEY` |
+| Firecrawl | Yes | Yes | `FIRECRAWL_API_KEY` |
+| Tavily | Yes | Yes | `TAVILY_API_KEY` |
+
+Backends are tried in config order. Entries with no resolvable key are skipped; if none resolve, that tool remains disabled and the daemon logs why.
+
+Web Search also supports a `native` backend that runs a search-capable model with its provider-native search tool. That is a nested model call rather than an HTTP search API.
+
+## Web Search
+
+```json
+{
+  "type": "bitrouter:web_search",
+  "args": {"backend": "exa", "max_results": 3}
+}
+```
+
+The parent model calls `web_search` with a query. A declaration may pin one configured backend and lower the result cap. A bare or foreign-namespaced `web_search` remains a provider-native tool; only the explicit `bitrouter:` namespace selects BitRouter's implementation.
+
+## Web Fetch
+
+```json
+{
+  "type": "bitrouter:web_fetch",
+  "args": {"backend": "firecrawl", "max_content_tokens": 1500}
+}
+```
+
+The parent calls `web_fetch` with a URL. `max_content_tokens` resolves from deployment to declaration and may only be lowered. Exa, Firecrawl, or Tavily fetch the address on their infrastructure; BitRouter sends the URL to the chosen extraction API instead of dereferencing it directly.
+
+## Operational boundaries
+
+- Search and fetch content is untrusted model input; keep prompt-injection defenses in the calling workflow.
+- Backend requests consume external quota and may leave your network.
+- Tool results are bounded by the server-tool loop and appear in request telemetry when export is enabled.
+- Backend pinning chooses an already configured implementation; it does not supply or reveal a credential.
+
+<Cards>
+  <Card title="Server tools" href="/docs/customization/tools/server-tools" description="Understand activation, loop bounds, and authorization." />
+  <Card title="Observability" href="/docs/configuration/observability" description="Inspect nested calls and exported traces." />
+</Cards>

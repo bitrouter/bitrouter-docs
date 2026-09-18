@@ -1,0 +1,104 @@
+---
+title: Operate
+description: Reload configuration, diagnose routing, manage persistent state, and recover a running BitRouter deployment.
+---
+
+Operate BitRouter through a small loop: validate the intended state, inspect the route it produces, apply it, and verify the running state. Back up the data that cannot be reconstructed before changing the binary or schema.
+
+## Change and diagnose
+
+Five read-only commands cover most incidents:
+
+```bash
+bro status -c /etc/bitrouter/bitrouter.yaml
+bro models -c /etc/bitrouter/bitrouter.yaml
+bro providers list -c /etc/bitrouter/bitrouter.yaml
+bro route <model> -c /etc/bitrouter/bitrouter.yaml
+bro observe status -c /etc/bitrouter/bitrouter.yaml
+```
+
+Use this order:
+
+1. `status`: is the process reachable through the expected control socket, and does it have routable models?
+2. `/health`: is the HTTP listener alive?
+3. `providers list`: are the expected provider credentials active?
+4. `route`: does the requested selector resolve where you expect?
+5. Logs: if routing is correct, inspect the upstream failure with `RUST_LOG=info,bitrouter=debug`.
+
+An unexpected `running: no` can mean the command used a different config and therefore looked for a different control socket. Keep `-c` explicit in both service and operator commands.
+
+## Reload or restart
+
+```bash
+bro reload -c /etc/bitrouter/bitrouter.yaml
+bro restart -c /etc/bitrouter/bitrouter.yaml
+```
+
+Prefer `reload` for routing, provider, policy, and timeout changes. It prepares the replacement state before swapping it into the running daemon; a failed reload leaves the previous state active.
+
+Restart when changing process-bound settings such as the listen address, control socket, `skip_auth`, database URL, or `RUST_LOG`. A restart drains in-flight requests for up to 30 seconds before forcing the old process down, so a long agentic stream can be interrupted.
+
+A safe config rollout is:
+
+```bash
+bro config validate -c /etc/bitrouter/bitrouter.yaml
+bro route <important-model> -c /etc/bitrouter/bitrouter.yaml
+bro reload -c /etc/bitrouter/bitrouter.yaml
+bro status -c /etc/bitrouter/bitrouter.yaml
+```
+
+When systemd owns the process, use `systemctl restart bitrouter` for a full restart rather than stopping the daemon behind the supervisor's back.
+
+## State and backups
+
+Routing config is not stored in the database. Persistent features are:
+
+| State | Why it matters |
+| --- | --- |
+| `bitrouter.yaml` and `policy-lock.yaml` | Desired routing state; keep both in version control |
+| Virtual-key tables | Losing them invalidates every self-hosted caller key |
+| Metering rows | Cost history and caller attribution |
+| Adequacy evidence | Observations used by adaptive routing |
+| Provider credentials | Recover through your normal secret store, not the BitRouter database |
+
+The database URL supports SQLite, Postgres, and MySQL:
+
+```yaml
+database:
+  url: "sqlite:///var/lib/bitrouter/bitrouter.db"
+  # url: "postgres://bitrouter:${DB_PASSWORD}@db.internal:5432/bitrouter"
+```
+
+SQLite is appropriate for a single host. Back it up with SQLite's online backup command rather than copying a live file:
+
+```bash
+sqlite3 /var/lib/bitrouter/bitrouter.db ".backup '/backup/bitrouter-$(date +%F).db'"
+```
+
+The daemon applies pending migrations at startup, and migrations only move forward. There is no down-migration command, so take a database backup before an upgrade you may reverse. To restore, stop the daemon, restore the file or database dump, then start it and let already-applied migrations be skipped.
+
+## Multiple instances
+
+The pid-file guard prevents a second process from using the same control-socket path on one host. It is not a distributed lock.
+
+Several instances can technically share a database, which shares virtual keys, metering, and adequacy evidence. Their routing table, control socket, process state, and local `policy-lock.yaml` remain separate. BitRouter does not publish a supported coordinated multi-replica topology with leader election or distributed locking.
+
+For redundancy, prefer independent single-node routers behind a load balancer, with the same reviewed config and policy lock deployed to each. Treat shared-database adaptive routing as an unsupported design requiring separate validation.
+
+## Logs and telemetry
+
+`bro serve` writes structured logs to stdout. Set `RUST_LOG` at process start; restart to change it.
+
+BitRouter exports operational telemetry through OTLP when configured. Confirm the running exporter rather than assuming the config was applied:
+
+```bash
+bro observe status -c /etc/bitrouter/bitrouter.yaml
+```
+
+Use an OpenTelemetry Collector when the destination is Prometheus-based. See [Observability](/docs/configuration/observability) for spans, usage attribution, and exporter configuration.
+
+<Cards>
+  <Card title="Install" href="/docs/self-hosting/install" description="Pin, upgrade, or roll back the binary." />
+  <Card title="Deploy" href="/docs/self-hosting/deploy" description="Review the service and network configuration." />
+  <Card title="CLI reference" href="/docs/usage/cli" description="Inspect every command and flag used here." />
+</Cards>

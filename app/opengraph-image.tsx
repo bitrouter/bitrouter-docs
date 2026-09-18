@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "BitRouter — Context-Aware LLM Router for Agent Workflows";
+export const alt = "BitRouter — Open-Source LLM Router";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -46,8 +46,7 @@ export default function OGImage() {
               maxWidth: "800px",
             }}
           >
-            Context-aware LLM router that continuously
-            improves your agent workflows
+            Cut inference costs. Keep control.
           </div>
           <div
             style={{
@@ -58,11 +57,11 @@ export default function OGImage() {
               color: "#71717a",
             }}
           >
-            <span>200+ Models</span>
+            <span>Apache-2.0</span>
             <span>&#183;</span>
-            <span>93.2% SWE-bench</span>
+            <span>Self-host or Cloud</span>
             <span>&#183;</span>
-            <span>&lt;10ms Overhead</span>
+            <span>Policy you own</span>
           </div>
         </div>
       </div>

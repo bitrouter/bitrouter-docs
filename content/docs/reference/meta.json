@@ -1,18 +1,17 @@
 {
-  "title": "API Reference",
-  "icon": "Library",
-  "root": true,
-  "collapsible": false,
+  "title": "Reference",
+  "pagesIndex": "index",
   "pages": [
-    "index",
-    "---Cloud API---",
-    "health",
-    "discovery",
-    "byok",
-    "management",
+    "---Inference---",
     "openai-compatible",
     "openai-responses",
     "anthropic-compatible",
-    "google-compatible"
+    "google-compatible",
+    "---Platform---",
+    "discovery",
+    "byok",
+    "management",
+    "observability",
+    "health"
   ]
 }

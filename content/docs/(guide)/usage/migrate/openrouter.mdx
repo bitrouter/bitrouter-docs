@@ -1,0 +1,119 @@
+---
+title: Migrate from OpenRouter
+description: Move an OpenRouter client to BitRouter Cloud or a self-hosted BitRouter endpoint.
+---
+
+# Migrating from OpenRouter to BitRouter
+
+This guide moves an OpenRouter integration to BitRouter. The hosted path is mostly an endpoint and credential change; the self-hosted path also moves provider credentials and routing policy into infrastructure you control.
+
+## Choose the target deployment
+
+| | BitRouter Cloud | Self-hosted BitRouter |
+|---|---|---|
+| **Endpoint** | `https://api.bitrouter.ai/v1` | `http://127.0.0.1:4356/v1` by default |
+| **Credentials** | One BitRouter credential; optional Cloud BYOK | Your upstream provider keys |
+| **Gateway operations** | Managed by BitRouter | Owned by you |
+| **Gateway fee** | See the [live model catalog](/docs/overview/supported-models) | No BitRouter inference fee |
+
+OpenRouter's fees and BYOK allowance depend on its current plan. Use [OpenRouter's pricing page](https://openrouter.ai/pricing) for a current comparison rather than relying on a copied percentage.
+
+## Migration path
+
+### Step 1: Choose credentials
+
+**Option A: Headless CLI (recommended)**
+
+Install the CLI and sign in — `bro cloud login` runs the RFC 8628 device-code flow, opens an approval URL in your browser, and persists the resulting OAuth credential (auto-refreshed) under `$XDG_DATA_HOME/bitrouter/account-credentials.json`. After that, every request through the `bitrouter` provider is authenticated automatically — no API key in your config:
+
+```bash
+npm install -g bitrouter
+bro cloud login
+```
+
+Inspect the local session with `bro cloud whoami`, and manage account-level resources (API keys, usage, billing, policies, BYOK) with `bro cloud --help`.
+
+**Option B: Dashboard**
+
+Sign up at [cloud.bitrouter.ai](https://cloud.bitrouter.ai) and copy your API key from the dashboard.
+
+For self-hosting, install BitRouter, export your provider keys, and run `bro start` instead. The [Quickstart](/docs/overview/quickstart#run-self-hosted) covers that path.
+
+### Step 2: Update the base URL and credential
+
+That's the full migration. Replace your OpenRouter endpoint and key with BitRouter's:
+
+<Tabs items={['Python', 'JavaScript', 'curl']}>
+<Tab value="Python">
+```python
+# Before (OpenRouter)
+client = openai.OpenAI(
+    base_url="https://openrouter.ai/api/v1",
+    api_key=OPENROUTER_API_KEY,
+)
+
+# After (BitRouter)
+client = openai.OpenAI(
+    base_url="https://api.bitrouter.ai/v1",
+    api_key=BITROUTER_API_KEY,
+)
+```
+</Tab>
+<Tab value="JavaScript">
+```javascript
+// Before (OpenRouter)
+const client = new OpenAI({
+  baseURL: 'https://openrouter.ai/api/v1',
+  apiKey: OPENROUTER_API_KEY,
+});
+
+// After (BitRouter)
+const client = new OpenAI({
+  baseURL: 'https://api.bitrouter.ai/v1',
+  apiKey: BITROUTER_API_KEY,
+});
+```
+</Tab>
+<Tab value="curl">
+```bash
+# Before (OpenRouter)
+curl https://openrouter.ai/api/v1/chat/completions \
+  -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model": "openai/gpt-4o", "messages": [{"role": "user", "content": "Hello"}]}'
+
+# After (BitRouter)
+curl https://api.bitrouter.ai/v1/chat/completions \
+  -H "Authorization: Bearer $BITROUTER_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model": "openai/gpt-4o", "messages": [{"role": "user", "content": "Hello"}]}'
+```
+</Tab>
+</Tabs>
+
+
+## Headers to Remove
+
+If your OpenRouter integration sets any of these headers, you can safely drop them:
+
+| OpenRouter header | Status in BitRouter |
+|-------------------|---------------------|
+| `HTTP-Referer` | Not used |
+| `X-Title` | Not used |
+| `transforms` | Not used — guardrails are configured server-side |
+| `route` | Not used — routing lives in `bitrouter.yaml` or a named preset |
+
+## Next Steps
+
+<Cards>
+  <Card title="Quick Start" href="/docs/overview/quickstart" description="Get BitRouter running in under a minute" />
+  <Card title="Configuration" href="/docs/configuration/routing#presets" description="Advanced routing and configuration options" />
+  <Card title="Coding agents" href="/docs/usage/coding-agents" description="Setup guides for specific agent runtimes" />
+  <Card title="API Reference" href="/docs/reference" description="Complete API documentation" />
+</Cards>
+
+## Need Help?
+
+- **Discord**: [Join our community](https://discord.gg/G3zVrZDa5C) for migration support
+- **GitHub**: [Report issues](https://github.com/bitrouter/bitrouter/issues) or contribute
+- **Email**: contact@bitrouter.ai for enterprise migration assistance

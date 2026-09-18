@@ -19,21 +19,19 @@ import {
 } from "../lib/docs-sync/transform.mjs";
 import { COMPONENT_WHITELIST } from "../lib/docs-sync/constants.mjs";
 
-// Hand-authored sections, relative to content/docs. The Documentation tab's
-// sections live under the `(guide)` folder group, which fumadocs strips from
-// the URL — `(guide)/overview/` is still served at /docs/overview, and the
-// harness recipes in `(guide)/integrations/` keep their /docs/integrations/*
-// URLs from when Integrations was its own tab. The Guides tab is a top-level
-// root folder, so it has no group prefix.
+// Hand-authored sections, relative to content/docs. The primary sections live
+// under the `(guide)` folder group, which fumadocs strips from the URL.
 const SECTIONS = [
   "(guide)/overview",
   "(guide)/usage",
-  "(guide)/integrations",
-  "(guide)/models-and-routing",
-  "(guide)/evals-and-observability",
-  "(guide)/agents-and-orchestration",
-  "guides",
+  "(guide)/configuration",
+  "(guide)/customization",
+  "(guide)/development",
+  "self-hosting",
 ];
+// Reference endpoint pages are generated, but its overview is hand-authored
+// and must obey the same import-free contract.
+const STANDALONE_DOCS = ["reference/index.mdx"];
 const ROOT = "content/docs";
 // Generated output, exempt from the hand-authoring contract: it is emitted by
 // scripts/generate-cli.mjs from the binary's own `--help`.
@@ -84,6 +82,7 @@ function findAlertLine(body) {
 async function main() {
   const files = [];
   for (const s of SECTIONS) files.push(...(await walk(join(ROOT, s))));
+  files.push(...STANDALONE_DOCS.map((path) => join(ROOT, path)));
   const docs = files.filter(isDoc).filter((p) => !GENERATED.has(relative(ROOT, p)));
 
   const errors = [];
@@ -122,7 +121,10 @@ async function main() {
     for (const e of errors) console.error(`  ✗ ${e}`);
     process.exit(1);
   }
-  console.log(`check-docs: OK — ${docs.length} doc(s) across ${SECTIONS.length} sections pass the authoring contract`);
+  console.log(
+    `check-docs: OK — ${docs.length} doc(s) across ${SECTIONS.length} sections ` +
+      `and ${STANDALONE_DOCS.length} standalone overview(s) pass the authoring contract`,
+  );
 }
 
 main().catch((err) => {

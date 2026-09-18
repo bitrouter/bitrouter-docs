@@ -1,0 +1,49 @@
+---
+title: Claude subscription
+description: Use a Claude Pro or Max login as a BitRouter model source through the claude-code provider.
+---
+
+The `claude-code` provider uses a Claude subscription credential instead of an Anthropic API key. It is separate from the standard `anthropic` provider and from the Claude Code harness.
+
+## Sign in
+
+```bash
+bro providers login claude-code
+```
+
+BitRouter adopts a compatible local Claude Code login when possible and otherwise starts the provider's login flow. The stored credential refreshes automatically.
+
+No `providers:` block is required. Verify the route with a model exposed by the installed catalog:
+
+```bash
+bro models --provider claude-code
+bro route claude-code:claude-sonnet-4-6
+```
+
+Use the provider-qualified id to require the subscription source. A request routed to `anthropic:<model>` uses `ANTHROPIC_API_KEY` instead.
+
+## Use it with Claude Code
+
+```bash
+bro start
+bro claude
+```
+
+`bro claude` launches the native Claude Code interface through BitRouter. For BitRouter's ACP conversation or a headless turn, use `bro code claude` or `bro run claude "..."`.
+
+## Sign out
+
+```bash
+bro providers logout claude-code
+```
+
+This removes the stored subscription credential and its route. It does not modify Claude Code's own configuration.
+
+<Callout type="info">
+Provider login and BitRouter Cloud login are separate. `bro providers login claude-code` authenticates the upstream subscription; `bro cloud login` authenticates your BitRouter account.
+</Callout>
+
+<Cards>
+  <Card title="Claude Code" href="/docs/usage/coding-agents/claude-code" description="Choose ACP, headless, or native harness operation." />
+  <Card title="Model sources" href="/docs/usage/model-sources" description="Compare subscription, BYOK, and local sources." />
+</Cards>

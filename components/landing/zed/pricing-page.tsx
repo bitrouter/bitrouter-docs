@@ -18,33 +18,31 @@ import { ZED_LINKS } from "./primitives";
 /* No model count here on purpose: the live registry and the build-time snapshot
    disagree (20 vs 52 at time of writing), so any figure flips depending on which
    one answers. `/models` is the authority for the catalog size. */
-const INCLUDED = [
-  "Routing across every model on the catalog — never metered",
-  "No BitRouter rate limit · no request cap",
-  "Unlimited seats · 1 workspace",
-  "1M trace receipts / mo · 30-day retention",
-  "Evals, guardrails and multi-provider failover",
-  "BYOK and self-host — Apache-2.0, no platform fee",
+const SELF_HOSTED = [
+  "Apache-2.0 routing core",
+  "Run in your own infrastructure",
+  "Use your provider keys and local models",
+  "Routing, guardrails and OpenTelemetry export",
+  "No BitRouter platform or request fee",
 ];
 
-const ENTERPRISE = [
-  "Measured baseline & quality floor",
-  "Budget guarantee — never more than we save you",
-  "Shared workspaces & spend controls",
-  "Retention to 7 years · SSO · SIEM · DPA",
-  "Founders + SLA",
+const CLOUD = [
+  "Hosted endpoint at api.bitrouter.ai",
+  "No upstream provider keys required",
+  "Provider list price with 0% token markup",
+  "Managed providers and consolidated billing",
+  "Hosted request receipts and observability",
 ];
 
-/** What each gateway's fee is actually charged on. Figures are published rates. */
+/** Keep competitor commercial terms qualitative; plans and allowances change. */
 const CMP_COLS = ["BitRouter", "OpenRouter", "LiteLLM"];
 const CMP_ROWS: { label: string; row: string[]; hi?: boolean }[] = [
   { label: "What it selects for you", row: ["Model × provider, per call", "Provider, for a model you pick", "Neither — you configure routes"], hi: true },
   { label: "Which cost lever that moves", row: ["Model choice — multiples", "Host choice — single digits", "None — your config decides"], hi: true },
-  { label: "Gateway fee on tokens", row: ["0% markup", "5.5% to load credits", "None on the OSS proxy"] },
-  { label: "Hosted tier", row: ["Self-serve, no call", "Self-serve", "Quote-only, sales call"] },
-  { label: "BYOK fee", row: ["None", "5% past the free allowance", "n/a — self-hosted"] },
+  { label: "Gateway fee on tokens", row: ["0% markup", "Varies by hosted plan", "None on the OSS proxy"] },
+  { label: "Managed option", row: ["Self-serve Cloud", "Self-serve hosted service", "Commercial Enterprise offering"] },
+  { label: "BYOK fee", row: ["None when self-hosted", "Plan allowance, then a fee", "None when self-hosted"] },
   { label: "Self-host", row: ["Apache-2.0, free", "n/a", "MIT, free"] },
-  { label: "SSO · audit logs · RBAC", row: ["Enterprise", "n/a", "Enterprise"] },
 ];
 
 /** Each axis is a target you declare and we report against — not a reading you
@@ -75,13 +73,12 @@ export function ZedPricingPage() {
           {/* header */}
           <PageHead
             eyebrow="Pricing"
-            title="Every gateway adds a line to your bill. We take one off."
+            title="Self-host the router. Or let us run it."
             maxWidth="62ch"
             sub={
               <>
-                0% markup on every token, on every model. The savings come from{" "}
-                <code style={{ color: "var(--z-ink-2)" }}>bitrouter/auto</code> choosing the model for
-                each call — not from shaving a percentage off the fee.
+                The Apache-2.0 router is free to run with your own keys. BitRouter Cloud gives you
+                the same routing engine as a managed endpoint, with no token markup.
               </>
             }
           />
@@ -89,61 +86,91 @@ export function ZedPricingPage() {
           {/* plans — two ruled columns rather than a pair of filled cards. */}
           <div className="zed-grid-2 zed-sec" style={{ display: "grid", gridTemplateColumns: "1.05fr 0.95fr", columnGap: 72, rowGap: 48 }}>
             <div style={{ display: "flex", flexDirection: "column", borderTop: "1px solid var(--z-ink)", paddingTop: 22 }}>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--z-ink-6)" }}>usage-based</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--z-ink-6)" }}>self-hosted</div>
               <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginTop: 12 }}>
-                <span className="zed-display" style={{ fontSize: 42, lineHeight: 1, color: "var(--z-blue)" }}>0%</span>
-                <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--z-ink-6)" }}>markup · pay-as-you-go</span>
+                <span className="zed-display" style={{ fontSize: 42, lineHeight: 1, color: "var(--z-blue)" }}>$0</span>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--z-ink-6)" }}>to BitRouter · Apache-2.0</span>
               </div>
               <p style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, lineHeight: 1.65, color: "var(--z-ink-4)", margin: "14px 0 18px" }}>
-                You pay the provider&apos;s list price for tokens and nothing to us. Everything the router needs
-                to do its job is included.
+                Run the complete routing core in your infrastructure. You pay your model providers
+                directly and owe BitRouter nothing for the traffic.
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 9, marginBottom: 24 }}>
-                {INCLUDED.map((f) => (
+                {SELF_HOSTED.map((f) => (
                   <div key={f} style={{ display: "flex", gap: 9, fontFamily: "var(--font-mono)", fontSize: 12.5, lineHeight: 1.5, color: "var(--z-ink-3)" }}>
                     <span style={{ color: "var(--z-ink-6)" }}>—</span>
                     <span>{f}</span>
                   </div>
                 ))}
               </div>
-              <a className="zed-btn zed-btn-primary" href={ZED_LINKS.apiKey} style={{ marginTop: "auto", justifyContent: "center" }}>
-                Get API key
+              <a className="zed-btn zed-btn-primary" href={ZED_LINKS.quickstart} style={{ marginTop: "auto", justifyContent: "center" }}>
+                Self-host BitRouter
               </a>
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", borderTop: "1px solid var(--z-rule)", paddingTop: 22 }}>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--z-ink-6)" }}>outcome-based</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--z-ink-6)" }}>BitRouter Cloud</div>
               <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginTop: 12 }}>
-                <span className="zed-display" style={{ fontSize: 42, lineHeight: 1 }}>Custom</span>
-                <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--z-ink-6)" }}>on savings · enterprise</span>
+                <span className="zed-display" style={{ fontSize: 42, lineHeight: 1 }}>0%</span>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--z-ink-6)" }}>token markup · pay as you go</span>
               </div>
               <p style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, lineHeight: 1.65, color: "var(--z-ink-4)", margin: "14px 0 18px" }}>
-                At scale the comparison stops being something you read and becomes something we guarantee — we
-                bill a share of what we save, only on runs that clear your quality bar.
+                Use the hosted endpoint without running router infrastructure or opening accounts
+                with every upstream provider. You pay the providers&apos; published token prices.
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 9, marginBottom: 24 }}>
-                {ENTERPRISE.map((f) => (
+                {CLOUD.map((f) => (
                   <div key={f} style={{ display: "flex", gap: 9, fontFamily: "var(--font-mono)", fontSize: 12.5, lineHeight: 1.5, color: "var(--z-ink-3)" }}>
                     <span style={{ color: "var(--z-ink-6)" }}>—</span>
                     <span>{f}</span>
                   </div>
                 ))}
               </div>
-              <a className="zed-btn zed-btn-ghost" href="mailto:contact@bitrouter.ai" style={{ marginTop: "auto", justifyContent: "center" }}>
-                Talk to the founders
+              <a className="zed-btn zed-btn-ghost" href={ZED_LINKS.apiKey} style={{ marginTop: "auto", justifyContent: "center" }}>
+                Try Cloud
               </a>
             </div>
           </div>
+
+          <section id="teams" className="zed-sec" style={{ scrollMarginTop: 88 }}>
+            <div
+              className="zed-grid-2"
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 0.9fr",
+                gap: 56,
+                alignItems: "end",
+                borderTop: "1px solid var(--z-rule)",
+                paddingTop: 30,
+              }}
+            >
+              <div>
+                <Kicker>For teams</Kicker>
+                <h2 className="zed-display" style={{ fontSize: 34, lineHeight: 1.1, margin: "18px 0 0" }}>
+                  Taking BitRouter beyond one developer?
+                </h2>
+                <p className="zed-lead">
+                  We are working with early teams on deployment, security, procurement, and support
+                  requirements. Talk to the founders and help shape what BitRouter builds for teams.
+                </p>
+              </div>
+              <div style={{ display: "flex", justifyContent: "flex-start" }}>
+                <a className="zed-btn zed-btn-ghost" href={ZED_LINKS.bookDemo}>
+                  Talk to the founders
+                </a>
+              </div>
+            </div>
+          </section>
 
           {/* comparison */}
           <div className="zed-sec" style={{ overflowX: "auto" }}>
             <Kicker>versus other gateways</Kicker>
             <h2 className="zed-display" style={{ fontSize: 40, lineHeight: 1.08, margin: "20px 0 0", maxWidth: "26ch" }}>
-              A markup, a sales call, or a router that lowers the bill.
+              Compare what the gateway selects — and who operates it.
             </h2>
             <p style={{ fontFamily: "var(--font-mono)", fontSize: 14, lineHeight: 1.7, color: "var(--z-ink-5)", margin: "20px 0 34px", maxWidth: "70ch" }}>
-              Picking the <em>provider</em> for a model you chose moves cost by single digits — same model,
-              cheaper host. Picking the <em>model</em> moves it by multiples. That is why we don&apos;t need a percentage.
+              A provider router chooses where a named model runs. BitRouter can also choose the model for
+              each call under a policy you own, which addresses a different cost lever.
             </p>
             <div style={{ minWidth: 720, borderTop: "1px solid var(--z-ink)" }}>
               <div style={{ display: "grid", gridTemplateColumns: "1.15fr 1fr 1fr 1fr", borderBottom: "1px solid var(--z-rule)" }}>
@@ -162,10 +189,9 @@ export function ZedPricingPage() {
               ))}
             </div>
             <p style={{ fontFamily: "var(--font-mono)", fontSize: 11.5, lineHeight: 1.7, color: "var(--z-ink-6)", margin: "18px 0 0", maxWidth: "82ch" }}>
-              Competitor figures are their published rates at time of writing; LiteLLM Enterprise is quote-only, so
-              there is no rate to compare. See the{" "}
-              <a href="/docs/guides/migrate-from-openrouter" className="zed-link">OpenRouter</a> and{" "}
-              <a href="/docs/overview/bitrouter-vs-litellm" className="zed-link">LiteLLM</a> comparisons for the detail.
+              Competitor plans and allowances change. Verify their current pricing before making a purchasing decision. See the{" "}
+              <a href="/docs/usage/migrate/openrouter" className="zed-link">OpenRouter</a> and{" "}
+              <a href="/docs/overview/comparisons/litellm" className="zed-link">LiteLLM</a> comparisons for the detail.
             </p>
           </div>
 
@@ -202,9 +228,8 @@ export function ZedPricingPage() {
               None of the three costs extra, and none of them waits on us. Success rate ships as the default
               quality metric — outcome classification is deterministic, with no judge in the request path — so a
               route has to earn its traffic before it keeps it. An eval only refines that bar where your
-              definition of good is narrower than ours. Beyond it sits the enterprise engagement, where we
-              measure the baseline with you and price on the savings. For measured runs against an all-frontier
-              baseline, see the <a href="/#benchmark" className="zed-link">routed benchmark</a>.
+              definition of good is narrower than ours. For measured runs against an all-frontier baseline,
+              see the <a href="/#benchmark" className="zed-link">routed benchmark</a>.
             </p>
           </div>
 

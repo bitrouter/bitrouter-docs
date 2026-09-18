@@ -1,54 +1,29 @@
 ---
-title: MCP
-description: Drive BitRouter from any MCP client — the origin MCP server exposing complete, list_models, and status as tools onto the same local endpoint, plus the hosted docs MCP server.
+title: Docs MCP server
+description: Search BitRouter documentation and inspect model availability from an MCP client.
 ---
-
-MCP is a second way to **drive** BitRouter, parallel to the [CLI](/docs/usage/cli). Where the CLI is a command-line surface onto the local daemon, the MCP server is a **tool surface** onto the same endpoint — so any MCP client (Claude, Cursor, or your own agent) can talk to BitRouter as a set of tools instead of shelling out.
-
-## The origin MCP server
-
-`bitrouter mcp serve` exposes BitRouter itself as an **origin** MCP server — a small, fixed set of tools that front the local daemon at `127.0.0.1:4356`:
-
-- `complete` — run a completion through the router, with all the same routing, fallback, and policy behavior as the HTTP API.
-- `list_models` — enumerate the models your account or keys can reach.
-- `status` — report the daemon's health and configuration.
-
-```bash
-bitrouter mcp serve                    # stdio → local daemon at 127.0.0.1:4356
-bitrouter mcp install --client claude  # print the mcpServers config block to paste
-```
-
-Add `--transport http` to target the multi-tenant cloud backend instead of the local daemon.
-
-### Backend variants
-
-The `--backend` flag selects which tool surface the server exposes:
-
-| Backend | Tools | Use case |
-|---------|-------|----------|
-| `local` *(default)* | `complete`, `list_models`, `status` | Drive the local daemon from any MCP client |
-| `cloud` | `complete`, `list_models`, `status` | Drive BitRouter Cloud over HTTP |
-| `fleet` | Orchestrator profile — completion tools plus subagent spawn/manage, cost, routing preview, and human-bridge tools | TUI orchestrator delegated to an agent |
-| `skills` | `skills_search`, `skills_get` | Origin AgentSkills server over installed skills |
-
-The `skills` backend exposes installed skills as a standalone server so harnesses can discover and load them. When running under `bitrouter tui`, this server is automatically injected into every launched harness. See [Agent Skills](/docs/usage/skills).
 
 ## The docs MCP server
 
-BitRouter also publishes a **hosted** [Model Context Protocol](https://modelcontextprotocol.io) server over its documentation, so your editor or agent can search the docs, read pages, and check model availability without leaving the loop. It is a separate server from the origin one above — it answers questions *about* BitRouter rather than driving it.
+BitRouter publishes a public [Model Context Protocol](https://modelcontextprotocol.io) server for this documentation. An editor or agent can search the docs, read a page, and check model availability without leaving its current workflow.
 
-- **Endpoint** — `https://bitrouter.ai/mcp` (Streamable HTTP)
-- **Auth** — none; it's public.
+- **Endpoint:** `https://bitrouter.ai/mcp`
+- **Transport:** Streamable HTTP
+- **Authentication:** none
 
-### Tools
+This service answers questions *about* BitRouter. It is separate from the open-source [MCP gateway](/docs/usage/mcp-gateway), which connects configured third-party MCP servers to your agents and model requests.
 
-- **`search_docs(query, limit?, locale?)`** — Full-text search across the docs; returns hits with a title, canonical URL, and a `path` to pass to `get_doc`.
-- **`get_doc(path, locale?)`** — Fetch a single documentation page as clean Markdown.
-- **`lookup_model(query)`** — Check whether a `provider/model` is routable through BitRouter and get its pricing, context window, and a copy-paste config snippet.
+## Tools
 
-Clients that read MCP resources can also pull the curated index via the `bitrouter-docs://llms-index` resource.
+| Tool | Purpose |
+| --- | --- |
+| `search_docs(query, limit?, locale?)` | Find relevant documentation and return canonical URLs plus paths for `get_doc` |
+| `get_doc(path, locale?)` | Fetch one documentation page as clean Markdown |
+| `lookup_model(query)` | Check model availability, pricing, context window, and a configuration snippet |
 
-### Add it to your agent
+Clients that support MCP resources can also read the curated index at `bitrouter-docs://llms-index`.
+
+## Add it to a client
 
 Claude Code:
 
@@ -56,21 +31,24 @@ Claude Code:
 claude mcp add --transport http bitrouter-docs https://bitrouter.ai/mcp
 ```
 
-Cursor and other clients — add a remote MCP server entry to your client's config:
+For clients that accept an MCP server configuration:
 
 ```json
 {
   "mcpServers": {
-    "bitrouter-docs": { "url": "https://bitrouter.ai/mcp" }
+    "bitrouter-docs": {
+      "url": "https://bitrouter.ai/mcp"
+    }
   }
 }
 ```
 
-## Two servers, two jobs
+## Operating BitRouter from an agent
 
-Keep the BitRouter-and-MCP roles distinct:
+BitRouter OSS is not a first-party origin MCP server for local administrative commands. To inspect status, models, routes, or requests, install the [BitRouter Agent Skill](/docs/usage/skills) in a shell-capable host. The Skill selects structured `bro` commands; the host obtains approval and executes them.
 
-- **The origin server.** BitRouter *is* the tool. A client calls `complete` / `list_models` / `status` to drive the router.
-- **The docs server.** BitRouter's documentation is the tool. A client calls `search_docs` / `get_doc` / `lookup_model` to read about the router.
-
-Both are how you reach BitRouter. See [Agent Skills](/docs/usage/skills) for the other way an agent drives it.
+<Cards>
+  <Card title="MCP gateway" href="/docs/usage/mcp-gateway" description="Connect and aggregate your own upstream MCP servers." />
+  <Card title="Skills" href="/docs/usage/skills" description="Teach an agent to operate BitRouter through its CLI." />
+  <Card title="llms.txt" href="/llms.txt" description="Read the curated documentation index without MCP." />
+</Cards>

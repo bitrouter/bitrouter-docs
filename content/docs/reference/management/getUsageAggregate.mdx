@@ -11,8 +11,9 @@ _openapi:
     headings: []
     contents:
       - content: >-
-          Sums `usage` / `pending_debit_recovery` ledger entries and the
-          `requests` rows over the window. Defaults to the last 30 days.
+          Uses immutable billing-audit charges when present and legacy request
+          charges only when no audit exists. Billing anomaly counts keep null
+          charges visible. Defaults to the last 30 days.
 
 
           _Requires the `usage:read` scope._

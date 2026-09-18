@@ -1,0 +1,88 @@
+---
+title: Coding agents
+description: Run supported coding agents through BitRouter interactively, headlessly, or in their native interface.
+---
+
+BitRouter separates the **agent harness** that drives the loop from the **model source** that supplies tokens. The same Claude, Codex, OpenCode, or Pi harness can use a hosted model, a subscription, or a model running on your machine.
+
+## Choose the interface
+
+| Goal | Command | Interface owner |
+| --- | --- | --- |
+| Work in BitRouter's conversation | `bro code <agent>` | BitRouter |
+| Run one turn from a script | `bro run <agent> "..."` | BitRouter, headless |
+| Use the harness's own terminal UI | `bro launch <agent>` | The harness |
+| Let another ACP client launch the adapter | `bro acp serve <agent>` | The ACP client |
+
+```bash
+bro code codex
+bro run claude "Review the current diff" --format quiet
+bro launch opencode
+```
+
+`bro code`, `bro run`, and `bro acp serve` use ACP adapters. `bro launch` starts the harness's native interface with process-local routing overrides. It does not rewrite the user's normal harness configuration.
+
+## Supported agents
+
+Run `bro agents list` for the catalog shipped by your installed version. Alpha.31 includes local ACP adapters for Claude, Codex, Gemini CLI, OpenCode, Pi, Hermes, and OpenClaw.
+
+| Friendly id | ACP adapter | Native launch |
+| --- | --- | --- |
+| `claude` | `claude-acp` | `bro claude` or `bro launch claude` |
+| `codex` | `codex-acp` | `bro codex` or `bro launch codex` |
+| `opencode` | `opencode` | `bro launch opencode` |
+| `pi` | `pi-acp` | `bro launch pi` |
+| `hermes` | `hermes-acp` | `bro launch hermes` |
+| `openclaw` | `openclaw` | `bro launch openclaw` |
+| `gemini-cli` | `gemini-cli` | ACP only in the bundled catalog |
+
+Use `bro agents check <agent>` before a long task. It verifies that the adapter can initialize and reports whether its model traffic can be routed through BitRouter.
+
+## What launch changes
+
+For Claude and Codex, BitRouter passes temporary environment variables or command-line overrides. For OpenCode, Pi, Hermes, and OpenClaw, it writes a generated profile under the working tree's self-ignoring `.bitrouter/launch/` directory and points only the child process at it.
+
+```bash
+bro launch pi --model bitrouter/auto
+bro launch codex --check
+bro launch claude -- --permission-mode plan
+```
+
+Arguments after `--` belong to the harness. BitRouter options such as `--model`, `--base-url`, and `--check` must come before it.
+
+Supported native harnesses also receive the aggregate [MCP gateway](/docs/usage/mcp-gateway) when they expose a compatible injection mechanism. The launch summary states what was actually routed or injected; Pi and some other harnesses do not expose an MCP injection surface.
+
+## Other harnesses
+
+If a harness is not in the catalog, configure it as a normal API client:
+
+| Protocol | Local base URL | Cloud base URL |
+| --- | --- | --- |
+| OpenAI-compatible | `http://127.0.0.1:4356/v1` | `https://api.bitrouter.ai/v1` |
+| Anthropic-compatible | `http://127.0.0.1:4356` | `https://api.bitrouter.ai` |
+
+Use a `provider/model` id where the harness accepts a model name. Product-specific configuration keys belong to that harness's documentation; BitRouter only owns the endpoint and routing contract.
+
+## Harness or model source?
+
+| You want to… | Read |
+| --- | --- |
+| Run the Claude Code application | [Claude Code](#claude-code) |
+| Spend a Claude Pro or Max subscription | [Claude subscription](/docs/usage/model-sources/claude-subscription) |
+| Run the Codex application | [Codex](#codex) |
+| Spend a ChatGPT Plus or Pro subscription | [Codex subscription](/docs/usage/model-sources/codex-subscription) |
+
+### Claude Code
+
+Use `bro code claude`, `bro run claude`, or `bro claude`. See the [Claude Code details](/docs/usage/coding-agents/claude-code) when you need manual environment configuration.
+
+### Codex
+
+Use `bro code codex`, `bro run codex`, or `bro codex`. See the [Codex details](/docs/usage/coding-agents/codex) when you need a permanent provider block.
+
+<Cards>
+  <Card title="Claude Code" href="/docs/usage/coding-agents/claude-code" description="ACP, native launch, and manual Anthropic endpoint configuration." />
+  <Card title="Codex" href="/docs/usage/coding-agents/codex" description="ACP, native launch, and permanent Codex provider configuration." />
+  <Card title="Code" href="/docs/usage/code" description="Use BitRouter's interactive ACP conversation." />
+  <Card title="ACP" href="/docs/usage/acp" description="Inspect adapters and run headless turns." />
+</Cards>

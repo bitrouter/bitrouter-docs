@@ -7,7 +7,7 @@ description: bitrouter-agent — a CLI wizard that reads your agentic codebase a
 
 | Artifact | What it is |
 |----------|------------|
-| `bitrouter.yaml` | An MVP routing policy to try — see [Config (YAML)](/docs/usage/configuration) |
+| `bitrouter.yaml` | An MVP routing policy to try — see [Config (YAML)](/docs/configuration/config-file) |
 | `bitrouter-audit.md` | An audit of your LLM usage, with a savings estimate |
 | `.bitrouter/analysis.json` | The same analysis, machine-readable |
 
@@ -32,7 +32,7 @@ Flags: `--out-dir <dir>`, `--model <id>`, `--target <local|cloud>`, `--offline`,
 
 The agent routes its own LLM calls through BitRouter, so it needs a router to talk to:
 
-- **`local`** *(default)* — a BitRouter daemon at `http://127.0.0.1:4356`. Run [`bitrouter start`](/docs/usage/cli) first.
+- **`local`** *(default)* — a BitRouter daemon at `http://127.0.0.1:4356`. Run [`bro start`](/docs/usage/cli) first.
 - **`cloud`** — BitRouter Cloud. Run `bitrouter auth login` first.
 
 ### Offline analysis
@@ -94,7 +94,7 @@ The list is namespaced under `bitrouter` on purpose: pi reads the top-level `ski
 bitrouter-agent is an **adoption and tuning** tool, not a runtime surface — it writes policy, it doesn't serve traffic. Once the generated `bitrouter.yaml` is in place, the router runs it like any other config:
 
 <Cards>
-  <Card title="Config (YAML)" href="/docs/usage/configuration" description="The bitrouter.yaml reference — every block the generated policy can contain." />
+  <Card title="Config (YAML)" href="/docs/configuration/config-file" description="The bitrouter.yaml reference — every block the generated policy can contain." />
   <Card title="CLI" href="/docs/usage/cli" description="Start the daemon the agent routes through, and validate the policy it wrote." />
-  <Card title="TUI" href="/docs/usage/tui" description="Watch the metered traffic that optimize later reads back." />
+  <Card title="Code" href="/docs/usage/code" description="Run an interactive ACP conversation with attributed session cost." />
 </Cards>

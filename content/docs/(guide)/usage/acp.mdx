@@ -1,0 +1,96 @@
+---
+title: ACP
+description: Discover ACP agents, run them interactively or headlessly, and expose a local adapter to another ACP client.
+---
+
+[Agent Client Protocol](https://agentclientprotocol.com) gives an editor, terminal client, or another agent a common way to start sessions, send prompts, stream updates, and handle permission requests.
+
+BitRouter uses ACP in two directions:
+
+- `bro code` and `bro run` act as ACP clients that drive an agent adapter.
+- `bro acp serve <agent>` exposes a BitRouter-managed adapter over protocol-pure stdio to another ACP client.
+
+The current open-source surface is local and stdio-based. It is not a cross-host agent registry or a durable fleet control plane.
+
+## Choose an agent
+
+BitRouter ships a catalog of maintained adapters, including Claude and Codex. A catalog id does not need an `agents:` entry.
+
+```bash
+bro agents list
+bro agents check codex
+bro agents inspect codex
+```
+
+- `list` shows the bundled catalog and configured agents; `--remote` also reads the public ACP registry.
+- `check` starts an adapter and verifies initialization and routing.
+- `inspect` opens a fresh session and reports the commands advertised by the agent.
+
+For an agent outside the bundled catalog, generate a configuration stub and review it before adding it to [`bitrouter.yaml`](/docs/configuration/config-file):
+
+```bash
+bro agents scaffold <id>
+```
+
+You can also declare a local stdio agent directly:
+
+```yaml
+agents:
+  house-agent:
+    name: house-agent
+    transport:
+      type: stdio
+      command: ./bin/our-acp-agent
+      args: ["--profile", "review"]
+      env:
+        RUST_LOG: warn
+```
+
+The child inherits the ambient environment; `env` adds or overrides entries for that process. Agent names must be non-empty and cannot contain `/`.
+
+## Run one headless turn
+
+`bro run` is the canonical automation surface. It opens one ACP session, sends a prompt from an argument, stdin, or a file, and streams versioned NDJSON by default.
+
+```bash
+bro run codex "Summarize this repository"
+printf 'Review this diff' | bro run claude -
+bro run codex --prompt-file task.md --format quiet
+```
+
+Headless permissions default to deny. Choose an explicit policy when the task needs tools:
+
+```bash
+bro run codex "Run the test suite" --approve-reads
+bro run codex "Fix the failing test" --permission-policy @permissions.json
+```
+
+Use `--result-schema @schema.json` when automation needs a validated final result. See the [CLI reference](/docs/usage/cli#bro-run) for output formats, permission modes, timeouts, and exit behavior.
+
+## Serve an adapter to an ACP client
+
+An ACP-capable editor or parent process can launch BitRouter as its agent command:
+
+```bash
+bro acp serve codex
+```
+
+The client owns the stdio connection and initializes first. One connection may carry multiple harness-native sessions. Standard output is reserved for ACP JSON-RPC; diagnostics go to standard error.
+
+## Routing and session ownership
+
+Supported adapters route model traffic through the local daemon by default, inheriting its provider selection, fallback, policy, and metering. Use `--direct` to keep an adapter on its own credentials, or `--base-url` to target an explicit gateway.
+
+Session identity and history remain owned by the harness:
+
+- `--load <id>` asks the harness to replay a native session.
+- `--resume <id>` continues a native session without replay.
+- BitRouter does not create a parallel durable session catalog.
+
+Optional `acp_recording` configuration can mirror observable ACP content into the local BitRouter database for inspection. A recording is an audit copy, not the source of truth for the agent's session.
+
+<Cards>
+  <Card title="Code" href="/docs/usage/code" description="Use the interactive BitRouter ACP conversation." />
+  <Card title="Coding agents" href="/docs/usage/coding-agents" description="Launch Claude, Codex, OpenCode, Pi, and other supported harnesses." />
+  <Card title="CLI reference" href="/docs/usage/cli#agents-acp-and-mcp" description="Agent catalog, ACP, and headless run commands." />
+</Cards>

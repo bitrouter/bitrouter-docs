@@ -1,14 +1,10 @@
 {
   "title": "Documentation",
-  "icon": "BookOpen",
-  "root": true,
-  "pagesIndex": "[Documentation](/docs/overview/what-is-bitrouter)",
   "pages": [
     "overview",
     "usage",
-    "models-and-routing",
-    "evals-and-observability",
-    "agents-and-orchestration",
-    "integrations"
+    "configuration",
+    "customization",
+    "development"
   ]
 }

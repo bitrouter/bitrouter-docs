@@ -1,0 +1,70 @@
+---
+title: Local inference
+description: Connect Ollama, vLLM, Unsloth, or another OpenAI-compatible model server to BitRouter.
+---
+
+Local inference servers share one BitRouter integration: expose an OpenAI-compatible endpoint, add it under `providers`, and declare the model ids that endpoint serves.
+
+## Common servers
+
+| Server | Typical API base | Authentication | Model id source |
+| --- | --- | --- | --- |
+| Ollama | `http://127.0.0.1:11434/v1` | None on loopback | `ollama list` |
+| vLLM | `http://127.0.0.1:8000/v1` | Optional `--api-key` | Served model name |
+| Unsloth | `http://127.0.0.1:8888/v1` | Server-issued key | `GET /v1/models` |
+
+Ports and authentication can be changed by the server. Treat the table as a starting point and confirm the endpoint locally.
+
+## Configure BitRouter
+
+```yaml
+providers:
+  local:
+    api_base: http://127.0.0.1:11434/v1
+    api_protocol:
+      - "*": chat_completions
+    models:
+      - id: llama3.1
+```
+
+For an authenticated server, add an environment-backed key:
+
+```yaml
+providers:
+  local:
+    api_base: http://127.0.0.1:8000/v1
+    api_key: ${LOCAL_INFERENCE_API_KEY}
+    api_protocol:
+      - "*": chat_completions
+    models:
+      - id: my-served-model
+```
+
+The model id must match what the server accepts. For vLLM, that may be the full model repository id or the value supplied with `--served-model-name`. For Ollama, it is the pulled model tag. For Unsloth, use the id returned by its models endpoint.
+
+## Verify and route
+
+```bash
+bro config validate
+bro models --provider local
+bro route local:llama3.1
+bro start
+```
+
+The provider-qualified id pins the local server. A bare model id lets BitRouter use another configured source serving the same model, which is useful for local-first fallback.
+
+<Callout type="warning">
+Keep an unauthenticated inference server on loopback or a trusted private network. Binding it publicly without its own authentication exposes model capacity outside BitRouter's policy boundary.
+</Callout>
+
+## Server-specific references
+
+- [Ollama OpenAI compatibility](https://docs.ollama.com/api/openai-compatibility)
+- [vLLM OpenAI-compatible server](https://docs.vllm.ai/en/stable/serving/openai_compatible_server/)
+- [Unsloth API endpoint](https://unsloth.ai/docs/basics/api)
+
+<Cards>
+  <Card title="Bring your own model" href="/docs/customization/models#custom-endpoints-and-models" description="Understand the general contract for any model you serve." />
+  <Card title="Model fallback" href="/docs/configuration/routing#fallback" description="Fall back from local inference to a hosted source." />
+  <Card title="Config file" href="/docs/configuration/config-file" description="Place the provider block in the full YAML structure." />
+</Cards>

@@ -43,6 +43,9 @@ export function GitHubStarsBadge({ className }: { className?: string }) {
       )}
     >
       <GitHubIcon className="size-[15px]" />
+      <span className="hidden font-mono text-[11px] uppercase tracking-[0.12em] xl:inline">
+        Open source
+      </span>
       {stars !== null && (
         <span className="font-mono text-[11px] tabular-nums">
           {formatStars(stars)}

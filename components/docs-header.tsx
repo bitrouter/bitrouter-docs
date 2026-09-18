@@ -2,34 +2,25 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import Link from "next/link";
 import { PanelLeft } from "lucide-react";
 import { useNotebookLayout } from "fumadocs-ui/layouts/notebook";
-import { isLayoutTabActive } from "fumadocs-ui/layouts/shared";
 import { WebHeaderBody } from "@/components/site-header-wired";
 import { cn } from "@/lib/cn";
 
 /**
- * Custom docs header — replaces fumadocs notebook's default header via
+ * Custom notebook header — replaces fumadocs' default header via
  * `slots.header`. Keeps the docs grid wiring (sticky + grid-area: header +
- * --fd-header-height for sidebar/toc offset) while letting us render
- * CustomNavBody on top and the section-tabs strip below.
+ * --fd-header-height for sidebar/toc offset) while rendering the shared site
+ * navigation.
  *
  * Solid `bg-background` (not /80) so when the page scrolls under it, body
  * text can't bleed through. Backdrop blur isn't useful on a fully opaque
  * surface, so it's omitted.
  */
-export function DocsHeader() {
-  const {
-    slots,
-    props: { tabs, tabMode },
-  } = useNotebookLayout();
+function NotebookHeader() {
+  const { slots } = useNotebookLayout();
   const pathname = usePathname();
   const SidebarTrigger = slots.sidebar?.trigger;
-  const showTabs = tabMode === "navbar" && tabs.length > 0;
-  const selectedIdx = tabs.findLastIndex((tab) =>
-    isLayoutTabActive(tab, pathname),
-  );
 
   // The docs shell scrolls #nd-page instead of the window. Next.js resets the
   // window on navigation, so without this a newly opened page can inherit the
@@ -48,12 +39,10 @@ export function DocsHeader() {
         // sidebar/TOC siblings (which read `--fd-docs-row-2`) get the right
         // offset. Setting it directly on the header would only scope it here.
         "layout:[--fd-header-height:62px]",
-        showTabs && "lg:layout:[--fd-header-height:102px]",
       )}
     >
-      {/* Below `md` the sidebar becomes a drawer, and the drawer is the only
-          place the layout-tabs dropdown lives — without this trigger the docs
-          nav and the API Reference tab are unreachable on a phone. Native
+      {/* Below `md` the sidebar becomes a drawer. Without this trigger the docs
+          tree and changelog release list are unreachable on a phone. Native
           notebook headers render the same slot; ours has to opt in because it
           replaces the whole header. */}
       <WebHeaderBody
@@ -68,30 +57,16 @@ export function DocsHeader() {
           ) : null
         }
       />
-
-      {showTabs && (
-        <div className="flex h-10 flex-row items-end gap-[34px] overflow-x-auto border-t border-[var(--z-rule)] px-10 max-lg:hidden">
-          {tabs.map((tab, i) => {
-            const isSelected = selectedIdx === i;
-            return (
-              <Link
-                key={i}
-                href={tab.url}
-                aria-current={isSelected ? "page" : undefined}
-                className={cn(
-                  // v3 marks the active tab with ink, not an accent underline —
-                  // the strip reads as the same label row as the nav above it.
-                  "inline-flex items-center gap-2 text-nowrap border-b border-transparent pb-2 font-mono text-[11.5px] uppercase tracking-[0.16em] text-[var(--z-ink-5)] transition-colors hover:text-[var(--z-ink-2)]",
-                  tab.unlisted && !isSelected && "hidden",
-                  isSelected && "border-[var(--z-ink)] text-[var(--z-ink)]",
-                )}
-              >
-                {tab.title}
-              </Link>
-            );
-          })}
-        </div>
-      )}
     </header>
   );
+}
+
+/** Notebook header for the unified documentation tree. */
+export function DocsHeader() {
+  return <NotebookHeader />;
+}
+
+/** Standalone top-level Changelog, retaining the native notebook shell. */
+export function ChangelogHeader() {
+  return <NotebookHeader />;
 }

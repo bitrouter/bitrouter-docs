@@ -25,21 +25,14 @@ export interface NavItem {
 }
 
 // Marketing/docs links — they always point at the website. Ordered as the
-// decision path a visitor walks: what it routes to, what it costs, the
-// outcome-based tier, product writing, then how to build on it. Changelog
-// belongs to the docs-family section nav instead of competing with product
-// navigation here.
+// decision path a visitor walks: what it routes to, what it costs, the ideas
+// behind it, evidence that it keeps shipping, then how to build on it.
 export const NAV_ITEMS: NavItem[] = [
   { key: "models", label: "Models", webPath: "/models" },
   { key: "pricing", label: "Pricing", webPath: "/pricing" },
-  { key: "enterprise", label: "Enterprise", webPath: "/enterprise" },
   { key: "blog", label: "Blog", webPath: "/blog" },
-  {
-    key: "docs",
-    label: "Docs",
-    webPath: "/docs",
-    activePaths: ["/docs", "/changelog"],
-  },
+  { key: "changelog", label: "Changelog", webPath: "/changelog" },
+  { key: "docs", label: "Docs", webPath: "/docs" },
 ];
 
 function matchesPath(pathname: string, route: string): boolean {

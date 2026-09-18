@@ -41,7 +41,7 @@ const siteJsonLd = {
       url: BASE_URL,
       logo: `${BASE_URL}/logo.svg`,
       description:
-        "Context-aware LLM router that continuously improves your agent workflows. Send bitrouter/auto instead of a model name. Zero harness changes.",
+        "The open-source LLM router for reducing inference costs while keeping routing policy under your control.",
       sameAs: SOCIAL_LINKS.map((s) => s.href),
     },
     {
@@ -49,7 +49,7 @@ const siteJsonLd = {
       name: "BitRouter",
       url: BASE_URL,
       description:
-        "A context-aware LLM router that picks the model for every call in your agent loop, then keeps improving that choice against your own workflows. Open-sourced, Cloud opt-in.",
+        "Route requests across models to reduce inference costs. Self-host the Apache-2.0 router or use BitRouter Cloud.",
       inLanguage: "en",
     },
     {
@@ -74,11 +74,11 @@ export const metadata: Metadata = {
     icon: "/logo.svg",
   },
   title: {
-    default: "BitRouter — Context-Aware LLM Router for Agent Workflows",
+    default: "BitRouter — Open-Source LLM Router",
     template: "%s | BitRouter",
   },
   description:
-    "A context-aware LLM router that picks the model for every call in your agent loop, then keeps improving that choice against your own workflows. Open-sourced, Cloud opt-in.",
+    "Route requests across models to reduce inference costs. Self-host the Apache-2.0 router or use BitRouter Cloud.",
   alternates: {
     types: {
       "application/rss+xml": [
@@ -92,16 +92,16 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "BitRouter",
-    title: "BitRouter — Context-Aware LLM Router for Agent Workflows",
+    title: "BitRouter — Open-Source LLM Router",
     description:
-      "A context-aware LLM router that picks the model for every call in your agent loop, then keeps improving that choice against your own workflows. Open-sourced, Cloud opt-in.",
+      "Route requests across models to reduce inference costs. Self-host the Apache-2.0 router or use BitRouter Cloud.",
     url: BASE_URL,
   },
   twitter: {
     card: "summary_large_image",
-    title: "BitRouter — Context-Aware LLM Router for Agent Workflows",
+    title: "BitRouter — Open-Source LLM Router",
     description:
-      "A context-aware LLM router that picks the model for every call in your agent loop, then keeps improving that choice against your own workflows.",
+      "Route requests across models to reduce inference costs. Self-host the Apache-2.0 router or use BitRouter Cloud.",
   },
 };
 

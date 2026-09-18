@@ -1,0 +1,94 @@
+---
+title: Secure
+description: Authenticate callers, protect the control plane, and verify the boundary before exposing a self-hosted router.
+---
+
+The safe local default relies on the operating system: BitRouter listens on loopback and accepts an anonymous local caller. A shared deployment needs an explicit identity boundary before the listener becomes reachable.
+
+## Authenticate callers
+
+```yaml
+server:
+  listen: "127.0.0.1:4356"
+  skip_auth: false
+```
+
+Changing `skip_auth` requires a daemon restart. Make that change and verify the `401` check below before widening network access.
+
+Mint a `brvk_` virtual key against the same database the daemon uses:
+
+```bash
+bro key sign --user alice --db sqlite:///var/lib/bitrouter/bitrouter.db
+```
+
+The plaintext secret is shown once. A caller sends it as a bearer token:
+
+```bash
+curl https://router.internal.example.com/v1/chat/completions \
+  -H "Authorization: Bearer brvk_..." \
+  -H "Content-Type: application/json" \
+  -d '{"model":"openai:gpt-5","messages":[{"role":"user","content":"Hello"}]}'
+```
+
+With `skip_auth: false`, BitRouter requires a virtual-key-shaped credential, resolves its stored hash, and checks that the key is active and unexpired. The resulting caller identity is attached to metering and telemetry.
+
+<Callout type="warning">
+`bro key sign` defaults its database path from the current shell, while the daemon resolves relative database paths from the config directory. Pass `--db` explicitly on a deployed host so the key is not written to a different SQLite file.
+</Callout>
+
+The self-hosted CLI does not currently expose mint-time flags for per-key spend, request-rate, or expiry limits. Do not assume those controls exist merely because the database schema has fields for them.
+
+## Protect the administration path
+
+Daemon-control commands use a Unix socket rather than the HTTP API:
+
+```yaml
+server:
+  control_socket: "/run/bitrouter/bitrouter.sock"
+```
+
+Anyone who can write to that socket can reload, restart, or stop the process. Put it in a directory owned by the service user and keep control commands on the host.
+
+Keep these boundaries separate:
+
+| Boundary | Control |
+| --- | --- |
+| Client to reverse proxy | TLS and network policy |
+| Caller to BitRouter | `skip_auth: false` and `brvk_` keys |
+| Operator to daemon | Control-socket filesystem permissions |
+| Request content | [Guardrails](/docs/configuration/guardrails) and workflow policy |
+| Provider credentials | Environment or secret-store permissions |
+
+## Public read endpoints
+
+`GET /health` and `GET /v1/models` are not protected by the inference authentication hook. If model and provider discovery is sensitive, restrict those paths at the reverse proxy or network layer. `GET /metrics` is not a substitute for telemetry in the shipped binary; use [OpenTelemetry](/docs/configuration/observability#self-hosted-opentelemetry).
+
+## Production checklist
+
+Before allowing traffic from another machine:
+
+1. Set `listen` explicitly and keep BitRouter on loopback when a local reverse proxy can own the public interface.
+2. Set `skip_auth: false` before changing network reachability.
+3. Mint and test a virtual key against the daemon's actual database.
+4. Terminate TLS without buffering long-lived model streams.
+5. Commit only `${VAR}` references, never provider secrets.
+6. Run as an unprivileged service user and restrict the control socket.
+7. Validate the pinned config in CI and again on the target host.
+8. Back up state before an upgrade that may need rollback.
+
+Verify that an unauthenticated inference request is rejected:
+
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' \
+  -X POST http://127.0.0.1:4356/v1/chat/completions \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"openai:gpt-5","messages":[{"role":"user","content":"hi"}]}'
+```
+
+Expect `401`. Testing `/health` or `/v1/models` does not verify authentication because those reads remain available without a virtual key.
+
+<Cards>
+  <Card title="Deploy" href="/docs/self-hosting/deploy" description="Configure the process, reverse proxy, and timeout boundary." />
+  <Card title="Operate" href="/docs/self-hosting/operate" description="Back up identity state and roll out changes safely." />
+  <Card title="Guardrails" href="/docs/configuration/guardrails" description="Apply content controls after caller identity is established." />
+</Cards>

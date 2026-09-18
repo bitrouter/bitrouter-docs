@@ -2,14 +2,14 @@
 title: Daemon lifecycle
 ---
 
-Your agent never talks to a remote API directly — it points at the binary running locally, by default on `http://127.0.0.1:4356`. Everything else in these docs — the four model protocols, the MCP and ACP gateways — is served from that one endpoint. These six commands run and control it.
+The local router listens on `http://127.0.0.1:4356` by default. It serves the supported model protocols and the configured upstream MCP aggregate; ACP agent adapters use their own stdio lifecycle. This section covers the daemon, request history, retained remote operations, and named remote contexts.
 
 ## @serve
 
 Runs in the foreground — the form you want under a process supervisor or in a container:
 
 ```bash
-bitrouter serve -c ./bitrouter.yaml
+bro serve -c ./bitrouter.yaml
 ```
 
 ## @start

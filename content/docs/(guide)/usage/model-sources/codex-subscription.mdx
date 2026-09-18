@@ -1,0 +1,53 @@
+---
+title: Codex subscription
+description: Use a ChatGPT Plus or Pro login as a BitRouter model source through the openai-codex provider.
+---
+
+The `openai-codex` provider uses a ChatGPT subscription credential and the Codex Responses backend. It is separate from the standard `openai` API-key provider and from the Codex harness.
+
+## Sign in
+
+```bash
+bro providers login openai-codex
+```
+
+BitRouter can import a compatible local Codex login or start the provider's browser flow. For automation that must not open a browser:
+
+```bash
+bro providers login openai-codex --import-existing --no-browser
+```
+
+No `providers:` block is required. Verify the models and route:
+
+```bash
+bro models --provider openai-codex
+bro route openai-codex:gpt-5-codex
+```
+
+Use the provider-qualified id to require the subscription source. A request routed to `openai:<model>` uses `OPENAI_API_KEY` and the public OpenAI API instead.
+
+## Use it with Codex
+
+```bash
+bro start
+bro codex
+```
+
+`bro codex` launches Codex's native interface through BitRouter. For BitRouter's ACP conversation or a headless turn, use `bro code codex` or `bro run codex "..."`.
+
+## Sign out
+
+```bash
+bro providers logout openai-codex
+```
+
+This removes BitRouter's stored subscription credential. It does not sign the Codex CLI out of its own account.
+
+<Callout type="info">
+Provider login and BitRouter Cloud login are separate. `bro providers login openai-codex` authenticates the upstream subscription; `bro cloud login` authenticates your BitRouter account.
+</Callout>
+
+<Cards>
+  <Card title="Codex" href="/docs/usage/coding-agents/codex" description="Choose ACP, headless, or native harness operation." />
+  <Card title="Model sources" href="/docs/usage/model-sources" description="Compare subscription, BYOK, and local sources." />
+</Cards>

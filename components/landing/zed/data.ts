@@ -5,9 +5,9 @@
  * ========================================================================== */
 
 export const HERO = {
-  announcement: "self-tuning routing policies",
-  headline: "Stop tokenmaxxing while loop engineering.",
-  sub: "Context-aware LLM router that continuously improves your agent workflows",
+  announcement: "the open-source LLM router",
+  headline: "Cut inference costs. Keep control.",
+  sub: "BitRouter routes requests across models to reduce inference costs. Run the router yourself, inspect the source, and set your own routing rules — or get started with BitRouter Cloud.",
 };
 
 // ── Bring-your-own ──────────────────────────────────────────────────────────
@@ -560,21 +560,26 @@ export const STEPS: Step[] = [
 // ── FAQ ─────────────────────────────────────────────────────────────────────
 export const FAQS = [
   {
-    q: "What is an AI model router?",
-    a: "A unified API layer between your agent and the upstream LLM providers. Instead of hardcoding one provider, you point every call at the router and it selects the best model by cost, latency, capability and provider health — plus failover, per-run observability and guardrails, with no changes to your agent code.",
+    q: "What is BitRouter?",
+    a: "BitRouter is an open-source LLM router that sits between your agent and model providers. It gives you one endpoint, then applies a routing policy you can inspect and change across models, providers, and reasoning levels.",
   },
   {
-    q: "How is BitRouter different from OpenRouter?",
-    a: "OpenRouter is a closed-source hosted gateway. BitRouter is Apache 2.0 — fork the binary and run it anywhere, or use the hosted edge. The provider registry is fully open, and you get router-level guardrails, per-run cost attribution, MCP/ACP/Skills support and intent-aware routing OpenRouter does not offer.",
+    q: "How does BitRouter reduce inference cost?",
+    a: "A routing policy can keep routine steps on lower-cost models or reasoning levels and reserve stronger routes for work that needs them. Savings depend on your models, workload, prices, cache behavior, and policy — so BitRouter makes the decision trail and cost evidence inspectable rather than promising a universal percentage.",
   },
   {
-    q: "How is BitRouter different from LiteLLM?",
-    a: "LiteLLM is a library you embed in your application code. BitRouter is a standalone binary that runs as a sidecar or hosted edge — drop it in front of any runtime without modifying each service. It ships with auth, billing, observability and guardrails built in.",
+    q: "Is the router really open source?",
+    a: "Yes. The routing core is licensed under Apache 2.0. You can inspect it, fork it, self-host it, and keep routing policy in files you review with the rest of your code.",
   },
   {
     q: "Do I have to change my agent code?",
-    a: "No. Point your harness at the bitrouter endpoint and it works — Claude Code, Cursor, Codex, or your own loop. Routing, tracing and policy all live in the request path.",
+    a: "BitRouter exposes an OpenAI-compatible endpoint and integration guides for common coding agents. You point the harness at BitRouter and choose a model or policy route; the exact environment variables depend on the harness.",
+  },
+  {
+    q: "What does BitRouter Cloud add?",
+    a: "Cloud runs the same open-source routing engine as a managed service. It adds the hosted endpoint, a managed provider network, consolidated billing, and hosted request receipts. Self-hosting remains available when you want to run the router in your own infrastructure.",
   },
 ];
 
-export const INSTALL_CMD = "curl -fsSL bitrouter.ai/install.sh | sh";
+export const INSTALL_CMD =
+  "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/bitrouter/bitrouter/releases/latest/download/bitrouter-installer.sh | sh";

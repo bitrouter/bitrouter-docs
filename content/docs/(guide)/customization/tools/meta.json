@@ -1,0 +1,5 @@
+{
+  "title": "Tool calling",
+  "pagesIndex": "index",
+  "pages": ["server-tools", "model-backed-tools", "web-tools"]
+}

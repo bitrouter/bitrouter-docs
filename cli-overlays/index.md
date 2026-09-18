@@ -1,17 +1,17 @@
 ---
 title: CLI
-description: The bitrouter binary — one local endpoint your runtime points at, a daemon you control, and a scriptable surface for routing, policy, and your Cloud account.
+description: The bro CLI — run and inspect the local router, launch coding agents, and manage your BitRouter Cloud account.
 ---
 
-BitRouter ships as one **static binary**, `bitrouter`, with no dependencies to install. It plays two roles: it runs the **local router** your agent talks to (by default on `http://127.0.0.1:4356`), and it's the **command-line surface** for routing introspection, policy lifecycle, and your hosted account.
+BitRouter ships as one **static binary**, `bro`, with no runtime dependencies to install. It runs the local router your applications call, launches supported coding agents, and exposes scriptable commands for routing, evaluation, optimization, and your hosted account.
 
-Running it bare is always safe: `bitrouter` probes for configured credentials without touching the network, then launches the [onboarding wizard](/docs/overview/quickstart) when nothing is configured, or prints a one-line status when it is.
+Start with `bro init` for guided setup, `bro serve` for a foreground router, or `bro code` for BitRouter's coding conversation.
 
 Every command below is **generated from the binary's own `--help`**, so the flags you see here are the flags your installed version accepts.
 
 ## Conventions
 
-- **Output is JSON by default** (agent-native). `-j/--json` forces JSON where it's optional; `--human` renders the human-readable view instead. Both are [global flags](#global-flags) — accepted everywhere, so the per-command tables below list only what's specific to that command.
+- **Output is JSON by default** for scriptable commands. The compatibility options `--json`, `--human`, and `--context <NAME>` go before the command when needed.
 - **`-c/--config <PATH>`** overrides config discovery for any command that loads a config. Discovery order: `./bitrouter.yaml` → `$BITROUTER_HOME/bitrouter.yaml` → `~/.bitrouter/bitrouter.yaml` → zero-config (in-memory defaults, auto-enabling providers from env keys).
 - **Credentials** live under `$XDG_DATA_HOME/bitrouter/account-credentials.json` (mode `0600`), written by `cloud login` or `providers login`.
 
@@ -19,23 +19,23 @@ Every command below is **generated from the binary's own `--help`**, so the flag
 
 | Variable | Effect |
 | --- | --- |
-| `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `OPENCODE_ZEN_API_KEY` | Zero-config BYOK — auto-enables the provider. See [BYOK](/docs/models-and-routing/bring-your-own-provider) |
+| `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `OPENCODE_ZEN_API_KEY` | Zero-config BYOK — auto-enables the provider. See [BYOK](/docs/customization/models#built-in-providers-with-your-own-key) |
 | `BITROUTER_API_KEY` | Cloud API key; enables the managed `bitrouter` provider |
 | `BITROUTER_HOME` | Config discovery override (see above) |
 | `BITROUTER_OAUTH_AS` | Override the OAuth authorization server for self-hosted Cloud |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | Opt in to OTLP export. See [OpenTelemetry](/docs/evals-and-observability/opentelemetry) |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | Opt in to OTLP export. See [OpenTelemetry](/docs/configuration/observability#self-hosted-opentelemetry) |
 
 ## Command map
 
-- **Run it** — [daemon lifecycle](#daemon-lifecycle): `serve`, `start`, `stop`, `restart`, `reload`, `status`
+- **Run it** — [daemon lifecycle](#daemon-lifecycle): lifecycle, request history, retained operations, and remote contexts
 - **Onboard** — [init and config](#init-and-config): the wizard, config validation
 - **Inspect routing** — [routing introspection](#routing-introspection): decision preview, model catalog, OTel state
 - **Providers** — [providers](#providers): catalog and subscription login
-- **The loop** — [policy](#policy): init, check, evolve, lock/unlock, reload
+- **Evaluate and improve** — [policy](#policy): policies, evidence exchange, optimization, and trajectory history
 - **Cloud** — [cloud](#cloud): login, keys, usage, billing, policies, BYOK
-- **Gateways** — [tools, agents, and ACP](#tools-agents-and-acp): MCP introspection, agent catalog, ACP sessions
-- **Skills & MCP** — [skills and MCP](#skills-and-mcp): install skills, run the origin MCP server
-- **Harnesses** — [harnesses](#harnesses): run agents pointed at the daemon
+- **Agents and protocols** — [agents, ACP, and MCP](#agents-acp-and-mcp): agent catalog, ACP adapters, and upstream MCP checks
+- **Skills** — [skills](#skills): inspect installed Agent Skills or scaffold one locally
+- **Coding agents** — [coding agents](#coding-agents): native launch, interactive conversation, and headless ACP runs
 - **Misc** — [key, workflow-state, and update](#key-workflow-state-and-update): virtual keys, benchmark tooling, self-update
 
-Not the only surface: an agent can also drive BitRouter over [MCP](/docs/usage/mcp) — the origin server exposing `complete`, `list_models`, and `status` as tools — or via the shipped `/bitrouter` [Agent Skill](/docs/usage/skills), which teaches a coding agent to install and operate BitRouter on its own.
+The deprecated `bitrouter` command may still be installed as a compatibility alias, but documentation uses `bro`. Agents can operate BitRouter through the shipped [Agent Skill](/docs/usage/skills); BitRouter's MCP support is an upstream client and aggregate gateway, not a first-party origin tool server.

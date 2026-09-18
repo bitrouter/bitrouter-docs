@@ -1,0 +1,88 @@
+---
+title: Code
+description: Use BitRouter's built-in ACP conversation for interactive agent work, route selection, permission decisions, and attributed cost.
+---
+
+`bro code` is BitRouter's interactive ACP client. It keeps the conversation, composer, selected agent, route, activity, and attributed session cost in one terminal interface.
+
+```bash
+bro code           # open the conversation and choose an agent
+bro code codex     # connect directly to the Codex ACP adapter
+bro code claude    # connect directly to the Claude ACP adapter
+```
+
+<Callout type="info">
+`bro code` renders a BitRouter-owned conversation. To use an agent's own native interface, use [`bro launch`](/docs/usage/coding-agents) or the `bro claude` and `bro codex` shortcuts.
+</Callout>
+
+## Start a conversation
+
+Bare `bro code` opens an empty conversation and a searchable agent picker. An explicit agent id skips the picker. Claude and Codex adapters are bundled, so they do not need an `agents:` entry.
+
+When an adapter supports native session persistence, you can load its history or resume it without replaying the history:
+
+```bash
+bro code codex --load <native-session-id>
+bro code codex --resume <native-session-id>
+```
+
+The id belongs to the harness. BitRouter does not create a second session id or read the harness's private session files.
+
+## Routing
+
+BitRouter attempts to route supported ACP adapters through the local daemon. The usual routing controls are available on an explicit session:
+
+```bash
+bro code codex --model bitrouter/auto
+bro code codex --direct
+bro code codex --base-url http://127.0.0.1:4356
+```
+
+- `--model` pins the model exposed to the adapter.
+- `--direct` leaves the adapter on its own provider authentication.
+- `--base-url` targets an explicit gateway instead of deriving it from `bitrouter.yaml`.
+- `--no-start` fails when the local daemon is unavailable instead of starting it.
+
+The route picker and router-attributed cost appear only when the active adapter and daemon connection advertise those capabilities. Direct traffic is not attributed as router spend.
+
+## Conversation controls
+
+| Key | Action |
+| --- | --- |
+| `Enter` | Send the current draft while idle |
+| `Shift-Enter`, `Alt-Enter`, or `Ctrl-J` | Insert a newline |
+| `Tab` | Accept a completion, or queue a follow-up while the agent is working |
+| `Ctrl-P` | Open commands and temporary inspectors |
+| `PageUp` / `PageDown` | Read transcript history |
+| `F2` | Focus the oldest pending permission request |
+| `Esc` | Close a temporary surface or request cancellation |
+| `Ctrl-C` | Cancel work, clear an idle draft, or exit when idle and empty |
+| `Ctrl-D` | Exit from an idle, empty composer |
+
+Permission requests require an explicit choice. `bro code` does not silently approve a tool call on the agent's behalf.
+
+## Operations-only targets
+
+A named remote context or explicit control socket opens an operations inspector instead of an ACP conversation:
+
+```bash
+bro --context production code
+bro code --socket /path/to/bitrouter.sock
+```
+
+These targets can inspect status, models, requests, routes, providers, telemetry, policy, agents, and reload state. They do not launch an agent, expose a composer, or fall back to local data after a remote failure.
+
+## Interactive, headless, or native
+
+| Goal | Command |
+| --- | --- |
+| Work interactively in BitRouter's conversation | `bro code <agent>` |
+| Run one prompt for automation | `bro run <agent> "..."` |
+| Expose an adapter to another ACP client | `bro acp serve <agent>` |
+| Drive the harness's own native interface | `bro launch <agent>` |
+
+<Cards>
+  <Card title="ACP" href="/docs/usage/acp" description="Agent discovery, headless runs, and the stdio adapter." />
+  <Card title="Coding agents" href="/docs/usage/coding-agents" description="Choose between BitRouter's ACP conversation and native harness launch." />
+  <Card title="CLI reference" href="/docs/usage/cli#coding-agents" description="Every code, run, and launch flag." />
+</Cards>

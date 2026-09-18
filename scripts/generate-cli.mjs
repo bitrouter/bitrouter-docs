@@ -27,15 +27,15 @@ const OUT_FILE = join(ROOT, "content/docs/(guide)/usage/cli.mdx");
 // text comes from the overlay's `title:`; keep both slug-friendly, because
 // next.config.ts redirects the retired per-group pages at these anchors.
 const GROUPS = [
-  { slug: "daemon", commands: ["serve", "start", "stop", "restart", "reload", "status"] },
+  { slug: "daemon", commands: ["serve", "start", "stop", "restart", "reload", "operations", "status", "requests", "context"] },
   { slug: "init", commands: ["init", "config"] },
   { slug: "route", commands: ["route", "models", "observe"] },
   { slug: "providers", commands: ["providers"] },
-  { slug: "policy", commands: ["policy"] },
+  { slug: "policy", commands: ["policy", "eval", "optimize", "trajectory"] },
   { slug: "cloud", commands: ["cloud"] },
-  { slug: "tools", commands: ["tools", "agents", "acp"] },
-  { slug: "skills", commands: ["skills", "mcp"] },
-  { slug: "harnesses", commands: ["launch", "spawn", "tui"] },
+  { slug: "tools", commands: ["agents", "acp", "mcp"] },
+  { slug: "skills", commands: ["skills"] },
+  { slug: "harnesses", commands: ["launch", "claude", "claude-code", "codex", "run", "code"] },
   { slug: "misc", commands: ["key", "workflow-state", "update"] },
 ];
 
@@ -44,10 +44,40 @@ const GROUPS = [
 // buries the flags that actually differ, and the sheer row count is what the
 // MDX compiler chokes on (a few hundred table rows in one page is its ceiling;
 // past that the build OOMs). Payloads must match the snapshot exactly.
-const GLOBAL_FLAGS = ["-j, --json", "--json", "--human"];
+const GLOBAL_FLAGS = [];
 
 const snapshot = JSON.parse(readFileSync(SNAPSHOT, "utf8"));
 const nodes = snapshot.commands;
+const commandName = snapshot.version.split(/\s+/)[0];
+const commandNodes = nodes.filter((node) => node.path.length > 0);
+
+// Keep the hand-authored grouping honest as the CLI evolves. A new top-level
+// command must be placed deliberately; otherwise it would be captured in the
+// snapshot but silently omitted from the generated reference.
+const roots = new Set(commandNodes.map((node) => node.path[0]));
+const owners = new Map();
+for (const group of GROUPS) {
+  for (const command of group.commands) {
+    const groups = owners.get(command) ?? [];
+    groups.push(group.slug);
+    owners.set(command, groups);
+  }
+}
+const duplicated = [...owners].filter(([, groups]) => groups.length > 1);
+const ungrouped = [...roots].filter((command) => !owners.has(command));
+const missing = [...owners].filter(([command]) => !roots.has(command));
+if (duplicated.length || ungrouped.length || missing.length) {
+  const problems = [];
+  if (duplicated.length) {
+    problems.push(
+      `assigned to multiple groups: ${duplicated.map(([command, groups]) => `${command} (${groups.join(", ")})`).join("; ")}`,
+    );
+  }
+  if (ungrouped.length) problems.push(`not assigned to a group: ${ungrouped.join(", ")}`);
+  if (missing.length) problems.push(`listed but absent from the snapshot: ${missing.map(([command]) => command).join(", ")}`);
+  console.error(`generate-cli: command grouping is out of sync with the snapshot\n- ${problems.join("\n- ")}`);
+  process.exit(1);
+}
 
 // --- overlay parsing -------------------------------------------------------
 // Overlay format:
@@ -57,7 +87,7 @@ const nodes = snapshot.commands;
 //   Intro markdown for the section.
 //
 //   ## @policy init
-//   Extra markdown appended to the `bitrouter policy init` subsection.
+//   Extra markdown appended to the `bro policy init` subsection.
 function parseOverlay(slug) {
   const file = join(OVERLAY_DIR, `${slug}.md`);
   if (!existsSync(file)) return { frontmatter: {}, intro: "", extras: {} };
@@ -109,7 +139,7 @@ function table(headers, rows) {
 // headings of their own, which keeps the table of contents to command names.
 function commandSection(node, extras) {
   const level = "#".repeat(Math.min(node.path.length + 2, 6));
-  const out = [`${level} \`bitrouter ${node.path.join(" ")}\``];
+  const out = [`${level} \`${commandName} ${node.path.join(" ")}\``];
   if (node.about) out.push(escProse(node.about));
   if (node.usage) out.push(`**Usage:** \`${node.usage}\``);
   if (node.args.length) {
@@ -167,7 +197,7 @@ for (const group of GROUPS) {
       console.warn(`generate-cli: cli-overlays/${group.slug}.md has "## @${key}", which is not in the snapshot — dropped`);
     }
   }
-  const title = overlay.frontmatter.title ?? `bitrouter ${group.commands[0]}`;
+  const title = overlay.frontmatter.title ?? `${commandName} ${group.commands[0]}`;
   const body = [`## ${title}`];
   if (overlay.intro) body.push(overlay.intro);
   body.push(...groupNodes.map((n) => commandSection(n, overlay.extras)));
@@ -193,5 +223,5 @@ const mdx = [
 mkdirSync(dirname(OUT_FILE), { recursive: true });
 writeFileSync(OUT_FILE, mdx);
 console.log(
-  `generate-cli: wrote ${sections.length} section(s) covering ${nodes.length} command(s) → content/docs/(guide)/usage/cli.mdx`,
+  `generate-cli: wrote ${sections.length} section(s) covering ${commandNodes.length} command(s) → content/docs/(guide)/usage/cli.mdx`,
 );

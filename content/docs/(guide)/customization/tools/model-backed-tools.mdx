@@ -1,0 +1,88 @@
+---
+title: Model-backed tools
+description: Use Advisor, Sub-agent, or Fusion for bounded nested model calls inside one routed request.
+---
+
+Model-backed tools make additional model calls inside BitRouter's server-tool loop. Choose by the job the nested call performs:
+
+| Tool | Use it when | Nested result |
+| --- | --- | --- |
+| Advisor | The parent needs an expert answer to one question | Advice returned to the parent model |
+| Sub-agent | The parent can delegate a self-contained task | Worker's final result |
+| Fusion | Several models should analyze the same prompt | Judge analysis, then synthesis |
+
+Every nested call has its own tokens, latency, and provider cost. A tool can improve unit-token productivity, but it is not free parallelism.
+
+## Enable the implementations
+
+```yaml
+server_tools:
+  advisor: true
+  subagent: true
+  fusion:
+    panel:
+      - anthropic:claude-opus-4.8
+      - openai:gpt-5
+    judge: anthropic:claude-opus-4.8
+```
+
+Advisor and Sub-agent use the parent request model unless their declaration pins another model. Fusion defaults come from the deployment block and can be overridden by an explicit declaration.
+
+## Advisor
+
+Declare `bitrouter:advisor` when the parent should ask a focused question and then continue its own work:
+
+```json
+{
+  "type": "bitrouter:advisor",
+  "args": {
+    "model": "anthropic:claude-opus-4.8",
+    "instructions": "Review only the authentication edge cases."
+  }
+}
+```
+
+At call time the parent supplies `prompt`; it may also override `model`. The advisor sees the question and configured instructions, not ownership of the outer task.
+
+## Sub-agent
+
+Declare `bitrouter:subagent` for a task whose context and expected result can be stated independently:
+
+```json
+{
+  "type": "bitrouter:subagent",
+  "args": {
+    "model": "openai:gpt-5",
+    "instructions": "Return a concise factual summary."
+  }
+}
+```
+
+The parent calls it with `task_name` and the required `task_description`. The worker receives the task description, works in isolation, and returns its result. It does not inherit the parent's transcript or environment automatically.
+
+## Fusion
+
+Fusion runs a panel of up to eight models in parallel, asks a judge to compare their answers, and lets the parent or a dedicated synthesizer write the final response.
+
+```json
+{
+  "type": "bitrouter:fusion",
+  "args": {
+    "panel": [
+      {"model": "anthropic:claude-opus-4.8"},
+      {"model": "openai:gpt-5"}
+    ],
+    "judge": {"model": "anthropic:claude-opus-4.8"}
+  }
+}
+```
+
+When `server_tools.fusion` is configured, `bitrouter/fusion` is also available as a model alias. The alias injects the deployment defaults and is the simplest cross-protocol entry point.
+
+The judge compares panel answers; it does not silently merge them. Treat Fusion as a deliberate high-cost path for questions where independent perspectives justify the added calls.
+
+## Nested tools
+
+Advisor and Sub-agent declarations may include provider-namespaced tools for their nested model. Fusion panel members may do the same. Those declarations do not grant new credentials or bypass provider capability checks.
+
+Use [Observability](/docs/configuration/observability) to attribute the nested attempts, and [Routing](/docs/configuration/routing) to inspect the models each declaration selects.

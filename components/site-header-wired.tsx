@@ -55,9 +55,9 @@ export function WebHeader() {
 /**
  * Headerless body — for the docs notebook grid header (DocsHeader).
  *
- * `leadingSlot` is where docs passes the sidebar drawer trigger, so the docs
- * nav (and the tabs dropdown inside it) is reachable on small screens.
+ * `leadingSlot` is where notebook pages pass the sidebar drawer trigger, so
+ * their navigation remains reachable on small screens.
  */
 export function WebHeaderBody({ leadingSlot }: { leadingSlot?: React.ReactNode }) {
-  return <SiteHeaderBody {...useWebHeaderProps(leadingSlot)} wordmarkSuffix="docs" />;
+  return <SiteHeaderBody {...useWebHeaderProps(leadingSlot)} />;
 }

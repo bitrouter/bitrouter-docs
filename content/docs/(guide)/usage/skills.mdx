@@ -1,24 +1,50 @@
 ---
 title: Skills
-description: Drop-in Agent Skills that teach an AI agent to install, configure, and use BitRouter.
+description: Install the BitRouter Agent Skill, inspect local skills, or scaffold a spec-valid SKILL.md.
 ---
 
-**[Agent Skills](https://github.com/bitrouter/agent-skills)** are drop-in skills that teach an AI coding agent — Claude Code, Cursor, Copilot, Codex, and others — how to install, configure, migrate to, and troubleshoot BitRouter on its own. They are the third way to drive BitRouter, alongside the [CLI](/docs/usage/cli) and the [MCP server](/docs/usage/mcp).
+[Agent Skills](https://agentskills.io) are portable instruction packages built around a `SKILL.md` file. BitRouter ships a Skill that teaches a shell-capable agent how to install, configure, migrate to, and troubleshoot the router.
 
-Install with the generic skills CLI:
+## Install the BitRouter Skill
+
+Use your agent host's plugin or skill mechanism. With the generic Skills CLI:
 
 ```bash
 npx skills add bitrouter/bitrouter
 ```
 
-Or via BitRouter's own installer:
+Then ask the host to use the BitRouter Skill—for example, “Set up BitRouter for this project.” The Skill explains the commands; the host still owns user approval and process execution.
+
+## Inspect installed skills
+
+BitRouter can validate the skills already present on disk:
 
 ```bash
-bitrouter skills add bitrouter
+bro skills list
+bro skills list --global
 ```
 
-The skill is kept in sync with the code in the [bitrouter repo](https://github.com/bitrouter/bitrouter).
+The project-local command checks conventional skill layouts under the current project. `--global` checks the global Claude-compatible skill root. Each result includes the declared name, description, paths, validity, and a problem when the skill does not satisfy the Agent Skills format.
 
-## Serving skills to a harness
+BitRouter reads these directories; it does not install into them. Installation and activation remain the responsibility of the agent host.
 
-`bitrouter skills` installs and manages skills locally; `bitrouter mcp serve --backend skills` exposes the installed set as a standalone AgentSkills server so any harness can discover and load them. Under `bitrouter tui` that server is injected into every launched harness automatically — see [MCP server](/docs/usage/mcp#backend-variants).
+## Scaffold a skill
+
+Create a starter skill in the current project:
+
+```bash
+bro skills init my-skill
+bro skills init my-skill --output ./skills/my-skill/SKILL.md
+```
+
+The name must use lowercase ASCII letters, digits, and single internal hyphens. The command refuses to overwrite an existing `SKILL.md`.
+
+<Callout type="info">
+BitRouter does not expose local filesystem skills through a first-party MCP origin server. Skills advertised by a configured upstream MCP server can still be relayed through the [MCP gateway](/docs/usage/mcp-gateway).
+</Callout>
+
+<Cards>
+  <Card title="BitRouter Skill source" href="https://github.com/bitrouter/bitrouter/tree/main/skills/bitrouter" description="Review the Skill and its versioned references." />
+  <Card title="CLI reference" href="/docs/usage/cli#skills" description="Exact list and init flags." />
+  <Card title="ACP & MCP" href="/docs/usage/protocols" description="Understand the protocol and ownership boundaries." />
+</Cards>

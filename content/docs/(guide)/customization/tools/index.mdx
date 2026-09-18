@@ -1,0 +1,14 @@
+---
+title: Tool calling
+description: Run MCP, nested-model, search, and fetch tools inside BitRouter's bounded server-side loop.
+---
+
+Tool customizations let BitRouter execute selected tool calls and continue the model loop before returning a response. The deployment enables each capability; an individual request still has to opt into it.
+
+<Cards>
+  <Card title="Server tools" href="/docs/customization/tools/server-tools" description="Understand the loop, its bounds, and the two-gate activation model." />
+  <Card title="Model-backed tools" href="/docs/customization/tools/model-backed-tools" description="Compare Advisor, Sub-agent, and Fusion." />
+  <Card title="Web tools" href="/docs/customization/tools/web-tools" description="Configure Web Search and Web Fetch backends together." />
+</Cards>
+
+Use [MCP gateway](/docs/usage/mcp-gateway) when BitRouter should proxy tool servers without owning the model loop. Use server tools when the router itself should advertise, execute, and feed tool results back to the model.

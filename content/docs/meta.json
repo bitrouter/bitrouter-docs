@@ -1,4 +1,11 @@
 {
   "title": "Documentation",
-  "pages": ["(guide)", "self-hosting", "guides", "reference"]
+  "pages": [
+    "(overview-nav)",
+    "(usage-nav)",
+    "(configuration-nav)",
+    "(customization-nav)",
+    "reference",
+    "(development-nav)"
+  ]
 }

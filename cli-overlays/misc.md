@@ -4,10 +4,10 @@ title: Key, workflow-state, and update
 
 ## @key sign
 
-Mints a **virtual key** bound to an access-control policy — the per-key guardrails surface (allowed models, budgets, rate limits), distinct from routing policies. See [Guardrails](/docs/models-and-routing/guardrails).
+Mints a **virtual key** bound to an access-control policy — the per-key guardrails surface (allowed models, budgets, rate limits), distinct from routing policies. See [Guardrails](/docs/configuration/guardrails).
 
 ```bash
-bitrouter key sign --user ci --policy nightly-cap
+bro key sign --user ci --policy nightly-cap
 ```
 
 ## @workflow-state
@@ -19,7 +19,7 @@ Internal benchmark tooling — the plumbing behind the published Terminal-Bench 
 ## @update
 
 ```bash
-bitrouter update
+bro update
 ```
 
 Updates the installed binary in place to the latest release — follows prereleases by default while pre-1.0. Homebrew and `cargo install` builds update through their own package manager instead.

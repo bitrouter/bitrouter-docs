@@ -3,27 +3,27 @@ import { Faq } from "./faq";
 const PFAQS = [
   {
     q: "How is this different from OpenRouter and LiteLLM?",
-    a: "OpenRouter picks the best provider for a model you chose, and charges 5.5% to load credits. LiteLLM doesn't pick anything — you configure the routes yourself, and its hosted tier is quote-only through a sales call. BitRouter picks the model and the provider for each call, based on where it sits in your agent's trajectory and how much risk it carries, and charges 0%. That difference isn't a discount, it's a different lever: choosing a cheaper host for the same model moves cost by single digits, while choosing a cheaper model for the calls that don't need a frontier one moves it by multiples. We don't need a percentage because the routing is the product.",
+    a: "OpenRouter is a hosted model marketplace that chooses a provider for a model you selected; its fees and BYOK allowance vary by plan. LiteLLM gives you an importable Python SDK and a proxy whose routes you configure. BitRouter can choose both the model and provider for each call, based on where the call sits in an agent trajectory and the policy you own. Self-hosted BitRouter adds no inference fee; BitRouter Cloud uses the prices shown in the live model catalog.",
   },
   {
     q: "So what do I actually pay?",
-    a: "Tokens, at the provider's published list price, with 0% markup — no routing fee, no platform fee, no seat fee. Routing itself is never metered, and that's a commitment rather than a not-yet: your request volume will not turn into a billed line later. A free account also includes 1M trace receipts a month kept 30 days, evals, guardrails, multi-provider failover, unlimited seats and one workspace. Point BitRouter at your own provider contracts and we take no percentage on that traffic either — unlike gateways that levy one on BYOK — or self-host the whole Apache-2.0 stack, with the same routing engine, guardrails and observability as the hosted edge, and owe us nothing at all.",
+    a: "Self-hosting is free: you pay your model providers directly and owe BitRouter nothing for the traffic. On BitRouter Cloud, you pay the providers' published token prices with 0% token markup and no separate routing fee. The Cloud endpoint runs the same open-source routing engine as the self-hosted binary.",
   },
   {
     q: "Is cost-per-session a quote, or what you bill me on?",
-    a: "Neither — it's a unit of account. Cost-per-session is how you compare bitrouter/auto against running a frontier model outright, in the unit the router actually controls; your invoice is tokens at list price. And we deliberately don't quote it in advance, because an accurate forecast would have to absorb the variance in your context shape, how often the router escalates, and upstream prices that move — the spread we'd charge to cover that would be exactly the markup we removed. What we can do is show you what your traffic did cost, computed from your own receipts, against what your baseline model would have cost for the same sessions. At enterprise scale the variance does get absorbed: that's what the budget guarantee is.",
+    a: "Neither — it's a unit of account. Cost-per-session is how you compare a routed workload against running one baseline model throughout; your Cloud invoice remains token usage at published prices. We do not quote a universal saving in advance because the result depends on your context shape, routing policy, model mix, upstream prices, and cache behavior. BitRouter reports what your traffic actually cost so you can compare it with your own baseline.",
   },
   {
     q: "How do I know routing didn't make quality worse?",
     a: "Because a route has to earn its traffic. You declare what each workload is optimizing for — a cost ceiling, a p50/p95 target, a quality floor — and every session is measured against it. Success rate is the default quality metric and needs nothing from you: outcome classification is deterministic, with no judge in the request path, so a failure escalates a route immediately and a cheaper route must succeed repeatedly before it earns traffic. If your definition of good is narrower than that, point an eval at it — `bitrouter optimize` then runs your workflow twice, once as-is and once with a single routing change, and reports the cost and quality deltas so you can publish or roll back.",
   },
   {
-    q: "How long are traces kept, and why those windows?",
-    a: "A free account keeps receipts for 30 days, sized for debugging rather than for an audit. Longer windows are set by the regimes that actually govern log retention rather than by round numbers: 6 months matches the EU AI Act's Article 19 minimum for providers of high-risk AI systems, applicable since 2 August 2026; 12 months matches SOC 2 expectations and PCI DSS 4.0; 7 years covers HIPAA and SOX. Whether a given obligation applies to your system is a call for your own counsel — under the AI Act the duty sits with the provider of the high-risk system, not with BitRouter. Either way we store receipts, never prompts or responses.",
+    q: "Does BitRouter charge for self-hosted traffic?",
+    a: "No. The Apache-2.0 router does not meter requests or charge a platform fee. You bring your own provider contracts and pay those providers directly. If you opt into BitRouter Cloud instead, usage is billed through the hosted service at the providers' published token prices.",
   },
   {
-    q: "How does outcome-based pricing work?",
-    a: "You run your full production loop through BitRouter. You set a budget and a measurable quality floor. We guarantee the loop stays under your budget, and we bill a custom share of what we save you against your measured baseline — only on runs that clear your quality bar, and never more than we saved you. It's enterprise-only, because agreeing a baseline and a quality bar takes a conversation; talk to the founders to scope the rate.",
+    q: "Do you offer a separate enterprise plan?",
+    a: "Not as a packaged suite today. We are working with early teams on deployment, security, procurement, and support requirements. If you are taking BitRouter beyond one developer, contact the founders and help shape the team offering.",
   },
 ];
 

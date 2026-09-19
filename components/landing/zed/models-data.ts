@@ -52,23 +52,16 @@ const PROVIDER_LABELS: Record<string, string> = {
   tencent: "Tencent",
 };
 
-export const PDOT: Record<string, string> = {
-  OpenAI: "#74aa9c",
-  Anthropic: "#d97757",
-  Google: "#6b9bff",
-  Qwen: "#a78bfa",
-  DeepSeek: "#5b8def",
-  Minimax: "#e0a955",
-  Moonshot: "#9aa2af",
-  "Z.ai": "#5bbf6a",
-  Xiaomi: "#e0805b",
-  Stepfun: "#7f8894",
-  Grok: "#c8ccd4",
-  Meituan: "#e0a955",
-  Tencent: "#5b8def",
-};
+/** Provider identity is conveyed by its name; dots stay neutral. */
+export const PDOT: Record<string, string> = Object.fromEntries(
+  Object.values(PROVIDER_LABELS).map((label) => [label, "var(--muted-foreground)"]),
+);
 
-export const MODC: Record<Modality, string> = { TXT: "#8a93a0", IMG: "#6b9bff", AUD: "#e0a955" };
+export const MODC: Record<Modality, string> = {
+  TXT: "var(--muted-foreground)",
+  IMG: "var(--foreground)",
+  AUD: "var(--muted-foreground)",
+};
 
 export function providerLabel(id: string): string {
   const prefix = id.includes("/") ? id.slice(0, id.indexOf("/")) : id;
@@ -128,7 +121,7 @@ export function barW(v: number, max: number): string {
   return Math.round(Math.max(6, Math.sqrt(v / max) * 100)) + "%";
 }
 export function pColor(v: number, hi: number): string {
-  return v < hi * 0.06 ? "#a1c181" : v < hi * 0.22 ? "#6b9bff" : v < hi * 0.6 ? "#e0a955" : "#e06c6c";
+  return v < hi * 0.06 ? "var(--foreground)" : v < hi * 0.22 ? "var(--chart-1)" : v < hi * 0.6 ? "var(--chart-2)" : "var(--chart-3)";
 }
 export function fmtUsd(v: number): string {
   return "$" + (v < 1 ? v.toFixed(2) : v.toFixed(2).replace(/\.00$/, ".0"));
@@ -139,5 +132,5 @@ export function fmtUsd(v: number): string {
 export const CHART_H = 240;
 
 /** Stable per-model colors for the usage chart, cycled by rank. */
-export const CHART_COLORS = ["#a78bfa", "#5b8def", "#7f8894", "#d97757", "#74aa9c", "#5bbf6a"];
-export const CHART_OTHER_COLOR = "#3a4048";
+export const CHART_COLORS = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)", "var(--foreground)"];
+export const CHART_OTHER_COLOR = "var(--muted)";

@@ -1,5 +1,5 @@
 /* ============================================================================
- * Zed dark — design-system primitives
+ * Landing design-system primitives
  * Shared by the landing, nav and footer. Colour tokens (--z-*) live globally in
  * app/globals.css; this file owns structure, typography helpers, terminal
  * chrome, buttons and keyframes. Plain CSS (no @apply) so it can be imported by
@@ -16,7 +16,7 @@
   color: var(--z-ink);
   width: 100%;
   overflow-x: hidden;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
 }
 
 /* ── Layout ── */
@@ -34,6 +34,9 @@
 .zed-sec-b {
   padding-bottom: var(--z-sec);
 }
+.zed-hero {
+  padding-top: 72px;
+}
 /* Retained for surfaces that still rule off their sections (docs, legal). The
    landing no longer uses it — v3 has no section hairlines. */
 .zed-section {
@@ -49,12 +52,12 @@
   color: var(--z-ink);
   margin: 0;
 }
-/* Section headings inside docs/loop steps: Newsreader *upright*, not italic.
-   v3 reserves the italic for page-level display type. */
+/* Upright sans display style for secondary headings. */
 .zed-display-up {
-  font-family: var(--font-display);
+  font-family: var(--font-sans);
   font-style: normal;
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: -0.025em;
   color: var(--z-ink);
   margin: 0;
 }
@@ -152,12 +155,12 @@
 }
 .zed-btn-primary {
   background: var(--z-cta);
-  color: #fff;
+  color: var(--primary-foreground);
   border: 1px solid var(--z-cta);
 }
 .zed-btn-primary:hover {
-  background: #1a56f0;
-  color: #fff;
+  background: var(--foreground);
+  color: var(--primary-foreground);
 }
 .zed-btn-ghost {
   background: transparent;
@@ -196,8 +199,8 @@
   line-height: 1.4;
 }
 .zed-key.on-primary {
-  background: rgba(255, 255, 255, 0.18);
-  color: #fff;
+  background: color-mix(in oklab, var(--primary-foreground) 12%, transparent);
+  color: var(--primary-foreground);
 }
 .zed-key.on-ghost {
   border: 1px solid var(--z-rule-2);
@@ -304,7 +307,7 @@
   margin-top: 10px;
   padding-left: 2px;
   color: var(--z-ink-6);
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 12px;
   line-height: 1.6;
 }
@@ -322,7 +325,7 @@
 .zed-section-intro p {
   max-width: 62ch;
   margin: 22px auto 0;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 14px;
   line-height: 1.7;
   color: var(--z-ink-5);
@@ -359,10 +362,10 @@
 }
 .zed-benchmark-claim {
   margin: 36px 0 0;
-  font-family: var(--font-display);
+  font-family: var(--font-sans);
   font-size: clamp(38px, 5vw, 58px);
-  font-style: italic;
-  font-weight: 500;
+  font-style: normal;
+  font-weight: 600;
   line-height: 1;
   letter-spacing: -0.035em;
   color: var(--z-ink);
@@ -378,7 +381,7 @@
 .zed-benchmark-quality {
   max-width: 66ch;
   margin: 34px 0 0;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 14px;
   line-height: 1.75;
   color: var(--z-ink-5);
@@ -390,7 +393,7 @@
 }
 .zed-benchmark-control {
   margin: 8px 0 0;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 12.5px;
   line-height: 1.7;
   color: var(--z-ink-6);
@@ -403,7 +406,7 @@
   margin: 42px 0 0;
   padding-top: 17px;
   border-top: 1px solid var(--z-rule);
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 10.5px;
   line-height: 1.7;
   color: var(--z-ink-7);
@@ -468,7 +471,7 @@
 .zed-feature-copy > p {
   max-width: 53ch;
   margin: 24px 0 0;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 13.5px;
   line-height: 1.8;
   color: var(--z-ink-5);
@@ -482,8 +485,8 @@
   overflow: hidden;
   border: 1px solid var(--z-rule);
   background:
-    linear-gradient(rgba(107, 155, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(107, 155, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(oklch(1 0 0 / 3.5%) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(1 0 0 / 3.5%) 1px, transparent 1px),
     var(--z-wash);
   background-size: 36px 36px;
   font-family: var(--font-mono);
@@ -522,7 +525,7 @@
   padding: 17px 20px;
   border: 1px solid var(--z-blue-chip-border);
   background: var(--z-blue-chip-bg);
-  box-shadow: 0 0 50px rgba(107, 155, 255, 0.08);
+  box-shadow: 0 0 50px oklch(1 0 0 / 8%);
 }
 .zed-status-dot {
   width: 8px;
@@ -818,7 +821,7 @@
 .zed-commercial-copy > p {
   max-width: 52ch;
   margin: 24px 0 0;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 13.5px;
   line-height: 1.8;
   color: var(--z-ink-5);
@@ -852,7 +855,7 @@
 }
 .zed-commercial-row p {
   margin: 0;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 11.5px;
   line-height: 1.65;
   color: var(--z-ink-6);
@@ -1051,9 +1054,9 @@
   margin-right: 10px;
 }
 .zed-step-title {
-  font-family: var(--font-display);
+  font-family: var(--font-sans);
   font-style: normal;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 24px;
   line-height: 1.25;
   color: var(--z-ink);
@@ -1061,7 +1064,7 @@
   max-width: 26ch;
 }
 .zed-step-body {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 13px;
   line-height: 1.75;
   color: var(--z-ink-5);
@@ -1090,7 +1093,7 @@
   color: var(--z-ink-6);
 }
 .zed-aside-desc {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 12px;
   line-height: 1.6;
   color: var(--z-ink-5);
@@ -1179,7 +1182,7 @@
    These three were re-declared as inline style objects on every marketing page
    (the LEAD / label / body triple). Naming them here keeps one definition. */
 .zed-lead {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 14px;
   line-height: 1.7;
   color: var(--z-ink-5);
@@ -1194,7 +1197,7 @@
   color: var(--z-ink-6);
 }
 .zed-body {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 13px;
   line-height: 1.7;
   color: var(--z-ink-2);
@@ -1230,7 +1233,7 @@
   border: none;
   text-align: left;
   cursor: pointer;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 14.5px;
   color: var(--z-ink-2);
 }
@@ -1244,7 +1247,7 @@
 }
 .zed-faq-a {
   padding: 0 0 24px 28px;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 13px;
   line-height: 1.8;
   color: var(--z-ink-5);
@@ -1253,7 +1256,7 @@
 
 /* ── Prose (blog/long-form reuse later) ── */
 .zed-prose p {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 14px;
   line-height: 1.75;
   color: var(--z-ink-3);
@@ -1266,30 +1269,24 @@
 .zed-prose code {
   font-family: var(--font-mono);
   font-size: 0.86em;
-  background: #1a1e24;
+  background: var(--z-wash);
   border: 1px solid var(--z-rule-code);
   border-radius: 5px;
   padding: 1px 6px;
   color: var(--z-code);
 }
 
-/* ── Article body (blog / changelog MDX via fumadocs DocsBody) ──
-   Layered over fumadocs prose: Newsreader italic headings, IBM Plex Mono body,
-   blue links, blue inline code, blue-rule blockquotes. */
-/* ── Long-form prose (legal pages, blog posts, changelog permalinks) ──
-   Matches the docs surface in app/globals.css: mono body at 14/1.85 over a
-   72ch measure, Newsreader *upright* headings with a hairline opening each h2,
-   and tan inline code. The italic stays on page titles only. */
+/* ── Long-form prose (legal pages, blog posts, changelog permalinks) ── */
 .zed-article {
-  font-family: var(--font-mono) !important;
+  font-family: var(--font-sans) !important;
   color: var(--z-ink-2);
 }
 .zed-article :is(h1, h2, h3, h4) {
-  font-family: var(--font-display) !important;
+  font-family: var(--font-sans) !important;
   font-style: normal;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--z-ink);
-  letter-spacing: normal;
+  letter-spacing: -0.02em;
 }
 .zed-article h2 {
   font-size: 26px;
@@ -1309,7 +1306,7 @@
 }
 .zed-article p,
 .zed-article li {
-  font-family: var(--font-mono) !important;
+  font-family: var(--font-sans) !important;
   font-size: 14px;
   line-height: 1.85;
   color: var(--z-ink-2);
@@ -1349,7 +1346,7 @@
 }
 
 /* Release notes rendered inline on the changelog index. The standalone article
-   styling sets h3 as 22px serif italic, which is right for one entry on its own
+   styling sets h3 as 22px display text, which is right for one entry on its own
    page but shouts when ~50 of them ("Features", "Bug Fixes") stack down a feed —
    they'd outweigh the release headlines they sit under. Demote them to quiet
    mono labels and tighten the rhythm so the hierarchy stays
@@ -1387,8 +1384,7 @@
   font-style: normal;
   color: var(--z-ink-6);
 }
-/* Headings carry an autolink anchor, which the article rules paint blue and
-   underline. On a section label repeated down the whole feed that reads as a
+/* Headings carry an underlined autolink anchor. On a section label repeated down the whole feed that reads as a
    row of broken links. */
 .zed-changelog-body :is(h2, h3, h4) a {
   color: inherit;
@@ -1396,14 +1392,15 @@
 }
 .zed-article a {
   color: var(--z-blue);
-  text-decoration: none;
-  border-bottom: 1px solid #2a3550;
+  text-decoration: underline;
+  text-decoration-color: var(--z-rule-2);
+  text-underline-offset: 3px;
+  border-bottom: none;
 }
 .zed-article a:hover {
   color: var(--z-blue-hi);
 }
-/* Inline code is tan and unboxed, matching the docs surface — the colour does
-   the work the border used to. */
+/* Inline code is neutral and unboxed, matching the docs surface. */
 .zed-article :not(pre) > code {
   font-family: var(--font-mono);
   font-size: 13px;
@@ -1427,7 +1424,7 @@
   margin: 24px 0 0;
 }
 .zed-article blockquote {
-  border-left: 1px solid var(--z-blue);
+  border-left: 1px solid var(--z-rule-2);
   background: transparent;
   border-radius: 0;
   padding: 2px 0 2px 18px;
@@ -1456,7 +1453,7 @@
 .zed-post-row:hover,
 .zed-release-row:hover,
 .zed-row-hover:hover {
-  background: #101216;
+  background: var(--z-wash);
 }
 /* Models registry: rail + main → single column on small screens. */
 @media (max-width: 900px) {

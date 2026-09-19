@@ -147,8 +147,8 @@ function ReleaseSection({
             routine
               ? { ...MONO, fontSize: 14, fontWeight: 500, lineHeight: 1.5, color: "var(--z-ink-2)", margin: "0 0 10px", maxWidth: "62ch" }
               : {
-                  fontFamily: "var(--font-display)",
-                  fontStyle: "italic",
+                  fontFamily: "var(--font-sans)",
+                  fontStyle: "normal",
                   fontWeight: 500,
                   fontSize: highlight ? 34 : 26,
                   lineHeight: 1.18,

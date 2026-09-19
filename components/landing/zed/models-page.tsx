@@ -15,8 +15,7 @@ import { PageHead } from "./primitives";
 type SortKey = "input" | "output" | "name";
 type View = "table" | "cards";
 
-// v3 marks selection with ink over a flat wash rather than a blue-tinted fill —
-// the accent stays reserved for data (price bars, the routed model).
+// Selected controls use the shared neutral surface and foreground tokens.
 const optStyle = (on: boolean) =>
   on ? { background: "var(--z-wash)", color: "var(--z-ink)" } : { color: "var(--z-ink-5)" };
 const segStyle = (on: boolean) =>
@@ -25,7 +24,7 @@ const segStyle = (on: boolean) =>
 function decorate(m: ModelRow, maxIn: number, maxOut: number) {
   return {
     ...m,
-    dot: PDOT[m.p] ?? "#7f8894",
+    dot: PDOT[m.p] ?? "var(--muted-foreground)",
     inTxt: fmtUsd(m.in),
     outTxt: fmtUsd(m.out),
     inW: barW(m.in, maxIn),
@@ -35,8 +34,8 @@ function decorate(m: ModelRow, maxIn: number, maxOut: number) {
     // Open-weight rows carry no pill; unknown licensing carries none either,
     // so an undeclared model is never mislabelled as proprietary.
     tag: m.oss === false ? "proprietary" : "",
-    tagColor: "#e0a955",
-    tagBorder: "#3d3320",
+    tagColor: "var(--foreground)",
+    tagBorder: "var(--border)",
   };
 }
 
@@ -120,7 +119,7 @@ export function ZedModelsPage({ models, stats }: { models: ModelRow[]; stats: Us
               <aside style={{ borderRight: "1px solid var(--z-rule)", padding: "18px 14px" }} className="zed-hide-sm">
                 <div style={{ display: "flex", alignItems: "center", margin: "0 8px 16px" }}>
                   <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--z-ink-7)" }}>filters</span>
-                  <button onClick={reset} disabled={!filtersActive} style={{ marginLeft: "auto", cursor: filtersActive ? "pointer" : "default", background: "none", border: "none", fontFamily: "var(--font-mono)", fontSize: 11, color: filtersActive ? "#8fb4ff" : "var(--z-ink-8)" }}>clear</button>
+                  <button onClick={reset} disabled={!filtersActive} style={{ marginLeft: "auto", cursor: filtersActive ? "pointer" : "default", background: "none", border: "none", fontFamily: "var(--font-mono)", fontSize: 11, color: filtersActive ? "var(--foreground)" : "var(--z-ink-8)" }}>clear</button>
                 </div>
 
                 <FilterGroup title="license">
@@ -153,7 +152,7 @@ export function ZedModelsPage({ models, stats }: { models: ModelRow[]; stats: Us
                   })}
                 </FilterGroup>
                 <FilterGroup title="provider">
-                  <FilterBtn label="All" dot="#6b9bff" count={String(models.length)} active={provider === "All"} onClick={() => setProvider("All")} />
+                  <FilterBtn label="All" dot="var(--foreground)" count={String(models.length)} active={provider === "All"} onClick={() => setProvider("All")} />
                   {providers.map((p) => (
                     <FilterBtn key={p} label={p} icon={p} dot={PDOT[p]} count={String(cnt((m) => m.p === p))} active={provider === p} onClick={() => setProvider(p)} />
                   ))}
@@ -165,7 +164,7 @@ export function ZedModelsPage({ models, stats }: { models: ModelRow[]; stats: Us
                 {/* toolbar */}
                 <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", padding: "14px 16px", borderBottom: "1px solid var(--z-rule)" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 9, background: "var(--z-wash)", border: "1px solid var(--z-rule)", borderRadius: 0, padding: "7px 11px", flex: 1, minWidth: 180 }}>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6b727e" strokeWidth="2" style={{ flex: "0 0 auto" }}><circle cx="11" cy="11" r="7" /><path d="M21 21l-4-4" /></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--muted-foreground)" strokeWidth="2" style={{ flex: "0 0 auto" }}><circle cx="11" cy="11" r="7" /><path d="M21 21l-4-4" /></svg>
                     <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search models…" style={{ flex: 1, background: "none", border: "none", outline: "none", fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--z-ink)", minWidth: 0 }} />
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
@@ -241,7 +240,7 @@ function UsageChart({ stats }: { stats: UsageStats }) {
             <div key={g.key} style={{ display: "inline-flex", alignItems: "center", gap: 7, fontFamily: "var(--font-mono)", fontSize: 11.5, color: "var(--z-ink-4)" }}>
               <span style={{ width: 9, height: 9, borderRadius: 2, background: g.color }} />
               {g.key}
-              {g.proprietary && <span style={{ fontSize: 9, letterSpacing: "0.06em", textTransform: "uppercase", color: "#e0a955" }}>proprietary</span>}
+              {g.proprietary && <span style={{ fontSize: 9, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--foreground)" }}>proprietary</span>}
             </div>
           ))}
         </div>
@@ -253,7 +252,7 @@ function UsageChart({ stats }: { stats: UsageStats }) {
           </div>
           <div style={{ position: "relative", height: CHART_H, borderLeft: "1px solid var(--z-rule)", borderBottom: "1px solid var(--z-rule)" }}>
             {[0, 33.33, 66.66].map((t) => (
-              <div key={t} style={{ position: "absolute", left: 0, right: 0, top: `${t}%`, height: 1, background: "#181c22" }} />
+              <div key={t} style={{ position: "absolute", left: 0, right: 0, top: `${t}%`, height: 1, background: "var(--border)" }} />
             ))}
             <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "flex-end", gap: 7, padding: "0 6px" }}>
               {stats.series.map((day) => (
@@ -289,7 +288,7 @@ function UsageChart({ stats }: { stats: UsageStats }) {
             <>
               <span><b style={{ color: "var(--z-blue)" }}>{Math.round(openShare * 100)}%</b> open-weight</span>
               <span style={{ color: "var(--z-ink-7)" }}>·</span>
-              <span><b style={{ color: "#e0a955" }}>{Math.round((1 - openShare) * 100)}%</b> proprietary</span>
+              <span><b style={{ color: "var(--foreground)" }}>{Math.round((1 - openShare) * 100)}%</b> proprietary</span>
             </>
           )}
           <span style={{ marginLeft: "auto", color: "var(--z-ink-6)" }}>{formatTokens(stats.totals.total_tokens)} tokens routed</span>
@@ -313,7 +312,7 @@ function FilterBtn({ label, count, dot, icon, check, active, onClick }: { label:
   return (
     <button onClick={onClick} style={{ display: "flex", alignItems: "center", gap: 9, width: "100%", background: "none", border: "none", cursor: "pointer", textAlign: "left", padding: "6px 8px", borderRadius: 0, fontFamily: "var(--font-mono)", fontSize: 12.5, ...optStyle(active) }}>
       {icon ? <BrandIcon name={icon} size={14} color={dot} /> : dot && <span style={{ width: 7, height: 7, borderRadius: 2, background: dot, flex: "0 0 auto" }} />}
-      {check && <span style={{ width: 12, flex: "0 0 auto", color: "#6b9bff" }}>{check}</span>}
+      {check && <span style={{ width: 12, flex: "0 0 auto", color: "var(--foreground)" }}>{check}</span>}
       <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{label}</span>
       {count && <span style={{ marginLeft: "auto", color: "var(--z-ink-7)" }}>{count}</span>}
     </button>
@@ -354,7 +353,7 @@ function PriceCell({ txt, w, color }: { txt: string; w: string; color: string })
   return (
     <div style={{ padding: "12px 10px" }}>
       <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--z-ink-2)" }}>{txt}</div>
-      <div style={{ height: 3, background: "#1a1e24", marginTop: 5, marginRight: 12 }}>
+      <div style={{ height: 3, background: "var(--muted)", marginTop: 5, marginRight: 12 }}>
         <span style={{ display: "block", height: "100%", width: w, background: color }} />
       </div>
     </div>
@@ -380,8 +379,8 @@ function CardView({ rows }: { rows: DecoratedRow[] }) {
             {([["in /1M", r.inTxt, r.inW, r.inColor], ["out /1M", r.outTxt, r.outW, r.outColor]] as [string, string, string, string][]).map(([lab, txt, w, color]) => (
               <div key={lab}>
                 <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--z-ink-7)" }}>{lab}</div>
-                <div style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: 22, color: "var(--z-ink-2)", marginTop: 2 }}>{txt}</div>
-                <div style={{ height: 3, background: "#1a1e24", marginTop: 6 }}><span style={{ display: "block", height: "100%", width: w, background: color }} /></div>
+                <div style={{ fontFamily: "var(--font-sans)", fontStyle: "normal", fontSize: 22, color: "var(--z-ink-2)", marginTop: 2 }}>{txt}</div>
+                <div style={{ height: 3, background: "var(--muted)", marginTop: 6 }}><span style={{ display: "block", height: "100%", width: w, background: color }} /></div>
               </div>
             ))}
           </div>

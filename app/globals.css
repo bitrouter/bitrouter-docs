@@ -2,21 +2,12 @@
 @import "fumadocs-ui/css/shadcn.css";
 @import "fumadocs-ui/css/preset.css";
 @import "fumadocs-openapi/css/preset.css";
-/* ─────────────────────────────────────────────────────────────────────────
- * Design tokens — the single home for the palette.
- * One chain, one direction: the --z-* Zed tokens (defined in :root below) are
- * the source of truth; the shadcn semantic names alias them; @theme inline
- * exposes those to Tailwind. The brand overrides (IBM Plex --font-sans, 7px
- * radius, blue accent) sit after the base tokens and intentionally win.
- * The site is dark-only (forcedTheme in components/site-providers.tsx), so
- * there is no light branch and no .dark twin to keep in sync.
- * ───────────────────────────────────────────────────────────────────────── */
+/* shadcn Neutral is the source of truth. The site stays dark-only; legacy
+   --z-* aliases below keep older landing components on the same palette. */
 @theme inline {
-  /* Fonts — --font-sans / --font-display set by the brand override below. */
-  --font-mono: var(--font-ibm-plex-mono), ui-monospace, "SF Mono", Menlo,
-    monospace;
-
-  /* shadcn surface tokens → resolve to --z-* via :root below. */
+  --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -36,8 +27,11 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-
-  /* Sidebar slots. */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -46,140 +40,93 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --radius-xs: calc(var(--radius) * 0.5);
+  --radius-sm: calc(var(--radius) * 0.75);
+  --radius-md: calc(var(--radius) * 0.875);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.5);
+  --radius-2xl: calc(var(--radius) * 2);
+  --radius-3xl: calc(var(--radius) * 3);
 }
 
-/* ─── Zed dark · single global palette (dark-only) ───
-   The site is dark-only; :root and .dark carry the SAME Zed values so every
-   surface resolves to the Zed palette regardless of the theme class. */
-:root {
-
-  --background: var(--z-bg);
-  --foreground: var(--z-ink);
-  --card: var(--z-wash);
-  --card-foreground: var(--z-ink);
-  --popover: var(--z-wash);
-  --popover-foreground: var(--z-ink);
-  --primary: var(--z-blue);
-  --primary-foreground: var(--z-bg);
-  --secondary: var(--z-inset);
-  --secondary-foreground: var(--z-ink);
-  --muted: var(--z-inset);
-  --muted-foreground: var(--z-ink-4);
-  --accent: rgba(107, 155, 255, 0.1);
-  --accent-foreground: var(--z-ink);
-  --destructive: var(--z-red);
-  --destructive-foreground: var(--z-bg);
-  --border: var(--z-rule);
-  --input: var(--z-rule);
-  --ring: var(--z-blue);
-
-  --sidebar: var(--background);
-  --sidebar-foreground: var(--foreground);
-  --sidebar-primary: var(--primary);
-  --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: var(--accent);
-  --sidebar-accent-foreground: var(--accent-foreground);
-  --sidebar-border: var(--border);
-  --sidebar-ring: var(--ring);
-}
-
-
-/* Every surface is on the Zed system: tokens + docs re-skin here, marketing
-   component CSS in components/landing/zed/zed.css. */
-
-@custom-variant dark (&:is(.dark *));
-
-/*
- * Website global styles — the Zed dark brand, applied to every surface.
- * IBM Plex Sans is the default UI face, Newsreader the display serif, and IBM
- * Plex Mono carries the celled header/nav and every terminal via --font-mono.
- * A blue accent (--accent-brand #6b9bff) drives focus rings and content links;
- * semantic status stays ANSI (green/amber/red); radius scale tops out at 7px.
- *
- * Token chain:
- *   --z-* raw tokens + shadcn semantic aliases  ← defined above
- *   brand overrides (font-sans, radius, ring, --color-fd-primary) ← this file,
- *     placed after the base tokens so they win for docs/blog/chrome too.
- */
-@theme inline {
-  /* ── Zed dark brand: IBM Plex Sans default + Newsreader display, 7px radius ── */
-  --font-sans: var(--font-ibm-plex-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-newsreader), Georgia, "Times New Roman", serif;
-  --radius: 0.4375rem; /* 7px */
-  --radius-sm: 0.25rem; /* 4px */
-  --radius-md: 0.375rem; /* 6px */
-  --radius-lg: 0.4375rem; /* 7px */
-  --radius-xl: 0.625rem; /* 10px */
-  --radius-2xl: 0.875rem; /* 14px */
-  --radius-3xl: 1.25rem; /* 20px */
-}
-
-/* ─── Zed dark brand overrides (win over the base aliases above) ─── */
 :root,
 .dark {
-  /* ── Zed dark brand (globalized — blue accent everywhere) ── */
-  --accent-brand: #6b9bff;
-  /* Blue focus ring everywhere. */
-  --ring: var(--accent-brand);
-  --sidebar-ring: var(--accent-brand);
-  /* fumadocs link/accent token → Zed blue (docs + blog). */
-  --color-fd-primary: var(--accent-brand);
-  /* Primary button = the deep Zed CTA blue with white text (overrides the
-     --z-blue alias above so shadcn/fumadocs buttons match the design's CTA). */
-  --primary: #1348dc;
-  --primary-foreground: #ffffff;
+  color-scheme: dark;
+  --radius: 0.625rem;
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.922 0 0);
+  --chart-2: oklch(0.708 0 0);
+  --chart-3: oklch(0.556 0 0);
+  --chart-4: oklch(0.439 0 0);
+  --chart-5: oklch(0.371 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.922 0 0);
+  --sidebar-primary-foreground: oklch(0.205 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+  --color-fd-primary: var(--foreground);
+  --accent-brand: var(--foreground);
 
-  /* ── Zed component tokens (One-Dark terminal surfaces + semantic hues) ──
-     Shared by the nav, footer, landing and every later surface. */
-  --z-bg: #0c0d10;
-  --z-panel: #282c34; /* One-Dark terminal body */
-  --z-panel-header: #21252b; /* terminal titlebar / rail */
-  --z-panel-sel: #2e333c; /* selected row */
-  --z-inset: #0e1013; /* inset code well */
-  --z-wash: #101216; /* v3 flat well — code blocks, quickstart, search box */
-  --z-rule: #20242b; /* section hairline */
-  --z-rule-2: #333a44; /* lighter border / corner ticks */
-  --z-rule-code: #262b33; /* input / inline-code border */
-  --z-rule-faint: #181c22; /* faint row divider */
-  --z-ink: #f3f5f7;
-  --z-ink-bright: #dce0e5;
-  --z-ink-2: #c8ccd4; /* secondary-bright */
-  --z-ink-3: #aab1bc; /* secondary */
-  --z-ink-4: #9aa2af; /* muted body */
-  --z-ink-5: #8a93a0; /* dim */
-  --z-ink-6: #6b7180; /* dimmer */
-  --z-ink-7: #565d6b; /* faint / labels */
-  --z-ink-8: #3a3f4a; /* line numbers */
-  --z-blue: #6b9bff;
-  --z-blue-hi: #8fb4ff;
-  --z-blue-chip-bg: #101a2e;
-  --z-blue-chip-border: #1c2b45;
-  --z-cta: #1348dc;
+  --z-bg: var(--background);
+  --z-panel: var(--card);
+  --z-panel-header: oklch(0.185 0 0);
+  --z-panel-sel: var(--accent);
+  --z-inset: oklch(0.17 0 0);
+  --z-wash: oklch(0.18 0 0);
+  --z-rule: var(--border);
+  --z-rule-2: oklch(1 0 0 / 18%);
+  --z-rule-code: var(--input);
+  --z-rule-faint: oklch(1 0 0 / 6%);
+  --z-ink: var(--foreground);
+  --z-ink-bright: oklch(0.95 0 0);
+  --z-ink-2: oklch(0.86 0 0);
+  --z-ink-3: oklch(0.78 0 0);
+  --z-ink-4: var(--muted-foreground);
+  --z-ink-5: oklch(0.66 0 0);
+  --z-ink-6: oklch(0.58 0 0);
+  --z-ink-7: oklch(0.5 0 0);
+  --z-ink-8: oklch(0.4 0 0);
+  --z-blue: var(--foreground);
+  --z-blue-hi: var(--foreground);
+  --z-blue-chip-bg: var(--accent);
+  --z-blue-chip-border: var(--border);
+  --z-cta: var(--primary);
   --z-green: #a1c181; /* success text */
   --z-green-dot: #5bbf6a; /* status dot */
-  --z-amber: #e0a955; /* frontier */
-  --z-cost: #bf956a;
-  --z-purple: #b79bd0; /* agent tag */
-  /* Inline code in prose. Sits one step lighter than --z-blue so it reads as
-     blue-family with the rest of the site without being mistaken for a link
-     (docs links are --accent-brand #6b9bff and underlined). */
-  --z-code: #8fb4ff;
+  --z-amber: var(--z-ink-3);
+  --z-cost: var(--z-ink-3);
+  --z-purple: var(--z-ink-3);
+  --z-code: var(--foreground);
   --z-red: #e06c6c; /* traffic light red */
   --z-yellow: #e0b45b; /* traffic light yellow */
 
-  /* ── v3 layout rhythm ──
-     The design drops section hairlines entirely and lets one vertical interval
-     carry the structure: every marketing section is `padding: var(--z-sec) 0 0`.
-     Wrap = 1180px content, 40px gutters (22px below the 900px breakpoint). */
   --z-sec: 116px;
   --z-wrap: 1180px;
   --z-gutter: 40px;
 }
 
-/* ─── Docs inherit the global Zed blue accent (no monochrome override) ───
-   The former #nd-notebook-layout mono-accent block was removed so docs links,
-   rings, and the active-sidebar pill match the rest of the site. The docs
-   surface gets its full Zed re-skin in a later pass. */
+@custom-variant dark (&:is(.dark *));
 
 /* ─── Base layer ─── */
 @layer base {
@@ -188,14 +135,8 @@
   }
   body {
     @apply bg-background text-foreground flex min-h-screen flex-col;
-    /* Font custom-properties declared on <body>. @theme inline (above) inlines
-       these into Tailwind utilities but does NOT emit the :root variable, so raw
-       `var(--font-*)` references in zed.css + inline styles would be undefined
-       and silently fall back to the inherited font. Declaring them here (where
-       the next/font leaf vars --font-ibm-plex-* / --font-newsreader are in scope)
-       makes var(--font-sans|mono|display) resolve across the whole subtree. */
-    --font-sans: var(--font-ibm-plex-sans), ui-sans-serif, system-ui, sans-serif;
-    --font-mono: var(--font-ibm-plex-mono), ui-monospace, "SF Mono", Menlo, monospace;
+    --font-sans: var(--font-geist-sans), "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+    --font-mono: var(--font-geist-mono), "Geist Mono Fallback", ui-monospace, monospace;
     --font-display: var(--font-newsreader), Georgia, "Times New Roman", serif;
   }
 }
@@ -233,12 +174,10 @@ pre:has(code) {
 .prose a:not([data-card]),
 #nd-page a:not([data-card]):not(.zed-chrome-link) {
   color: var(--accent-brand);
+  text-decoration-line: underline;
   text-underline-offset: 3px;
 }
-/* Docs links add an underline so the affordance doesn't rest on colour alone.
-   Scoped to `#nd-page` (docs article) — blog links stay colour-only, no rule. */
 #nd-page a:not([data-card]):not(.zed-chrome-link) {
-  text-decoration-line: underline;
   text-decoration-color: oklch(from var(--foreground) l c h / 0.4);
 }
 .prose a:not([data-card]):hover,
@@ -356,16 +295,16 @@ pre:has(code) {
 
 /* Title + description. */
 .zed-doc-title {
-  font-family: var(--font-display) !important;
-  font-style: italic !important;
-  font-weight: 500 !important;
-  letter-spacing: -0.015em;
+  font-family: var(--font-sans) !important;
+  font-style: normal !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.035em;
   font-size: 44px !important;
   line-height: 1.06;
   margin: 26px 0 0;
 }
 .zed-doc-desc {
-  font-family: var(--font-mono) !important;
+  font-family: var(--font-sans) !important;
   font-size: 14.5px !important;
   line-height: 1.75;
   color: var(--z-ink-5) !important;
@@ -374,16 +313,13 @@ pre:has(code) {
   text-wrap: pretty;
 }
 
-/* ── Prose ──
-   Body copy is mono at 14/1.85 over a 72ch measure; headings are Newsreader
-   *upright* (the italic is reserved for the page title) and each `h2` opens
-   on a hairline. */
+/* ── Prose ── */
 .zed-docs {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   margin-top: 52px;
 }
 .zed-docs :is(p, li) {
-  font-family: var(--font-mono) !important;
+  font-family: var(--font-sans) !important;
   font-size: 14px;
   line-height: 1.85;
   color: var(--z-ink-2);
@@ -391,10 +327,10 @@ pre:has(code) {
   text-wrap: pretty;
 }
 .zed-docs :is(h1, h2, h3, h4) {
-  font-family: var(--font-display) !important;
+  font-family: var(--font-sans) !important;
   font-style: normal !important;
-  font-weight: 500 !important;
-  letter-spacing: normal;
+  font-weight: 600 !important;
+  letter-spacing: -0.02em;
   color: var(--z-ink);
 }
 .zed-docs h2 {
@@ -419,7 +355,7 @@ pre:has(code) {
   font-weight: 500;
 }
 
-/* Inline code — tan, so it never reads as a link. */
+/* Inline code uses neutral text; links retain their underline. */
 .zed-docs :not(pre) > code {
   font-family: var(--font-mono);
   font-size: 13px;

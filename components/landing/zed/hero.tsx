@@ -1,38 +1,34 @@
 import { HERO } from "./data";
 import { HeroQuickstart } from "./hero-quickstart";
 
-/**
- * v3 hero. Three changes from the previous cut, all from the design file:
- * the headline is Newsreader italic in ink (not blue), the eyebrow is a dim
- * uppercase label (not a blue "New: … →" line), and the CTA pair is one solid
- * install-method tabs — the deployment decision stays out of the first action.
- *
- * No glow, no corner ticks: v3 sits on the flat page.
- */
+/** A compact introduction followed by a copyable installation command. */
 export function Hero() {
   return (
-    <section className="zed-wrap" style={{ padding: "120px 40px 0", textAlign: "center" }}>
+    <section className="zed-wrap zed-hero" style={{ textAlign: "center" }}>
       <div className="zed-eyebrow">{HERO.announcement}</div>
 
       <h1
-        className="zed-display"
+        aria-label={HERO.headline}
         style={{
           fontSize: "clamp(38px, 6.4vw, 68px)",
           lineHeight: 1.04,
           margin: "30px auto 0",
-          maxWidth: "15ch",
-          textWrap: "pretty",
+          maxWidth: "19ch",
+          textWrap: "balance",
         }}
       >
-        {HERO.headline}
+        <span style={{ display: "block", fontWeight: 400 }}>Your router.</span>
+        <span className="zed-display" style={{ display: "block" }}>
+          Your rules.
+        </span>
       </h1>
 
       <p
         style={{
-          fontFamily: "var(--font-mono)",
+          fontFamily: "var(--font-sans)",
           fontSize: 16,
           lineHeight: 1.65,
-          color: "var(--z-ink-5)",
+          color: "var(--muted-foreground)",
           margin: "28px auto 0",
           maxWidth: "52ch",
           textWrap: "pretty",

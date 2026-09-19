@@ -20,14 +20,7 @@ export function Kicker({ children }: { children: ReactNode }) {
   return <div className="zed-kicker">{children}</div>;
 }
 
-/**
- * The v3 page header shared by the index surfaces (models, pricing, blog,
- * changelog): a dim uppercase eyebrow, a Newsreader-italic title, and a mono
- * standfirst — the same three-part opening the landing hero uses, one size down.
- *
- * The title stays monochrome. v3 spends blue on state and data, not on headline
- * fragments, so the "…in production." half-sentence highlights are gone.
- */
+/** Shared neutral page heading for models, pricing, blog, and changelog. */
 export function PageHead({
   eyebrow,
   title,
@@ -70,8 +63,8 @@ export function PageHead({
         {sub && (
           <p
             style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: 14.5,
+              fontFamily: "var(--font-sans)",
+              fontSize: 16,
               lineHeight: 1.7,
               color: "var(--z-ink-5)",
               margin: "20px 0 0",

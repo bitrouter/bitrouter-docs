@@ -1,8 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from "react";
-import { Terminal as WTerm, useTerminal as useWTerm } from "@wterm/react";
-import "@wterm/react/css";
 import {
   HARNESSES,
   MASCOT,
@@ -11,6 +9,7 @@ import {
   type Harness,
   type Seg,
 } from "./data";
+import { DemoTerminal, TerminalWindow } from "./demo-terminal";
 
 /* ============================================================================
  * Hero TUI demo — one macOS terminal, five native harnesses.
@@ -107,9 +106,8 @@ function useFitToWidth(deps: unknown[]) {
 const DESKTOP_COLS = 112;
 const NARROW_COLS = 44;
 const TERM_ROWS = 30;
-// wterm currently maps RGB channels onto its compact colour cube. These values
-// intentionally resolve to a deep navy instead of the greener nearest step.
-const STATUS_BG = "#10102e";
+// ANSI output uses literal RGB values; keep router-owned chrome neutral.
+const STATUS_BG = "#202020";
 
 type AnsiPart = {
   text: string;
@@ -292,24 +290,24 @@ function statusLines(harness: Harness, rows: Harness["rows"], switches: number, 
     const active = rung.name === last?.tier;
     const color = active
       ? {
-          low: "#a1c181",
-          medium: "#6b9bff",
-          high: "#bf956a",
-          extra: "#e0a955",
-          max: "#b79bd0",
+          low: "#fafafa",
+          medium: "#fafafa",
+          high: "#fafafa",
+          extra: "#fafafa",
+          max: "#fafafa",
         }[rung.name]
-      : "#565d6b";
+      : "#a3a3a3";
     tiers.push(part(`${index ? " " : ""}${rung.name}`, color));
   });
 
   const rightText = switches ? `switched ${switches}× this session` : last ? "no switch yet" : "";
   if (columns < 70) {
-    const identity = [part("bitrouter/auto", "#6b9bff")];
-    const right = rightText ? [part(rightText, "#565d6b")] : [];
+    const identity = [part("bitrouter/auto", "#fafafa")];
+    const right = rightText ? [part(rightText, "#a3a3a3")] : [];
     const model = [
-      part(last ? last.model : "waiting for the session", "#c8ccd4"),
-      part(" · ", "#565d6b"),
-      part(last ? last.effort : "—", "#6b7180"),
+      part(last ? last.model : "waiting for the session", "#d4d4d4"),
+      part(" · ", "#a3a3a3"),
+      part(last ? last.effort : "—", "#a3a3a3"),
     ];
     return [
       fillStatus(right.length ? withRight(identity, right, columns - 1) : identity, columns),
@@ -319,17 +317,17 @@ function statusLines(harness: Harness, rows: Harness["rows"], switches: number, 
   }
 
   const left: AnsiLine = [
-    part("bitrouter/auto", "#6b9bff"),
-    part(" │ ", "#1c2b45"),
+    part("bitrouter/auto", "#fafafa"),
+    part(" │ ", "#737373"),
     ...tiers,
   ];
   left.push(
-    part(" │ ", "#1c2b45"),
-    part(last ? last.model : "waiting for the session", "#c8ccd4"),
-    part(" · ", "#565d6b"),
-    part(last ? last.effort : "—", "#6b7180"),
+    part(" │ ", "#737373"),
+    part(last ? last.model : "waiting for the session", "#d4d4d4"),
+    part(" · ", "#a3a3a3"),
+    part(last ? last.effort : "—", "#a3a3a3"),
   );
-  const right = rightText ? [part(rightText, "#565d6b")] : [];
+  const right = rightText ? [part(rightText, "#a3a3a3")] : [];
   return [fillStatus(right.length ? withRight(left, right, columns - 1) : left, columns)];
 }
 
@@ -393,28 +391,16 @@ function renderTerminalFrame(harness: Harness, frame: Frame, columns: number): s
 }
 
 function WTermFrame({ harness, frame, narrow }: { harness: Harness; frame: Frame; narrow: boolean }) {
-  const { ref, write } = useWTerm();
-  const [ready, setReady] = useState(false);
   const columns = narrow ? NARROW_COLS : DESKTOP_COLS;
   const output = useMemo(() => renderTerminalFrame(harness, frame, columns), [columns, harness, frame]);
 
-  useEffect(() => {
-    if (ready) write(output);
-  }, [output, ready, write]);
-
   return (
-    <WTerm
-      ref={ref}
+    <DemoTerminal
       cols={columns}
       rows={TERM_ROWS}
-      onReady={() => setReady(true)}
-      onData={() => {}}
-      onError={(error) => console.error("Unable to initialize the landing terminal", error)}
-      aria-label={`${harness.tab} session routed through BitRouter`}
-      aria-readonly="true"
-      tabIndex={-1}
-      className="zed-wterm"
-      style={{ "--term-bg": harness.bg } as React.CSSProperties}
+      label={`${harness.tab} session routed through BitRouter`}
+      output={output}
+      background={harness.bg}
     />
   );
 }
@@ -579,55 +565,7 @@ export function TuiDemo() {
                   : { margin: "0 auto" }
               }
             >
-            <div
-              style={{
-                borderRadius: 10,
-                overflow: "hidden",
-                boxShadow: "0 34px 80px -34px rgba(0,0,0,0.85)",
-              }}
-            >
-              {/* ── macOS titlebar ────────────────────────────────────── */}
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 9,
-                  height: 38,
-                  padding: "0 13px",
-                  background: "#333336",
-                  borderBottom: "1px solid #262628",
-                }}
-              >
-                <span style={{ width: 12, height: 12, borderRadius: "50%", background: "#ff5f57" }} />
-                <span style={{ width: 12, height: 12, borderRadius: "50%", background: "#febc2e" }} />
-                <span style={{ width: 12, height: 12, borderRadius: "50%", background: "#28c840" }} />
-                {/* Finder proxy icon */}
-                <span
-                  style={{
-                    display: "inline-block",
-                    width: 13,
-                    height: 11,
-                    borderRadius: 2,
-                    background: "#5aa9f8",
-                    marginLeft: 14,
-                    flex: "0 0 auto",
-                  }}
-                />
-                <span
-                  style={{
-                    fontFamily: "var(--font-sans)",
-                    fontSize: 12.5,
-                    fontWeight: 600,
-                    color: "#d8d8d8",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {cur.title}
-                </span>
-              </div>
-
+            <TerminalWindow title={cur.title}>
               {/* ── tab bar ───────────────────────────────────────────── */}
               <div style={{ display: "flex", background: "#232326", borderBottom: "1px solid #17171a" }}>
                 {HARNESSES.map((x, i) => {
@@ -662,7 +600,7 @@ export function TuiDemo() {
                           height: 5,
                           borderRadius: "50%",
                           flex: "0 0 auto",
-                          background: on ? "#28c840" : "#3a3a3a",
+                          background: on ? "#d4d4d4" : "#525252",
                         }}
                       />
                       <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -675,7 +613,7 @@ export function TuiDemo() {
               </div>
 
               <WTermFrame harness={cur} frame={frame} narrow={narrow} />
-            </div>
+            </TerminalWindow>
 
             <div style={{ textAlign: "center", marginTop: 22 }}>
               <div style={{ fontSize: 12.5, color: "var(--z-ink-5)" }}>

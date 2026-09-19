@@ -49,8 +49,8 @@ export default async function BlogIndexPage() {
                     <div>
                       <h2
                         style={{
-                          fontFamily: "var(--font-display)",
-                          fontStyle: "italic",
+                          fontFamily: "var(--font-sans)",
+                          fontStyle: "normal",
                           fontWeight: 500,
                           fontSize: 27,
                           lineHeight: 1.12,
@@ -64,8 +64,8 @@ export default async function BlogIndexPage() {
                       {page.data.description && (
                         <p
                           style={{
-                            fontFamily: "var(--font-mono)",
-                            fontSize: 13.5,
+                            fontFamily: "var(--font-sans)",
+                            fontSize: 15,
                             lineHeight: 1.7,
                             color: "var(--z-ink-5)",
                             margin: 0,

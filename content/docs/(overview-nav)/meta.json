@@ -1,10 +1,17 @@
 {
   "title": "Overview",
-  "pagesIndex": "[Overview](/docs/overview/what-is-bitrouter)",
+  "pagesIndex": "[What is BitRouter?](/docs/overview/what-is-bitrouter)",
   "pages": [
     "[Quickstart](/docs/overview/quickstart)",
     "[Supported Models](/docs/overview/supported-models)",
     "[Enterprise](/docs/enterprise)",
-    "[Comparisons](/docs/overview/comparisons)"
+    "[Self-hosting](/docs/self-hosting)",
+    "[Install](/docs/self-hosting/install)",
+    "[Deploy](/docs/self-hosting/deploy)",
+    "[Secure](/docs/self-hosting/secure)",
+    "[Operate](/docs/self-hosting/operate)",
+    "[Comparisons](/docs/overview/comparisons)",
+    "[BitRouter vs OpenRouter](/docs/overview/comparisons/openrouter)",
+    "[BitRouter vs LiteLLM](/docs/overview/comparisons/litellm)"
   ]
 }

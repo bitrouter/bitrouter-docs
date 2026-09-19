@@ -3,15 +3,15 @@
   "pagesIndex": "index",
   "pages": [
     "---Inference---",
-    "[OpenAI Chat Completions](/docs/reference/openai-compatible/createChatCompletion)",
-    "[OpenAI Responses](/docs/reference/openai-responses/createResponse)",
-    "[Anthropic Messages](/docs/reference/anthropic-compatible/createMessage)",
-    "[Google GenerateContent](/docs/reference/google-compatible/googleGenerateContent)",
+    "openai-compatible",
+    "openai-responses",
+    "anthropic-compatible",
+    "google-compatible",
     "---Platform---",
     "discovery",
-    "[BYOK encryption](/docs/reference/byok/getEncryptionPubkey)",
+    "byok",
     "management",
-    "[Metrics](/docs/reference/observability/getMetrics)",
-    "[Health](/docs/reference/health/ping)"
+    "observability",
+    "health"
   ]
 }

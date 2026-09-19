@@ -1,11 +1,17 @@
 {
   "title": "Documentation",
   "pages": [
-    "(overview-nav)",
-    "(usage-nav)",
-    "(configuration-nav)",
-    "(customization-nav)",
-    "reference",
-    "(development-nav)"
+    "---Overview---",
+    "...(overview-nav)",
+    "---Usage---",
+    "...(usage-nav)",
+    "---Configuration---",
+    "...(configuration-nav)",
+    "---Customization---",
+    "...(customization-nav)",
+    "---Reference---",
+    "...reference",
+    "---Development---",
+    "...(development-nav)"
   ]
 }

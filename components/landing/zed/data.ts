@@ -7,7 +7,7 @@
 export const HERO = {
   announcement: "the open-source LLM router",
   headline: "Cut inference costs. Keep control.",
-  sub: "BitRouter routes requests across models to reduce inference costs. Run the router yourself, inspect the source, and set your own routing rules — or get started with BitRouter Cloud.",
+  sub: "Route agent requests across models and reasoning levels through policy you can inspect, run, and extend. Start with one binary and keep every decision under your control.",
 };
 
 // ── Bring-your-own ──────────────────────────────────────────────────────────

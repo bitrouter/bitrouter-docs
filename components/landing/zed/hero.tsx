@@ -1,12 +1,11 @@
 import { HERO } from "./data";
-import { ZED_LINKS } from "./primitives";
 import { HeroQuickstart } from "./hero-quickstart";
 
 /**
  * v3 hero. Three changes from the previous cut, all from the design file:
  * the headline is Newsreader italic in ink (not blue), the eyebrow is a dim
  * uppercase label (not a blue "New: … →" line), and the CTA pair is one solid
- * button plus a ruled text link — the K/D keycaps are gone.
+ * install-method tabs — the deployment decision stays out of the first action.
  *
  * No glow, no corner ticks: v3 sits on the flat page.
  */
@@ -42,31 +41,13 @@ export function Hero() {
         {HERO.sub}
       </p>
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 28,
-          marginTop: 40,
-          flexWrap: "wrap",
-        }}
-      >
-        <a className="zed-btn zed-btn-primary" href={ZED_LINKS.quickstart}>
-          Self-host
-        </a>
-        <a className="zed-btn-underline" href={ZED_LINKS.apiKey}>
-          Try Cloud
-        </a>
-      </div>
+      <HeroQuickstart />
 
       <div className="zed-proofline" aria-label="Open-source product attributes">
         <span>Apache-2.0</span>
         <span>Your provider keys</span>
         <span>Cloud optional</span>
       </div>
-
-      <HeroQuickstart />
     </section>
   );
 }

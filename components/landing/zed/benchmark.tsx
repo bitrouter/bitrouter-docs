@@ -1,47 +1,37 @@
-import { ZED_LINKS } from "./primitives";
-
 const BENCHMARK_REPORT =
-  "https://github.com/bitrouter/bitrouter/blob/main/benchmarks/001-2026-07-10-tbench-v2.1-codex-gpt55-kimi-k27.md";
-const BENCHMARK_DATA = "https://huggingface.co/datasets/BitRouterAI/benchmarks";
+  "https://huggingface.co/datasets/BitRouterAI/benchmarks/blob/main/terminal-bench-2.1/router-random-study/README.md";
 
-/** Public evidence, with the experiment boundary shown beside the result. */
+/** One landing-page finding; the linked report owns the full comparison. */
 export function Benchmark() {
   return (
     <section className="zed-wrap zed-sec" id="benchmark">
-      <div className="zed-evidence">
-        <div>
-          <div className="zed-eyebrow">Measured evidence</div>
-          <h2 className="zed-display">See what routing saves.</h2>
-          <p className="zed-lead">
-            Compare inference cost and task success on the same workload, then inspect the policy,
-            traces, and accounting behind the result.
-          </p>
-          <div className="zed-action-row">
-            <a className="zed-btn zed-btn-ghost" href={BENCHMARK_REPORT}>
-              Read the benchmark
-            </a>
-            <a className="zed-btn-underline" href={BENCHMARK_DATA}>
-              Explore the data
-            </a>
-          </div>
+      <div className="zed-benchmark">
+        <div className="zed-benchmark-meta">
+          <span>Terminal-Bench 2.1</span>
+          <span>80 common-valid tasks</span>
         </div>
 
-        <div className="zed-evidence-result">
-          <div className="zed-evidence-number">−32.8%</div>
-          <div className="zed-cardlabel">zero-cache imputed cost vs. control</div>
-          <p className="zed-body">
-            Terminal-Bench 2.1 mechanism study using GPT-5.5 as the strong route and Kimi K2.7 Code
-            as the economy route. The audited range was 28.6–32.8% under equal cache-read shares,
-            with one fewer task passed on the 88-task comparable set.
-          </p>
-          <div className="zed-evidence-note">
-            One controlled study under a modified protocol — not a leaderboard submission or a
-            universal savings guarantee.
-          </div>
-          <a className="zed-source-link" href={ZED_LINKS.github}>
-            Source, reports, and limitations →
-          </a>
-        </div>
+        <h2 className="zed-benchmark-claim">
+          <span>40.93% lower</span>
+          nominal API cost
+        </h2>
+
+        <p className="zed-benchmark-quality">
+          BitRouter achieved <strong>81.25%</strong> task success, compared with{" "}
+          <strong>81.56%</strong> for the fixed strong-model baseline.
+        </p>
+        <p className="zed-benchmark-control">
+          Same-pool random routing reached <strong>76.50%</strong>.
+        </p>
+
+        <a className="zed-btn-underline zed-benchmark-link" href={BENCHMARK_REPORT}>
+          View methodology &amp; data
+        </a>
+
+        <p className="zed-benchmark-note">
+          Frozen-price nominal API cost on accepted valid-path requests. Not provider billing.
+          Research artifact; not an official Terminal-Bench submission.
+        </p>
       </div>
     </section>
   );

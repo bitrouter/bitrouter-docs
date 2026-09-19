@@ -221,15 +221,100 @@
   margin: 0 12px;
   color: var(--z-ink-7);
 }
+
+/* Hero install selector. One action surface replaces the former self-host / Cloud
+   choice, while keeping every supported install path one click away. */
+.zed-install {
+  max-width: 760px;
+  margin: 44px auto 0;
+  text-align: left;
+}
+.zed-install-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid var(--z-rule);
+}
+.zed-install-tabs button {
+  appearance: none;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  margin-bottom: -1px;
+  padding: 12px 14px;
+  background: transparent;
+  color: var(--z-ink-6);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.zed-install-tabs button:hover {
+  color: var(--z-ink-2);
+}
+.zed-install-tabs button.active {
+  border-bottom-color: var(--z-blue);
+  background: var(--z-wash);
+  color: var(--z-ink);
+}
+.zed-install-tabs button:focus-visible,
+.zed-install-copy:focus-visible {
+  outline: 1px solid var(--z-blue);
+  outline-offset: 2px;
+}
+.zed-install-command {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 58px;
+  padding: 15px 18px;
+  background: var(--z-wash);
+}
+.zed-install-prompt,
+.zed-install-copy {
+  color: var(--z-ink-6);
+}
+.zed-install-code {
+  min-width: 0;
+  overflow-x: auto;
+}
+.zed-install-code code {
+  color: var(--z-ink);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  white-space: nowrap;
+}
+.zed-install-copy {
+  display: inline-flex;
+  flex: 0 0 auto;
+  padding: 3px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+.zed-install-copy:hover {
+  color: var(--z-ink);
+}
+.zed-install-copy.copied {
+  color: var(--z-green);
+}
+.zed-install-note {
+  margin-top: 10px;
+  padding-left: 2px;
+  color: var(--z-ink-6);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
 .zed-section-intro {
   max-width: 760px;
   margin: 0 auto 46px;
   text-align: center;
 }
-.zed-section-intro .zed-display,
-.zed-oss-intro .zed-display,
-.zed-deploy .zed-display,
-.zed-evidence .zed-display {
+.zed-section-intro .zed-display {
   margin-top: 18px;
   font-size: 40px;
   line-height: 1.08;
@@ -249,134 +334,528 @@
   margin-top: 32px;
   flex-wrap: wrap;
 }
-.zed-evidence {
-  display: grid;
-  grid-template-columns: 0.85fr 1.15fr;
-  gap: 72px;
-  align-items: start;
+
+/* Benchmark: one landing-page finding. The report owns the full comparison,
+   while the page keeps only the outcome, quality context, and evidence bound. */
+.zed-benchmark {
+  max-width: 920px;
+  padding: 52px 0 42px;
+  border-top: 1px solid var(--z-rule);
+  border-bottom: 1px solid var(--z-rule);
 }
-.zed-evidence-result {
-  padding: 34px 0 0 40px;
-  border-left: 1px solid var(--z-rule);
+.zed-benchmark-meta {
+  display: flex;
+  gap: 24px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--z-ink-6);
 }
-.zed-evidence-number {
+.zed-benchmark-meta span + span::before {
+  content: "·";
+  margin-right: 24px;
+  color: var(--z-ink-7);
+}
+.zed-benchmark-claim {
+  margin: 36px 0 0;
   font-family: var(--font-display);
+  font-size: clamp(38px, 5vw, 58px);
   font-style: italic;
-  font-size: clamp(64px, 9vw, 104px);
-  line-height: 0.85;
-  letter-spacing: -0.04em;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--z-ink);
+}
+.zed-benchmark-claim span {
+  display: block;
+  margin-bottom: 10px;
+  font-size: clamp(70px, 9vw, 112px);
+  line-height: 0.88;
+  letter-spacing: -0.055em;
   color: var(--z-blue);
 }
-.zed-evidence-result .zed-cardlabel {
+.zed-benchmark-quality {
+  max-width: 66ch;
+  margin: 34px 0 0;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--z-ink-5);
+}
+.zed-benchmark-quality strong,
+.zed-benchmark-control strong {
+  color: var(--z-ink-2);
+  font-weight: 500;
+}
+.zed-benchmark-control {
+  margin: 8px 0 0;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--z-ink-6);
+}
+.zed-benchmark-link {
+  margin-top: 30px;
+}
+.zed-benchmark-note {
+  max-width: 92ch;
+  margin: 42px 0 0;
+  padding-top: 17px;
+  border-top: 1px solid var(--z-rule);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  line-height: 1.7;
+  color: var(--z-ink-7);
+}
+
+/* Feature stories: three alternating editorial rows. The product diagrams use
+   real BitRouter terms without pretending to be a dashboard screenshot. */
+.zed-feature-section-label {
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--z-rule);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--z-ink-6);
+}
+.zed-features {
+  display: flex;
+  flex-direction: column;
+}
+.zed-feature-row {
+  display: grid;
+  grid-template-columns: 0.88fr 1.12fr;
+  gap: 72px;
+  align-items: center;
+  min-height: 490px;
+  padding: 64px 0;
+  border-bottom: 1px solid var(--z-rule);
+}
+.zed-feature-copy {
+  order: 1;
+}
+.zed-feature-media {
+  order: 2;
+  min-width: 0;
+}
+.zed-feature-row.reverse .zed-feature-copy {
+  order: 2;
+}
+.zed-feature-row.reverse .zed-feature-media {
+  order: 1;
+}
+.zed-feature-kicker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--z-ink-6);
+}
+.zed-feature-kicker span {
+  color: var(--z-blue);
+}
+.zed-feature-copy .zed-display {
+  max-width: 14ch;
   margin-top: 22px;
+  font-size: clamp(34px, 4.5vw, 48px);
+  line-height: 1.05;
 }
-.zed-evidence-result .zed-body {
+.zed-feature-copy .zed-display span {
+  display: block;
+}
+.zed-feature-copy > p {
+  max-width: 53ch;
   margin: 24px 0 0;
-  max-width: 62ch;
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  line-height: 1.8;
+  color: var(--z-ink-5);
 }
-.zed-evidence-note {
-  margin-top: 24px;
-  padding-left: 14px;
-  border-left: 1px solid var(--z-cost);
+.zed-feature-copy .zed-btn-underline {
+  margin-top: 30px;
+}
+.zed-feature-visual {
+  position: relative;
+  min-height: 390px;
+  overflow: hidden;
+  border: 1px solid var(--z-rule);
+  background:
+    linear-gradient(rgba(107, 155, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(107, 155, 255, 0.035) 1px, transparent 1px),
+    var(--z-wash);
+  background-size: 36px 36px;
+  font-family: var(--font-mono);
+}
+.zed-visual-caption,
+.zed-visual-footer {
+  position: absolute;
+  right: 18px;
+  left: 18px;
+  z-index: 2;
+  color: var(--z-ink-7);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.zed-visual-caption {
+  top: 16px;
+}
+.zed-visual-footer {
+  bottom: 16px;
+  text-align: right;
+}
+
+/* Minimal core diagram. */
+.zed-core-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 76px 48px 58px;
+}
+.zed-core-binary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: min(260px, 100%);
+  padding: 17px 20px;
+  border: 1px solid var(--z-blue-chip-border);
+  background: var(--z-blue-chip-bg);
+  box-shadow: 0 0 50px rgba(107, 155, 255, 0.08);
+}
+.zed-status-dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--z-green-dot);
+  box-shadow: 0 0 14px rgba(91, 191, 106, 0.5);
+  animation: zed-status-breathe 3.8s ease-in-out infinite;
+}
+.zed-core-binary div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 18px;
+  width: 100%;
+}
+.zed-core-binary strong {
+  color: var(--z-ink);
+  font-size: 13px;
+  font-weight: 500;
+}
+.zed-core-binary span:last-child {
+  color: var(--z-ink-6);
+  font-size: 10.5px;
+}
+.zed-core-line {
+  width: 1px;
+  height: 30px;
+  background: var(--z-rule-2);
+}
+.zed-core-modules {
+  display: grid;
+  gap: 9px;
+  width: min(380px, 100%);
+}
+.zed-core-module {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr);
+  gap: 16px;
+  padding: 13px 15px;
+  border: 1px solid var(--z-rule);
+  background: rgba(11, 13, 16, 0.86);
+  animation: zed-module-route 6s ease-in-out infinite;
+}
+.zed-core-module:nth-child(2) {
+  animation-delay: 1s;
+}
+.zed-core-module:nth-child(3) {
+  animation-delay: 2s;
+}
+.zed-core-module span {
+  color: var(--z-ink-6);
+  font-size: 10.5px;
+  text-transform: uppercase;
+}
+.zed-core-module strong {
+  overflow: hidden;
+  color: var(--z-ink-3);
+  font-size: 10.5px;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Interpretable decision diagram. */
+.zed-decision-flow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 76px 28px 0;
+}
+.zed-decision-step {
+  position: relative;
+  min-width: 0;
+  padding: 15px 13px;
+  border: 1px solid var(--z-rule);
+  background: rgba(11, 13, 16, 0.9);
+  animation: zed-decision-route 8s ease-in-out infinite;
+}
+.zed-decision-step:nth-child(2) {
+  animation-delay: 1.15s;
+}
+.zed-decision-step:nth-child(3) {
+  animation-delay: 2.3s;
+}
+.zed-decision-step:nth-child(4) {
+  animation-delay: 3.45s;
+}
+.zed-decision-step span,
+.zed-decision-step strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.zed-decision-step span {
+  color: var(--z-ink-7);
+  font-size: 9px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+.zed-decision-step strong {
+  margin-top: 10px;
+  color: var(--z-ink-2);
+  font-size: 11.5px;
+  font-weight: 400;
+}
+.zed-decision-receipt {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 18px;
+  margin: 28px 28px 0;
+  padding: 17px 18px;
+  border-top: 1px solid var(--z-blue-chip-border);
+  border-bottom: 1px solid var(--z-blue-chip-border);
+  background: rgba(16, 26, 46, 0.72);
+}
+.zed-decision-receipt span {
+  color: var(--z-ink-6);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.zed-decision-receipt strong {
+  color: var(--z-blue-hi);
+  font-size: 11px;
+  font-weight: 400;
+}
+.zed-decision-receipt span:last-child {
+  grid-column: 1 / -1;
+  padding-top: 10px;
+  border-top: 1px solid var(--z-blue-chip-border);
+}
+
+/* Workflow customization diagram. */
+.zed-workflow-routes {
+  display: grid;
+  gap: 13px;
+  padding: 72px 42px 0;
+}
+.zed-workflow-route {
+  display: grid;
+  grid-template-columns: 70px 1fr 130px;
+  align-items: center;
+  gap: 16px;
+  animation: zed-workflow-route 7s ease-in-out infinite;
+}
+.zed-workflow-route:nth-child(2) {
+  animation-delay: 0.8s;
+}
+.zed-workflow-route:nth-child(3) {
+  animation-delay: 1.6s;
+}
+.zed-workflow-route:nth-child(4) {
+  animation-delay: 2.4s;
+}
+.zed-workflow-route span,
+.zed-workflow-route strong {
+  font-size: 11px;
+  font-weight: 400;
+}
+.zed-workflow-route span {
+  color: var(--z-ink-4);
+  text-transform: uppercase;
+}
+.zed-workflow-route strong {
+  color: var(--z-ink-2);
+  text-align: right;
+}
+.zed-workflow-route i {
+  position: relative;
+  height: 1px;
+  background: var(--z-rule-2);
+}
+.zed-workflow-route i::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  right: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--z-blue);
+}
+.zed-workflow-diff {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin: 36px 42px 0;
+  padding: 15px 17px;
+  border: 1px solid var(--z-rule);
+  background: rgba(11, 13, 16, 0.9);
+  font-size: 10.5px;
+}
+.zed-workflow-diff .del {
+  color: var(--z-red);
+}
+.zed-workflow-diff .add {
+  color: var(--z-green);
+  animation: zed-diff-accept 5s ease-in-out infinite;
+}
+.zed-workflow-diff small {
+  margin-top: 5px;
+  color: var(--z-ink-7);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@keyframes zed-status-breathe {
+  0%,
+  100% {
+    opacity: 0.65;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+@keyframes zed-module-route {
+  0%,
+  12%,
+  60%,
+  100% {
+    border-color: var(--z-rule);
+  }
+  20%,
+  42% {
+    border-color: var(--z-blue-chip-border);
+  }
+}
+@keyframes zed-decision-route {
+  0%,
+  10%,
+  55%,
+  100% {
+    border-color: var(--z-rule);
+    background: rgba(11, 13, 16, 0.9);
+  }
+  18%,
+  38% {
+    border-color: var(--z-blue-chip-border);
+    background: rgba(16, 26, 46, 0.82);
+  }
+}
+@keyframes zed-workflow-route {
+  0%,
+  12%,
+  62%,
+  100% {
+    opacity: 0.62;
+  }
+  20%,
+  44% {
+    opacity: 1;
+  }
+}
+@keyframes zed-diff-accept {
+  0%,
+  35%,
+  100% {
+    background: transparent;
+  }
+  45%,
+  70% {
+    background: rgba(161, 193, 129, 0.08);
+  }
+}
+
+/* Pricing and enterprise: an operating-model ledger, not a tier-card grid.
+   The third path stays explicitly founder-led until a packaged suite is GA. */
+.zed-commercial {
+  display: grid;
+  grid-template-columns: 0.82fr 1.18fr;
+  gap: 72px;
+  align-items: start;
+  padding: 56px 0;
+  border-top: 1px solid var(--z-rule);
+  border-bottom: 1px solid var(--z-rule);
+}
+.zed-commercial-copy .zed-display {
+  max-width: 13ch;
+  margin-top: 20px;
+  font-size: clamp(36px, 4.5vw, 48px);
+  line-height: 1.04;
+}
+.zed-commercial-copy .zed-display span {
+  display: block;
+}
+.zed-commercial-copy > p {
+  max-width: 52ch;
+  margin: 24px 0 0;
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  line-height: 1.8;
+  color: var(--z-ink-5);
+}
+.zed-commercial-ledger {
+  border-top: 1px solid var(--z-ink);
+}
+.zed-commercial-row {
+  display: grid;
+  grid-template-columns: 112px 172px minmax(0, 1fr);
+  gap: 22px;
+  align-items: baseline;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--z-rule);
+}
+.zed-commercial-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--z-ink-6);
+}
+.zed-commercial-row strong {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--z-ink);
+}
+.zed-commercial-row:nth-child(-n + 2) strong {
+  color: var(--z-blue-hi);
+}
+.zed-commercial-row p {
+  margin: 0;
   font-family: var(--font-mono);
   font-size: 11.5px;
   line-height: 1.65;
   color: var(--z-ink-6);
-}
-.zed-source-link {
-  display: inline-block;
-  margin-top: 22px;
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  color: var(--z-ink-3);
-  text-decoration: none;
-  border-bottom: 1px solid var(--z-rule-2);
-}
-.zed-source-link:hover {
-  color: var(--z-ink);
-}
-.zed-oss-intro {
-  display: grid;
-  grid-template-columns: 0.85fr 1.15fr;
-  gap: 72px;
-  align-items: end;
-}
-.zed-oss-intro .zed-lead {
-  margin-top: 0;
-}
-.zed-value-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  margin-top: 56px;
-  border-top: 1px solid var(--z-rule);
-}
-.zed-value-grid article {
-  padding: 28px 34px 32px 0;
-}
-.zed-value-grid article + article {
-  padding-left: 34px;
-  border-left: 1px solid var(--z-rule);
-}
-.zed-value-grid h3,
-.zed-deploy h3 {
-  margin: 18px 0 0;
-  font-family: var(--font-display);
-  font-size: 24px;
-  font-weight: 500;
-  color: var(--z-ink);
-}
-.zed-value-grid p,
-.zed-deploy article p {
-  margin: 14px 0 0;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  line-height: 1.75;
-  color: var(--z-ink-5);
-}
-.zed-oss-compare {
-  margin-top: 48px;
-  border-top: 1px solid var(--z-ink);
-}
-.zed-compare-row {
-  display: grid;
-  grid-template-columns: 0.8fr 1fr 1fr;
-  gap: 28px;
-  padding: 15px 0;
-  border-bottom: 1px solid var(--z-rule);
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  color: var(--z-ink-5);
-}
-.zed-compare-row span:first-child {
-  color: var(--z-ink-3);
-}
-.zed-compare-row span:nth-child(2) {
-  color: var(--z-ink);
-}
-.zed-compare-head {
-  font-size: 10.5px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--z-ink-6);
-}
-.zed-deploy {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr 1fr;
-  gap: 0;
-  margin-top: 112px;
-  border-top: 1px solid var(--z-rule);
-}
-.zed-deploy-heading,
-.zed-deploy article {
-  padding-top: 34px;
-  padding-right: 42px;
-}
-.zed-deploy article {
-  padding-left: 34px;
-  border-left: 1px solid var(--z-rule);
-}
-.zed-deploy article .zed-btn-underline {
-  margin-top: 26px;
 }
 
 /* ── Animated terminal (compare page) ── */
@@ -512,7 +991,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .zed-ck {
+  .zed-ck,
+  .zed-status-dot,
+  .zed-core-module,
+  .zed-decision-step,
+  .zed-workflow-route,
+  .zed-workflow-diff .add {
     animation: none;
   }
 }
@@ -990,34 +1474,29 @@
   .zed-grid-2 {
     grid-template-columns: 1fr !important;
   }
-  .zed-evidence,
-  .zed-oss-intro,
-  .zed-deploy {
+  .zed-feature-row {
     grid-template-columns: 1fr;
-    gap: 36px;
+    gap: 40px;
+    min-height: 0;
+    padding: 56px 0;
   }
-  .zed-evidence-result {
-    padding: 34px 0 0;
-    border-top: 1px solid var(--z-rule);
-    border-left: none;
+  .zed-feature-row .zed-feature-copy,
+  .zed-feature-row.reverse .zed-feature-copy {
+    order: 1;
   }
-  .zed-value-grid {
+  .zed-feature-row .zed-feature-media,
+  .zed-feature-row.reverse .zed-feature-media {
+    order: 2;
+  }
+  .zed-feature-copy .zed-display {
+    max-width: 18ch;
+  }
+  .zed-commercial {
     grid-template-columns: 1fr;
+    gap: 48px;
   }
-  .zed-value-grid article,
-  .zed-value-grid article + article {
-    padding: 26px 0;
-    border-left: none;
-    border-bottom: 1px solid var(--z-rule);
-  }
-  .zed-deploy article,
-  .zed-deploy-heading {
-    padding: 0;
-    border-left: none;
-  }
-  .zed-deploy article {
-    padding-top: 30px;
-    border-top: 1px solid var(--z-rule);
+  .zed-commercial-copy .zed-display {
+    max-width: 16ch;
   }
   .zed-hide-sm {
     display: none !important;
@@ -1031,10 +1510,81 @@
   .zed-proofline span + span::before {
     content: none;
   }
-  .zed-compare-row {
-    grid-template-columns: 0.85fr 1fr 1fr;
-    gap: 12px;
-    font-size: 11px;
+  .zed-install-tabs {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .zed-install-code code {
+    font-size: 11.5px;
+  }
+  .zed-benchmark {
+    padding: 38px 0 34px;
+  }
+  .zed-benchmark-meta {
+    flex-direction: column;
+    gap: 7px;
+  }
+  .zed-benchmark-meta span + span::before {
+    content: none;
+  }
+  .zed-benchmark-claim {
+    margin-top: 30px;
+  }
+  .zed-benchmark-claim span {
+    font-size: clamp(56px, 17vw, 76px);
+  }
+  .zed-benchmark-quality {
+    margin-top: 28px;
+  }
+  .zed-benchmark-note {
+    margin-top: 36px;
+  }
+  .zed-feature-visual {
+    min-height: 350px;
+  }
+  .zed-core-stage {
+    padding: 68px 20px 54px;
+  }
+  .zed-core-module {
+    grid-template-columns: 74px minmax(0, 1fr);
+    gap: 10px;
+  }
+  .zed-core-module strong {
+    overflow: visible;
+    line-height: 1.5;
+    text-overflow: clip;
+    white-space: normal;
+  }
+  .zed-decision-flow {
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+    padding: 66px 20px 0;
+  }
+  .zed-decision-receipt {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin: 28px 20px 0;
+  }
+  .zed-workflow-routes {
+    padding: 64px 20px 0;
+  }
+  .zed-workflow-route {
+    grid-template-columns: 56px 1fr 112px;
+    gap: 10px;
+  }
+  .zed-workflow-diff {
+    margin: 30px 20px 0;
+  }
+  .zed-commercial {
+    gap: 40px;
+    padding: 40px 0;
+  }
+  .zed-commercial-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 19px 0;
+  }
+  .zed-commercial-row p {
+    max-width: 42ch;
   }
 }
 @media (max-width: 700px) {

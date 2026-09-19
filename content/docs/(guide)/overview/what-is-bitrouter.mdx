@@ -7,7 +7,7 @@ description: The context-aware LLM router that continuously improves your agent 
 
 A frontier release lands every few weeks, and each one moves the cost, latency, and accuracy frontier somewhere different. Nobody re-benchmarks a whole agent that often, so the choice has been to pin one frontier model and overpay on every trivial step, or hand-tune a table that's stale a month later. BitRouter is the third option: a router that keeps re-testing the frontier for you, scored against *your* workload instead of a public leaderboard.
 
-On Terminal-Bench 2.1, routing an agent through BitRouter cuts total run cost by roughly **30%**.
+On a strict 80-task common-valid Terminal-Bench 2.1 comparison, an initial BitRouter configuration reached **81.25% task success** versus **81.56%** for a fixed strong-model baseline and **76.50%** for same-pool random routing. Its frozen-price nominal API cost for accepted valid-path requests was **40.93% lower** than the strong-model baseline. These are research results, not provider billing or an official leaderboard submission; review the [data and protocol](https://huggingface.co/datasets/BitRouterAI/benchmarks).
 
 ## One model id replaces every model decision
 

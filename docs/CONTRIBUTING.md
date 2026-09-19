@@ -10,9 +10,8 @@ Documentation uses one unified Fumadocs page tree with no layout tabs. Its
 top-level order is the `pages` list in `content/docs/meta.json`:
 
 1. **Overview** — quickstart, product explanation, models, comparisons, and
-   the Self-hosting entry.
-2. **Usage** — CLI/Code, coding agents, ACP/MCP, Skills, model sources, and
-   migration walkthroughs.
+   the Enterprise deployment-decision entry.
+2. **Usage** — CLI/TUI, coding agents, MCP, ACP, Agent Skills, and model sources.
 3. **Configuration** — config file, routing behavior, guardrails, and observability.
 4. **Customization** — model/provider customization and router-owned tool
    capabilities.
@@ -25,6 +24,14 @@ the first, second, third, fourth, and sixth groups. They contain links to the
 canonical pages rather than copies of those pages. `content/docs/reference/`
 is the only native content folder in the top-level list because the OpenAPI
 generator owns its nested endpoint tree.
+
+The notebook layout sets Fumadocs' native `defaultOpenLevel` to `1`, so all six
+top-level groups are presented together while remaining user-collapsible.
+Reference keeps that same top-level presentation, flattens single-operation
+protocol groups into direct links, and reserves nested folders for genuine
+multi-operation groups such as Models & providers and Cloud management. Make
+Reference navigation changes in `scripts/generate-openapi.mjs`; generated
+`meta.json` files are replaced during `prebuild`.
 
 **Changelog is not part of the documentation tree.** It is a top-level `/changelog`
 section with a separate `content/changelog/` source. It still uses the native
@@ -44,8 +51,8 @@ Three rules keep the unified navigation intact:
 ### Keep Usage shallow
 
 Usage source pages live together under `content/docs/(guide)/usage/`. The
-sidebar shows task-level entry points only: CLI, Code, coding agents, MCP & ACP,
-Skills, model sources, and migration. Product-specific recipes live one level
+sidebar shows task-level entry points only: CLI, TUI, coding agents, MCP Support,
+ACP Support, Agent Skills, and model sources. Product-specific recipes live one level
 deeper and are discovered from cards on those overview pages, not by expanding
 another sidebar tree.
 
@@ -67,7 +74,8 @@ boundary has to be held deliberately or they rot into two half-answers per topic
   happens on day 2* — supervision, bind address and TLS, authentication,
   upgrades, state.
 
-Self-hosting **links** to feature pages rather than restating them. The
+Enterprise is the Overview decision page and links into Self-hosting for the
+open-source operational path. Self-hosting **links** to feature pages rather than restating them. The
 `bitrouter.yaml` block reference stays in `configuration/config-file.mdx`; the
 Self-hosting page about config covers only the operational contract around it
 (resolution, secrets, CI validation).

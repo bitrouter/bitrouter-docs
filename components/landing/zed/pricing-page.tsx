@@ -190,7 +190,7 @@ export function ZedPricingPage() {
             </div>
             <p style={{ fontFamily: "var(--font-mono)", fontSize: 11.5, lineHeight: 1.7, color: "var(--z-ink-6)", margin: "18px 0 0", maxWidth: "82ch" }}>
               Competitor plans and allowances change. Verify their current pricing before making a purchasing decision. See the{" "}
-              <a href="/docs/usage/migrate/openrouter" className="zed-link">OpenRouter</a> and{" "}
+              <a href="/docs/overview/comparisons/openrouter#migrate-from-openrouter" className="zed-link">OpenRouter</a> and{" "}
               <a href="/docs/overview/comparisons/litellm" className="zed-link">LiteLLM</a> comparisons for the detail.
             </p>
           </div>

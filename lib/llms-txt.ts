@@ -18,7 +18,7 @@ If you are an AI agent setting up BitRouter, follow these steps:
 References:
 - Full quickstart walkthrough: ${BASE_URL}/docs/overview/quickstart
 - Agent Skill (install/configure BitRouter from inside an agent): https://github.com/bitrouter/bitrouter/tree/main/skills/bitrouter
-- BitRouter CLI (proxy, onboarding, and Code conversation): https://github.com/bitrouter/bitrouter
+- BitRouter CLI (proxy, onboarding, and TUI conversation): https://github.com/bitrouter/bitrouter
 - Coding-agent modes and supported adapters (Claude, Codex, OpenCode, Pi, and more): ${BASE_URL}/docs/usage/coding-agents
 
 ## Overview
@@ -29,7 +29,8 @@ References:
 - [vs OpenRouter](${BASE_URL}/docs/overview/comparisons/openrouter): Honest side-by-side with the cloud catalog
 - [vs LiteLLM](${BASE_URL}/docs/overview/comparisons/litellm): Honest side-by-side with the all-in-one proxy
 - [Agent Skill](https://github.com/bitrouter/bitrouter/tree/main/skills/bitrouter): Versioned instructions that teach an agent to install and operate BitRouter
-- [BitRouter CLI](https://github.com/bitrouter/bitrouter): \`cargo install bitrouter\` — the Rust binary, onboarding, and Code conversation
+- [BitRouter CLI](https://github.com/bitrouter/bitrouter): \`cargo install bitrouter\` — the Rust binary, onboarding, and TUI conversation
+- [Enterprise](${BASE_URL}/docs/enterprise): Choose between self-hosted OSS, BitRouter Cloud, and a design partnership for requirements not shipped today
 - [Self-hosting Overview](${BASE_URL}/docs/self-hosting): Run the Apache-2.0 router on your own infrastructure — one binary, no external database required for basic routing, no container required, no platform fee
 - [Install](${BASE_URL}/docs/self-hosting/install): Choose an install method, pin a release, and upgrade or roll back deliberately
 - [Deploy](${BASE_URL}/docs/self-hosting/deploy): Commit configuration, supervise the process, and expose the streaming API through TLS
@@ -59,23 +60,19 @@ References:
 
 - [Usage Overview](${BASE_URL}/docs/usage): Choose the interface or workflow you use to operate BitRouter
 - [CLI](${BASE_URL}/docs/usage/cli): Every command of the binary — serve, route, models, policy, optimize, providers
-- [Code](${BASE_URL}/docs/usage/code): BitRouter's interactive ACP conversation with route, activity, permissions, and attributed cost
-- [Coding agents](${BASE_URL}/docs/usage/coding-agents): Choose BitRouter Code, a headless ACP turn, or a harness's native interface
+- [TUI](${BASE_URL}/docs/usage/tui): BitRouter's interactive ACP conversation with route, activity, permissions, and attributed cost
+- [Coding agents](${BASE_URL}/docs/usage/coding-agents): Choose BitRouter's TUI, a headless ACP turn, or a harness's native interface
 - [Claude Code](${BASE_URL}/docs/usage/coding-agents/claude-code): ACP, headless, native launch, and manual Anthropic endpoint configuration
 - [Codex](${BASE_URL}/docs/usage/coding-agents/codex): ACP, headless, native launch, and permanent Codex provider configuration
-- [ACP & MCP](${BASE_URL}/docs/usage/protocols): ACP for local agent sessions, MCP for upstream tools, and the boundary with Agent Skills
 - [MCP Gateway](${BASE_URL}/docs/usage/mcp-gateway): Front many MCP tool servers with one endpoint
-- [ACP](${BASE_URL}/docs/usage/acp): Discover adapters, run headless turns, or expose one over stdio
-- [Docs MCP](${BASE_URL}/docs/usage/mcp): Search the documentation and inspect model availability from an MCP client
-- [Skills](${BASE_URL}/docs/usage/skills): Install the BitRouter Skill, inspect local skills, or scaffold a SKILL.md
+- [MCP Support](${BASE_URL}/docs/usage/mcp): Connect upstream tools, expose selected tools to model requests, and search BitRouter documentation
+- [ACP Support](${BASE_URL}/docs/usage/acp): Discover adapters, run headless turns, or expose one over stdio
+- [Agent Skills](${BASE_URL}/docs/usage/skills): Install the BitRouter Skill, inspect local skills, or scaffold a SKILL.md
 - [BitRouter Agent](${BASE_URL}/docs/usage/agent): Audit an agentic codebase and generate an initial routing policy
 - [Model sources](${BASE_URL}/docs/usage/model-sources): Compare subscription, BYOK, hosted, and local inference sources
 - [Claude subscription](${BASE_URL}/docs/usage/model-sources/claude-subscription): Use a Claude Pro or Max login through the claude-code provider
 - [Codex subscription](${BASE_URL}/docs/usage/model-sources/codex-subscription): Use a ChatGPT login through the openai-codex provider
 - [Local inference](${BASE_URL}/docs/usage/model-sources/local-inference): Connect Ollama, vLLM, Unsloth, or another OpenAI-compatible server
-- [Migrate from LiteLLM](${BASE_URL}/docs/usage/migrate/litellm): Swap your gateway, keep your code
-- [Migrate from OpenRouter](${BASE_URL}/docs/usage/migrate/openrouter): Change base URL and key
-- [Migrate from TensorZero](${BASE_URL}/docs/usage/migrate/tensorzero): Drop the LLMOps stack for a single binary
 
 ## Reference
 

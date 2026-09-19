@@ -34,8 +34,9 @@ const OUTPUT_DIR = "./content/docs/reference";
 // component can look the spec up in the preloaded map.
 const DOCUMENT_ID = "./openapi.yaml";
 
-// Static part of the section meta. Reference stays collapsible in the unified
-// documentation sidebar so its generated endpoint tree does not dominate it.
+// Static part of the section meta. The Reference section itself opens with the
+// other top-level docs groups. Single-operation protocol folders are flattened
+// into direct links below; only multi-operation groups keep another tree level.
 const REFERENCE_META = {
   title: "Reference",
   pagesIndex: "index",
@@ -58,16 +59,16 @@ const TAG_TITLES = {
 
 const ROOT_PAGES = [
   "---Inference---",
-  "openai-compatible",
-  "openai-responses",
-  "anthropic-compatible",
-  "google-compatible",
+  "[OpenAI Chat Completions](/docs/reference/openai-compatible/createChatCompletion)",
+  "[OpenAI Responses](/docs/reference/openai-responses/createResponse)",
+  "[Anthropic Messages](/docs/reference/anthropic-compatible/createMessage)",
+  "[Google GenerateContent](/docs/reference/google-compatible/googleGenerateContent)",
   "---Platform---",
   "discovery",
-  "byok",
+  "[BYOK encryption](/docs/reference/byok/getEncryptionPubkey)",
   "management",
-  "observability",
-  "health",
+  "[Metrics](/docs/reference/observability/getMetrics)",
+  "[Health](/docs/reference/health/ping)",
 ];
 
 const MANAGEMENT_GROUPS = [

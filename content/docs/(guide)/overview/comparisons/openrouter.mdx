@@ -25,10 +25,25 @@ We're not trying to out-catalog them. BitRouter is a bet that the interesting pr
 
 **You need deeper enterprise tooling.** OpenRouter has more of it built out today. If there's a requirement we don't meet, see [team pricing](/pricing#teams) and tell us about the gap — we'd rather hear it than guess at it.
 
+## Migrate from OpenRouter
+
+For BitRouter Cloud, replace the OpenRouter base URL and credential:
+
+```diff
+- base_url="https://openrouter.ai/api/v1"
+- api_key=OPENROUTER_API_KEY
++ base_url="https://api.bitrouter.ai/v1"
++ api_key=BITROUTER_API_KEY
+```
+
+Keep explicit model ids such as `openai/gpt-4o`; replace `openrouter/auto` with `bitrouter/auto`. You can remove OpenRouter-specific `HTTP-Referer`, `X-Title`, `transforms`, and `route` fields because BitRouter does not use them.
+
+For a self-hosted deployment, [install and start BitRouter](/docs/overview/quickstart#run-self-hosted), provide your upstream provider keys, and point the client at `http://127.0.0.1:4356/v1`. Verify the models you need in the [catalog](/docs/overview/supported-models) before moving production traffic.
+
 ## Next steps
 
 <Cards>
-  <Card title="Migrate from OpenRouter" href="/docs/usage/migrate/openrouter" description="One URL, one key — under five minutes." />
+  <Card title="Quickstart" href="/docs/overview/quickstart" description="Start with BitRouter Cloud or a self-hosted endpoint." />
   <Card title="BitRouter vs LiteLLM" href="/docs/overview/comparisons/litellm" description="The other gateway teams most often weigh against BitRouter." />
   <Card title="Provider selection" href="/docs/configuration/routing#provider-selection" description="Get adaptive routing running on your own keys." />
 </Cards>

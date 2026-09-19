@@ -35,12 +35,24 @@ BitRouter is distributed as one Rust binary with its router, protocol adapters, 
 
 **You need enterprise checkboxes today.** SSO/SAML, audit logs, RBAC, compliance certifications, support SLAs — LiteLLM Enterprise has them shipped and we're still building ours. If you like where we're going and have enterprise requirements, [talk to us](https://cal.com/bitrouter/founder-call) — that roadmap is very much open to being shaped.
 
-Already running LiteLLM and want to try the other shape? The [migration guide](/docs/usage/migrate/litellm) keeps your provider mappings.
+Already running LiteLLM and want to try the other shape? Start with the migration notes below.
+
+## Migrate from LiteLLM
+
+If you use the LiteLLM Python SDK in-process, this is an architecture change rather than a drop-in package swap: move model calls to a standard OpenAI-compatible client and send them through a BitRouter endpoint. If you run LiteLLM Proxy, replace that service with BitRouter and keep your applications on the same endpoint shape.
+
+1. Choose [BitRouter Cloud or self-hosting](/docs/overview/quickstart).
+2. Move provider credentials into the cloud account, environment variables, or [`bitrouter.yaml`](/docs/configuration/config-file).
+3. Change the client base URL to `https://api.bitrouter.ai/v1` or `http://127.0.0.1:4356/v1`.
+4. Translate LiteLLM `model_list`, fallback, and routing settings into BitRouter [providers, presets, and fallback rules](/docs/configuration/routing).
+5. Send representative requests, inspect the selected routes, and configure [OpenTelemetry export](/docs/configuration/observability#self-hosted-opentelemetry) before retiring the old proxy.
+
+BitRouter does not replace LiteLLM's importable SDK, non-chat endpoint breadth, cache layer, or mature team-admin surface. Keep workloads that depend on those features on LiteLLM until you have an explicit replacement.
 
 ## Next steps
 
 <Cards>
-  <Card title="Migrate from LiteLLM" href="/docs/usage/migrate/litellm" description="Move routing out of your process, keep your provider mappings." />
+  <Card title="Quickstart" href="/docs/overview/quickstart" description="Start with BitRouter Cloud or a self-hosted endpoint." />
   <Card title="BitRouter vs OpenRouter" href="/docs/overview/comparisons/openrouter" description="The cloud-catalog alternative, side by side." />
   <Card title="Provider selection" href="/docs/configuration/routing#provider-selection" description="Get adaptive routing running on your own keys." />
 </Cards>

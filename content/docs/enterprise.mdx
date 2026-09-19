@@ -1,0 +1,34 @@
+---
+title: Enterprise
+description: Choose the BitRouter deployment path that fits your security, procurement, and operating requirements.
+---
+
+BitRouter's core router is Apache 2.0 and can run inside infrastructure you control. BitRouter Cloud is the managed path. We do not package a separate enterprise suite today; teams with requirements beyond those two paths can work with us as design partners.
+
+## Choose a deployment path
+
+| | Self-hosted OSS | BitRouter Cloud | Enterprise design partnership |
+| --- | --- | --- | --- |
+| Best for | Teams that want to own the request path, credentials, and routing policy | Teams that want a managed endpoint and provider network | Teams with specific security, procurement, or operating requirements |
+| Operations | You run and upgrade BitRouter | Managed by BitRouter | Defined with your team |
+| Provider access | Bring your own keys or local models | BitRouter-hosted models and optional BYOK | Depends on the agreed deployment |
+| Commercial model | Apache 2.0; no BitRouter inference fee for self-hosted BYOK traffic | Usage-based pricing | Contact us |
+
+## What ships today
+
+The self-hosted router, configuration, routing policy, protocol adapters, and observability surface are open source. BitRouter Cloud adds a managed endpoint, hosted model access, account billing, and cloud request activity.
+
+Requirements such as SSO, delegated RBAC, compliance certifications, enterprise audit workflows, and contractual SLAs are not a generally available product tier today. If one of those is a blocker, [tell us what you need](https://cal.com/bitrouter/founder-call) before planning a migration.
+
+## Run BitRouter in your infrastructure
+
+<Cards>
+  <Card title="Self-hosting overview" href="/docs/self-hosting" description="Understand the deployment boundary before you operate it." />
+  <Card title="Install" href="/docs/self-hosting/install" description="Install the binary and run the daemon." />
+  <Card title="Secure" href="/docs/self-hosting/secure" description="Configure network, credentials, policies, and virtual keys." />
+  <Card title="Operate" href="/docs/self-hosting/operate" description="Monitor, upgrade, back up, and recover a deployment." />
+</Cards>
+
+## Talk to us
+
+If BitRouter's open-source boundary is the right fit but your team needs a defined deployment, support, or procurement path, [book a founder call](https://cal.com/bitrouter/founder-call) or email [contact@bitrouter.ai](mailto:contact@bitrouter.ai).

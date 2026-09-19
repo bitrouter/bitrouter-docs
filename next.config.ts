@@ -31,9 +31,14 @@ for (const [slug, dest] of Object.entries(finalPath)) {
 // overview + root + special
 pairs.push(
   ["/docs", "/docs/overview/what-is-bitrouter"],
-  // Released command-language cleanup (2026-09): the TUI is `bro code`, and
-  // the local ACP surface is an adapter/controller rather than a gateway.
-  ["/docs/usage/tui", "/docs/usage/code"],
+  // 2026-09 information-architecture cleanup. The command remains `bro code`;
+  // TUI is the user-facing documentation name.
+  ["/docs/usage/code", "/docs/usage/tui"],
+  ["/docs/usage/protocols", "/docs/usage"],
+  ["/docs/usage/migrate", "/docs/overview/comparisons"],
+  ["/docs/usage/migrate/litellm", "/docs/overview/comparisons/litellm#migrate-from-litellm"],
+  ["/docs/usage/migrate/openrouter", "/docs/overview/comparisons/openrouter#migrate-from-openrouter"],
+  ["/docs/usage/migrate/tensorzero", "/docs/overview/comparisons"],
   ["/docs/usage/acp-gateway", "/docs/usage/acp"],
   // Product-specific recipes collapsed into maintained task pages (2026-09).
   ["/docs/usage/coding-agents/opencode", "/docs/usage/coding-agents"],
@@ -189,11 +194,11 @@ pairs.push(
   ["/docs/cookbook/local-models", "/docs/usage/model-sources"],
   ["/docs/integrations/local-models", "/docs/usage/model-sources"],
   ["/docs/cookbook", "/docs/usage/coding-agents"],
-  // migration history → usage
-  ["/docs/integrations/migrate/litellm", "/docs/usage/migrate/litellm"],
-  ["/docs/integrations/migrate/openrouter", "/docs/usage/migrate/openrouter"],
-  ["/docs/cookbook/migration/litellm", "/docs/usage/migrate/litellm"],
-  ["/docs/cookbook/migration/openrouter", "/docs/usage/migrate/openrouter"],
+  // Migration walkthroughs now live on the relevant comparison pages.
+  ["/docs/integrations/migrate/litellm", "/docs/overview/comparisons/litellm#migrate-from-litellm"],
+  ["/docs/integrations/migrate/openrouter", "/docs/overview/comparisons/openrouter#migrate-from-openrouter"],
+  ["/docs/cookbook/migration/litellm", "/docs/overview/comparisons/litellm#migrate-from-litellm"],
+  ["/docs/cookbook/migration/openrouter", "/docs/overview/comparisons/openrouter#migrate-from-openrouter"],
   // Earlier router-section names now resolve into Router or Extensions.
   ["/docs/models-and-routing/presets", "/docs/configuration/routing#presets"],
   ["/docs/models-and-routing/byok", "/docs/customization/models#built-in-providers-with-your-own-key"],
@@ -234,7 +239,7 @@ pairs.push(
   // Tool pages keep their filenames, so one wildcard covers them.
   ["/docs/models-and-routing/tool-calling", "/docs/customization/tools/server-tools"],
   ["/docs/models-and-routing/tool-calling/:slug*", "/docs/customization/tools/:slug*"],
-  ["/docs/agents-and-orchestration", "/docs/usage/protocols"],
+  ["/docs/agents-and-orchestration", "/docs/usage"],
   // Retired guide slugs resolve to the current task pages.
   ["/docs/guides/cloud-api", "/docs/usage/cli"],
   ["/docs/guides/build-a-plugin", "/docs/overview/what-is-bitrouter"],

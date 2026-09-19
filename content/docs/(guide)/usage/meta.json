@@ -3,15 +3,13 @@
   "pagesIndex": "index",
   "pages": [
     "cli",
-    "code",
+    "tui",
     "coding-agents",
-    "protocols",
     "mcp",
     "mcp-gateway",
     "acp",
     "skills",
     "model-sources",
-    "migrate",
     "agent"
   ]
 }

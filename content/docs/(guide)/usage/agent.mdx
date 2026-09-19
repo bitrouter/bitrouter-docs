@@ -70,7 +70,7 @@ The package also ships a **read-only chat session**, launched as `bitrouter` fro
 
 ### Which skills load
 
-By default the session loads **only BitRouter-family skills** — every skill whose front-matter `name` is `bitrouter` or `bitrouter-<thing>`, such as the bundled `bitrouter` analysis skill and the provider's `bitrouter-pi` setup skill. pi's usual skill auto-discovery (`~/.agents/skills`, ancestor `.agents/skills`, and so on) is otherwise disabled, so unrelated skills don't leak into the appliance. See [Skills](/docs/usage/skills) for the skills BitRouter itself publishes.
+By default the session loads **only BitRouter-family skills** — every skill whose front-matter `name` is `bitrouter` or `bitrouter-<thing>`, such as the bundled `bitrouter` analysis skill and the provider's `bitrouter-pi` setup skill. pi's usual skill auto-discovery (`~/.agents/skills`, ancestor `.agents/skills`, and so on) is otherwise disabled, so unrelated skills don't leak into the appliance. See [Agent Skills](/docs/usage/skills) for the skills BitRouter itself publishes.
 
 Discovery is **by declared name, not directory name**, and de-duplicates by name — the bundled copy wins over a stray `~/.agents/skills` copy. Naming a skill `bitrouter-<thing>` is all it takes to have it auto-load.
 
@@ -96,5 +96,5 @@ bitrouter-agent is an **adoption and tuning** tool, not a runtime surface — it
 <Cards>
   <Card title="Config (YAML)" href="/docs/configuration/config-file" description="The bitrouter.yaml reference — every block the generated policy can contain." />
   <Card title="CLI" href="/docs/usage/cli" description="Start the daemon the agent routes through, and validate the policy it wrote." />
-  <Card title="Code" href="/docs/usage/code" description="Run an interactive ACP conversation with attributed session cost." />
+  <Card title="TUI" href="/docs/usage/tui" description="Run an interactive ACP conversation with attributed session cost." />
 </Cards>

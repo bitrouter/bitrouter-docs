@@ -3,11 +3,11 @@
   "pagesIndex": "[Usage](/docs/usage)",
   "pages": [
     "[CLI](/docs/usage/cli)",
-    "[Code](/docs/usage/code)",
+    "[TUI](/docs/usage/tui)",
     "[Coding agents](/docs/usage/coding-agents)",
-    "[MCP & ACP](/docs/usage/protocols)",
-    "[Skills](/docs/usage/skills)",
-    "[Model sources](/docs/usage/model-sources)",
-    "[Migrate](/docs/usage/migrate)"
+    "[MCP Support](/docs/usage/mcp)",
+    "[ACP Support](/docs/usage/acp)",
+    "[Agent Skills](/docs/usage/skills)",
+    "[Model sources](/docs/usage/model-sources)"
   ]
 }

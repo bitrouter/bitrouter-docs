@@ -26,16 +26,11 @@ References:
 - [What is BitRouter?](${BASE_URL}/docs/overview/what-is-bitrouter): The one-page explanation — \`bitrouter/auto\`, how routing reads each call, and the two loops that improve it
 - [Quick Start](${BASE_URL}/docs/overview/quickstart): Install via Agent Skills or the CLI, start routing in under a minute, then optimize against your own workflow
 - [Supported Models](${BASE_URL}/docs/overview/supported-models): The curated catalog the router can score, downgrade, and fail over between, with pricing
-- [vs OpenRouter](${BASE_URL}/docs/overview/comparisons/openrouter): Honest side-by-side with the cloud catalog
-- [vs LiteLLM](${BASE_URL}/docs/overview/comparisons/litellm): Honest side-by-side with the all-in-one proxy
+- [Comparison](${BASE_URL}/docs/overview/comparison): Compare BitRouter with OpenRouter and LiteLLM across ownership, routing, deployment, and migration
 - [Agent Skill](https://github.com/bitrouter/bitrouter/tree/main/skills/bitrouter): Versioned instructions that teach an agent to install and operate BitRouter
 - [BitRouter CLI](https://github.com/bitrouter/bitrouter): \`cargo install bitrouter\` — the Rust binary, onboarding, and TUI conversation
 - [Enterprise](${BASE_URL}/docs/enterprise): Choose between self-hosted OSS, BitRouter Cloud, and a design partnership for requirements not shipped today
-- [Self-hosting Overview](${BASE_URL}/docs/self-hosting): Run the Apache-2.0 router on your own infrastructure — one binary, no external database required for basic routing, no container required, no platform fee
-- [Install](${BASE_URL}/docs/self-hosting/install): Choose an install method, pin a release, and upgrade or roll back deliberately
-- [Deploy](${BASE_URL}/docs/self-hosting/deploy): Commit configuration, supervise the process, and expose the streaming API through TLS
-- [Secure](${BASE_URL}/docs/self-hosting/secure): Authenticate callers, protect daemon administration, and verify the production boundary
-- [Operate](${BASE_URL}/docs/self-hosting/operate): Reload, diagnose, back up, and recover a running router
+- [Self-hosting](${BASE_URL}/docs/self-hosting): Install, deploy, secure, and operate the Apache-2.0 router on infrastructure you control
 
 ## Configuration
 
@@ -62,16 +57,12 @@ References:
 - [CLI](${BASE_URL}/docs/usage/cli): Every command of the binary — serve, route, models, policy, optimize, providers
 - [TUI](${BASE_URL}/docs/usage/tui): BitRouter's interactive ACP conversation with route, activity, permissions, and attributed cost
 - [Coding agents](${BASE_URL}/docs/usage/coding-agents): Choose BitRouter's TUI, a headless ACP turn, or a harness's native interface
-- [Claude Code](${BASE_URL}/docs/usage/coding-agents/claude-code): ACP, headless, native launch, and manual Anthropic endpoint configuration
-- [Codex](${BASE_URL}/docs/usage/coding-agents/codex): ACP, headless, native launch, and permanent Codex provider configuration
-- [MCP Gateway](${BASE_URL}/docs/usage/mcp-gateway): Front many MCP tool servers with one endpoint
-- [MCP Support](${BASE_URL}/docs/usage/mcp): Connect upstream tools, expose selected tools to model requests, and search BitRouter documentation
+- [Claude Code](${BASE_URL}/docs/usage/coding-agents/claude-code): ACP, headless, native launch, manual configuration, and Claude subscription login
+- [Codex](${BASE_URL}/docs/usage/coding-agents/codex): ACP, headless, native launch, permanent configuration, and ChatGPT subscription login
+- [MCP Support](${BASE_URL}/docs/usage/mcp): Connect and aggregate upstream MCP servers, expose selected tools to model requests, and search BitRouter documentation
 - [ACP Support](${BASE_URL}/docs/usage/acp): Discover adapters, run headless turns, or expose one over stdio
 - [Agent Skills](${BASE_URL}/docs/usage/skills): Install the BitRouter Skill, inspect local skills, or scaffold a SKILL.md
-- [BitRouter Agent](${BASE_URL}/docs/usage/agent): Audit an agentic codebase and generate an initial routing policy
 - [Model sources](${BASE_URL}/docs/usage/model-sources): Compare subscription, BYOK, hosted, and local inference sources
-- [Claude subscription](${BASE_URL}/docs/usage/model-sources/claude-subscription): Use a Claude Pro or Max login through the claude-code provider
-- [Codex subscription](${BASE_URL}/docs/usage/model-sources/codex-subscription): Use a ChatGPT login through the openai-codex provider
 - [Local inference](${BASE_URL}/docs/usage/model-sources/local-inference): Connect Ollama, vLLM, Unsloth, or another OpenAI-compatible server
 
 ## Reference

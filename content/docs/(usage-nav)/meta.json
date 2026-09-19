@@ -8,13 +8,9 @@
     "[Claude Code](/docs/usage/coding-agents/claude-code)",
     "[Codex](/docs/usage/coding-agents/codex)",
     "[MCP Support](/docs/usage/mcp)",
-    "[MCP gateway](/docs/usage/mcp-gateway)",
     "[ACP Support](/docs/usage/acp)",
     "[Agent Skills](/docs/usage/skills)",
     "[Model sources](/docs/usage/model-sources)",
-    "[Claude subscription](/docs/usage/model-sources/claude-subscription)",
-    "[Codex subscription](/docs/usage/model-sources/codex-subscription)",
-    "[Local inference](/docs/usage/model-sources/local-inference)",
-    "[BitRouter Agent](/docs/usage/agent)"
+    "[Local inference](/docs/usage/model-sources/local-inference)"
   ]
 }

@@ -1,35 +1,138 @@
 ---
 title: MCP Support
-description: Connect upstream MCP servers, expose tools to model requests, and search BitRouter documentation from an MCP client.
+description: Connect and aggregate upstream MCP servers, expose selected tools to model requests, and search BitRouter documentation over MCP.
 ---
 
-[Model Context Protocol](https://modelcontextprotocol.io) connects agents and model requests to tools, resources, and prompts. BitRouter supports MCP in two distinct places:
+[Model Context Protocol](https://modelcontextprotocol.io) connects agents and model requests to tools, resources, and prompts. BitRouter supports MCP in two places:
 
-- The open-source daemon connects and aggregates MCP servers you configure.
-- The public Docs MCP server lets any compatible client search BitRouter documentation and model availability.
+- The open-source daemon acts as a client and gateway for MCP servers you configure.
+- The public Docs MCP server lets compatible clients search BitRouter documentation and model availability.
 
-## Connect upstream MCP servers
+## MCP gateway
 
-Declare third-party servers under `mcp_servers` in [`bitrouter.yaml`](/docs/configuration/config-file). BitRouter exposes each upstream at `/mcp/{server}` and can aggregate participating servers at `/mcp`.
+The gateway puts BitRouter between an agent or model request and its third-party MCP servers. Configure upstreams once, then expose each server directly or combine them behind one aggregate endpoint.
 
-```bash
-bro mcp check
-bro mcp check context7
+BitRouter OSS is the **client and gateway** on this path. It does not add BitRouter-owned administrative tools to the catalog.
+
+### Configure upstream servers
+
+Add servers under `mcp_servers` in [`bitrouter.yaml`](/docs/configuration/config-file). Stdio entries launch a child process; HTTP entries connect to a Streamable HTTP endpoint.
+
+```yaml
+mcp_servers:
+  filesystem:
+    name: filesystem
+    transport:
+      type: stdio
+      command: npx
+      args: ["-y", "@modelcontextprotocol/server-filesystem", "/data"]
+  context7:
+    name: context7
+    transport:
+      type: http
+      url: https://mcp.context7.com/mcp
+      headers:
+        Authorization: "Bearer ${CONTEXT7_TOKEN}"
 ```
 
-The gateway can make upstream tools available to compatible model requests. Connection ownership, tool allowlists, and server-side execution remain explicit configuration choices; start with the [MCP gateway guide](/docs/usage/mcp-gateway) before enabling tools in a shared deployment.
+A stdio child inherits the ambient environment, with configured `env` values added or overridden. HTTP headers are sent to that upstream on every request.
 
-## Search the docs over MCP
+<Callout type="info">
+When `mcp_servers` is empty, the daemon does not mount MCP routes. A `404` on `/mcp` before configuring an upstream is expected.
+</Callout>
 
-BitRouter publishes a public [Model Context Protocol](https://modelcontextprotocol.io) server for this documentation. An editor or agent can search the docs, read a page, and check model availability without leaving its current workflow.
+### Direct and aggregate routes
+
+| Route | Behavior |
+| --- | --- |
+| `POST /mcp/{server}` | Proxy one configured upstream with its original capability names |
+| `POST /mcp` | Aggregate participating upstreams into one virtual MCP server |
+
+The aggregate is enabled by default and can be moved or disabled:
+
+```yaml
+mcp:
+  aggregate:
+    enabled: true
+    route: /mcp
+```
+
+Aggregate tool and prompt names are prefixed with the server id to avoid collisions. Override the prefix or exclude one server from aggregation without disabling its direct route:
+
+```yaml
+mcp_servers:
+  context7:
+    name: context7
+    transport:
+      type: http
+      url: https://mcp.context7.com/mcp
+    tool_prefix: "docs__"
+    aggregate: false
+```
+
+### Diagnose upstreams
+
+`bro mcp check` performs a `tools/list` round trip and reports transport, reachability, latency, negotiated tool capability, and advertised tool names:
+
+```bash
+bro mcp check             # every configured upstream
+bro mcp check context7    # one upstream
+```
+
+Configuration remains the source of truth; the check does not maintain a separate global tool registry.
+
+### Cache discovery, not execution
+
+Aggregate list calls use bounded TTL caches by default. Tool execution is never cached.
+
+| Setting | Default | Method |
+| --- | --- | --- |
+| `tools_list_ttl_secs` | `60` | `tools/list` |
+| `resources_list_ttl_secs` | `60` | `resources/list` |
+| `resources_templates_list_ttl_secs` | `300` | `resources/templates/list` |
+| `prompts_list_ttl_secs` | `300` | `prompts/list` |
+
+Set an individual TTL to `0`, or disable the cache as a whole:
+
+```yaml
+mcp:
+  cache:
+    enabled: false
+```
+
+### Execute tools inside a model request
+
+The gateway normally lets an external agent call MCP tools. To let BitRouter run the tool loop, list selected upstream ids under `server_tools.mcp_servers`:
+
+```yaml
+server_tools:
+  mcp_servers: [filesystem, context7]
+  max_iterations: 6
+```
+
+BitRouter advertises those tools to the model, executes selected calls, returns results, and continues until the model stops requesting tools or the iteration bound is reached. Declaring an upstream under `mcp_servers` alone does not put it into this loop. See [Server tools](/docs/customization/tools/server-tools) for approval and iteration behavior.
+
+### Connect a coding agent
+
+`bro launch` injects the aggregate endpoint into supported native harnesses without editing their user configuration. Claude, Codex, OpenCode, and Hermes have an injectable MCP surface; other harnesses may not.
+
+```bash
+bro launch codex
+```
+
+The launch summary states whether model routing and MCP injection were applied. Local filesystem skills use the agent host's normal plugin or skill mechanism; they are not served by a BitRouter origin MCP process.
+
+## Docs MCP server
+
+BitRouter publishes a public MCP server for this documentation. An editor or agent can search docs, read a page, and check model availability without leaving its current workflow.
 
 - **Endpoint:** `https://bitrouter.ai/mcp`
 - **Transport:** Streamable HTTP
 - **Authentication:** none
 
-This service answers questions *about* BitRouter. It is separate from the gateway running in your own BitRouter deployment.
+This service answers questions *about* BitRouter. It is separate from the gateway running in your own deployment.
 
-## Tools
+### Tools
 
 | Tool | Purpose |
 | --- | --- |
@@ -39,7 +142,7 @@ This service answers questions *about* BitRouter. It is separate from the gatewa
 
 Clients that support MCP resources can also read the curated index at `bitrouter-docs://llms-index`.
 
-## Add it to a client
+### Add it to a client
 
 Claude Code:
 
@@ -61,10 +164,10 @@ For clients that accept an MCP server configuration:
 
 ## Operating BitRouter from an agent
 
-BitRouter OSS is not a first-party origin MCP server for local administrative commands. To inspect status, models, routes, or requests, install the [BitRouter Agent Skill](/docs/usage/skills) in a shell-capable host. The Skill selects structured `bro` commands; the host obtains approval and executes them.
+BitRouter OSS is not a first-party origin MCP server for local administrative commands. To inspect status, models, routes, or requests, install [Agent Skills](/docs/usage/skills) in a shell-capable host. The skill selects structured `bro` commands; the host obtains approval and executes them.
 
 <Cards>
-  <Card title="MCP gateway" href="/docs/usage/mcp-gateway" description="Connect and aggregate your own upstream MCP servers." />
+  <Card title="Server tools" href="/docs/customization/tools/server-tools" description="Run selected MCP tools inside the router's model loop." />
   <Card title="Agent Skills" href="/docs/usage/skills" description="Teach an agent to operate BitRouter through its CLI." />
   <Card title="ACP Support" href="/docs/usage/acp" description="Run agent sessions interactively, headlessly, or over local stdio." />
   <Card title="llms.txt" href="/llms.txt" description="Read the curated documentation index without MCP." />

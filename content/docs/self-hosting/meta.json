@@ -1,10 +1,5 @@
 {
   "title": "Self-hosting",
   "pagesIndex": "index",
-  "pages": [
-    "install",
-    "deploy",
-    "secure",
-    "operate"
-  ]
+  "pages": []
 }

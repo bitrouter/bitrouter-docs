@@ -1,6 +1,6 @@
 ---
 title: Self-hosting BitRouter
-description: Run the Apache-2.0 router on your own infrastructure with one binary and your own provider credentials.
+description: Install, deploy, secure, and operate the Apache-2.0 router on infrastructure you control.
 ---
 
 BitRouter self-hosted is one binary in the request path between your agents and model providers. It needs no external database, queue, container runtime, or sidecar for a local deployment.
@@ -15,7 +15,7 @@ bro start                           # http://127.0.0.1:4356
 
 This starts a loopback-only router with local authentication skipped. No config or database is required until you opt into features that need them.
 
-## Decide how far to deploy
+## Choose a deployment shape
 
 | Goal | Add |
 | --- | --- |
@@ -30,21 +30,381 @@ The open-source binary includes protocol translation, routing, guardrails, serve
 You can attach a Cloud account with `bro cloud login` while continuing to route through your own provider accounts from the same process.
 </Callout>
 
-## Persistence is optional
+Routing decisions come from configuration. A database becomes important only when you use virtual keys, request metering, or the adequacy ledger that adaptive routing learns from. SQLite is the default; Postgres and MySQL use the same binary.
 
-Routing decisions come from configuration. A database becomes important only when you use:
+## Install
 
-- **Virtual keys** — the `users` and `api_keys` tables behind `bro key sign`, when you authenticate callers.
-- **Metering** — the `requests` table, per-request cost accounting.
-- **The adequacy ledger** — the evidence tables the adaptive routing loop learns from.
+BitRouter ships as a single binary with no runtime dependencies. The install methods below produce the same router; they differ only in who owns the upgrade path.
 
-SQLite is the default. Postgres and MySQL use the same binary. See [Operate](/docs/self-hosting/operate#state-and-backups) before depending on stored identity or history.
+<Tabs items={['macOS / Linux', 'Homebrew', 'npm', 'cargo']}>
+<Tab value="macOS / Linux">
 
-## Production path
+```bash
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/bitrouter/bitrouter/releases/latest/download/bitrouter-installer.sh | sh
+```
+
+The installer fetches a prebuilt release binary. This is the method `bro update` can drive in place.
+
+</Tab>
+<Tab value="Homebrew">
+
+```bash
+brew install bitrouter/tap/bitrouter
+```
+
+</Tab>
+<Tab value="npm">
+
+```bash
+npm install -g bitrouter
+```
+
+</Tab>
+<Tab value="cargo">
+
+```bash
+cargo install bitrouter
+```
+
+This builds from source and needs no prebuilt artifact for your platform.
+
+</Tab>
+</Tabs>
+
+Confirm the installed version:
+
+```bash
+bro --version
+```
+
+### Pin a version
+
+Pin deployed hosts so two machines provisioned at different times do not silently run different routers. `bro update --tag` moves the installer-managed binary to an exact release, up or down:
+
+```bash
+bro update --tag 1.0.0-alpha.31
+```
+
+Pin the config schema to the same release:
+
+```yaml
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bitrouter/bitrouter/v1.0.0-alpha.31/dist/schema/bitrouter.config.schema.json
+```
+
+<Callout type="warning">
+**BitRouter is pre-1.0, and `update` follows prereleases by default.** Use `--stable` to consider only stable releases or `--tag` to name the exact version, and gate either behind your normal change process.
+</Callout>
+
+### Upgrade and roll back
+
+```bash
+bro update --check     # report whether a newer release exists, change nothing
+bro update             # upgrade to the latest release
+bro update --stable    # ignore prereleases
+bro update --restart   # upgrade and restart a workstation daemon
+bro update -y          # skip confirmation for automation
+```
+
+Homebrew and `cargo install` builds are updated by their package manager. `bro update` detects those installations and prints the appropriate command rather than overwriting a managed binary.
+
+For a production host, separate the binary swap from validation and restart:
+
+```bash
+bro update --tag 1.0.0-alpha.31 -y
+bro config validate -c /etc/bitrouter/bitrouter.yaml
+bro restart -c /etc/bitrouter/bitrouter.yaml
+bro status -c /etc/bitrouter/bitrouter.yaml
+```
+
+Rollback uses the same sequence with the previous tag. Database migrations only move forward, so take a backup before an upgrade you may reverse. Roll back `policy-lock.yaml` with Git rather than the installer.
+
+### Air-gapped and image-baked installs
+
+Runtime needs only provider reachability. For an offline install, fetch and verify a release binary on a connected host, then ship it through your image or artifact pipeline. Without GitHub egress, replace the binary through that pipeline; `bro update` cannot resolve releases. Config validation itself remains local.
+
+## Deploy
+
+A production deployment adds an explicit config file, a process supervisor, and a network boundary. Keep those decisions together so the process cannot start with the wrong policy or become reachable before authentication is ready.
+
+### Production configuration
+
+Scaffold and validate a file, then commit its non-secret parts with the rest of your infrastructure:
+
+```bash
+bro init -c /etc/bitrouter/bitrouter.yaml
+bro config validate -c /etc/bitrouter/bitrouter.yaml
+```
+
+The generated file starts local-first:
+
+```yaml
+server:
+  listen: "127.0.0.1:4356"
+  skip_auth: true
+```
+
+Always pass `-c` in a deployment. Without it, lookup depends on the process working directory and can fall through to zero-config defaults. Prefer absolute paths for deployed state:
+
+```yaml
+server:
+  control_socket: "/run/bitrouter/bitrouter.sock"
+
+database:
+  url: "sqlite:///var/lib/bitrouter/bitrouter.db"
+
+providers:
+  openai:
+    api_key: "${OPENAI_API_KEY}"
+```
+
+Supply credentials through a process-manager environment file or secrets mount. Use the same released version for the binary, config schema, and CI validator. See [Config file](/docs/configuration/config-file) for individual settings.
+
+### Run as a service
+
+Use `bro serve` under a supervisor. It stays in the foreground and writes logs to stdout; `bro start` detaches and is intended for workstations.
+
+```ini
+# /etc/systemd/system/bitrouter.service
+[Unit]
+Description=BitRouter
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/bro serve -c /etc/bitrouter/bitrouter.yaml
+EnvironmentFile=/etc/bitrouter/bitrouter.env
+Restart=on-failure
+RestartSec=2
+User=bitrouter
+Group=bitrouter
+RuntimeDirectory=bitrouter
+StateDirectory=bitrouter
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+systemctl daemon-reload
+systemctl enable --now bitrouter
+systemctl status bitrouter
+```
+
+Set the environment file to mode `0600`. Use `RUST_LOG`, such as `RUST_LOG=info,bitrouter=debug`, to control logging. The Unix control socket is how `status`, `reload`, `restart`, and `stop` reach the daemon; filesystem permissions on that socket are the administration boundary.
+
+### Network and TLS
+
+| Exposure | Safe baseline |
+| --- | --- |
+| One host only | `listen: 127.0.0.1:4356`, `skip_auth: true` |
+| Shared or remote | Reverse proxy with TLS, `skip_auth: false`, virtual keys |
+
+Never combine a non-loopback listener with `skip_auth: true`. Prefer keeping BitRouter on loopback and terminating TLS in a reverse proxy. Long model responses are streams, so disable buffering and allow long reads:
+
+```nginx
+location / {
+    proxy_pass http://127.0.0.1:4356;
+    proxy_http_version 1.1;
+    proxy_buffering off;
+    proxy_cache off;
+    proxy_set_header Connection "";
+    proxy_read_timeout 600s;
+    proxy_send_timeout 600s;
+    client_max_body_size 16m;
+}
+```
+
+A reverse proxy provides transport security, not caller authentication. Complete the [Secure](#secure) section before accepting remote inference traffic.
+
+### Upstream timeouts
+
+Inbound proxy timeouts and BitRouter's outbound provider timeouts are independent:
+
+```yaml
+upstream:
+  timeouts:
+    connect_secs: 10
+    read_secs: 120
+    pool_idle_secs: 90
+    tcp_keepalive_secs: 60
+    # total_secs: unset
+```
+
+`read_secs` is an idle timeout between upstream bytes, including during a stream. Leave `total_secs` unset unless the entire model call needs a wall-clock deadline.
+
+### Verify the deployment
+
+```bash
+bro config validate -c /etc/bitrouter/bitrouter.yaml
+bro status -c /etc/bitrouter/bitrouter.yaml
+curl -s http://127.0.0.1:4356/health
+```
+
+`GET /health` proves the HTTP server is alive, not that an upstream model is usable. `bro status` also reports the process, listen address, and routable-model count.
+
+## Secure
+
+The safe local default relies on the operating system: BitRouter listens on loopback and accepts an anonymous local caller. A shared deployment needs an explicit identity boundary before the listener becomes reachable.
+
+### Authenticate callers
+
+```yaml
+server:
+  listen: "127.0.0.1:4356"
+  skip_auth: false
+```
+
+Changing `skip_auth` requires a restart. Mint a `brvk_` virtual key against the same database the daemon uses:
+
+```bash
+bro key sign --user alice --db sqlite:///var/lib/bitrouter/bitrouter.db
+```
+
+The plaintext secret is shown once. A caller sends it as a bearer token:
+
+```bash
+curl https://router.internal.example.com/v1/chat/completions \
+  -H "Authorization: Bearer brvk_..." \
+  -H "Content-Type: application/json" \
+  -d '{"model":"openai:gpt-5","messages":[{"role":"user","content":"Hello"}]}'
+```
+
+<Callout type="warning">
+`bro key sign` defaults its database path from the current shell, while the daemon resolves relative database paths from the config directory. Pass `--db` explicitly on a deployed host so the key is not written to a different SQLite file.
+</Callout>
+
+The self-hosted CLI does not currently expose mint-time flags for per-key spend, request-rate, or expiry limits. Do not infer those controls from database fields.
+
+### Protect the administration path
+
+Daemon-control commands use a Unix socket rather than the HTTP API:
+
+```yaml
+server:
+  control_socket: "/run/bitrouter/bitrouter.sock"
+```
+
+Anyone who can write to that socket can reload, restart, or stop the process. Put it in a directory owned by the service user and keep control commands on the host.
+
+| Boundary | Control |
+| --- | --- |
+| Client to reverse proxy | TLS and network policy |
+| Caller to BitRouter | `skip_auth: false` and `brvk_` keys |
+| Operator to daemon | Control-socket filesystem permissions |
+| Request content | [Guardrails](/docs/configuration/guardrails) and workflow policy |
+| Provider credentials | Environment or secret-store permissions |
+
+### Public read endpoints
+
+`GET /health` and `GET /v1/models` are not protected by the inference authentication hook. If model and provider discovery is sensitive, restrict those paths at the reverse proxy or network layer. Use [OpenTelemetry](/docs/configuration/observability#self-hosted-opentelemetry) for operational telemetry.
+
+### Production checklist
+
+Before allowing traffic from another machine:
+
+1. Keep BitRouter on loopback when a local reverse proxy can own the public interface.
+2. Set `skip_auth: false` before changing network reachability.
+3. Mint and test a virtual key against the daemon's actual database.
+4. Terminate TLS without buffering long-lived model streams.
+5. Commit only `${VAR}` references, never provider secrets.
+6. Run as an unprivileged service user and restrict the control socket.
+7. Validate the pinned config in CI and again on the target host.
+8. Back up state before an upgrade that may need rollback.
+
+Verify that an unauthenticated inference request is rejected:
+
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' \
+  -X POST http://127.0.0.1:4356/v1/chat/completions \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"openai:gpt-5","messages":[{"role":"user","content":"hi"}]}'
+```
+
+Expect `401`. Testing `/health` or `/v1/models` does not verify authentication because those reads remain public.
+
+## Operate
+
+Operate BitRouter through a small loop: validate the intended state, inspect the route it produces, apply it, and verify the running state.
+
+### Change and diagnose
+
+```bash
+bro status -c /etc/bitrouter/bitrouter.yaml
+bro models -c /etc/bitrouter/bitrouter.yaml
+bro providers list -c /etc/bitrouter/bitrouter.yaml
+bro route <model> -c /etc/bitrouter/bitrouter.yaml
+bro observe status -c /etc/bitrouter/bitrouter.yaml
+```
+
+Check process and control-socket reachability first, then `/health`, active provider credentials, selector resolution, and finally logs. An unexpected `running: no` can mean the operator command used a different config and therefore looked for another control socket.
+
+### Reload or restart
+
+```bash
+bro reload -c /etc/bitrouter/bitrouter.yaml
+bro restart -c /etc/bitrouter/bitrouter.yaml
+```
+
+Prefer `reload` for routing, provider, policy, and timeout changes. It prepares replacement state before swapping it in; a failed reload leaves the previous state active.
+
+Restart for process-bound settings such as the listen address, control socket, `skip_auth`, database URL, or `RUST_LOG`. A restart drains in-flight requests for up to 30 seconds before forcing the old process down. When systemd owns the process, use `systemctl restart bitrouter` for a full restart.
+
+A safe config rollout is:
+
+```bash
+bro config validate -c /etc/bitrouter/bitrouter.yaml
+bro route <important-model> -c /etc/bitrouter/bitrouter.yaml
+bro reload -c /etc/bitrouter/bitrouter.yaml
+bro status -c /etc/bitrouter/bitrouter.yaml
+```
+
+### State and backups
+
+| State | Why it matters |
+| --- | --- |
+| `bitrouter.yaml` and `policy-lock.yaml` | Desired routing state; keep both in version control |
+| Virtual-key tables | Losing them invalidates every self-hosted caller key |
+| Metering rows | Cost history and caller attribution |
+| Adequacy evidence | Observations used by adaptive routing |
+| Provider credentials | Recover through your normal secret store, not the database |
+
+The database URL supports SQLite, Postgres, and MySQL:
+
+```yaml
+database:
+  url: "sqlite:///var/lib/bitrouter/bitrouter.db"
+  # url: "postgres://bitrouter:${DB_PASSWORD}@db.internal:5432/bitrouter"
+```
+
+SQLite is appropriate for one host. Back it up with SQLite's online backup command rather than copying a live file:
+
+```bash
+sqlite3 /var/lib/bitrouter/bitrouter.db ".backup '/backup/bitrouter-$(date +%F).db'"
+```
+
+Migrations apply at startup and only move forward. Take a database backup before an upgrade you may reverse. To restore, stop the daemon, restore the file or database dump, then start it and let already-applied migrations be skipped.
+
+### Multiple instances
+
+The pid-file guard prevents a second process from using the same control-socket path on one host; it is not a distributed lock. Several instances can technically share a database, but routing tables, process state, control sockets, and local `policy-lock.yaml` files remain separate.
+
+For redundancy, prefer independent single-node routers behind a load balancer, with the same reviewed config and policy lock deployed to each. Treat shared-database adaptive routing as an unsupported design requiring separate validation.
+
+### Logs and telemetry
+
+`bro serve` writes structured logs to stdout. Set `RUST_LOG` at process start and restart to change it. Confirm the running OTLP exporter with:
+
+```bash
+bro observe status -c /etc/bitrouter/bitrouter.yaml
+```
+
+Use an OpenTelemetry Collector when the destination is Prometheus-based. See [Observability](/docs/configuration/observability) for spans, usage attribution, and exporter configuration.
+
+## Next steps
 
 <Cards>
-  <Card title="Install" href="/docs/self-hosting/install" description="Choose an install method, pin a version, and upgrade safely." />
-  <Card title="Deploy" href="/docs/self-hosting/deploy" description="Commit configuration, supervise the process, and expose it through TLS." />
-  <Card title="Secure" href="/docs/self-hosting/secure" description="Authenticate callers and check the production boundary." />
-  <Card title="Operate" href="/docs/self-hosting/operate" description="Reload, diagnose, back up, and recover a running router." />
+  <Card title="Configuration" href="/docs/configuration" description="Define routing behavior after the host is deployed." />
+  <Card title="Observability" href="/docs/configuration/observability" description="Export telemetry and inspect routing outcomes." />
+  <Card title="CLI reference" href="/docs/usage/cli" description="Inspect every command and flag used here." />
 </Cards>

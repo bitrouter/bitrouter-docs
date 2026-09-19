@@ -9,7 +9,7 @@ is rendered from this repo — docs are committed directly here under
 Documentation uses one unified Fumadocs page tree with no layout tabs. Its
 top-level order is the `pages` list in `content/docs/meta.json`:
 
-1. **Overview** — quickstart, product explanation, models, comparisons, and
+1. **Overview** — quickstart, product explanation, models, comparison, and
    the Enterprise deployment-decision entry.
 2. **Usage** — CLI/TUI, coding agents, MCP, ACP, Agent Skills, and model sources.
 3. **Configuration** — config file, routing behavior, guardrails, and observability.
@@ -23,8 +23,8 @@ a page or collapsible folder. Five meta-only folders —
 `content/docs/(overview-nav)/`, `(usage-nav)/`, `(configuration-nav)/`,
 `(customization-nav)/`, and `(development-nav)/` — are extracted into the root
 with Fumadocs' `...folder` syntax. They contain links to canonical pages rather
-than copies of those pages, so every non-Reference page appears directly below
-its section label.
+than copies of those pages, so every public non-Reference page appears directly
+below its section label.
 
 Reference is the deliberate exception. `content/docs/reference/` is extracted
 below the **Reference** separator, but the generated API families remain native
@@ -50,9 +50,11 @@ Three rules keep the unified navigation intact:
 ### Keep non-Reference sections flat
 
 Source pages can remain nested where that keeps related files together, but the
-public sidebar is a flat list beneath each section separator. Every page must be
-listed exactly once in the matching `*-nav/meta.json`; cards and inline links
-provide additional discovery, not a substitute for sidebar visibility.
+public sidebar is a flat list beneath each section separator. Every public page
+must be listed exactly once in the matching `*-nav/meta.json`; cards and inline
+links provide additional discovery, not a substitute for sidebar visibility.
+Rare intentional exceptions must be added to `HIDDEN_SIDEBAR_ROUTES` in
+`scripts/check-docs.mjs`. BitRouter Agent is currently the only hidden page.
 
 Use this boundary when classifying new pages:
 
@@ -80,8 +82,9 @@ Self-hosting page about config covers only the operational contract around it
 
 Folders under `content/docs/(guide)/` own their routes and local source
 ordering. Public sidebar order comes from the `*-nav/meta.json` files, which
-must expose the complete non-Reference source tree. `pnpm lint:docs` fails when
-a page is missing, duplicated, or points to a route that does not exist.
+must expose the non-Reference source tree except for the explicit hidden-page
+allowlist. `pnpm lint:docs` fails when a public page is missing, duplicated, or
+points to a route that does not exist.
 
 ## Authoring contract (import-free MDX)
 
@@ -120,8 +123,9 @@ beyond the whitelisted components. The build enforces this:
 
 1. Create `content/docs/(guide)/<section>/<name>.mdx`.
 2. Add it to the source section's `meta.json` when that local ordering is used.
-3. Add its canonical URL link to the appropriate `*-nav/meta.json`; every
-   non-Reference page must appear in the public sidebar exactly once.
+3. Add its canonical URL link to the appropriate `*-nav/meta.json`; every public
+   non-Reference page must appear in the sidebar exactly once. If the product
+   decision is to hide it, add the route to `HIDDEN_SIDEBAR_ROUTES` instead.
 4. Run `pnpm lint:docs` to check the authoring contract.
 
 ## Adding a section

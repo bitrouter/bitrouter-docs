@@ -1,5 +1,5 @@
 {
   "title": "Model sources",
   "pagesIndex": "index",
-  "pages": ["claude-subscription", "codex-subscription", "local-inference"]
+  "pages": ["local-inference"]
 }

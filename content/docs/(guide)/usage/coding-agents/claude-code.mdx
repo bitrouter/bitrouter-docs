@@ -1,6 +1,6 @@
 ---
 title: Claude Code
-description: Use Claude Code through BitRouter as an ACP adapter, a headless agent, or its native terminal interface.
+description: Run Claude Code through BitRouter and optionally use a Claude Pro or Max subscription as its model source.
 ---
 
 Claude Code is a harness: it owns the agent loop and tools. BitRouter supplies its model route, fallback, policy, and metering.
@@ -51,12 +51,50 @@ claude
 
 For Cloud, use `https://api.bitrouter.ai` and set `ANTHROPIC_AUTH_TOKEN` to a BitRouter key. An authenticated self-hosted daemon likewise requires a valid BitRouter key instead of the placeholder.
 
-## Harness versus subscription
+## Use a Claude subscription
 
-This page routes the **Claude Code application** through BitRouter. To use a Claude Pro or Max plan as the source of tokens, first configure the separate [`claude-code` subscription provider](/docs/usage/model-sources/claude-subscription). The harness and model source can then be used together.
+The `claude-code` provider uses a Claude Pro or Max credential instead of an Anthropic API key. It is separate from the standard `anthropic` provider, but it can be used with the Claude Code harness described above.
+
+Sign in:
+
+```bash
+bro providers login claude-code
+```
+
+BitRouter adopts a compatible local Claude Code login when possible and otherwise starts the provider's login flow. The stored credential refreshes automatically; no `providers:` block is required.
+
+Verify the models and route:
+
+```bash
+bro models --provider claude-code
+bro route claude-code:claude-sonnet-4-6
+```
+
+Use the provider-qualified id to require the subscription source. A request routed to `anthropic:<model>` uses `ANTHROPIC_API_KEY` instead.
+
+Then launch any Claude Code mode normally:
+
+```bash
+bro start
+bro claude
+# or: bro code claude
+# or: bro run claude "Summarize this repo"
+```
+
+Sign out with:
+
+```bash
+bro providers logout claude-code
+```
+
+This removes BitRouter's stored subscription credential and route. It does not modify Claude Code's own configuration.
+
+<Callout type="info">
+Provider login and BitRouter Cloud login are separate. `bro providers login claude-code` authenticates the upstream subscription; `bro cloud login` authenticates your BitRouter account.
+</Callout>
 
 <Cards>
-  <Card title="Claude subscription" href="/docs/usage/model-sources/claude-subscription" description="Use a Claude Pro or Max login as a model source." />
+  <Card title="Model sources" href="/docs/usage/model-sources" description="Compare subscription, BYOK, hosted, and local model sources." />
   <Card title="Coding agents" href="/docs/usage/coding-agents" description="Compare interactive, headless, and native launch modes." />
   <Card title="CLI reference" href="/docs/usage/cli#bro-launch" description="All native launch flags." />
 </Cards>

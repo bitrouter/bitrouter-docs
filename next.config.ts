@@ -5,7 +5,7 @@ import { createMDX } from "fumadocs-mdx/next";
 const finalPath = {
   // get-started (dissolved 2026-08 → overview/quickstart)
   installation: "/docs/overview/quickstart", quickstart: "/docs/overview/quickstart",
-  comparison: "/docs/overview/comparisons/openrouter", "self-host-vs-cloud": "/docs/overview/quickstart#self-host-or-cloud",
+  comparison: "/docs/overview/comparison#openrouter", "self-host-vs-cloud": "/docs/overview/quickstart#self-host-or-cloud",
   // models & routing
   "provider-selection":"/docs/configuration/routing#provider-selection","model-fallback":"/docs/configuration/routing#fallback",
   "model-variants":"/docs/configuration/routing#variants","presets":"/docs/configuration/routing#presets",
@@ -35,10 +35,13 @@ pairs.push(
   // TUI is the user-facing documentation name.
   ["/docs/usage/code", "/docs/usage/tui"],
   ["/docs/usage/protocols", "/docs/usage"],
-  ["/docs/usage/migrate", "/docs/overview/comparisons"],
-  ["/docs/usage/migrate/litellm", "/docs/overview/comparisons/litellm#migrate-from-litellm"],
-  ["/docs/usage/migrate/openrouter", "/docs/overview/comparisons/openrouter#migrate-from-openrouter"],
-  ["/docs/usage/migrate/tensorzero", "/docs/overview/comparisons"],
+  ["/docs/usage/mcp-gateway", "/docs/usage/mcp#mcp-gateway"],
+  ["/docs/usage/model-sources/claude-subscription", "/docs/usage/coding-agents/claude-code#use-a-claude-subscription"],
+  ["/docs/usage/model-sources/codex-subscription", "/docs/usage/coding-agents/codex#use-a-codex-subscription"],
+  ["/docs/usage/migrate", "/docs/overview/comparison"],
+  ["/docs/usage/migrate/litellm", "/docs/overview/comparison#migrate-from-litellm"],
+  ["/docs/usage/migrate/openrouter", "/docs/overview/comparison#migrate-from-openrouter"],
+  ["/docs/usage/migrate/tensorzero", "/docs/overview/comparison"],
   ["/docs/usage/acp-gateway", "/docs/usage/acp"],
   // Product-specific recipes collapsed into maintained task pages (2026-09).
   ["/docs/usage/coding-agents/opencode", "/docs/usage/coding-agents"],
@@ -63,14 +66,22 @@ pairs.push(
   ["/docs/customization/tools/fusion", "/docs/customization/tools/model-backed-tools#fusion"],
   ["/docs/customization/tools/websearch", "/docs/customization/tools/web-tools#web-search"],
   ["/docs/customization/tools/web-fetch", "/docs/customization/tools/web-tools#web-fetch"],
-  // Self-hosting consolidated around the deployment lifecycle (2026-09).
-  ["/docs/self-hosting/production-config", "/docs/self-hosting/deploy#production-configuration"],
-  ["/docs/self-hosting/run-as-a-service", "/docs/self-hosting/deploy#run-as-a-service"],
-  ["/docs/self-hosting/networking", "/docs/self-hosting/deploy#network-and-tls"],
-  ["/docs/self-hosting/authentication", "/docs/self-hosting/secure#authenticate-callers"],
-  ["/docs/self-hosting/hardening", "/docs/self-hosting/secure#production-checklist"],
-  ["/docs/self-hosting/operations", "/docs/self-hosting/operate#change-and-diagnose"],
-  ["/docs/self-hosting/state-and-backups", "/docs/self-hosting/operate#state-and-backups"],
+  // Self-hosting lifecycle consolidated into one page (2026-09).
+  ["/docs/self-hosting/install", "/docs/self-hosting#install"],
+  ["/docs/self-hosting/deploy", "/docs/self-hosting#deploy"],
+  ["/docs/self-hosting/secure", "/docs/self-hosting#secure"],
+  ["/docs/self-hosting/operate", "/docs/self-hosting#operate"],
+  ["/docs/self-hosting/production-config", "/docs/self-hosting#production-configuration"],
+  ["/docs/self-hosting/run-as-a-service", "/docs/self-hosting#run-as-a-service"],
+  ["/docs/self-hosting/networking", "/docs/self-hosting#network-and-tls"],
+  ["/docs/self-hosting/authentication", "/docs/self-hosting#authenticate-callers"],
+  ["/docs/self-hosting/hardening", "/docs/self-hosting#production-checklist"],
+  ["/docs/self-hosting/operations", "/docs/self-hosting#change-and-diagnose"],
+  ["/docs/self-hosting/state-and-backups", "/docs/self-hosting#state-and-backups"],
+  // Comparison pages consolidated into one singular route (2026-09).
+  ["/docs/overview/comparisons", "/docs/overview/comparison"],
+  ["/docs/overview/comparisons/openrouter", "/docs/overview/comparison#openrouter"],
+  ["/docs/overview/comparisons/litellm", "/docs/overview/comparison#litellm"],
   // 2026-09 task-language rename: Router → Configuration,
   // Extensions → Customization. The config page also became Config file.
   ["/docs/routers", "/docs/configuration"],
@@ -82,7 +93,7 @@ pairs.push(
   ["/docs/guides", "/docs/usage"],
   ["/docs/guides/overview", "/docs/overview/what-is-bitrouter"],
   ["/docs/guides/overview/quickstart", "/docs/overview/quickstart"],
-  ["/docs/guides/overview/comparison", "/docs/overview/comparisons/openrouter"],
+  ["/docs/guides/overview/comparison", "/docs/overview/comparison#openrouter"],
   ["/docs/guides/overview/provider", "/docs/customization/models#built-in-providers-with-your-own-key"],
   // intro page renamed (2026-07): recursive-self-improvement → what-is-bitrouter
   ["/docs/overview/recursive-self-improvement", "/docs/overview/what-is-bitrouter"],
@@ -119,7 +130,7 @@ pairs.push(
   // slugs llms.txt advertised under get-started/ that never had a page there
   ["/docs/get-started/quickstart", "/docs/overview/quickstart"],
   ["/docs/get-started/installation", "/docs/overview/quickstart"],
-  ["/docs/get-started/comparison", "/docs/overview/comparisons/openrouter"],
+  ["/docs/get-started/comparison", "/docs/overview/comparison#openrouter"],
   ["/docs/get-started/set-up-routing", "/docs/configuration/routing#provider-selection"],
   ["/docs/get-started/set-up-tracing", "/docs/configuration/observability#self-hosted-opentelemetry"],
   ["/docs/get-started/set-up-evaling", "/docs/configuration/observability#evaluation"],
@@ -195,10 +206,10 @@ pairs.push(
   ["/docs/integrations/local-models", "/docs/usage/model-sources"],
   ["/docs/cookbook", "/docs/usage/coding-agents"],
   // Migration walkthroughs now live on the relevant comparison pages.
-  ["/docs/integrations/migrate/litellm", "/docs/overview/comparisons/litellm#migrate-from-litellm"],
-  ["/docs/integrations/migrate/openrouter", "/docs/overview/comparisons/openrouter#migrate-from-openrouter"],
-  ["/docs/cookbook/migration/litellm", "/docs/overview/comparisons/litellm#migrate-from-litellm"],
-  ["/docs/cookbook/migration/openrouter", "/docs/overview/comparisons/openrouter#migrate-from-openrouter"],
+  ["/docs/integrations/migrate/litellm", "/docs/overview/comparison#migrate-from-litellm"],
+  ["/docs/integrations/migrate/openrouter", "/docs/overview/comparison#migrate-from-openrouter"],
+  ["/docs/cookbook/migration/litellm", "/docs/overview/comparison#migrate-from-litellm"],
+  ["/docs/cookbook/migration/openrouter", "/docs/overview/comparison#migrate-from-openrouter"],
   // Earlier router-section names now resolve into Router or Extensions.
   ["/docs/models-and-routing/presets", "/docs/configuration/routing#presets"],
   ["/docs/models-and-routing/byok", "/docs/customization/models#built-in-providers-with-your-own-key"],
@@ -214,7 +225,7 @@ pairs.push(
   ["/docs/gateway-and-routing/bring-your-own-provider", "/docs/customization/models#built-in-providers-with-your-own-key"],
   ["/docs/gateway-and-routing/structured-outputs", "/docs/configuration/structured-outputs"],
   ["/docs/gateway-and-routing/guardrails", "/docs/configuration/guardrails"],
-  ["/docs/gateway-and-routing/mcp-gateway", "/docs/usage/mcp-gateway"],
+  ["/docs/gateway-and-routing/mcp-gateway", "/docs/usage/mcp#mcp-gateway"],
   ["/docs/gateway-and-routing/server-tools", "/docs/customization/tools/server-tools"],
   ["/docs/gateway-and-routing/advisor", "/docs/customization/tools/model-backed-tools#advisor"],
   ["/docs/gateway-and-routing/subagent", "/docs/customization/tools/model-backed-tools#sub-agent"],
@@ -228,7 +239,7 @@ pairs.push(
   // The section index has no page of its own, and `:slug*` matches zero
   // segments too — so the bare path has to be claimed before the wildcard.
   ["/docs/mcp-and-tool-calling", "/docs/customization/tools/server-tools"],
-  ["/docs/mcp-and-tool-calling/mcp-gateway", "/docs/usage/mcp-gateway"],
+  ["/docs/mcp-and-tool-calling/mcp-gateway", "/docs/usage/mcp#mcp-gateway"],
   ["/docs/mcp-and-tool-calling/acp-gateway", "/docs/usage/acp"],
   ["/docs/mcp-and-tool-calling/:slug*", "/docs/customization/tools/:slug*"],
   // evals-and-tracing/ → Router observability
@@ -365,18 +376,18 @@ const nextConfig: NextConfig = {
 
       // ── Integrations URL history → Usage ──
       { source: "/docs/integrations/models", destination: "/docs/usage/model-sources", permanent: true },
-      { source: "/docs/integrations/claude-subscription", destination: "/docs/usage/model-sources/claude-subscription", permanent: true },
-      { source: "/docs/integrations/codex-subscription", destination: "/docs/usage/model-sources/codex-subscription", permanent: true },
+      { source: "/docs/integrations/claude-subscription", destination: "/docs/usage/coding-agents/claude-code#use-a-claude-subscription", permanent: true },
+      { source: "/docs/integrations/codex-subscription", destination: "/docs/usage/coding-agents/codex#use-a-codex-subscription", permanent: true },
       { source: "/docs/integrations/ollama", destination: "/docs/usage/model-sources/local-inference", permanent: true },
       { source: "/docs/integrations/vllm", destination: "/docs/usage/model-sources/local-inference", permanent: true },
       { source: "/docs/integrations/unsloth", destination: "/docs/usage/model-sources/local-inference", permanent: true },
 
       // ── /compare article retired; comparisons live in docs → overview (2026-07) ──
-      { source: "/compare/bitrouter-vs-openrouter", destination: "/docs/overview/comparisons/openrouter", permanent: true },
-      { source: "/compare/bitrouter-vs-litellm", destination: "/docs/overview/comparisons/litellm", permanent: true },
-      { source: "/compare/bitrouter-vs-portkey", destination: "/docs/overview/comparisons/openrouter", permanent: true },
-      { source: "/compare", destination: "/docs/overview/comparisons/openrouter", permanent: true },
-      { source: "/zh/compare/:slug*", destination: "/docs/overview/comparisons/openrouter", permanent: true },
+      { source: "/compare/bitrouter-vs-openrouter", destination: "/docs/overview/comparison#openrouter", permanent: true },
+      { source: "/compare/bitrouter-vs-litellm", destination: "/docs/overview/comparison#litellm", permanent: true },
+      { source: "/compare/bitrouter-vs-portkey", destination: "/docs/overview/comparison#openrouter", permanent: true },
+      { source: "/compare", destination: "/docs/overview/comparison#openrouter", permanent: true },
+      { source: "/zh/compare/:slug*", destination: "/docs/overview/comparison#openrouter", permanent: true },
 
       // ── Legal pages moved off /legal to flat top-level URLs ──
       { source: "/legal/privacy", destination: "/privacy-policy", permanent: true },

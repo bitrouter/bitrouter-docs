@@ -1,6 +1,6 @@
 ---
 title: Codex
-description: Use Codex through BitRouter as an ACP adapter, a headless agent, or its native terminal interface.
+description: Run Codex through BitRouter and optionally use a ChatGPT Plus or Pro subscription as its model source.
 ---
 
 Codex is a harness: it owns the agent loop and tools. BitRouter supplies its model route, fallback, policy, and metering.
@@ -52,12 +52,54 @@ For Cloud, use `https://api.bitrouter.ai/v1`, set `env_key = "BITROUTER_API_KEY"
 Codex model-provider configuration belongs in the user-level `~/.codex/config.toml`. Project-local Codex configuration does not define model providers.
 </Callout>
 
-## Harness versus subscription
+## Use a Codex subscription
 
-This page routes the **Codex application** through BitRouter. To use a ChatGPT Plus or Pro plan as the source of tokens, configure the separate [`openai-codex` subscription provider](/docs/usage/model-sources/codex-subscription).
+The `openai-codex` provider uses a ChatGPT Plus or Pro credential and the Codex Responses backend. It is separate from the standard `openai` API-key provider, but it can be used with the Codex harness described above.
+
+Sign in:
+
+```bash
+bro providers login openai-codex
+```
+
+BitRouter can import a compatible local Codex login or start the provider's browser flow. For automation that must not open a browser:
+
+```bash
+bro providers login openai-codex --import-existing --no-browser
+```
+
+No `providers:` block is required. Verify the models and route:
+
+```bash
+bro models --provider openai-codex
+bro route openai-codex:gpt-5-codex
+```
+
+Use the provider-qualified id to require the subscription source. A request routed to `openai:<model>` uses `OPENAI_API_KEY` and the public OpenAI API instead.
+
+Then launch any Codex mode normally:
+
+```bash
+bro start
+bro codex
+# or: bro code codex
+# or: bro run codex "Summarize this repo"
+```
+
+Sign out with:
+
+```bash
+bro providers logout openai-codex
+```
+
+This removes BitRouter's stored subscription credential. It does not sign the Codex CLI out of its own account.
+
+<Callout type="info">
+Provider login and BitRouter Cloud login are separate. `bro providers login openai-codex` authenticates the upstream subscription; `bro cloud login` authenticates your BitRouter account.
+</Callout>
 
 <Cards>
-  <Card title="Codex subscription" href="/docs/usage/model-sources/codex-subscription" description="Use a ChatGPT login as a model source." />
+  <Card title="Model sources" href="/docs/usage/model-sources" description="Compare subscription, BYOK, hosted, and local model sources." />
   <Card title="Coding agents" href="/docs/usage/coding-agents" description="Compare interactive, headless, and native launch modes." />
   <Card title="CLI reference" href="/docs/usage/cli#bro-launch" description="All native launch flags." />
 </Cards>

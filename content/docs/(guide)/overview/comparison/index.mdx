@@ -1,0 +1,101 @@
+---
+title: Comparison
+description: Compare BitRouter with OpenRouter and LiteLLM across ownership, routing behavior, deployment, and migration.
+---
+
+BitRouter is not trying to win on catalog size or gateway feature count. It is an Apache-2.0 router built around an operator-owned learning loop: route agent workflows, observe outcomes, and improve the policy using evidence from your own traffic.
+
+| Start with | Best fit |
+| --- | --- |
+| **BitRouter** | You want an inspectable, self-hostable router that optimizes model choice for complete agent workflows |
+| **OpenRouter** | You want a hosted key with the broadest model marketplace and minimal infrastructure |
+| **LiteLLM** | You want a broad Python SDK or an all-in-one proxy with a mature gateway surface |
+
+## OpenRouter
+
+OpenRouter built the hosted model-marketplace category. One key and a broad catalog make it an excellent choice when reach and convenience matter most.
+
+BitRouter makes a different bet: the hard problem is no longer only *how many models can you reach*, but *which model should this workflow step use* and *who owns the layer making that decision*.
+
+### Where BitRouter differs
+
+**You can run the whole router yourself.** BitRouter is Apache 2.0; `bro start` runs it in your VPC, CI, or laptop. Self-hosting keeps the routing policy, provider credentials, and request path in infrastructure you control. OpenRouter is a hosted service.
+
+**Self-hosted BYOK has no BitRouter inference fee.** Your provider bills you directly. OpenRouter's hosted platform and BYOK allowances vary by plan, so check its [current pricing](https://openrouter.ai/pricing) rather than treating a fee quoted here as permanent. BitRouter Cloud remains a separate managed option.
+
+**The router learns your workload.** BitRouter runs an [act → observe → evaluate → learn](/docs/overview/what-is-bitrouter) cycle over your actual workflows. The routing policy is readable, versioned, and yours to approve.
+
+<CompareTable slug="bitrouter-vs-openrouter" />
+
+### Use OpenRouter when
+
+- **You want the broadest hosted catalog.** BitRouter Cloud deliberately curates its agentic and coding set. BitRouter can still [bring your own model](/docs/customization/models#custom-endpoints-and-models), but that is different from having every model on one hosted account.
+- **You want free hosted models.** OpenRouter surfaces free options for some models; BitRouter Cloud does not currently offer a free-model tier.
+- **You need enterprise tooling BitRouter has not shipped.** Review [Enterprise](/docs/enterprise) before planning a migration around SSO, audit, compliance, or contractual support requirements.
+
+### Migrate from OpenRouter
+
+For BitRouter Cloud, replace the base URL and credential:
+
+```diff
+- base_url="https://openrouter.ai/api/v1"
+- api_key=OPENROUTER_API_KEY
++ base_url="https://api.bitrouter.ai/v1"
++ api_key=BITROUTER_API_KEY
+```
+
+Keep explicit model ids such as `openai/gpt-4o`; replace `openrouter/auto` with `bitrouter/auto`. Remove OpenRouter-specific `HTTP-Referer`, `X-Title`, `transforms`, and `route` fields because BitRouter does not use them.
+
+For self-hosting, [install and start BitRouter](/docs/self-hosting#install), provide upstream provider keys, and point the client at `http://127.0.0.1:4356/v1`. Verify required models in the [catalog](/docs/overview/supported-models) before moving production traffic.
+
+## LiteLLM
+
+LiteLLM is the default Python gateway choice for good reason. It is MIT-licensed, covers a broad provider and endpoint surface, and offers both an importable SDK and a proxy. If you need `from litellm import completion` inside your process, BitRouter does not replace that shape.
+
+The useful question is whether you want a broad gateway toolkit or a focused router that gets better at model selection for your workflow.
+
+### All-in-one proxy vs. a router that learns
+
+LiteLLM's bet is coverage: a broad provider and endpoint surface you configure. BitRouter concentrates on an operator-owned feedback loop. It wraps the agent loop in a second one — [act → observe → evaluate → learn](/docs/overview/what-is-bitrouter) — and folds admitted evidence back into the routing policy.
+
+An [MCP gateway](/docs/usage/mcp#mcp-gateway) for tools and local [ACP adapters](/docs/usage/acp) for agent sessions are included because they serve that loop. The router remains one binary and one `bitrouter.yaml`; new model and provider definitions live in the open [registry](/docs/customization/models).
+
+<CompareTable slug="bitrouter-vs-litellm" />
+
+### Deployment and commercial model
+
+LiteLLM's open-source proxy is free to self-host. Its commercial Enterprise offering is scoped around gateway capacity, architecture, and support; check [LiteLLM's current pricing](https://www.litellm.ai/pricing) for current packaging.
+
+[BitRouter Cloud](/docs/overview/quickstart) is the managed path for users who do not want to operate a proxy or manage upstream accounts. The core stays Apache 2.0 and free to self-host; self-hosted BYOK requests do not incur a BitRouter inference fee.
+
+### Python ecosystem vs. a standalone binary
+
+LiteLLM offers two shapes BitRouter does not copy: an importable Python SDK and a feature-rich proxy for teams already operating a Python gateway stack.
+
+BitRouter is distributed as one Rust binary with its router, protocol adapters, local MCP gateway, and ACP adapters together. That reduces moving parts for the deployment BitRouter targets; it is an operational tradeoff, not a claim that one implementation language makes a gateway secure or fast by itself.
+
+### Use LiteLLM when
+
+- **You need breadth on day one.** LiteLLM covers a broad provider set plus embeddings, rerank, audio, and image endpoints. BitRouter focuses on agentic chat models and extends through the open registry.
+- **You want a library, not a proxy.** LiteLLM's importable SDK supports in-process calls, hooks, async generators, and framework middleware.
+- **You need mature enterprise controls today.** LiteLLM Enterprise has shipped SSO/SAML, audit, RBAC, compliance, and support options that BitRouter is still developing.
+
+### Migrate from LiteLLM
+
+If you use the LiteLLM Python SDK in-process, this is an architecture change rather than a package swap: move model calls to a standard OpenAI-compatible client and send them through a BitRouter endpoint. If you run LiteLLM Proxy, replace that service while keeping applications on the same endpoint shape.
+
+1. Choose [BitRouter Cloud or self-hosting](/docs/overview/quickstart).
+2. Move provider credentials into the cloud account, environment variables, or [`bitrouter.yaml`](/docs/configuration/config-file).
+3. Change the client base URL to `https://api.bitrouter.ai/v1` or `http://127.0.0.1:4356/v1`.
+4. Translate LiteLLM `model_list`, fallback, and routing settings into BitRouter [providers, presets, and fallback rules](/docs/configuration/routing).
+5. Send representative requests, inspect selected routes, and configure [OpenTelemetry export](/docs/configuration/observability#self-hosted-opentelemetry) before retiring the old proxy.
+
+BitRouter does not replace LiteLLM's importable SDK, non-chat endpoint breadth, cache layer, or mature team-admin surface. Keep workloads that depend on those features on LiteLLM until you have an explicit replacement.
+
+## Next steps
+
+<Cards>
+  <Card title="Quickstart" href="/docs/overview/quickstart" description="Start with BitRouter Cloud or a self-hosted endpoint." />
+  <Card title="Self-hosting" href="/docs/self-hosting" description="Run the open-source router on infrastructure you control." />
+  <Card title="Provider selection" href="/docs/configuration/routing#provider-selection" description="Configure adaptive routing on your own keys." />
+</Cards>

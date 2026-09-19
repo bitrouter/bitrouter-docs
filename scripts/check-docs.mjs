@@ -9,8 +9,8 @@
 //   - an `import`/`export` statement appears outside a fenced code block
 //   - a GitHub-style alert (`> [!NOTE]`) is used: the site has no alerts remark
 //     plugin, so it renders as a blockquote with a literal `[!NOTE]` visible
-//   - a non-Reference page is missing from the public sidebar, appears more
-//     than once, or a sidebar link points at a missing page
+//   - a non-Reference page not explicitly allowlisted as hidden is missing
+//     from the public sidebar, appears more than once, or points at a missing page
 import { readdir, readFile } from "node:fs/promises";
 import { join, relative } from "node:path";
 import {
@@ -38,6 +38,9 @@ const ROOT = "content/docs";
 // Generated output, exempt from the hand-authoring contract: it is emitted by
 // scripts/generate-cli.mjs from the binary's own `--help`.
 const GENERATED = new Set(["(guide)/usage/cli.mdx"]);
+// Intentional exceptions to the otherwise complete public sidebar. Keep this
+// list short and document each product-navigation decision.
+const HIDDEN_SIDEBAR_ROUTES = new Set(["/docs/usage/agent"]);
 const NAV_FILES = [
   "(overview-nav)/meta.json",
   "(usage-nav)/meta.json",
@@ -134,8 +137,17 @@ async function main() {
   const sidebarDocs = files
     .filter(isDoc)
     .filter((path) => !relative(ROOT, path).replace(/\\/g, "/").startsWith("reference/"));
-  const expectedRoutes = new Set(sidebarDocs.map(docRoute));
+  const allSidebarRoutes = new Set(sidebarDocs.map(docRoute));
+  const expectedRoutes = new Set(
+    [...allSidebarRoutes].filter((route) => !HIDDEN_SIDEBAR_ROUTES.has(route)),
+  );
   const seenRoutes = new Map();
+
+  for (const route of HIDDEN_SIDEBAR_ROUTES) {
+    if (!allSidebarRoutes.has(route)) {
+      errors.push(`${route}  hidden-sidebar allowlist entry has no MDX page`);
+    }
+  }
 
   for (const navFile of NAV_FILES) {
     const meta = JSON.parse(await readFile(join(ROOT, navFile), "utf8"));
@@ -196,7 +208,8 @@ async function main() {
   console.log(
     `check-docs: OK — ${docs.length} doc(s) across ${SECTIONS.length} sections ` +
       `and ${STANDALONE_DOCS.length} standalone page(s) pass the authoring contract; ` +
-      `${expectedRoutes.size} non-Reference page(s) appear exactly once in the sidebar`,
+      `${expectedRoutes.size} visible non-Reference page(s) appear exactly once in the sidebar; ` +
+      `${HIDDEN_SIDEBAR_ROUTES.size} page(s) are intentionally hidden`,
   );
 }
 

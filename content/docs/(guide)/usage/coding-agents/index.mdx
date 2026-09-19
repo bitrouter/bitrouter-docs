@@ -50,7 +50,7 @@ bro launch claude -- --permission-mode plan
 
 Arguments after `--` belong to the harness. BitRouter options such as `--model`, `--base-url`, and `--check` must come before it.
 
-Supported native harnesses also receive the aggregate [MCP gateway](/docs/usage/mcp-gateway) when they expose a compatible injection mechanism. The launch summary states what was actually routed or injected; Pi and some other harnesses do not expose an MCP injection surface.
+Supported native harnesses also receive the aggregate [MCP gateway](/docs/usage/mcp#mcp-gateway) when they expose a compatible injection mechanism. The launch summary states what was actually routed or injected; Pi and some other harnesses do not expose an MCP injection surface.
 
 ## Other harnesses
 
@@ -68,9 +68,9 @@ Use a `provider/model` id where the harness accepts a model name. Product-specif
 | You want to… | Read |
 | --- | --- |
 | Run the Claude Code application | [Claude Code](#claude-code) |
-| Spend a Claude Pro or Max subscription | [Claude subscription](/docs/usage/model-sources/claude-subscription) |
+| Spend a Claude Pro or Max subscription | [Claude Code](/docs/usage/coding-agents/claude-code#use-a-claude-subscription) |
 | Run the Codex application | [Codex](#codex) |
-| Spend a ChatGPT Plus or Pro subscription | [Codex subscription](/docs/usage/model-sources/codex-subscription) |
+| Spend a ChatGPT Plus or Pro subscription | [Codex](/docs/usage/coding-agents/codex#use-a-codex-subscription) |
 
 ### Claude Code
 
@@ -81,8 +81,8 @@ Use `bro code claude`, `bro run claude`, or `bro claude`. See the [Claude Code d
 Use `bro code codex`, `bro run codex`, or `bro codex`. See the [Codex details](/docs/usage/coding-agents/codex) when you need a permanent provider block.
 
 <Cards>
-  <Card title="Claude Code" href="/docs/usage/coding-agents/claude-code" description="ACP, native launch, and manual Anthropic endpoint configuration." />
-  <Card title="Codex" href="/docs/usage/coding-agents/codex" description="ACP, native launch, and permanent Codex provider configuration." />
+  <Card title="Claude Code" href="/docs/usage/coding-agents/claude-code" description="ACP, native launch, manual configuration, and Claude subscription login." />
+  <Card title="Codex" href="/docs/usage/coding-agents/codex" description="ACP, native launch, permanent configuration, and ChatGPT subscription login." />
   <Card title="TUI" href="/docs/usage/tui" description="Use BitRouter's interactive ACP conversation." />
   <Card title="ACP" href="/docs/usage/acp" description="Inspect adapters and run headless turns." />
 </Cards>

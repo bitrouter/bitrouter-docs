@@ -2,7 +2,8 @@ import "./zed.css";
 import { Hero } from "./hero";
 import { TuiDemo } from "./tui-demo";
 import { Benchmark } from "./benchmark";
-import { OpenSource } from "./open-source";
+import { Features } from "./open-source";
+import { EnterprisePricing } from "./enterprise-pricing";
 import { Faq } from "./faq";
 import { FAQS } from "./data";
 import { FinalCta } from "./cta";
@@ -13,7 +14,7 @@ import { FinalCta } from "./cta";
  * the hero down to the final CTA on the flat backdrop.
  *
  * The page follows one compact buying story: value, product, evidence,
- * ownership, deployment choice, objections, action.
+ * ownership, commercial path, objections, action.
  */
 export function ZedLanding() {
   return (
@@ -21,7 +22,8 @@ export function ZedLanding() {
       <Hero />
       <TuiDemo />
       <Benchmark />
-      <OpenSource />
+      <Features />
+      <EnterprisePricing />
       <section className="zed-wrap zed-sec">
         <Faq items={FAQS} heading="Questions." jsonLd />
       </section>

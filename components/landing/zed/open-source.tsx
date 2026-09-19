@@ -1,98 +1,151 @@
 import { ZED_LINKS } from "./primitives";
 
-const VALUES = [
-  {
-    title: "Run it yourself",
-    body: "Deploy the router in your own infrastructure and choose which model providers it can reach.",
-  },
-  {
-    title: "Inspect every decision",
-    body: "The routing engine, policy files, traces, and benchmark methodology are open to review.",
-  },
-  {
-    title: "Change the rules",
-    body: "Fork the Apache-2.0 core or keep policy changes in Git beside the systems they govern.",
-  },
-] as const;
-
-const COMPARISON = [
-  ["Source access", "Apache-2.0", "Vendor-controlled"],
-  ["Deployment", "Self-host or Cloud", "Hosted service"],
-  ["Routing policy", "Readable and versioned", "Managed in product"],
-] as const;
-
-export function OpenSource() {
+function CoreVisual() {
   return (
-    <section className="zed-wrap zed-sec" id="open-source">
-      <div className="zed-oss-intro">
-        <div>
-          <div className="zed-eyebrow">Open source is the product strategy</div>
-          <h2 className="zed-display">The router is yours.</h2>
+    <div className="zed-feature-visual zed-core-visual" aria-hidden="true">
+      <div className="zed-visual-caption">local deployment</div>
+      <div className="zed-core-stage">
+        <div className="zed-core-binary">
+          <span className="zed-status-dot" />
+          <div>
+            <strong>bitrouter</strong>
+            <span>one process</span>
+          </div>
         </div>
-        <p className="zed-lead">
-          Routing is infrastructure. You should be able to see how it spends, change how it
-          decides, and run it without asking a vendor for permission.
-        </p>
-      </div>
-
-      <div className="zed-value-grid">
-        {VALUES.map((value, index) => (
-          <article key={value.title}>
-            <div className="zed-cardlabel">0{index + 1}</div>
-            <h3>{value.title}</h3>
-            <p>{value.body}</p>
-          </article>
-        ))}
-      </div>
-
-      <div className="zed-oss-compare" aria-label="BitRouter and hosted-only routers compared">
-        <div className="zed-compare-row zed-compare-head">
-          <span />
-          <span>BitRouter</span>
-          <span>Hosted-only routers</span>
+        <div className="zed-core-line" />
+        <div className="zed-core-modules">
+          {[
+            ["providers", "OpenAI · Anthropic · custom"],
+            ["protocols", "OpenAI · Anthropic · MCP · ACP"],
+            ["capabilities", "tools · telemetry · guardrails"],
+          ].map(([label, value]) => (
+            <div className="zed-core-module" key={label}>
+              <span>{label}</span>
+              <strong>{value}</strong>
+            </div>
+          ))}
         </div>
-        {COMPARISON.map(([label, bitrouter, hosted]) => (
-          <div className="zed-compare-row" key={label}>
+      </div>
+      <div className="zed-visual-footer">SQLite optional · no queue · no sidecar</div>
+    </div>
+  );
+}
+
+function DecisionVisual() {
+  return (
+    <div className="zed-feature-visual zed-decision-visual" aria-hidden="true">
+      <div className="zed-visual-caption">route receipt</div>
+      <div className="zed-decision-flow">
+        {[
+          ["request", "bitrouter/auto"],
+          ["workflow state", "midstream"],
+          ["matched rule", "tier: cheap"],
+          ["selected route", "kimi-k3 · max"],
+        ].map(([label, value]) => (
+          <div className="zed-decision-step" key={label}>
             <span>{label}</span>
-            <span>{bitrouter}</span>
-            <span>{hosted}</span>
+            <strong>{value}</strong>
           </div>
         ))}
       </div>
-
-      <div className="zed-action-row">
-        <a className="zed-btn zed-btn-ghost" href={ZED_LINKS.github}>
-          View source
-        </a>
-        <a className="zed-btn-underline" href={ZED_LINKS.selfHosting}>
-          Self-hosting guide
-        </a>
+      <div className="zed-decision-receipt">
+        <span>decision</span>
+        <strong>policy route 03 matched</strong>
+        <span>inspectable · versioned · reversible</span>
       </div>
+    </div>
+  );
+}
 
-      <div className="zed-deploy">
-        <div className="zed-deploy-heading">
-          <div className="zed-eyebrow">Start your way</div>
-          <h2 className="zed-display">Same router. Two ways to run it.</h2>
-          <p className="zed-lead">Start in one mode and move later without changing the routing engine.</p>
-        </div>
+function WorkflowVisual() {
+  return (
+    <div className="zed-feature-visual zed-workflow-visual" aria-hidden="true">
+      <div className="zed-visual-caption">workflow policy</div>
+      <div className="zed-workflow-routes">
+        {[
+          ["plan", "strong"],
+          ["edit", "economy"],
+          ["verify", "strong"],
+          ["recover", "guarded fallback"],
+        ].map(([step, route]) => (
+          <div className="zed-workflow-route" key={step}>
+            <span>{step}</span>
+            <i />
+            <strong>{route}</strong>
+          </div>
+        ))}
+      </div>
+      <div className="zed-workflow-diff">
+        <span className="del">- midstream: capable</span>
+        <span className="add">+ midstream: cheap</span>
+        <small>policy.lock · review before publish</small>
+      </div>
+    </div>
+  );
+}
 
-        <article>
-          <div className="zed-cardlabel">Self-host</div>
-          <h3>Run the router in your infrastructure.</h3>
-          <p>Use your provider keys, connect local models, and keep operations under your control.</p>
-          <a className="zed-btn-underline" href={ZED_LINKS.quickstart}>
-            Install BitRouter
-          </a>
-        </article>
+const FEATURES = [
+  {
+    n: "01",
+    kicker: "Core",
+    title: (
+      <>
+        Minimal core. <span>Lightweight &amp; extensible.</span>
+      </>
+    ),
+    body: "Start locally with one binary: no external database, queue, container runtime, or sidecar. Add providers, protocol adapters, tools, and telemetry as your deployment needs them.",
+    link: ZED_LINKS.github,
+    linkLabel: "View source",
+    visual: <CoreVisual />,
+  },
+  {
+    n: "02",
+    kicker: "Control",
+    title: (
+      <>
+        Interpretable decisions. <span>Under your control.</span>
+      </>
+    ),
+    body: "Follow a decision from workflow state to the matched rule and selected route. Keep policy in readable configuration, inspect resolution with bro route, and version it in Git.",
+    link: "/docs/configuration/routing",
+    linkLabel: "Inspect routing",
+    visual: <DecisionVisual />,
+  },
+  {
+    n: "03",
+    kicker: "Workflow",
+    title: (
+      <>
+        A customizable router. <span>Adapt it to your workflow.</span>
+      </>
+    ),
+    body: "Add models, providers, tools, and workflow-specific routing behind one stable request interface. Tune planning, routine work, verification, and recovery independently.",
+    link: "/docs/customization",
+    linkLabel: "Customize BitRouter",
+    visual: <WorkflowVisual />,
+  },
+] as const;
 
-        <article>
-          <div className="zed-cardlabel">BitRouter Cloud</div>
-          <h3>Use the managed endpoint.</h3>
-          <p>Skip router operations and add managed providers, consolidated billing, and team workflows.</p>
-          <a className="zed-btn-underline" href={ZED_LINKS.apiKey}>
-            Try Cloud
-          </a>
-        </article>
+export function Features() {
+  return (
+    <section className="zed-wrap zed-sec" id="features" aria-label="BitRouter features">
+      <div className="zed-feature-section-label">Built to be yours</div>
+      <div className="zed-features">
+        {FEATURES.map((feature, index) => (
+          <article className={index % 2 === 1 ? "zed-feature-row reverse" : "zed-feature-row"} key={feature.n}>
+            <div className="zed-feature-copy">
+              <div className="zed-feature-kicker">
+                <span>{feature.n}</span> / {feature.kicker}
+              </div>
+              <h2 className="zed-display">{feature.title}</h2>
+              <p>{feature.body}</p>
+              <a className="zed-btn-underline" href={feature.link}>
+                {feature.linkLabel}
+              </a>
+            </div>
+            <div className="zed-feature-media">{feature.visual}</div>
+          </article>
+        ))}
       </div>
     </section>
   );

@@ -5,9 +5,9 @@
  * ========================================================================== */
 
 export const HERO = {
-  announcement: "the open-source LLM router",
-  headline: "Cut inference costs. Keep control.",
-  sub: "Route agent requests across models and reasoning levels through policy you can inspect, run, and extend. Start with one binary and keep every decision under your control.",
+  announcement: "THE OPEN-SOURCE MODEL ROUTER",
+  headline: "Your router. Your rules.",
+  sub: "BitRouter is an open-source model router you can run, inspect, and extend. Bring your models, define your routing rules, and make it work your way.",
 };
 
 // ── Bring-your-own ──────────────────────────────────────────────────────────

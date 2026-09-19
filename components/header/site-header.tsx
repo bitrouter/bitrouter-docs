@@ -477,7 +477,7 @@ function MobileMenu({
               ) : (
                 <a
                   href={`${config.consoleBaseUrl}/sign-in`}
-                  className="flex flex-1 items-center justify-center rounded-[2px] bg-[var(--z-cta)] px-4 py-3 font-mono text-[11.5px] uppercase tracking-[0.16em] text-white transition-colors hover:bg-[#1a56f0]"
+                  className="flex flex-1 items-center justify-center rounded-[2px] bg-primary px-4 py-3 font-sans text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
                 >
                   Try Cloud
                 </a>

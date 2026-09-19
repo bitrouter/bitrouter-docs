@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
+import { HERO } from "@/components/landing/zed/data";
 
-export const alt = "BitRouter — Open-Source LLM Router";
+export const alt = "BitRouter — Your router. Your rules.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -46,7 +47,7 @@ export default function OGImage() {
               maxWidth: "800px",
             }}
           >
-            Cut inference costs. Keep control.
+            {HERO.headline}
           </div>
           <div
             style={{

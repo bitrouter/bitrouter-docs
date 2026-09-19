@@ -1,23 +1,17 @@
-import { IBM_Plex_Sans, IBM_Plex_Mono, Newsreader } from "next/font/google";
+import { Geist, Geist_Mono, Newsreader } from "next/font/google";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { SOCIAL_LINKS } from "@/components/landing/social-links";
 import "./globals.css";
 
-// ── "Zed dark" design system typefaces (single global theme) ──
-//   IBM Plex Sans  → UI + body      (--font-sans)
-//   IBM Plex Mono  → mono / labels / code / most copy   (--font-mono)
-//   Newsreader     → display headings, italic  (--font-display)
-const ibmPlexSans = IBM_Plex_Sans({
-  variable: "--font-ibm-plex-sans",
-  weight: ["400", "500", "600"],
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
   display: "swap",
 });
 
-const ibmPlexMono = IBM_Plex_Mono({
-  variable: "--font-ibm-plex-mono",
-  weight: ["400", "500", "600"],
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
   display: "swap",
 });
@@ -25,12 +19,15 @@ const ibmPlexMono = IBM_Plex_Mono({
 const newsreader = Newsreader({
   variable: "--font-newsreader",
   weight: ["400", "500"],
-  style: ["normal", "italic"],
+  style: "italic",
   subsets: ["latin"],
   display: "swap",
 });
 
 const BASE_URL = "https://bitrouter.ai";
+const SITE_DESCRIPTION =
+  "BitRouter is an open-source model router you can run, inspect, and extend. Bring your models, define your routing rules, and make it work your way.";
+const SITE_TITLE = "BitRouter — Open-Source Model Router";
 
 const siteJsonLd = {
   "@context": "https://schema.org",
@@ -40,16 +37,14 @@ const siteJsonLd = {
       name: "BitRouter",
       url: BASE_URL,
       logo: `${BASE_URL}/logo.svg`,
-      description:
-        "The open-source LLM router for reducing inference costs while keeping routing policy under your control.",
+      description: SITE_DESCRIPTION,
       sameAs: SOCIAL_LINKS.map((s) => s.href),
     },
     {
       "@type": "WebSite",
       name: "BitRouter",
       url: BASE_URL,
-      description:
-        "Route requests across models to reduce inference costs. Self-host the Apache-2.0 router or use BitRouter Cloud.",
+      description: SITE_DESCRIPTION,
       inLanguage: "en",
     },
     {
@@ -74,11 +69,10 @@ export const metadata: Metadata = {
     icon: "/logo.svg",
   },
   title: {
-    default: "BitRouter — Open-Source LLM Router",
+    default: SITE_TITLE,
     template: "%s | BitRouter",
   },
-  description:
-    "Route requests across models to reduce inference costs. Self-host the Apache-2.0 router or use BitRouter Cloud.",
+  description: SITE_DESCRIPTION,
   alternates: {
     types: {
       "application/rss+xml": [
@@ -92,16 +86,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "BitRouter",
-    title: "BitRouter — Open-Source LLM Router",
-    description:
-      "Route requests across models to reduce inference costs. Self-host the Apache-2.0 router or use BitRouter Cloud.",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
     url: BASE_URL,
   },
   twitter: {
     card: "summary_large_image",
-    title: "BitRouter — Open-Source LLM Router",
-    description:
-      "Route requests across models to reduce inference costs. Self-host the Apache-2.0 router or use BitRouter Cloud.",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
   },
 };
 
@@ -111,14 +103,18 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`dark ${geistSans.variable} ${geistMono.variable} ${newsreader.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
         />
       </head>
-      <body className={`${ibmPlexSans.variable} ${ibmPlexMono.variable} ${newsreader.variable} font-sans antialiased`}>
+      <body className="font-sans antialiased">
         {children}
       </body>
     </html>

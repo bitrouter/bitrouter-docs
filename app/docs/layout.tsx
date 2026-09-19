@@ -10,7 +10,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <DocsLayout
         tree={source.pageTree}
         tabs={false}
-        sidebar={{ defaultOpenLevel: 1 }}
+        sidebar={{ prefetch: false }}
         nav={{ mode: "top" }}
         slots={{ header: DocsHeader }}
       >

@@ -18,20 +18,19 @@ top-level order is the `pages` list in `content/docs/meta.json`:
 5. **Reference** — the generated Cloud API reference.
 6. **Development** — source and contribution entry points.
 
-Five meta-only folders — `content/docs/(overview-nav)/`, `(usage-nav)/`,
-`(configuration-nav)/`, `(customization-nav)/`, and `(development-nav)/` — define
-the first, second, third, fourth, and sixth groups. They contain links to the
-canonical pages rather than copies of those pages. `content/docs/reference/`
-is the only native content folder in the top-level list because the OpenAPI
-generator owns its nested endpoint tree.
+Each group name in `content/docs/meta.json` is a native Fumadocs separator, not
+a page or collapsible folder. Five meta-only folders —
+`content/docs/(overview-nav)/`, `(usage-nav)/`, `(configuration-nav)/`,
+`(customization-nav)/`, and `(development-nav)/` — are extracted into the root
+with Fumadocs' `...folder` syntax. They contain links to canonical pages rather
+than copies of those pages, so every non-Reference page appears directly below
+its section label.
 
-The notebook layout sets Fumadocs' native `defaultOpenLevel` to `1`, so all six
-top-level groups are presented together while remaining user-collapsible.
-Reference keeps that same top-level presentation, flattens single-operation
-protocol groups into direct links, and reserves nested folders for genuine
-multi-operation groups such as Models & providers and Cloud management. Make
-Reference navigation changes in `scripts/generate-openapi.mjs`; generated
-`meta.json` files are replaced during `prebuild`.
+Reference is the deliberate exception. `content/docs/reference/` is extracted
+below the **Reference** separator, but the generated API families remain native
+folders with endpoint children. Make Reference navigation changes in
+`scripts/generate-openapi.mjs`; generated `meta.json` files are replaced during
+`prebuild`.
 
 **Changelog is not part of the documentation tree.** It is a top-level `/changelog`
 section with a separate `content/changelog/` source. It still uses the native
@@ -48,13 +47,12 @@ Three rules keep the unified navigation intact:
 3. A page should appear in one user-facing group. Cross-link it from content
    when another journey needs it instead of duplicating the navigation entry.
 
-### Keep Usage shallow
+### Keep non-Reference sections flat
 
-Usage source pages live together under `content/docs/(guide)/usage/`. The
-sidebar shows task-level entry points only: CLI, TUI, coding agents, MCP Support,
-ACP Support, Agent Skills, and model sources. Product-specific recipes live one level
-deeper and are discovered from cards on those overview pages, not by expanding
-another sidebar tree.
+Source pages can remain nested where that keeps related files together, but the
+public sidebar is a flat list beneath each section separator. Every page must be
+listed exactly once in the matching `*-nav/meta.json`; cards and inline links
+provide additional discovery, not a substitute for sidebar visibility.
 
 Use this boundary when classifying new pages:
 
@@ -82,14 +80,8 @@ Self-hosting page about config covers only the operational contract around it
 
 Folders under `content/docs/(guide)/` own their routes and local source
 ordering. Public sidebar order comes from the `*-nav/meta.json` files, which
-intentionally expose fewer entries than the complete source tree.
-
-### Unlisted pages are details, not orphans
-
-A page left out of a public `*-nav/meta.json` still builds and answers at its
-URL. It must be linked from its task overview page and included in its source
-folder's `meta.json`. This is how detailed recipes stay discoverable without
-making the sidebar a complete file browser.
+must expose the complete non-Reference source tree. `pnpm lint:docs` fails when
+a page is missing, duplicated, or points to a route that does not exist.
 
 ## Authoring contract (import-free MDX)
 
@@ -128,8 +120,8 @@ beyond the whitelisted components. The build enforces this:
 
 1. Create `content/docs/(guide)/<section>/<name>.mdx`.
 2. Add it to the source section's `meta.json` when that local ordering is used.
-3. Add a canonical URL link to the appropriate `*-nav/meta.json` if it should
-   appear in the public sidebar.
+3. Add its canonical URL link to the appropriate `*-nav/meta.json`; every
+   non-Reference page must appear in the public sidebar exactly once.
 4. Run `pnpm lint:docs` to check the authoring contract.
 
 ## Adding a section

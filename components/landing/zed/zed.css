@@ -798,8 +798,162 @@
   }
 }
 
+/* ── Pricing page ──────────────────────────────────────────────────────────
+   Four billing modes share one detail surface. The selector is deliberately
+   neutral and compact: the active state comes from structure, not an accent. */
+.zed-pricing-page {
+  max-width: 1040px;
+}
+.zed-pricing-selector {
+  margin-top: 72px;
+}
+.zed-pricing-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid var(--z-rule);
+  border-radius: 8px 8px 0 0;
+  background: var(--z-rule);
+  gap: 1px;
+}
+.zed-pricing-tab {
+  display: flex;
+  min-width: 0;
+  min-height: 76px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 7px;
+  padding: 16px 20px;
+  border: 0;
+  background: var(--z-bg);
+  color: var(--z-ink-5);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.zed-pricing-tab:hover {
+  background: color-mix(in oklab, var(--accent) 46%, var(--z-bg));
+  color: var(--z-ink-2);
+}
+.zed-pricing-tab[aria-selected="true"] {
+  background: var(--accent);
+  color: var(--z-ink);
+}
+.zed-pricing-tab:focus-visible {
+  position: relative;
+  z-index: 1;
+  outline: 1px solid var(--ring);
+  outline-offset: -3px;
+}
+.zed-pricing-tab span {
+  overflow: hidden;
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.zed-pricing-tab small {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--z-ink-7);
+}
+.zed-pricing-tab[aria-selected="true"] small {
+  color: var(--z-ink-4);
+}
+.zed-pricing-panel {
+  border: 1px solid var(--z-rule);
+  border-top: 0;
+  border-radius: 0 0 8px 8px;
+  outline: none;
+}
+.zed-pricing-panel:focus-visible {
+  outline: 1px solid var(--ring);
+  outline-offset: 3px;
+}
+.zed-pricing-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(220px, 0.8fr);
+  gap: 64px;
+  align-items: end;
+  padding: 44px 48px 40px;
+}
+.zed-pricing-summary h2 {
+  margin: 16px 0 0;
+  font-size: clamp(36px, 5vw, 50px);
+  line-height: 1;
+}
+.zed-pricing-summary p {
+  max-width: 58ch;
+  margin: 20px 0 0;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--z-ink-5);
+  text-wrap: pretty;
+}
+.zed-pricing-price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding-bottom: 3px;
+}
+.zed-pricing-price strong {
+  font-family: var(--font-display);
+  font-size: clamp(34px, 4.5vw, 46px);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--z-ink);
+}
+.zed-pricing-price span {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--z-ink-6);
+}
+.zed-pricing-details {
+  margin: 0;
+  border-top: 1px solid var(--z-rule);
+}
+.zed-pricing-detail {
+  display: grid;
+  grid-template-columns: minmax(170px, 0.48fr) minmax(0, 1.52fr);
+  border-bottom: 1px solid var(--z-rule);
+}
+.zed-pricing-detail dt,
+.zed-pricing-detail dd {
+  margin: 0;
+  padding: 15px 48px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.zed-pricing-detail dt {
+  color: var(--z-ink-6);
+}
+.zed-pricing-detail dd {
+  border-left: 1px solid var(--z-rule);
+  color: var(--z-ink-2);
+}
+.zed-pricing-action {
+  display: flex;
+  justify-content: flex-end;
+  padding: 28px 48px;
+}
+.zed-pricing-bottom-space {
+  height: var(--z-sec);
+}
+
 /* Pricing and enterprise: an operating-model ledger, not a tier-card grid.
-   The third path stays explicitly founder-led until a packaged suite is GA. */
+   The enterprise path stays explicitly founder-led until a packaged suite is GA. */
 .zed-commercial {
   display: grid;
   grid-template-columns: 0.82fr 1.18fr;
@@ -957,6 +1111,47 @@
   min-width: max-content;
 }
 @media (max-width: 699px) {
+  .zed-pricing-selector {
+    margin-top: 48px;
+  }
+  .zed-pricing-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .zed-pricing-tab {
+    min-height: 72px;
+    padding: 14px 16px;
+  }
+  .zed-pricing-summary {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 34px 24px 30px;
+  }
+  .zed-pricing-price {
+    padding: 0;
+  }
+  .zed-pricing-detail {
+    grid-template-columns: 1fr;
+  }
+  .zed-pricing-detail dt,
+  .zed-pricing-detail dd {
+    padding: 12px 24px;
+  }
+  .zed-pricing-detail dt {
+    padding-bottom: 3px;
+  }
+  .zed-pricing-detail dd {
+    padding-top: 3px;
+    padding-bottom: 14px;
+    border-left: 0;
+  }
+  .zed-pricing-action {
+    justify-content: stretch;
+    padding: 24px;
+  }
+  .zed-pricing-action .zed-btn {
+    width: 100%;
+    justify-content: center;
+  }
   .zed-tui-fit {
     min-width: 380px;
     max-width: 560px;

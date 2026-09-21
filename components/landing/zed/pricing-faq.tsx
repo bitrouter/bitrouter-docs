@@ -2,24 +2,24 @@ import { Faq } from "./faq";
 
 const PFAQS = [
   {
-    q: "How is this different from OpenRouter and LiteLLM?",
-    a: "OpenRouter is a hosted model marketplace that chooses a provider for a model you selected; its fees and BYOK allowance vary by plan. LiteLLM gives you an importable Python SDK and a proxy whose routes you configure. BitRouter can choose both the model and provider for each call, based on where the call sits in an agent trajectory and the policy you own. Self-hosted BitRouter adds no inference fee; BitRouter Cloud uses the prices shown in the live model catalog.",
+    q: "What do I pay in each mode?",
+    a: "Self-hosting has no BitRouter fee. With BitRouter-hosted models, you pay provider token prices with 0% token markup and routing is included. With Cloud BYOK, you pay your providers for inference and BitRouter once per successful logical request for hosted routing. Enterprise terms are defined with your team.",
   },
   {
-    q: "So what do I actually pay?",
-    a: "Self-hosting is free: you pay your model providers directly and owe BitRouter nothing for the traffic. On BitRouter Cloud, you pay the providers' published token prices with 0% token markup and no separate routing fee. The Cloud endpoint runs the same open-source routing engine as the self-hosted binary.",
+    q: "Does 0% token markup mean there are no other fees?",
+    a: "BitRouter does not add a margin to the provider token prices shown in the model catalog, and model routing is included with hosted inference. Third-party payment processors may charge a fee when you add funds. That top-up fee is separate from model pricing and is not a token markup.",
   },
   {
-    q: "Is cost-per-session a quote, or what you bill me on?",
-    a: "Neither — it's a unit of account. Cost-per-session is how you compare a routed workload against running one baseline model throughout; your Cloud invoice remains token usage at published prices. We do not quote a universal saving in advance because the result depends on your context shape, routing policy, model mix, upstream prices, and cache behavior. BitRouter reports what your traffic actually cost so you can compare it with your own baseline.",
+    q: "What counts as a billable Cloud BYOK request?",
+    a: "One successful logical request. Retries and provider fallbacks performed inside that request are included, so they do not create extra BitRouter request charges. A logical request that ultimately fails is not billed by BitRouter; your provider's own billing rules still apply to any upstream work it performed.",
   },
   {
-    q: "How do I know routing didn't make quality worse?",
-    a: "Because a route has to earn its traffic. You declare what each workload is optimizing for — a cost ceiling, a p50/p95 target, a quality floor — and every session is measured against it. Success rate is the default quality metric and needs nothing from you: outcome classification is deterministic, with no judge in the request path, so a failure escalates a route immediately and a cheaper route must succeed repeatedly before it earns traffic. If your definition of good is narrower than that, point an eval at it — `bitrouter optimize` then runs your workflow twice, once as-is and once with a single routing change, and reports the cost and quality deltas so you can publish or roll back.",
+    q: "Does BitRouter charge for self-hosted BYOK traffic?",
+    a: "No. The Apache-2.0 router does not meter self-hosted traffic or charge a platform or request fee. You run the router and pay your model providers directly. The per-request routing fee applies only when BitRouter operates Cloud BYOK for you.",
   },
   {
-    q: "Does BitRouter charge for self-hosted traffic?",
-    a: "No. The Apache-2.0 router does not meter requests or charge a platform fee. You bring your own provider contracts and pay those providers directly. If you opt into BitRouter Cloud instead, usage is billed through the hosted service at the providers' published token prices.",
+    q: "Can I switch or combine these modes?",
+    a: "Yes. The same routing core sits behind every mode. A self-hosted binary can use local models and your provider keys while also routing selected traffic through BitRouter-hosted models. Cloud customers can choose hosted models or attach their own provider keys.",
   },
   {
     q: "Do you offer a separate enterprise plan?",

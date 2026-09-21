@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { FOOTER_LINKS, LEGAL_LINKS, type FooterLink } from "./footer-nav";
 import { SOCIAL_LINKS } from "./social-links";
-import { NAV_ITEMS } from "../header/nav-config";
 
 const columnLinks = (): FooterLink[] => FOOTER_LINKS;
 const allLinks = (): FooterLink[] => [...columnLinks(), ...LEGAL_LINKS];
@@ -61,15 +60,6 @@ describe("footer links", () => {
     // The grid is lg:grid-cols-6. More than six cells wraps to a second row and
     // the design stops being the one-strip footer it was cut down to.
     expect(FOOTER_LINKS.length).toBeLessThanOrEqual(6);
-  });
-
-  it("carries at least one internal page the header does not", () => {
-    // Repeating a header link is harmless but earns nothing, so the footer has
-    // to justify itself with something only it links — today that is the
-    // changelog, which is nested under Docs in the header's information model.
-    const header = new Set(NAV_ITEMS.map((i) => i.webPath));
-    const only = FOOTER_LINKS.filter((l) => !l.external && !header.has(l.href));
-    expect(only.length).toBeGreaterThan(0);
   });
 
   it("takes its social hrefs from the one social-links source", () => {

@@ -7,8 +7,8 @@ export default function Page() {
 
 export function generateMetadata(): Metadata {
   const description =
-    "Self-host the Apache-2.0 BitRouter core for free, or use BitRouter Cloud at provider list price with 0% token markup.";
-  const ogTitle = "BitRouter Pricing — self-host free or use BitRouter Cloud";
+    "Self-host BitRouter for free, use hosted models with 0% token markup, or bring your keys to Cloud and pay per successful routed request.";
+  const ogTitle = "BitRouter Pricing — free, token-based, BYOK, or enterprise";
   return {
     title: "Pricing",
     description,

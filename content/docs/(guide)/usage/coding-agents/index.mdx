@@ -63,26 +63,240 @@ If a harness is not in the catalog, configure it as a normal API client:
 
 Use a `provider/model` id where the harness accepts a model name. Product-specific configuration keys belong to that harness's documentation; BitRouter only owns the endpoint and routing contract.
 
-## Harness or model source?
+## Claude Code
 
-| You want to… | Read |
-| --- | --- |
-| Run the Claude Code application | [Claude Code](#claude-code) |
-| Spend a Claude Pro or Max subscription | [Claude Code](/docs/usage/coding-agents/claude-code#use-a-claude-subscription) |
-| Run the Codex application | [Codex](#codex) |
-| Spend a ChatGPT Plus or Pro subscription | [Codex](/docs/usage/coding-agents/codex#use-a-codex-subscription) |
+Claude Code owns the agent loop and tools. BitRouter supplies its model route, fallback, policy, and metering.
 
-### Claude Code
+### Pick a mode
 
-Use `bro code claude`, `bro run claude`, or `bro claude`. See the [Claude Code details](/docs/usage/coding-agents/claude-code) when you need manual environment configuration.
+```bash
+bro code claude                         # BitRouter conversation
+bro run claude "Summarize this repo"   # headless ACP turn
+bro claude                              # Claude Code's native interface
+```
 
-### Codex
+`bro launch claude` is the generic spelling of `bro claude`. Both use temporary environment variables for the child process and do not edit Claude Code's user or project settings.
 
-Use `bro code codex`, `bro run codex`, or `bro codex`. See the [Codex details](/docs/usage/coding-agents/codex) when you need a permanent provider block.
+Before launching, verify the executable, daemon, and route:
+
+```bash
+bro launch claude --check
+```
+
+If the Claude executable is missing, the launcher can offer Claude's official installer. Use `--no-install` when an automated environment should fail instead.
+
+### Select a Claude model
+
+Pin a daemon-routable model before the `--` separator:
+
+```bash
+bro claude --model bitrouter/auto
+bro launch claude --model anthropic/claude-sonnet-4-6
+```
+
+Arguments after `--` go directly to Claude Code:
+
+```bash
+bro launch claude -- --permission-mode plan
+```
+
+### Configure Claude Code manually
+
+Use manual environment variables only when Claude Code must start outside `bro launch`. Claude Code appends `/v1/messages`, so the base URL is the host root:
+
+```bash
+export ANTHROPIC_BASE_URL=http://127.0.0.1:4356
+export ANTHROPIC_AUTH_TOKEN=local-placeholder
+export ANTHROPIC_MODEL=bitrouter/auto
+claude
+```
+
+For Cloud, use `https://api.bitrouter.ai` and set `ANTHROPIC_AUTH_TOKEN` to a BitRouter key. An authenticated self-hosted daemon likewise requires a valid BitRouter key instead of the placeholder.
+
+### Use a Claude subscription
+
+The `claude-code` provider uses a Claude Pro or Max credential instead of an Anthropic API key. It is separate from the standard `anthropic` provider, but it can be used with the Claude Code harness described above.
+
+Sign in:
+
+```bash
+bro providers login claude-code
+```
+
+BitRouter adopts a compatible local Claude Code login when possible and otherwise starts the provider's login flow. The stored credential refreshes automatically; no `providers:` block is required.
+
+Verify the models and route:
+
+```bash
+bro models --provider claude-code
+bro route claude-code:claude-sonnet-4-6
+```
+
+Use the provider-qualified id to require the subscription source. A request routed to `anthropic:<model>` uses `ANTHROPIC_API_KEY` instead.
+
+Then launch any Claude Code mode normally:
+
+```bash
+bro start
+bro claude
+# or: bro code claude
+# or: bro run claude "Summarize this repo"
+```
+
+Sign out with:
+
+```bash
+bro providers logout claude-code
+```
+
+This removes BitRouter's stored subscription credential and route. It does not modify Claude Code's own configuration.
+
+<Callout type="info">
+Provider login and BitRouter Cloud login are separate. `bro providers login claude-code` authenticates the upstream subscription; `bro cloud login` authenticates your BitRouter account.
+</Callout>
+
+## Codex
+
+Codex owns the agent loop and tools. BitRouter supplies its model route, fallback, policy, and metering.
+
+### Pick a mode
+
+```bash
+bro code codex                         # BitRouter conversation
+bro run codex "Summarize this repo"   # headless ACP turn
+bro codex                              # Codex's native interface
+```
+
+`bro launch codex` is the generic spelling of `bro codex`. It injects a temporary `bitrouter` model provider into the child process and does not edit `~/.codex/config.toml`.
+
+Verify the executable, daemon, and route before a long run:
+
+```bash
+bro launch codex --check
+```
+
+### Select a Codex model
+
+Pin a daemon-routable model with BitRouter's option:
+
+```bash
+bro codex --model bitrouter/auto
+bro launch codex --model openai/gpt-5-codex
+```
+
+Arguments after `--` go directly to Codex. Avoid forwarding Codex `-c` or `--config` overrides that replace the injected provider; `bro launch` rejects known conflicting shapes.
+
+### Configure Codex permanently
+
+Use a permanent provider block only when Codex must start outside `bro launch`:
+
+```toml
+model_provider = "bitrouter"
+
+[model_providers.bitrouter]
+name = "BitRouter"
+base_url = "http://127.0.0.1:4356/v1"
+wire_api = "responses"
+# env_key = "BITROUTER_API_KEY"
+```
+
+For Cloud, use `https://api.bitrouter.ai/v1`, set `env_key = "BITROUTER_API_KEY"`, and export a BitRouter key. An authenticated self-hosted daemon requires the same.
+
+<Callout type="warning">
+Codex model-provider configuration belongs in the user-level `~/.codex/config.toml`. Project-local Codex configuration does not define model providers.
+</Callout>
+
+### Use a Codex subscription
+
+The `openai-codex` provider uses a ChatGPT Plus or Pro credential and the Codex Responses backend. It is separate from the standard `openai` API-key provider, but it can be used with the Codex harness described above.
+
+Sign in:
+
+```bash
+bro providers login openai-codex
+```
+
+BitRouter can import a compatible local Codex login or start the provider's browser flow. For automation that must not open a browser:
+
+```bash
+bro providers login openai-codex --import-existing --no-browser
+```
+
+No `providers:` block is required. Verify the models and route:
+
+```bash
+bro models --provider openai-codex
+bro route openai-codex:gpt-5-codex
+```
+
+Use the provider-qualified id to require the subscription source. A request routed to `openai:<model>` uses `OPENAI_API_KEY` and the public OpenAI API instead.
+
+Then launch any Codex mode normally:
+
+```bash
+bro start
+bro codex
+# or: bro code codex
+# or: bro run codex "Summarize this repo"
+```
+
+Sign out with:
+
+```bash
+bro providers logout openai-codex
+```
+
+This removes BitRouter's stored subscription credential. It does not sign the Codex CLI out of its own account.
+
+<Callout type="info">
+Provider login and BitRouter Cloud login are separate. `bro providers login openai-codex` authenticates the upstream subscription; `bro cloud login` authenticates your BitRouter account.
+</Callout>
+
+## Model sources
+
+A model source is where inference runs and how it is authenticated. BitRouter puts each source behind the same model ids and routing policy, so the calling agent does not need source-specific code.
+
+| Source | Authentication | Setup |
+| --- | --- | --- |
+| Claude or Codex subscription | Provider OAuth | `bro providers login <provider>` |
+| Built-in BYOK provider | Environment variable or stored key | Export its key or use `bro providers login <provider> --api-key ...` |
+| Custom hosted API | API key | Add a `providers:` entry |
+| Local inference server | Usually loopback; optional key | Add a `providers:` entry |
+
+Subscription providers do not need a YAML block. Other sources use the same minimal shape:
+
+```yaml
+providers:
+  my-source:
+    api_base: https://example.com/v1
+    api_key: ${MY_SOURCE_API_KEY}
+    api_protocol:
+      - "*": chat_completions
+    models:
+      - id: example/model
+```
+
+Use the upstream's actual served model id in `models`. Keep secrets in environment variables rather than committing them to the file.
+
+### Verify a source
+
+```bash
+bro config validate
+bro models --provider my-source
+bro route my-source:example/model
+bro start
+```
+
+- `config validate` catches malformed configuration and unsafe upstream URLs.
+- `models` confirms the source is in the resolved catalog.
+- `route` previews resolution without making an inference request.
+- The provider-qualified form pins one source; the bare model id lets BitRouter select among every source that serves it.
+
+To combine sources, define a [virtual model](/docs/configuration/routing#presets) or fallback chain. A common pattern is local inference first and a hosted source second.
 
 <Cards>
-  <Card title="Claude Code" href="/docs/usage/coding-agents/claude-code" description="ACP, native launch, manual configuration, and Claude subscription login." />
-  <Card title="Codex" href="/docs/usage/coding-agents/codex" description="ACP, native launch, permanent configuration, and ChatGPT subscription login." />
+  <Card title="Local inference" href="/docs/usage/model-sources/local-inference" description="Connect Ollama, vLLM, Unsloth, or another OpenAI-compatible server." />
+  <Card title="Models & providers" href="/docs/customization/models" description="Add a hosted API or provider account with a key." />
   <Card title="TUI" href="/docs/usage/tui" description="Use BitRouter's interactive ACP conversation." />
   <Card title="ACP" href="/docs/usage/acp" description="Inspect adapters and run headless turns." />
 </Cards>

@@ -1,8 +1,7 @@
 {
   "title": "Customization",
-  "pagesIndex": "[Overview](/docs/customization)",
+  "pagesIndex": "[Models & providers](/docs/customization/models)",
   "pages": [
-    "[Models & providers](/docs/customization/models)",
     "[Tool calling](/docs/customization/tools)",
     "[Server tools](/docs/customization/tools/server-tools)",
     "[Model-backed tools](/docs/customization/tools/model-backed-tools)",

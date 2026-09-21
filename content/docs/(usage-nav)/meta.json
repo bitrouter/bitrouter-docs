@@ -1,16 +1,11 @@
 {
   "title": "Usage",
-  "pagesIndex": "[Overview](/docs/usage)",
+  "pagesIndex": "[CLI](/docs/usage/cli)",
   "pages": [
-    "[CLI](/docs/usage/cli)",
     "[TUI](/docs/usage/tui)",
     "[Coding agents](/docs/usage/coding-agents)",
-    "[Claude Code](/docs/usage/coding-agents/claude-code)",
-    "[Codex](/docs/usage/coding-agents/codex)",
     "[MCP Support](/docs/usage/mcp)",
     "[ACP Support](/docs/usage/acp)",
-    "[Agent Skills](/docs/usage/skills)",
-    "[Model sources](/docs/usage/model-sources)",
-    "[Local inference](/docs/usage/model-sources/local-inference)"
+    "[Agent Skills](/docs/usage/skills)"
   ]
 }

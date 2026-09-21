@@ -58,12 +58,10 @@ const TAG_TITLES = {
 };
 
 const ROOT_PAGES = [
-  "---Inference---",
   "openai-compatible",
   "openai-responses",
   "anthropic-compatible",
   "google-compatible",
-  "---Platform---",
   "discovery",
   "byok",
   "management",

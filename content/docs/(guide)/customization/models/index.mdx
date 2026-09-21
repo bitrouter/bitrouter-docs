@@ -10,7 +10,8 @@ A **provider** tells BitRouter where and how to call an upstream. A **model** is
 | Need | Use |
 | --- | --- |
 | A supported provider with your API key | Environment variable or an empty built-in provider block |
-| Claude/Codex subscription or local inference | [Model sources](/docs/usage/model-sources) |
+| Claude or Codex subscription | [Coding agents](/docs/usage/coding-agents#model-sources) |
+| Local inference | [Local inference](/docs/usage/model-sources/local-inference) |
 | A private or OpenAI-compatible endpoint | A custom `providers` entry below |
 | A provider everyone should discover | A pull request to the open registry |
 | Your provider key on BitRouter Cloud | Cloud BYOK |
@@ -108,7 +109,7 @@ For automated onboarding, start with the [BYOK API reference](/docs/reference/by
 Private config affects only your deployment. To make a provider discoverable to every BitRouter installation, add its manifest to the [open provider registry](https://github.com/bitrouter/bitrouter/tree/main/registry) and submit a pull request. Registry data can describe endpoints, protocols, models, capabilities, pricing, and authentication conventions; provider-specific executors or OAuth flows still require code.
 
 <Cards>
-  <Card title="Model sources" href="/docs/usage/model-sources" description="Connect subscriptions, local inference, and hosted sources." />
+  <Card title="Model sources" href="/docs/usage/coding-agents#model-sources" description="Connect subscriptions, local inference, and hosted sources." />
   <Card title="Routing" href="/docs/configuration/routing" description="Control selectors, ordering, and fallback after a source is connected." />
   <Card title="Config file" href="/docs/configuration/config-file" description="Validate and operate the complete bitrouter.yaml file." />
 </Cards>

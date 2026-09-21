@@ -34,7 +34,6 @@ References:
 
 ## Configuration
 
-- [Configuration Overview](${BASE_URL}/docs/configuration): Configure, run, and inspect routing behavior
 - [Config file](${BASE_URL}/docs/configuration/config-file): Create, validate, and operate \`bitrouter.yaml\`
 - [Routing](${BASE_URL}/docs/configuration/routing): Resolve selectors, define ordered fallback chains, presets, and variants, then inspect the result
 - [Guardrails](${BASE_URL}/docs/configuration/guardrails): Block or redact matching request and response content in the router
@@ -43,7 +42,6 @@ References:
 
 ## Customization
 
-- [Customization Overview](${BASE_URL}/docs/customization): Choose the customization surface that matches the capability you are adding
 - [Models & providers](${BASE_URL}/docs/customization/models): Connect a provider account, declare a private endpoint, or contribute to the open registry
 - [Guardrails](${BASE_URL}/docs/configuration/guardrails): Named regex rules that block or redact matching content in requests and responses
 - [Tool calling](${BASE_URL}/docs/customization/tools): Choose router-owned tool execution or an MCP gateway
@@ -53,21 +51,16 @@ References:
 
 ## Usage
 
-- [Usage Overview](${BASE_URL}/docs/usage): Choose the interface or workflow you use to operate BitRouter
 - [CLI](${BASE_URL}/docs/usage/cli): Every command of the binary — serve, route, models, policy, optimize, providers
 - [TUI](${BASE_URL}/docs/usage/tui): BitRouter's interactive ACP conversation with route, activity, permissions, and attributed cost
-- [Coding agents](${BASE_URL}/docs/usage/coding-agents): Choose BitRouter's TUI, a headless ACP turn, or a harness's native interface
-- [Claude Code](${BASE_URL}/docs/usage/coding-agents/claude-code): ACP, headless, native launch, manual configuration, and Claude subscription login
-- [Codex](${BASE_URL}/docs/usage/coding-agents/codex): ACP, headless, native launch, permanent configuration, and ChatGPT subscription login
+- [Coding agents](${BASE_URL}/docs/usage/coding-agents): Run supported harnesses, configure Claude Code and Codex, and connect model sources
 - [MCP Support](${BASE_URL}/docs/usage/mcp): Connect and aggregate upstream MCP servers, expose selected tools to model requests, and search BitRouter documentation
 - [ACP Support](${BASE_URL}/docs/usage/acp): Discover adapters, run headless turns, or expose one over stdio
 - [Agent Skills](${BASE_URL}/docs/usage/skills): Install the BitRouter Skill, inspect local skills, or scaffold a SKILL.md
-- [Model sources](${BASE_URL}/docs/usage/model-sources): Compare subscription, BYOK, hosted, and local inference sources
-- [Local inference](${BASE_URL}/docs/usage/model-sources/local-inference): Connect Ollama, vLLM, Unsloth, or another OpenAI-compatible server
 
 ## Reference
 
-- [API Overview](${BASE_URL}/docs/reference): Choose an inference protocol or a Cloud platform API, then apply the correct authentication
+- [API Overview](${BASE_URL}/docs/reference): Choose an API family and apply the correct authentication
 - [OpenAI Chat Completions](${BASE_URL}/docs/reference/openai-compatible/createChatCompletion): \`/v1/chat/completions\` — OpenAI Chat Completions request and response format
 - [OpenAI Responses](${BASE_URL}/docs/reference/openai-responses/createResponse): \`/v1/responses\` — OpenAI Responses request and event format
 - [Anthropic Messages](${BASE_URL}/docs/reference/anthropic-compatible/createMessage): \`/v1/messages\` — Anthropic Messages request and response format

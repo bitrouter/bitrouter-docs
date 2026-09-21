@@ -5,7 +5,7 @@ description: Install BitRouter and get your agent routing in under a minute — 
 
 This page gets BitRouter routing for your agent in under a minute. There are two deployment modes, and three ways to onboard either one — the Agent Skill, the CLI wizard, or manual env keys.
 
-- **BitRouter Cloud (default).** Hosted endpoint at `api.bitrouter.ai`. No upstream keys to manage; per-request billing, or BYOK on top.
+- **BitRouter Cloud (default).** Hosted endpoint at `api.bitrouter.ai`. Use BitRouter-hosted models at their token prices with 0% token markup, or attach your own provider keys and pay BitRouter per successful routed request.
 - **Local proxy.** A single binary on your machine, BYOK with your own provider keys. Basic routing requires no external service.
 
 Both modes use the **same open-source routing core** (Apache 2.0). The deployment boundary changes, but the client protocol does not, so you can switch modes without rewriting your harness.
@@ -15,7 +15,7 @@ Both modes use the **same open-source routing core** (Apache 2.0). The deploymen
 The routing contract is shared, while operational surfaces follow the deployment boundary:
 
 - **Self-host** if you already have provider keys, run local/private models, have data-residency rules, or are prototyping solo.
-- **Cloud** if you want no key management, per-request billing, and a managed provider network without upstream provider signups.
+- **Cloud** if you want BitRouter to operate the router, whether inference comes from BitRouter-hosted models or your own provider accounts.
 
 | Capability | Self-hosted (OSS) | Cloud |
 | --- | --- | --- |
@@ -33,11 +33,12 @@ The routing contract is shared, while operational surfaces follow the deployment
 | Namespace isolation primitive | ✅ | ✅ |
 | Managed provider network (no upstream keys needed) | — | ✅ |
 | Hosted activity and request receipts | — | ✅ |
-| Managed billing (one wallet, per-request) | — | ✅ |
+| Hosted models (one balance, 0% token markup) | — | ✅ |
+| Hosted BYOK routing (per successful request) | — | ✅ |
 
 BitRouter does not package a separate enterprise suite today. Teams with deployment, security, procurement, or support requirements can [contact the founders](mailto:contact@bitrouter.ai) and help shape the team offering.
 
-Do you need your own provider keys? Only if you self-host with BYOK — a Cloud account needs **no upstream keys**: one sign-in covers the whole hosted network, billed per request, failed requests not charged. You can also attach Cloud to a self-hosted binary and use both.
+Do you need your own provider keys? Not for BitRouter-hosted models: one Cloud sign-in covers the managed provider network, model routing is included, and you pay provider token prices with 0% token markup. Provider keys are optional in Cloud. If you attach them, you keep paying those providers for inference and pay BitRouter once per successful logical request for hosted routing; retries and fallbacks are included, and failed logical requests are not billed by BitRouter. You can also attach Cloud to a self-hosted binary and use both.
 
 ## Install the binary
 
@@ -132,7 +133,7 @@ bro start
 
 ## Use BitRouter Cloud
 
-Sign in to a BitRouter Cloud account from the terminal — one account covers every model the hosted network offers, with no upstream provider keys required:
+Sign in to a BitRouter Cloud account from the terminal — one account covers every model the hosted network offers, with no upstream provider keys required. Hosted model routing is included at 0% token markup; you can optionally attach your own keys and use per-request Cloud BYOK:
 
 ```bash
 bro cloud login   # RFC 8628 device flow against api.bitrouter.ai

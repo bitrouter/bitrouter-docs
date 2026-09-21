@@ -57,7 +57,7 @@ const siteJsonLd = {
         "@type": "Offer",
         price: "0",
         priceCurrency: "USD",
-        description: "Free to self-host. Cloud opt-in with pay-as-you-go pricing.",
+        description: "Free to self-host. Cloud offers hosted models at 0% token markup or per-request BYOK routing.",
       },
     },
   ],

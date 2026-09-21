@@ -7,18 +7,23 @@ const OPERATING_PATHS = [
     detail: "Your infrastructure · your provider keys · no platform or request fee",
   },
   {
-    label: "Cloud",
+    label: "Hosted models",
     value: "0% token markup",
-    detail: "Managed endpoint · hosted providers · consolidated billing",
+    detail: "Managed inference · routing included · processor top-up fees may apply",
   },
   {
-    label: "For teams",
+    label: "Cloud BYOK",
+    value: "Per successful request",
+    detail: "Your provider keys · hosted routing · retries and fallbacks included",
+  },
+  {
+    label: "Enterprise",
     value: "Talk to the founders",
     detail: "Deployment · security · procurement · support",
   },
 ] as const;
 
-/** Commercial paths, without implying an enterprise package that is not GA. */
+/** Four commercial paths, without implying an enterprise package that is not GA. */
 export function EnterprisePricing() {
   return (
     <section className="zed-wrap zed-sec" id="enterprise-pricing">

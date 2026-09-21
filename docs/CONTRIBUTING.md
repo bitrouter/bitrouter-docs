@@ -27,8 +27,9 @@ than copies of those pages, so every public non-Reference page appears directly
 below its section label.
 
 Reference is the deliberate exception. `content/docs/reference/` is extracted
-below the **Reference** separator, but the generated API families remain native
-folders with endpoint children. Make Reference navigation changes in
+below the **Reference** separator, with every generated API family listed
+directly under it as a native folder with endpoint children. Do not add another
+separator for API categories. Make Reference navigation changes in
 `scripts/generate-openapi.mjs`; generated `meta.json` files are replaced during
 `prebuild`.
 
@@ -54,7 +55,8 @@ public sidebar is a flat list beneath each section separator. Every public page
 must be listed exactly once in the matching `*-nav/meta.json`; cards and inline
 links provide additional discovery, not a substitute for sidebar visibility.
 Rare intentional exceptions must be added to `HIDDEN_SIDEBAR_ROUTES` in
-`scripts/check-docs.mjs`. BitRouter Agent is currently the only hidden page.
+`scripts/check-docs.mjs`. BitRouter Agent and Local inference are currently
+hidden while retaining their direct URLs.
 
 Use this boundary when classifying new pages:
 

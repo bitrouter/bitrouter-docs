@@ -1,6 +1,5 @@
 {
   "title": "Usage",
-  "pagesIndex": "index",
   "pages": [
     "cli",
     "tui",

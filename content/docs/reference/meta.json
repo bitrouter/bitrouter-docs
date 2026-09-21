@@ -2,12 +2,10 @@
   "title": "Reference",
   "pagesIndex": "index",
   "pages": [
-    "---Inference---",
     "openai-compatible",
     "openai-responses",
     "anthropic-compatible",
     "google-compatible",
-    "---Platform---",
     "discovery",
     "byok",
     "management",

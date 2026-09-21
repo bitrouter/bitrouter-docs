@@ -1,5 +1,4 @@
 {
   "title": "Coding agents",
-  "pagesIndex": "index",
-  "pages": ["claude-code", "codex"]
+  "pagesIndex": "index"
 }

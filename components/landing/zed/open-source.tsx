@@ -37,7 +37,7 @@ const FEATURES = [
       </>
     ),
     body: "Add models, providers, tools, and workflow-specific routing behind one stable request interface. Tune planning, routine work, verification, and recovery independently.",
-    link: "/docs/customization",
+    link: "/docs/customization/models",
     linkLabel: "Customize BitRouter",
     visual: <WorkflowVisual />,
   },

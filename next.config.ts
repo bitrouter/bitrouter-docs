@@ -10,7 +10,7 @@ const finalPath = {
   "provider-selection":"/docs/configuration/routing#provider-selection","model-fallback":"/docs/configuration/routing#fallback",
   "model-variants":"/docs/configuration/routing#variants","presets":"/docs/configuration/routing#presets",
   "structured-outputs":"/docs/configuration/structured-outputs","byok":"/docs/customization/models#built-in-providers-with-your-own-key",
-  "local-models":"/docs/usage/model-sources","guardrails":"/docs/configuration/guardrails",
+  "local-models":"/docs/usage/model-sources/local-inference","guardrails":"/docs/configuration/guardrails",
   "observability":"/docs/configuration/observability#self-hosted-opentelemetry","opentelemetry":"/docs/configuration/observability#self-hosted-opentelemetry",
   "tracing":"/docs/configuration/observability#cloud-activity","telemetry":"/docs/configuration/observability#self-hosted-opentelemetry",
   "mcp":"/docs/usage/mcp","acp":"/docs/usage/acp",
@@ -31,13 +31,23 @@ for (const [slug, dest] of Object.entries(finalPath)) {
 // overview + root + special
 pairs.push(
   ["/docs", "/docs/overview/what-is-bitrouter"],
+  // Section overview pages retired in 2026-09. Each section now starts with
+  // its first concrete task page.
+  ["/docs/usage", "/docs/usage/cli"],
+  ["/docs/configuration", "/docs/configuration/config-file"],
+  ["/docs/customization", "/docs/customization/models"],
+  // Claude Code, Codex, and model-source guidance now live on one Coding
+  // agents page. Preserve the former canonical URLs at stable anchors.
+  ["/docs/usage/coding-agents/claude-code", "/docs/usage/coding-agents#claude-code"],
+  ["/docs/usage/coding-agents/codex", "/docs/usage/coding-agents#codex"],
+  ["/docs/usage/model-sources", "/docs/usage/coding-agents#model-sources"],
   // 2026-09 information-architecture cleanup. The command remains `bro code`;
   // TUI is the user-facing documentation name.
   ["/docs/usage/code", "/docs/usage/tui"],
-  ["/docs/usage/protocols", "/docs/usage"],
+  ["/docs/usage/protocols", "/docs/usage/cli"],
   ["/docs/usage/mcp-gateway", "/docs/usage/mcp#mcp-gateway"],
-  ["/docs/usage/model-sources/claude-subscription", "/docs/usage/coding-agents/claude-code#use-a-claude-subscription"],
-  ["/docs/usage/model-sources/codex-subscription", "/docs/usage/coding-agents/codex#use-a-codex-subscription"],
+  ["/docs/usage/model-sources/claude-subscription", "/docs/usage/coding-agents#use-a-claude-subscription"],
+  ["/docs/usage/model-sources/codex-subscription", "/docs/usage/coding-agents#use-a-codex-subscription"],
   ["/docs/usage/migrate", "/docs/overview/comparison"],
   ["/docs/usage/migrate/litellm", "/docs/overview/comparison#migrate-from-litellm"],
   ["/docs/usage/migrate/openrouter", "/docs/overview/comparison#migrate-from-openrouter"],
@@ -84,13 +94,13 @@ pairs.push(
   ["/docs/overview/comparisons/litellm", "/docs/overview/comparison#litellm"],
   // 2026-09 task-language rename: Router → Configuration,
   // Extensions → Customization. The config page also became Config file.
-  ["/docs/routers", "/docs/configuration"],
+  ["/docs/routers", "/docs/configuration/config-file"],
   ["/docs/routers/configuration", "/docs/configuration/config-file"],
   ["/docs/routers/:slug+", "/docs/configuration/:slug+"],
-  ["/docs/extensions", "/docs/customization"],
+  ["/docs/extensions", "/docs/customization/models"],
   ["/docs/extensions/:slug+", "/docs/customization/:slug+"],
   // The former Guides section is now organized around usage tasks.
-  ["/docs/guides", "/docs/usage"],
+  ["/docs/guides", "/docs/usage/cli"],
   ["/docs/guides/overview", "/docs/overview/what-is-bitrouter"],
   ["/docs/guides/overview/quickstart", "/docs/overview/quickstart"],
   ["/docs/guides/overview/comparison", "/docs/overview/comparison#openrouter"],
@@ -189,7 +199,7 @@ pairs.push(
   // observability & evaluation split out of features/ (2026-08); the single
   // opentelemetry page was two pages welded together — OSS export vs hosted view
   ["/docs/features/opentelemetry", "/docs/configuration/observability#self-hosted-opentelemetry"],
-  ["/docs/features/local-models", "/docs/usage/model-sources"],
+  ["/docs/features/local-models", "/docs/usage/model-sources/local-inference"],
   ["/docs/features/toolsets", "/docs/customization/tools/server-tools"],
   ["/docs/guides/export-telemetry", "/docs/configuration/observability#self-hosted-opentelemetry"],
   ["/docs/cloud/managed-tools", "/docs/overview/quickstart#self-host-or-cloud"],
@@ -202,8 +212,8 @@ pairs.push(
   ["/docs/integrations/harnesses/:slug+", "/docs/usage/coding-agents/:slug+"],
   ["/docs/cookbook/integration/:slug*", "/docs/usage/coding-agents/:slug*"],
   // the local-models page was unpublished; the model catalog absorbed it
-  ["/docs/cookbook/local-models", "/docs/usage/model-sources"],
-  ["/docs/integrations/local-models", "/docs/usage/model-sources"],
+  ["/docs/cookbook/local-models", "/docs/usage/model-sources/local-inference"],
+  ["/docs/integrations/local-models", "/docs/usage/model-sources/local-inference"],
   ["/docs/cookbook", "/docs/usage/coding-agents"],
   // Migration walkthroughs now live on the relevant comparison pages.
   ["/docs/integrations/migrate/litellm", "/docs/overview/comparison#migrate-from-litellm"],
@@ -250,7 +260,7 @@ pairs.push(
   // Tool pages keep their filenames, so one wildcard covers them.
   ["/docs/models-and-routing/tool-calling", "/docs/customization/tools/server-tools"],
   ["/docs/models-and-routing/tool-calling/:slug*", "/docs/customization/tools/:slug*"],
-  ["/docs/agents-and-orchestration", "/docs/usage"],
+  ["/docs/agents-and-orchestration", "/docs/usage/coding-agents"],
   // Retired guide slugs resolve to the current task pages.
   ["/docs/guides/cloud-api", "/docs/usage/cli"],
   ["/docs/guides/build-a-plugin", "/docs/overview/what-is-bitrouter"],
@@ -292,7 +302,7 @@ pairs.push(
   // the OpenRouter page was unpublished (2026-08); the aggregator provider block
   // it documented is the worked example on the model-sources page. The
   // migrate-from-openrouter guide is unaffected.
-  ["/docs/integrations/openrouter", "/docs/usage/model-sources"],
+  ["/docs/integrations/openrouter", "/docs/usage/coding-agents#model-sources"],
   // Self-hosting became its own tab (2026-08). The single `guides/self-host`
   // page was split across the new section: config → production-config, daemon
   // → run-as-a-service, telemetry → operations, hardening → hardening. Its old
@@ -359,13 +369,13 @@ const nextConfig: NextConfig = {
       // /openclaw and /hermes-agent land on the harnesses overview instead:
       // their integration pages were retired in 2026-08 (see below), so there
       // is no per-harness doc left to point them at.
-      { source: "/claude-code", destination: "/docs/usage/coding-agents/claude-code", permanent: true },
-      { source: "/codex", destination: "/docs/usage/coding-agents/codex", permanent: true },
+      { source: "/claude-code", destination: "/docs/usage/coding-agents#claude-code", permanent: true },
+      { source: "/codex", destination: "/docs/usage/coding-agents#codex", permanent: true },
       { source: "/opencode", destination: "/docs/usage/coding-agents", permanent: true },
       { source: "/openclaw", destination: "/docs/usage/coding-agents", permanent: true },
       { source: "/hermes-agent", destination: "/docs/usage/coding-agents", permanent: true },
-      { source: "/zh/claude-code", destination: "/docs/usage/coding-agents/claude-code", permanent: true },
-      { source: "/zh/codex", destination: "/docs/usage/coding-agents/codex", permanent: true },
+      { source: "/zh/claude-code", destination: "/docs/usage/coding-agents#claude-code", permanent: true },
+      { source: "/zh/codex", destination: "/docs/usage/coding-agents#codex", permanent: true },
       { source: "/zh/opencode", destination: "/docs/usage/coding-agents", permanent: true },
       { source: "/zh/openclaw", destination: "/docs/usage/coding-agents", permanent: true },
       { source: "/zh/hermes-agent", destination: "/docs/usage/coding-agents", permanent: true },
@@ -375,9 +385,9 @@ const nextConfig: NextConfig = {
       { source: "/docs/integrations/hermes", destination: "/docs/usage/coding-agents", permanent: true },
 
       // ── Integrations URL history → Usage ──
-      { source: "/docs/integrations/models", destination: "/docs/usage/model-sources", permanent: true },
-      { source: "/docs/integrations/claude-subscription", destination: "/docs/usage/coding-agents/claude-code#use-a-claude-subscription", permanent: true },
-      { source: "/docs/integrations/codex-subscription", destination: "/docs/usage/coding-agents/codex#use-a-codex-subscription", permanent: true },
+      { source: "/docs/integrations/models", destination: "/docs/usage/coding-agents#model-sources", permanent: true },
+      { source: "/docs/integrations/claude-subscription", destination: "/docs/usage/coding-agents#use-a-claude-subscription", permanent: true },
+      { source: "/docs/integrations/codex-subscription", destination: "/docs/usage/coding-agents#use-a-codex-subscription", permanent: true },
       { source: "/docs/integrations/ollama", destination: "/docs/usage/model-sources/local-inference", permanent: true },
       { source: "/docs/integrations/vllm", destination: "/docs/usage/model-sources/local-inference", permanent: true },
       { source: "/docs/integrations/unsloth", destination: "/docs/usage/model-sources/local-inference", permanent: true },

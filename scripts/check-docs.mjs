@@ -40,7 +40,10 @@ const ROOT = "content/docs";
 const GENERATED = new Set(["(guide)/usage/cli.mdx"]);
 // Intentional exceptions to the otherwise complete public sidebar. Keep this
 // list short and document each product-navigation decision.
-const HIDDEN_SIDEBAR_ROUTES = new Set(["/docs/usage/agent"]);
+const HIDDEN_SIDEBAR_ROUTES = new Set([
+  "/docs/usage/agent",
+  "/docs/usage/model-sources/local-inference",
+]);
 const NAV_FILES = [
   "(overview-nav)/meta.json",
   "(usage-nav)/meta.json",

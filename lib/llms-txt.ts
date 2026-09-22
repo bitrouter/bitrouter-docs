@@ -34,11 +34,11 @@ References:
 
 ## Configuration
 
-- [Config file](${BASE_URL}/docs/configuration/config-file): Create, validate, and operate \`bitrouter.yaml\`
-- [Routing](${BASE_URL}/docs/configuration/routing): Resolve selectors, define ordered fallback chains, presets, and variants, then inspect the result
+- [Policy](${BASE_URL}/docs/configuration/policy): Treat \`bitrouter.yaml\` as the router's complete desired-state contract, then validate, review, and apply it safely
+- [Models](${BASE_URL}/docs/configuration/models): Resolve selectors, define eligible candidates and fallback chains, and preserve request capabilities across provider protocols
 - [Guardrails](${BASE_URL}/docs/configuration/guardrails): Block or redact matching request and response content in the router
-- [Structured outputs](${BASE_URL}/docs/configuration/structured-outputs): Translate one JSON Schema constraint across supported API protocols
-- [Observability](${BASE_URL}/docs/configuration/observability): Preview routes, export OpenTelemetry, inspect Cloud Activity, and keep evaluation separate from telemetry
+- [Evaluations](${BASE_URL}/docs/configuration/evaluations): Record objective outcomes as immutable evidence and freeze reproducible snapshots
+- [Telemetry](${BASE_URL}/docs/configuration/telemetry): Inspect request receipts, export OpenTelemetry, and view Cloud Activity
 
 ## Customization
 
@@ -51,6 +51,7 @@ References:
 
 ## Usage
 
+- [bitrouter/auto](${BASE_URL}/docs/usage/bitrouter-auto): Use one stable model id, inspect the resolved route, and publish reviewed policy changes
 - [CLI](${BASE_URL}/docs/usage/cli): Every command of the binary — serve, route, models, policy, optimize, providers
 - [TUI](${BASE_URL}/docs/usage/tui): BitRouter's interactive ACP conversation with route, activity, permissions, and attributed cost
 - [Coding agents](${BASE_URL}/docs/usage/coding-agents): Run supported harnesses, configure Claude Code and Codex, and connect model sources

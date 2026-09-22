@@ -25,7 +25,7 @@ Every command below is **generated from the binary's own `--help`**, so the flag
 | `BITROUTER_API_KEY` | Cloud API key; enables the managed `bitrouter` provider |
 | `BITROUTER_HOME` | Config discovery override (see above) |
 | `BITROUTER_OAUTH_AS` | Override the OAuth authorization server for self-hosted Cloud |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | Opt in to OTLP export. See [OpenTelemetry](/docs/configuration/observability#self-hosted-opentelemetry) |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | Opt in to OTLP export. See [OpenTelemetry](/docs/configuration/telemetry#self-hosted-opentelemetry) |
 
 ## Command map
 
@@ -354,7 +354,7 @@ Report the OTel exporter's current state (endpoint, sampler, cardinality usage, 
 | `--socket <SOCKET>` | Explicit control socket path. Overrides the config-derived path |
 
 
-Reports the OTel exporter's live state — endpoint, sampler, cardinality usage, in-flight spans. The verification step for [OpenTelemetry](/docs/configuration/observability#self-hosted-opentelemetry).
+Reports the OTel exporter's live state — endpoint, sampler, cardinality usage, in-flight spans. The verification step for [OpenTelemetry](/docs/configuration/telemetry#self-hosted-opentelemetry).
 
 ## Providers
 
@@ -418,7 +418,7 @@ Log out of an upstream provider — clears every stored credential for it. For t
 
 ## Policy
 
-Routing policies are the artifact the [self-improving loop](/docs/overview/what-is-bitrouter) learns into: `init` scaffolds `policy-lock.yaml` and binds it to a preset, live traffic teaches the adequacy ledger, and `evolve --apply` folds proven downgrades back into the file. The walkthrough, table, and ledger semantics are in [Adaptive routing](/docs/overview/quickstart#adaptive-routing).
+Routing policies are the artifact the [self-improving loop](/docs/overview/what-is-bitrouter) learns into: `init` scaffolds `policy-lock.yaml` and binds it to a preset, live traffic teaches the adequacy ledger, and `evolve --apply` folds proven downgrades back into the file. The walkthrough, table, and ledger semantics are in [bitrouter/auto](/docs/usage/bitrouter-auto#let-evidence-improve-the-policy).
 
 <Callout type="info">
 `bro policy create` + `bro key sign` are a **different surface** — per-virtual-key access control (allowed models, budgets, rate limits), not routing. See [Guardrails](/docs/configuration/guardrails).

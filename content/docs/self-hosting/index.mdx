@@ -157,7 +157,7 @@ providers:
     api_key: "${OPENAI_API_KEY}"
 ```
 
-Supply credentials through a process-manager environment file or secrets mount. Use the same released version for the binary, config schema, and CI validator. See [Config file](/docs/configuration/config-file) for individual settings.
+Supply credentials through a process-manager environment file or secrets mount. Use the same released version for the binary, policy schema, and CI validator. See [Router policy](/docs/configuration/policy) for how `bitrouter.yaml` and its linked artifacts define the complete desired state.
 
 ### Run as a service
 
@@ -297,7 +297,7 @@ Anyone who can write to that socket can reload, restart, or stop the process. Pu
 
 ### Public read endpoints
 
-`GET /health` and `GET /v1/models` are not protected by the inference authentication hook. If model and provider discovery is sensitive, restrict those paths at the reverse proxy or network layer. Use [OpenTelemetry](/docs/configuration/observability#self-hosted-opentelemetry) for operational telemetry.
+`GET /health` and `GET /v1/models` are not protected by the inference authentication hook. If model and provider discovery is sensitive, restrict those paths at the reverse proxy or network layer. Use [OpenTelemetry](/docs/configuration/telemetry#self-hosted-opentelemetry) for operational telemetry.
 
 ### Production checklist
 
@@ -399,12 +399,12 @@ For redundancy, prefer independent single-node routers behind a load balancer, w
 bro observe status -c /etc/bitrouter/bitrouter.yaml
 ```
 
-Use an OpenTelemetry Collector when the destination is Prometheus-based. See [Observability](/docs/configuration/observability) for spans, usage attribution, and exporter configuration.
+Use an OpenTelemetry Collector when the destination is Prometheus-based. See [Telemetry](/docs/configuration/telemetry) for spans, usage attribution, and exporter configuration.
 
 ## Next steps
 
 <Cards>
-  <Card title="Configuration" href="/docs/configuration/config-file" description="Define routing behavior after the host is deployed." />
-  <Card title="Observability" href="/docs/configuration/observability" description="Export telemetry and inspect routing outcomes." />
+  <Card title="Router policy" href="/docs/configuration/policy" description="Define, validate, and apply the router's desired behavior." />
+  <Card title="Telemetry" href="/docs/configuration/telemetry" description="Export telemetry and inspect routing outcomes." />
   <Card title="CLI reference" href="/docs/usage/cli" description="Inspect every command and flag used here." />
 </Cards>

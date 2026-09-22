@@ -1,0 +1,146 @@
+---
+title: Router policy
+description: Define, validate, and apply the complete desired behavior of a BitRouter deployment.
+---
+
+A **router policy** is the complete desired-state contract for a BitRouter deployment. It covers every reviewed setting that determines how the router is exposed, where it can send work, how it selects and executes routes, which constraints it enforces, and what evidence it records.
+
+`bitrouter.yaml` is the main operator-authored expression of that policy. The term is intentionally broader than the file's `policies`, `policy`, or `policy_table` fields: those are specific mechanisms inside the overall router policy.
+
+BitRouter can start from in-memory defaults, but a file makes the intended behavior reviewable, reproducible, and deployable as code.
+
+## Policy artifacts
+
+| Artifact | Role |
+| --- | --- |
+| `bitrouter.yaml` | Operator-authored desired state for the router and its integrations |
+| `policy-lock.yaml` | Versioned routing decisions linked to policy-bound presets |
+| Environment variables | Secret values and deployment-specific inputs resolved into the policy |
+| Database evidence | Observed runtime state that can inform a later decision; not policy by itself |
+
+Keep `bitrouter.yaml` and any linked policy lock in version control. Keep credential values in your secret store and reference them from the policy.
+
+## Policy layers
+
+The policy file is an assembly point, not the place to learn every subsystem. Each layer has an owning guide:
+
+| Layer | Examples | Guide |
+| --- | --- | --- |
+| Runtime | Listen address, authentication, database, state | [Self-hosting](/docs/self-hosting) |
+| Supply | Providers, accounts, private endpoints, model declarations | [Models & providers](/docs/customization/models) |
+| Selection | Model ids, fallback chains, presets, variants | [Models](/docs/configuration/models) |
+| Adaptation | Routing tables, adequacy, exploration, writeback | [bitrouter/auto](/docs/usage/bitrouter-auto#let-evidence-improve-the-policy) |
+| Constraints | Request and response enforcement, caller restrictions | [Guardrails](/docs/configuration/guardrails) |
+| Execution | Server tools, MCP servers, ACP agents | [Tool calling](/docs/customization/tools) and [Usage](/docs/usage/bitrouter-auto) |
+| Evidence | Objective results, receipts, traces, and metrics | [Evaluations](/docs/configuration/evaluations) and [Telemetry](/docs/configuration/telemetry) |
+
+This page explains how those layers form one policy. Follow the owning guide when you need the schema and behavior of a specific block.
+
+## Create a policy file
+
+```bash
+bro init
+bro config validate -c bitrouter.yaml
+```
+
+The generated file mirrors the zero-config defaults. Delete sections you do not need, make intentional behavior explicit, and keep secrets in environment variables.
+
+```yaml
+server:
+  listen: "127.0.0.1:4356"
+
+providers:
+  openai:
+    api_key: "${OPENAI_API_KEY}"
+  anthropic:
+    api_key: "${ANTHROPIC_API_KEY}"
+```
+
+Built-in providers can inherit endpoints, protocols, and model declarations from the bundled registry. Add a custom provider only when the built-in definition does not cover it.
+
+## Find the active policy
+
+BitRouter uses the first matching source:
+
+| Order | Location | Behavior |
+| --- | --- | --- |
+| 1 | `-c/--config <PATH>` | Explicit; a missing file is an error |
+| 2 | `./bitrouter.yaml` | Project-local policy |
+| 3 | `$BITROUTER_HOME/bitrouter.yaml` | Required when `BITROUTER_HOME` is set |
+| 4 | `~/.bitrouter/bitrouter.yaml` | Per-user default policy |
+| 5 | No file | In-memory zero-config defaults |
+
+<Callout type="warning">
+If `BITROUTER_HOME` is set but contains no `bitrouter.yaml`, BitRouter stops instead of silently loading another file.
+</Callout>
+
+Use `${NAME}` for required environment variables and `${NAME:-default}` for an optional fallback:
+
+```yaml
+providers:
+  local:
+    api_base: "${LOCAL_LLM_URL:-http://127.0.0.1:8000/v1}"
+    api_key: "${LOCAL_LLM_KEY}"
+```
+
+Environment references inside YAML comments are ignored. The resolved value participates in the running policy, but the secret itself should not be committed.
+
+## Validate the contract
+
+Point a YAML-aware editor at the schema generated from the binary's config types:
+
+```yaml
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bitrouter/bitrouter/main/dist/schema/bitrouter.config.schema.json
+```
+
+Pin `main` to a release tag when the file must match a deployed binary exactly. Then validate both syntax and route behavior:
+
+```bash
+bro config validate -c bitrouter.yaml
+bro route bitrouter/auto -c bitrouter.yaml
+bro policy check -c bitrouter.yaml
+```
+
+- `config validate` checks the complete router policy without requiring live provider credentials.
+- `route` previews model resolution without sending an inference request.
+- `policy check` cross-validates the policy file and its linked routing-policy lock.
+
+## Apply and review changes
+
+```bash
+bro reload -c bitrouter.yaml
+bro policy status -c bitrouter.yaml
+bro status -c bitrouter.yaml
+```
+
+`reload` applies reloadable changes while the daemon is running. Restart for process-bound changes when the command reports that a field cannot be reloaded. For production rollout, validate and preview the policy with the same released binary that will serve it.
+
+The review loop is:
+
+1. Author the desired behavior.
+2. Validate the file and linked artifacts.
+3. Preview important model routes.
+4. Apply the policy to the running router.
+5. Inspect telemetry and evaluate outcomes.
+6. Review and commit any intentional policy change.
+
+Runtime evidence may justify a candidate, but it does not silently become policy. Publishing a routing-policy change remains an explicit, digest-checked operation.
+
+## Three meanings of policy
+
+BitRouter uses narrower policy terms within the broader router policy:
+
+| Term | Scope |
+| --- | --- |
+| **Router policy** | The complete desired behavior expressed by `bitrouter.yaml` and linked artifacts |
+| **Routing policy** | Model-selection rules used by a policy-bound preset such as `bitrouter/auto` |
+| **Access-control policy** | Caller-specific allowed models, budgets, rate limits, guardrails, and presets |
+
+`bro policy init`, `check`, `compile`, and `publish` operate on routing policy. `bro policy create` creates an access-control policy file. Both are components of the router policy, but they are not interchangeable.
+
+<Cards>
+  <Card title="Models" href="/docs/configuration/models" description="Configure model selectors, fallback, presets, and candidate eligibility." />
+  <Card title="bitrouter/auto" href="/docs/usage/bitrouter-auto" description="Use the policy-bound model id and review learned route changes." />
+  <Card title="Self-hosting" href="/docs/self-hosting#production-configuration" description="Deploy the policy with explicit paths, secrets, supervision, and backups." />
+  <Card title="CLI reference" href="/docs/usage/cli#init-and-config" description="Read the generated config and policy command surface." />
+</Cards>

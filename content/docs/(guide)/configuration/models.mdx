@@ -1,0 +1,212 @@
+---
+title: Models
+description: Configure model selection, fallback, reusable selectors, and compatibility across provider protocols.
+---
+
+This page controls what a requested model id means after model sources are connected. Use [Supported Models](/docs/overview/supported-models) to browse the public catalog and [Models & providers](/docs/customization/models) to connect keys, private endpoints, or custom model declarations.
+
+Model resolution turns the request's `model` into an ordered chain of eligible provider endpoints. Most policies need only a logical model id or a named fallback chain.
+
+## Model selector forms
+
+The separator carries selection meaning:
+
+| Form | Meaning | Example |
+| --- | --- | --- |
+| `provider/model` | A stable logical model id from the registry; every eligible provider that declares it can join the route | `anthropic/claude-opus-4.8` |
+| `provider:model` | A direct local route through one configured provider | `anthropic:anthropic/claude-opus-4.8` |
+
+Prefer the slash form in application code. Use the colon form when the provider itself is part of the decision, such as a subscription-backed account or a specific custom endpoint.
+
+## Resolution order
+
+BitRouter resolves a request in four stages:
+
+1. Apply a known `@preset` and optional `:variant`.
+2. Treat `provider:model` as an explicit provider route.
+3. Resolve a matching entry under `models` as a virtual model.
+4. Otherwise, build a cascade from active providers that declare the bare model.
+
+Subscription-backed providers are explicit-route-only. A bare model never silently consumes a personal Claude or Codex subscription.
+
+| Selector | Use it for |
+| --- | --- |
+| `openai:openai/gpt-5.4` | Pin one provider and logical model |
+| `openai/gpt-5.4` | Route a logical model through eligible providers |
+| `coding` | Use a named chain from `models` |
+| `@fast` | Apply a reusable preset |
+| `@fast:cost` | Apply a preset, then a known variant |
+| `bitrouter/auto` | Use the routing policy bound to the `auto` preset |
+
+## Candidate eligibility
+
+For a bare model, BitRouter filters active providers by `only`, `ignore`, required tags, request capabilities, and protocol compatibility. It then orders candidates by explicit provider priority or the registry's provider-class priority, followed by provider ID.
+
+Presets and variants accept three sort values:
+
+| Value | alpha.31 behavior |
+| --- | --- |
+| `alphabetical` | Provider priority, then provider ID |
+| `cost` | Accepted, but currently uses the same deterministic fallback order |
+| `latency` | Accepted, but currently uses the same deterministic fallback order |
+
+<Callout type="warning">
+Cost- and latency-based live scoring are not active in alpha.31. Do not describe `:cost` or `:latency` as measured optimization until a release provides the corresponding metrics-backed recommender.
+</Callout>
+
+Use `routing.only`, `routing.ignore`, or provider `priority` when the order must be explicit today.
+
+## Fallback chains
+
+Define an ordered chain with a virtual model:
+
+```yaml
+models:
+  coding:
+    strategy: priority
+    endpoints:
+      - provider: openai
+        service_id: gpt-5
+      - provider: anthropic
+        service_id: claude-sonnet-4-6
+```
+
+A request for `coding` tries endpoints in YAML order. BitRouter advances after retryable upstream failures: `5xx`, `408`, `429`, transport or timeout failures, invalid upstream responses, and exhausted provider credit. Other client-side `4xx` errors fail immediately.
+
+Use `strategy: cascade` only when the endpoints are interchangeable and selection preferences may reorder or filter them. In alpha.31, cost and latency sorts still use the deterministic priority/provider-ID fallback described above.
+
+## Presets
+
+Presets put model substitution, prompt defaults, parameters, routing-policy binding, and candidate filters behind a short name:
+
+```yaml
+presets:
+  fast:
+    model: coding
+    system_prompt: "Be concise."
+    params:
+      temperature: 0.2
+    routing:
+      only: [openai, anthropic]
+```
+
+Call it as `@fast`. Request fields win over preset defaults, so a preset provides a stable baseline without taking control away from the caller.
+
+`bitrouter/auto` is the public spelling of the `auto` preset and requires that preset to be bound to a routing policy. Create the binding with `bro policy init` rather than hand-authoring a partial lock file.
+
+See [bitrouter/auto](/docs/usage/bitrouter-auto) for the operational walkthrough: send traffic, inspect the settled route, override one call, and publish reviewed policy changes.
+
+## Variants
+
+A variant changes candidate preferences only:
+
+```yaml
+variants:
+  private:
+    routing:
+      require_tags: [private]
+  primary:
+    routing:
+      only: [openai]
+```
+
+Append a known variant to a model or preset, such as `coding:private` or `@fast:primary`. An unknown suffix is not removed; it remains part of the model selector.
+
+Variants do not grant access, bypass guardrails, or change virtual-key policy.
+
+## Protocol compatibility
+
+A model route can receive one API shape and call an upstream provider that speaks another. BitRouter handles that boundary in four steps:
+
+1. Normalize the inbound request into a canonical representation.
+2. Derive requirements such as tool calling or structured outputs.
+3. Remove model/provider routes that explicitly lack a required capability.
+4. Render the selected route in its outbound provider protocol.
+
+Protocol translation and model selection are related but separate: translation preserves the caller's intent, while capability filtering determines which routes are eligible to receive it.
+
+### Structured outputs across protocols
+
+Structured output is a request-time constraint, not a global router setting. Supply a JSON Schema in the client's native request shape:
+
+| Inbound API | Schema field |
+| --- | --- |
+| OpenAI Chat Completions | `response_format.json_schema` |
+| OpenAI Responses | `text.format` |
+| Anthropic Messages | `output_config.format` |
+| Google Generate Content | `generationConfig.responseSchema` |
+
+BitRouter promotes these fields into one canonical response-format constraint, then renders the corresponding outbound field after model resolution. The same request can therefore resolve to a Messages or Generate Content upstream without the caller rewriting the schema field.
+
+```bash
+curl http://127.0.0.1:4356/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "openai:gpt-5",
+    "messages": [{"role": "user", "content": "Return the issue priority."}],
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "issue_priority",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "properties": {
+            "priority": {"type": "string", "enum": ["low", "medium", "high"]}
+          },
+          "required": ["priority"],
+          "additionalProperties": false
+        }
+      }
+    }
+  }'
+```
+
+There is no router-wide schema or enable switch. Presets can supply ordinary request defaults, but the response constraint belongs to each request.
+
+### Declare custom capabilities
+
+Routes with explicit capability declarations remain eligible only when they include every capability required by the request. For a private endpoint, declare support only after verifying that exact provider/model route:
+
+```yaml
+providers:
+  my-cluster:
+    models:
+      - id: team/model
+        capabilities: [structured_outputs]
+```
+
+The public model registry carries these declarations for built-in routes. See [Models & providers](/docs/customization/models#custom-endpoints-and-models) when adding a private endpoint or custom model.
+
+### Compatibility limits
+
+BitRouter preserves and translates the constraint across supported wire protocols. The upstream model and provider remain responsible for producing schema-conforming output.
+
+JSON Schema support differs by upstream. Use the subset accepted by every provider in a fallback chain, and test the exact models you deploy. If the selected outbound protocol cannot represent the response format, BitRouter fails the request instead of silently dropping the schema.
+
+| Canonical field | Chat Completions | Responses | Messages | Generate Content |
+| --- | --- | --- | --- | --- |
+| Name | `json_schema.name` | `text.format.name` | Not represented | Not represented |
+| Description | `json_schema.description` | `text.format.description` | Not represented | Not represented |
+| Strict | `json_schema.strict` | `text.format.strict` | Provider behavior | Provider behavior |
+| Schema | `json_schema.schema` | `text.format.schema` | `format.schema` | `responseSchema` |
+
+Fields a destination protocol cannot represent are not invented. Keep portable behavior in the schema itself.
+
+## Inspect and verify
+
+```bash
+bro config validate -c bitrouter.yaml
+bro models --provider openai
+bro route coding -c bitrouter.yaml
+bro route @fast:primary -c bitrouter.yaml
+```
+
+`bro route` uses the running daemon when available and otherwise resolves from the selected policy file. It is the authoritative way to review the candidate chain before sending traffic.
+
+<Cards>
+  <Card title="Router policy" href="/docs/configuration/policy" description="Understand how model settings fit into the complete desired-state contract." />
+  <Card title="Supported Models" href="/docs/overview/supported-models" description="Browse the public model catalog and current hosted pricing." />
+  <Card title="Models & providers" href="/docs/customization/models" description="Connect credentials, private endpoints, and custom model declarations." />
+  <Card title="API reference" href="/docs/reference" description="Use the request shape for your chosen inbound protocol." />
+</Cards>

@@ -1,10 +1,10 @@
 {
   "title": "Configuration",
-  "pagesIndex": "[Config file](/docs/configuration/config-file)",
+  "pagesIndex": "[Policy](/docs/configuration/policy)",
   "pages": [
-    "[Routing](/docs/configuration/routing)",
-    "[Structured outputs](/docs/configuration/structured-outputs)",
+    "[Models](/docs/configuration/models)",
     "[Guardrails](/docs/configuration/guardrails)",
-    "[Observability](/docs/configuration/observability)"
+    "[Evaluations](/docs/configuration/evaluations)",
+    "[Telemetry](/docs/configuration/telemetry)"
   ]
 }

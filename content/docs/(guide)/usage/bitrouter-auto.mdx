@@ -1,0 +1,155 @@
+---
+title: bitrouter/auto
+description: Use one stable model id to route each request through the policy you own, inspect, and can override.
+---
+
+`bitrouter/auto` is the stable model id for policy-driven routing. Keep it in your application or agent configuration while BitRouter resolves each request through the policy bound to the `auto` preset.
+
+An explicit model id still bypasses that policy. Use `bitrouter/auto` for calls the router should choose; use a logical `provider/model` id when a call must stay on a model you selected.
+
+## Before you send a request
+
+The endpoint needs an `auto` preset with a routing policy bound to it. BitRouter fails visibly when that binding is missing rather than silently guessing a model.
+
+| Deployment | What you need |
+| --- | --- |
+| BitRouter Cloud | A Cloud credential and an `auto` policy available to the active workspace |
+| Self-hosted | A running `bro` proxy, at least one usable model route, and a local policy bound to the `auto` preset |
+
+Start with the [Quickstart](/docs/overview/quickstart) if the endpoint is not running yet. Use `bro models` to see the logical model ids currently available.
+
+## Send the first request
+
+The model id works anywhere BitRouter accepts a model selector. For an OpenAI-compatible local request:
+
+```bash
+curl http://127.0.0.1:4356/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "bitrouter/auto",
+    "messages": [{"role": "user", "content": "Summarize this change."}]
+  }'
+```
+
+For the hosted endpoint, use `https://api.bitrouter.ai/v1` as the OpenAI-compatible base URL and authenticate with your Cloud credential. Anthropic Messages and Google Generative AI clients can use the same model id through their corresponding BitRouter-compatible endpoint.
+
+The public spelling maps to the `auto` preset. `@auto` addresses that preset directly, but application and agent configuration should prefer `bitrouter/auto` as the portable model id.
+
+## Use it from a coding agent
+
+Pass the model when BitRouter launches the harness:
+
+```bash
+bro code codex --model bitrouter/auto
+bro claude --model bitrouter/auto
+bro codex --model bitrouter/auto
+```
+
+For a harness that connects to BitRouter directly, set its base URL to the local proxy or Cloud endpoint and set its model to `bitrouter/auto`. The [Coding agents](/docs/usage/coding-agents) page documents the environment variables and authentication boundary for each supported harness.
+
+## Create the local binding
+
+`bro policy init` creates a routing-policy lock and binds it to a preset. Supply both base tiers when the preset does not already define the strong model:
+
+```bash
+bro policy init auto --preset auto \
+  --strong openai/gpt-5.4 \
+  --economy moonshotai/kimi-k2.7-code
+```
+
+The command writes `policy-lock.yaml` and updates `bitrouter.yaml` with the binding. Keep both files in version control. Do not hand-author only part of the binding: the initializer validates the model identities, seeds the policy invariants, and starts writeback in the locked state.
+
+Check the artifacts before starting traffic:
+
+```bash
+bro policy check
+bro policy status
+bro route bitrouter/auto
+```
+
+`bro route` verifies selector resolution and the configured candidate chain. The settled request record is the authority for the model and provider that actually served a request.
+
+## Inspect what served
+
+For a self-hosted router:
+
+```bash
+bro requests --limit 25
+```
+
+For BitRouter Cloud:
+
+```bash
+bro cloud requests --limit 25
+```
+
+The receipt distinguishes the requested selector from the resolved model and serving provider. Retries and fallback attempts are separate telemetry hops; the settled route is not inferred from response text.
+
+Use [Telemetry](/docs/configuration/telemetry) when you need traces, metrics, sampling, or exporter configuration. Use [Evaluations](/docs/configuration/evaluations) when you need to decide whether the result met an objective.
+
+## Override one call
+
+You do not need a second endpoint to opt out of automatic selection:
+
+| Selector | Effect |
+| --- | --- |
+| `bitrouter/auto` | Resolve through the policy bound to `auto` |
+| `openai/gpt-5.4` | Request one logical model while preserving eligible provider fallback |
+| `openai:openai/gpt-5.4` | Pin one configured provider and model |
+
+Prefer the slash form for a deliberate model override. Use the colon form only when the provider account itself is part of the decision. See [Models](/docs/configuration/models#model-selector-forms) for the complete resolution order.
+
+## Let evidence improve the policy
+
+The policy starts conservatively: an unmatched request fingerprint uses its configured default tier. With `adequacy` enabled, BitRouter records deterministic outcome observations for policy-bound traffic.
+
+```yaml
+# policy-lock.yaml
+adequacy:
+  enabled: true
+  escalation_tier: strong
+  escalation_threshold: 2
+  pin_cooldown_secs: 1800
+  explore_enabled: true
+  explore_tier: economy
+  explore_threshold: 3
+  explore_interval: 5
+```
+
+The two directions are intentionally asymmetric:
+
+- **Escalation:** repeated hard failures pin a downgraded fingerprint back to the strong tier; the pin expires after its cooldown.
+- **Exploration:** a cheaper tier must succeed repeatedly before its fingerprint qualifies for that route; a failed trial stops the downgrade.
+
+Qualified changes remain in the local evidence store until you explicitly project and publish them:
+
+```bash
+bro policy status
+bro policy evolve          # dry-run the candidate
+bro policy unlock
+bro policy evolve --apply  # atomically update policy-lock.yaml
+bro policy reload
+bro policy lock
+```
+
+`evolve --apply` adds qualified routes without overwriting routes you authored, and it aborts when the policy changed after the candidate was derived. Review and commit the resulting lock-file diff.
+
+Objective-scored evaluations are a separate evidence path. They create immutable subjects, admitted results, and frozen snapshots that optimization can consume; they are not inferred from HTTP status or low cost. See [Evaluations](/docs/configuration/evaluations).
+
+## Diagnose a request
+
+| Symptom | Check |
+| --- | --- |
+| The `auto` policy is not bound | `bro policy status`, then initialize or repair the `auto` binding |
+| No model is eligible | `bro models`, provider credentials, and policy tier model ids |
+| The candidate chain is unexpected | `bro route bitrouter/auto` and [Models](/docs/configuration/models) |
+| A call did not use the policy | Confirm its requested model was `bitrouter/auto`, not an explicit model id |
+| The serving route is unclear | Inspect the settled local or Cloud request receipt |
+| Traces are missing | Check `bro observe status` and [Telemetry](/docs/configuration/telemetry) |
+
+<Cards>
+  <Card title="Models" href="/docs/configuration/models" description="Understand selector resolution, presets, fallback, and provider ordering." />
+  <Card title="Evaluations" href="/docs/configuration/evaluations" description="Turn objective outcomes into admitted, reproducible evidence." />
+  <Card title="Telemetry" href="/docs/configuration/telemetry" description="Inspect receipts and export traces and metrics." />
+  <Card title="CLI reference" href="/docs/usage/cli" description="Read the complete generated command surface." />
+</Cards>

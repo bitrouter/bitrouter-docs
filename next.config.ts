@@ -7,12 +7,13 @@ const finalPath = {
   installation: "/docs/overview/quickstart", quickstart: "/docs/overview/quickstart",
   comparison: "/docs/overview/comparison#openrouter", "self-host-vs-cloud": "/docs/overview/quickstart#self-host-or-cloud",
   // models & routing
-  "provider-selection":"/docs/configuration/routing#provider-selection","model-fallback":"/docs/configuration/routing#fallback",
-  "model-variants":"/docs/configuration/routing#variants","presets":"/docs/configuration/routing#presets",
-  "structured-outputs":"/docs/configuration/structured-outputs","byok":"/docs/customization/models#built-in-providers-with-your-own-key",
+  "provider-selection":"/docs/configuration/models#candidate-eligibility","model-fallback":"/docs/configuration/models#fallback-chains",
+  "model-variants":"/docs/configuration/models#variants","presets":"/docs/configuration/models#presets",
+  "structured-outputs":"/docs/configuration/models#protocol-compatibility","byok":"/docs/customization/models#built-in-providers-with-your-own-key",
   "local-models":"/docs/usage/model-sources/local-inference","guardrails":"/docs/configuration/guardrails",
-  "observability":"/docs/configuration/observability#self-hosted-opentelemetry","opentelemetry":"/docs/configuration/observability#self-hosted-opentelemetry",
-  "tracing":"/docs/configuration/observability#cloud-activity","telemetry":"/docs/configuration/observability#self-hosted-opentelemetry",
+  "observability":"/docs/configuration/telemetry","opentelemetry":"/docs/configuration/telemetry#self-hosted-opentelemetry",
+  "tracing":"/docs/configuration/telemetry#cloud-activity","telemetry":"/docs/configuration/telemetry",
+  "evaluation":"/docs/configuration/evaluations","evaluations":"/docs/configuration/evaluations",
   "mcp":"/docs/usage/mcp","acp":"/docs/usage/acp",
   "agentskills":"/docs/usage/skills",
   // bitrouter cloud (was: infrastructure)
@@ -33,8 +34,8 @@ pairs.push(
   ["/docs", "/docs/overview/what-is-bitrouter"],
   // Section overview pages retired in 2026-09. Each section now starts with
   // its first concrete task page.
-  ["/docs/usage", "/docs/usage/cli"],
-  ["/docs/configuration", "/docs/configuration/config-file"],
+  ["/docs/usage", "/docs/usage/bitrouter-auto"],
+  ["/docs/configuration", "/docs/configuration/policy"],
   ["/docs/customization", "/docs/customization/models"],
   // Claude Code, Codex, and model-source guidance now live on one Coding
   // agents page. Preserve the former canonical URLs at stable anchors.
@@ -60,14 +61,21 @@ pairs.push(
   ["/docs/usage/model-sources/ollama", "/docs/usage/model-sources/local-inference"],
   ["/docs/usage/model-sources/vllm", "/docs/usage/model-sources/local-inference"],
   ["/docs/usage/model-sources/unsloth", "/docs/usage/model-sources/local-inference"],
-  // Configuration details collapsed into two maintained task pages (2026-09).
-  ["/docs/configuration/provider-selection", "/docs/configuration/routing#provider-selection"],
-  ["/docs/configuration/model-fallback", "/docs/configuration/routing#fallback"],
-  ["/docs/configuration/virtual-model", "/docs/configuration/routing#presets"],
-  ["/docs/configuration/model-variants", "/docs/configuration/routing#variants"],
-  ["/docs/configuration/observability/opentelemetry", "/docs/configuration/observability#self-hosted-opentelemetry"],
-  ["/docs/configuration/observability/tracing", "/docs/configuration/observability#cloud-activity"],
-  ["/docs/configuration/observability/evaluation", "/docs/configuration/observability#evaluation"],
+  // Configuration details collapsed into maintained task pages (2026-09).
+  ["/docs/configuration/config-file", "/docs/configuration/policy"],
+  ["/docs/configuration/routing", "/docs/configuration/models"],
+  ["/docs/usage/structured-outputs", "/docs/configuration/models#protocol-compatibility"],
+  ["/docs/configuration/structured-outputs", "/docs/configuration/models#protocol-compatibility"],
+  ["/docs/configuration/provider-selection", "/docs/configuration/models#candidate-eligibility"],
+  ["/docs/configuration/model-fallback", "/docs/configuration/models#fallback-chains"],
+  ["/docs/configuration/virtual-model", "/docs/configuration/models#presets"],
+  ["/docs/configuration/model-variants", "/docs/configuration/models#variants"],
+  // Observability was split into the narrower Telemetry and Evaluations pages.
+  ["/docs/configuration/observability", "/docs/configuration/telemetry"],
+  ["/docs/configuration/observability/opentelemetry", "/docs/configuration/telemetry#self-hosted-opentelemetry"],
+  ["/docs/configuration/observability/tracing", "/docs/configuration/telemetry#cloud-activity"],
+  ["/docs/configuration/observability/evaluation", "/docs/configuration/evaluations"],
+  ["/docs/configuration/observability/:slug*", "/docs/configuration/telemetry"],
   // Customization recipes collapsed around capability families (2026-09).
   ["/docs/customization/models/bring-your-own-model", "/docs/customization/models#custom-endpoints-and-models"],
   ["/docs/customization/models/bring-your-own-provider", "/docs/customization/models#built-in-providers-with-your-own-key"],
@@ -93,9 +101,9 @@ pairs.push(
   ["/docs/overview/comparisons/openrouter", "/docs/overview/comparison#openrouter"],
   ["/docs/overview/comparisons/litellm", "/docs/overview/comparison#litellm"],
   // 2026-09 task-language rename: Router → Configuration,
-  // Extensions → Customization. The config page also became Config file.
-  ["/docs/routers", "/docs/configuration/config-file"],
-  ["/docs/routers/configuration", "/docs/configuration/config-file"],
+  // Extensions → Customization. Router configuration became Router policy.
+  ["/docs/routers", "/docs/configuration/policy"],
+  ["/docs/routers/configuration", "/docs/configuration/policy"],
   ["/docs/routers/:slug+", "/docs/configuration/:slug+"],
   ["/docs/extensions", "/docs/customization/models"],
   ["/docs/extensions/:slug+", "/docs/customization/:slug+"],
@@ -111,16 +119,16 @@ pairs.push(
   ["/docs/get-started/introduction", "/docs/overview/what-is-bitrouter"],
   ["/docs/get-started/supported-models", "/docs/overview/supported-models"],
   ["/docs/get-started/supported-providers", "/docs/overview/supported-models"],
-  ["/docs/features/provider-selection", "/docs/configuration/routing#provider-selection"],
-  ["/docs/features/model-fallback", "/docs/configuration/routing#fallback"],
-  ["/docs/features/model-variants", "/docs/configuration/routing#variants"],
-  ["/docs/features/presets", "/docs/configuration/routing#presets"],
-  ["/docs/features/structured-outputs", "/docs/configuration/structured-outputs"],
+  ["/docs/features/provider-selection", "/docs/configuration/models#candidate-eligibility"],
+  ["/docs/features/model-fallback", "/docs/configuration/models#fallback-chains"],
+  ["/docs/features/model-variants", "/docs/configuration/models#variants"],
+  ["/docs/features/presets", "/docs/configuration/models#presets"],
+  ["/docs/features/structured-outputs", "/docs/configuration/models#protocol-compatibility"],
   ["/docs/features/byok", "/docs/customization/models#built-in-providers-with-your-own-key"],
   // concepts/ section dissolved (2026-07 reorg) → pages land next to their features
   ["/docs/concepts", "/docs/overview/what-is-bitrouter"],
   ["/docs/concepts/models", "/docs/overview/supported-models#how-model-ids-work"],
-  ["/docs/concepts/policy", "/docs/overview/quickstart#adaptive-routing"],
+  ["/docs/concepts/policy", "/docs/usage/bitrouter-auto#let-evidence-improve-the-policy"],
   ["/docs/concepts/tools", "/docs/usage/mcp"],
   ["/docs/concepts/agents", "/docs/usage/acp"],
   ["/docs/concepts/cli", "/docs/usage/cli"],
@@ -141,10 +149,10 @@ pairs.push(
   ["/docs/get-started/quickstart", "/docs/overview/quickstart"],
   ["/docs/get-started/installation", "/docs/overview/quickstart"],
   ["/docs/get-started/comparison", "/docs/overview/comparison#openrouter"],
-  ["/docs/get-started/set-up-routing", "/docs/configuration/routing#provider-selection"],
-  ["/docs/get-started/set-up-tracing", "/docs/configuration/observability#self-hosted-opentelemetry"],
-  ["/docs/get-started/set-up-evaling", "/docs/configuration/observability#evaluation"],
-  ["/docs/get-started/set-up-looping", "/docs/overview/quickstart#adaptive-routing"],
+  ["/docs/get-started/set-up-routing", "/docs/configuration/models#candidate-eligibility"],
+  ["/docs/get-started/set-up-tracing", "/docs/configuration/telemetry#self-hosted-opentelemetry"],
+  ["/docs/get-started/set-up-evaling", "/docs/configuration/evaluations"],
+  ["/docs/get-started/set-up-looping", "/docs/usage/bitrouter-auto#let-evidence-improve-the-policy"],
   // infrastructure → bitrouter cloud (folder renamed; pages merged/moved)
   ["/docs/infrastructure/managed-provider", "/docs/overview/supported-models"],
   ["/docs/infrastructure/discounted-models", "/docs/overview/supported-models"],
@@ -156,7 +164,7 @@ pairs.push(
   ["/docs/cloud/overview", "/docs/overview/quickstart#self-host-or-cloud"],
   ["/docs/cloud/get-started", "/docs/overview/quickstart#self-host-or-cloud"],
   ["/docs/cloud/byok", "/docs/customization/models#built-in-providers-with-your-own-key"],
-  ["/docs/cloud/tracing", "/docs/configuration/observability#cloud-activity"],
+  ["/docs/cloud/tracing", "/docs/configuration/telemetry#cloud-activity"],
   ["/docs/cloud/managed-models", "/docs/overview/supported-models"],
   ["/docs/cloud/workspaces", "/docs/reference/management/listNamespaces"],
   ["/docs/cloud/payment", "/docs/overview/quickstart#self-host-or-cloud"],
@@ -193,15 +201,15 @@ pairs.push(
   ["/docs/changelog/:slug*", "/changelog/:slug*"],
   ["/docs/changelog", "/changelog"],
   // moved/removed pages (2026-06 refactor) → live destinations
-  ["/docs/features/observability", "/docs/configuration/observability#self-hosted-opentelemetry"],
-  ["/docs/features/tracing", "/docs/configuration/observability#cloud-activity"],
-  ["/docs/features/telemetry", "/docs/configuration/observability#self-hosted-opentelemetry"],
+  ["/docs/features/observability", "/docs/configuration/telemetry"],
+  ["/docs/features/tracing", "/docs/configuration/telemetry#cloud-activity"],
+  ["/docs/features/telemetry", "/docs/configuration/telemetry"],
   // observability & evaluation split out of features/ (2026-08); the single
   // opentelemetry page was two pages welded together — OSS export vs hosted view
-  ["/docs/features/opentelemetry", "/docs/configuration/observability#self-hosted-opentelemetry"],
+  ["/docs/features/opentelemetry", "/docs/configuration/telemetry#self-hosted-opentelemetry"],
   ["/docs/features/local-models", "/docs/usage/model-sources/local-inference"],
   ["/docs/features/toolsets", "/docs/customization/tools/server-tools"],
-  ["/docs/guides/export-telemetry", "/docs/configuration/observability#self-hosted-opentelemetry"],
+  ["/docs/guides/export-telemetry", "/docs/configuration/telemetry#self-hosted-opentelemetry"],
   ["/docs/cloud/managed-tools", "/docs/overview/quickstart#self-host-or-cloud"],
   ["/docs/cloud/managed-agents", "/docs/overview/quickstart#self-host-or-cloud"],
   // integrations + cookbook history → usage.
@@ -221,19 +229,19 @@ pairs.push(
   ["/docs/cookbook/migration/litellm", "/docs/overview/comparison#migrate-from-litellm"],
   ["/docs/cookbook/migration/openrouter", "/docs/overview/comparison#migrate-from-openrouter"],
   // Earlier router-section names now resolve into Router or Extensions.
-  ["/docs/models-and-routing/presets", "/docs/configuration/routing#presets"],
+  ["/docs/models-and-routing/presets", "/docs/configuration/models#presets"],
   ["/docs/models-and-routing/byok", "/docs/customization/models#built-in-providers-with-your-own-key"],
-  ["/docs/models-and-routing", "/docs/configuration/routing#provider-selection"],
+  ["/docs/models-and-routing", "/docs/configuration/models#candidate-eligibility"],
   // gateway-and-routing/ split (2026-09): the routing pages went back to
   // models-and-routing/, the tool-calling pages to what became
   // models-and-routing/tool-calling/ (see the section dissolve below).
-  ["/docs/gateway-and-routing/model-fallback", "/docs/configuration/routing#fallback"],
-  ["/docs/gateway-and-routing/provider-selection", "/docs/configuration/routing#provider-selection"],
-  ["/docs/gateway-and-routing/virtual-model", "/docs/configuration/routing#presets"],
-  ["/docs/gateway-and-routing/model-variants", "/docs/configuration/routing#variants"],
+  ["/docs/gateway-and-routing/model-fallback", "/docs/configuration/models#fallback-chains"],
+  ["/docs/gateway-and-routing/provider-selection", "/docs/configuration/models#candidate-eligibility"],
+  ["/docs/gateway-and-routing/virtual-model", "/docs/configuration/models#presets"],
+  ["/docs/gateway-and-routing/model-variants", "/docs/configuration/models#variants"],
   ["/docs/gateway-and-routing/bring-your-own-model", "/docs/customization/models#custom-endpoints-and-models"],
   ["/docs/gateway-and-routing/bring-your-own-provider", "/docs/customization/models#built-in-providers-with-your-own-key"],
-  ["/docs/gateway-and-routing/structured-outputs", "/docs/configuration/structured-outputs"],
+  ["/docs/gateway-and-routing/structured-outputs", "/docs/configuration/models#protocol-compatibility"],
   ["/docs/gateway-and-routing/guardrails", "/docs/configuration/guardrails"],
   ["/docs/gateway-and-routing/mcp-gateway", "/docs/usage/mcp#mcp-gateway"],
   ["/docs/gateway-and-routing/server-tools", "/docs/customization/tools/server-tools"],
@@ -243,7 +251,7 @@ pairs.push(
   ["/docs/gateway-and-routing/websearch", "/docs/customization/tools/web-tools#web-search"],
   ["/docs/gateway-and-routing/web-fetch", "/docs/customization/tools/web-tools#web-fetch"],
   ["/docs/gateway-and-routing/acp-gateway", "/docs/usage/acp"],
-  ["/docs/gateway-and-routing", "/docs/configuration/routing#provider-selection"],
+  ["/docs/gateway-and-routing", "/docs/configuration/models#candidate-eligibility"],
   // mcp-and-tool-calling/ dissolved: tools live under Extensions, while the
   // The MCP gateway and local ACP adapter are usage tasks.
   // The section index has no page of its own, and `:slug*` matches zero
@@ -252,9 +260,12 @@ pairs.push(
   ["/docs/mcp-and-tool-calling/mcp-gateway", "/docs/usage/mcp#mcp-gateway"],
   ["/docs/mcp-and-tool-calling/acp-gateway", "/docs/usage/acp"],
   ["/docs/mcp-and-tool-calling/:slug*", "/docs/customization/tools/:slug*"],
-  // evals-and-tracing/ → Router observability
-  ["/docs/evals-and-tracing", "/docs/configuration/observability#self-hosted-opentelemetry"],
-  ["/docs/evals-and-tracing/:slug*", "/docs/configuration/observability/:slug*"],
+  // evals-and-tracing/ split into objective evidence and operational telemetry.
+  ["/docs/evals-and-tracing", "/docs/configuration/telemetry"],
+  ["/docs/evals-and-tracing/evaluation", "/docs/configuration/evaluations"],
+  ["/docs/evals-and-tracing/evaluations", "/docs/configuration/evaluations"],
+  ["/docs/evals-and-tracing/evals", "/docs/configuration/evaluations"],
+  ["/docs/evals-and-tracing/:slug*", "/docs/configuration/telemetry"],
   // agent and tool protocol history → Usage and Extensions.
   ["/docs/models-and-routing/acp-gateway", "/docs/usage/acp"],
   // Tool pages keep their filenames, so one wildcard covers them.
@@ -265,8 +276,8 @@ pairs.push(
   ["/docs/guides/cloud-api", "/docs/usage/cli"],
   ["/docs/guides/build-a-plugin", "/docs/overview/what-is-bitrouter"],
   ["/docs/guides/register-as-a-provider", "/docs/customization/models#built-in-providers-with-your-own-key"],
-  // observability/ → Router observability
-  ["/docs/observability/:slug*", "/docs/configuration/observability/:slug*"],
+  // observability/ → Router telemetry
+  ["/docs/observability/:slug*", "/docs/configuration/telemetry"],
   // tools/agents pages retitled to name their protocol; features/ dissolved —
   // guardrails moved, namespaces and payment retired (2026-08)
   ["/docs/gateway-and-routing/tools", "/docs/usage/mcp"],
@@ -284,11 +295,11 @@ pairs.push(
   ["/docs/features/advisor", "/docs/customization/tools/model-backed-tools#advisor"],
   ["/docs/features/fusion", "/docs/customization/tools/model-backed-tools#fusion"],
   // pages retired (2026-08): the provider directory and the models concept page
-  // folded into the model catalog, policy semantics into the quickstart, and the
+  // folded into the model catalog, policy semantics into bitrouter/auto, and the
   // search-provider integrations into the web search feature page.
   ["/docs/overview/supported-providers", "/docs/overview/supported-models"],
   ["/docs/gateway-and-routing/models", "/docs/overview/supported-models#how-model-ids-work"],
-  ["/docs/gateway-and-routing/policy", "/docs/overview/quickstart#adaptive-routing"],
+  ["/docs/gateway-and-routing/policy", "/docs/usage/bitrouter-auto#let-evidence-improve-the-policy"],
   ["/docs/integrations/tools", "/docs/customization/tools/web-tools#web-search"],
   ["/docs/integrations/exa", "/docs/customization/tools/web-tools#web-search"],
   ["/docs/integrations/parallel", "/docs/customization/tools/web-tools#web-search"],
@@ -297,7 +308,7 @@ pairs.push(
   // gateway pages renamed for what they are, not what the field is called
   // (2026-08): presets → virtual model, external providers (BYOK) → bring your
   // own provider. The API keeps `routing-presets` and `byok`; the docs don't.
-  ["/docs/gateway-and-routing/presets", "/docs/configuration/routing#presets"],
+  ["/docs/gateway-and-routing/presets", "/docs/configuration/models#presets"],
   ["/docs/gateway-and-routing/byok", "/docs/customization/models#built-in-providers-with-your-own-key"],
   // the OpenRouter page was unpublished (2026-08); the aggregator provider block
   // it documented is the worked example on the model-sources page. The

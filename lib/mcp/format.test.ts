@@ -23,8 +23,8 @@ const model = (over: Partial<Model>): Model => ({
 
 describe("pathToSlug", () => {
   it("strips the /docs base", () => {
-    expect(pathToSlug("/docs/configuration/routing#fallback")).toEqual([
-      "configuration", "routing",
+    expect(pathToSlug("/docs/configuration/models#fallback-chains")).toEqual([
+      "configuration", "models",
     ]);
   });
   it("strips a #hash and a full origin", () => {
@@ -39,17 +39,17 @@ describe("pathToSlug", () => {
 
 describe("formatSearchResults", () => {
   const raw: RawSearchResult[] = [
-    { id: "1", url: "/docs/configuration/routing", type: "page", content: "Routing" },
-    { id: "2", url: "/docs/configuration/routing#fallback", type: "heading", content: "Fallback" },
+    { id: "1", url: "/docs/configuration/models", type: "page", content: "Models" },
+    { id: "2", url: "/docs/configuration/models#fallback-chains", type: "heading", content: "Fallback chains" },
     { id: "3", url: "/docs/customization/models", type: "page", content: "Models & providers" },
   ];
   it("dedups by page and caps to the limit", () => {
     const hits = formatSearchResults(raw, 1);
     expect(hits).toHaveLength(1);
     expect(hits[0]).toMatchObject({
-      title: "Routing",
-      path: "configuration/routing",
-      url: "https://bitrouter.ai/docs/configuration/routing",
+      title: "Models",
+      path: "configuration/models",
+      url: "https://bitrouter.ai/docs/configuration/models",
     });
   });
   it("returns one hit per distinct page", () => {
@@ -57,10 +57,10 @@ describe("formatSearchResults", () => {
   });
   it("strips fumadocs <mark> highlight tags from the title", () => {
     const hits = formatSearchResults(
-      [{ id: "1", url: "/docs/configuration/routing", type: "page", content: "Model <mark>Routing</mark>" }],
+      [{ id: "1", url: "/docs/configuration/models", type: "page", content: "Configured <mark>Models</mark>" }],
       5,
     );
-    expect(hits[0].title).toBe("Model Routing");
+    expect(hits[0].title).toBe("Configured Models");
   });
 });
 

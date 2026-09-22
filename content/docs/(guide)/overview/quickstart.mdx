@@ -173,76 +173,25 @@ Model selectors use two similar-looking forms for different jobs:
 | `provider/model` | Stable logical model id; BitRouter may route it through any eligible provider | `anthropic/claude-opus-4.8` |
 | `provider:model` | Explicit provider pin for local routing | `anthropic:anthropic/claude-opus-4.8` |
 
-Use the slash form by default. Use the colon form only when you intentionally need one configured provider, such as a subscription-backed route. See [Routing](/docs/configuration/routing#model-selector-forms) for the complete resolution order.
+Use the slash form by default. Use the colon form only when you intentionally need one configured provider, such as a subscription-backed route. See [Models](/docs/configuration/models#model-selector-forms) for the complete resolution order.
 
 ## Adaptive routing
 
-Everything above is a static router. The adaptive half — the **learn** step of the [act → observe → evaluate → learn](/docs/overview/what-is-bitrouter) loop — is opt-in, deterministic, and adds no LLM call to the path. Its artifact is `policy-lock.yaml`, living next to `bitrouter.yaml`: **Git owns its history; the local database owns the evidence.**
-
-One command scaffolds everything:
-
-```bash
-bro policy init coding --preset coding --economy moonshotai/kimi-k2.7-code
-```
-
-That writes a two-tier table (strong = your preset's model, economy = the cheap one), clamps tool-carrying requests to the strong tier so a downgrade never strands a tool call, and binds the policy to the preset in `bitrouter.yaml` with `writeback: locked`. Selecting the preset as the model is the entire opt-in boundary — bare model requests are never touched by a policy:
+Explicit model ids give you deterministic model selection. To let the router apply the policy bound to its `auto` preset, keep one stable model id in your agent or application:
 
 ```bash
 curl http://127.0.0.1:4356/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -d '{"model": "@coding", "messages": [{"role": "user", "content": "..."}]}'
+  -d '{"model": "bitrouter/auto", "messages": [{"role": "user", "content": "..."}]}'
 ```
 
-Each request is fingerprinted by loop step (`opening`, `after_<tool>`, `midstream`) and resolved fingerprint → tier → model. An unmatched fingerprint falls back to `default_tier`, and the table starts conservative: everything routes strong until evidence says otherwise.
-
-### Learning from live traffic
-
-With `adequacy` enabled, every request through a policy-bound route is classified by outcome and recorded against its fingerprint — deterministically, with [no LLM judge in the path](/docs/configuration/observability#evaluation). Two halves act on that signal:
-
-- **Escalation (the safety half)** — a downgraded fingerprint that hard-fails `escalation_threshold` consecutive times is pinned up to the strong tier. Pins decay after a cooldown.
-- **Exploration (the aggressive half)** — with `explore_enabled`, roughly 1-in-`explore_interval` candidate requests is trialed on the economy tier; `explore_threshold` consecutive adequate trials qualify that fingerprint for the cheap tier. A failed trial escalates and stops.
-
-```yaml
-# policy-lock.yaml
-adequacy:
-  enabled: true
-  escalation_tier: strong
-  escalation_threshold: 2
-  pin_cooldown_secs: 1800
-  explore_enabled: true
-  explore_tier: economy
-  explore_threshold: 3
-  explore_interval: 5
-```
-
-The evidence rule is asymmetric: negative evidence escalates immediately, while a cheaper route needs repeated success before it becomes effective. A policy with `adequacy` off behaves exactly like its deterministic table.
-
-The signal itself — the outcome classes it records, the per-request cost metering alongside it, and the objective-scored eval engine landing on top — is [Evaluation](/docs/configuration/observability#evaluation).
-
-### Publishing what it learns
-
-Qualified downgrades live in the database until you publish them. The cycle is explicit and digest-checked:
-
-```bash
-bro policy status          # path, digest, writeback mode, bindings
-bro policy evolve          # dry-run: which routes would materialize
-bro policy unlock          # permit programmatic writeback
-bro policy evolve --apply  # atomically republish policy-lock.yaml
-bro policy reload          # daemon picks it up — no restart
-bro policy lock            # forbid programmatic writes again
-```
-
-`evolve --apply` only **adds** qualified routes — it never overwrites or removes anything you or Git wrote, and a detected intervening edit aborts the publish instead of clobbering it. Commit the result and the improved table is in Git, where a policy belongs.
-
-<Callout type="info">
-`bro policy create` + `bro key sign` are a **different surface** — per-key access control (allowed models, budgets, rate limits), not routing. See [Guardrails](/docs/configuration/guardrails).
-</Callout>
+`bitrouter/auto` requires an `auto` policy binding and fails visibly when the binding is missing. The dedicated [bitrouter/auto guide](/docs/usage/bitrouter-auto) shows how to create it, inspect the selected route, override one call, learn from runtime adequacy, and explicitly publish a reviewed policy update. [Evaluations](/docs/configuration/evaluations) covers the separate objective-scored evidence path.
 
 ## Next steps
 
 <Cards>
-  <Card title="Provider selection" href="/docs/configuration/routing#provider-selection" description="Declare providers, rank them, and add multi-account failover." />
-  <Card title="Virtual models" href="/docs/configuration/routing#presets" description="Named routing profiles — the opt-in boundary for adaptive routing." />
+  <Card title="Models" href="/docs/configuration/models" description="Configure selectors, candidate eligibility, and fallback." />
+  <Card title="bitrouter/auto" href="/docs/usage/bitrouter-auto" description="Use one stable model id and inspect the policy-driven route." />
   <Card title="Coding agents" href="/docs/usage/coding-agents" description="Step-by-step guides for every supported agent runtime." />
   <Card title="CLI reference" href="/docs/usage/cli" description="The full command surface of the binary." />
 </Cards>

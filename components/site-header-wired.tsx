@@ -59,5 +59,10 @@ export function WebHeader() {
  * their navigation remains reachable on small screens.
  */
 export function WebHeaderBody({ leadingSlot }: { leadingSlot?: React.ReactNode }) {
-  return <SiteHeaderBody {...useWebHeaderProps(leadingSlot)} />;
+  return (
+    <SiteHeaderBody
+      {...useWebHeaderProps(leadingSlot)}
+      leadingSlotClassName={leadingSlot ? "md:hidden" : undefined}
+    />
+  );
 }

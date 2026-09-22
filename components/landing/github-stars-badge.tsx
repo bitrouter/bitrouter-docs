@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Star } from "lucide-react";
 import { GitHubIcon } from "@/components/icons";
 import { cn } from "@/lib/cn";
 
@@ -34,8 +35,8 @@ export function GitHubStarsBadge({ className }: { className?: string }) {
       rel="noopener noreferrer"
       aria-label={
         stars !== null
-          ? `BitRouter on GitHub — ${stars} stars`
-          : "BitRouter on GitHub"
+          ? `Star BitRouter on GitHub — ${stars} stars`
+          : "Star BitRouter on GitHub"
       }
       className={cn(
         "inline-flex shrink-0 items-center gap-1.5 text-[var(--z-ink-4)] transition-colors hover:text-[var(--z-ink)]",
@@ -43,9 +44,7 @@ export function GitHubStarsBadge({ className }: { className?: string }) {
       )}
     >
       <GitHubIcon className="size-[15px]" />
-      <span className="hidden font-mono text-[11px] uppercase tracking-[0.12em] xl:inline">
-        Open source
-      </span>
+      <Star aria-hidden="true" className="size-[13px]" strokeWidth={1.7} />
       {stars !== null && (
         <span className="font-mono text-[11px] tabular-nums">
           {formatStars(stars)}

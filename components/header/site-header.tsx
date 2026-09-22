@@ -16,7 +16,7 @@ import {
  * Design language: the v3 dark nav. A bare ≋ mask mark + lowercase mono
  * `bitrouter` wordmark, a centred row of uppercase mono nav links
  * (11.5px / 0.16em, ink-3 → ink on hover), then the utility cluster — the
- * "Ask AI…" search box, GitHub, "book demo" and "Try Cloud". The shell is
+ * "Ask AI…" search box, GitHub, "book demo" and "Try bitrouter/auto". The shell is
  * sticky + translucent (`rgba(12,13,16,0.85)`) with a `--z-rule` hairline. All
  * colours come from the global Zed tokens (`--z-*`), so it matches every page.
  *
@@ -42,6 +42,8 @@ export interface SiteHeaderProps {
   showSignOut?: boolean;
   /** Optional leading cell (generally empty on the web header). */
   leadingSlot?: React.ReactNode;
+  /** Responsive visibility for the leading cell (for example, a docs drawer trigger). */
+  leadingSlotClassName?: string;
   /** web: ⌘K command palette. */
   searchSlot?: React.ReactNode;
   /** web: GitHub stars. */
@@ -114,6 +116,17 @@ function initials(session: HeaderSession): string {
   return (a + b).toUpperCase();
 }
 
+function TryAutoLabel(): React.ReactElement {
+  return (
+    <>
+      <span>Try</span>
+      <code className="rounded-[3px] border border-current/20 bg-current/[0.04] px-1.5 py-0.5 font-mono text-[11px] normal-case tracking-normal text-current">
+        bitrouter/auto
+      </code>
+    </>
+  );
+}
+
 // ── component ────────────────────────────────────────────
 
 /**
@@ -128,6 +141,7 @@ export function SiteHeaderBody({
   onSignOut,
   showSignOut = true,
   leadingSlot,
+  leadingSlotClassName,
   searchSlot,
   utilitySlot,
 }: SiteHeaderProps): React.ReactElement {
@@ -136,7 +150,11 @@ export function SiteHeaderBody({
   useCalFounderCall();
   return (
     <div className="flex h-[62px] w-full items-center gap-6 px-[22px] sm:px-6 lg:px-6 xl:px-10">
-      {leadingSlot ? <div className="flex shrink-0 items-center">{leadingSlot}</div> : null}
+      {leadingSlot ? (
+        <div className={cn("flex shrink-0 items-center", leadingSlotClassName)}>
+          {leadingSlot}
+        </div>
+      ) : null}
 
       {/* Logo — bare ≋ mask mark + lowercase mono wordmark. v3 drops the
           blue-bordered box: the mark carries ink, not accent. */}
@@ -193,11 +211,11 @@ export function SiteHeaderBody({
 
       {/* Utility cluster — search, GitHub, demo, auth. `ml-auto` keeps it right
           even when the nav is hidden and the centring flex-1 is gone. */}
-      <div className="ml-auto flex min-w-0 shrink-0 items-center gap-[22px]">
+      <div className="ml-auto flex min-w-0 shrink-0 items-center gap-3 sm:gap-[22px]">
         {searchSlot ? <div className="flex min-w-0 items-center">{searchSlot}</div> : null}
 
         {utilitySlot ? (
-          <div className="hidden items-center sm:flex">{utilitySlot}</div>
+          <div className="flex items-center">{utilitySlot}</div>
         ) : null}
 
         {/* Secondary CTA — book a founder call. Shown for all visitors. */}
@@ -218,13 +236,18 @@ export function SiteHeaderBody({
             showSignOut={showSignOut}
           />
         ) : (
-          // Single auth CTA — "Try Cloud" routes to the console's sign-in
+          // Single auth CTA — the auto route is the product entry point, and
+          // the link routes to the console's sign-in.
           // (social sign-in auto-creates the account, so it is sign-in/sign-up).
           <a
             href={`${config.consoleBaseUrl}/sign-in`}
-            className={cn(UTIL_LINK, "text-[var(--z-ink)] hover:text-[var(--z-ink-3)]")}
+            aria-label="Try bitrouter/auto"
+            className={cn(
+              UTIL_LINK,
+              "inline-flex items-center gap-1.5 text-[var(--z-ink)] hover:text-[var(--z-ink-3)]",
+            )}
           >
-            Try Cloud
+            <TryAutoLabel />
           </a>
         )}
 
@@ -235,7 +258,6 @@ export function SiteHeaderBody({
           pathname={pathname}
           onSignOut={onSignOut}
           showSignOut={showSignOut}
-          utilitySlot={utilitySlot}
         />
       </div>
     </div>
@@ -391,14 +413,12 @@ function MobileMenu({
   pathname,
   onSignOut,
   showSignOut,
-  utilitySlot,
 }: {
   config: HeaderConfig;
   session: HeaderSession | null | undefined;
   pathname?: string;
   onSignOut?: () => void;
   showSignOut: boolean;
-  utilitySlot?: React.ReactNode;
 }) {
   const [open, setOpen] = React.useState(false);
   const isAuthed = Boolean(session);
@@ -451,11 +471,6 @@ function MobileMenu({
                 </a>
               );
             })}
-            {utilitySlot ? (
-              <div className="mt-1 flex items-center border-t border-[var(--z-rule)] px-1 pt-2.5">
-                {utilitySlot}
-              </div>
-            ) : null}
             <BookDemoButton
               location="header_mobile"
               className="mt-2 flex cursor-pointer items-center justify-center border border-[var(--z-rule)] px-4 py-3 font-mono text-[11.5px] uppercase tracking-[0.16em] text-[var(--z-ink)] transition-colors hover:border-[var(--z-rule-2)] hover:bg-white/[0.02]"
@@ -477,9 +492,10 @@ function MobileMenu({
               ) : (
                 <a
                   href={`${config.consoleBaseUrl}/sign-in`}
-                  className="flex flex-1 items-center justify-center rounded-[2px] bg-primary px-4 py-3 font-sans text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                  aria-label="Try bitrouter/auto"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-[2px] bg-primary px-4 py-3 font-mono text-[11.5px] uppercase tracking-[0.12em] text-primary-foreground transition-colors hover:bg-primary/90"
                 >
-                  Try Cloud
+                  <TryAutoLabel />
                 </a>
               )}
             </div>

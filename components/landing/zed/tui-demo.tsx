@@ -541,18 +541,10 @@ export function TuiDemo() {
 
   return (
     <section>
-      {/* Vertical only — `.zed-wrap` owns the horizontal padding, and drops it
-          to 22px under 900px. Hard-coding the gutter here cost the terminal
-          width on a phone, which is width it does not have. */}
-      <div className="zed-wrap zed-sec">
-        <div className="zed-section-intro">
-          <div className="zed-eyebrow">Illustrative workflow</div>
-          <h2 className="zed-display">Keep your agent. Let BitRouter choose the route.</h2>
-          <p>
-            Connect your existing agent to BitRouter and use a routing policy to choose only the
-            model and reasoning effort each step needs.
-          </p>
-        </div>
+      {/* The terminal leads this section so the live product is already visible
+          in the initial viewport. The explanation follows the artifact, like a
+          figure caption, instead of delaying it by a full section intro. */}
+      <div className="zed-wrap zed-hero-demo">
         <div ref={outer} style={{ overflowX: "auto" }}>
           {/* Occupies the scaled box so the transform doesn't leave a gap. */}
           <div style={fit ? { width: fit.w, height: fit.h, margin: "0 auto" } : undefined}>
@@ -614,22 +606,7 @@ export function TuiDemo() {
 
               <WTermFrame harness={cur} frame={frame} narrow={narrow} />
             </TerminalWindow>
-
-            <div style={{ textAlign: "center", marginTop: 22 }}>
-              <div style={{ fontSize: 12.5, color: "var(--z-ink-5)" }}>
-                One policy route, configured in <span style={{ color: "var(--z-ink)" }}>bitrouter.yaml</span> — the router can
-                change the underlying model or reasoning level as the workflow changes.
-              </div>
-              <div style={{ fontSize: 11.5, color: "var(--z-ink-6)", marginTop: 8 }}>
-                {cur.id} · {cur.workflow} · {cur.tierShape}
-              </div>
-              {narrow && (
-                <div style={{ fontSize: 11.5, color: "var(--z-ink-6)", marginTop: 9 }}>
-                  tap a tab to run that session
-                </div>
-              )}
-            </div>
-            </div>
+          </div>
           </div>
         </div>
       </div>

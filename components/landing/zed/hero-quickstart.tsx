@@ -9,32 +9,27 @@ const INSTALL_METHODS = [
     id: "curl",
     label: "curl",
     command: INSTALL_CMD,
-    note: "Install the binary, then run bitrouter to configure a provider and route.",
   },
   {
     id: "powershell",
     label: "PowerShell",
     command:
       'powershell -ExecutionPolicy Bypass -Command "irm https://github.com/bitrouter/bitrouter/releases/download/v1.0.0-alpha.31/bitrouter-installer.ps1 | iex"',
-    note: "Install the native Windows binary, then run bro to configure a provider and route.",
   },
   {
     id: "npm",
     label: "npm",
     command: "npm install -g bitrouter",
-    note: "Install the binary, then run bitrouter to configure a provider and route.",
   },
   {
     id: "brew",
     label: "brew",
     command: "brew install bitrouter/tap/bitrouter",
-    note: "Install the binary, then run bitrouter to configure a provider and route.",
   },
   {
     id: "agent-skill",
     label: "Agent Skill",
     command: "npx skills add bitrouter/bitrouter",
-    note: 'Then ask your agent: "Set up BitRouter for this project."',
   },
 ] as const;
 
@@ -112,7 +107,6 @@ export function HeroQuickstart() {
         </button>
       </div>
 
-      <div className="zed-install-note">↳ {active.note}</div>
     </div>
   );
 }

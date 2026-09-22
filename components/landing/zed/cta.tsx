@@ -10,7 +10,7 @@ import { Cursor, ZED_LINKS } from "./primitives";
  */
 export function FinalCta() {
   return (
-    <section className="zed-wrap zed-sec zed-sec-b" style={{ textAlign: "center" }}>
+    <section className="zed-wrap zed-sec zed-sec-b zed-final-cta" style={{ textAlign: "center" }}>
       <h2
         className="zed-display"
         style={{

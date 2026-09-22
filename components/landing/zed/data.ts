@@ -5,9 +5,16 @@
  * ========================================================================== */
 
 export const HERO = {
-  announcement: "THE OPEN-SOURCE MODEL ROUTER",
-  headline: "Your router. Your rules.",
-  sub: "BitRouter is an open-source model router you can run, inspect, and extend. Bring your models, define your routing rules, and make it work your way.",
+  headline: "The open-source model router for your workflow",
+  sub: "The minimal interpretable model router that learns & adapts to your agent workflows",
+  outcomes: [
+    { label: "Better outcomes.", href: null },
+    {
+      label: "40% lower model cost.",
+      href: "https://huggingface.co/datasets/BitRouterAI/benchmarks/blob/main/terminal-bench-2.1/router-random-study/README.md",
+    },
+    { label: "Faster iteration.", href: null },
+  ],
 };
 
 // ── Bring-your-own ──────────────────────────────────────────────────────────
@@ -134,8 +141,6 @@ export type Harness = {
   /** …pi prints it bottom-right, where it normally prints `unknown`. */
   afterLiveRight?: boolean;
   ladder: { name: Tier; value: string }[];
-  workflow: string;
-  tierShape: string;
 };
 
 /** Claude Code's pixel mascot: 7×7, salmon face, two eyes, three feet. */
@@ -192,8 +197,6 @@ export const HARNESSES: Harness[] = [
       { name: "extra", value: "claude-opus-4.8 · think 32k" },
       { name: "max", value: "claude-opus-4.8 · think 64k" },
     ],
-    workflow: "Debugging",
-    tierShape: "one model, five efforts",
   },
   {
     id: "codex",
@@ -249,8 +252,6 @@ export const HARNESSES: Harness[] = [
       { name: "extra", value: "openai/gpt-5.5 · high" },
       { name: "max", value: "openai/gpt-5.5 · high" },
     ],
-    workflow: "Code generation",
-    tierShape: "two models on one ladder",
   },
   {
     id: "opencode",
@@ -307,8 +308,6 @@ export const HARNESSES: Harness[] = [
       { name: "extra", value: "deepseek/deepseek-v4-pro" },
       { name: "max", value: "anthropic/claude-opus-4.8" },
     ],
-    workflow: "Repo scanning",
-    tierShape: "a different model per rung",
   },
   {
     id: "pi",
@@ -347,8 +346,6 @@ export const HARNESSES: Harness[] = [
       { name: "extra", value: "openai/gpt-5.5 · high" },
       { name: "max", value: "anthropic/claude-opus-4.8" },
     ],
-    workflow: "SQL & database",
-    tierShape: "three models, five rungs",
   },
   {
     // UNVERIFIED CHROME. No screenshot of dsh exists, unlike the four above, so
@@ -386,8 +383,6 @@ export const HARNESSES: Harness[] = [
       { name: "extra", value: "deepseek-v4-pro · high" },
       { name: "max", value: "deepseek-v4-pro · high" },
     ],
-    workflow: "Frontend & UI",
-    tierShape: "declared efforts, routed per step",
   },
 ];
 

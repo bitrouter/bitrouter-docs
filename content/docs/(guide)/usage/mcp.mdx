@@ -1,12 +1,9 @@
 ---
 title: MCP Support
-description: Connect and aggregate upstream MCP servers, expose selected tools to model requests, and search BitRouter documentation over MCP.
+description: Connect and aggregate upstream MCP servers, then expose selected tools to agents or model requests.
 ---
 
-[Model Context Protocol](https://modelcontextprotocol.io) connects agents and model requests to tools, resources, and prompts. BitRouter supports MCP in two places:
-
-- The open-source daemon acts as a client and gateway for MCP servers you configure.
-- The public Docs MCP server lets compatible clients search BitRouter documentation and model availability.
+[Model Context Protocol](https://modelcontextprotocol.io) connects agents and model requests to tools, resources, and prompts. The open-source BitRouter daemon acts as a client and gateway for MCP servers you configure.
 
 ## MCP gateway
 
@@ -122,51 +119,12 @@ bro launch codex
 
 The launch summary states whether model routing and MCP injection were applied. Local filesystem skills use the agent host's normal plugin or skill mechanism; they are not served by a BitRouter origin MCP process.
 
-## Docs MCP server
-
-BitRouter publishes a public MCP server for this documentation. An editor or agent can search docs, read a page, and check model availability without leaving its current workflow.
-
-- **Endpoint:** `https://bitrouter.ai/mcp`
-- **Transport:** Streamable HTTP
-- **Authentication:** none
-
-This service answers questions *about* BitRouter. It is separate from the gateway running in your own deployment.
-
-### Tools
-
-| Tool | Purpose |
-| --- | --- |
-| `search_docs(query, limit?, locale?)` | Find relevant documentation and return canonical URLs plus paths for `get_doc` |
-| `get_doc(path, locale?)` | Fetch one documentation page as clean Markdown |
-| `lookup_model(query)` | Check model availability, pricing, context window, and a configuration snippet |
-
-Clients that support MCP resources can also read the curated index at `bitrouter-docs://llms-index`.
-
-### Add it to a client
-
-Claude Code:
-
-```bash
-claude mcp add --transport http bitrouter-docs https://bitrouter.ai/mcp
-```
-
-For clients that accept an MCP server configuration:
-
-```json
-{
-  "mcpServers": {
-    "bitrouter-docs": {
-      "url": "https://bitrouter.ai/mcp"
-    }
-  }
-}
-```
-
 ## Operating BitRouter from an agent
 
 BitRouter OSS is not a first-party origin MCP server for local administrative commands. To inspect status, models, routes, or requests, install [Agent Skills](/docs/usage/skills) in a shell-capable host. The skill selects structured `bro` commands; the host obtains approval and executes them.
 
 <Cards>
+  <Card title="MCP for development" href="/docs/development/mcp" description="Give a coding agent BitRouter reference context." />
   <Card title="Server tools" href="/docs/customization/tools/server-tools" description="Run selected MCP tools inside the router's model loop." />
   <Card title="Agent Skills" href="/docs/usage/skills" description="Teach an agent to operate BitRouter through its CLI." />
   <Card title="ACP Support" href="/docs/usage/acp" description="Run agent sessions interactively, headlessly, or over local stdio." />

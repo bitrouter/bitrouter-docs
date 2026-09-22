@@ -55,9 +55,9 @@ References:
 - [CLI](${BASE_URL}/docs/usage/cli): Every command of the binary — serve, route, models, policy, optimize, providers
 - [TUI](${BASE_URL}/docs/usage/tui): BitRouter's interactive ACP conversation with route, activity, permissions, and attributed cost
 - [Coding agents](${BASE_URL}/docs/usage/coding-agents): Run supported harnesses, configure Claude Code and Codex, and connect model sources
-- [MCP Support](${BASE_URL}/docs/usage/mcp): Connect and aggregate upstream MCP servers, expose selected tools to model requests, and search BitRouter documentation
+- [MCP Support](${BASE_URL}/docs/usage/mcp): Connect and aggregate upstream MCP servers, then expose selected tools to agents or model requests
 - [ACP Support](${BASE_URL}/docs/usage/acp): Discover adapters, run headless turns, or expose one over stdio
-- [Agent Skills](${BASE_URL}/docs/usage/skills): Install the BitRouter Skill, inspect local skills, or scaffold a SKILL.md
+- [Agent Skills](${BASE_URL}/docs/usage/skills): Inspect local skills, scaffold a SKILL.md, and understand the host execution boundary
 
 ## Reference
 
@@ -73,7 +73,9 @@ References:
 
 ## Development
 
-- [Development Overview](${BASE_URL}/docs/development): Choose the repository and contribution path for the router, documentation, or agent skills
+- [Contributing to BitRouter](${BASE_URL}/docs/development): Choose a contribution path, run the project locally, and validate changes
+- [MCP for development](${BASE_URL}/docs/development/mcp): Give a coding agent searchable BitRouter docs and current model information
+- [Agent Skills for development](${BASE_URL}/docs/development/agent-skills): Use supplied procedures for setup, diagnosis, route evaluation, and benchmarks
 - [BitRouter Source](https://github.com/bitrouter/bitrouter): Rust router source and issue tracker
 - [Documentation Source](https://github.com/bitrouter/bitrouter-docs): Website and documentation source
 

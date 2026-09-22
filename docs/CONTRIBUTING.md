@@ -18,7 +18,7 @@ top-level order is the `pages` list in `content/docs/meta.json`:
 4. **Customization** — model/provider customization and router-owned tool
    capabilities.
 5. **Reference** — the generated Cloud API reference.
-6. **Development** — source and contribution entry points.
+6. **Development** — source contribution and developer-assistance guides.
 
 Each group name in `content/docs/meta.json` is a native Fumadocs separator, not
 a page or collapsible folder. Five meta-only folders —
@@ -67,6 +67,9 @@ Use this boundary when classifying new pages:
 - **Customization** adds or replaces a capability in the router's execution path.
 - **Configuration** explains the router's desired-state policy, model selection,
   constraints, and evidence.
+- **Development** explains how to contribute source and how to use BitRouter's
+  supplied Docs MCP server and Agent Skills as development assistance.
+  Operational setup for MCP upstreams and local skills remains under Usage.
 
 ### Documentation vs Self-hosting
 

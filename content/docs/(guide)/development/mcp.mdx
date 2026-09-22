@@ -1,0 +1,113 @@
+---
+title: MCP for Development
+description: Give a coding agent live access to BitRouter documentation and model information while it works.
+---
+
+Connect BitRouter's public Docs MCP server to a coding agent when you want it to look up product behavior, configuration, API guidance, and model availability without leaving the development session.
+
+- **Endpoint:** `https://bitrouter.ai/mcp`
+- **Transport:** Streamable HTTP
+- **Authentication:** none
+- **Access:** read-only
+
+This page is the canonical guide for the public Docs MCP service. [MCP Support](/docs/usage/mcp) covers the separate upstream gateway in an open-source BitRouter deployment.
+
+## What the server gives your agent
+
+| Capability | Development use |
+| --- | --- |
+| `search_docs(query, limit?)` | Find the guides related to a feature, configuration block, or integration question |
+| `get_doc(path)` | Read the complete Markdown for one result before making a decision |
+| `lookup_model(query)` | Check routable model ids, pricing, context windows, and configuration examples |
+| `bitrouter-docs://llms-index` | Read the curated documentation map when the client supports MCP resources |
+
+The server is useful for questions such as:
+
+- Which public guide must change with a user-visible code change?
+- What is the documented configuration shape for a provider, policy, or MCP upstream?
+- Is a model id currently available, and what identifier should an example use?
+- Which API family and authentication guide applies to an integration?
+
+## Connect a coding agent
+
+Claude Code can register the server from the command line:
+
+```bash
+claude mcp add --transport http bitrouter-docs https://bitrouter.ai/mcp
+```
+
+For an agent host that accepts MCP configuration, add the endpoint as a remote server:
+
+```json
+{
+  "mcpServers": {
+    "bitrouter-docs": {
+      "url": "https://bitrouter.ai/mcp"
+    }
+  }
+}
+```
+
+The location and exact field names are owned by the agent host. Prefer project-scoped configuration when a repository team should share the integration, and user-scoped configuration when it is only a personal development aid.
+
+## Give the agent a research contract
+
+Connecting the server makes its tools available; it does not tell the agent when to use them. Put a short instruction in the task or repository guidance:
+
+```text
+Use the bitrouter-docs MCP server before changing BitRouter-facing behavior.
+Search first, read the complete relevant pages, then verify every claim against
+the current checkout. Treat repository source and local contribution rules as
+authoritative for this branch.
+```
+
+A reliable development loop is:
+
+1. Search the docs for the feature or public contract.
+2. Read the relevant pages rather than relying on search snippets.
+3. Inspect the current checkout, tests, and repository instructions.
+4. Implement the smallest consistent change.
+5. Update public docs when behavior visible to users changed.
+6. Run the repository's required validation commands.
+
+This sequence prevents the MCP server from becoming an excuse to skip source inspection. Published docs describe released or deployed behavior; a development branch may be ahead of them.
+
+## Useful prompts
+
+```text
+Use bitrouter-docs to find the public contract for MCP upstreams. Then inspect
+this checkout and identify any behavior that differs before proposing a change.
+```
+
+```text
+Look up the model ids used in this example. Flag unavailable or ambiguous ids,
+but do not edit the example until you verify the registry source in this branch.
+```
+
+```text
+Find every public guide affected by this configuration change. Return the
+canonical pages, the claims that need updating, and the source files that own
+the behavior.
+```
+
+## Know the boundary
+
+The Docs MCP server cannot read your checkout, edit files, execute commands, inspect a running daemon, open issues, or submit pull requests. It also does not expose BitRouter administrative tools.
+
+Use each source for what it owns:
+
+| Source | Authority |
+| --- | --- |
+| Current checkout | Code and behavior on the branch you are changing |
+| Repository `AGENTS.md`, `CONTRIBUTING.md`, and development guide | Local workflow, architecture, and validation rules |
+| Docs MCP server | Published product guidance and current public model information |
+| [BitRouter Agent Skills](/docs/development/agent-skills) | Maintained procedures for setup, operation, diagnosis, evaluation, and benchmarks |
+
+Never send repository secrets, credentials, private logs, or proprietary source through a prompt merely to use the public server. Search with the minimum product terms needed, then correlate the result locally.
+
+<Cards>
+  <Card title="Contributing to BitRouter" href="/docs/development" description="Choose the repository, local workflow, and required checks." />
+  <Card title="Agent Skills for development" href="/docs/development/agent-skills" description="Give an agent maintained procedures alongside documentation context." />
+  <Card title="MCP Support" href="/docs/usage/mcp" description="Configure BitRouter's upstream gateway and use the Docs MCP server outside contribution work." />
+  <Card title="llms.txt" href="/llms.txt" description="Use the curated documentation index when an agent host does not support MCP." />
+</Cards>

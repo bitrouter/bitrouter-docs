@@ -1,19 +1,9 @@
 ---
 title: Agent Skills
-description: Install the BitRouter Agent Skill, inspect local skills, or scaffold a spec-valid SKILL.md.
+description: Inspect local Agent Skills, scaffold a spec-valid SKILL.md, and understand the host execution boundary.
 ---
 
-[Agent Skills](https://agentskills.io) are portable instruction packages built around a `SKILL.md` file. BitRouter ships a Skill that teaches a shell-capable agent how to install, configure, migrate to, and troubleshoot the router.
-
-## Install the BitRouter Skill
-
-Use your agent host's plugin or skill mechanism. With the generic Skills CLI:
-
-```bash
-npx skills add bitrouter/bitrouter
-```
-
-Then ask the host to use the BitRouter Skill—for example, “Set up BitRouter for this project.” The Skill explains the commands; the host still owns user approval and process execution.
+[Agent Skills](https://agentskills.io) are portable instruction packages built around a `SKILL.md` file. BitRouter can inspect and scaffold skills on disk; the agent host remains responsible for installation, activation, approval, and execution.
 
 ## Inspect installed skills
 
@@ -44,8 +34,8 @@ BitRouter does not expose local filesystem skills through a first-party MCP orig
 </Callout>
 
 <Cards>
-  <Card title="BitRouter Skill source" href="https://github.com/bitrouter/bitrouter/tree/main/skills/bitrouter" description="Review the Skill and its versioned references." />
+  <Card title="Agent Skills for development" href="/docs/development/agent-skills" description="Use BitRouter's supplied skills as coding-agent development aids." />
   <Card title="CLI reference" href="/docs/usage/cli#skills" description="Exact list and init flags." />
-  <Card title="MCP Support" href="/docs/usage/mcp" description="Connect upstream tools and search the BitRouter docs." />
+  <Card title="MCP Support" href="/docs/usage/mcp" description="Connect and aggregate upstream MCP servers." />
   <Card title="ACP Support" href="/docs/usage/acp" description="Run agent sessions interactively, headlessly, or over local stdio." />
 </Cards>

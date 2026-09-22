@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { HERO } from "@/components/landing/zed/data";
 
-export const alt = "BitRouter — Your router. Your rules.";
+export const alt = "BitRouter — The open-source model router for your workflow";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

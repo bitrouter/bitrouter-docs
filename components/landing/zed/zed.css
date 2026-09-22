@@ -35,7 +35,10 @@
   padding-bottom: var(--z-sec);
 }
 .zed-hero {
-  padding-top: 72px;
+  padding-top: clamp(44px, 6vh, 64px);
+}
+.zed-hero-title > span {
+  display: inline;
 }
 /* Retained for surfaces that still rule off their sections (docs, legal). The
    landing no longer uses it — v3 has no section hairlines. */
@@ -211,25 +214,57 @@
 .zed-proofline {
   display: flex;
   justify-content: center;
-  gap: 0;
-  margin-top: 24px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  margin-top: 18px;
+  font-family: var(--font-sans);
+  font-size: 12px;
   color: var(--z-ink-6);
 }
-.zed-proofline span + span::before {
-  content: "·";
-  margin: 0 12px;
+.zed-proofline code {
+  border: 1px solid var(--z-rule);
+  border-radius: 3px;
+  background: var(--z-wash);
+  padding: 2px 6px;
+  font-family: var(--font-mono);
+  font-size: 0.95em;
+  color: var(--z-ink-2);
+}
+.zed-outcomes {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  margin: 24px auto 0;
+  font-family: var(--font-sans);
+  font-size: clamp(14px, 1.35vw, 17px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--z-ink-2);
+}
+.zed-outcome-separator {
+  margin: 0 14px;
   color: var(--z-ink-7);
+}
+.zed-outcomes a {
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-color: var(--z-rule-2);
+  text-underline-offset: 4px;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+.zed-outcomes a:hover {
+  color: var(--z-ink);
+  text-decoration-color: currentColor;
+}
+.zed-outcomes a:focus-visible {
+  border-radius: 2px;
+  outline: 1px solid var(--z-blue);
+  outline-offset: 4px;
 }
 
 /* Hero install selector. One action surface replaces the former self-host / Cloud
    choice, while keeping every supported install path one click away. */
 .zed-install {
   max-width: 760px;
-  margin: 44px auto 0;
+  margin: 32px auto 0;
   text-align: left;
 }
 .zed-install-tabs {
@@ -303,15 +338,6 @@
 .zed-install-copy.copied {
   color: var(--z-green);
 }
-.zed-install-note {
-  margin-top: 10px;
-  padding-left: 2px;
-  color: var(--z-ink-6);
-  font-family: var(--font-sans);
-  font-size: 12px;
-  line-height: 1.6;
-}
-
 .zed-section-intro {
   max-width: 760px;
   margin: 0 auto 46px;
@@ -330,6 +356,9 @@
   line-height: 1.7;
   color: var(--z-ink-5);
 }
+.zed-hero-demo {
+  margin-top: 38px;
+}
 .zed-action-row {
   display: flex;
   align-items: center;
@@ -338,94 +367,12 @@
   flex-wrap: wrap;
 }
 
-/* Benchmark: one landing-page finding. The report owns the full comparison,
-   while the page keeps only the outcome, quality context, and evidence bound. */
-.zed-benchmark {
-  max-width: 920px;
-  padding: 52px 0 42px;
-  border-top: 1px solid var(--z-rule);
-  border-bottom: 1px solid var(--z-rule);
-}
-.zed-benchmark-meta {
-  display: flex;
-  gap: 24px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--z-ink-6);
-}
-.zed-benchmark-meta span + span::before {
-  content: "·";
-  margin-right: 24px;
-  color: var(--z-ink-7);
-}
-.zed-benchmark-claim {
-  margin: 36px 0 0;
-  font-family: var(--font-sans);
-  font-size: clamp(38px, 5vw, 58px);
-  font-style: normal;
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: -0.035em;
-  color: var(--z-ink);
-}
-.zed-benchmark-claim span {
-  display: block;
-  margin-bottom: 10px;
-  font-size: clamp(70px, 9vw, 112px);
-  line-height: 0.88;
-  letter-spacing: -0.055em;
-  color: var(--z-blue);
-}
-.zed-benchmark-quality {
-  max-width: 66ch;
-  margin: 34px 0 0;
-  font-family: var(--font-sans);
-  font-size: 14px;
-  line-height: 1.75;
-  color: var(--z-ink-5);
-}
-.zed-benchmark-quality strong,
-.zed-benchmark-control strong {
-  color: var(--z-ink-2);
-  font-weight: 500;
-}
-.zed-benchmark-control {
-  margin: 8px 0 0;
-  font-family: var(--font-sans);
-  font-size: 12.5px;
-  line-height: 1.7;
-  color: var(--z-ink-6);
-}
-.zed-benchmark-link {
-  margin-top: 30px;
-}
-.zed-benchmark-note {
-  max-width: 92ch;
-  margin: 42px 0 0;
-  padding-top: 17px;
-  border-top: 1px solid var(--z-rule);
-  font-family: var(--font-sans);
-  font-size: 10.5px;
-  line-height: 1.7;
-  color: var(--z-ink-7);
-}
-
 /* Feature stories: three alternating editorial rows. The product diagrams use
    real BitRouter terms without pretending to be a dashboard screenshot. */
-.zed-feature-section-label {
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--z-rule);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--z-ink-6);
-}
 .zed-features {
   display: flex;
   flex-direction: column;
+  padding-top: 32px;
 }
 .zed-feature-row {
   display: grid;
@@ -434,7 +381,6 @@
   align-items: center;
   min-height: 490px;
   padding: 64px 0;
-  border-bottom: 1px solid var(--z-rule);
 }
 .zed-feature-copy {
   order: 1;
@@ -449,19 +395,9 @@
 .zed-feature-row.reverse .zed-feature-media {
   order: 1;
 }
-.zed-feature-kicker {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--z-ink-6);
-}
-.zed-feature-kicker span {
-  color: var(--z-blue);
-}
 .zed-feature-copy .zed-display {
   max-width: 14ch;
-  margin-top: 22px;
+  margin-top: 0;
   font-size: clamp(34px, 4.5vw, 48px);
   line-height: 1.05;
 }
@@ -960,8 +896,6 @@
   gap: 72px;
   align-items: start;
   padding: 56px 0;
-  border-top: 1px solid var(--z-rule);
-  border-bottom: 1px solid var(--z-rule);
 }
 .zed-commercial-copy .zed-display {
   max-width: 13ch;
@@ -1449,6 +1383,13 @@
   max-width: 62ch;
 }
 
+/* The FAQ finishes in the right column, so the standard section interval can
+   make the centered closing CTA appear to crowd its last rule. Give that final
+   transition one additional beat without changing the global section rhythm. */
+.zed-final-cta {
+  margin-top: clamp(36px, 4vw, 56px);
+}
+
 /* ── Prose (blog/long-form reuse later) ── */
 .zed-prose p {
   font-family: var(--font-sans);
@@ -1662,6 +1603,9 @@
   .zed-wrap {
     padding: 0 22px;
   }
+  .zed-hero {
+    padding-top: 56px;
+  }
   .zed-grid-3,
   .zed-grid-2 {
     grid-template-columns: 1fr !important;
@@ -1695,12 +1639,12 @@
   }
 }
 @media (max-width: 560px) {
-  .zed-proofline {
+  .zed-outcomes {
     flex-direction: column;
     gap: 8px;
   }
-  .zed-proofline span + span::before {
-    content: none;
+  .zed-outcome-separator {
+    display: none;
   }
   .zed-install-tabs {
     grid-template-columns: repeat(2, 1fr);
@@ -1710,28 +1654,6 @@
   }
   .zed-install-code code {
     font-size: 11.5px;
-  }
-  .zed-benchmark {
-    padding: 38px 0 34px;
-  }
-  .zed-benchmark-meta {
-    flex-direction: column;
-    gap: 7px;
-  }
-  .zed-benchmark-meta span + span::before {
-    content: none;
-  }
-  .zed-benchmark-claim {
-    margin-top: 30px;
-  }
-  .zed-benchmark-claim span {
-    font-size: clamp(56px, 17vw, 76px);
-  }
-  .zed-benchmark-quality {
-    margin-top: 28px;
-  }
-  .zed-benchmark-note {
-    margin-top: 36px;
   }
   .zed-feature-visual {
     min-height: 350px;

@@ -3,8 +3,6 @@ import { CoreVisual, DecisionVisual, WorkflowVisual } from "./feature-visuals";
 
 const FEATURES = [
   {
-    n: "01",
-    kicker: "Core",
     title: (
       <>
         Minimal core. <span>Lightweight &amp; extensible.</span>
@@ -16,8 +14,6 @@ const FEATURES = [
     visual: <CoreVisual />,
   },
   {
-    n: "02",
-    kicker: "Control",
     title: (
       <>
         Interpretable decisions. <span>Under your control.</span>
@@ -29,8 +25,6 @@ const FEATURES = [
     visual: <DecisionVisual />,
   },
   {
-    n: "03",
-    kicker: "Workflow",
     title: (
       <>
         A customizable router. <span>Adapt it to your workflow.</span>
@@ -46,14 +40,13 @@ const FEATURES = [
 export function Features() {
   return (
     <section className="zed-wrap zed-sec" id="features" aria-label="BitRouter features">
-      <div className="zed-feature-section-label">Built to be yours</div>
       <div className="zed-features">
         {FEATURES.map((feature, index) => (
-          <article className={index % 2 === 1 ? "zed-feature-row reverse" : "zed-feature-row"} key={feature.n}>
+          <article
+            className={index % 2 === 1 ? "zed-feature-row reverse" : "zed-feature-row"}
+            key={feature.linkLabel}
+          >
             <div className="zed-feature-copy">
-              <div className="zed-feature-kicker">
-                <span>{feature.n}</span> / {feature.kicker}
-              </div>
               <h2 className="zed-display">{feature.title}</h2>
               <p>{feature.body}</p>
               <a className="zed-btn-underline" href={feature.link}>

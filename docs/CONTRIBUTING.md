@@ -11,8 +11,10 @@ top-level order is the `pages` list in `content/docs/meta.json`:
 
 1. **Overview** — quickstart, product explanation, models, comparison, and
    the Enterprise deployment-decision entry.
-2. **Usage** — CLI/TUI, coding agents, MCP, ACP, Agent Skills, and model sources.
-3. **Configuration** — config file, routing behavior, guardrails, and observability.
+2. **Usage** — `bitrouter/auto`, CLI/TUI, coding agents, MCP, ACP, Agent Skills,
+   and model sources.
+3. **Configuration** — router policy, model selection and protocol compatibility,
+   guardrails, evaluations, and telemetry.
 4. **Customization** — model/provider customization and router-owned tool
    capabilities.
 5. **Reference** — the generated Cloud API reference.
@@ -63,24 +65,26 @@ Use this boundary when classifying new pages:
 - **Usage** explains how to operate BitRouter from an interface, agent,
   protocol, skill, or model source.
 - **Customization** adds or replaces a capability in the router's execution path.
-- **Configuration** explains built-in routing behavior and observation.
+- **Configuration** explains the router's desired-state policy, model selection,
+  constraints, and evidence.
 
 ### Documentation vs Self-hosting
 
 These two sidebar areas slice the same product differently, so the content
 boundary has to be held deliberately or they rot into two half-answers per topic:
 
-- **Documentation** answers *what the router does* — feature semantics, routing
-  behaviour, and the `bitrouter.yaml` block reference.
+- **Documentation** answers *what the router does* — feature semantics, router
+  policy, and model-selection behavior.
 - **Self-hosting** answers *how the process runs, who can reach it, and what
   happens on day 2* — supervision, bind address and TLS, authentication,
   upgrades, state.
 
 Enterprise is the Overview decision page and links into Self-hosting for the
-open-source operational path. Self-hosting **links** to feature pages rather than restating them. The
-`bitrouter.yaml` block reference stays in `configuration/config-file.mdx`; the
-Self-hosting page about config covers only the operational contract around it
-(resolution, secrets, CI validation).
+open-source operational path. Self-hosting **links** to feature pages rather
+than restating them. The Router policy page defines what the complete
+`bitrouter.yaml` desired state means without becoming an exhaustive field
+reference; Self-hosting covers the operational contract around that policy
+(resolution, secrets, CI validation, and rollout).
 
 Folders under `content/docs/(guide)/` own their routes and local source
 ordering. Public sidebar order comes from the `*-nav/meta.json` files, which

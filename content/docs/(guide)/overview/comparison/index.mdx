@@ -85,10 +85,10 @@ BitRouter is distributed as one Rust binary with its router, protocol adapters, 
 If you use the LiteLLM Python SDK in-process, this is an architecture change rather than a package swap: move model calls to a standard OpenAI-compatible client and send them through a BitRouter endpoint. If you run LiteLLM Proxy, replace that service while keeping applications on the same endpoint shape.
 
 1. Choose [BitRouter Cloud or self-hosting](/docs/overview/quickstart).
-2. Move provider credentials into the cloud account, environment variables, or [`bitrouter.yaml`](/docs/configuration/config-file).
+2. Move provider credentials into the cloud account, environment variables, or the [`bitrouter.yaml` router policy](/docs/configuration/policy).
 3. Change the client base URL to `https://api.bitrouter.ai/v1` or `http://127.0.0.1:4356/v1`.
-4. Translate LiteLLM `model_list`, fallback, and routing settings into BitRouter [providers, presets, and fallback rules](/docs/configuration/routing).
-5. Send representative requests, inspect selected routes, and configure [OpenTelemetry export](/docs/configuration/observability#self-hosted-opentelemetry) before retiring the old proxy.
+4. Translate LiteLLM `model_list`, fallback, and routing settings into BitRouter [models, presets, and fallback rules](/docs/configuration/models).
+5. Send representative requests, inspect selected routes, and configure [OpenTelemetry export](/docs/configuration/telemetry#self-hosted-opentelemetry) before retiring the old proxy.
 
 BitRouter does not replace LiteLLM's importable SDK, non-chat endpoint breadth, cache layer, or mature team-admin surface. Keep workloads that depend on those features on LiteLLM until you have an explicit replacement.
 
@@ -97,5 +97,5 @@ BitRouter does not replace LiteLLM's importable SDK, non-chat endpoint breadth, 
 <Cards>
   <Card title="Quickstart" href="/docs/overview/quickstart" description="Start with BitRouter Cloud or a self-hosted endpoint." />
   <Card title="Self-hosting" href="/docs/self-hosting" description="Run the open-source router on infrastructure you control." />
-  <Card title="Provider selection" href="/docs/configuration/routing#provider-selection" description="Configure adaptive routing on your own keys." />
+  <Card title="Models" href="/docs/configuration/models#candidate-eligibility" description="Configure candidate eligibility and fallback on your own keys." />
 </Cards>

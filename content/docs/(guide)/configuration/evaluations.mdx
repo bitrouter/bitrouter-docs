@@ -1,0 +1,113 @@
+---
+title: Evaluations
+description: Record objective outcomes as immutable evidence, freeze reproducible snapshots, and use them to improve routing policy.
+---
+
+An evaluation answers whether a result met an objective. It is deliberately separate from telemetry, which records what ran, and from optimization, which decides how admitted evidence may change a routing policy.
+
+| Responsibility | Question it answers | Primary surface |
+| --- | --- | --- |
+| Telemetry | What route ran, what did it cost, and what happened on each attempt? | Request receipts, traces, and metrics |
+| Evaluation | Did the result satisfy the declared objective? | Subjects, evaluator results, and evidence snapshots |
+| Optimization | What policy transition is justified by admitted evidence? | Controller state and policy candidates |
+
+An HTTP `200`, a completed stream, or a cheaper route is not proof of task success. Those are observations that an evaluator may use, not the objective result itself.
+
+## Two evidence paths
+
+BitRouter keeps runtime adequacy and objective-scored evaluations distinct:
+
+- **Runtime adequacy** records deterministic outcome classes for policy-bound live traffic. It supports fast escalation and conservative exploration for a request fingerprint.
+- **Evaluator-neutral exchange** accepts immutable evaluation subjects and results from an evaluator you choose. Admitted results can be frozen into a reproducible snapshot for optimization or policy compilation.
+
+The two paths can inform the same routing-policy lifecycle, but their records are not interchangeable. An adequacy observation does not silently become an evaluator result, and exporting a trace does not evaluate its outcome.
+
+## Evidence lifecycle
+
+### 1. Define and seal a subject
+
+An evaluation subject identifies what is being evaluated and carries redacted evidence items. Seal a draft to calculate its canonical digest and write validated JSON:
+
+```bash
+bro eval subject seal --output subject.json subject.yaml
+bro eval subject put subject.json
+```
+
+The digest makes the subject content-addressed. Changing the evidence creates a different subject rather than mutating the one an evaluator already scored.
+
+### 2. Evaluate outside the router
+
+Run the evaluator appropriate to the objective: a test suite, benchmark harness, rubric implementation, human review, or another process whose configuration you can identify. BitRouter does not infer task success from model text or choose an evaluator for you.
+
+The result should name the sealed subject and preserve enough evaluator identity to distinguish materially different scoring configurations.
+
+### 3. Submit the result
+
+Submit the result through the configured authority boundary:
+
+```bash
+bro eval result submit result.json
+bro eval status
+```
+
+Admission determines which results are eligible evidence. A stored result is not permission to rewrite a policy, and an unadmitted or malformed result must not influence optimization.
+
+### 4. Freeze a snapshot
+
+Freeze the currently admitted results into an immutable, content-addressed manifest:
+
+```bash
+bro eval snapshot freeze
+bro eval snapshot get <EVIDENCE_ROOT>
+```
+
+The evidence root pins the exact set used for a later decision. This prevents a candidate from changing meaning when new results arrive.
+
+### 5. Consume the evidence explicitly
+
+Optimization can advance its controller from admitted evaluation history:
+
+```bash
+bro optimize status --policy auto
+bro optimize run --policy auto
+```
+
+Policy compilation can also pin a frozen evaluation snapshot:
+
+```bash
+bro policy compile \
+  --eval-snapshot <EVIDENCE_ROOT> \
+  --output candidate-policy.yaml
+bro policy diff policy-lock.yaml candidate-policy.yaml
+```
+
+Compilation and optimization do not make every candidate active. Review the candidate and use the explicit policy publication workflow when it should serve traffic.
+
+## Reproducibility boundary
+
+A defensible evaluation decision needs all of the following to stay identifiable:
+
+- the sealed subject and its evidence digest;
+- the evaluator and materially relevant evaluator configuration;
+- the submitted result and admission decision;
+- the frozen evidence root consumed by optimization or compilation;
+- the active and candidate policy digests being compared.
+
+Keep private prompts, responses, and artifacts out of the subject unless the evaluator requires them. Redaction changes the evidence and therefore belongs before sealing, not as an undocumented post-processing step.
+
+## What evaluation does not establish
+
+- A successful transport or HTTP status does not establish task success.
+- Lower token cost does not establish acceptable quality.
+- A trace or request receipt does not become evaluation evidence merely because it is detailed.
+- One admitted result does not prove a general routing policy is better.
+- A candidate policy is not active until it passes the explicit publication boundary.
+
+Use repeated, comparable subjects and an evaluator aligned with the workload objective. Keep exploratory conclusions separate from policy changes you are prepared to serve.
+
+<Cards>
+  <Card title="bitrouter/auto" href="/docs/usage/bitrouter-auto" description="Run traffic through the policy and inspect what served." />
+  <Card title="Telemetry" href="/docs/configuration/telemetry" description="Collect the operational facts an evaluator may consume." />
+  <Card title="Models" href="/docs/configuration/models" description="Review model resolution, presets, and candidate-chain semantics." />
+  <Card title="CLI reference" href="/docs/usage/cli#bro-eval" description="Read every released eval and optimize command." />
+</Cards>

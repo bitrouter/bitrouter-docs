@@ -1,16 +1,28 @@
 ---
-title: Observability
-description: Inspect routes locally, export OpenTelemetry to your own backend, or use the hosted Cloud activity view.
+title: Telemetry
+description: Inspect request receipts, export OpenTelemetry to your own backend, or use the hosted Cloud activity view.
 ---
 
-Start with the smallest surface that answers your question:
+Telemetry records what BitRouter did. Start with the smallest surface that answers your operational question:
 
 | Need | Surface |
 | --- | --- |
-| Preview the route without sending traffic | `bro route <model>` |
+| Inspect the model and provider that served local traffic | `bro requests` |
 | Inspect the running exporter | `bro observe status` |
 | Keep full traces and metrics in your stack | Self-hosted OpenTelemetry |
 | View hosted spend and request receipts | BitRouter Cloud Activity |
+
+Use [Models](/docs/configuration/models#inspect-and-verify) to preview a selector before sending traffic. Use [Evaluations](/docs/configuration/evaluations) to decide whether a completed result met an objective.
+
+## Local request receipts
+
+The local metering store records settled requests independently of OpenTelemetry export:
+
+```bash
+bro requests --limit 25
+```
+
+Each receipt distinguishes the requested selector, resolved model, serving provider, token usage, cost, latency, and status. It remains available when the exporter is disabled and can be inspected with no daemon running.
 
 ## Self-hosted OpenTelemetry
 
@@ -85,18 +97,15 @@ bro cloud requests --limit 25
 
 Cloud receipts are not span waterfalls. Use your own OTLP backend when you need the complete trace across an agent, router, tools, and every upstream attempt.
 
-## Evaluation
+## Telemetry is not evaluation
 
-Observability records what route ran and what it cost. Evaluation decides whether the result met an objective. Keep those responsibilities separate:
+Receipts, spans, and metrics establish what ran and what it cost. They do not establish whether the result was correct or whether a cheaper policy is safe to adopt.
 
-- request outcomes and metering provide evidence for routing and policy review;
-- `bro eval` manages evaluation subjects, results, and snapshots;
-- `bro optimize` uses admitted evidence to inspect or advance routing optimization.
-
-See the [CLI reference](/docs/usage/cli#bro-eval) for the released command surface. Do not infer task success from an HTTP success code or from a low-cost route alone.
+[Evaluations](/docs/configuration/evaluations) defines the separate subject, result, admission, and snapshot lifecycle. An evaluator may consume telemetry, but the evaluator's objective and result remain explicit evidence rather than inferred metadata.
 
 <Cards>
-  <Card title="Routing" href="/docs/configuration/routing" description="Preview selectors, ordered chains, and fallback behavior." />
+  <Card title="bitrouter/auto" href="/docs/usage/bitrouter-auto" description="Use the policy-driven model id and inspect the route that served." />
+  <Card title="Evaluations" href="/docs/configuration/evaluations" description="Record whether results met an objective." />
   <Card title="Self-hosting operations" href="/docs/self-hosting#operate" description="Reload, inspect, and operate a production daemon." />
   <Card title="API reference" href="/docs/reference" description="Read hosted usage and request records programmatically." />
 </Cards>

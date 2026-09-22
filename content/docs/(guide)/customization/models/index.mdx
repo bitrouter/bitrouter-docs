@@ -77,7 +77,7 @@ bro models --provider my-cluster
 bro route my-cluster:team/llama-3.1-8b -c bitrouter.yaml
 ```
 
-The `provider:model` selector pins one provider. The bare model id joins every active provider that declares that id; use [Routing](/docs/configuration/routing) to control its order and fallback.
+The `provider:model` selector pins one provider. The bare model id joins every active provider that declares that id; use [Models](/docs/configuration/models) to control its order and fallback.
 
 For Ollama, vLLM, Unsloth, and similar servers, use the shorter [Local inference](/docs/usage/model-sources/local-inference) recipe.
 
@@ -110,6 +110,6 @@ Private config affects only your deployment. To make a provider discoverable to 
 
 <Cards>
   <Card title="Model sources" href="/docs/usage/coding-agents#model-sources" description="Connect subscriptions, local inference, and hosted sources." />
-  <Card title="Routing" href="/docs/configuration/routing" description="Control selectors, ordering, and fallback after a source is connected." />
-  <Card title="Config file" href="/docs/configuration/config-file" description="Validate and operate the complete bitrouter.yaml file." />
+  <Card title="Models" href="/docs/configuration/models" description="Control selectors, eligibility, ordering, and fallback after a source is connected." />
+  <Card title="Router policy" href="/docs/configuration/policy" description="Validate and apply the complete desired-state contract." />
 </Cards>

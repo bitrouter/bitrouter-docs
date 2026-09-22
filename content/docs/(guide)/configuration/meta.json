@@ -1,10 +1,10 @@
 {
   "title": "Configuration",
   "pages": [
-    "config-file",
-    "routing",
+    "policy",
+    "models",
     "guardrails",
-    "structured-outputs",
-    "observability"
+    "evaluations",
+    "telemetry"
   ]
 }

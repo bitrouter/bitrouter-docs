@@ -1,7 +1,8 @@
 {
   "title": "Usage",
-  "pagesIndex": "[CLI](/docs/usage/cli)",
+  "pagesIndex": "[bitrouter/auto](/docs/usage/bitrouter-auto)",
   "pages": [
+    "[CLI](/docs/usage/cli)",
     "[TUI](/docs/usage/tui)",
     "[Coding agents](/docs/usage/coding-agents)",
     "[MCP Support](/docs/usage/mcp)",

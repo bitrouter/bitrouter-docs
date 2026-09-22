@@ -20,8 +20,8 @@ const FEATURES = [
       </>
     ),
     body: "Follow a decision from workflow state to the matched rule and selected route. Keep policy in readable configuration, inspect resolution with bro route, and version it in Git.",
-    link: "/docs/configuration/routing",
-    linkLabel: "Inspect routing",
+    link: "/docs/configuration/models",
+    linkLabel: "Inspect model selection",
     visual: <DecisionVisual />,
   },
   {

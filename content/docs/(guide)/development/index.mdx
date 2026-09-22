@@ -1,31 +1,73 @@
 ---
-title: Development
-description: Find the source repository and contribution path for the part of BitRouter you want to change.
+title: Contributing to BitRouter
+description: Choose a contribution path, run the project locally, and validate changes before opening a pull request.
 ---
 
-BitRouter is developed in the open. Use this page when you intend to change the product, its documentation, or its agent-facing setup rather than operate an existing deployment.
+BitRouter's router, SDK, CLI, registry, agent skills, website, and public documentation are developed in public. Start with the kind of change you want to make; the exact build and review contracts stay with the repository that owns the code.
 
-## Choose the repository
-
-| Change | Repository |
-| --- | --- |
-| Router, CLI, protocols, providers, policies, or generated OpenAPI source | [`bitrouter/bitrouter`](https://github.com/bitrouter/bitrouter) |
-| Website, guides, API reference presentation, blog, or changelog | [`bitrouter/bitrouter-docs`](https://github.com/bitrouter/bitrouter-docs) |
-| Agent-install and setup skills | [`bitrouter/agent-skills`](https://github.com/bitrouter/agent-skills) |
+## Add development assistance
 
 <Cards>
-  <Card title="Router contribution guide" href="https://github.com/bitrouter/bitrouter/blob/main/CONTRIBUTING.md" description="Build, test, and submit changes to the Rust workspace." />
-  <Card title="Documentation guide" href="https://github.com/bitrouter/bitrouter-docs/blob/main/docs/CONTRIBUTING.md" description="Follow the MDX, navigation, generation, and validation contract." />
+  <Card title="MCP for development" href="/docs/development/mcp" description="Give a coding agent searchable BitRouter docs and current model information." />
+  <Card title="Agent Skills for development" href="/docs/development/agent-skills" description="Use supplied procedures for setup, diagnosis, route evaluation, and benchmarks." />
 </Cards>
 
-## Documentation workflow
+These tools assist development without replacing source inspection. The Docs MCP server provides published reference context; the supplied Agent Skills provide task procedures; the current checkout remains authoritative for the branch you are changing.
 
-Most documentation is hand-authored `.mdx`. Two surfaces are generated and must be changed at their source:
+## Choose what you want to change
 
-- API endpoint pages come from `openapi.yaml` through `pnpm generate:openapi`.
-- The CLI page comes from the binary snapshot and `cli-overlays/` through `pnpm generate:cli`.
+<Cards>
+  <Card title="Core, SDK, CLI, and TUI" href="https://github.com/bitrouter/bitrouter/blob/main/CONTRIBUTING.md" description="Change the Rust workspace, protocols, routing behavior, or terminal interfaces." />
+  <Card title="Models and providers" href="https://github.com/bitrouter/bitrouter/blob/main/CONTRIBUTING.md#updating-provider-support" description="Update the public registry, pricing, model mappings, or provider authentication." />
+  <Card title="BitRouter agent skill" href="https://github.com/bitrouter/bitrouter/tree/main/skills/bitrouter" description="Improve the shipped /bitrouter setup, migration, and troubleshooting skill." />
+  <Card title="Website and documentation" href="https://github.com/bitrouter/bitrouter-docs/blob/main/docs/CONTRIBUTING.md" description="Change guides, navigation, API reference presentation, blog, or changelog." />
+</Cards>
 
-Before opening a documentation change, run:
+The committed `openapi.yaml` in `bitrouter-docs` drives the rendered API reference, but it is synchronized from BitRouter Cloud. Do not edit generated endpoint pages or the synchronized schema by hand. Change reference presentation in `bitrouter-docs`; discuss an API contract change before implementation.
+
+## Before you start
+
+- Search [open issues](https://github.com/bitrouter/bitrouter/issues) and [pull requests](https://github.com/bitrouter/bitrouter/pulls) for related work.
+- For a substantial feature or architectural change, start a thread in [GitHub Discussions](https://github.com/orgs/bitrouter/discussions) before writing code. Small fixes and documentation improvements can go directly to a focused pull request.
+- Keep a change scoped to one problem, add or update tests when behavior changes, and update public documentation when users will observe the difference.
+
+## Run the core locally
+
+Install the Rust toolchain with [rustup](https://rustup.rs/), then build the `bro` CLI from the workspace:
+
+```bash
+git clone https://github.com/bitrouter/bitrouter.git
+cd bitrouter
+cargo run -p bitrouter -- --help
+```
+
+The repository's [development guide](https://github.com/bitrouter/bitrouter/blob/main/docs/DEVELOPMENT.md) maps the workspace, request flow, extension points, and SDK internals. Treat the repository guide as the source of truth for architecture and toolchain details.
+
+## Run the documentation locally
+
+```bash
+git clone https://github.com/bitrouter/bitrouter-docs.git
+cd bitrouter-docs
+pnpm install
+pnpm dev
+```
+
+Most documentation is hand-authored `.mdx`. Two surfaces are generated and must never be edited directly:
+
+- API endpoint pages come from the synchronized `openapi.yaml` through `pnpm generate:openapi`. Change the generator or presentation here; propose API contract changes before editing the schema.
+- The CLI page comes from the binary snapshot and `cli-overlays/` through `pnpm generate:cli`. Recapture the snapshot from the binary and edit the overlays rather than the generated page.
+
+## Validate your change
+
+Before opening a core pull request, run the checks required by the router contribution guide:
+
+```bash
+cargo fmt --all -- --check
+cargo clippy --workspace --all-targets --all-features -- -D warnings
+cargo test --workspace --all-features
+```
+
+Before opening a documentation pull request, run:
 
 ```bash
 pnpm lint:docs
@@ -33,4 +75,8 @@ pnpm test
 pnpm build
 ```
 
-For operating an existing binary, start with [Self-hosting](/docs/self-hosting). For adding a model, provider, or router-owned tool without changing core behavior, start with [Models & providers](/docs/customization/models).
+## Ask for help or propose a change
+
+Use [GitHub Discussions](https://github.com/orgs/bitrouter/discussions) for design questions and early proposals. Use the [issue tracker](https://github.com/bitrouter/bitrouter/issues) for reproducible bugs and accepted, actionable work.
+
+If you want to operate an existing binary rather than change BitRouter, start with [Self-hosting](/docs/self-hosting). To configure an existing model, provider, or router-owned tool, start with [Models & providers](/docs/customization/models).

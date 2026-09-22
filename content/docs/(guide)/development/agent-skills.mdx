@@ -1,0 +1,111 @@
+---
+title: Agent Skills for Development
+description: Use BitRouter's supplied Agent Skills to set up, diagnose, evaluate, and benchmark development workflows.
+---
+
+BitRouter ships Agent Skills that give a shell-capable coding agent maintained procedures for common BitRouter work. They complement the [Docs MCP server](/docs/development/mcp): MCP supplies reference context, while a skill tells the agent how to carry out a task safely.
+
+These are development aids, not replacements for the current checkout or its contribution rules. An agent changing BitRouter source should still read the repository's `AGENTS.md`, [`CONTRIBUTING.md`](https://github.com/bitrouter/bitrouter/blob/main/CONTRIBUTING.md), and [`docs/DEVELOPMENT.md`](https://github.com/bitrouter/bitrouter/blob/main/docs/DEVELOPMENT.md).
+
+## Install the supplied skills
+
+Use your agent host's plugin or skill mechanism. With the generic Skills CLI:
+
+```bash
+npx skills add bitrouter/bitrouter
+```
+
+Choose only the skills relevant to the work. The repository currently supplies these task-specific packages:
+
+| Skill | Use it for |
+| --- | --- |
+| [`bitrouter`](https://github.com/bitrouter/bitrouter/tree/main/skills/bitrouter) | Install, configure, run, migrate to, or troubleshoot BitRouter through the `bro` CLI |
+| [`evaluating-bitrouter-routes`](https://github.com/bitrouter/bitrouter/tree/main/skills/evaluating-bitrouter-routes) | Build and submit evidence-backed route evaluations without crossing optimizer authority boundaries |
+| [`run-bitrouter-benchmark`](https://github.com/bitrouter/bitrouter/tree/main/skills/run-bitrouter-benchmark) | Prepare, run, resume, audit, or publish a Harbor benchmark through BitRouter |
+
+Installation and activation remain owned by the agent host. BitRouter can inspect conventional filesystem layouts with `bro skills list`, but it does not install or activate the packages for the host. See [Agent Skills usage](/docs/usage/skills) for scope and inspection commands.
+
+## Use the right skill for the task
+
+### Set up or reproduce a development environment
+
+Use the `bitrouter` skill when a contributor or integration developer needs to:
+
+- install the matching CLI and verify its version;
+- configure providers and a local router without inventing commands;
+- launch a supported coding agent through BitRouter;
+- reproduce a routing or authentication problem; or
+- collect structured status, route, request, and spend evidence for a bug report.
+
+Example prompt:
+
+```text
+Use the BitRouter skill to reproduce this routing failure in a minimal local
+configuration. Keep the existing project files intact, redact credentials, and
+report the resolved route and request evidence before suggesting a code change.
+```
+
+The skill is operator-focused. It can prepare and inspect the environment, but it does not explain every internal crate boundary or authorize edits to the source tree.
+
+### Evaluate routing behavior
+
+Use `evaluating-bitrouter-routes` when the task produces external quality, cost, latency, or verifier evidence for route decisions. The skill keeps evaluator evidence separate from policy optimization and preserves the identities needed for later analysis.
+
+Example prompt:
+
+```text
+Use the route-evaluation skill to package this task-native verifier result.
+Preserve router-authored decision fields, redact private evidence, and stop
+after reporting the admission result.
+```
+
+Do not use this skill as a generic code-review rubric or as permission to run the optimizer.
+
+### Run a routed benchmark
+
+Use `run-bitrouter-benchmark` for Harbor-based development and research workflows. It guides environment discovery, route confirmation, bounded smoke tests, execution, artifact retention, and optional publication.
+
+Example prompt:
+
+```text
+Use the BitRouter benchmark skill to prepare a private comparison on the
+selected Harbor dataset. Inspect the installed tools first and show me the
+resolved agents, models, providers, expected spend, and mutations before the run.
+```
+
+Benchmark execution can incur provider or infrastructure cost. The skill requires explicit confirmation before paid or externally mutating steps; installing it is not that confirmation.
+
+## Combine Skills with the Docs MCP server
+
+For a stronger coding-agent workflow, give the host both surfaces:
+
+1. Connect `https://bitrouter.ai/mcp` so the agent can search and read current public guidance.
+2. Install the task-specific skill so it has the maintained operating procedure.
+3. Tell the agent to inspect the current checkout before editing or making branch-specific claims.
+4. Require the repository's normal validation commands after a change.
+
+For example:
+
+```text
+Use the bitrouter-docs MCP server for the published configuration contract and
+the BitRouter skill for CLI procedure. Verify both against this checkout, then
+reproduce the issue. Do not modify source until you can show where documented
+and actual behavior diverge.
+```
+
+This division is deliberate: MCP answers “what does the public documentation say?” and Skills answer “what procedure should the agent follow?” The repository answers “what does this branch actually do?”
+
+## Safety and authority
+
+- A skill does not grant shell access, credentials, network access, or approval for a risky action. The agent host and user retain those decisions.
+- Treat detected providers, accounts, cloud profiles, and secrets as context, never authorization.
+- Keep credentials out of prompts, command arguments, committed configuration, and uploaded artifacts.
+- Review skill source before enabling it in a sensitive repository and pin a revision when reproducibility matters.
+- Use the exact validation and review contract from the repository being changed; a supplied skill does not override it.
+
+<Cards>
+  <Card title="Docs MCP for development" href="/docs/development/mcp" description="Give an agent searchable BitRouter documentation and model context." />
+  <Card title="Agent Skills usage" href="/docs/usage/skills" description="Install the BitRouter Skill and inspect local skill packages." />
+  <Card title="BitRouter skills source" href="https://github.com/bitrouter/bitrouter/tree/main/skills" description="Review every supplied skill and its versioned references." />
+  <Card title="Contributing to BitRouter" href="/docs/development" description="Follow the source contribution and validation workflow." />
+</Cards>

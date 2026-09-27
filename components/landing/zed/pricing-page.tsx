@@ -10,12 +10,12 @@ export function ZedPricingPage() {
         <div className="zed-wrap zed-pricing-page">
           <PageHead
             eyebrow="Pricing"
-            title="One router. Four ways to run it."
+            title="One router. Three ways to use it."
             maxWidth="62ch"
             sub={
               <>
-                Choose who operates BitRouter, who supplies the models, and how BitRouter bills
-                you. Switch paths without changing the routing core.
+                Routing is free. Self-host with your own models, pay as you go for hosted models,
+                or work with us on enterprise requirements.
               </>
             }
           />

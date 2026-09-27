@@ -527,7 +527,7 @@ export const STEPS: Step[] = [
     n: "04",
     kicker: "Improve",
     title: "The router proposes a diff. You commit it.",
-    body: "Under the default writeback: locked the router never publishes on its own — evolve prints the dry run, --apply writes the lock file. One versioned artifact next to your config, reviewed like any other change.",
+    body: "With the default policy.mode: frozen, the router never publishes on its own — evolve prints a candidate, while publication requires adaptive mode and an explicit --apply. One versioned artifact next to your config, reviewed like any other change.",
     artifact: {
       kind: "diff",
       caption: "$ bitrouter policy evolve",
@@ -577,4 +577,4 @@ export const FAQS = [
 ];
 
 export const INSTALL_CMD =
-  "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/bitrouter/bitrouter/releases/latest/download/bitrouter-installer.sh | sh";
+  "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/bitrouter/bitrouter/releases/download/v1.0.0-alpha.33/bitrouter-installer.sh | sh";

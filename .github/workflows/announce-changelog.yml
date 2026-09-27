@@ -120,7 +120,7 @@ jobs:
           SITE_URL: ${{ vars.SITE_URL }}
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-          RESEND_AUDIENCE: ${{ vars.RESEND_AUDIENCE }}
+          RESEND_SEGMENT_ID: ${{ vars.RESEND_SEGMENT_ID || vars.RESEND_AUDIENCE }}
           RESEND_FROM: ${{ vars.RESEND_FROM }}
         run: node scripts/announce-changelog.mjs
 

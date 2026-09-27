@@ -21,7 +21,7 @@
  *   ENTRY_FILES        newline-separated content/changelog/*.mdx paths
  *   SITE_URL           default https://bitrouter.ai
  *   DISCORD_WEBHOOK    Discord incoming webhook
- *   RESEND_API_KEY / RESEND_AUDIENCE / RESEND_FROM
+ *   RESEND_API_KEY / RESEND_SEGMENT_ID / RESEND_FROM
  *   ANNOUNCE_DRY_RUN   "1" → print what would be sent, contact nothing
  *   ANNOUNCE_MAX_AGE_DAYS  default 14; guards against a backfill announcing
  *                          a pile of old releases at once
@@ -40,6 +40,10 @@ const MAX_AGE_DAYS = Number(process.env.ANNOUNCE_MAX_AGE_DAYS ?? 14);
 
 const skip = (channel, why) => console.log(`  ${channel}: skipped — ${why}`);
 
+const escapeHtml = (value) => value.replace(/[&<>"']/g, (char) => ({
+  "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+})[char]);
+
 function copyFor(entry, url) {
   const headline = entry.description?.trim() || entry.title;
   return {
@@ -48,8 +52,9 @@ function copyFor(entry, url) {
     tweet: `${headline}\n\n${url}`.slice(0, 250),
     subject: entry.title,
     html:
-      `<h2>${entry.title}</h2><p>${headline}</p>` +
-      `<p><a href="${url}">Read the full changelog →</a></p>`,
+      `<h2>${escapeHtml(entry.title)}</h2><p>${escapeHtml(headline)}</p>` +
+      `<p><a href="${url}">Read the full changelog →</a></p>` +
+      '<p><a href="{{{RESEND_UNSUBSCRIBE_URL}}}">Unsubscribe from BitRouter updates</a></p>',
   };
 }
 
@@ -77,17 +82,17 @@ async function postX(copy) {
 
 async function draftEmail(copy) {
   const key = process.env.RESEND_API_KEY;
-  const audience = process.env.RESEND_AUDIENCE;
+  const segment = process.env.RESEND_SEGMENT_ID;
   const from = process.env.RESEND_FROM;
-  if (!key || !audience || !from) {
-    return skip("email", "RESEND_API_KEY / RESEND_AUDIENCE / RESEND_FROM not set");
+  if (!key || !segment || !from) {
+    return skip("email", "RESEND_API_KEY / RESEND_SEGMENT_ID / RESEND_FROM not set");
   }
   if (DRY_RUN) return console.log(`  email: [dry run] draft "${copy.subject}"`);
   // Create only. Sending stays a human action — see the header.
   const res = await fetch("https://api.resend.com/broadcasts", {
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ audience_id: audience, from, subject: copy.subject, html: copy.html }),
+    body: JSON.stringify({ segment_id: segment, from, subject: copy.subject, html: copy.html }),
   });
   if (!res.ok) throw new Error(`Resend create ${res.status}`);
   const { id } = await res.json();

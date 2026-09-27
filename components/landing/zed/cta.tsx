@@ -1,90 +1,74 @@
-import { INSTALL_CMD } from "./data";
-import { Cursor, ZED_LINKS } from "./primitives";
+"use client";
 
-/**
- * Closing CTA.
- *
- * v3 drops the bordered, glowing card: the section sits directly on the page,
- * centred, with the install command in a flat --z-wash well. It's the same
- * shape as the hero, which is the point — the page opens and closes on it.
- */
+import { useState, type FormEvent } from "react";
+
+/** The closing action is an explicit newsletter opt-in. */
 export function FinalCta() {
+  const [pending, setPending] = useState(false);
+  const [message, setMessage] = useState("");
+  const [sent, setSent] = useState(false);
+
+  async function subscribe(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPending(true);
+    setMessage("");
+    const form = event.currentTarget;
+    const fields = new FormData(form);
+    try {
+      const response = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: fields.get("email"),
+          website: fields.get("website"),
+        }),
+      });
+      const result = await response.json() as { error?: string };
+      if (!response.ok) throw new Error(result.error ?? "Could not send confirmation.");
+      setSent(true);
+      setMessage("Check your inbox and confirm your subscription. The link expires in 24 hours.");
+      form.reset();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not send confirmation. Try again later.");
+    } finally {
+      setPending(false);
+    }
+  }
+
   return (
     <section className="zed-wrap zed-sec zed-sec-b zed-final-cta" style={{ textAlign: "center" }}>
-      <h2
-        className="zed-display"
-        style={{
-          fontSize: "clamp(32px, 5vw, 48px)",
-          lineHeight: 1.06,
-          margin: "0 auto",
-          maxWidth: "18ch",
-        }}
-      >
-        Start routing. Spend less.
-      </h2>
-      <p
-        style={{
-          fontFamily: "var(--font-mono)",
-          fontSize: 14.5,
-          lineHeight: 1.7,
-          color: "var(--z-ink-5)",
-          margin: "24px auto 0",
-          maxWidth: "46ch",
-          textWrap: "pretty",
-        }}
-      >
-        Run the Apache-2.0 router yourself, or use the same routing engine through BitRouter Cloud.
+      <p className="zed-newsletter-eyebrow">THE BITROUTER NEWSLETTER</p>
+      <h2 className="zed-display zed-newsletter-title">Better routes, in your inbox.</h2>
+      <p className="zed-newsletter-description">
+        Occasional routing insights and significant BitRouter updates. No routine release noise.
       </p>
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 12,
-          padding: "16px 18px",
-          background: "var(--z-wash)",
-          maxWidth: 420,
-          margin: "36px auto 0",
-        }}
-      >
-        <span style={{ color: "var(--z-ink-6)", fontFamily: "var(--font-mono)", fontSize: 13 }}>
-          $
-        </span>
-        <code
-          style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: 13,
-            color: "var(--z-ink)",
-            flex: 1,
-            textAlign: "left",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {INSTALL_CMD}
-        </code>
-        <Cursor />
-      </div>
-
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 28,
-          marginTop: 32,
-          flexWrap: "wrap",
-        }}
-      >
-        <a className="zed-btn zed-btn-primary" href={ZED_LINKS.quickstart}>
-          Self-host BitRouter
-        </a>
-        <a className="zed-btn-underline" href={ZED_LINKS.apiKey}>
-          Try Cloud
-        </a>
-      </div>
+      {sent ? (
+        <p className="zed-newsletter-status" role="status">{message}</p>
+      ) : (
+        <form className="zed-newsletter-form" onSubmit={subscribe}>
+          <div className="zed-newsletter-input-row">
+            <label className="sr-only" htmlFor="newsletter-email">Email address</label>
+            <input
+              id="newsletter-email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              placeholder="you@company.com"
+              maxLength={254}
+              required
+            />
+            <button className="zed-btn zed-btn-primary" type="submit" disabled={pending}>
+              {pending ? "Sending…" : "Subscribe"}
+            </button>
+          </div>
+          <div className="zed-newsletter-honeypot" aria-hidden="true">
+            <label htmlFor="newsletter-website">Website</label>
+            <input id="newsletter-website" name="website" type="text" tabIndex={-1} autoComplete="off" />
+          </div>
+          {message && <p className="zed-newsletter-status" role="alert">{message}</p>}
+        </form>
+      )}
     </section>
   );
 }

@@ -1520,6 +1520,101 @@
   margin-top: clamp(36px, 4vw, 56px);
 }
 
+.zed-newsletter-eyebrow {
+  margin: 0 0 20px;
+  color: var(--z-ink-6);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+}
+
+.zed-newsletter-title {
+  margin: 0 auto;
+  max-width: 24ch;
+  font-size: clamp(32px, 5vw, 48px);
+  line-height: 1.06;
+}
+
+.zed-newsletter-description {
+  max-width: 48ch;
+  margin: 24px auto 0;
+  color: var(--z-ink-5);
+  font-family: var(--font-mono);
+  font-size: 14.5px;
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+
+.zed-newsletter-form {
+  max-width: 590px;
+  margin: 36px auto 0;
+}
+
+.zed-newsletter-input-row {
+  display: flex;
+  gap: 10px;
+  padding: 8px;
+  background: var(--z-wash);
+  border: 1px solid var(--z-rule);
+}
+
+.zed-newsletter-input-row input {
+  min-width: 0;
+  flex: 1;
+  padding: 0 14px;
+  outline: none;
+  background: transparent;
+  color: var(--z-ink);
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+
+.zed-newsletter-input-row input::placeholder {
+  color: var(--z-ink-6);
+}
+
+.zed-newsletter-input-row input:focus-visible {
+  outline: 2px solid var(--z-ink);
+  outline-offset: -2px;
+}
+
+.zed-newsletter-input-row button {
+  white-space: nowrap;
+}
+
+.zed-newsletter-input-row button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.zed-newsletter-honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.zed-newsletter-status {
+  margin: 14px auto 0;
+  color: var(--z-ink-5);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+@media (max-width: 560px) {
+  .zed-newsletter-input-row {
+    flex-direction: column;
+  }
+  .zed-newsletter-input-row input {
+    min-height: 48px;
+  }
+  .zed-newsletter-input-row button {
+    width: 100%;
+  }
+}
+
 /* ── Prose (blog/long-form reuse later) ── */
 .zed-prose p {
   font-family: var(--font-sans);

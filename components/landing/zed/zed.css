@@ -888,6 +888,145 @@
   height: var(--z-sec);
 }
 
+/* ── Enterprise page ────────────────────────────────────────────────────────
+   A marketing surface for deployment choices, with a clear boundary between
+   the open-source and Cloud products available now and a design partnership. */
+.zed-enterprise-page {
+  max-width: 1180px;
+  padding-bottom: var(--z-sec);
+}
+.zed-enterprise-intro,
+.zed-enterprise-section-copy,
+.zed-enterprise-contact p {
+  max-width: 72ch;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--z-ink-5);
+  text-wrap: pretty;
+}
+.zed-enterprise-intro {
+  margin: 32px 0 0;
+}
+.zed-enterprise-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 24px;
+  margin-top: 32px;
+}
+.zed-enterprise-section {
+  margin-top: var(--z-sec);
+}
+.zed-enterprise-heading {
+  max-width: 22ch;
+  margin: 16px 0 34px;
+  font-family: var(--font-display);
+  font-size: clamp(32px, 4.2vw, 44px);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  color: var(--z-ink);
+  text-wrap: pretty;
+}
+.zed-enterprise-paths {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  border: 1px solid var(--z-rule);
+  background: var(--z-rule);
+}
+.zed-enterprise-path {
+  min-width: 0;
+  padding: 30px 26px;
+  background: var(--z-bg);
+}
+.zed-enterprise-path h3,
+.zed-enterprise-boundary h3 {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--z-ink);
+}
+.zed-enterprise-path dl {
+  margin: 24px 0 0;
+}
+.zed-enterprise-path dl > div {
+  padding: 16px 0;
+  border-top: 1px solid var(--z-rule);
+}
+.zed-enterprise-path dt {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--z-ink-6);
+}
+.zed-enterprise-path dd {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--z-ink-3);
+}
+.zed-enterprise-boundary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 64px;
+  padding: 32px 0;
+  border-top: 1px solid var(--z-ink);
+  border-bottom: 1px solid var(--z-rule);
+}
+.zed-enterprise-boundary p {
+  max-width: 57ch;
+  margin: 16px 0 0;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--z-ink-5);
+}
+.zed-enterprise-boundary a,
+.zed-enterprise-links a {
+  color: var(--z-blue-hi);
+  text-decoration: underline;
+  text-decoration-color: var(--z-rule-2);
+  text-underline-offset: 4px;
+}
+.zed-enterprise-boundary a:hover,
+.zed-enterprise-links a:hover {
+  color: var(--z-ink);
+  text-decoration-color: var(--z-ink);
+}
+.zed-enterprise-section-copy {
+  margin: 0;
+}
+.zed-enterprise-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 30px;
+  margin-top: 26px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.zed-enterprise-contact {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 40px;
+  padding-top: 40px;
+  border-top: 1px solid var(--z-rule);
+}
+.zed-enterprise-contact .zed-enterprise-heading {
+  margin-bottom: 14px;
+}
+.zed-enterprise-contact p {
+  margin: 0;
+}
+.zed-enterprise-contact .zed-enterprise-actions {
+  flex-shrink: 0;
+  margin: 0;
+}
+
 /* Pricing and enterprise: an operating-model ledger, not a tier-card grid.
    The enterprise path stays explicitly founder-led until a packaged suite is GA. */
 .zed-commercial {
@@ -1633,6 +1772,17 @@
   }
   .zed-commercial-copy .zed-display {
     max-width: 16ch;
+  }
+  .zed-enterprise-paths {
+    grid-template-columns: 1fr;
+  }
+  .zed-enterprise-boundary {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .zed-enterprise-contact {
+    align-items: start;
+    flex-direction: column;
   }
   .zed-hide-sm {
     display: none !important;

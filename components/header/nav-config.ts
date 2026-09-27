@@ -25,13 +25,12 @@ export interface NavItem {
 }
 
 // Marketing/docs links — they always point at the website. Ordered as the
-// decision path a visitor walks: what it routes to, what it costs, the ideas
-// behind it, evidence that it keeps shipping, then how to build on it.
+// decision path a visitor walks: what it routes to, what it costs, how teams
+// can deploy it, then how to build on it.
 export const NAV_ITEMS: NavItem[] = [
   { key: "models", label: "Models", webPath: "/models" },
   { key: "pricing", label: "Pricing", webPath: "/pricing" },
-  { key: "blog", label: "Blog", webPath: "/blog" },
-  { key: "changelog", label: "Changelog", webPath: "/changelog" },
+  { key: "enterprise", label: "Enterprise", webPath: "/enterprise" },
   { key: "docs", label: "Docs", webPath: "/docs" },
 ];
 

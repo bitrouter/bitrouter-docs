@@ -12,6 +12,15 @@ bro agents check codex-acp
 
 Spawns the adapter, performs ACP initialization, and reports whether the configured route is usable.
 
+## @agents sessions
+
+```bash
+bro agents sessions
+bro agents attach <agent-run-id>
+```
+
+`bro agents sessions` lists metadata-only summaries of supervised background runs. Attach opens the interactive inspector; use `bro agents stop <agent-run-id>` to stop a run without deleting its harness-native session.
+
 ## @acp serve
 
 ```bash

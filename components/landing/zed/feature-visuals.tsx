@@ -142,7 +142,7 @@ function FeatureTerminal({
 
 const CORE_TRANSCRIPT = [
   `${ANSI.cyan}$${ANSI.reset} bro --version`,
-  `${ANSI.bold}bro 1.0.0-alpha.31${ANSI.reset}`,
+  `${ANSI.bold}bro 1.0.0-alpha.33${ANSI.reset}`,
   "",
   `${ANSI.cyan}$${ANSI.reset} bro --help`,
   "BitRouter: an LLM API router. CLI + assembly library.",

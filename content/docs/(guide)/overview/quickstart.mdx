@@ -44,7 +44,7 @@ Do you need your own provider keys? Not for BitRouter-hosted models: one Cloud s
 <Tab value="macOS / Linux">
 
 ```bash
-curl --proto '=https' --tlsv1.2 -LsSf https://github.com/bitrouter/bitrouter/releases/latest/download/bitrouter-installer.sh | sh
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/bitrouter/bitrouter/releases/download/v1.0.0-alpha.33/bitrouter-installer.sh | sh
 ```
 
 </Tab>
@@ -175,7 +175,7 @@ Use the slash form by default. Use the colon form only when you intentionally ne
 
 ## Adaptive routing
 
-Explicit model ids give you deterministic model selection. To let the router apply the policy bound to its `auto` preset, keep one stable model id in your agent or application:
+Explicit model ids give you deterministic model selection. To let the router apply the policy bound to its named `auto` router, keep one stable model id in your agent or application:
 
 ```bash
 curl http://127.0.0.1:4356/v1/chat/completions \
@@ -183,7 +183,7 @@ curl http://127.0.0.1:4356/v1/chat/completions \
   -d '{"model": "bitrouter/auto", "messages": [{"role": "user", "content": "..."}]}'
 ```
 
-`bitrouter/auto` requires an `auto` policy binding and fails visibly when the binding is missing. The dedicated [bitrouter/auto guide](/docs/usage/bitrouter-auto) shows how to create it, inspect the selected route, override one call, learn from runtime adequacy, and explicitly publish a reviewed policy update. [Evaluations](/docs/configuration/evaluations) covers the separate objective-scored evidence path.
+`bitrouter/auto` requires an `auto` router policy binding and fails visibly when the binding is missing. The dedicated [bitrouter/auto guide](/docs/usage/bitrouter-auto) shows how to create it, inspect the selected route, override one call, learn from runtime adequacy, and explicitly publish a reviewed policy update. [Evaluations](/docs/configuration/evaluations) covers the separate objective-scored evidence path.
 
 ## Next steps
 

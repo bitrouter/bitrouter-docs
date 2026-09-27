@@ -8,7 +8,7 @@ BitRouter self-hosted is one binary in the request path between your agents and 
 ## Start locally
 
 ```bash
-curl --proto '=https' --tlsv1.2 -LsSf https://github.com/bitrouter/bitrouter/releases/latest/download/bitrouter-installer.sh | sh
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/bitrouter/bitrouter/releases/download/v1.0.0-alpha.33/bitrouter-installer.sh | sh
 export OPENAI_API_KEY=sk-...        # any provider key in the environment is auto-detected
 bro start                           # http://127.0.0.1:4356
 ```
@@ -40,7 +40,7 @@ BitRouter ships as a single binary with no runtime dependencies. The install met
 <Tab value="macOS / Linux">
 
 ```bash
-curl --proto '=https' --tlsv1.2 -LsSf https://github.com/bitrouter/bitrouter/releases/latest/download/bitrouter-installer.sh | sh
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/bitrouter/bitrouter/releases/download/v1.0.0-alpha.33/bitrouter-installer.sh | sh
 ```
 
 The installer fetches a prebuilt release binary. This is the method `bro update` can drive in place.
@@ -82,13 +82,13 @@ bro --version
 Pin deployed hosts so two machines provisioned at different times do not silently run different routers. `bro update --tag` moves the installer-managed binary to an exact release, up or down:
 
 ```bash
-bro update --tag 1.0.0-alpha.31
+bro update --tag 1.0.0-alpha.33
 ```
 
 Pin the config schema to the same release:
 
 ```yaml
-# yaml-language-server: $schema=https://raw.githubusercontent.com/bitrouter/bitrouter/v1.0.0-alpha.31/dist/schema/bitrouter.config.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bitrouter/bitrouter/v1.0.0-alpha.33/dist/schema/bitrouter.config.schema.json
 ```
 
 <Callout type="warning">
@@ -110,7 +110,7 @@ Homebrew and `cargo install` builds are updated by their package manager. `bro u
 For a production host, separate the binary swap from validation and restart:
 
 ```bash
-bro update --tag 1.0.0-alpha.31 -y
+bro update --tag 1.0.0-alpha.33 -y
 bro config validate -c /etc/bitrouter/bitrouter.yaml
 bro restart -c /etc/bitrouter/bitrouter.yaml
 bro status -c /etc/bitrouter/bitrouter.yaml

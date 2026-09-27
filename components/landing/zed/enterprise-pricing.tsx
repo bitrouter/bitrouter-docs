@@ -2,28 +2,23 @@ import { ZED_LINKS } from "./primitives";
 
 const OPERATING_PATHS = [
   {
-    label: "Self-hosted",
-    value: "$0 to BitRouter",
+    label: "Free",
+    value: "$0 router fee",
     detail: "Your infrastructure · your provider keys · no platform or request fee",
   },
   {
-    label: "Hosted models",
+    label: "Pay as you go",
     value: "0% token markup",
     detail: "Managed inference · routing included · processor top-up fees may apply",
   },
   {
-    label: "Cloud BYOK",
-    value: "Per successful request",
-    detail: "Your provider keys · hosted routing · retries and fallbacks included",
-  },
-  {
     label: "Enterprise",
-    value: "Talk to the founders",
-    detail: "Deployment · security · procurement · support",
+    value: "Custom services",
+    detail: "Free router · deployment · security · procurement · support",
   },
 ] as const;
 
-/** Four commercial paths, without implying an enterprise package that is not GA. */
+/** Three pricing paths, without implying an enterprise package that is not GA. */
 export function EnterprisePricing() {
   return (
     <section className="zed-wrap zed-sec" id="enterprise-pricing">
@@ -35,8 +30,8 @@ export function EnterprisePricing() {
             <span>Scale on your terms.</span>
           </h2>
           <p>
-            Run the Apache-2.0 router yourself, use the same core through BitRouter Cloud, or work
-            with us on the deployment and support path your team needs.
+            Routing is free whether you run the Apache-2.0 router yourself or use BitRouter Cloud.
+            Pay provider token prices for hosted models, or work with us on your team requirements.
           </p>
           <div className="zed-action-row">
             <a className="zed-btn zed-btn-ghost" href={ZED_LINKS.pricing}>

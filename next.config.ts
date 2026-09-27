@@ -32,6 +32,7 @@ for (const [slug, dest] of Object.entries(finalPath)) {
 // overview + root + special
 pairs.push(
   ["/docs", "/docs/overview/what-is-bitrouter"],
+  ["/docs/enterprise", "/enterprise"],
   // Section overview pages retired in 2026-09. Each section now starts with
   // its first concrete task page.
   ["/docs/usage", "/docs/usage/bitrouter-auto"],
@@ -367,10 +368,7 @@ const nextConfig: NextConfig = {
       { source: "/zh/careers", destination: "/", permanent: true },
       { source: "/startup", destination: "/", permanent: true },
       { source: "/zh/startup", destination: "/", permanent: true },
-      // The standalone enterprise offer was retired before it became a distinct
-      // product. Team conversations now start from the honest pricing surface.
-      { source: "/enterprise", destination: "/pricing#teams", permanent: true },
-      { source: "/zh/enterprise", destination: "/pricing#teams", permanent: true },
+      { source: "/zh/enterprise", destination: "/enterprise", permanent: true },
       { source: "/zh/blog", destination: "/blog", permanent: true },
       { source: "/zh/blog/:slug", destination: "/blog/:slug", permanent: true },
 

@@ -31,9 +31,9 @@ const SECTIONS = [
   "(guide)/development",
   "self-hosting",
 ];
-// Reference endpoint pages are generated, but its overview and the root-level
-// Enterprise page are hand-authored and must obey the same import-free contract.
-const STANDALONE_DOCS = ["enterprise.mdx", "reference/index.mdx"];
+// Reference endpoint pages are generated, but its overview is hand-authored
+// and must obey the same import-free contract.
+const STANDALONE_DOCS = ["reference/index.mdx"];
 const ROOT = "content/docs";
 // Generated output, exempt from the hand-authoring contract: it is emitted by
 // scripts/generate-cli.mjs from the binary's own `--help`.

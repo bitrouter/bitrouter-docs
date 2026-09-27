@@ -1550,6 +1550,15 @@
   margin: 36px auto 0;
 }
 
+.zed-newsletter-action {
+  margin: 36px auto 0;
+}
+
+.zed-newsletter-action button:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
 .zed-newsletter-input-row {
   display: flex;
   gap: 10px;

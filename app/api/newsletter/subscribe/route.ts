@@ -43,7 +43,7 @@ export async function POST(request: Request) {
   }
 
   const token = createNewsletterToken(email, config.tokenSecret);
-  const confirmUrl = `${config.siteUrl}/newsletter/confirm?token=${encodeURIComponent(token)}`;
+  const confirmUrl = `${config.siteUrl}/#newsletter-confirm=${encodeURIComponent(token)}`;
   const privacyUrl = `${config.siteUrl}/privacy-policy`;
   try {
     const response = await resendRequest(config.apiKey, "/emails", {

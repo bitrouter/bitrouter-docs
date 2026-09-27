@@ -26,14 +26,14 @@ export async function POST(request: Request) {
     ? readNewsletterToken(token, config.tokenSecret)
     : null;
   const confirmedEmail = normalizeNewsletterEmail(email);
-  if (!confirmedEmail) return NextResponse.redirect(new URL("/newsletter/confirmed?status=expired", config.siteUrl), 303);
+  if (!confirmedEmail) return NextResponse.json({ status: "expired" }, { status: 400 });
 
   try {
     const contact = await resendRequest(config.apiKey, `/contacts/${encodeURIComponent(confirmedEmail)}`);
     if (contact.ok) {
       const data = await contact.json() as { unsubscribed?: boolean };
       if (data.unsubscribed === true) {
-        return NextResponse.redirect(new URL("/newsletter/confirmed?status=unsubscribed", config.siteUrl), 303);
+        return NextResponse.json({ status: "unsubscribed" }, { status: 409 });
       }
       if (data.unsubscribed !== false) throw new Error("contact status unavailable");
       const add = await resendRequest(
@@ -51,8 +51,8 @@ export async function POST(request: Request) {
     } else {
       throw new Error("contact lookup failed");
     }
-    return NextResponse.redirect(new URL("/newsletter/confirmed?status=success", config.siteUrl), 303);
+    return NextResponse.json({ status: "success" });
   } catch {
-    return NextResponse.redirect(new URL("/newsletter/confirmed?status=error", config.siteUrl), 303);
+    return NextResponse.json({ status: "error" }, { status: 502 });
   }
 }

@@ -8,22 +8,21 @@ const DEPLOYMENT_PATHS = [
     bestFor: "Teams that want to own the request path, credentials, and routing policy",
     operations: "You run and upgrade BitRouter",
     providerAccess: "Bring your own keys or local models",
-    commercialModel: "Apache 2.0; no BitRouter platform or request fee",
+    commercialModel: "Free router; pay your infrastructure and providers",
   },
   {
     name: "BitRouter Cloud",
     bestFor: "Teams that want a managed endpoint and provider network",
     operations: "Managed by BitRouter",
-    providerAccess: "BitRouter-hosted models and optional BYOK",
-    commercialModel:
-      "Hosted models at 0% token markup; Cloud BYOK per successful request",
+    providerAccess: "BitRouter-hosted models",
+    commercialModel: "Free routing; provider token prices with 0% markup",
   },
   {
     name: "Enterprise design partnership",
     bestFor: "Teams with specific security, procurement, or operating requirements",
     operations: "Defined with your team",
     providerAccess: "Depends on the agreed deployment",
-    commercialModel: "Contact us",
+    commercialModel: "Free router; additional services and terms agreed with your team",
   },
 ] as const;
 
@@ -94,8 +93,8 @@ export function ZedEnterprisePage() {
               <p>
                 The self-hosted router, configuration, routing policy, protocol adapters, and
                 observability surface are open source. BitRouter Cloud adds a managed endpoint,
-                hosted model access at 0% token markup, optional per-request BYOK routing,
-                account billing, and cloud request activity.
+                hosted model access at provider token prices with 0% markup, account billing,
+                and cloud request activity. Routing is free in both paths.
               </p>
             </div>
             <div>

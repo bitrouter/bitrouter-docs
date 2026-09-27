@@ -735,154 +735,126 @@
 }
 
 /* ── Pricing page ──────────────────────────────────────────────────────────
-   Four billing modes share one detail surface. The selector is deliberately
-   neutral and compact: the active state comes from structure, not an accent. */
+   Show all three operating and billing paths in one comparison. */
 .zed-pricing-page {
-  max-width: 1040px;
+  max-width: 1200px;
 }
-.zed-pricing-selector {
-  margin-top: 72px;
+.zed-pricing-comparison {
+  margin-top: 64px;
+  scroll-margin-top: 90px;
 }
-.zed-pricing-tabs {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  overflow: hidden;
-  border: 1px solid var(--z-rule);
-  border-radius: 8px 8px 0 0;
-  background: var(--z-rule);
-  gap: 1px;
-}
-.zed-pricing-tab {
-  display: flex;
-  min-width: 0;
-  min-height: 76px;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 7px;
-  padding: 16px 20px;
-  border: 0;
-  background: var(--z-bg);
-  color: var(--z-ink-5);
-  cursor: pointer;
-  text-align: left;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-.zed-pricing-tab:hover {
-  background: color-mix(in oklab, var(--accent) 46%, var(--z-bg));
-  color: var(--z-ink-2);
-}
-.zed-pricing-tab[aria-selected="true"] {
-  background: var(--accent);
-  color: var(--z-ink);
-}
-.zed-pricing-tab:focus-visible {
-  position: relative;
-  z-index: 1;
-  outline: 1px solid var(--ring);
-  outline-offset: -3px;
-}
-.zed-pricing-tab span {
-  overflow: hidden;
+.zed-pricing-table {
   width: 100%;
-  font-family: var(--font-sans);
-  font-size: 14px;
-  font-weight: 500;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  table-layout: fixed;
+  border-spacing: 0;
+  border: 1px solid var(--z-rule);
+  border-radius: 8px;
+  overflow: hidden;
 }
-.zed-pricing-tab small {
-  font-family: var(--font-mono);
-  font-size: 10px;
+.zed-pricing-table th,
+.zed-pricing-table td {
+  border-right: 1px solid var(--z-rule);
+  border-bottom: 1px solid var(--z-rule);
+  text-align: left;
+  vertical-align: top;
+}
+.zed-pricing-table tr > :last-child {
+  border-right: 0;
+}
+.zed-pricing-table tbody tr:last-child > * {
+  border-bottom: 0;
+}
+.zed-pricing-table thead th {
+  width: 27%;
+  padding: 28px 22px;
   font-weight: 400;
+}
+.zed-pricing-table thead th:first-child {
+  width: 19%;
+  color: var(--z-ink-6);
+  font-family: var(--font-mono);
+  font-size: 11px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--z-ink-7);
 }
-.zed-pricing-tab[aria-selected="true"] small {
-  color: var(--z-ink-4);
-}
-.zed-pricing-panel {
-  border: 1px solid var(--z-rule);
-  border-top: 0;
-  border-radius: 0 0 8px 8px;
-  outline: none;
-}
-.zed-pricing-panel:focus-visible {
-  outline: 1px solid var(--ring);
-  outline-offset: 3px;
-}
-.zed-pricing-summary {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(220px, 0.8fr);
-  gap: 64px;
-  align-items: end;
-  padding: 44px 48px 40px;
-}
-.zed-pricing-summary h2 {
-  margin: 16px 0 0;
-  font-size: clamp(36px, 5vw, 50px);
-  line-height: 1;
-}
-.zed-pricing-summary p {
-  max-width: 58ch;
-  margin: 20px 0 0;
+.zed-pricing-plan-label {
+  display: block;
   font-family: var(--font-sans);
-  font-size: 14px;
-  line-height: 1.7;
-  color: var(--z-ink-5);
-  text-wrap: pretty;
-}
-.zed-pricing-price {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
-  padding-bottom: 3px;
-}
-.zed-pricing-price strong {
-  font-family: var(--font-display);
-  font-size: clamp(34px, 4.5vw, 46px);
-  font-style: italic;
-  font-weight: 400;
-  line-height: 1;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.2;
   color: var(--z-ink);
 }
-.zed-pricing-price span {
+.zed-pricing-plan-descriptor,
+.zed-pricing-plan-price-detail {
+  display: block;
   font-family: var(--font-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.12em;
+  font-size: 10px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--z-ink-6);
 }
-.zed-pricing-details {
-  margin: 0;
-  border-top: 1px solid var(--z-rule);
+.zed-pricing-plan-descriptor {
+  margin-top: 8px;
 }
-.zed-pricing-detail {
-  display: grid;
-  grid-template-columns: minmax(170px, 0.48fr) minmax(0, 1.52fr);
-  border-bottom: 1px solid var(--z-rule);
+.zed-pricing-plan-price {
+  display: block;
+  margin-top: 28px;
+  font-family: var(--font-display);
+  font-size: clamp(30px, 3.4vw, 42px);
+  font-style: italic;
+  line-height: 1;
+  color: var(--z-ink);
 }
-.zed-pricing-detail dt,
-.zed-pricing-detail dd {
-  margin: 0;
-  padding: 15px 48px;
+.zed-pricing-plan-price-detail {
+  margin-top: 8px;
+}
+.zed-pricing-plan-description {
+  display: block;
+  min-height: 72px;
+  margin: 22px 0 0;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--z-ink-5);
+}
+.zed-pricing-table .zed-btn {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 18px;
+  padding-inline: 12px;
+  text-align: center;
+}
+.zed-pricing-table tbody th,
+.zed-pricing-table tbody td {
+  padding: 17px 22px;
   font-family: var(--font-sans);
   font-size: 13px;
   line-height: 1.55;
 }
-.zed-pricing-detail dt {
+.zed-pricing-table tbody th {
+  font-weight: 500;
   color: var(--z-ink-6);
 }
-.zed-pricing-detail dd {
-  border-left: 1px solid var(--z-rule);
+.zed-pricing-table tbody td {
   color: var(--z-ink-2);
 }
-.zed-pricing-action {
-  display: flex;
-  justify-content: flex-end;
-  padding: 28px 48px;
+.zed-pricing-model-link {
+  display: block;
+  width: fit-content;
+  margin-top: 5px;
+  color: var(--z-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.zed-pricing-anchor {
+  display: block;
+  height: 0;
+  scroll-margin-top: 90px;
+}
+.zed-pricing-mobile {
+  display: none;
 }
 .zed-pricing-bottom-space {
   height: var(--z-sec);
@@ -1184,46 +1156,65 @@
   min-width: max-content;
 }
 @media (max-width: 699px) {
-  .zed-pricing-selector {
+  .zed-pricing-comparison {
     margin-top: 48px;
   }
-  .zed-pricing-tabs {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .zed-pricing-table {
+    display: none;
   }
-  .zed-pricing-tab {
-    min-height: 72px;
-    padding: 14px 16px;
+  .zed-pricing-mobile {
+    display: grid;
+    gap: 16px;
   }
-  .zed-pricing-summary {
-    grid-template-columns: 1fr;
-    gap: 30px;
-    padding: 34px 24px 30px;
+  .zed-pricing-mobile-plan {
+    border: 1px solid var(--z-rule);
+    border-radius: 8px;
+    overflow: hidden;
   }
-  .zed-pricing-price {
-    padding: 0;
+  .zed-pricing-mobile-head {
+    padding: 28px 24px 20px;
   }
-  .zed-pricing-detail {
-    grid-template-columns: 1fr;
+  .zed-pricing-mobile-head .zed-pricing-plan-descriptor {
+    margin: 0 0 8px;
   }
-  .zed-pricing-detail dt,
-  .zed-pricing-detail dd {
+  .zed-pricing-mobile-head .zed-pricing-plan-label {
+    margin: 0;
+  }
+  .zed-pricing-mobile-head .zed-pricing-plan-price {
+    margin-top: 24px;
+  }
+  .zed-pricing-mobile-head .zed-pricing-plan-description {
+    min-height: 0;
+    margin-top: 18px;
+  }
+  .zed-pricing-mobile-plan dl {
+    margin: 0;
+    border-top: 1px solid var(--z-rule);
+  }
+  .zed-pricing-mobile-plan dl > div {
+    display: grid;
+    grid-template-columns: 36% 1fr;
+    gap: 12px;
     padding: 12px 24px;
+    border-bottom: 1px solid var(--z-rule);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    line-height: 1.5;
   }
-  .zed-pricing-detail dt {
-    padding-bottom: 3px;
+  .zed-pricing-mobile-plan dt,
+  .zed-pricing-mobile-plan dd {
+    margin: 0;
   }
-  .zed-pricing-detail dd {
-    padding-top: 3px;
-    padding-bottom: 14px;
-    border-left: 0;
+  .zed-pricing-mobile-plan dt {
+    color: var(--z-ink-6);
   }
-  .zed-pricing-action {
-    justify-content: stretch;
-    padding: 24px;
+  .zed-pricing-mobile-plan dd {
+    color: var(--z-ink-2);
   }
-  .zed-pricing-action .zed-btn {
-    width: 100%;
+  .zed-pricing-mobile-plan > .zed-btn {
+    display: flex;
     justify-content: center;
+    margin: 20px 24px 24px;
   }
   .zed-tui-fit {
     min-width: 380px;

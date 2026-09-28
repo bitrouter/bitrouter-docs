@@ -38,7 +38,6 @@ export function ModelsTableClient({ rows }: { rows: ModelRow[] }) {
               <th className="py-2 pr-4">Context</th>
               <th className="py-2 pr-4">Input $/M</th>
               <th className="py-2 pr-4">Output $/M</th>
-              <th className="py-2 pr-4">Providers</th>
             </tr>
           </thead>
           <tbody>
@@ -48,7 +47,6 @@ export function ModelsTableClient({ rows }: { rows: ModelRow[] }) {
                 <td className="py-2 pr-4">{fmtCtx(r.maxInputTokens)}</td>
                 <td className="py-2 pr-4">{fmtUsd(r.inputUsdPerM)}</td>
                 <td className="py-2 pr-4">{fmtUsd(r.outputUsdPerM)}</td>
-                <td className="py-2 pr-4">{r.providers}</td>
               </tr>
             ))}
           </tbody>

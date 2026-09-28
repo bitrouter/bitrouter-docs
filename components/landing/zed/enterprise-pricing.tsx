@@ -8,7 +8,7 @@ const OPERATING_PATHS = [
   },
   {
     label: "Pay as you go",
-    value: "0% token markup",
+    value: "Model usage",
     detail: "Managed inference · routing included · processor top-up fees may apply",
   },
   {
@@ -31,7 +31,7 @@ export function EnterprisePricing() {
           </h2>
           <p>
             Routing is free whether you run the Apache-2.0 router yourself or use BitRouter Cloud.
-            Pay provider token prices for hosted models, or work with us on your team requirements.
+            Pay published BitRouter model prices for hosted models, or work with us on your team requirements.
           </p>
           <div className="zed-action-row">
             <a className="zed-btn zed-btn-ghost" href={ZED_LINKS.pricing}>

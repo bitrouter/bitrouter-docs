@@ -102,6 +102,8 @@ providers:
 
 Cloud BYOK stores a provider credential for your account and routes eligible calls through it. The recommended path is the Cloud console, which fetches the node's encryption public key and seals the provider key in the browser before upload.
 
+If the provider fails, times out, or rate-limits your request, BitRouter may continue on a hosted route and charge your hosted credits at the published BitRouter model price. The console's **BYOK only** setting keeps requests on caller-owned keys. An account without hosted credits also stays on BYOK; a bad or unavailable key then returns an error instead of starting a paid hosted route. Provider 401/403 responses stop by default so an invalid key cannot silently spend hosted credits.
+
 For automated onboarding, start with the [BYOK API reference](/docs/reference/byok/getEncryptionPubkey). Keep encryption and upload code in the client; never send a plaintext provider key to a logging or application endpoint.
 
 ## Contribute a provider

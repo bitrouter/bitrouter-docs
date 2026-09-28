@@ -164,7 +164,7 @@ export const COMPARE_REGISTRY: Record<string, CompareRegistryEntry> = {
       { feat: "Routing overhead",                   them: "⚠ ~15ms p50",                br: "✓ ~5ms p50" },
       { feat: "Per-run cost attribution",           them: "✓",                          br: "✓" },
       { feat: "BYOK support",                       them: "✓",                          br: "✓" },
-      { feat: "Platform fee",                       them: "— varies by plan",           br: "✓ none · 0% markup" },
+      { feat: "Separate routing fee",               them: "— varies by plan",           br: "✓ none for hosted model usage" },
     ],
     tradeoffs: [
       "Your team already relies on Portkey's prompt management, versioning, and caching workflows",

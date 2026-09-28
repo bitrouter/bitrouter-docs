@@ -7,7 +7,7 @@ export default function Page() {
 
 export function generateMetadata(): Metadata {
   const description =
-    "BitRouter routing is free. Self-host the router, pay provider token prices for hosted models with 0% markup, or discuss enterprise requirements.";
+    "BitRouter routing is free. Self-host the router, pay published BitRouter model prices for hosted models, or discuss enterprise requirements.";
   const ogTitle = "BitRouter Pricing — free, pay as you go, or enterprise";
   return {
     title: "Pricing",

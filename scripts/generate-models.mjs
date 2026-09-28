@@ -42,7 +42,6 @@ function normalize(model, registryOpenWeights) {
     outputModalities: model.output_modalities ?? [],
     maxInputTokens: model.max_input_tokens ?? null,
     capabilities: model.capabilities ?? [],
-    providers: model.providers?.total_online ?? 0,
     inputUsdPerM: inUsd,
     // Cached-input reads are a separate line on every bill and the price an
     // agent loop actually pays on turn two onward, so the catalog carries it

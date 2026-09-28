@@ -14,7 +14,7 @@ Choose the API family that matches your task:
 | Need | Start with |
 | --- | --- |
 | Send a model request in an existing SDK format | One of the four inference APIs |
-| Discover available models or providers | Models & providers |
+| Discover available models | Models |
 | Manage Cloud accounts, keys, usage, billing, or policy | Cloud management |
 | Check node health or scrape metrics | Health or Metrics |
 
@@ -49,7 +49,7 @@ curl https://api.bitrouter.ai/v1/chat/completions \
 Model discovery, BYOK encryption bootstrap, health, and metrics are public. BYOK provider eligibility requires `byok:read`; account-bound management endpoints require a credential with the scope named by that endpoint.
 
 <Cards>
-  <Card title="Models & providers" href="/docs/reference/discovery/listModels" description="Inspect the public catalog and aggregate platform usage." />
+  <Card title="Models" href="/docs/reference/discovery/listModels" description="Inspect canonical model IDs, capabilities, and BitRouter prices." />
   <Card title="Cloud management" href="/docs/reference/management/listNamespaces" description="Manage namespaces, keys, billing, policy, presets, and OAuth clients." />
   <Card title="BYOK encryption" href="/docs/reference/byok/getEncryptionPubkey" description="Fetch the public key used for client-side provider-key encryption." />
   <Card title="Health" href="/docs/reference/health/ping" description="Probe whether the Cloud node is alive." />

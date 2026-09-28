@@ -66,7 +66,7 @@ References:
 - [OpenAI Responses](${BASE_URL}/docs/reference/openai-responses/createResponse): \`/v1/responses\` — OpenAI Responses request and event format
 - [Anthropic Messages](${BASE_URL}/docs/reference/anthropic-compatible/createMessage): \`/v1/messages\` — Anthropic Messages request and response format
 - [Google GenerateContent](${BASE_URL}/docs/reference/google-compatible/googleGenerateContent): \`/v1beta/models/{model}:generateContent\` — Google Generative Language format
-- [Models & providers](${BASE_URL}/docs/reference/discovery/listModels): Inspect the public catalog and aggregate platform usage
+- [Models](${BASE_URL}/docs/reference/discovery/listModels): Inspect canonical model IDs, capabilities, and BitRouter prices
 - [Cloud management](${BASE_URL}/docs/reference/management/listNamespaces): Manage namespaces, keys, billing, policy, presets, and OAuth clients
 - [BYOK encryption](${BASE_URL}/docs/reference/byok/getEncryptionPubkey): Bootstrap client-side encryption of upstream provider keys
 - [Health](${BASE_URL}/docs/reference/health/ping): Liveness probe

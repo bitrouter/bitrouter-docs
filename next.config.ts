@@ -32,6 +32,7 @@ for (const [slug, dest] of Object.entries(finalPath)) {
 // overview + root + special
 pairs.push(
   ["/docs", "/docs/overview/what-is-bitrouter"],
+  ["/docs/reference/discovery/listProviders", "/docs/reference/byok/listByokProviders"],
   ["/docs/enterprise", "/enterprise"],
   // Section overview pages retired in 2026-09. Each section now starts with
   // its first concrete task page.

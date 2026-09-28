@@ -1,5 +1,5 @@
 {
-  "count": 55,
+  "count": 52,
   "models": [
     {
       "id": "anthropic/claude-fable-5",
@@ -15,7 +15,6 @@
       "capabilities": [
         "reasoning"
       ],
-      "providers": 1,
       "inputUsdPerM": 10,
       "cacheReadUsdPerM": 1,
       "outputUsdPerM": 50,
@@ -34,7 +33,6 @@
       ],
       "maxInputTokens": 1000000,
       "capabilities": [],
-      "providers": 1,
       "inputUsdPerM": 10,
       "cacheReadUsdPerM": 0.25,
       "outputUsdPerM": 50,
@@ -54,7 +52,6 @@
       "capabilities": [
         "tools"
       ],
-      "providers": 1,
       "inputUsdPerM": 1,
       "cacheReadUsdPerM": 0.1,
       "outputUsdPerM": 5,
@@ -76,7 +73,6 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 2,
       "inputUsdPerM": 5,
       "cacheReadUsdPerM": 0.5,
       "outputUsdPerM": 25,
@@ -98,7 +94,6 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 2,
       "inputUsdPerM": 4.5,
       "cacheReadUsdPerM": 0.45,
       "outputUsdPerM": 22.5,
@@ -120,7 +115,6 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 2,
       "inputUsdPerM": 5,
       "cacheReadUsdPerM": 0.5,
       "outputUsdPerM": 25,
@@ -140,11 +134,28 @@
       "capabilities": [
         "reasoning"
       ],
-      "providers": 2,
       "inputUsdPerM": 5,
       "cacheReadUsdPerM": 0.5,
       "outputUsdPerM": 25,
       "openWeights": false
+    },
+    {
+      "id": "anthropic/claude-opus-5.5",
+      "name": "Anthropic: Claude Opus 5.5",
+      "inputModalities": [
+        "file",
+        "image",
+        "text"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1000000,
+      "capabilities": [],
+      "inputUsdPerM": 4,
+      "cacheReadUsdPerM": 0.2,
+      "outputUsdPerM": 20,
+      "openWeights": null
     },
     {
       "id": "anthropic/claude-sonnet-4.6",
@@ -163,7 +174,6 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 2,
       "inputUsdPerM": 3,
       "cacheReadUsdPerM": 0.3,
       "outputUsdPerM": 15,
@@ -186,7 +196,6 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 1,
       "inputUsdPerM": 2,
       "cacheReadUsdPerM": 0.2,
       "outputUsdPerM": 10,
@@ -207,7 +216,6 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 6,
       "inputUsdPerM": 0.21,
       "cacheReadUsdPerM": 0.105,
       "outputUsdPerM": 0.315,
@@ -227,10 +235,9 @@
         "reasoning",
         "tools"
       ],
-      "providers": 8,
-      "inputUsdPerM": 0.105,
-      "cacheReadUsdPerM": 0.0021,
-      "outputUsdPerM": 0.21,
+      "inputUsdPerM": 0.09,
+      "cacheReadUsdPerM": 0.02,
+      "outputUsdPerM": 0.18,
       "openWeights": true
     },
     {
@@ -247,9 +254,8 @@
         "reasoning",
         "tools"
       ],
-      "providers": 8,
       "inputUsdPerM": 0.14,
-      "cacheReadUsdPerM": 0.0028,
+      "cacheReadUsdPerM": 0.028,
       "outputUsdPerM": 0.28,
       "openWeights": true
     },
@@ -268,10 +274,9 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 7,
-      "inputUsdPerM": 1.305,
-      "cacheReadUsdPerM": 0.10875,
-      "outputUsdPerM": 2.61,
+      "inputUsdPerM": 0.435,
+      "cacheReadUsdPerM": 0.003625,
+      "outputUsdPerM": 0.87,
       "openWeights": true
     },
     {
@@ -288,7 +293,6 @@
         "reasoning",
         "tools"
       ],
-      "providers": 5,
       "inputUsdPerM": 0.435,
       "cacheReadUsdPerM": 0.003625,
       "outputUsdPerM": 0.87,
@@ -306,97 +310,9 @@
       ],
       "maxInputTokens": 1048576,
       "capabilities": [],
-      "providers": 1,
       "inputUsdPerM": 0.65,
       "cacheReadUsdPerM": 0.13,
       "outputUsdPerM": 1.45,
-      "openWeights": null
-    },
-    {
-      "id": "google/gemini-3.5-flash",
-      "name": "Google: Gemini 3.5 Flash",
-      "inputModalities": [
-        "text",
-        "image",
-        "audio"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 1048576,
-      "capabilities": [
-        "reasoning",
-        "tools"
-      ],
-      "providers": 1,
-      "inputUsdPerM": 1.5,
-      "cacheReadUsdPerM": 0.15,
-      "outputUsdPerM": 9,
-      "openWeights": false
-    },
-    {
-      "id": "google/gemini-3.6-flash",
-      "name": "Google: Gemini 3.6 Flash",
-      "inputModalities": [
-        "text",
-        "image",
-        "audio",
-        "video"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 1048576,
-      "capabilities": [
-        "reasoning",
-        "tools"
-      ],
-      "providers": 1,
-      "inputUsdPerM": 1.5,
-      "cacheReadUsdPerM": 0.15,
-      "outputUsdPerM": 7.5,
-      "openWeights": false
-    },
-    {
-      "id": "google/gemini-3.7-flash",
-      "name": "Google: Gemini 3.7 Flash",
-      "inputModalities": [
-        "audio",
-        "file",
-        "image",
-        "text",
-        "video"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 1048576,
-      "capabilities": [],
-      "providers": 1,
-      "inputUsdPerM": 0.75,
-      "cacheReadUsdPerM": 0.075,
-      "outputUsdPerM": 3.75,
-      "openWeights": null
-    },
-    {
-      "id": "google/gemini-3.8-flash",
-      "name": "Google: Gemini 3.8 Flash",
-      "inputModalities": [
-        "audio",
-        "file",
-        "image",
-        "text",
-        "video"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 1048576,
-      "capabilities": [],
-      "providers": 1,
-      "inputUsdPerM": 0.75,
-      "cacheReadUsdPerM": 0.075,
-      "outputUsdPerM": 3.75,
       "openWeights": null
     },
     {
@@ -413,7 +329,6 @@
         "reasoning",
         "tools"
       ],
-      "providers": 3,
       "inputUsdPerM": 0.225,
       "cacheReadUsdPerM": 0.045,
       "outputUsdPerM": 0.9,
@@ -434,7 +349,6 @@
         "reasoning",
         "tools"
       ],
-      "providers": 4,
       "inputUsdPerM": 0.3,
       "cacheReadUsdPerM": 0.06,
       "outputUsdPerM": 1.2,
@@ -455,7 +369,6 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 10,
       "inputUsdPerM": 0.7125,
       "cacheReadUsdPerM": 0.12,
       "outputUsdPerM": 3,
@@ -477,7 +390,6 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 5,
       "inputUsdPerM": 0.7125,
       "cacheReadUsdPerM": 0.1425,
       "outputUsdPerM": 3,
@@ -499,10 +411,9 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 2,
-      "inputUsdPerM": 2,
-      "cacheReadUsdPerM": null,
-      "outputUsdPerM": 6,
+      "inputUsdPerM": 3,
+      "cacheReadUsdPerM": 0.3,
+      "outputUsdPerM": 15,
       "openWeights": true
     },
     {
@@ -521,7 +432,6 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 1,
       "inputUsdPerM": 2.5,
       "cacheReadUsdPerM": 0.25,
       "outputUsdPerM": 15,
@@ -543,7 +453,6 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 1,
       "inputUsdPerM": 0.75,
       "cacheReadUsdPerM": 0.075,
       "outputUsdPerM": 4.5,
@@ -565,7 +474,6 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 2,
       "inputUsdPerM": 5,
       "cacheReadUsdPerM": 0.5,
       "outputUsdPerM": 30,
@@ -587,10 +495,9 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 1,
-      "inputUsdPerM": 0.2,
-      "cacheReadUsdPerM": 0.02,
-      "outputUsdPerM": 1.2,
+      "inputUsdPerM": 1,
+      "cacheReadUsdPerM": 0.1,
+      "outputUsdPerM": 6,
       "openWeights": false
     },
     {
@@ -609,7 +516,6 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 1,
       "inputUsdPerM": 5,
       "cacheReadUsdPerM": 0.5,
       "outputUsdPerM": 30,
@@ -631,10 +537,9 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 1,
-      "inputUsdPerM": 2,
-      "cacheReadUsdPerM": 0.2,
-      "outputUsdPerM": 12,
+      "inputUsdPerM": 2.5,
+      "cacheReadUsdPerM": 0.25,
+      "outputUsdPerM": 15,
       "openWeights": false
     },
     {
@@ -650,83 +555,46 @@
       ],
       "maxInputTokens": 1050000,
       "capabilities": [],
-      "providers": 1,
       "inputUsdPerM": 10,
       "cacheReadUsdPerM": 1,
       "outputUsdPerM": 50,
       "openWeights": false
     },
     {
-      "id": "qwen/qwen3.5-122b-a10b",
-      "name": "Qwen: Qwen3.5 122B-A10B",
+      "id": "openai/gpt-6-luna",
+      "name": "OpenAI: GPT-6 Luna",
       "inputModalities": [
-        "text",
-        "image"
+        "file",
+        "image",
+        "text"
       ],
       "outputModalities": [
         "text"
       ],
-      "maxInputTokens": 262144,
+      "maxInputTokens": 1050000,
       "capabilities": [],
-      "providers": 2,
-      "inputUsdPerM": 0.26,
-      "cacheReadUsdPerM": null,
-      "outputUsdPerM": 2.08,
-      "openWeights": true
+      "inputUsdPerM": 0.1,
+      "cacheReadUsdPerM": 0.01,
+      "outputUsdPerM": 0.5,
+      "openWeights": null
     },
     {
-      "id": "qwen/qwen3.5-27b",
-      "name": "Qwen: Qwen3.5 27B",
+      "id": "openai/gpt-6-sol",
+      "name": "OpenAI: GPT-6 Sol",
       "inputModalities": [
-        "text",
-        "image"
+        "file",
+        "image",
+        "text"
       ],
       "outputModalities": [
         "text"
       ],
-      "maxInputTokens": 262144,
+      "maxInputTokens": 1050000,
       "capabilities": [],
-      "providers": 2,
-      "inputUsdPerM": 0.25,
-      "cacheReadUsdPerM": null,
-      "outputUsdPerM": 2,
-      "openWeights": true
-    },
-    {
-      "id": "qwen/qwen3.6-27b",
-      "name": "Qwen: Qwen3.6 27B",
-      "inputModalities": [
-        "text",
-        "image"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 262144,
-      "capabilities": [],
-      "providers": 2,
-      "inputUsdPerM": 0.3,
-      "cacheReadUsdPerM": null,
-      "outputUsdPerM": 3.2,
-      "openWeights": true
-    },
-    {
-      "id": "qwen/qwen3.6-35b-a3b",
-      "name": "Qwen: Qwen3.6 35B-A3B",
-      "inputModalities": [
-        "text",
-        "image"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 262144,
-      "capabilities": [],
-      "providers": 2,
-      "inputUsdPerM": 0.248,
-      "cacheReadUsdPerM": null,
-      "outputUsdPerM": 1.485,
-      "openWeights": true
+      "inputUsdPerM": 2,
+      "cacheReadUsdPerM": 0.2,
+      "outputUsdPerM": 10,
+      "openWeights": null
     },
     {
       "id": "qwen/qwen3.6-flash",
@@ -740,10 +608,9 @@
       ],
       "maxInputTokens": 1000000,
       "capabilities": [],
-      "providers": 2,
-      "inputUsdPerM": 0.1875,
+      "inputUsdPerM": 0.165,
       "cacheReadUsdPerM": null,
-      "outputUsdPerM": 1.125,
+      "outputUsdPerM": 0.99,
       "openWeights": false
     },
     {
@@ -757,10 +624,9 @@
       ],
       "maxInputTokens": 1000000,
       "capabilities": [],
-      "providers": 4,
-      "inputUsdPerM": 1.875,
-      "cacheReadUsdPerM": 0.375,
-      "outputUsdPerM": 5.625,
+      "inputUsdPerM": 1.25,
+      "cacheReadUsdPerM": 0.25,
+      "outputUsdPerM": 3.75,
       "openWeights": false
     },
     {
@@ -775,31 +641,10 @@
       ],
       "maxInputTokens": 1000000,
       "capabilities": [],
-      "providers": 3,
-      "inputUsdPerM": 0.4,
-      "cacheReadUsdPerM": 0.08,
-      "outputUsdPerM": 1.6,
+      "inputUsdPerM": 0.276,
+      "cacheReadUsdPerM": null,
+      "outputUsdPerM": 1.101,
       "openWeights": false
-    },
-    {
-      "id": "qwen/qwen3.8-2.4t-a95b",
-      "name": "Qwen: Qwen3.8 2.4T-A95B",
-      "inputModalities": [
-        "text"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 1000000,
-      "capabilities": [
-        "reasoning",
-        "tools"
-      ],
-      "providers": 1,
-      "inputUsdPerM": 2,
-      "cacheReadUsdPerM": 0.17,
-      "outputUsdPerM": 6,
-      "openWeights": true
     },
     {
       "id": "qwen/qwen3.8-27b",
@@ -813,55 +658,11 @@
         "text"
       ],
       "maxInputTokens": 1000000,
-      "capabilities": [
-        "reasoning",
-        "tools"
-      ],
-      "providers": 2,
-      "inputUsdPerM": 0.99,
-      "cacheReadUsdPerM": null,
-      "outputUsdPerM": 1.49,
-      "openWeights": true
-    },
-    {
-      "id": "qwen/qwen3.8-flash",
-      "name": "Qwen: Qwen3.8 Flash",
-      "inputModalities": [
-        "image",
-        "text",
-        "video"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 1000000,
       "capabilities": [],
-      "providers": 1,
-      "inputUsdPerM": 0.15,
-      "cacheReadUsdPerM": 0.016,
-      "outputUsdPerM": 0.47,
-      "openWeights": null
-    },
-    {
-      "id": "qwen/qwen3.8-max",
-      "name": "Qwen: Qwen3.8 Max",
-      "inputModalities": [
-        "text",
-        "image",
-        "video"
-      ],
-      "outputModalities": [
-        "text"
-      ],
-      "maxInputTokens": 1000000,
-      "capabilities": [
-        "tools"
-      ],
-      "providers": 1,
-      "inputUsdPerM": 2,
-      "cacheReadUsdPerM": 0.25,
-      "outputUsdPerM": 6,
-      "openWeights": false
+      "inputUsdPerM": 0.5,
+      "cacheReadUsdPerM": 0.05,
+      "outputUsdPerM": 3,
+      "openWeights": true
     },
     {
       "id": "x-ai/grok-4.20",
@@ -877,7 +678,6 @@
       "capabilities": [
         "tools"
       ],
-      "providers": 1,
       "inputUsdPerM": 1.25,
       "cacheReadUsdPerM": 0.2,
       "outputUsdPerM": 2.5,
@@ -898,7 +698,6 @@
         "reasoning",
         "tools"
       ],
-      "providers": 1,
       "inputUsdPerM": 1.25,
       "cacheReadUsdPerM": 0.2,
       "outputUsdPerM": 2.5,
@@ -919,7 +718,6 @@
         "reasoning",
         "tools"
       ],
-      "providers": 2,
       "inputUsdPerM": 1.25,
       "cacheReadUsdPerM": 0.2,
       "outputUsdPerM": 2.5,
@@ -940,9 +738,8 @@
         "reasoning",
         "tools"
       ],
-      "providers": 1,
       "inputUsdPerM": 2,
-      "cacheReadUsdPerM": 0.3,
+      "cacheReadUsdPerM": 0.5,
       "outputUsdPerM": 6,
       "openWeights": false
     },
@@ -961,11 +758,28 @@
         "reasoning",
         "tools"
       ],
-      "providers": 1,
       "inputUsdPerM": 2,
       "cacheReadUsdPerM": 0.5,
       "outputUsdPerM": 6,
       "openWeights": false
+    },
+    {
+      "id": "x-ai/grok-4.7",
+      "name": "SpaceXAI: Grok 4.7",
+      "inputModalities": [
+        "file",
+        "image",
+        "text"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 500000,
+      "capabilities": [],
+      "inputUsdPerM": 2,
+      "cacheReadUsdPerM": 0.5,
+      "outputUsdPerM": 6,
+      "openWeights": null
     },
     {
       "id": "x-ai/grok-build-0.1",
@@ -980,7 +794,6 @@
       "capabilities": [
         "tools"
       ],
-      "providers": 1,
       "inputUsdPerM": 1,
       "cacheReadUsdPerM": 0.2,
       "outputUsdPerM": 2,
@@ -1000,7 +813,6 @@
         "reasoning",
         "tools"
       ],
-      "providers": 3,
       "inputUsdPerM": 0.14,
       "cacheReadUsdPerM": 0.0028,
       "outputUsdPerM": 0.28,
@@ -1020,11 +832,67 @@
         "reasoning",
         "tools"
       ],
-      "providers": 2,
       "inputUsdPerM": 0.435,
       "cacheReadUsdPerM": 0.0036,
       "outputUsdPerM": 0.87,
       "openWeights": true
+    },
+    {
+      "id": "xiaomi/mimo-v2.6-flash",
+      "name": "Xiaomi: MiMo-V2.6-Flash",
+      "inputModalities": [
+        "audio",
+        "image",
+        "text",
+        "video"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1048576,
+      "capabilities": [],
+      "inputUsdPerM": 0.14,
+      "cacheReadUsdPerM": 0.0028,
+      "outputUsdPerM": 0.28,
+      "openWeights": null
+    },
+    {
+      "id": "xiaomi/mimo-v2.6-pro",
+      "name": "Xiaomi: MiMo-V2.6-Pro",
+      "inputModalities": [
+        "audio",
+        "image",
+        "text",
+        "video"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1048576,
+      "capabilities": [],
+      "inputUsdPerM": 0.435,
+      "cacheReadUsdPerM": 0.0036,
+      "outputUsdPerM": 0.87,
+      "openWeights": null
+    },
+    {
+      "id": "xiaomi/mimo-v2.6-pro-ultraspeed",
+      "name": "Xiaomi: MiMo-V2.6-Pro-UltraSpeed",
+      "inputModalities": [
+        "audio",
+        "image",
+        "text",
+        "video"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1048576,
+      "capabilities": [],
+      "inputUsdPerM": 4.35,
+      "cacheReadUsdPerM": 0.036,
+      "outputUsdPerM": 8.7,
+      "openWeights": null
     },
     {
       "id": "z-ai/glm-4.7",
@@ -1037,7 +905,6 @@
       ],
       "maxInputTokens": 200000,
       "capabilities": [],
-      "providers": 2,
       "inputUsdPerM": 0.6,
       "cacheReadUsdPerM": 0.11,
       "outputUsdPerM": 2.2,
@@ -1057,9 +924,8 @@
         "reasoning",
         "tools"
       ],
-      "providers": 8,
       "inputUsdPerM": 0.98,
-      "cacheReadUsdPerM": 0.49,
+      "cacheReadUsdPerM": 0.182,
       "outputUsdPerM": 3.08,
       "openWeights": true
     },
@@ -1077,7 +943,6 @@
         "reasoning",
         "tools"
       ],
-      "providers": 9,
       "inputUsdPerM": 0.979,
       "cacheReadUsdPerM": 0.182,
       "outputUsdPerM": 3.08,
@@ -1097,7 +962,6 @@
         "reasoning",
         "tools"
       ],
-      "providers": 1,
       "inputUsdPerM": 1.4,
       "cacheReadUsdPerM": 0.26,
       "outputUsdPerM": 4.4,
@@ -1119,11 +983,28 @@
         "reasoning",
         "tools"
       ],
-      "providers": 2,
       "inputUsdPerM": 0.075,
       "cacheReadUsdPerM": 0.015,
       "outputUsdPerM": 0.25,
       "openWeights": true
+    },
+    {
+      "id": "z-ai/glm-5.3-flashx",
+      "name": "Z.ai: GLM 5.3 FlashX",
+      "inputModalities": [
+        "image",
+        "text",
+        "video"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1048576,
+      "capabilities": [],
+      "inputUsdPerM": 0.37,
+      "cacheReadUsdPerM": 0.075,
+      "outputUsdPerM": 1.25,
+      "openWeights": null
     }
   ]
 }

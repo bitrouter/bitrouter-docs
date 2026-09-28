@@ -21,9 +21,6 @@ interface ApiModelResponse {
     };
     output_tokens?: { text?: number };
   };
-  providers?: {
-    total_online?: number;
-  };
 }
 
 /**

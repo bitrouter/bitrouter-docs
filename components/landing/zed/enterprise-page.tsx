@@ -15,7 +15,7 @@ const DEPLOYMENT_PATHS = [
     bestFor: "Teams that want a managed endpoint and provider network",
     operations: "Managed by BitRouter",
     providerAccess: "BitRouter-hosted models",
-    commercialModel: "Free routing; provider token prices with 0% markup",
+    commercialModel: "Published BitRouter model prices; routing included",
   },
   {
     name: "Enterprise design partnership",
@@ -93,7 +93,7 @@ export function ZedEnterprisePage() {
               <p>
                 The self-hosted router, configuration, routing policy, protocol adapters, and
                 observability surface are open source. BitRouter Cloud adds a managed endpoint,
-                hosted model access at provider token prices with 0% markup, account billing,
+                hosted model access at published BitRouter prices, account billing,
                 and cloud request activity. Routing is free in both paths.
               </p>
             </div>

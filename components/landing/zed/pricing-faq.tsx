@@ -3,11 +3,11 @@ import { Faq } from "./faq";
 const PFAQS = [
   {
     q: "What do I pay in each mode?",
-    a: "The router is free. If you self-host, you cover your infrastructure and any provider charges. With BitRouter-hosted models, you pay provider token prices with 0% markup and no additional routing fee. Enterprise services and terms are defined with your team.",
+    a: "The router is free. If you self-host, you cover your infrastructure and any provider charges. With BitRouter-hosted models, you pay published BitRouter model prices with routing included. Enterprise services and terms are defined with your team.",
   },
   {
-    q: "Does 0% token markup mean there are no other fees?",
-    a: "BitRouter does not add a margin to the provider token prices shown in the model catalog, and model routing is included with hosted inference. Third-party payment processors may charge a fee when you add funds. That top-up fee is separate from model pricing and is not a token markup.",
+    q: "Are there any fees beyond model usage?",
+    a: "Model routing is included with hosted inference. Third-party payment processors may charge a fee when you add funds. That top-up fee is separate from the published BitRouter model prices.",
   },
   {
     q: "Is routing free in both self-hosted and Cloud use?",

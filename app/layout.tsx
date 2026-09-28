@@ -57,7 +57,7 @@ const siteJsonLd = {
         "@type": "Offer",
         price: "0",
         priceCurrency: "USD",
-        description: "Routing is free. Self-host BitRouter or use Cloud-hosted models at provider token prices with 0% markup.",
+        description: "Routing is free. Self-host BitRouter or use Cloud-hosted models at published BitRouter prices.",
       },
     },
   ],

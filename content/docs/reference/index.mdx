@@ -14,7 +14,7 @@ Choose the API family that matches your task:
 | Need | Start with |
 | --- | --- |
 | Send a model request in an existing SDK format | One of the four inference APIs |
-| Discover available models or providers | Models & providers |
+| Discover available models | Models |
 | Manage Cloud accounts, keys, usage, billing, or policy | Cloud management |
 | Check node health or scrape metrics | Health or Metrics |
 
@@ -46,13 +46,19 @@ curl https://api.bitrouter.ai/v1/chat/completions \
 
 ## Manage and inspect BitRouter
 
-Discovery, BYOK encryption bootstrap, health, and metrics are public. Account-bound management endpoints require a credential with the scope named by that endpoint.
+Model discovery, BYOK encryption bootstrap, health, and metrics are public. BYOK provider eligibility requires `byok:read`; account-bound management endpoints require a credential with the scope named by that endpoint.
 
 <Cards>
-  <Card title="Models & providers" href="/docs/reference/discovery/listModels" description="Inspect the public catalog and aggregate platform usage." />
+  <Card title="Models" href="/docs/reference/discovery/listModels" description="Inspect canonical model IDs, capabilities, and BitRouter prices." />
   <Card title="Cloud management" href="/docs/reference/management/listNamespaces" description="Manage namespaces, keys, billing, policy, presets, and OAuth clients." />
   <Card title="BYOK encryption" href="/docs/reference/byok/getEncryptionPubkey" description="Fetch the public key used for client-side provider-key encryption." />
   <Card title="Health" href="/docs/reference/health/ping" description="Probe whether the Cloud node is alive." />
 </Cards>
+
+## Provider discovery migration
+
+The public `GET /v1/providers` directory is removed from the API described here. After the corresponding Cloud release, that path returns `404`, and the former `?provider=` filter on `GET /v1/models` returns `400`. Use [Models](/docs/reference/discovery/listModels) to discover canonical model IDs and their BitRouter prices.
+
+For BYOK setup, call [List BYOK-eligible providers](/docs/reference/byok/listByokProviders) with a credential that has `byok:read`. Its authenticated response lists provider IDs and display labels that accept portable API keys. Existing account policy and preset provider controls remain available separately from public model discovery.
 
 This reference describes the hosted Cloud API. For the local daemon lifecycle, configuration, and virtual keys, use [Self-hosting](/docs/self-hosting); for the generated CLI surface, use [CLI](/docs/usage/cli).

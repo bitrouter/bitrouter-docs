@@ -9,12 +9,9 @@
 // Reads snapshots only — never the network — so `--check` is deterministic.
 // Run `generate-models.mjs` first to refresh them.
 //
-// MODEL PRICES ARE ROUTABLE PRICES. The snapshot comes from `/v1/models`, whose
-// per-model price is the cheapest provider that is actually reachable — platform
-// credentialed and online. It is deliberately NOT the cheapest row in the
-// registry, which includes supply nobody can route to without their own key and
-// which understated 17 of 49 models. This is the same number `/models` renders,
-// so the two surfaces agree by construction.
+// MODEL PRICES ARE BITROUTER TARIFFS. The snapshot comes from `/v1/models`,
+// which publishes one customer price per eligible hosted model. The same
+// snapshot feeds `/models`, so the two surfaces agree by construction.
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 

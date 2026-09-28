@@ -5,7 +5,6 @@ import snapshot from "@/.models-snapshot.json";
 export type ModelRow = {
   id: string;
   name: string;
-  providers: number;
   maxInputTokens: number | null;
   inputUsdPerM: number | null;
   outputUsdPerM: number | null;
@@ -18,7 +17,6 @@ export type ModelRow = {
 };
 
 const UPSTREAM = process.env.BITROUTER_API_URL ?? "https://api.bitrouter.ai";
-// Match the /providers route cadence so both halves of the page refresh together.
 const REVALIDATE_SECONDS = 600;
 
 function outputPrice(out: Record<string, unknown> | undefined | null): number | null {
@@ -50,7 +48,6 @@ function normalize(m: any): ModelRow {
     name: m.name ?? m.id,
     inputModalities: m.input_modalities ?? [],
     maxInputTokens: m.max_input_tokens ?? null,
-    providers: m.providers?.total_online ?? 0,
     inputUsdPerM: p?.input_tokens?.no_cache ?? null,
     outputUsdPerM: outputPrice(p?.output_tokens),
     openWeights:
@@ -65,7 +62,7 @@ function normalize(m: any): ModelRow {
  * every 10 min); falls back to the build-time snapshot if the API is
  * unreachable, so pages never render empty.
  *
- * Shared by the docs Models & Providers table and the `/models` registry page —
+ * Shared by the docs model table and the `/models` catalog page —
  * both read the same live catalog so they cannot drift apart.
  */
 export async function getDocsModels(): Promise<ModelRow[]> {

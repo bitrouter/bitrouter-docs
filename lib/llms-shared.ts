@@ -12,7 +12,7 @@ export const LLMS_PRODUCT_SUMMARY = `> BitRouter is a context-aware LLM router t
 - Runtimes that accept a custom OpenAI or Anthropic base URL can switch by changing the endpoint. The local proxy is http://127.0.0.1:4356; the hosted API is https://api.bitrouter.ai/v1.
 - One Rust binary; basic local routing needs no external service. Persistent identity, metering, and adaptive evidence use SQLite by default, with Postgres and MySQL also supported.
 - BYOK credentials can be detected from environment variables. Self-hosted BYOK traffic is billed by the upstream provider, not by BitRouter.
-- The router is free. Self-host the Apache-2.0 router with your own provider keys or local models and pay for your infrastructure and inference directly. With BitRouter-hosted models, you pay provider token prices with 0% token markup and routing is included at no additional cost; third-party payment-processing fees may apply when adding funds. BitRouter does not package a separate enterprise suite today; teams with deployment, security, procurement, or support requirements can work directly with the founders as early design partners.
+- The router is free. Self-host the Apache-2.0 router with your own provider keys or local models and pay for your infrastructure and inference directly. With BitRouter-hosted models, you pay published BitRouter model prices and routing is included at no additional cost; third-party payment-processing fees may apply when adding funds. BitRouter does not package a separate enterprise suite today; teams with deployment, security, procurement, or support requirements can work directly with the founders as early design partners.
 - Apache 2.0, open-sourced; Cloud is opt-in.
 
 ## How BitRouter Compares

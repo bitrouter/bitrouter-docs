@@ -46,7 +46,7 @@ curl https://api.bitrouter.ai/v1/chat/completions \
 
 ## Manage and inspect BitRouter
 
-Discovery, BYOK encryption bootstrap, health, and metrics are public. Account-bound management endpoints require a credential with the scope named by that endpoint.
+Model discovery, BYOK encryption bootstrap, health, and metrics are public. BYOK provider eligibility requires `byok:read`; account-bound management endpoints require a credential with the scope named by that endpoint.
 
 <Cards>
   <Card title="Models & providers" href="/docs/reference/discovery/listModels" description="Inspect the public catalog and aggregate platform usage." />

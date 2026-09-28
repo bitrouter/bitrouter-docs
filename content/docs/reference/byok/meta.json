@@ -2,6 +2,7 @@
   "title": "BYOK encryption",
   "description": "Bring-Your-Own-Key endpoints. Returns the node's sealed-box public key so the console can encrypt provider keys client-side; the node never sees plaintext on the write path.",
   "pages": [
-    "getEncryptionPubkey"
+    "getEncryptionPubkey",
+    "listByokProviders"
   ]
 }

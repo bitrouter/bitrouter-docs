@@ -1376,7 +1376,7 @@ paths:
       - Management
       summary: Get settlement for one invoked request
       description: |-
-        Returns only a request owned by the exact invoking credential. A request owned by another key is indistinguishable from an absent request (404). The response contains content-free usage, authoritative calculation/collection states, and the complete versioned immutable billing audit when present; it never includes prompt, response, or credential material.
+        Returns only a request owned by the exact invoking credential. A request owned by another key is indistinguishable from an absent request (404). The response contains content-free usage, authoritative calculation/collection states, and the complete versioned immutable billing audit when present. A successful Vercel rescue reports its actual serving provider after generation reconciliation; until then, gateway_serving_provider is pending or unavailable. The response never includes prompt, response, or credential material.
 
         _Requires the `inference:invoke` scope._
       operationId: getRequestSettlement
@@ -1402,14 +1402,21 @@ paths:
                 type: object
                 properties:
                   billing_audit:
-                    $ref: '#/$defs/NullableDoc4'
+                    $ref: '#/$defs/NullableDoc5'
                   billing_collection_status:
                     $ref: '#/$defs/BillingCollectionStatusDoc'
                   billing_fallbacks:
-                    $ref: '#/$defs/NullableDoc3'
+                    $ref: '#/$defs/NullableDoc4'
                   billing_status:
                     $ref: '#/$defs/BillingStatusProjectionDoc'
                   final_charge_micro_usd:
+                    $ref: '#/$defs/NullableDoc3'
+                  gateway_serving_provider:
+                    description: |-
+                      Verified underlying Vercel provider for a successful gateway rescue.
+                      `pending` means the generation ID is stored but provider reconciliation
+                      has not completed; `unavailable` means no generation ID was captured.
+                      Null for non-gateway requests.
                     $ref: '#/$defs/NullableDoc2'
                   model_id:
                     $ref: '#/$defs/NullableDoc'
@@ -1429,6 +1436,7 @@ paths:
                 - state
                 - model_id
                 - provider_id
+                - gateway_serving_provider
                 - usage
                 - final_charge_micro_usd
                 - billing_status
@@ -1529,17 +1537,17 @@ paths:
                       collection_required:
                         type: boolean
                       discount_snapshot:
-                        $ref: '#/$defs/NullableDoc13'
+                        $ref: '#/$defs/NullableDoc14'
                       fallbacks:
                         type: array
                         items:
                           $ref: '#/$defs/BillingFallbackDoc'
                       final_charge_micro_usd:
-                        $ref: '#/$defs/NullableDoc2'
+                        $ref: '#/$defs/NullableDoc3'
                       normalized_pricing:
                         $ref: '#/$defs/BillingNormalizedPricingDoc'
                       pre_discount_charge_micro_usd:
-                        $ref: '#/$defs/NullableDoc2'
+                        $ref: '#/$defs/NullableDoc3'
                       reported_usage:
                         $ref: '#/$defs/BillingReportedUsageDoc'
                       request_succeeded:
@@ -1575,9 +1583,9 @@ paths:
                         maximum: 65535
                         minimum: 0
                       input_charge_micro_usd:
-                        $ref: '#/$defs/NullableDoc2'
+                        $ref: '#/$defs/NullableDoc3'
                       output_charge_micro_usd:
-                        $ref: '#/$defs/NullableDoc2'
+                        $ref: '#/$defs/NullableDoc3'
                       source:
                         $ref: '#/$defs/BillingDiscountSourceDoc'
                     required:
@@ -1611,19 +1619,19 @@ paths:
                     type: object
                     properties:
                       input_cache_read:
-                        $ref: '#/$defs/NullableDoc11'
+                        $ref: '#/$defs/NullableDoc12'
                       input_cache_write:
-                        $ref: '#/$defs/NullableDoc11'
+                        $ref: '#/$defs/NullableDoc12'
                       input_no_cache:
-                        $ref: '#/$defs/NullableDoc11'
+                        $ref: '#/$defs/NullableDoc12'
                       output_audio:
-                        $ref: '#/$defs/NullableDoc11'
+                        $ref: '#/$defs/NullableDoc12'
                       output_image:
-                        $ref: '#/$defs/NullableDoc11'
+                        $ref: '#/$defs/NullableDoc12'
                       output_reasoning:
-                        $ref: '#/$defs/NullableDoc11'
+                        $ref: '#/$defs/NullableDoc12'
                       output_text:
-                        $ref: '#/$defs/NullableDoc11'
+                        $ref: '#/$defs/NullableDoc12'
                     required:
                     - input_no_cache
                     - input_cache_read
@@ -1636,7 +1644,7 @@ paths:
                     type: object
                     properties:
                       micro_usd_per_million:
-                        $ref: '#/$defs/NullableDoc12'
+                        $ref: '#/$defs/NullableDoc13'
                       source_usd_per_million:
                         type: string
                     required:
@@ -1883,11 +1891,11 @@ paths:
                     type: object
                     properties:
                       effective_usage:
-                        $ref: '#/$defs/NullableDoc9'
-                      estimator:
                         $ref: '#/$defs/NullableDoc10'
+                      estimator:
+                        $ref: '#/$defs/NullableDoc11'
                       raw_usage:
-                        $ref: '#/$defs/NullableDoc8'
+                        $ref: '#/$defs/NullableDoc9'
                       raw_usage_frames:
                         type: array
                         items:
@@ -1912,6 +1920,22 @@ paths:
                     - unverified_duplicate
                     - unverified_counter_mismatch
                     - unverified_malformed
+                  GatewayServingProviderDoc:
+                    type: object
+                    properties:
+                      provider_id:
+                        $ref: '#/$defs/NullableDoc'
+                      status:
+                        $ref: '#/$defs/GatewayServingProviderStatusDoc'
+                    required:
+                    - status
+                    - provider_id
+                  GatewayServingProviderStatusDoc:
+                    type: string
+                    enum:
+                    - verified
+                    - pending
+                    - unavailable
                   NullableDoc:
                     description: |-
                       A JSON field that is always present on the wire but may contain `null`.
@@ -1928,7 +1952,7 @@ paths:
                       `#[schemars(required)]` makes it non-nullable. This transparent wrapper
                       models the actual serde behavior: required + nullable.
                     anyOf:
-                    - $ref: '#/$defs/BillingUsageEstimatorSnapshotDoc'
+                    - $ref: '#/$defs/BillingReportedUsageDoc'
                     - type: 'null'
                   NullableDoc11:
                     description: |-
@@ -1937,7 +1961,7 @@ paths:
                       `#[schemars(required)]` makes it non-nullable. This transparent wrapper
                       models the actual serde behavior: required + nullable.
                     anyOf:
-                    - $ref: '#/$defs/BillingNormalizedRateDoc'
+                    - $ref: '#/$defs/BillingUsageEstimatorSnapshotDoc'
                     - type: 'null'
                   NullableDoc12:
                     description: |-
@@ -1946,9 +1970,18 @@ paths:
                       `#[schemars(required)]` makes it non-nullable. This transparent wrapper
                       models the actual serde behavior: required + nullable.
                     anyOf:
-                    - $ref: '#/$defs/BillingIntegerDoc'
+                    - $ref: '#/$defs/BillingNormalizedRateDoc'
                     - type: 'null'
                   NullableDoc13:
+                    description: |-
+                      A JSON field that is always present on the wire but may contain `null`.
+                      Using `Option<T>` directly makes schemars mark the property optional;
+                      `#[schemars(required)]` makes it non-nullable. This transparent wrapper
+                      models the actual serde behavior: required + nullable.
+                    anyOf:
+                    - $ref: '#/$defs/BillingIntegerDoc'
+                    - type: 'null'
+                  NullableDoc14:
                     description: |-
                       A JSON field that is always present on the wire but may contain `null`.
                       Using `Option<T>` directly makes schemars mark the property optional;
@@ -1963,11 +1996,20 @@ paths:
                       Using `Option<T>` directly makes schemars mark the property optional;
                       `#[schemars(required)]` makes it non-nullable. This transparent wrapper
                       models the actual serde behavior: required + nullable.
+                    anyOf:
+                    - $ref: '#/$defs/GatewayServingProviderDoc'
+                    - type: 'null'
+                  NullableDoc3:
+                    description: |-
+                      A JSON field that is always present on the wire but may contain `null`.
+                      Using `Option<T>` directly makes schemars mark the property optional;
+                      `#[schemars(required)]` makes it non-nullable. This transparent wrapper
+                      models the actual serde behavior: required + nullable.
                     type:
                     - integer
                     - 'null'
                     format: int64
-                  NullableDoc3:
+                  NullableDoc4:
                     description: |-
                       A JSON field that is always present on the wire but may contain `null`.
                       Using `Option<T>` directly makes schemars mark the property optional;
@@ -1978,7 +2020,7 @@ paths:
                     - 'null'
                     items:
                       $ref: '#/$defs/BillingFallbackDoc'
-                  NullableDoc4:
+                  NullableDoc5:
                     description: |-
                       A JSON field that is always present on the wire but may contain `null`.
                       Using `Option<T>` directly makes schemars mark the property optional;
@@ -1987,7 +2029,7 @@ paths:
                     anyOf:
                     - $ref: '#/$defs/RequestBillingAuditDoc'
                     - type: 'null'
-                  NullableDoc5:
+                  NullableDoc6:
                     description: |-
                       A JSON field that is always present on the wire but may contain `null`.
                       Using `Option<T>` directly makes schemars mark the property optional;
@@ -1998,7 +2040,7 @@ paths:
                     - 'null'
                     items:
                       $ref: '#/$defs/BillingRouteSnapshotDoc'
-                  NullableDoc6:
+                  NullableDoc7:
                     description: |-
                       A JSON field that is always present on the wire but may contain `null`.
                       Using `Option<T>` directly makes schemars mark the property optional;
@@ -2007,7 +2049,7 @@ paths:
                     anyOf:
                     - $ref: '#/$defs/BillingRegistrySnapshotDoc'
                     - type: 'null'
-                  NullableDoc7:
+                  NullableDoc8:
                     description: |-
                       A JSON field that is always present on the wire but may contain `null`.
                       Using `Option<T>` directly makes schemars mark the property optional;
@@ -2016,7 +2058,7 @@ paths:
                     anyOf:
                     - $ref: '#/$defs/BillingPricingSnapshotDoc'
                     - type: 'null'
-                  NullableDoc8:
+                  NullableDoc9:
                     description: |-
                       A JSON field that is always present on the wire but may contain `null`.
                       Using `Option<T>` directly makes schemars mark the property optional;
@@ -2025,20 +2067,11 @@ paths:
                     anyOf:
                     - $ref: '#/$defs/BillingProviderUsageDoc'
                     - type: 'null'
-                  NullableDoc9:
-                    description: |-
-                      A JSON field that is always present on the wire but may contain `null`.
-                      Using `Option<T>` directly makes schemars mark the property optional;
-                      `#[schemars(required)]` makes it non-nullable. This transparent wrapper
-                      models the actual serde behavior: required + nullable.
-                    anyOf:
-                    - $ref: '#/$defs/BillingReportedUsageDoc'
-                    - type: 'null'
                   RequestBillingAuditDoc:
                     type: object
                     properties:
                       attempted_route_snapshots:
-                        $ref: '#/$defs/NullableDoc5'
+                        $ref: '#/$defs/NullableDoc6'
                       audit_envelope_canonical_base64:
                         description: |-
                           Exact canonical UTF-8 envelope bytes encoded with the RFC 4648 standard Base64 alphabet with padding.
@@ -2076,7 +2109,7 @@ paths:
                       decision:
                         $ref: '#/$defs/BillingDecisionDoc'
                       registry_snapshot:
-                        $ref: '#/$defs/NullableDoc6'
+                        $ref: '#/$defs/NullableDoc7'
                       request_id:
                         type: string
                       selected_account_label:
@@ -2084,13 +2117,13 @@ paths:
                       selected_canonical_model_id:
                         $ref: '#/$defs/NullableDoc'
                       selected_pricing:
-                        $ref: '#/$defs/NullableDoc7'
+                        $ref: '#/$defs/NullableDoc8'
                       selected_provider_id:
                         $ref: '#/$defs/NullableDoc'
                       selected_provider_model_id:
                         $ref: '#/$defs/NullableDoc'
                       source_pricing:
-                        $ref: '#/$defs/NullableDoc7'
+                        $ref: '#/$defs/NullableDoc8'
                     required:
                     - request_id
                     - audit_schema_version

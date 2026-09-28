@@ -55,4 +55,10 @@ Model discovery, BYOK encryption bootstrap, health, and metrics are public. BYOK
   <Card title="Health" href="/docs/reference/health/ping" description="Probe whether the Cloud node is alive." />
 </Cards>
 
+## Provider discovery migration
+
+The public `GET /v1/providers` directory is removed from the API described here. After the corresponding Cloud release, that path returns `404`, and the former `?provider=` filter on `GET /v1/models` returns `400`. Use [Models](/docs/reference/discovery/listModels) to discover canonical model IDs and their BitRouter prices.
+
+For BYOK setup, call [List BYOK-eligible providers](/docs/reference/byok/listByokProviders) with a credential that has `byok:read`. Its authenticated response lists provider IDs and display labels that accept portable API keys. Existing account policy and preset provider controls remain available separately from public model discovery.
+
 This reference describes the hosted Cloud API. For the local daemon lifecycle, configuration, and virtual keys, use [Self-hosting](/docs/self-hosting); for the generated CLI surface, use [CLI](/docs/usage/cli).

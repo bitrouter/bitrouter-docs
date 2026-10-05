@@ -14,7 +14,7 @@ const INSTALL_METHODS = [
     id: "powershell",
     label: "PowerShell",
     command:
-      'powershell -ExecutionPolicy Bypass -Command "irm https://github.com/bitrouter/bitrouter/releases/download/v1.0.0-alpha.31/bitrouter-installer.ps1 | iex"',
+      'powershell -ExecutionPolicy Bypass -Command "irm https://github.com/bitrouter/bitrouter/releases/download/v1.0.0-alpha.33/bitrouter-installer.ps1 | iex"',
   },
   {
     id: "npm",

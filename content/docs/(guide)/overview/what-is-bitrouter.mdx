@@ -1,29 +1,31 @@
 ---
 title: What is BitRouter?
-description: The context-aware LLM router that continuously improves your agent workflows — send bitrouter/auto instead of a model name, and let a policy you own tighten against your own production traffic.
+description: The context-aware LLM router that continuously improves your agent workflows — in a self-hosted deployment, let a policy you own tighten against your production traffic.
 ---
 
-**BitRouter is a context-aware LLM router that continuously improves your agent workflows.** It takes model selection off your plate without taking it out of your hands: send `bitrouter/auto`, and every call in the loop is matched to a model against the objective you set — from a routing policy that lives in your repo, that you read, review, and can override line by line.
+**BitRouter is a context-aware LLM router that continuously improves your agent workflows.** In a self-hosted deployment, it takes model selection off your plate without taking it out of your hands: send `bitrouter/auto`, and every call in the loop is matched to a model against the objective you set — from a routing policy that lives in your repo, that you read, review, and can override line by line.
 
 A frontier release lands every few weeks, and each one moves the cost, latency, and accuracy frontier somewhere different. Nobody re-benchmarks a whole agent that often, so the choice has been to pin one frontier model and overpay on every trivial step, or hand-tune a table that's stale a month later. BitRouter is the third option: a router that keeps re-testing the frontier for you, scored against *your* workload instead of a public leaderboard.
 
 On a strict 80-task common-valid Terminal-Bench 2.1 comparison, an initial BitRouter configuration reached **81.25% task success** versus **81.56%** for a fixed strong-model baseline and **76.50%** for same-pool random routing. Its frozen-price nominal API cost for accepted valid-path requests was **40.93% lower** than the strong-model baseline. These are research results, not provider billing or an official leaderboard submission; review the [data and protocol](https://huggingface.co/datasets/BitRouterAI/benchmarks).
 
-## One model id replaces every model decision
+## A self-hosted model id for policy routing
 
 Two things change — the base URL, and the model you ask for:
 
 ```bash
-curl https://api.bitrouter.ai/v1/chat/completions \
+curl http://127.0.0.1:4356/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{"model": "bitrouter/auto", "messages": [{"role": "user", "content": "..."}]}'
 ```
 
-Explicit model ids stay passthrough — `openai/gpt-5` still means `openai/gpt-5`, so you can always pin a call the router shouldn't touch. The `vendor/auto` shape is deliberately the one other gateways already use: a config pointing at some other `.../auto` only needs its vendor segment changed.
+Explicit model ids stay passthrough — `openai/gpt-5` still means `openai/gpt-5`, so you can always pin a call the router shouldn't touch. The `vendor/auto` shape is deliberately the one other gateways already use: a self-hosted config pointing at some other `.../auto` only needs its vendor segment changed.
+
+Cloud accepts catalog model ids directly. For Cloud routing configuration, select an enabled workspace routing preset as `@<name>`; `@auto` is available only when that workspace defines an enabled preset with that name. It does not use the self-hosted `bitrouter/auto` selector or local policy files.
 
 What differs is what happens after the request lands. A classifier-based router makes an opaque per-prompt guess you can't inspect. BitRouter projects each request onto **where it sits in the agent's trajectory and how much risk it carries**, then resolves that projection through a signed policy file you own — ordinary `edit` and `test` work to economy, read-only `review` and long-context execution to balanced, anything guarded or unrecognized to strong. Risk is scored apart from the work itself: eight prior assistant action turns raises expected redo risk, and an observed execution failure stays guarded through the next two execution observations, so a model-induced loop can't quietly keep buying cheap tokens.
 
-Because `bitrouter/auto` resolves against a policy, it needs one bound before first use — an unbound install reports the missing binding rather than guessing a route.
+Because the self-hosted `bitrouter/auto` resolves against a local policy, it needs one bound before first use — an unbound install reports the missing binding rather than guessing a route.
 
 ## Your production traffic is the training signal
 
@@ -40,9 +42,9 @@ The evidence rule is asymmetric on purpose: one hard failure escalates immediate
 
 Every other gateway's unit of optimization is the request: pick a model, return a response, done. BitRouter's unit is the workflow — the whole run, judged on whether it did the job you wanted.
 
-Out of the box `bitrouter/auto` routes on general evidence. Optimizing replaces that with evidence from **your** workflow: you name the command that exercises your agent and write a success contract describing a good run, and BitRouter runs that command twice — once as-is, once with exactly one routing change — then compares cost and quality. One variable, measured on your code, against your definition of good. It is not "swap in a cheaper model."
+In a self-hosted deployment, `bitrouter/auto` routes on general evidence. Optimizing replaces that with evidence from **your** workflow: you name the command that exercises your agent and write a success contract describing a good run, and BitRouter runs that command twice — once as-is, once with exactly one routing change — then compares cost and quality. One variable, measured on your code, against your definition of good. It is not "swap in a cheaper model."
 
-Nothing moves until you say so: review reports the deltas, publishing is a separate explicit action, and a bad call rolls back by digest. The intent, the resolved identities, and the success contract are three files you own and commit — and the result serves under the same `bitrouter/auto`, so nothing in your application changes.
+Nothing moves until you say so: review reports the deltas, publishing is a separate explicit action, and a bad call rolls back by digest. In the self-hosted workflow, the intent, the resolved identities, and the success contract are three files you own and commit — and the result serves under the same `bitrouter/auto`, so nothing in your application changes.
 
 Scope isn't only models, either. A workflow's cost includes model calls, tool definitions, and the agent loops that generate them. The [MCP gateway](/docs/usage/mcp#mcp-gateway) centralizes upstream tools; [ACP adapters](/docs/usage/acp) let the same router policy cover supported coding-agent sessions; and the [BitRouter Skill](/docs/usage/skills) gives shell-capable agents a maintained operational interface.
 
@@ -52,7 +54,7 @@ The Core is Apache 2.0 and free to self-host; Cloud adds managed providers and a
 
 <Cards>
   <Card title="Quickstart" href="/docs/overview/quickstart" description="Self-host or Cloud, routing in under a minute." />
-  <Card title="Use bitrouter/auto" href="/docs/usage/bitrouter-auto" description="Run policy-driven traffic, inspect its route, and publish reviewed changes." />
+  <Card title="Use self-hosted bitrouter/auto" href="/docs/usage/bitrouter-auto" description="Run policy-driven traffic, inspect its route, and publish reviewed changes." />
   <Card title="Coding agents" href="/docs/usage/coding-agents" description="Run supported harnesses interactively, headlessly, or in their native interface." />
   <Card title="Comparison" href="/docs/overview/comparison" description="Compare BitRouter with OpenRouter and LiteLLM." />
 </Cards>

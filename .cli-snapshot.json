@@ -1,6 +1,6 @@
 {
-  "version": "bro 1.0.0-alpha.31",
-  "capturedAt": "2026-09-18",
+  "version": "bro 1.0.0-alpha.33",
+  "capturedAt": "2026-10-05",
   "binary": "bro",
   "commands": [
     {
@@ -302,6 +302,33 @@
     {
       "path": [
         "config",
+        "migrate-routers"
+      ],
+      "about": "Preview a source-preserving migration from presets to named routers",
+      "usage": "bro config migrate-routers [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Source bitrouter.yaml; standard local config resolution applies"
+        },
+        {
+          "payload": "--candidate <CANDIDATE>",
+          "help": "Candidate output path for preview, or reviewed input path for apply"
+        },
+        {
+          "payload": "--apply",
+          "help": "Apply the reviewed candidate and retain a backup of the source"
+        },
+        {
+          "payload": "--source-digest <SOURCE_DIGEST>",
+          "help": "Exact source digest returned by the preview; refuses stale edits"
+        }
+      ]
+    },
+    {
+      "path": [
+        "config",
         "validate"
       ],
       "about": "Validate a config file: structure, provider `derives` resolution, and upstream-URL (SSRF) safety. Exits non-zero on an invalid config — safe to run in CI. Unset `${VAR}` references are substituted with a placeholder and reported as warnings, so secrets need not be present",
@@ -499,8 +526,8 @@
         "policy",
         "init"
       ],
-      "about": "Create a routing policy lock and bind it to a preset",
-      "usage": "bro policy init [OPTIONS] --preset <PRESET> --economy <ECONOMY> <NAME>",
+      "about": "Create a routing policy lock and bind it to a router",
+      "usage": "bro policy init [OPTIONS] --economy <ECONOMY> <NAME>",
       "args": [
         {
           "payload": "<NAME>",
@@ -509,12 +536,16 @@
       ],
       "options": [
         {
+          "payload": "--router <ROUTER>",
+          "help": "Router users select as `bitrouter/<id>`. Defaults to `coding` when neither binding flag is supplied"
+        },
+        {
           "payload": "--preset <PRESET>",
-          "help": "Preset users select as `@preset` or `@preset:variant`"
+          "help": "Legacy preset binding kept for compatibility"
         },
         {
           "payload": "--strong <STRONG>",
-          "help": "Strong base model. Inferred from an existing preset when omitted"
+          "help": "Strong base model. Inferred from an existing router or preset when omitted"
         },
         {
           "payload": "--strong-effort <STRONG_EFFORT>",
@@ -1186,9 +1217,100 @@
         "agents"
       ],
       "about": "Inspect ACP agent adapters, advertised capabilities, and configuration stubs",
-      "usage": "bro agents <COMMAND>",
+      "usage": "bro agents [COMMAND]",
       "args": [],
       "options": []
+    },
+    {
+      "path": [
+        "agents",
+        "sessions"
+      ],
+      "about": "List BitRouter-supervised agent runs from the local daemon",
+      "usage": "bro agents sessions [OPTIONS]",
+      "args": [],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml` (used to locate the local control socket)"
+        },
+        {
+          "payload": "--socket <SOCKET>",
+          "help": "Explicit local control socket path"
+        }
+      ]
+    },
+    {
+      "path": [
+        "agents",
+        "attach"
+      ],
+      "about": "Attach to one supervised run in the alternate-screen inspector",
+      "usage": "bro agents attach [OPTIONS] <AGENT_RUN_ID>",
+      "args": [
+        {
+          "payload": "<AGENT_RUN_ID>",
+          "help": "BitRouter agent run id"
+        }
+      ],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml` (used to locate the local control socket)"
+        },
+        {
+          "payload": "--socket <SOCKET>",
+          "help": "Explicit local control socket path"
+        }
+      ]
+    },
+    {
+      "path": [
+        "agents",
+        "stop"
+      ],
+      "about": "Stop one supervised run without deleting its native harness session",
+      "usage": "bro agents stop [OPTIONS] <AGENT_RUN_ID>",
+      "args": [
+        {
+          "payload": "<AGENT_RUN_ID>",
+          "help": "BitRouter agent run id"
+        }
+      ],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml` (used to locate the local control socket)"
+        },
+        {
+          "payload": "--socket <SOCKET>",
+          "help": "Explicit local control socket path"
+        }
+      ]
+    },
+    {
+      "path": [
+        "agents",
+        "remove"
+      ],
+      "about": "Remove settled BitRouter run metadata and ephemeral retained events",
+      "usage": "bro agents remove [OPTIONS] <AGENT_RUN_ID>",
+      "args": [
+        {
+          "payload": "<AGENT_RUN_ID>",
+          "help": "BitRouter agent run id"
+        }
+      ],
+      "options": [
+        {
+          "payload": "-c, --config <CONFIG>",
+          "help": "Path to `bitrouter.yaml` (used to locate the local control socket)"
+        },
+        {
+          "payload": "--socket <SOCKET>",
+          "help": "Explicit local control socket path"
+        }
+      ]
     },
     {
       "path": [
@@ -1547,6 +1669,14 @@
         {
           "payload": "--turn-timeout <SECS>",
           "help": "Per-turn deadline in seconds"
+        },
+        {
+          "payload": "--background",
+          "help": "Submit the turn to the resident supervisor and return an attachable agent run id after it has accepted ownership"
+        },
+        {
+          "payload": "--allow-shared-directory",
+          "help": "Allow another potentially writable run to use the same canonical Git worktree or non-Git directory. This is unsafe and emits a warning before submission"
         },
         {
           "payload": "--result-schema <JSON|@PATH>",
@@ -2894,10 +3024,6 @@
         {
           "payload": "--stable",
           "help": "Only consider stable (non-prerelease) releases"
-        },
-        {
-          "payload": "--restart",
-          "help": "After a successful update, restart a running daemon so it serves the new binary"
         },
         {
           "payload": "-y, --yes",

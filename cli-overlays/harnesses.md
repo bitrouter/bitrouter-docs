@@ -8,6 +8,8 @@ Choose the interaction model that matches the task:
 - `bro code` opens BitRouter's coding conversation and connects to an ACP agent.
 - `bro run` sends one ACP prompt headlessly and returns NDJSON, text, or only the final answer.
 
+Add `--background` to `bro run` to hand the turn to the local supervisor and return an attachable run id. The supervisor prevents concurrent writable use of the same directory unless explicitly overridden.
+
 These commands do not imply the durable multi-attempt workflow described in BitRouter's architecture proposals. They run or connect to the selected harness using the released ACP and launch surfaces.
 
 ## @launch

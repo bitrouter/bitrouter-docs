@@ -1,5 +1,5 @@
 {
-  "count": 55,
+  "count": 67,
   "models": [
     {
       "id": "anthropic/claude-fable-5",
@@ -147,6 +147,25 @@
       "openWeights": false
     },
     {
+      "id": "anthropic/claude-opus-5.5",
+      "name": "Anthropic: Claude Opus 5.5",
+      "inputModalities": [
+        "file",
+        "image",
+        "text"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1000000,
+      "capabilities": [],
+      "providers": 1,
+      "inputUsdPerM": 4,
+      "cacheReadUsdPerM": 0.2,
+      "outputUsdPerM": 20,
+      "openWeights": null
+    },
+    {
       "id": "anthropic/claude-sonnet-4.6",
       "name": "Anthropic: Claude Sonnet 4.6",
       "inputModalities": [
@@ -191,6 +210,25 @@
       "cacheReadUsdPerM": 0.2,
       "outputUsdPerM": 10,
       "openWeights": false
+    },
+    {
+      "id": "anthropic/claude-sonnet-5.5",
+      "name": "Anthropic: Claude Sonnet 5.5",
+      "inputModalities": [
+        "file",
+        "image",
+        "text"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1000000,
+      "capabilities": [],
+      "providers": 1,
+      "inputUsdPerM": 2,
+      "cacheReadUsdPerM": 0.2,
+      "outputUsdPerM": 10,
+      "openWeights": null
     },
     {
       "id": "deepseek/deepseek-v3.2",
@@ -249,7 +287,7 @@
       ],
       "providers": 8,
       "inputUsdPerM": 0.14,
-      "cacheReadUsdPerM": 0.0028,
+      "cacheReadUsdPerM": 0.028,
       "outputUsdPerM": 0.28,
       "openWeights": true
     },
@@ -477,7 +515,7 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 5,
+      "providers": 6,
       "inputUsdPerM": 0.7125,
       "cacheReadUsdPerM": 0.1425,
       "outputUsdPerM": 3,
@@ -499,7 +537,7 @@
         "structured_outputs",
         "tools"
       ],
-      "providers": 2,
+      "providers": 4,
       "inputUsdPerM": 2,
       "cacheReadUsdPerM": null,
       "outputUsdPerM": 6,
@@ -657,6 +695,63 @@
       "openWeights": false
     },
     {
+      "id": "openai/gpt-6-luna",
+      "name": "OpenAI: GPT-6 Luna",
+      "inputModalities": [
+        "file",
+        "image",
+        "text"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1050000,
+      "capabilities": [],
+      "providers": 1,
+      "inputUsdPerM": 0.1,
+      "cacheReadUsdPerM": 0.01,
+      "outputUsdPerM": 0.5,
+      "openWeights": null
+    },
+    {
+      "id": "openai/gpt-6-sol",
+      "name": "OpenAI: GPT-6 Sol",
+      "inputModalities": [
+        "file",
+        "image",
+        "text"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1050000,
+      "capabilities": [],
+      "providers": 1,
+      "inputUsdPerM": 2,
+      "cacheReadUsdPerM": 0.2,
+      "outputUsdPerM": 10,
+      "openWeights": null
+    },
+    {
+      "id": "openai/gpt-6.1-sol",
+      "name": "OpenAI: GPT-6.1 Sol",
+      "inputModalities": [
+        "file",
+        "image",
+        "text"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1050000,
+      "capabilities": [],
+      "providers": 1,
+      "inputUsdPerM": 2,
+      "cacheReadUsdPerM": 0.1,
+      "outputUsdPerM": 10,
+      "openWeights": null
+    },
+    {
       "id": "qwen/qwen3.5-122b-a10b",
       "name": "Qwen: Qwen3.5 122B-A10B",
       "inputModalities": [
@@ -704,7 +799,7 @@
       ],
       "maxInputTokens": 262144,
       "capabilities": [],
-      "providers": 2,
+      "providers": 3,
       "inputUsdPerM": 0.3,
       "cacheReadUsdPerM": null,
       "outputUsdPerM": 3.2,
@@ -742,9 +837,28 @@
       "capabilities": [],
       "providers": 2,
       "inputUsdPerM": 0.1875,
-      "cacheReadUsdPerM": null,
+      "cacheReadUsdPerM": 0.01875,
       "outputUsdPerM": 1.125,
       "openWeights": false
+    },
+    {
+      "id": "qwen/qwen3.7-flash",
+      "name": "Qwen: Qwen3.7 Flash",
+      "inputModalities": [
+        "image",
+        "text",
+        "video"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1000000,
+      "capabilities": [],
+      "providers": 1,
+      "inputUsdPerM": 0.03,
+      "cacheReadUsdPerM": 0.003,
+      "outputUsdPerM": 0.13,
+      "openWeights": null
     },
     {
       "id": "qwen/qwen3.7-max",
@@ -795,9 +909,9 @@
         "reasoning",
         "tools"
       ],
-      "providers": 1,
+      "providers": 2,
       "inputUsdPerM": 2,
-      "cacheReadUsdPerM": 0.17,
+      "cacheReadUsdPerM": 0.25,
       "outputUsdPerM": 6,
       "openWeights": true
     },
@@ -817,7 +931,7 @@
         "reasoning",
         "tools"
       ],
-      "providers": 2,
+      "providers": 3,
       "inputUsdPerM": 0.99,
       "cacheReadUsdPerM": null,
       "outputUsdPerM": 1.49,
@@ -836,7 +950,7 @@
       ],
       "maxInputTokens": 1000000,
       "capabilities": [],
-      "providers": 1,
+      "providers": 2,
       "inputUsdPerM": 0.15,
       "cacheReadUsdPerM": 0.016,
       "outputUsdPerM": 0.47,
@@ -857,11 +971,31 @@
       "capabilities": [
         "tools"
       ],
-      "providers": 1,
+      "providers": 2,
       "inputUsdPerM": 2,
       "cacheReadUsdPerM": 0.25,
       "outputUsdPerM": 6,
       "openWeights": false
+    },
+    {
+      "id": "qwen/qwen3.8-omni-flash",
+      "name": "Qwen: Qwen3.8 Omni Flash",
+      "inputModalities": [
+        "audio",
+        "image",
+        "text",
+        "video"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1000000,
+      "capabilities": [],
+      "providers": 1,
+      "inputUsdPerM": 0.15,
+      "cacheReadUsdPerM": 0.016,
+      "outputUsdPerM": 0.47,
+      "openWeights": null
     },
     {
       "id": "x-ai/grok-4.20",
@@ -968,6 +1102,25 @@
       "openWeights": false
     },
     {
+      "id": "x-ai/grok-4.7",
+      "name": "SpaceXAI: Grok 4.7",
+      "inputModalities": [
+        "file",
+        "image",
+        "text"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 500000,
+      "capabilities": [],
+      "providers": 1,
+      "inputUsdPerM": 2,
+      "cacheReadUsdPerM": 0.5,
+      "outputUsdPerM": 6,
+      "openWeights": null
+    },
+    {
       "id": "x-ai/grok-build-0.1",
       "name": "xAI: Grok Build 0.1",
       "inputModalities": [
@@ -1025,6 +1178,66 @@
       "cacheReadUsdPerM": 0.0036,
       "outputUsdPerM": 0.87,
       "openWeights": true
+    },
+    {
+      "id": "xiaomi/mimo-v2.6-flash",
+      "name": "Xiaomi: MiMo-V2.6-Flash",
+      "inputModalities": [
+        "audio",
+        "image",
+        "text",
+        "video"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1048576,
+      "capabilities": [],
+      "providers": 1,
+      "inputUsdPerM": 0.14,
+      "cacheReadUsdPerM": 0.0028,
+      "outputUsdPerM": 0.28,
+      "openWeights": null
+    },
+    {
+      "id": "xiaomi/mimo-v2.6-pro",
+      "name": "Xiaomi: MiMo-V2.6-Pro",
+      "inputModalities": [
+        "audio",
+        "image",
+        "text",
+        "video"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1048576,
+      "capabilities": [],
+      "providers": 1,
+      "inputUsdPerM": 0.435,
+      "cacheReadUsdPerM": 0.0036,
+      "outputUsdPerM": 0.87,
+      "openWeights": null
+    },
+    {
+      "id": "xiaomi/mimo-v2.6-pro-ultraspeed",
+      "name": "Xiaomi: MiMo-V2.6-Pro-UltraSpeed",
+      "inputModalities": [
+        "audio",
+        "image",
+        "text",
+        "video"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1048576,
+      "capabilities": [],
+      "providers": 1,
+      "inputUsdPerM": 4.35,
+      "cacheReadUsdPerM": 0.036,
+      "outputUsdPerM": 8.7,
+      "openWeights": null
     },
     {
       "id": "z-ai/glm-4.7",
@@ -1097,7 +1310,7 @@
         "reasoning",
         "tools"
       ],
-      "providers": 1,
+      "providers": 2,
       "inputUsdPerM": 1.4,
       "cacheReadUsdPerM": 0.26,
       "outputUsdPerM": 4.4,
@@ -1124,6 +1337,25 @@
       "cacheReadUsdPerM": 0.015,
       "outputUsdPerM": 0.25,
       "openWeights": true
+    },
+    {
+      "id": "z-ai/glm-5.3-flashx",
+      "name": "Z.ai: GLM 5.3 FlashX",
+      "inputModalities": [
+        "image",
+        "text",
+        "video"
+      ],
+      "outputModalities": [
+        "text"
+      ],
+      "maxInputTokens": 1048576,
+      "capabilities": [],
+      "providers": 1,
+      "inputUsdPerM": 0.37,
+      "cacheReadUsdPerM": 0.075,
+      "outputUsdPerM": 1.25,
+      "openWeights": null
     }
   ]
 }

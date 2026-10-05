@@ -1,9 +1,9 @@
 ---
 title: Router policy
-description: Define, validate, and apply the complete desired behavior of a BitRouter deployment.
+description: Define, validate, and apply the complete desired behavior of a self-hosted BitRouter deployment.
 ---
 
-A **router policy** is the complete desired-state contract for a BitRouter deployment. It covers every reviewed setting that determines how the router is exposed, where it can send work, how it selects and executes routes, which constraints it enforces, and what evidence it records.
+A **router policy** is the complete desired-state contract for a self-hosted BitRouter deployment. It covers every reviewed setting that determines how the router is exposed, where it can send work, how it selects and executes routes, which constraints it enforces, and what evidence it records.
 
 `bitrouter.yaml` is the main operator-authored expression of that policy. The term is intentionally broader than the file's `policies`, `policy`, or `policy_table` fields: those are specific mechanisms inside the overall router policy.
 
@@ -14,7 +14,7 @@ BitRouter can start from in-memory defaults, but a file makes the intended behav
 | Artifact | Role |
 | --- | --- |
 | `bitrouter.yaml` | Operator-authored desired state for the router and its integrations |
-| `policy-lock.yaml` | Versioned routing decisions linked to policy-bound presets |
+| `policy-lock.yaml` | Versioned routing decisions linked to policy-bound named routers |
 | Environment variables | Secret values and deployment-specific inputs resolved into the policy |
 | Database evidence | Observed runtime state that can inform a later decision; not policy by itself |
 
@@ -28,7 +28,7 @@ The policy file is an assembly point, not the place to learn every subsystem. Ea
 | --- | --- | --- |
 | Runtime | Listen address, authentication, database, state | [Self-hosting](/docs/self-hosting) |
 | Supply | Providers, accounts, private endpoints, model declarations | [Models & providers](/docs/customization/models) |
-| Selection | Model ids, fallback chains, presets, variants | [Models](/docs/configuration/models) |
+| Selection | Model ids, fallback chains, named routers, legacy presets, variants | [Models](/docs/configuration/models) |
 | Adaptation | Routing tables, adequacy, exploration, writeback | [bitrouter/auto](/docs/usage/bitrouter-auto#let-evidence-improve-the-policy) |
 | Constraints | Request and response enforcement, caller restrictions | [Guardrails](/docs/configuration/guardrails) |
 | Execution | Server tools, MCP servers, ACP agents | [Tool calling](/docs/customization/tools) and [Usage](/docs/usage/bitrouter-auto) |
@@ -133,13 +133,13 @@ BitRouter uses narrower policy terms within the broader router policy:
 | Term | Scope |
 | --- | --- |
 | **Router policy** | The complete desired behavior expressed by `bitrouter.yaml` and linked artifacts |
-| **Routing policy** | Model-selection rules used by a policy-bound preset such as `bitrouter/auto` |
+| **Routing policy** | Model-selection rules used by a policy-bound named router such as `bitrouter/coding` |
 | **Access-control policy** | Caller-specific allowed models, budgets, rate limits, guardrails, and presets |
 
 `bro policy init`, `check`, `compile`, and `publish` operate on routing policy. `bro policy create` creates an access-control policy file. Both are components of the router policy, but they are not interchangeable.
 
 <Cards>
-  <Card title="Models" href="/docs/configuration/models" description="Configure model selectors, fallback, presets, and candidate eligibility." />
+  <Card title="Models" href="/docs/configuration/models" description="Configure model selectors, fallback, named routers, and candidate eligibility." />
   <Card title="bitrouter/auto" href="/docs/usage/bitrouter-auto" description="Use the policy-bound model id and review learned route changes." />
   <Card title="Self-hosting" href="/docs/self-hosting#production-configuration" description="Deploy the policy with explicit paths, secrets, supervision, and backups." />
   <Card title="CLI reference" href="/docs/usage/cli#init-and-config" description="Read the generated config and policy command surface." />

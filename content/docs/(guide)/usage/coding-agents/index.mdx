@@ -73,7 +73,7 @@ If a harness is not in the catalog, configure it as a normal API client:
 | OpenAI-compatible | `http://127.0.0.1:4356/v1` | `https://api.bitrouter.ai/v1` |
 | Anthropic-compatible | `http://127.0.0.1:4356` | `https://api.bitrouter.ai` |
 
-Use a `provider/model` id where the harness accepts a model name. Product-specific configuration keys belong to that harness's documentation; BitRouter only owns the endpoint and routing contract.
+Use a `provider/model` id where the harness accepts a model name. For a Cloud workspace routing preset, use its `@<name>` selector instead; `@auto` is available only when that workspace has an enabled preset with that name. Product-specific configuration keys belong to that harness's documentation; BitRouter only owns the endpoint and routing contract.
 
 ## Claude Code
 
@@ -123,7 +123,7 @@ export ANTHROPIC_MODEL=bitrouter/auto
 claude
 ```
 
-For Cloud, use `https://api.bitrouter.ai` and set `ANTHROPIC_AUTH_TOKEN` to a BitRouter key. An authenticated self-hosted daemon likewise requires a valid BitRouter key instead of the placeholder.
+For Cloud, use `https://api.bitrouter.ai`, set `ANTHROPIC_AUTH_TOKEN` to a BitRouter key, and set `ANTHROPIC_MODEL` to a catalog model or an enabled workspace `@<name>` preset (not `bitrouter/auto`). An authenticated self-hosted daemon likewise requires a valid BitRouter key instead of the placeholder.
 
 ### Use a Claude subscription
 

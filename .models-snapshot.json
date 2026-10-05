@@ -837,7 +837,7 @@
       "capabilities": [],
       "providers": 2,
       "inputUsdPerM": 0.1875,
-      "cacheReadUsdPerM": null,
+      "cacheReadUsdPerM": 0.01875,
       "outputUsdPerM": 1.125,
       "openWeights": false
     },
@@ -911,7 +911,7 @@
       ],
       "providers": 2,
       "inputUsdPerM": 2,
-      "cacheReadUsdPerM": 0.17,
+      "cacheReadUsdPerM": 0.25,
       "outputUsdPerM": 6,
       "openWeights": true
     },

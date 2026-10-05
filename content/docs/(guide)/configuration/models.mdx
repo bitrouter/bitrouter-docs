@@ -3,7 +3,7 @@ title: Models
 description: Configure model selection, fallback, reusable selectors, and compatibility across provider protocols.
 ---
 
-This page controls what a requested model id means after model sources are connected. Use [Supported Models](/docs/overview/supported-models) to browse the public catalog and [Models & providers](/docs/customization/models) to connect keys, private endpoints, or custom model declarations.
+This page describes model selection in the self-hosted proxy after model sources are connected. Use [Supported Models](/docs/overview/supported-models) to browse the public catalog and [Models & providers](/docs/customization/models) to connect keys, private endpoints, or custom model declarations.
 
 Model resolution turns the request's `model` into an ordered chain of eligible provider endpoints. Most policies need only a logical model id or a named fallback chain.
 
@@ -20,7 +20,7 @@ Prefer the slash form in application code. Use the colon form when the provider 
 
 ## Resolution order
 
-BitRouter resolves a request in four stages:
+The self-hosted proxy resolves a request in four stages:
 
 1. Apply a named `bitrouter/<id>` router, or a legacy `@preset` and optional `:variant`.
 2. Treat `provider:model` as an explicit provider route.
@@ -28,6 +28,10 @@ BitRouter resolves a request in four stages:
 4. Otherwise, build a cascade from active providers that declare the bare model.
 
 Subscription-backed providers are explicit-route-only. A bare model never silently consumes a personal Claude or Codex subscription.
+
+<Callout type="info">
+The hosted endpoint uses enabled, namespace-scoped routing presets selected as `@<name>` rather than self-hosted `bitrouter/<id>` routers. A hosted preset may supply its model or accept an inline base model as `@<name>/<base-model>`.
+</Callout>
 
 | Selector | Use it for |
 | --- | --- |
@@ -76,7 +80,7 @@ A request for `coding` tries endpoints in YAML order. BitRouter advances after r
 
 Use `strategy: cascade` only when the endpoints are interchangeable and selection preferences may reorder or filter them. In alpha.33, cost and latency sorts still use the deterministic priority/provider-ID fallback described above.
 
-## Named routers
+## Named routers (self-hosted)
 
 Use a named router for new configuration. It packages a model or policy selection with defaults, request checks, and routing preferences behind a stable `bitrouter/<id>` selector:
 
@@ -90,7 +94,7 @@ routers:
 
 Call this router as `bitrouter/coding`. For a policy-backed router, use `bro policy init` to create the lock and binding together rather than hand-authoring a partial configuration.
 
-## Presets
+## Presets (self-hosted)
 
 Legacy presets remain supported for compatibility. They put model substitution, prompt defaults, parameters, routing-policy binding, and candidate filters behind a short name:
 
@@ -107,11 +111,11 @@ presets:
 
 Call it as `@fast`. Request fields win over preset defaults, so a preset provides a stable baseline without taking control away from the caller.
 
-`bitrouter/auto` selects the named `auto` router and requires it to be bound to a routing policy. A legacy `auto` preset is normalized for compatibility. Create a new binding with `bro policy init --router auto` rather than hand-authoring a partial lock file.
+In self-hosted configuration, `bitrouter/auto` selects the named `auto` router and requires it to be bound to a routing policy. A legacy `auto` preset is normalized for compatibility. Create a new binding with `bro policy init --router auto` rather than hand-authoring a partial lock file.
 
 See [bitrouter/auto](/docs/usage/bitrouter-auto) for the operational walkthrough: send traffic, inspect the settled route, override one call, and publish reviewed policy changes.
 
-## Variants
+## Variants (self-hosted)
 
 A variant changes candidate preferences only:
 

@@ -1,9 +1,9 @@
 ---
 title: Router policy
-description: Define, validate, and apply the complete desired behavior of a BitRouter deployment.
+description: Define, validate, and apply the complete desired behavior of a self-hosted BitRouter deployment.
 ---
 
-A **router policy** is the complete desired-state contract for a BitRouter deployment. It covers every reviewed setting that determines how the router is exposed, where it can send work, how it selects and executes routes, which constraints it enforces, and what evidence it records.
+A **router policy** is the complete desired-state contract for a self-hosted BitRouter deployment. It covers every reviewed setting that determines how the router is exposed, where it can send work, how it selects and executes routes, which constraints it enforces, and what evidence it records.
 
 `bitrouter.yaml` is the main operator-authored expression of that policy. The term is intentionally broader than the file's `policies`, `policy`, or `policy_table` fields: those are specific mechanisms inside the overall router policy.
 

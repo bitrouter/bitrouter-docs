@@ -1,26 +1,26 @@
 ---
-title: bitrouter/auto
-description: Use one stable model id to route each request through the policy you own, inspect, and can override.
+title: bitrouter/auto (self-hosted)
+description: Use one stable self-hosted model id to route each request through the policy you own, inspect, and can override.
 ---
 
-`bitrouter/auto` is the stable model id for policy-driven routing. Keep it in your application or agent configuration while BitRouter resolves each request through the named `auto` router and its bound policy.
+`bitrouter/auto` is the stable **self-hosted** model id for policy-driven routing. Keep it in an application or agent configured for your local BitRouter proxy while BitRouter resolves each request through the named `auto` router and its bound policy.
 
-An explicit model id still bypasses that policy. Use `bitrouter/auto` for calls the router should choose; use a logical `provider/model` id when a call must stay on a model you selected.
+An explicit model id still bypasses that local policy. Use `bitrouter/auto` for self-hosted calls the router should choose; use a logical `provider/model` id when a call must stay on a model you selected.
 
 ## Before you send a request
 
-The endpoint needs a named `auto` router with a routing policy bound to it. BitRouter fails visibly when that binding is missing rather than silently guessing a model.
+The self-hosted endpoint needs a named `auto` router with a routing policy bound to it. BitRouter fails visibly when that binding is missing rather than silently guessing a model.
 
 | Deployment | What you need |
 | --- | --- |
-| BitRouter Cloud | A Cloud credential and an `auto` policy available to the active workspace |
+| BitRouter Cloud | A Cloud credential and an enabled workspace routing preset, selected as `@<name>`; `@auto` works only when that workspace has an enabled preset named `auto` |
 | Self-hosted | A running `bro` proxy, at least one usable model route, and a local policy bound to the `auto` router |
 
 Start with the [Quickstart](/docs/overview/quickstart) if the endpoint is not running yet. Use `bro models` to see the logical model ids currently available.
 
 ## Send the first request
 
-The model id works anywhere BitRouter accepts a model selector. For an OpenAI-compatible local request:
+For an OpenAI-compatible self-hosted request:
 
 ```bash
 curl http://127.0.0.1:4356/v1/chat/completions \
@@ -31,9 +31,9 @@ curl http://127.0.0.1:4356/v1/chat/completions \
   }'
 ```
 
-For the hosted endpoint, use `https://api.bitrouter.ai/v1` as the OpenAI-compatible base URL and authenticate with your Cloud credential. Anthropic Messages and Google Generative AI clients can use the same model id through their corresponding BitRouter-compatible endpoint.
+For the hosted endpoint, use `https://api.bitrouter.ai/v1` as the OpenAI-compatible base URL and authenticate with your Cloud credential. Hosted routing presets use `@<name>` rather than self-hosted `bitrouter/<id>` selectors: use `@auto` only when the active workspace has an enabled `auto` preset. A hosted preset can supply its model, or you can provide one inline as `@<name>/<base-model>`; recognized `balanced`, `cost`, `latency`, and `throughput` profiles may follow with `:<profile>`.
 
-The public spelling selects the named `auto` router. Legacy `@auto` preset configuration remains compatible, but application and agent configuration should prefer `bitrouter/auto` as the portable model id.
+`bitrouter/auto` selects the named local `auto` router. It is not a hosted model selector; hosted applications should use a catalog model id or their workspace's `@<name>` routing preset.
 
 ## Use it from a coding agent
 
@@ -45,7 +45,7 @@ bro claude --model bitrouter/auto
 bro codex --model bitrouter/auto
 ```
 
-For a harness that connects to BitRouter directly, set its base URL to the local proxy or Cloud endpoint and set its model to `bitrouter/auto`. The [Coding agents](/docs/usage/coding-agents) page documents the environment variables and authentication boundary for each supported harness.
+For a harness that connects to the local proxy directly, set its model to `bitrouter/auto`. A harness pointed at the Cloud endpoint must instead use a catalog model id or its workspace's `@<name>` routing preset. The [Coding agents](/docs/usage/coding-agents) page documents the environment variables and authentication boundary for each supported harness.
 
 ## Create the local binding
 
@@ -87,7 +87,7 @@ The receipt distinguishes the requested selector from the resolved model and ser
 
 Use [Telemetry](/docs/configuration/telemetry) when you need traces, metrics, sampling, or exporter configuration. Use [Evaluations](/docs/configuration/evaluations) when you need to decide whether the result met an objective.
 
-## Override one call
+## Override one self-hosted call
 
 You do not need a second endpoint to opt out of automatic selection:
 
@@ -134,7 +134,7 @@ bro policy reload
 
 Objective-scored evaluations are a separate evidence path. They create immutable subjects, admitted results, and frozen snapshots that optimization can consume; they are not inferred from HTTP status or low cost. See [Evaluations](/docs/configuration/evaluations).
 
-## Diagnose a request
+## Diagnose a self-hosted request
 
 | Symptom | Check |
 | --- | --- |

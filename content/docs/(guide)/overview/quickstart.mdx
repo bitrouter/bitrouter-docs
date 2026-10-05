@@ -173,9 +173,9 @@ Model selectors use two similar-looking forms for different jobs:
 
 Use the slash form by default. Use the colon form only when you intentionally need one configured provider, such as a subscription-backed route. See [Models](/docs/configuration/models#model-selector-forms) for the complete resolution order.
 
-## Adaptive routing
+## Self-hosted adaptive routing
 
-Explicit model ids give you deterministic model selection. To let the router apply the policy bound to its named `auto` router, keep one stable model id in your agent or application:
+Explicit model ids give you deterministic model selection. On the self-hosted proxy, let the router apply the policy bound to its named `auto` router by keeping one stable model id in your agent or application:
 
 ```bash
 curl http://127.0.0.1:4356/v1/chat/completions \
@@ -183,7 +183,7 @@ curl http://127.0.0.1:4356/v1/chat/completions \
   -d '{"model": "bitrouter/auto", "messages": [{"role": "user", "content": "..."}]}'
 ```
 
-`bitrouter/auto` requires an `auto` router policy binding and fails visibly when the binding is missing. The dedicated [bitrouter/auto guide](/docs/usage/bitrouter-auto) shows how to create it, inspect the selected route, override one call, learn from runtime adequacy, and explicitly publish a reviewed policy update. [Evaluations](/docs/configuration/evaluations) covers the separate objective-scored evidence path.
+On the self-hosted proxy, `bitrouter/auto` requires an `auto` router policy binding and fails visibly when the binding is missing. Cloud uses namespace routing presets selected as `@<name>` instead. The dedicated [bitrouter/auto guide](/docs/usage/bitrouter-auto) shows how to create the self-hosted binding, inspect the selected route, override one call, learn from runtime adequacy, and explicitly publish a reviewed policy update. [Evaluations](/docs/configuration/evaluations) covers the separate objective-scored evidence path.
 
 ## Next steps
 

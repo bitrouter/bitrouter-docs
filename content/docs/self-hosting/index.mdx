@@ -101,18 +101,29 @@ Pin the config schema to the same release:
 bro update --check     # report whether a newer release exists, change nothing
 bro update             # upgrade to the latest release
 bro update --stable    # ignore prereleases
-bro update --restart   # upgrade and restart a workstation daemon
 bro update -y          # skip confirmation for automation
 ```
 
-Homebrew and `cargo install` builds are updated by their package manager. `bro update` detects those installations and prints the appropriate command rather than overwriting a managed binary.
+After an installer-managed workstation update, BitRouter attempts a safe daemon
+handoff by default. It only takes over an idle daemon launched by `bro start`
+that supports the handoff protocol and passes the SQLite migration preflight.
+If work is active, the daemon is legacy or incompatible, preflight fails, or a
+service manager owns the process, the old daemon keeps running and the update
+reports `deferred`. Finish active work and either use `bro restart` explicitly
+or restart through the owning service manager. `bro update --check` never
+restarts a daemon.
 
-For a production host, separate the binary swap from validation and restart:
+Homebrew and `cargo install` builds are updated by their package manager.
+`bro update` detects those installations and prints the appropriate command
+rather than overwriting a managed binary.
+
+For a production host, `bro serve` stays under its process supervisor; update
+the binary through the normal package or image pipeline, validate the saved
+configuration, then restart through that supervisor:
 
 ```bash
-bro update --tag 1.0.0-alpha.33 -y
 bro config validate -c /etc/bitrouter/bitrouter.yaml
-bro restart -c /etc/bitrouter/bitrouter.yaml
+sudo systemctl restart bitrouter
 bro status -c /etc/bitrouter/bitrouter.yaml
 ```
 

@@ -1,6 +1,6 @@
 {
   "version": "bro 1.0.0-alpha.33",
-  "capturedAt": "2026-09-27",
+  "capturedAt": "2026-10-05",
   "binary": "bro",
   "commands": [
     {
@@ -3024,10 +3024,6 @@
         {
           "payload": "--stable",
           "help": "Only consider stable (non-prerelease) releases"
-        },
-        {
-          "payload": "--restart",
-          "help": "After a successful update, restart a running daemon so it serves the new binary"
         },
         {
           "payload": "-y, --yes",

@@ -23,3 +23,12 @@ bro update
 ```
 
 Updates the installed binary in place to the latest release — follows prereleases by default while pre-1.0. Homebrew and `cargo install` builds update through their own package manager instead.
+
+After a self-managed update, BitRouter attempts a safe handoff to an idle
+daemon that `bro start` owns. The daemon must support the handoff protocol and
+the SQLite migration preflight must succeed. A busy, legacy, incompatible, or
+externally supervised daemon is left running and the update reports `deferred`;
+finish its work and use the owning service manager or an explicit `bro restart`
+as appropriate. `bro update --check` never restarts a daemon. The hidden
+`--restart` spelling remains accepted for older scripts, but safe handoff is
+already the default.

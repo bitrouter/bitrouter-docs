@@ -77,7 +77,7 @@ Spawn `bro serve` as a detached background process
 | `--log <LOG>` | Path to redirect the daemon's stdout/stderr to. Defaults to `bitrouter.log` inside the config file's directory (e.g. `~/.bitrouter/bitrouter.log`) so it lives alongside the socket and pid file rather than in the launcher's CWD |
 
 
-Daemonizes: writes a pidfile and detaches. `stop`/`restart` target the pidfile; `reload` hot-loads config changes without dropping in-flight connections.
+Daemonizes: writes a pidfile and detaches. `stop`/`restart` target the pidfile; `reload` hot-loads config changes without dropping in-flight connections. A daemon launched this way is eligible for an automatic upgrade handoff when it is idle.
 
 ### `bro stop`
 
@@ -103,6 +103,11 @@ Send a `stop` command to a running daemon
 | `--socket <SOCKET>` | Explicit control socket path. Overrides the config-derived path |
 | `--log <LOG>` | Path to redirect the new daemon's stdout/stderr to. Defaults to `bitrouter.log` next to the config file |
 
+
+`restart` is the explicit maintenance path. For a file-backed SQLite database,
+it validates migration lineage and applies pending migrations to a private
+snapshot before retaining a recovery backup and stopping the old daemon. It can
+interrupt active agent runs, so use it after those runs finish.
 
 ### `bro reload`
 
@@ -152,6 +157,10 @@ With `--requests`, reports what the router has actually done instead: settled re
 
 
 Prints `running: no` when no daemon is reachable — safe to poll in scripts.
+When the daemon supports upgrade metadata, JSON includes the installed and
+daemon versions, `compatibility`, launcher ownership, and observed active-work
+counts. These counts are only a snapshot; the daemon checks again before a
+handoff can stop it.
 
 ### `bro requests`
 
@@ -2431,7 +2440,6 @@ Update the installed `bitrouter` binary in place to the latest release. Follows 
 | `--check` | Report whether a newer version exists, then exit without changing anything |
 | `--tag <TAG>` | Update (or downgrade) to a specific release tag, e.g. `1.0.0-alpha.18`. Named `--tag` to avoid clashing with the global `--version` flag |
 | `--stable` | Only consider stable (non-prerelease) releases |
-| `--restart` | After a successful update, restart a running daemon so it serves the new binary |
 | `-y, --yes` | Skip the confirmation prompt |
 
 
@@ -2440,3 +2448,12 @@ bro update
 ```
 
 Updates the installed binary in place to the latest release — follows prereleases by default while pre-1.0. Homebrew and `cargo install` builds update through their own package manager instead.
+
+After a self-managed update, BitRouter attempts a safe handoff to an idle
+daemon that `bro start` owns. The daemon must support the handoff protocol and
+the SQLite migration preflight must succeed. A busy, legacy, incompatible, or
+externally supervised daemon is left running and the update reports `deferred`;
+finish its work and use the owning service manager or an explicit `bro restart`
+as appropriate. `bro update --check` never restarts a daemon. The hidden
+`--restart` spelling remains accepted for older scripts, but safe handoff is
+already the default.

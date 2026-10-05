@@ -125,7 +125,7 @@ variants:
       only: [openai]
 ```
 
-Append a known variant to a model, named router, or legacy preset, such as `coding:private`, `bitrouter/coding:private`, or `@fast:primary`. An unknown suffix is not removed; it remains part of the model selector.
+Append a known variant to a model or legacy preset, such as `coding:private` or `@fast:primary`. Named routers currently use the legacy preset spelling for variants (for example, `@coding:private`); `bitrouter/coding:private` is rejected. An unknown suffix is not removed; it remains part of the model selector.
 
 Variants do not grant access, bypass guardrails, or change virtual-key policy.
 

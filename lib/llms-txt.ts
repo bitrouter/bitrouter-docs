@@ -19,7 +19,7 @@ References:
 - Full quickstart walkthrough: ${BASE_URL}/docs/overview/quickstart
 - Agent Skill (install/configure BitRouter from inside an agent): https://github.com/bitrouter/bitrouter/tree/main/skills/bitrouter
 - BitRouter CLI (proxy, onboarding, and TUI conversation): https://github.com/bitrouter/bitrouter
-- Coding-agent modes and supported adapters (Claude, Codex, OpenCode, Pi, and more): ${BASE_URL}/docs/usage/coding-agents
+- Coding-agent modes and supported adapters (Claude, Codex, OpenCode, Pi, and more): ${BASE_URL}/docs/integration/coding-agents
 
 ## Overview
 
@@ -32,38 +32,37 @@ References:
 - [Enterprise](${BASE_URL}/enterprise): Choose between self-hosted OSS, BitRouter Cloud, and a design partnership for requirements not shipped today
 - [Self-hosting](${BASE_URL}/docs/self-hosting): Install, deploy, secure, and operate the Apache-2.0 router on infrastructure you control
 
-## Configuration
+## Models & routing
 
-- [Policy](${BASE_URL}/docs/configuration/policy): Treat \`bitrouter.yaml\` as the router's complete desired-state contract, then validate, review, and apply it safely
-- [Models](${BASE_URL}/docs/configuration/models): Resolve selectors, define eligible candidates and fallback chains, and preserve request capabilities across provider protocols
-- [Guardrails](${BASE_URL}/docs/configuration/guardrails): Block or redact matching request and response content in the router
-- [Evaluations](${BASE_URL}/docs/configuration/evaluations): Record objective outcomes as immutable evidence and freeze reproducible snapshots
-- [Telemetry](${BASE_URL}/docs/configuration/telemetry): Inspect request receipts, export OpenTelemetry, and view Cloud Activity
+- [bitrouter/auto](${BASE_URL}/docs/models-routing/bitrouter-auto): Use one stable model id and inspect the route that served each request
+- [Models & providers](${BASE_URL}/docs/models-routing/providers): Connect provider accounts, private endpoints, and custom model declarations
+- [Model routing](${BASE_URL}/docs/models-routing/models): Configure selectors, eligibility, fallback, and protocol compatibility
+- [Guardrails](${BASE_URL}/docs/models-routing/guardrails): Block or redact matching request and response content
+- [Evaluations](${BASE_URL}/docs/models-routing/evaluations): Record objective outcomes and freeze reproducible evidence snapshots
+- [Routing policy](${BASE_URL}/docs/models-routing/policy): Configure adequacy and publish reviewed routing-policy changes
 
-## Customization
+## Context & routing
 
-- [Models & providers](${BASE_URL}/docs/customization/models): Connect a provider account, declare a private endpoint, or contribute to the open registry
-- [Guardrails](${BASE_URL}/docs/configuration/guardrails): Named regex rules that block or redact matching content in requests and responses
-- [Tool calling](${BASE_URL}/docs/customization/tools): Choose router-owned tool execution or an MCP gateway
-- [Server tools](${BASE_URL}/docs/customization/tools/server-tools): Understand the bounded loop and two-gate activation model
-- [Model-backed tools](${BASE_URL}/docs/customization/tools/model-backed-tools): Compare Advisor, Sub-agent, and Fusion
-- [Web tools](${BASE_URL}/docs/customization/tools/web-tools): Configure Web Search and Web Fetch backends together
+- [MCP servers](${BASE_URL}/docs/context-routing/mcp-servers): Connect upstream servers and expose selected tools through the gateway or server-tool loop
+- [Agent Skills](${BASE_URL}/docs/context-routing/skills): Inspect and scaffold instruction packages with host-owned activation
+- [AGENTS.md](${BASE_URL}/docs/context-routing/agents-md): Write repository instructions and verify the selected harness's loading behavior
+- [Server tools](${BASE_URL}/docs/context-routing/server-tools): Configure bounded execution, Advisor, Sub-agent, Fusion, and web search and fetch
+
+## CLI
+
+- [CLI reference](${BASE_URL}/docs/cli/reference): Every command from the binary's help snapshot
+- [TUI](${BASE_URL}/docs/cli/tui): Interactive ACP conversations, route selection, and activity
+- [Configuration](${BASE_URL}/docs/cli/configuration): Discover, validate, and apply deployment configuration and linked policy files
+- [Permissions](${BASE_URL}/docs/cli/permissions): Handle interactive and headless ACP tool permission requests
+- [Telemetry](${BASE_URL}/docs/cli/telemetry): Inspect receipts, export OpenTelemetry, and view Cloud Activity
 
 ## Integration
 
-- [ACP servers](${BASE_URL}/docs/integration/acp-servers): Discover and configure local ACP servers, or expose an adapter to another client
+- [ACP servers](${BASE_URL}/docs/integration/acp-servers): Discover and configure ACP servers or expose an adapter to another client
+- [Coding agents](${BASE_URL}/docs/integration/coding-agents): Choose an interface and connect supported harnesses and model sources
 - [DeepSeek Harness](${BASE_URL}/docs/integration/deepseek-harness): Coming soon
 - [OpenCode](${BASE_URL}/docs/integration/opencode): Coming soon
 - [Pi](${BASE_URL}/docs/integration/pi): Coming soon
-
-## Usage
-
-- [bitrouter/auto](${BASE_URL}/docs/usage/bitrouter-auto): Use one stable model id, inspect the resolved route, and publish reviewed policy changes
-- [CLI](${BASE_URL}/docs/usage/cli): Every command of the binary — serve, route, models, policy, optimize, providers
-- [TUI](${BASE_URL}/docs/usage/tui): BitRouter's interactive ACP conversation with route, activity, permissions, and attributed cost
-- [Coding agents](${BASE_URL}/docs/usage/coding-agents): Run supported harnesses, configure Claude Code and Codex, and connect model sources
-- [MCP Support](${BASE_URL}/docs/usage/mcp): Connect and aggregate upstream MCP servers, then expose selected tools to agents or model requests
-- [Agent Skills](${BASE_URL}/docs/usage/skills): Inspect local skills, scaffold a SKILL.md, and understand the host execution boundary
 
 ## Reference
 

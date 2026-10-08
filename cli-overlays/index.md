@@ -1,5 +1,5 @@
 ---
-title: CLI
+title: CLI reference
 description: The bro CLI — run and inspect the local router, launch coding agents, and manage your BitRouter Cloud account.
 ---
 
@@ -19,11 +19,11 @@ Every command below is **generated from the binary's own `--help`**, so the flag
 
 | Variable | Effect |
 | --- | --- |
-| `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `OPENCODE_ZEN_API_KEY` | Zero-config BYOK — auto-enables the provider. See [BYOK](/docs/customization/models#built-in-providers-with-your-own-key) |
+| `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `OPENCODE_ZEN_API_KEY` | Zero-config BYOK — auto-enables the provider. See [BYOK](/docs/models-routing/providers#built-in-providers-with-your-own-key) |
 | `BITROUTER_API_KEY` | Cloud API key; enables the managed `bitrouter` provider |
 | `BITROUTER_HOME` | Config discovery override (see above) |
 | `BITROUTER_OAUTH_AS` | Override the OAuth authorization server for self-hosted Cloud |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | Opt in to OTLP export. See [OpenTelemetry](/docs/configuration/telemetry#self-hosted-opentelemetry) |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | Opt in to OTLP export. See [OpenTelemetry](/docs/cli/telemetry#self-hosted-opentelemetry) |
 
 ## Command map
 
@@ -38,4 +38,4 @@ Every command below is **generated from the binary's own `--help`**, so the flag
 - **Coding agents** — [coding agents](#coding-agents): native launch, interactive conversation, and headless ACP runs
 - **Misc** — [key, workflow-state, and update](#key-workflow-state-and-update): virtual keys, benchmark tooling, self-update
 
-The deprecated `bitrouter` command may still be installed as a compatibility alias, but documentation uses `bro`. Agents can operate BitRouter through the shipped [Agent Skill](/docs/usage/skills); BitRouter's MCP support is an upstream client and aggregate gateway, not a first-party origin tool server.
+The deprecated `bitrouter` command may still be installed as a compatibility alias, but documentation uses `bro`. Agents can operate BitRouter through the shipped [Agent Skill](/docs/context-routing/skills); BitRouter's MCP support is an upstream client and aggregate gateway, not a first-party origin tool server.

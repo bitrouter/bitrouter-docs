@@ -25,9 +25,9 @@ import { COMPONENT_WHITELIST } from "../lib/docs-sync/constants.mjs";
 // under the `(guide)` folder group, which fumadocs strips from the URL.
 const SECTIONS = [
   "(guide)/overview",
-  "(guide)/usage",
-  "(guide)/configuration",
-  "(guide)/customization",
+  "(guide)/models-routing",
+  "(guide)/context-routing",
+  "(guide)/cli",
   "(guide)/integration",
   "(guide)/development",
   "self-hosting",
@@ -38,30 +38,30 @@ const STANDALONE_DOCS = ["reference/index.mdx"];
 const ROOT = "content/docs";
 // Generated output, exempt from the hand-authoring contract: it is emitted by
 // scripts/generate-cli.mjs from the binary's own `--help`.
-const GENERATED = new Set(["(guide)/usage/cli.mdx"]);
+const GENERATED = new Set(["(guide)/cli/reference.mdx"]);
 // Intentional exceptions to the otherwise complete public sidebar. Keep this
 // list short and document each product-navigation decision.
 const HIDDEN_SIDEBAR_ROUTES = new Set([
-  "/docs/usage/agent",
-  "/docs/usage/model-sources/local-inference",
+  "/docs/cli/agent",
+  "/docs/models-routing/local-inference",
 ]);
 const NAV_FILES = [
   "(overview-nav)/meta.json",
-  "(usage-nav)/meta.json",
-  "(configuration-nav)/meta.json",
-  "(customization-nav)/meta.json",
+  "(models-routing-nav)/meta.json",
+  "(context-routing-nav)/meta.json",
+  "(cli-nav)/meta.json",
   "(integration-nav)/meta.json",
   "(development-nav)/meta.json",
 ];
 const ROOT_NAV_PAGES = [
   "---Overview---",
   "...(overview-nav)",
-  "---Usage---",
-  "...(usage-nav)",
-  "---Configuration---",
-  "...(configuration-nav)",
-  "---Customization---",
-  "...(customization-nav)",
+  "---Models & routing---",
+  "...(models-routing-nav)",
+  "---Context & routing---",
+  "...(context-routing-nav)",
+  "---CLI---",
+  "...(cli-nav)",
   "---Integration---",
   "...(integration-nav)",
   "---Reference---",

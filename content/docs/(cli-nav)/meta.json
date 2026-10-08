@@ -1,0 +1,10 @@
+{
+  "title": "CLI",
+  "pagesIndex": "[CLI reference](/docs/cli/reference)",
+  "pages": [
+    "[TUI](/docs/cli/tui)",
+    "[Configuration](/docs/cli/configuration)",
+    "[Permissions](/docs/cli/permissions)",
+    "[Telemetry](/docs/cli/telemetry)"
+  ]
+}

@@ -11,20 +11,18 @@ top-level order is the `pages` list in `content/docs/meta.json`:
 
 1. **Overview** — quickstart, product explanation, models, comparison, and
    the Enterprise deployment-decision entry.
-2. **Usage** — `bitrouter/auto`, CLI/TUI, coding agents, MCP, Agent Skills,
-   and model sources.
-3. **Configuration** — router policy, model selection and protocol compatibility,
-   guardrails, evaluations, and telemetry.
-4. **Customization** — model/provider customization and router-owned tool
-   capabilities.
-5. **Integration** — dedicated guides for external agent harnesses and ACP servers.
+2. **Models & routing** — model/provider supply, model selection, fallback,
+   compatibility, guardrails, evaluations, and routing policy.
+3. **Context & routing** — MCP servers, Agent Skills, AGENTS.md, and server tools.
+4. **CLI** — CLI reference, TUI, configuration, permissions, and telemetry.
+5. **Integration** — coding-agent guides and ACP servers.
 6. **Reference** — the generated Cloud API reference.
 7. **Development** — source contribution and developer-assistance guides.
 
 Each group name in `content/docs/meta.json` is a native Fumadocs separator, not
 a page or collapsible folder. Six meta-only folders —
-`content/docs/(overview-nav)/`, `(usage-nav)/`, `(configuration-nav)/`,
-`(customization-nav)/`, `(integration-nav)/`, and `(development-nav)/` — are
+`content/docs/(overview-nav)/`, `(models-routing-nav)/`, `(context-routing-nav)/`,
+`(cli-nav)/`, `(integration-nav)/`, and `(development-nav)/` — are
 extracted into the root with Fumadocs' `...folder` syntax. They contain links to canonical pages rather
 than copies of those pages, so every public non-Reference page appears directly
 below its section label.
@@ -63,15 +61,19 @@ hidden while retaining their direct URLs.
 
 Use this boundary when classifying new pages:
 
-- **Usage** explains how to operate BitRouter from an interface, agent,
-  protocol, skill, or model source.
-- **Customization** adds or replaces a capability in the router's execution path.
-- **Configuration** explains the router's desired-state policy, model selection,
-  constraints, and evidence.
-- **Integration** provides dedicated guides for external agent harnesses and ACP servers.
-- **Development** explains how to contribute source and how to use BitRouter's
-  supplied Docs MCP server and Agent Skills as development assistance.
-  Operational setup for MCP upstreams and local skills remains under Usage.
+- **Models & routing** explains supply, selection, compatibility, constraints,
+  evaluations, and reviewed changes to routing policy.
+- **Context & routing** explains available instructions and capabilities, their
+  discovery and selection, and the boundary between availability and execution.
+  Keep its four current pages: MCP servers, Agent Skills, AGENTS.md, Server tools.
+  Model-backed and web-tool details live in Server tools rather than separate pages.
+- **CLI** explains operation: commands, TUI, configuration discovery and reload,
+  permission decisions, and telemetry. Configuration owns the complete deployment
+  contract; Routing policy owns model-selection evidence and policy publication.
+- **Integration** explains external coding-agent and ACP server connections.
+- **Development** explains source contribution and BitRouter's supplied Docs MCP
+  server and Agent Skills as development assistance. Operational upstream MCP
+  configuration and skill inspection remain in Context & routing.
 
 ### Documentation vs Self-hosting
 
@@ -86,7 +88,7 @@ boundary has to be held deliberately or they rot into two half-answers per topic
 
 Enterprise is the Overview decision page and links into Self-hosting for the
 open-source operational path. Self-hosting **links** to feature pages rather
-than restating them. The Router policy page defines what the complete
+than restating them. The Configuration page defines what the complete
 `bitrouter.yaml` desired state means without becoming an exhaustive field
 reference; Self-hosting covers the operational contract around that policy
 (resolution, secrets, CI validation, and rollout).
@@ -165,9 +167,9 @@ output:
   regenerates from `openapi.yaml`. The hand-authored `index.mdx` survives; every
   other subdirectory is wiped, and the section `meta.json` is rewritten from
   `REFERENCE_META` in the script. The index is included in `pnpm lint:docs` as
-  a standalone hand-authored page. Reference remains a regular collapsible
-  folder in the unified sidebar, so edit the script, not the generated files.
-- **CLI reference** (`content/docs/(guide)/usage/cli.mdx`) — `pnpm generate:cli`
+  a standalone hand-authored page. Reference preserves generated API-family folders beneath its separator;
+  edit the script, not the generated files.
+- **CLI reference** (`content/docs/(guide)/cli/reference.mdx`) — `pnpm generate:cli`
   builds the whole page from `.cli-snapshot.json` plus the hand-authored
   overlays in `cli-overlays/`. It is **one page**: `cli-overlays/index.md`
   supplies the frontmatter and the intro, and each `cli-overlays/<group>.md`

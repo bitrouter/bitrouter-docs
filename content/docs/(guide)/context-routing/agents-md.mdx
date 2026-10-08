@@ -1,0 +1,34 @@
+---
+title: AGENTS.md
+description: Give coding agents repository instructions while keeping discovery and execution under the selected harness.
+---
+
+[`AGENTS.md`](https://agents.md/) is a Markdown file for repository-specific instructions: project layout, build commands, conventions, and validation steps. Put shared guidance at the repository root; nested files can supply directory-specific guidance in harnesses that support them.
+
+## Write project instructions
+
+Keep instructions concrete and check commands against the current checkout. For example:
+
+```markdown
+# Project instructions
+
+## Layout
+Application code lives in src/; documentation lives in docs/.
+
+## Setup
+Install dependencies with pnpm install --frozen-lockfile.
+
+## Validation
+Run pnpm test after changing application behavior.
+
+## Conventions
+Preserve unrelated changes. Keep credentials out of committed files.
+```
+
+## Harness ownership
+
+When using an external coding agent through BitRouter, that harness determines instruction discovery, nesting, precedence, and loading. Model routing does not establish a shared instruction-loading contract across adapters. Check the selected harness's documentation; [OpenCode's rules guide](https://opencode.ai/docs/rules/) describes its project and global files.
+
+## Instructions, skills, and permissions
+
+Use `AGENTS.md` for project guidance and [Agent Skills](/docs/context-routing/skills) for reusable workflows. Tool execution still follows [Permissions](/docs/cli/permissions); writing an instruction does not grant credentials or authorize an action.

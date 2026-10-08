@@ -1,0 +1,12 @@
+{
+  "title": "Models & routing",
+  "pages": [
+    "bitrouter-auto",
+    "providers",
+    "models",
+    "guardrails",
+    "evaluations",
+    "policy",
+    "local-inference"
+  ]
+}

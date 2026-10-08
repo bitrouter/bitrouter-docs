@@ -1,5 +1,11 @@
 {
   "title": "Integration",
   "icon": "Plug",
-  "pages": ["acp-servers", "deepseek-harness", "opencode", "pi"]
+  "pages": [
+    "acp-servers",
+    "coding-agents",
+    "deepseek-harness",
+    "opencode",
+    "pi"
+  ]
 }

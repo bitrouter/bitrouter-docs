@@ -93,8 +93,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       { url: `${BASE_URL}/pricing`, file: "app/(home)/pricing/page.tsx", priority: 0.8, changeFrequency: "monthly" },
       { url: `${BASE_URL}/enterprise`, file: "app/(home)/enterprise/page.tsx", priority: 0.8, changeFrequency: "monthly" },
       // The per-harness routes (/claude-code, /codex, …) were retired in 2026-08
-      // and now 301 into /docs/usage/*, which the docs entries above
-      // already cover — a redirecting URL must not be listed here.
+      // and now redirect into canonical docs routes already covered above.
+      // A redirecting URL must not be listed here.
       { url: `${BASE_URL}/blog`, file: "app/blog/page.tsx", priority: 0.6, changeFrequency: "weekly" },
       { url: `${BASE_URL}/changelog`, file: "app/changelog/page.tsx", priority: 0.6, changeFrequency: "weekly" },
     ] as const

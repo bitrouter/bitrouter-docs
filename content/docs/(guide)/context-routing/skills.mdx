@@ -1,0 +1,41 @@
+---
+title: Agent Skills
+description: Inspect local Agent Skills, scaffold a spec-valid SKILL.md, and understand the host execution boundary.
+---
+
+[Agent Skills](https://agentskills.io) are portable instruction packages built around a `SKILL.md` file. BitRouter can inspect and scaffold skills on disk; the agent host remains responsible for installation, activation, approval, and execution.
+
+## Inspect installed skills
+
+BitRouter can validate the skills already present on disk:
+
+```bash
+bro skills list
+bro skills list --global
+```
+
+The project-local command checks conventional skill layouts under the current project. `--global` checks the global Claude-compatible skill root. Each result includes the declared name, description, paths, validity, and a problem when the skill does not satisfy the Agent Skills format.
+
+BitRouter reads these directories; it does not install into them. Installation and activation remain the responsibility of the agent host.
+
+## Scaffold a skill
+
+Create a starter skill in the current project:
+
+```bash
+bro skills init my-skill
+bro skills init my-skill --output ./skills/my-skill/SKILL.md
+```
+
+The name must use lowercase ASCII letters, digits, and single internal hyphens. The command refuses to overwrite an existing `SKILL.md`.
+
+<Callout type="info">
+BitRouter does not expose local filesystem skills through a first-party MCP origin server. Skills advertised by a configured upstream MCP server can still be relayed through the [MCP gateway](/docs/context-routing/mcp-servers#mcp-gateway).
+</Callout>
+
+<Cards>
+  <Card title="Agent Skills for development" href="/docs/development/agent-skills" description="Use BitRouter's supplied skills as coding-agent development aids." />
+  <Card title="CLI reference" href="/docs/cli/reference#skills" description="Exact list and init flags." />
+  <Card title="MCP servers" href="/docs/context-routing/mcp-servers" description="Connect and aggregate upstream MCP servers." />
+  <Card title="ACP servers" href="/docs/integration/acp-servers" description="Run agent sessions interactively, headlessly, or over local stdio." />
+</Cards>

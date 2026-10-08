@@ -1,4 +1,4 @@
-// Generates the single CLI reference page at content/docs/(guide)/usage/cli.mdx
+// Generates the single CLI reference page at content/docs/(guide)/cli/reference.mdx
 // from .cli-snapshot.json (captured by scripts/snapshot-cli.mjs) plus the
 // hand-authored overlays in cli-overlays/.
 //
@@ -20,7 +20,7 @@ import { join, dirname } from "node:path";
 const ROOT = process.cwd();
 const SNAPSHOT = join(ROOT, ".cli-snapshot.json");
 const OVERLAY_DIR = join(ROOT, "cli-overlays");
-const OUT_FILE = join(ROOT, "content/docs/(guide)/usage/cli.mdx");
+const OUT_FILE = join(ROOT, "content/docs/(guide)/cli/reference.mdx");
 
 // Page sections: slug → top-level commands whose trees land in that section.
 // Order here is the order of `##` sections on the page. The section heading
@@ -223,5 +223,5 @@ const mdx = [
 mkdirSync(dirname(OUT_FILE), { recursive: true });
 writeFileSync(OUT_FILE, mdx);
 console.log(
-  `generate-cli: wrote ${sections.length} section(s) covering ${commandNodes.length} command(s) → content/docs/(guide)/usage/cli.mdx`,
+  `generate-cli: wrote ${sections.length} section(s) covering ${commandNodes.length} command(s) → content/docs/(guide)/cli/reference.mdx`,
 );

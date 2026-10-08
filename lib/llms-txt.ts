@@ -49,6 +49,12 @@ References:
 - [Model-backed tools](${BASE_URL}/docs/customization/tools/model-backed-tools): Compare Advisor, Sub-agent, and Fusion
 - [Web tools](${BASE_URL}/docs/customization/tools/web-tools): Configure Web Search and Web Fetch backends together
 
+## Integration
+
+- [DeepSeek Harness](${BASE_URL}/docs/integration/deepseek-harness): Coming soon
+- [OpenCode](${BASE_URL}/docs/integration/opencode): Coming soon
+- [Pi](${BASE_URL}/docs/integration/pi): Coming soon
+
 ## Usage
 
 - [bitrouter/auto](${BASE_URL}/docs/usage/bitrouter-auto): Use one stable model id, inspect the resolved route, and publish reviewed policy changes

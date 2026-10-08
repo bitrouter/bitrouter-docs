@@ -17,14 +17,15 @@ top-level order is the `pages` list in `content/docs/meta.json`:
    guardrails, evaluations, and telemetry.
 4. **Customization** — model/provider customization and router-owned tool
    capabilities.
-5. **Reference** — the generated Cloud API reference.
-6. **Development** — source contribution and developer-assistance guides.
+5. **Integration** — dedicated guides for integrating external agent harnesses.
+6. **Reference** — the generated Cloud API reference.
+7. **Development** — source contribution and developer-assistance guides.
 
 Each group name in `content/docs/meta.json` is a native Fumadocs separator, not
-a page or collapsible folder. Five meta-only folders —
+a page or collapsible folder. Six meta-only folders —
 `content/docs/(overview-nav)/`, `(usage-nav)/`, `(configuration-nav)/`,
-`(customization-nav)/`, and `(development-nav)/` — are extracted into the root
-with Fumadocs' `...folder` syntax. They contain links to canonical pages rather
+`(customization-nav)/`, `(integration-nav)/`, and `(development-nav)/` — are
+extracted into the root with Fumadocs' `...folder` syntax. They contain links to canonical pages rather
 than copies of those pages, so every public non-Reference page appears directly
 below its section label.
 
@@ -67,6 +68,7 @@ Use this boundary when classifying new pages:
 - **Customization** adds or replaces a capability in the router's execution path.
 - **Configuration** explains the router's desired-state policy, model selection,
   constraints, and evidence.
+- **Integration** provides dedicated guides for external agent harnesses.
 - **Development** explains how to contribute source and how to use BitRouter's
   supplied Docs MCP server and Agent Skills as development assistance.
   Operational setup for MCP upstreams and local skills remains under Usage.

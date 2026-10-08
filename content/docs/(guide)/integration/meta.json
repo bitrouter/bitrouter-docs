@@ -1,0 +1,5 @@
+{
+  "title": "Integration",
+  "icon": "Plug",
+  "pages": ["deepseek-harness", "opencode", "pi"]
+}

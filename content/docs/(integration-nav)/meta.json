@@ -1,9 +1,9 @@
 {
   "title": "Integration",
-  "pagesIndex": "[DeepSeek Harness](/docs/integration/deepseek-harness)",
+  "pagesIndex": "[ACP servers](/docs/integration/acp-servers)",
   "pages": [
+    "[DeepSeek Harness](/docs/integration/deepseek-harness)",
     "[OpenCode](/docs/integration/opencode)",
-    "[Pi](/docs/integration/pi)",
-    "[ACP servers](/docs/integration/acp-servers)"
+    "[Pi](/docs/integration/pi)"
   ]
 }

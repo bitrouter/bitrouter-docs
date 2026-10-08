@@ -51,10 +51,10 @@ References:
 
 ## Integration
 
+- [ACP servers](${BASE_URL}/docs/integration/acp-servers): Discover and configure local ACP servers, or expose an adapter to another client
 - [DeepSeek Harness](${BASE_URL}/docs/integration/deepseek-harness): Coming soon
 - [OpenCode](${BASE_URL}/docs/integration/opencode): Coming soon
 - [Pi](${BASE_URL}/docs/integration/pi): Coming soon
-- [ACP servers](${BASE_URL}/docs/integration/acp-servers): Discover and configure local ACP servers, or expose an adapter to another client
 
 ## Usage
 

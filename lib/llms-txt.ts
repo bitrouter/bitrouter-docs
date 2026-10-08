@@ -54,6 +54,7 @@ References:
 - [DeepSeek Harness](${BASE_URL}/docs/integration/deepseek-harness): Coming soon
 - [OpenCode](${BASE_URL}/docs/integration/opencode): Coming soon
 - [Pi](${BASE_URL}/docs/integration/pi): Coming soon
+- [ACP servers](${BASE_URL}/docs/integration/acp-servers): Discover and configure local ACP servers, or expose an adapter to another client
 
 ## Usage
 
@@ -62,7 +63,6 @@ References:
 - [TUI](${BASE_URL}/docs/usage/tui): BitRouter's interactive ACP conversation with route, activity, permissions, and attributed cost
 - [Coding agents](${BASE_URL}/docs/usage/coding-agents): Run supported harnesses, configure Claude Code and Codex, and connect model sources
 - [MCP Support](${BASE_URL}/docs/usage/mcp): Connect and aggregate upstream MCP servers, then expose selected tools to agents or model requests
-- [ACP Support](${BASE_URL}/docs/usage/acp): Discover adapters, run headless turns, or expose one over stdio
 - [Agent Skills](${BASE_URL}/docs/usage/skills): Inspect local skills, scaffold a SKILL.md, and understand the host execution boundary
 
 ## Reference

@@ -14,7 +14,7 @@ const finalPath = {
   "observability":"/docs/configuration/telemetry","opentelemetry":"/docs/configuration/telemetry#self-hosted-opentelemetry",
   "tracing":"/docs/configuration/telemetry#cloud-activity","telemetry":"/docs/configuration/telemetry",
   "evaluation":"/docs/configuration/evaluations","evaluations":"/docs/configuration/evaluations",
-  "mcp":"/docs/usage/mcp","acp":"/docs/usage/acp",
+  "mcp":"/docs/usage/mcp","acp":"/docs/integration/acp-servers",
   "agentskills":"/docs/usage/skills",
   // bitrouter cloud (was: infrastructure)
   "managed-provider":"/docs/overview/supported-models","discounted-models":"/docs/overview/supported-models",
@@ -54,7 +54,9 @@ pairs.push(
   ["/docs/usage/migrate/litellm", "/docs/overview/comparison#migrate-from-litellm"],
   ["/docs/usage/migrate/openrouter", "/docs/overview/comparison#migrate-from-openrouter"],
   ["/docs/usage/migrate/tensorzero", "/docs/overview/comparison"],
-  ["/docs/usage/acp-gateway", "/docs/usage/acp"],
+  // ACP integration guide moved from Usage (2026-10).
+  ["/docs/usage/acp", "/docs/integration/acp-servers"],
+  ["/docs/usage/acp-gateway", "/docs/integration/acp-servers"],
   // Product-specific recipes collapsed into maintained task pages (2026-09).
   ["/docs/usage/coding-agents/opencode", "/docs/usage/coding-agents"],
   ["/docs/usage/coding-agents/pi", "/docs/usage/coding-agents"],
@@ -131,7 +133,7 @@ pairs.push(
   ["/docs/concepts/models", "/docs/overview/supported-models#how-model-ids-work"],
   ["/docs/concepts/policy", "/docs/usage/bitrouter-auto#let-evidence-improve-the-policy"],
   ["/docs/concepts/tools", "/docs/usage/mcp"],
-  ["/docs/concepts/agents", "/docs/usage/acp"],
+  ["/docs/concepts/agents", "/docs/integration/acp-servers"],
   ["/docs/concepts/cli", "/docs/usage/cli"],
   ["/docs/concepts/mcp", "/docs/usage/mcp"],
   ["/docs/concepts/agent-skill", "/docs/overview/quickstart"],
@@ -251,15 +253,15 @@ pairs.push(
   ["/docs/gateway-and-routing/fusion", "/docs/customization/tools/model-backed-tools#fusion"],
   ["/docs/gateway-and-routing/websearch", "/docs/customization/tools/web-tools#web-search"],
   ["/docs/gateway-and-routing/web-fetch", "/docs/customization/tools/web-tools#web-fetch"],
-  ["/docs/gateway-and-routing/acp-gateway", "/docs/usage/acp"],
+  ["/docs/gateway-and-routing/acp-gateway", "/docs/integration/acp-servers"],
   ["/docs/gateway-and-routing", "/docs/configuration/models#candidate-eligibility"],
   // mcp-and-tool-calling/ dissolved: tools live under Extensions, while the
-  // The MCP gateway and local ACP adapter are usage tasks.
+  // The MCP gateway lives in Usage; ACP servers live in Integration.
   // The section index has no page of its own, and `:slug*` matches zero
   // segments too — so the bare path has to be claimed before the wildcard.
   ["/docs/mcp-and-tool-calling", "/docs/customization/tools/server-tools"],
   ["/docs/mcp-and-tool-calling/mcp-gateway", "/docs/usage/mcp#mcp-gateway"],
-  ["/docs/mcp-and-tool-calling/acp-gateway", "/docs/usage/acp"],
+  ["/docs/mcp-and-tool-calling/acp-gateway", "/docs/integration/acp-servers"],
   ["/docs/mcp-and-tool-calling/:slug*", "/docs/customization/tools/:slug*"],
   // evals-and-tracing/ split into objective evidence and operational telemetry.
   ["/docs/evals-and-tracing", "/docs/configuration/telemetry"],
@@ -268,7 +270,7 @@ pairs.push(
   ["/docs/evals-and-tracing/evals", "/docs/configuration/evaluations"],
   ["/docs/evals-and-tracing/:slug*", "/docs/configuration/telemetry"],
   // agent and tool protocol history → Usage and Extensions.
-  ["/docs/models-and-routing/acp-gateway", "/docs/usage/acp"],
+  ["/docs/models-and-routing/acp-gateway", "/docs/integration/acp-servers"],
   // Tool pages keep their filenames, so one wildcard covers them.
   ["/docs/models-and-routing/tool-calling", "/docs/customization/tools/server-tools"],
   ["/docs/models-and-routing/tool-calling/:slug*", "/docs/customization/tools/:slug*"],
@@ -282,7 +284,7 @@ pairs.push(
   // tools/agents pages retitled to name their protocol; features/ dissolved —
   // guardrails moved, namespaces and payment retired (2026-08)
   ["/docs/gateway-and-routing/tools", "/docs/usage/mcp"],
-  ["/docs/gateway-and-routing/agents", "/docs/usage/acp"],
+  ["/docs/gateway-and-routing/agents", "/docs/integration/acp-servers"],
   ["/docs/features", "/docs/configuration/guardrails"],
   ["/docs/features/guardrails", "/docs/configuration/guardrails"],
   ["/docs/features/namespaces", "/docs/reference/management/listNamespaces"],
@@ -291,7 +293,7 @@ pairs.push(
   ["/docs/features/server-tools", "/docs/customization/tools/server-tools"],
   ["/docs/features/websearch", "/docs/customization/tools/web-tools#web-search"],
   ["/docs/features/web-fetch", "/docs/customization/tools/web-tools#web-fetch"],
-  ["/docs/features/agents", "/docs/usage/acp"],
+  ["/docs/features/agents", "/docs/integration/acp-servers"],
   ["/docs/features/subagent", "/docs/customization/tools/model-backed-tools#sub-agent"],
   ["/docs/features/advisor", "/docs/customization/tools/model-backed-tools#advisor"],
   ["/docs/features/fusion", "/docs/customization/tools/model-backed-tools#fusion"],

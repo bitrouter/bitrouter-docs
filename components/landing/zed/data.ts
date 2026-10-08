@@ -417,7 +417,7 @@ export const BENCH_ROWS = [
  * the whole committed file lands at the end as the result. That ordering is the
  * point — the diff only reads as a payoff if you met the lines earlier.
  *
- * Every key below is real: see `content/docs/(guide)/usage/configuration.mdx`
+ * Every key below is real: see `content/docs/(guide)/cli/configuration.mdx`
  * ("The policy table" / "The adaptive loop"). Don't invent knobs here.
  */
 

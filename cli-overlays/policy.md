@@ -2,10 +2,10 @@
 title: Policy
 ---
 
-Routing policies are the artifact the [self-improving loop](/docs/overview/what-is-bitrouter) learns into: `init` scaffolds `policy-lock.yaml` and binds it to a preset, live traffic teaches the adequacy ledger, and `evolve --apply` folds proven downgrades back into the file. The walkthrough, table, and ledger semantics are in [bitrouter/auto](/docs/usage/bitrouter-auto#let-evidence-improve-the-policy).
+Routing policies are the artifact the [self-improving loop](/docs/overview/what-is-bitrouter) learns into: `init` scaffolds `policy-lock.yaml` and binds it to a preset, live traffic teaches the adequacy ledger, and `evolve --apply` folds proven downgrades back into the file. The walkthrough, table, and ledger semantics are in [Routing policy](/docs/models-routing/policy#let-evidence-improve-the-policy).
 
 <Callout type="info">
-`bro policy create` + `bro key sign` are a **different surface** — per-virtual-key access control (allowed models, budgets, rate limits), not routing. See [Guardrails](/docs/configuration/guardrails).
+`bro policy create` + `bro key sign` are a **different surface** — per-virtual-key access control (allowed models, budgets, rate limits), not routing. See [Guardrails](/docs/models-routing/guardrails).
 </Callout>
 
 ## @policy init

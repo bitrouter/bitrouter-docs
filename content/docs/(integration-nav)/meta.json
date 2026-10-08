@@ -2,6 +2,7 @@
   "title": "Integration",
   "pagesIndex": "[ACP servers](/docs/integration/acp-servers)",
   "pages": [
+    "[Coding agents](/docs/integration/coding-agents)",
     "[DeepSeek Harness](/docs/integration/deepseek-harness)",
     "[OpenCode](/docs/integration/opencode)",
     "[Pi](/docs/integration/pi)"

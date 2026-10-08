@@ -26,7 +26,7 @@ bro agents inspect codex
 - `check` starts an adapter and verifies initialization and routing.
 - `inspect` opens a fresh session and reports the commands advertised by the agent.
 
-For an agent outside the bundled catalog, generate a configuration stub and review it before adding it to the [`bitrouter.yaml` router policy](/docs/configuration/policy):
+For an agent outside the bundled catalog, generate a configuration stub and review it before adding it to the [`bitrouter.yaml` router policy](/docs/cli/configuration):
 
 ```bash
 bro agents scaffold <id>
@@ -75,7 +75,7 @@ bro run codex "Run the test suite" --approve-reads
 bro run codex "Fix the failing test" --permission-policy @permissions.json
 ```
 
-Use `--result-schema @schema.json` when automation needs a validated final result. See the [CLI reference](/docs/usage/cli#bro-run) for output formats, permission modes, timeouts, and exit behavior.
+Use `--result-schema @schema.json` when automation needs a validated final result. See the [CLI reference](/docs/cli/reference#bro-run) for output formats, permission modes, timeouts, and exit behavior.
 
 ## Routing and session ownership
 
@@ -90,7 +90,7 @@ Session identity and history remain owned by the harness:
 Optional `acp_recording` configuration can mirror observable ACP content into the local BitRouter database for inspection. A recording is an audit copy, not the source of truth for the agent's session.
 
 <Cards>
-  <Card title="TUI" href="/docs/usage/tui" description="Use the interactive BitRouter ACP conversation." />
-  <Card title="Coding agents" href="/docs/usage/coding-agents" description="Launch Claude, Codex, OpenCode, Pi, and other supported harnesses." />
-  <Card title="CLI reference" href="/docs/usage/cli#agents-acp-and-mcp" description="Agent catalog, ACP, and headless run commands." />
+  <Card title="TUI" href="/docs/cli/tui" description="Use the interactive BitRouter ACP conversation." />
+  <Card title="Coding agents" href="/docs/integration/coding-agents" description="Launch Claude, Codex, OpenCode, Pi, and other supported harnesses." />
+  <Card title="CLI reference" href="/docs/cli/reference#agents-acp-and-mcp" description="Agent catalog, ACP, and headless run commands." />
 </Cards>

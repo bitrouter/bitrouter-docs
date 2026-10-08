@@ -1,0 +1,11 @@
+{
+  "title": "CLI",
+  "pages": [
+    "reference",
+    "tui",
+    "configuration",
+    "permissions",
+    "telemetry",
+    "agent"
+  ]
+}

@@ -2,9 +2,9 @@
   "title": "Documentation",
   "pages": [
     "overview",
-    "usage",
-    "configuration",
-    "customization",
+    "models-routing",
+    "context-routing",
+    "cli",
     "integration",
     "development"
   ]

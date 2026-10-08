@@ -20,7 +20,7 @@ const FEATURES = [
       </>
     ),
     body: "Follow a decision from workflow state to the matched rule and selected route. Keep policy in readable configuration, inspect resolution with bro route, and version it in Git.",
-    link: "/docs/configuration/models",
+    link: "/docs/models-routing/models",
     linkLabel: "Inspect model selection",
     visual: <DecisionVisual />,
   },
@@ -31,7 +31,7 @@ const FEATURES = [
       </>
     ),
     body: "Add models, providers, tools, and workflow-specific routing behind one stable request interface. Tune planning, routine work, verification, and recovery independently.",
-    link: "/docs/customization/models",
+    link: "/docs/models-routing/providers",
     linkLabel: "Customize BitRouter",
     visual: <WorkflowVisual />,
   },

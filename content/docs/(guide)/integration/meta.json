@@ -1,5 +1,5 @@
 {
   "title": "Integration",
   "icon": "Plug",
-  "pages": ["deepseek-harness", "opencode", "pi"]
+  "pages": ["deepseek-harness", "opencode", "pi", "acp-servers"]
 }

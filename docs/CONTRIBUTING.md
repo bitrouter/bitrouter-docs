@@ -11,13 +11,13 @@ top-level order is the `pages` list in `content/docs/meta.json`:
 
 1. **Overview** — quickstart, product explanation, models, comparison, and
    the Enterprise deployment-decision entry.
-2. **Usage** — `bitrouter/auto`, CLI/TUI, coding agents, MCP, ACP, Agent Skills,
+2. **Usage** — `bitrouter/auto`, CLI/TUI, coding agents, MCP, Agent Skills,
    and model sources.
 3. **Configuration** — router policy, model selection and protocol compatibility,
    guardrails, evaluations, and telemetry.
 4. **Customization** — model/provider customization and router-owned tool
    capabilities.
-5. **Integration** — dedicated guides for integrating external agent harnesses.
+5. **Integration** — dedicated guides for external agent harnesses and ACP servers.
 6. **Reference** — the generated Cloud API reference.
 7. **Development** — source contribution and developer-assistance guides.
 
@@ -68,7 +68,7 @@ Use this boundary when classifying new pages:
 - **Customization** adds or replaces a capability in the router's execution path.
 - **Configuration** explains the router's desired-state policy, model selection,
   constraints, and evidence.
-- **Integration** provides dedicated guides for external agent harnesses.
+- **Integration** provides dedicated guides for external agent harnesses and ACP servers.
 - **Development** explains how to contribute source and how to use BitRouter's
   supplied Docs MCP server and Agent Skills as development assistance.
   Operational setup for MCP upstreams and local skills remains under Usage.

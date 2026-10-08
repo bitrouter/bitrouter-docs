@@ -58,7 +58,7 @@ The useful question is whether you want a broad gateway toolkit or a focused rou
 
 LiteLLM's bet is coverage: a broad provider and endpoint surface you configure. BitRouter concentrates on an operator-owned feedback loop. It wraps the agent loop in a second one — [act → observe → evaluate → learn](/docs/overview/what-is-bitrouter) — and folds admitted evidence back into the routing policy.
 
-An [MCP gateway](/docs/usage/mcp#mcp-gateway) for tools and local [ACP adapters](/docs/usage/acp) for agent sessions are included because they serve that loop. The router remains one binary and one `bitrouter.yaml`; new model and provider definitions live in the open [registry](/docs/customization/models).
+An [MCP gateway](/docs/usage/mcp#mcp-gateway) for tools and local [ACP adapters](/docs/integration/acp-servers) for agent sessions are included because they serve that loop. The router remains one binary and one `bitrouter.yaml`; new model and provider definitions live in the open [registry](/docs/customization/models).
 
 <CompareTable slug="bitrouter-vs-litellm" />
 

@@ -32,41 +32,62 @@ References:
 - [Enterprise](${BASE_URL}/enterprise): Choose between self-hosted OSS, BitRouter Cloud, and a design partnership for requirements not shipped today
 - [Self-hosting](${BASE_URL}/docs/self-hosting): Install, deploy, secure, and operate the Apache-2.0 router on infrastructure you control
 
-## Models & routing
+## Config
+
+- [Configuration file](${BASE_URL}/docs/config/configuration-file): Discover files, resolve secrets, validate settings, and apply changes
+- [Providers](${BASE_URL}/docs/config/providers): Connect credentials, custom endpoints, model declarations, and multiple accounts
+- [Model routes](${BASE_URL}/docs/config/model-routes): Author virtual models, fallback chains, presets, and variants
+- [MCP connections](${BASE_URL}/docs/config/mcp-connections): Configure transports, aggregate routes, and discovery caches
+- [Server tools](${BASE_URL}/docs/config/server-tools): Enable implementations, select upstreams, set loop limits, and configure backends
+- [Telemetry](${BASE_URL}/docs/config/telemetry): Inspect receipts and Cloud Activity; configure OTLP export, capture, and sampling
+
+## Model
 
 - [bitrouter/auto](${BASE_URL}/docs/models-routing/bitrouter-auto): Use one stable model id and inspect the route that served each request
-- [Models & providers](${BASE_URL}/docs/models-routing/providers): Connect provider accounts, private endpoints, and custom model declarations
-- [Model routing](${BASE_URL}/docs/models-routing/models): Configure selectors, eligibility, fallback, and protocol compatibility
-- [Guardrails](${BASE_URL}/docs/models-routing/guardrails): Block or redact matching request and response content
+- [Model routing](${BASE_URL}/docs/models-routing/models): Understand selector resolution, eligibility, fallback, and protocol compatibility
 - [Evaluations](${BASE_URL}/docs/models-routing/evaluations): Record objective outcomes and freeze reproducible evidence snapshots
-- [Routing policy](${BASE_URL}/docs/models-routing/policy): Configure adequacy and publish reviewed routing-policy changes
+- [Routing policy](${BASE_URL}/docs/models-routing/policy): Review and publish evidence-backed routing-policy changes
 
-## Context & routing
+## Context
 
-- [MCP servers](${BASE_URL}/docs/context-routing/mcp-servers): Connect upstream servers and expose selected tools through the gateway or server-tool loop
+- [MCP servers](${BASE_URL}/docs/context-routing/mcp-servers): Use MCP discovery, direct and aggregate gateways, and agent connections
 - [Agent Skills](${BASE_URL}/docs/context-routing/skills): Inspect and scaffold instruction packages with host-owned activation
 - [AGENTS.md](${BASE_URL}/docs/context-routing/agents-md): Write repository instructions and verify the selected harness's loading behavior
-- [Server tools](${BASE_URL}/docs/context-routing/server-tools): Configure bounded execution, Advisor, Sub-agent, Fusion, and web search and fetch
+- [Server tools](${BASE_URL}/docs/context-routing/server-tools): Declare request tools and understand bounded execution, nested model calls, and web tools
 
 ## CLI
 
-- [CLI reference](${BASE_URL}/docs/cli/reference): Every command from the binary's help snapshot
 - [TUI](${BASE_URL}/docs/cli/tui): Interactive ACP conversations, route selection, and activity
-- [Configuration](${BASE_URL}/docs/cli/configuration): Discover, validate, and apply deployment configuration and linked policy files
-- [Permissions](${BASE_URL}/docs/cli/permissions): Handle interactive and headless ACP tool permission requests
-- [Telemetry](${BASE_URL}/docs/cli/telemetry): Inspect receipts, export OpenTelemetry, and view Cloud Activity
+- [Headless](${BASE_URL}/docs/cli/headless): Run one ACP prompt from scripts with output formats and approval policies
+
+### Reference
+
+- [Daemon lifecycle](${BASE_URL}/docs/cli/reference/daemon): Generated command reference
+- [Init and config](${BASE_URL}/docs/cli/reference/init): Generated command reference
+- [Routing introspection](${BASE_URL}/docs/cli/reference/route): Generated command reference
+- [Providers](${BASE_URL}/docs/cli/reference/providers): Generated command reference
+- [Policy](${BASE_URL}/docs/cli/reference/policy): Generated command reference
+- [Cloud](${BASE_URL}/docs/cli/reference/cloud): Generated command reference
+- [Agents, ACP, and MCP](${BASE_URL}/docs/cli/reference/tools): Generated command reference
+- [Skills](${BASE_URL}/docs/cli/reference/skills): Generated command reference
+- [Coding agents](${BASE_URL}/docs/cli/reference/harnesses): Generated command reference
+- [Key, workflow-state, and update](${BASE_URL}/docs/cli/reference/misc): Generated command reference
 
 ## Integration
 
 - [ACP servers](${BASE_URL}/docs/integration/acp-servers): Discover and configure ACP servers or expose an adapter to another client
-- [Coding agents](${BASE_URL}/docs/integration/coding-agents): Choose an interface and connect supported harnesses and model sources
 - [DeepSeek Harness](${BASE_URL}/docs/integration/deepseek-harness): Coming soon
 - [OpenCode](${BASE_URL}/docs/integration/opencode): Coming soon
 - [Pi](${BASE_URL}/docs/integration/pi): Coming soon
 
-## Reference
+## API
 
-- [API Overview](${BASE_URL}/docs/reference): Choose an API family and apply the correct authentication
+- [Responses API](${BASE_URL}/docs/api/responses): Routed generation, streaming, tool results, and continuation
+- [Decisions API](${BASE_URL}/docs/api/decisions): Typed questions and answers through a supported local gateway
+
+### Reference
+
+- [Overview & authentication](${BASE_URL}/docs/reference): Choose an API family and apply the correct authentication
 - [OpenAI Chat Completions](${BASE_URL}/docs/reference/openai-compatible/createChatCompletion): \`/v1/chat/completions\` — OpenAI Chat Completions request and response format
 - [OpenAI Responses](${BASE_URL}/docs/reference/openai-responses/createResponse): \`/v1/responses\` — OpenAI Responses request and event format
 - [Anthropic Messages](${BASE_URL}/docs/reference/anthropic-compatible/createMessage): \`/v1/messages\` — Anthropic Messages request and response format
@@ -75,14 +96,6 @@ References:
 - [Cloud management](${BASE_URL}/docs/reference/management/listNamespaces): Manage namespaces, keys, billing, policy, presets, and OAuth clients
 - [BYOK encryption](${BASE_URL}/docs/reference/byok/getEncryptionPubkey): Bootstrap client-side encryption of upstream provider keys
 - [Health](${BASE_URL}/docs/reference/health/ping): Liveness probe
-
-## Development
-
-- [Contributing to BitRouter](${BASE_URL}/docs/development): Choose a contribution path, run the project locally, and validate changes
-- [MCP for development](${BASE_URL}/docs/development/mcp): Give a coding agent searchable BitRouter docs and current model information
-- [Agent Skills for development](${BASE_URL}/docs/development/agent-skills): Use supplied procedures for setup, diagnosis, route evaluation, and benchmarks
-- [BitRouter Source](https://github.com/bitrouter/bitrouter): Rust router source and issue tracker
-- [Documentation Source](https://github.com/bitrouter/bitrouter-docs): Website and documentation source
 
 ## Optional
 

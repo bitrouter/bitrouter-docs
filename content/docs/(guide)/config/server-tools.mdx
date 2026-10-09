@@ -1,0 +1,102 @@
+---
+title: Server tools
+description: Enable server-tool implementations, select MCP upstreams, and configure loop limits and web backends.
+---
+
+Configure `server_tools` in [the configuration file](/docs/config/configuration-file) to make implementations available. Each request must still declare the tools it wants. [Server tools in Context](/docs/context-routing/server-tools) documents those request declarations and execution behavior.
+
+## Enable implementations
+
+```yaml
+server_tools:
+  max_iterations: 8
+  advisor: true
+  subagent: true
+  mcp_servers: [workspace]
+```
+
+`advisor` and `subagent` enable nested model calls. `mcp_servers` selects configured upstreams for use inside the router's tool loop.
+
+## Loop limits
+
+`server_tools.max_iterations` overrides the deployment's tool-round limit. The default loop permits 10 tool rounds, 30 seconds per tool, 120 seconds for the turn, and three consecutive tool-error rounds. The iteration limit is the override exposed in `bitrouter.yaml`.
+
+A loop bound stops additional tool rounds. Nested calls and backend requests still consume their normal quota and cost.
+
+## MCP-backed tools
+
+Declare transports in [MCP connections](/docs/config/mcp-connections), then select their ids for the server-tool loop:
+
+```yaml
+server_tools:
+  mcp_servers: [filesystem, context7]
+  max_iterations: 6
+```
+
+An upstream's presence in `mcp_servers` alone does not opt it into this loop.
+
+## Model-backed defaults
+
+```yaml
+server_tools:
+  advisor: true
+  subagent: true
+  fusion:
+    panel:
+      - anthropic:claude-opus-4.8
+      - openai:gpt-5
+    judge: anthropic:claude-opus-4.8
+```
+
+Advisor and Sub-agent use the parent request model unless their declaration pins another model. Fusion defaults come from the deployment block and can be overridden by an explicit declaration.
+
+## Web backends
+
+```yaml
+server_tools:
+  web_search:
+    max_results: 5
+    backends:
+      - kind: parallel
+      - kind: exa
+      - kind: firecrawl
+      - kind: tavily
+
+  web_fetch:
+    max_content_tokens: 4000
+    backends:
+      - kind: exa
+      - kind: firecrawl
+      - kind: tavily
+```
+
+Each HTTP backend reads an explicit `api_key` or its conventional environment variable:
+
+| Backend | Search | Fetch | Environment variable |
+| --- | --- | --- | --- |
+| Parallel | Yes | No | `PARALLEL_API_KEY` |
+| Exa | Yes | Yes | `EXA_API_KEY` |
+| Firecrawl | Yes | Yes | `FIRECRAWL_API_KEY` |
+| Tavily | Yes | Yes | `TAVILY_API_KEY` |
+
+Backends are tried in config order. Entries with no resolvable key are skipped; if none resolve, that tool remains disabled and the daemon logs why.
+
+Web Search also supports a `native` backend that runs a search-capable model with its provider-native search tool. That is a nested model call rather than an HTTP search API.
+
+## Validate and apply
+
+```bash
+bro config validate -c bitrouter.yaml
+bro reload -c bitrouter.yaml
+```
+
+Then send a request with an explicit tool declaration from [Server tools in Context](/docs/context-routing/server-tools). Verify the selected backend and any nested model calls using [Telemetry](/docs/config/telemetry).
+
+<Callout type="warning">
+Deployment enablement does not grant caller access, upstream credentials, network reachability, or tool approval. Keep those boundaries scoped to the callers that need them.
+</Callout>
+
+<Cards>
+  <Card title="Server tools in Context" href="/docs/context-routing/server-tools" description="Declare tools on a request and understand the execution loop." />
+  <Card title="MCP connections" href="/docs/config/mcp-connections" description="Configure transports for selected upstream servers." />
+</Cards>

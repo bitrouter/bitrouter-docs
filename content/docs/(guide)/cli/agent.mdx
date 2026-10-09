@@ -7,7 +7,7 @@ description: bitrouter-agent — a CLI wizard that reads your agentic codebase a
 
 | Artifact | What it is |
 |----------|------------|
-| `bitrouter.yaml` | An MVP router policy to try — see [Configuration](/docs/cli/configuration) |
+| `bitrouter.yaml` | An MVP router policy to try — see [Configuration](/docs/config/configuration-file) |
 | `bitrouter-audit.md` | An audit of your LLM usage, with a savings estimate |
 | `.bitrouter/analysis.json` | The same analysis, machine-readable |
 
@@ -32,7 +32,7 @@ Flags: `--out-dir <dir>`, `--model <id>`, `--target <local|cloud>`, `--offline`,
 
 The agent routes its own LLM calls through BitRouter, so it needs a router to talk to:
 
-- **`local`** *(default)* — a BitRouter daemon at `http://127.0.0.1:4356`. Run [`bro start`](/docs/cli/reference) first.
+- **`local`** *(default)* — a BitRouter daemon at `http://127.0.0.1:4356`. Run [`bro start`](/docs/cli/reference/init) first.
 - **`cloud`** — BitRouter Cloud. Run `bitrouter auth login` first.
 
 ### Offline analysis
@@ -65,7 +65,7 @@ The model drafts the policy diff (through BitRouter, with a deterministic offlin
 The package also ships a **read-only chat session**, launched as `bitrouter` from the agent package rather than `pi`. It can inspect your codebase and run the `estimate` / `audit` / `optimize` tools and the `/bitrouter` command, but it **cannot edit files or run shell commands**. Its identity, tool set, and skills are locked to BitRouter, and its config lives under `~/.bitrouter/agent` rather than pi's `~/.pi`.
 
 <Callout type="warn">
-  This session shares its name with the router binary documented in [CLI](/docs/cli/reference). They are different programs from different packages — `@bitrouter/agent` is the npm wizard, and the router is the Rust binary. Check which one is first on your `PATH` before assuming which you launched.
+  This session shares its name with the router binary documented in [CLI](/docs/cli/reference/init). They are different programs from different packages — `@bitrouter/agent` is the npm wizard, and the router is the Rust binary. Check which one is first on your `PATH` before assuming which you launched.
 </Callout>
 
 ### Which skills load
@@ -94,7 +94,7 @@ The list is namespaced under `bitrouter` on purpose: pi reads the top-level `ski
 bitrouter-agent is an **adoption and tuning** tool, not a runtime surface — it writes policy, it doesn't serve traffic. Once the generated `bitrouter.yaml` is in place, the router runs it like any other config:
 
 <Cards>
-  <Card title="Configuration" href="/docs/cli/configuration" description="Understand how bitrouter.yaml expresses the router's complete desired behavior." />
-  <Card title="CLI" href="/docs/cli/reference" description="Start the daemon the agent routes through, and validate the policy it wrote." />
+  <Card title="Configuration" href="/docs/config/configuration-file" description="Understand how bitrouter.yaml expresses the router's complete desired behavior." />
+  <Card title="CLI" href="/docs/cli/reference/init" description="Start the daemon the agent routes through, and validate the policy it wrote." />
   <Card title="TUI" href="/docs/cli/tui" description="Run an interactive ACP conversation with attributed session cost." />
 </Cards>

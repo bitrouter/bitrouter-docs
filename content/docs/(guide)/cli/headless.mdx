@@ -1,0 +1,84 @@
+---
+title: Headless
+description: Run one ACP prompt from scripts with explicit output formats and tool approval policies.
+---
+
+`bro run` sends one prompt to an ACP agent without opening the [TUI](/docs/cli/tui). Use it in scripts or automation when you need streamed updates or an assistant reply.
+
+## Send a prompt
+
+Choose an [ACP server](/docs/integration/acp-servers) from the bundled catalog or your `agents:` configuration. Supply the prompt as an argument, through stdin, or from a file:
+
+```bash
+bro run codex "Summarize this repository"
+printf 'Review this diff' | bro run claude -
+bro run codex --prompt-file task.md --format quiet
+```
+
+Use `--cwd <PATH>` to set the working directory supplied to the agent session.
+
+## Choose the output
+
+| Format | Output |
+| --- | --- |
+| `ndjson` | One self-describing JSON object per line; the default |
+| `text` | A readable transcript |
+| `quiet` | Assistant text only |
+
+```bash
+bro run codex "Summarize this repository" --format ndjson
+bro run codex --prompt-file task.md --format text
+```
+
+Use `--result-schema @schema.json` when the final reply must satisfy a JSON Schema, or supply the schema as inline JSON. Set `--turn-timeout <SECS>` to bound the turn. The generated [CLI reference](/docs/cli/reference/harnesses#bro-run) lists the complete options.
+
+## Permissions
+
+`bro run` denies permission requests by default. Choose the policy required by the task:
+
+| Option | Behavior |
+| --- | --- |
+| `--deny-all` | Deny every permission request; the default |
+| `--approve-reads` | Approve calls labeled `read` or `search` by the harness; deny other and unlabeled calls |
+| `--approve-all` | Approve every permission request from the harness |
+| `--permission-policy <JSON\|@PATH>` | Apply explicit per-tool rules |
+
+For an inspection task:
+
+```bash
+bro run codex "Review this repository" --approve-reads
+```
+
+For rules stored in a file:
+
+```json
+{
+  "autoApprove": ["read", "search"],
+  "autoDeny": ["edit", "execute"],
+  "defaultAction": "deny"
+}
+```
+
+```bash
+bro run codex "Review this repository" --permission-policy @permissions.json
+```
+
+Entries match the ACP tool kind, the tool-call title, or its first word. `autoDeny` wins over `autoApprove`. Unmatched requests use `defaultAction`, or the selected mode flag when no default action is supplied. See the generated [CLI reference](/docs/cli/reference/harnesses#bro-run) for the complete contract.
+
+## Routing and sessions
+
+Supported adapters attempt to route model traffic through the local daemon by default. Use `--model` to pin a model, `--base-url` to select an explicit gateway, or `--direct` to use the harness's own provider authentication. `--no-start` fails when the local daemon is unavailable instead of starting it.
+
+When the adapter supports native session persistence, `--load <id>` replays a harness-native session and `--resume <id>` continues one without replaying history. The harness owns the session identity and history.
+
+## Execution boundaries
+
+These options govern permission requests made by an ACP harness. [Native harness launch](/docs/integration/coding-agents#choose-the-interface) uses the harness's own permission configuration. They do not define an execution sandbox or grant upstream credentials.
+
+[Server tools](/docs/context-routing/server-tools) have a separate activation contract: the deployment enables the implementation and the request opts into it. Caller access policy, upstream credentials, and the tool's own approval rules still apply.
+
+<Cards>
+  <Card title="TUI" href="/docs/cli/tui" description="Work interactively and answer permission requests in the terminal." />
+  <Card title="ACP servers" href="/docs/integration/acp-servers" description="Discover and configure the agent adapter to run." />
+  <Card title="CLI reference" href="/docs/cli/reference/harnesses#bro-run" description="Inspect every headless command option." />
+</Cards>

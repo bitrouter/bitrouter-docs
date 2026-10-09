@@ -22,4 +22,4 @@ bro models --provider anthropic
 
 ## @observe status
 
-Reports the OTel exporter's live state — endpoint, sampler, cardinality usage, in-flight spans. The verification step for [OpenTelemetry](/docs/cli/telemetry#self-hosted-opentelemetry).
+Reports the OTel exporter's live state — endpoint, sampler, cardinality usage, in-flight spans. The verification step for [OpenTelemetry](/docs/config/telemetry#self-hosted-opentelemetry).

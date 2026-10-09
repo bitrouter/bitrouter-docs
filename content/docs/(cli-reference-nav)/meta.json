@@ -1,0 +1,17 @@
+{
+  "title": "Reference",
+  "defaultOpen": false,
+  "collapsible": true,
+  "pages": [
+    "[Daemon lifecycle](/docs/cli/reference/daemon)",
+    "[Init and config](/docs/cli/reference/init)",
+    "[Routing introspection](/docs/cli/reference/route)",
+    "[Providers](/docs/cli/reference/providers)",
+    "[Policy](/docs/cli/reference/policy)",
+    "[Cloud](/docs/cli/reference/cloud)",
+    "[Agents, ACP, and MCP](/docs/cli/reference/tools)",
+    "[Skills](/docs/cli/reference/skills)",
+    "[Coding agents](/docs/cli/reference/harnesses)",
+    "[Key, workflow-state, and update](/docs/cli/reference/misc)"
+  ]
+}

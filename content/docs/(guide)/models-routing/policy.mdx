@@ -5,7 +5,7 @@ description: Bind model-selection policy to a preset, collect evidence, and publ
 
 A routing policy controls model selection for a bound preset such as `bitrouter/auto`. Its versioned decisions live in `policy-lock.yaml`; `bitrouter.yaml` connects that artifact to the running router. Deployment configuration and caller access-control policies have separate responsibilities.
 
-Start with [bitrouter/auto](/docs/models-routing/bitrouter-auto) to initialize a binding and send requests. Use [Configuration](/docs/cli/configuration) for file discovery, secrets, schema validation, and reload behavior.
+Start with [bitrouter/auto](/docs/models-routing/bitrouter-auto) to initialize a binding and send requests. Use [Configuration](/docs/config/configuration-file) for file discovery, secrets, schema validation, and reload behavior.
 
 ## Let evidence improve the policy
 
@@ -46,4 +46,4 @@ bro policy lock
 
 Runtime adequacy and objective-scored evaluations are separate evidence paths. [Evaluations](/docs/models-routing/evaluations) documents sealed subjects, admitted results, frozen snapshots, and the `bro optimize` and `bro policy compile` workflow. Review the candidate before making it active; collecting evidence alone does not authorize publication.
 
-Use [Telemetry](/docs/cli/telemetry) to inspect the route and cost that actually served a request, and [Model routing](/docs/models-routing/models) to understand selectors, candidate eligibility, and fallback.
+Use [Telemetry](/docs/config/telemetry) to inspect the route and cost that actually served a request, and [Model routing](/docs/models-routing/models) to understand selectors, candidate eligibility, and fallback.

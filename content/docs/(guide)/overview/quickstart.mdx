@@ -108,7 +108,7 @@ bro init --yes --api-key "brk_..." --after exit                # Cloud key, no l
 bro init --reset                                               # clear credentials, start over
 ```
 
-Every flag is documented in the [`bro init` reference](/docs/cli/reference#bro-init). The wizard never writes `bitrouter.yaml` beyond the canned starter template — your routing config stays yours to edit.
+Every flag is documented in the [`bro init` reference](/docs/cli/reference/init#bro-init). The wizard never writes `bitrouter.yaml` beyond the canned starter template — your routing config stays yours to edit.
 
 ## Run self-hosted
 
@@ -120,7 +120,7 @@ bro start
 # Proxy running at http://127.0.0.1:4356
 ```
 
-BitRouter auto-detects any key set in the environment — no config file needed. Any provider whose key is present is immediately available. See [BYOK](/docs/models-routing/providers#built-in-providers-with-your-own-key) for the full list of recognized variables, or [local inference](/docs/models-routing/local-inference) to point BitRouter at Ollama, vLLM, or LM Studio for free.
+BitRouter auto-detects any key set in the environment — no config file needed. Any provider whose key is present is immediately available. See [BYOK](/docs/config/providers#built-in-providers-with-your-own-key) for the full list of recognized variables, or [local inference](/docs/models-routing/local-inference) to point BitRouter at Ollama, vLLM, or LM Studio for free.
 
 For advanced routing rules, guardrails, or multi-account failover, scaffold a config file:
 
@@ -191,5 +191,5 @@ curl http://127.0.0.1:4356/v1/chat/completions \
   <Card title="Model routing" href="/docs/models-routing/models" description="Configure selectors, candidate eligibility, and fallback." />
   <Card title="bitrouter/auto" href="/docs/models-routing/bitrouter-auto" description="Use one stable model id and inspect the policy-driven route." />
   <Card title="Coding agents" href="/docs/integration/coding-agents" description="Step-by-step guides for every supported agent runtime." />
-  <Card title="CLI reference" href="/docs/cli/reference" description="The full command surface of the binary." />
+  <Card title="CLI reference" href="/docs/cli/reference/init" description="The full command surface of the binary." />
 </Cards>

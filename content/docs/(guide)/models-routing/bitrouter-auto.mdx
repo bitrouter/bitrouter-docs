@@ -85,7 +85,7 @@ bro cloud requests --limit 25
 
 The receipt distinguishes the requested selector from the resolved model and serving provider. Retries and fallback attempts are separate telemetry hops; the settled route is not inferred from response text.
 
-Use [Telemetry](/docs/cli/telemetry) when you need traces, metrics, sampling, or exporter configuration. Use [Evaluations](/docs/models-routing/evaluations) when you need to decide whether the result met an objective.
+Use [Telemetry](/docs/config/telemetry) when you need traces, metrics, sampling, or exporter configuration. Use [Evaluations](/docs/models-routing/evaluations) when you need to decide whether the result met an objective.
 
 ## Override one call
 
@@ -112,11 +112,11 @@ Use [Routing policy](/docs/models-routing/policy) to configure adequacy, escalat
 | The candidate chain is unexpected | `bro route bitrouter/auto` and [Model routing](/docs/models-routing/models) |
 | A call did not use the policy | Confirm its requested model was `bitrouter/auto`, not an explicit model id |
 | The serving route is unclear | Inspect the settled local or Cloud request receipt |
-| Traces are missing | Check `bro observe status` and [Telemetry](/docs/cli/telemetry) |
+| Traces are missing | Check `bro observe status` and [Telemetry](/docs/config/telemetry) |
 
 <Cards>
   <Card title="Model routing" href="/docs/models-routing/models" description="Understand selector resolution, presets, fallback, and provider ordering." />
   <Card title="Evaluations" href="/docs/models-routing/evaluations" description="Turn objective outcomes into admitted, reproducible evidence." />
-  <Card title="Telemetry" href="/docs/cli/telemetry" description="Inspect receipts and export traces and metrics." />
-  <Card title="CLI reference" href="/docs/cli/reference" description="Read the complete generated command surface." />
+  <Card title="Telemetry" href="/docs/config/telemetry" description="Inspect receipts and export traces and metrics." />
+  <Card title="CLI reference" href="/docs/cli/reference/init" description="Read the complete generated command surface." />
 </Cards>

@@ -59,7 +59,7 @@ The route picker and router-attributed cost appear only when the active adapter 
 | `Ctrl-C` | Cancel work, clear an idle draft, or exit when idle and empty |
 | `Ctrl-D` | Exit from an idle, empty composer |
 
-Permission requests require an explicit choice. `bro code` does not silently approve a tool call on the agent's behalf. See [Permissions](/docs/cli/permissions) for interactive and headless approval behavior.
+Permission requests require an explicit choice. `bro code` does not silently approve a tool call on the agent's behalf. See [headless approval policies](/docs/cli/headless#permissions) for automation.
 
 ## Operations-only targets
 
@@ -82,7 +82,8 @@ These targets can inspect status, models, requests, routes, providers, telemetry
 | Drive the harness's own native interface | `bro launch <agent>` |
 
 <Cards>
+  <Card title="Headless" href="/docs/cli/headless" description="Run one ACP prompt from a script." />
   <Card title="ACP servers" href="/docs/integration/acp-servers" description="Agent discovery, headless runs, and the stdio adapter." />
   <Card title="Coding agents" href="/docs/integration/coding-agents" description="Choose between BitRouter's ACP conversation and native harness launch." />
-  <Card title="CLI reference" href="/docs/cli/reference#coding-agents" description="Every code, run, and launch flag." />
+  <Card title="CLI reference" href="/docs/cli/reference/harnesses" description="Every code, run, and launch flag." />
 </Cards>

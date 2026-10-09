@@ -4,7 +4,7 @@ title: Key, workflow-state, and update
 
 ## @key sign
 
-Mints a **virtual key** bound to an access-control policy — the per-key guardrails surface (allowed models, budgets, rate limits), distinct from routing policies. See [Guardrails](/docs/models-routing/guardrails).
+Mints a **virtual key** bound to an access-control policy — the per-key guardrails surface (allowed models, budgets, rate limits), distinct from routing policies. See [access-control policies](/docs/config/configuration-file#three-meanings-of-policy).
 
 ```bash
 bro key sign --user ci --policy nightly-cap

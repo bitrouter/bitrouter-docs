@@ -13,30 +13,7 @@ BitRouter OSS is the **client and gateway** on this path. It does not add BitRou
 
 ### Configure upstream servers
 
-Add servers under `mcp_servers` in the [`bitrouter.yaml` router policy](/docs/cli/configuration). Stdio entries launch a child process; HTTP entries connect to a Streamable HTTP endpoint.
-
-```yaml
-mcp_servers:
-  filesystem:
-    name: filesystem
-    transport:
-      type: stdio
-      command: npx
-      args: ["-y", "@modelcontextprotocol/server-filesystem", "/data"]
-  context7:
-    name: context7
-    transport:
-      type: http
-      url: https://mcp.context7.com/mcp
-      headers:
-        Authorization: "Bearer ${CONTEXT7_TOKEN}"
-```
-
-A stdio child inherits the ambient environment, with configured `env` values added or overridden. HTTP headers are sent to that upstream on every request.
-
-<Callout type="info">
-When `mcp_servers` is empty, the daemon does not mount MCP routes. A `404` on `/mcp` before configuring an upstream is expected.
-</Callout>
+Upstreams can use local stdio processes or Streamable HTTP endpoints. Declare transports, credentials, and environment overrides in [MCP connections](/docs/config/mcp-connections#configure-upstream-servers). When no upstreams are configured, the daemon does not mount MCP routes.
 
 ### Direct and aggregate routes
 
@@ -45,27 +22,7 @@ When `mcp_servers` is empty, the daemon does not mount MCP routes. A `404` on `/
 | `POST /mcp/{server}` | Proxy one configured upstream with its original capability names |
 | `POST /mcp` | Aggregate participating upstreams into one virtual MCP server |
 
-The aggregate is enabled by default and can be moved or disabled:
-
-```yaml
-mcp:
-  aggregate:
-    enabled: true
-    route: /mcp
-```
-
-Aggregate tool and prompt names are prefixed with the server id to avoid collisions. Override the prefix or exclude one server from aggregation without disabling its direct route:
-
-```yaml
-mcp_servers:
-  context7:
-    name: context7
-    transport:
-      type: http
-      url: https://mcp.context7.com/mcp
-    tool_prefix: "docs__"
-    aggregate: false
-```
+Aggregate tool and prompt names are prefixed with the server id to avoid collisions. Each upstream can retain its direct route while being excluded from aggregation. Use [MCP connections](/docs/config/mcp-connections#configure-the-aggregate-gateway) to set the aggregate endpoint, prefixes, and participation.
 
 ### Diagnose upstreams
 
@@ -80,34 +37,13 @@ Configuration remains the source of truth; the check does not maintain a separat
 
 ### Cache discovery, not execution
 
-Aggregate list calls use bounded TTL caches by default. Tool execution is never cached.
-
-| Setting | Default | Method |
-| --- | --- | --- |
-| `tools_list_ttl_secs` | `60` | `tools/list` |
-| `resources_list_ttl_secs` | `60` | `resources/list` |
-| `resources_templates_list_ttl_secs` | `300` | `resources/templates/list` |
-| `prompts_list_ttl_secs` | `300` | `prompts/list` |
-
-Set an individual TTL to `0`, or disable the cache as a whole:
-
-```yaml
-mcp:
-  cache:
-    enabled: false
-```
+Aggregate list calls use bounded TTL caches; tool execution is never cached. Configure the discovery TTLs or disable caching in [MCP connections](/docs/config/mcp-connections#cache-discovery-not-execution).
 
 ### Execute tools inside a model request
 
-The gateway normally lets an external agent call MCP tools. To let BitRouter run the tool loop, list selected upstream ids under `server_tools.mcp_servers`:
+The gateway lets an external agent call MCP tools. Selecting upstream ids in [Server tools configuration](/docs/config/server-tools#mcp-backed-tools) also makes them available to BitRouter's model loop.
 
-```yaml
-server_tools:
-  mcp_servers: [filesystem, context7]
-  max_iterations: 6
-```
-
-BitRouter advertises those tools to the model, executes selected calls, returns results, and continues until the model stops requesting tools or the iteration bound is reached. Declaring an upstream under `mcp_servers` alone does not put it into this loop. See [Server tools](/docs/context-routing/server-tools) for approval and iteration behavior.
+BitRouter advertises those tools to the model, executes selected calls, returns results, and continues until the model stops requesting tools or a loop bound is reached. Declaring an upstream alone does not put it into this loop. See [Server tools](/docs/context-routing/server-tools) for request opt-in and execution behavior.
 
 ### Connect a coding agent
 
@@ -124,7 +60,7 @@ The launch summary states whether model routing and MCP injection were applied. 
 BitRouter OSS is not a first-party origin MCP server for local administrative commands. To inspect status, models, routes, or requests, install [Agent Skills](/docs/context-routing/skills) in a shell-capable host. The skill selects structured `bro` commands; the host obtains approval and executes them.
 
 <Cards>
-  <Card title="MCP for development" href="/docs/development/mcp" description="Give a coding agent BitRouter reference context." />
+  <Card title="MCP connections" href="/docs/config/mcp-connections" description="Configure upstream transports, aggregate routes, and discovery caches." />
   <Card title="Server tools" href="/docs/context-routing/server-tools" description="Run selected MCP tools inside the router's model loop." />
   <Card title="Agent Skills" href="/docs/context-routing/skills" description="Teach an agent to operate BitRouter through its CLI." />
   <Card title="ACP servers" href="/docs/integration/acp-servers" description="Run agent sessions interactively, headlessly, or over local stdio." />

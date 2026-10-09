@@ -1,6 +1,6 @@
 ---
 title: Server tools
-description: Configure bounded tool execution, nested model calls, and web search and fetch inside routed requests.
+description: Declare tools on routed requests and understand bounded execution, nested model calls, and web search and fetch.
 ---
 
 Normally the calling harness owns the tool loop. With server tools, BitRouter advertises selected tools, intercepts their calls, executes them, appends the results, and calls the model again. The caller receives one final response.
@@ -14,13 +14,7 @@ A server tool runs only when both conditions are true:
 
 This prevents a configured capability from appearing on every request and prevents a caller from invoking an implementation the operator did not enable.
 
-```yaml
-server_tools:
-  max_iterations: 8
-  advisor: true
-  subagent: true
-  mcp_servers: [workspace]
-```
+Enable implementations in [Server tools configuration](/docs/config/server-tools#enable-implementations), then opt into them on a request:
 
 ```json
 {
@@ -34,7 +28,7 @@ Provider-defined declarations are carried by APIs that preserve provider tools, 
 
 ## Loop bounds
 
-The default loop permits 10 tool rounds, 30 seconds per tool, 120 seconds for the turn, and three consecutive tool-error rounds. `server_tools.max_iterations` is the deployment-level override exposed in `bitrouter.yaml`.
+The default loop permits 10 tool rounds, 30 seconds per tool, 120 seconds for the turn, and three consecutive tool-error rounds. Set the deployment-level iteration limit in [Server tools configuration](/docs/config/server-tools#loop-limits).
 
 Reaching a bound stops the loop instead of allowing unbounded model calls. Nested calls, searches, and fetches still consume their normal provider or backend quota.
 
@@ -66,18 +60,7 @@ Every nested call has its own tokens, latency, and provider cost. A tool can imp
 
 ### Enable the implementations
 
-```yaml
-server_tools:
-  advisor: true
-  subagent: true
-  fusion:
-    panel:
-      - anthropic:claude-opus-4.8
-      - openai:gpt-5
-    judge: anthropic:claude-opus-4.8
-```
-
-Advisor and Sub-agent use the parent request model unless their declaration pins another model. Fusion defaults come from the deployment block and can be overridden by an explicit declaration.
+The deployment enables Advisor, Sub-agent, and Fusion in [Server tools configuration](/docs/config/server-tools#model-backed-defaults). Advisor and Sub-agent use the parent model unless the declaration pins another; Fusion inherits deployment defaults unless the declaration overrides them.
 
 ### Advisor
 
@@ -136,7 +119,7 @@ The judge compares panel answers; it does not silently merge them. Treat Fusion 
 
 Advisor and Sub-agent declarations may include provider-namespaced tools for their nested model. Fusion panel members may do the same. Those declarations do not grant new credentials or bypass provider capability checks.
 
-Use [Telemetry](/docs/cli/telemetry) to attribute the nested attempts, and [Model routing](/docs/models-routing/models) to inspect the models each declaration selects.
+Use [Telemetry](/docs/config/telemetry) to attribute the nested attempts, and [Model routing](/docs/models-routing/models) to inspect the models each declaration selects.
 
 ## Web tools
 
@@ -151,36 +134,9 @@ Both are off by default. The deployment configures ordered backends, and each re
 
 ### Configure backends
 
-```yaml
-server_tools:
-  web_search:
-    max_results: 5
-    backends:
-      - kind: parallel
-      - kind: exa
-      - kind: firecrawl
-      - kind: tavily
+Select ordered backends and supply their credentials in [Server tools configuration](/docs/config/server-tools#web-backends). Entries with no resolvable key are skipped; if none resolve, the tool remains disabled. Requests may select an already configured backend, but cannot supply a new credential through a tool declaration.
 
-  web_fetch:
-    max_content_tokens: 4000
-    backends:
-      - kind: exa
-      - kind: firecrawl
-      - kind: tavily
-```
-
-Each HTTP backend reads an explicit `api_key` or its conventional environment variable:
-
-| Backend | Search | Fetch | Environment variable |
-| --- | --- | --- | --- |
-| Parallel | Yes | No | `PARALLEL_API_KEY` |
-| Exa | Yes | Yes | `EXA_API_KEY` |
-| Firecrawl | Yes | Yes | `FIRECRAWL_API_KEY` |
-| Tavily | Yes | Yes | `TAVILY_API_KEY` |
-
-Backends are tried in config order. Entries with no resolvable key are skipped; if none resolve, that tool remains disabled and the daemon logs why.
-
-Web Search also supports a `native` backend that runs a search-capable model with its provider-native search tool. That is a nested model call rather than an HTTP search API.
+Web Search also supports a `native` backend that runs a search-capable model with its provider-native search tool. That path makes a nested model call.
 
 ### Web Search
 
@@ -212,7 +168,8 @@ The parent calls `web_fetch` with a URL. `max_content_tokens` resolves from depl
 - Backend pinning chooses an already configured implementation; it does not supply or reveal a credential.
 
 <Cards>
+  <Card title="Server tools configuration" href="/docs/config/server-tools" description="Enable implementations, set loop limits, and configure backends." />
   <Card title="MCP servers" href="/docs/context-routing/mcp-servers" description="Connect upstream tools and expose them through the gateway." />
-  <Card title="Permissions" href="/docs/cli/permissions" description="Separate configured capabilities from approval to execute." />
-  <Card title="Telemetry" href="/docs/cli/telemetry" description="Inspect tool activity and nested model costs." />
+  <Card title="Headless" href="/docs/cli/headless#permissions" description="Run ACP prompts with explicit tool approval policies." />
+  <Card title="Telemetry" href="/docs/config/telemetry" description="Inspect tool activity and nested model costs." />
 </Cards>

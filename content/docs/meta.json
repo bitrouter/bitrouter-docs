@@ -3,17 +3,19 @@
   "pages": [
     "---Overview---",
     "...(overview-nav)",
-    "---Models & routing---",
+    "---Config---",
+    "...(config-nav)",
+    "---Model---",
     "...(models-routing-nav)",
-    "---Context & routing---",
+    "---Context---",
     "...(context-routing-nav)",
     "---CLI---",
     "...(cli-nav)",
+    "(cli-reference-nav)",
     "---Integration---",
     "...(integration-nav)",
-    "---Reference---",
-    "...reference",
-    "---Development---",
-    "...(development-nav)"
+    "---API---",
+    "...(api-nav)",
+    "reference"
   ]
 }

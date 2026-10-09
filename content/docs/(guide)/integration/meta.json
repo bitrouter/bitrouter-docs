@@ -3,7 +3,6 @@
   "icon": "Plug",
   "pages": [
     "acp-servers",
-    "coding-agents",
     "deepseek-harness",
     "opencode",
     "pi"

@@ -1,7 +1,9 @@
 {
   "title": "Reference",
-  "pagesIndex": "index",
+  "defaultOpen": false,
+  "collapsible": true,
   "pages": [
+    "index",
     "openai-compatible",
     "openai-responses",
     "anthropic-compatible",

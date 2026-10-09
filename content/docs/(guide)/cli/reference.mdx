@@ -21,11 +21,11 @@ Every command below is **generated from the binary's own `--help`**, so the flag
 
 | Variable | Effect |
 | --- | --- |
-| `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `OPENCODE_ZEN_API_KEY` | Zero-config BYOK — auto-enables the provider. See [BYOK](/docs/models-routing/providers#built-in-providers-with-your-own-key) |
+| `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `OPENCODE_ZEN_API_KEY` | Zero-config BYOK — auto-enables the provider. See [BYOK](/docs/config/providers#built-in-providers-with-your-own-key) |
 | `BITROUTER_API_KEY` | Cloud API key; enables the managed `bitrouter` provider |
 | `BITROUTER_HOME` | Config discovery override (see above) |
 | `BITROUTER_OAUTH_AS` | Override the OAuth authorization server for self-hosted Cloud |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | Opt in to OTLP export. See [OpenTelemetry](/docs/cli/telemetry#self-hosted-opentelemetry) |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | Opt in to OTLP export. See [OpenTelemetry](/docs/config/telemetry#self-hosted-opentelemetry) |
 
 ## Command map
 
@@ -354,11 +354,11 @@ Report the OTel exporter's current state (endpoint, sampler, cardinality usage, 
 | `--socket <SOCKET>` | Explicit control socket path. Overrides the config-derived path |
 
 
-Reports the OTel exporter's live state — endpoint, sampler, cardinality usage, in-flight spans. The verification step for [OpenTelemetry](/docs/cli/telemetry#self-hosted-opentelemetry).
+Reports the OTel exporter's live state — endpoint, sampler, cardinality usage, in-flight spans. The verification step for [OpenTelemetry](/docs/config/telemetry#self-hosted-opentelemetry).
 
 ## Providers
 
-Two ways a provider becomes available: **BYOK** (its API key in the environment — see [BYOK](/docs/models-routing/providers#built-in-providers-with-your-own-key)) and **`providers login`** (OAuth against subscription providers such as Claude or Codex subscriptions — see [Model sources](/docs/integration/coding-agents#model-sources)). `providers list` shows the catalog and which providers are active in the current config.
+Two ways a provider becomes available: **BYOK** (its API key in the environment — see [BYOK](/docs/config/providers#built-in-providers-with-your-own-key)) and **`providers login`** (OAuth against subscription providers such as Claude or Codex subscriptions — see [Model sources](/docs/integration/coding-agents#model-sources)). `providers list` shows the catalog and which providers are active in the current config.
 
 ### `bro providers`
 
@@ -421,7 +421,7 @@ Log out of an upstream provider — clears every stored credential for it. For t
 Routing policies are the artifact the [self-improving loop](/docs/overview/what-is-bitrouter) learns into: `init` scaffolds `policy-lock.yaml` and binds it to a preset, live traffic teaches the adequacy ledger, and `evolve --apply` folds proven downgrades back into the file. The walkthrough, table, and ledger semantics are in [Routing policy](/docs/models-routing/policy#let-evidence-improve-the-policy).
 
 <Callout type="info">
-`bro policy create` + `bro key sign` are a **different surface** — per-virtual-key access control (allowed models, budgets, rate limits), not routing. See [Guardrails](/docs/models-routing/guardrails).
+`bro policy create` + `bro key sign` are a **different surface** — per-virtual-key access control (allowed models, budgets, rate limits), not routing. See [access-control policies](/docs/config/configuration-file#three-meanings-of-policy).
 </Callout>
 
 ### `bro policy`
@@ -2157,6 +2157,8 @@ bro run codex-acp "Review the current diff" --format quiet
 
 The default permission policy denies requests. Choose an explicit approval mode or pass a per-tool policy when the task needs tools.
 
+See [Headless](/docs/cli/headless) for prompt input, output formats, session controls, and approval policies.
+
 ### `bro code`
 
 Open BitRouter's coding conversation, or connect directly when an agent id is supplied
@@ -2209,7 +2211,7 @@ Mint a new `brvk_` virtual key for a user. v1 does not sign a JWT — it creates
 | `--policy <POLICY>` | Optional policy id to bind to the key (the `policy_id` column) |
 
 
-Mints a **virtual key** bound to an access-control policy — the per-key guardrails surface (allowed models, budgets, rate limits), distinct from routing policies. See [Guardrails](/docs/models-routing/guardrails).
+Mints a **virtual key** bound to an access-control policy — the per-key guardrails surface (allowed models, budgets, rate limits), distinct from routing policies. See [access-control policies](/docs/config/configuration-file#three-meanings-of-policy).
 
 ```bash
 bro key sign --user ci --policy nightly-cap

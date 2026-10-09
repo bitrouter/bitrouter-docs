@@ -1,5 +1,5 @@
 ---
-title: Configuration
+title: Configuration file
 description: Discover, validate, and reload BitRouter configuration with explicit paths, secrets, and linked policy artifacts.
 ---
 
@@ -24,19 +24,18 @@ Keep `bitrouter.yaml` and any linked policy lock in version control. Keep creden
 
 ## Policy layers
 
-The policy file is an assembly point, not the place to learn every subsystem. Each layer has an owning guide:
+The policy file brings deployment settings together. Use Config to author each block and the behavior guides to understand what it does:
 
-| Layer | Examples | Guide |
+| Layer | Settings | Behavior |
 | --- | --- | --- |
-| Runtime | Listen address, authentication, database, state | [Self-hosting](/docs/self-hosting) |
-| Supply | Providers, accounts, private endpoints, model declarations | [Models & providers](/docs/models-routing/providers) |
-| Selection | Model ids, fallback chains, presets, variants | [Model routing](/docs/models-routing/models) |
-| Adaptation | Routing tables, adequacy, exploration, writeback | [Routing policy](/docs/models-routing/policy) |
-| Constraints | Request and response enforcement, caller restrictions | [Guardrails](/docs/models-routing/guardrails) |
-| Execution | Server tools, MCP servers, ACP agents | [Server tools](/docs/context-routing/server-tools), [MCP servers](/docs/context-routing/mcp-servers), and [ACP servers](/docs/integration/acp-servers) |
-| Evidence | Objective results, receipts, traces, and metrics | [Evaluations](/docs/models-routing/evaluations) and [Telemetry](/docs/cli/telemetry) |
-
-This page explains how those layers form one policy. Follow the owning guide when you need the schema and behavior of a specific block.
+| Runtime | [Self-hosting configuration](/docs/self-hosting#production-configuration) | [Self-hosting operations](/docs/self-hosting#operate) |
+| Supply | [Providers](/docs/config/providers) | [Model routing](/docs/models-routing/models#candidate-eligibility) |
+| Selection | [Model routes](/docs/config/model-routes) | [Model routing](/docs/models-routing/models) |
+| Adaptation | Linked `policy-lock.yaml` | [Routing policy](/docs/models-routing/policy) |
+| MCP | [MCP connections](/docs/config/mcp-connections) | [MCP servers](/docs/context-routing/mcp-servers) |
+| Execution | [Server tools](/docs/config/server-tools) | [Tool declarations and execution](/docs/context-routing/server-tools) |
+| Agents | [ACP server configuration](/docs/integration/acp-servers#choose-an-acp-server) | [TUI](/docs/cli/tui) and [Headless](/docs/cli/headless) |
+| Evidence | [Telemetry](/docs/config/telemetry) | [Evaluations](/docs/models-routing/evaluations) |
 
 ## Create a policy file
 
@@ -144,5 +143,5 @@ BitRouter uses narrower policy terms within the broader router policy:
   <Card title="Model routing" href="/docs/models-routing/models" description="Configure model selectors, fallback, presets, and candidate eligibility." />
   <Card title="bitrouter/auto" href="/docs/models-routing/bitrouter-auto" description="Use the policy-bound model id and review learned route changes." />
   <Card title="Self-hosting" href="/docs/self-hosting#production-configuration" description="Deploy the policy with explicit paths, secrets, supervision, and backups." />
-  <Card title="CLI reference" href="/docs/cli/reference#init-and-config" description="Read the generated config and policy command surface." />
+  <Card title="CLI reference" href="/docs/cli/reference/init" description="Read the generated config and policy command surface." />
 </Cards>

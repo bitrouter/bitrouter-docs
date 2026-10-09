@@ -1,9 +1,9 @@
 ---
 title: Model routing
-description: Configure model selection, fallback, reusable selectors, and compatibility across provider protocols.
+description: Understand model selectors, candidate eligibility, fallback behavior, and compatibility across provider protocols.
 ---
 
-This page controls what a requested model id means after model sources are connected. Use [Supported Models](/docs/overview/supported-models) to browse the public catalog and [Models & providers](/docs/models-routing/providers) to connect keys, private endpoints, or custom model declarations.
+Model routing determines what a requested model id means after model sources are connected. Use [Supported Models](/docs/overview/supported-models) to browse the public catalog and [Providers](/docs/config/providers) to connect keys, private endpoints, or custom model declarations.
 
 Model resolution turns the request's `model` into an ordered chain of eligible provider endpoints. Most policies need only a logical model id or a named fallback chain.
 
@@ -58,61 +58,21 @@ Use `routing.only`, `routing.ignore`, or provider `priority` when the order must
 
 ## Fallback chains
 
-Define an ordered chain with a virtual model:
+A virtual model selects an ordered chain of endpoints. With `strategy: priority`, requests try endpoints in YAML order. BitRouter advances after retryable upstream failures: `5xx`, `408`, `429`, transport or timeout failures, invalid upstream responses, and exhausted provider credit. Other client-side `4xx` errors fail immediately.
 
-```yaml
-models:
-  coding:
-    strategy: priority
-    endpoints:
-      - provider: openai
-        service_id: gpt-5
-      - provider: anthropic
-        service_id: claude-sonnet-4-6
-```
-
-A request for `coding` tries endpoints in YAML order. BitRouter advances after retryable upstream failures: `5xx`, `408`, `429`, transport or timeout failures, invalid upstream responses, and exhausted provider credit. Other client-side `4xx` errors fail immediately.
-
-Use `strategy: cascade` only when the endpoints are interchangeable and selection preferences may reorder or filter them. In alpha.31, cost and latency sorts still use the deterministic priority/provider-ID fallback described above.
+`strategy: cascade` allows selection preferences to reorder or filter interchangeable endpoints. Current cost and latency sorts still use deterministic ordering. Define the chain in [Model routes](/docs/config/model-routes#fallback-chains).
 
 ## Presets
 
-Presets put model substitution, prompt defaults, parameters, routing-policy binding, and candidate filters behind a short name:
+A preset combines model substitution, prompt defaults, parameters, routing-policy binding, and candidate filters behind a name such as `@fast`. Request fields win over preset defaults.
 
-```yaml
-presets:
-  fast:
-    model: coding
-    system_prompt: "Be concise."
-    params:
-      temperature: 0.2
-    routing:
-      only: [openai, anthropic]
-```
-
-Call it as `@fast`. Request fields win over preset defaults, so a preset provides a stable baseline without taking control away from the caller.
-
-`bitrouter/auto` is the public spelling of the `auto` preset and requires that preset to be bound to a routing policy. Create the binding with `bro policy init` rather than hand-authoring a partial lock file.
-
-See [bitrouter/auto](/docs/models-routing/bitrouter-auto) for the operational walkthrough: send traffic, inspect the settled route, override one call, and publish reviewed policy changes.
+`bitrouter/auto` is the public spelling of the `auto` preset and requires a routing-policy binding. Its [walkthrough](/docs/models-routing/bitrouter-auto) covers sending traffic, inspecting the settled route, and publishing reviewed policy changes. See [preset configuration](/docs/config/model-routes#presets) to author ordinary reusable defaults.
 
 ## Variants
 
-A variant changes candidate preferences only:
+A known variant changes candidate preferences when appended to a model or preset, such as `coding:private` or `@fast:primary`. An unknown suffix remains part of the selector.
 
-```yaml
-variants:
-  private:
-    routing:
-      require_tags: [private]
-  primary:
-    routing:
-      only: [openai]
-```
-
-Append a known variant to a model or preset, such as `coding:private` or `@fast:primary`. An unknown suffix is not removed; it remains part of the model selector.
-
-Variants do not grant access, bypass guardrails, or change virtual-key policy.
+Variants do not grant access, bypass guardrails, or change virtual-key policy. Define filters in [variant configuration](/docs/config/model-routes#variants).
 
 ## Protocol compatibility
 
@@ -166,17 +126,7 @@ There is no router-wide schema or enable switch. Presets can supply ordinary req
 
 ### Declare custom capabilities
 
-Routes with explicit capability declarations remain eligible only when they include every capability required by the request. For a private endpoint, declare support only after verifying that exact provider/model route:
-
-```yaml
-providers:
-  my-cluster:
-    models:
-      - id: team/model
-        capabilities: [structured_outputs]
-```
-
-The public model registry carries these declarations for built-in routes. See [Models & providers](/docs/models-routing/providers#custom-endpoints-and-models) when adding a private endpoint or custom model.
+Explicit capability declarations must include every capability required by the request. The public registry provides declarations for built-in routes; private endpoints need verified declarations in [Providers](/docs/config/providers#custom-endpoints-and-models).
 
 ### Compatibility limits
 
@@ -205,8 +155,9 @@ bro route @fast:primary -c bitrouter.yaml
 `bro route` uses the running daemon when available and otherwise resolves from the selected policy file. It is the authoritative way to review the candidate chain before sending traffic.
 
 <Cards>
-  <Card title="Configuration" href="/docs/cli/configuration" description="Understand how model settings fit into the complete desired-state contract." />
+  <Card title="Model routes" href="/docs/config/model-routes" description="Author virtual models, presets, variants, and fallback chains." />
+  <Card title="Configuration" href="/docs/config/configuration-file" description="Understand how model settings fit into the complete desired-state contract." />
   <Card title="Supported Models" href="/docs/overview/supported-models" description="Browse the public model catalog and current hosted pricing." />
-  <Card title="Models & providers" href="/docs/models-routing/providers" description="Connect credentials, private endpoints, and custom model declarations." />
+  <Card title="Providers" href="/docs/config/providers" description="Connect credentials, private endpoints, and custom model declarations." />
   <Card title="API reference" href="/docs/reference" description="Use the request shape for your chosen inbound protocol." />
 </Cards>

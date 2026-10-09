@@ -2,6 +2,7 @@ import { docs, blog, legal, changelog } from "@/.source/server";
 import { loader, type InferPageType } from "fumadocs-core/source";
 import { lucideIconsPlugin } from "fumadocs-core/source/lucide-icons";
 import type { ChangelogItem } from "@/lib/changelog";
+import { isCanonicalDoc } from "@/lib/docs-visibility";
 
 export const source = loader({
   baseUrl: "/docs",
@@ -28,6 +29,10 @@ export type DocsPage = InferPageType<typeof source>;
 export type BlogPage = InferPageType<typeof blogSource>;
 export type LegalPage = InferPageType<typeof legalSource>;
 export type ChangelogPage = InferPageType<typeof changelogSource>;
+
+export function getCanonicalDocs() {
+  return source.getPages().filter(isCanonicalDoc);
+}
 
 export async function getLLMText(page: DocsPage) {
   const processed = await page.data.getText("processed");

@@ -1,0 +1,76 @@
+---
+title: Responses API
+description: Send routed generation requests, stream output, and manage tool results and continuation through BitRouter.
+---
+
+`POST /v1/responses` accepts the OpenAI Responses request format and returns a Responses-shaped result. Use it for generation workflows that exchange messages, reasoning items, and tool calls. For typed questions over shared evidence, use the [Decisions API](/docs/api/decisions).
+
+## Choose an endpoint and model
+
+| Deployment | Endpoint | Authentication |
+| --- | --- | --- |
+| Local daemon | `http://127.0.0.1:4356/v1/responses` | A BitRouter virtual key when local authentication is enabled |
+| BitRouter Cloud | `https://api.bitrouter.ai/v1/responses` | Your Cloud API key or supported bearer credential |
+
+Choose a configured model that supports the requested capabilities. `bitrouter/auto` uses its bound routing policy; an explicit logical model id selects that model while retaining eligible provider fallback. Set up the [auto binding](/docs/models-routing/bitrouter-auto) before using the example below.
+
+## Send a request
+
+```bash
+curl http://127.0.0.1:4356/v1/responses \
+  -H "Authorization: Bearer $BITROUTER_VIRTUAL_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "bitrouter/auto",
+    "instructions": "Explain the result in plain English.",
+    "input": "Summarize what a model-routing policy controls."
+  }'
+```
+
+For Cloud, replace the URL and bearer value with the Cloud endpoint and credential. Upstream provider credentials belong in BitRouter's provider configuration, rather than in this client request.
+
+Read the result's `output` items according to their type. A raw HTTP response can contain message, reasoning, or tool-call items; a completed request does not necessarily contain only assistant text. The generated [endpoint reference](/docs/reference/openai-responses/createResponse) owns the full hosted request schema.
+
+## Stream output
+
+Set `stream` to `true` and let your HTTP client consume Server-Sent Events:
+
+```bash
+curl -N http://127.0.0.1:4356/v1/responses \
+  -H "Authorization: Bearer $BITROUTER_VIRTUAL_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "bitrouter/auto",
+    "input": "Explain provider fallback in two sentences.",
+    "stream": true
+  }'
+```
+
+Handle lifecycle events as well as text deltas. Keep the terminal response and usage when available, and handle failure or incomplete output before deciding that the workflow succeeded.
+
+## Handle function calls
+
+For caller-owned functions, your application runs the tool loop:
+
+1. Declare the function's name and argument schema in `tools`.
+2. Inspect returned function-call items and validate their arguments.
+3. Execute the permitted function in your application.
+4. Submit a `function_call_output` item with the original `call_id`.
+5. Continue until the response reaches the application's completion condition.
+
+Preserve the required prior input and output items, including replay metadata needed by the selected route. OpenAI's [function-calling guide](https://developers.openai.com/api/docs/guides/function-calling) explains the wire items. [Server tools](/docs/context-routing/server-tools) describe the separate path where BitRouter executes selected tools inside its bounded loop.
+
+## Continue a conversation
+
+When using `previous_response_id`, keep the response id returned by the gateway and continue against that deployment. The current local daemon stores provider-native continuation independently of trajectory capture and exposes gateway continuation ids to clients. Treat those ids as opaque; provider-private ids are not interchangeable with them.
+
+Continuation depends on retained state and the route's replay capabilities. A different model, provider, or deployment may require a self-contained history or reject a continuation. Verify the behavior of your deployment before changing a live conversation's route. Local continuation configuration is described in the [BitRouter operational reference](https://github.com/bitrouter/bitrouter/blob/main/skills/bitrouter/references/cli.md).
+
+## Inspect routing and compatibility
+
+Use [Telemetry](/docs/config/telemetry) to inspect the model and provider that actually served the request. [Model routing](/docs/models-routing/models#protocol-compatibility) explains capability filtering and translation between provider protocols. Support for the Responses wire format does not establish support for every provider-native tool or continuation mode.
+
+<Cards>
+  <Card title="Responses endpoint reference" href="/docs/reference/openai-responses/createResponse" description="Read the generated hosted request and response schema." />
+  <Card title="Decisions API" href="/docs/api/decisions" description="Evaluate typed questions over shared evidence." />
+</Cards>

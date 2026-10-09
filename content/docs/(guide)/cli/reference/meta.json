@@ -1,0 +1,17 @@
+{
+  "title": "Reference",
+  "defaultOpen": false,
+  "collapsible": true,
+  "pages": [
+    "daemon",
+    "init",
+    "route",
+    "providers",
+    "policy",
+    "cloud",
+    "tools",
+    "skills",
+    "harnesses",
+    "misc"
+  ]
+}

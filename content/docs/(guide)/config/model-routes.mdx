@@ -1,0 +1,88 @@
+---
+title: Model routes
+description: Author virtual models, ordered fallbacks, presets, variants, and routing filters.
+---
+
+Use `models`, `presets`, and `variants` in [the configuration file](/docs/config/configuration-file) to make reusable model routes. Connect [Providers](/docs/config/providers) first. [Model routing](/docs/models-routing/models) explains how a request selector resolves and which candidates are eligible.
+
+## Fallback chains
+
+Define an ordered chain with a virtual model:
+
+```yaml
+models:
+  coding:
+    strategy: priority
+    endpoints:
+      - provider: openai
+        service_id: gpt-5
+      - provider: anthropic
+        service_id: claude-sonnet-4-6
+```
+
+A request for `coding` tries endpoints in YAML order. BitRouter advances after retryable upstream failures: `5xx`, `408`, `429`, transport or timeout failures, invalid upstream responses, and exhausted provider credit. Other client-side `4xx` errors fail immediately.
+
+Use `strategy: cascade` only when the endpoints are interchangeable and selection preferences may reorder or filter them. In alpha.31, cost and latency sorts still use the deterministic priority/provider-ID fallback described in [candidate eligibility](/docs/models-routing/models#candidate-eligibility).
+
+## Presets
+
+Presets put model substitution, prompt defaults, parameters, routing-policy binding, and candidate filters behind a short name:
+
+```yaml
+presets:
+  fast:
+    model: coding
+    system_prompt: "Be concise."
+    params:
+      temperature: 0.2
+    routing:
+      only: [openai, anthropic]
+```
+
+Call it as `@fast`. Request fields win over preset defaults, so a preset provides a stable baseline without taking control away from the caller.
+
+`bitrouter/auto` is the public spelling of the `auto` preset and requires that preset to be bound to a routing policy. Create the binding with `bro policy init` rather than hand-authoring a partial lock file.
+
+See [bitrouter/auto](/docs/models-routing/bitrouter-auto) for the operational walkthrough: send traffic, inspect the settled route, override one call, and publish reviewed policy changes.
+
+## Variants
+
+A variant changes candidate preferences only:
+
+```yaml
+variants:
+  private:
+    routing:
+      require_tags: [private]
+  primary:
+    routing:
+      only: [openai]
+```
+
+Append a known variant to a model or preset, such as `coding:private` or `@fast:primary`. An unknown suffix is not removed; it remains part of the model selector.
+
+Variants do not grant access, bypass guardrails, or change virtual-key policy.
+
+## Review candidate filters
+
+Preset and variant `routing` blocks can restrict candidates with `only`, `ignore`, or `require_tags`. Provider `priority` also controls deterministic ordering. These settings narrow model selection; they do not grant caller access or bypass guardrails.
+
+<Callout type="warning">
+In alpha.31, `cost` and `latency` sorts use the same deterministic priority/provider-ID order as `alphabetical`. They do not provide measured live optimization. See [candidate eligibility](/docs/models-routing/models#candidate-eligibility).
+</Callout>
+
+## Validate and preview
+
+```bash
+bro config validate -c bitrouter.yaml
+bro route coding -c bitrouter.yaml
+bro route @fast:primary -c bitrouter.yaml
+bro policy check -c bitrouter.yaml
+```
+
+`bro route` previews resolution without sending an inference request. Check linked policy artifacts with `bro policy check` before applying a policy-bound preset.
+
+<Cards>
+  <Card title="Model routing" href="/docs/models-routing/models" description="Understand selector resolution, eligibility, fallback behavior, and protocol compatibility." />
+  <Card title="Routing policy" href="/docs/models-routing/policy" description="Review and publish evidence-backed changes to policy-bound routes." />
+</Cards>

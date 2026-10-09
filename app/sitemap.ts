@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { execSync } from "child_process";
 import {
-  source,
+  getCanonicalDocs,
   blogSource,
   legalSource,
   getChangelogItems,
@@ -27,7 +27,7 @@ type Entry = MetadataRoute.Sitemap[number];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // ── Docs, git-dated per source file ──
-  const docPages = source.getPages().map((page) => {
+  const docPages = getCanonicalDocs().map((page) => {
     // Real file path, not the slugs: the `(guide)/` folder group is stripped
     // from URLs, and pages are a mix of `.md`, `.mdx`, and `<name>/index.mdx`.
     const mdxPath = `content/docs/${page.path}`;

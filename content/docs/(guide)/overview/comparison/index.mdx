@@ -29,7 +29,7 @@ BitRouter makes a different bet: the hard problem is no longer only *how many mo
 
 ### Use OpenRouter when
 
-- **You want the broadest hosted catalog.** BitRouter Cloud deliberately curates its agentic and coding set. BitRouter can still [bring your own model](/docs/models-routing/providers#custom-endpoints-and-models), but that is different from having every model on one hosted account.
+- **You want the broadest hosted catalog.** BitRouter Cloud deliberately curates its agentic and coding set. BitRouter can still [bring your own model](/docs/config/providers#custom-endpoints-and-models), but that is different from having every model on one hosted account.
 - **You want free hosted models.** OpenRouter surfaces free options for some models; BitRouter Cloud does not currently offer a free-model tier.
 - **You need enterprise tooling BitRouter has not shipped.** Review [Enterprise](/enterprise) before planning a migration around SSO, audit, compliance, or contractual support requirements.
 
@@ -58,7 +58,7 @@ The useful question is whether you want a broad gateway toolkit or a focused rou
 
 LiteLLM's bet is coverage: a broad provider and endpoint surface you configure. BitRouter concentrates on an operator-owned feedback loop. It wraps the agent loop in a second one — [act → observe → evaluate → learn](/docs/overview/what-is-bitrouter) — and folds admitted evidence back into the routing policy.
 
-An [MCP gateway](/docs/context-routing/mcp-servers#mcp-gateway) for tools and local [ACP adapters](/docs/integration/acp-servers) for agent sessions are included because they serve that loop. The router remains one binary and one `bitrouter.yaml`; new model and provider definitions live in the open [registry](/docs/models-routing/providers).
+An [MCP gateway](/docs/context-routing/mcp-servers#mcp-gateway) for tools and local [ACP adapters](/docs/integration/acp-servers) for agent sessions are included because they serve that loop. The router remains one binary and one `bitrouter.yaml`; new model and provider definitions live in the open [registry](/docs/config/providers).
 
 <CompareTable slug="bitrouter-vs-litellm" />
 
@@ -85,10 +85,10 @@ BitRouter is distributed as one Rust binary with its router, protocol adapters, 
 If you use the LiteLLM Python SDK in-process, this is an architecture change rather than a package swap: move model calls to a standard OpenAI-compatible client and send them through a BitRouter endpoint. If you run LiteLLM Proxy, replace that service while keeping applications on the same endpoint shape.
 
 1. Choose [BitRouter Cloud or self-hosting](/docs/overview/quickstart).
-2. Move provider credentials into the cloud account, environment variables, or the [`bitrouter.yaml` router policy](/docs/cli/configuration).
+2. Move provider credentials into the cloud account, environment variables, or the [`bitrouter.yaml` router policy](/docs/config/configuration-file).
 3. Change the client base URL to `https://api.bitrouter.ai/v1` or `http://127.0.0.1:4356/v1`.
 4. Translate LiteLLM `model_list`, fallback, and routing settings into BitRouter [models, presets, and fallback rules](/docs/models-routing/models).
-5. Send representative requests, inspect selected routes, and configure [OpenTelemetry export](/docs/cli/telemetry#self-hosted-opentelemetry) before retiring the old proxy.
+5. Send representative requests, inspect selected routes, and configure [OpenTelemetry export](/docs/config/telemetry#self-hosted-opentelemetry) before retiring the old proxy.
 
 BitRouter does not replace LiteLLM's importable SDK, non-chat endpoint breadth, cache layer, or mature team-admin surface. Keep workloads that depend on those features on LiteLLM until you have an explicit replacement.
 

@@ -1,0 +1,11 @@
+{
+  "title": "Config",
+  "pagesIndex": "[Configuration file](/docs/config/configuration-file)",
+  "pages": [
+    "[Providers](/docs/config/providers)",
+    "[Model routes](/docs/config/model-routes)",
+    "[MCP connections](/docs/config/mcp-connections)",
+    "[Server tools](/docs/config/server-tools)",
+    "[Telemetry](/docs/config/telemetry)"
+  ]
+}

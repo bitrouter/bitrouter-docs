@@ -1,0 +1,11 @@
+{
+  "title": "Config",
+  "pages": [
+    "configuration-file",
+    "providers",
+    "model-routes",
+    "mcp-connections",
+    "server-tools",
+    "telemetry"
+  ]
+}

@@ -7,6 +7,7 @@ import { DocsMeta, readingMinutes } from "@/components/docs-meta";
 import { Feedback } from "@/components/feedback/client";
 import { onPageFeedbackAction } from "@/lib/github";
 import type { Metadata } from "next";
+import { isCanonicalDoc } from "@/lib/docs-visibility";
 
 const GITHUB_REPO = "https://github.com/AIMOverse/bitrouter-docs";
 
@@ -108,6 +109,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: page.data.title,
     description: page.data.description,
+    ...(!isCanonicalDoc(page) ? { robots: { index: false, follow: true } } : {}),
     alternates: {
       canonical: `https://bitrouter.ai${page.url}`,
     },

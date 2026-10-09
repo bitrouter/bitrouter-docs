@@ -1,10 +1,8 @@
 {
-  "title": "Models & routing",
+  "title": "Model",
   "pagesIndex": "[bitrouter/auto](/docs/models-routing/bitrouter-auto)",
   "pages": [
-    "[Models & providers](/docs/models-routing/providers)",
     "[Model routing](/docs/models-routing/models)",
-    "[Guardrails](/docs/models-routing/guardrails)",
     "[Evaluations](/docs/models-routing/evaluations)",
     "[Routing policy](/docs/models-routing/policy)"
   ]

@@ -1,6 +1,6 @@
 ---
 title: Telemetry
-description: Inspect request receipts, export OpenTelemetry to your own backend, or use the hosted Cloud activity view.
+description: Inspect request receipts and Cloud activity, and configure OpenTelemetry export, capture, and sampling.
 ---
 
 Telemetry records what BitRouter did. Start with the smallest surface that answers your operational question:
@@ -104,6 +104,7 @@ Receipts, spans, and metrics establish what ran and what it cost. They do not es
 [Evaluations](/docs/models-routing/evaluations) defines the separate subject, result, admission, and snapshot lifecycle. An evaluator may consume telemetry, but the evaluator's objective and result remain explicit evidence rather than inferred metadata.
 
 <Cards>
+  <Card title="Configuration file" href="/docs/config/configuration-file" description="Resolve secrets, validate settings, and apply exporter changes." />
   <Card title="bitrouter/auto" href="/docs/models-routing/bitrouter-auto" description="Use the policy-driven model id and inspect the route that served." />
   <Card title="Evaluations" href="/docs/models-routing/evaluations" description="Record whether results met an objective." />
   <Card title="Self-hosting operations" href="/docs/self-hosting#operate" description="Reload, inspect, and operate a production daemon." />

@@ -1,0 +1,87 @@
+---
+title: Decisions API
+description: Evaluate evidence with native predicate, choice, and score questions through a supported local BitRouter gateway.
+---
+
+`POST /v1/decisions` evaluates shared evidence against typed questions and returns an ordered `answers` array with provider-reported `usage`. Use the [Responses API](/docs/api/responses) when the workflow needs generated messages or tool calls.
+
+<Callout type="info">
+This guide covers a local BitRouter build with native Decisions support. The hosted OpenAPI reference currently does not declare a Decisions endpoint; it does not establish Cloud availability. Verify the contract of a hosted deployment before sending Decisions traffic to it.
+</Callout>
+
+## Configure a native target
+
+Choose a provider/model route that explicitly advertises the `decisions` protocol. Generic OpenAI compatibility or support for generation alone is insufficient, and a provider pin cannot bypass operation filtering.
+
+For an OpenAI upstream, use the API-key provider with `OPENAI_API_KEY`. The `openai-codex` subscription provider does not advertise Decisions. When local authentication is enabled, the client uses a BitRouter virtual key; the upstream provider key serves a separate authentication hop.
+
+The example uses `<configured-decisions-model>` as a placeholder for your configured native target. `bro route` previews generation routing; inspect settled requests to verify the actual Decisions hop.
+
+## Ask a predicate question
+
+```bash
+curl http://127.0.0.1:4356/v1/decisions \
+  -H "Authorization: Bearer $BITROUTER_VIRTUAL_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "<configured-decisions-model>",
+    "input": "The change adds a regression test, but the test run reports one failure.",
+    "questions": [{
+      "type": "predicate",
+      "name": "tests_pass",
+      "instructions": "Does the evidence establish that all tests passed?"
+    }]
+  }'
+```
+
+## Choose a question type
+
+| Type | Question definition | Answer fields |
+| --- | --- | --- |
+| `predicate` | Instructions defining a condition | `probability` |
+| `choice` | Instructions and a fixed list of typed choices | `choice`, `probabilities`, `confidence` |
+| `score` | Instructions and ordered rubric levels | `score`, `probabilities`, `confidence` |
+
+For example, these questions can be added to the same evidence request:
+
+```json
+{
+  "questions": [
+    {
+      "type": "choice",
+      "name": "next_step",
+      "instructions": "Choose the next step justified by the test result.",
+      "choices": [
+        {"value": "investigate", "description": "Inspect the failing test."},
+        {"value": "accept", "description": "All required checks passed."}
+      ]
+    },
+    {
+      "type": "score",
+      "name": "validation",
+      "instructions": "Score the evidence of successful validation.",
+      "levels": [
+        {"label": "missing", "description": "No checks are reported."},
+        {"label": "partial", "description": "Checks ran with unresolved failures."},
+        {"label": "complete", "description": "All required checks passed."}
+      ]
+    }
+  ]
+}
+```
+
+Choice values retain their type: boolean `true` and string `"true"` are different categories. Score levels are ordered from lowest to highest; the score is a probability-weighted, zero-based level index. Applications choose how answers inform their workflow. Confidence is a model estimate rather than measured task accuracy. See the official [Decisions guide](https://developers.openai.com/api/docs/guides/decisions) for question semantics.
+
+## Handle answers and refusals
+
+Answers correspond to questions in their original order. Optional question names help identify them; keep positional correspondence rather than replacing the array with a name-keyed map.
+
+Check each answer's `type` before reading its fields. A question may return `refusal` while other questions succeed; even an all-refusal result can be an HTTP success. A transport success alone does not establish that the evidence supports the application's next action.
+
+Input supports text and user-message parts with inline base64 image data URLs. External image URLs and file ids are unsupported. Decisions does not accept generation tools, streaming, or conversation continuation fields.
+
+## Inspect usage and cost
+
+Decisions uses its own `pricing_by_protocol` tariff and does not inherit generation pricing. The current local metering implementation preserves usage while marking cost unavailable for nonzero native cache counters. Keep unavailable cost distinct from zero cost.
+
+Use [Telemetry](/docs/config/telemetry) to inspect settled requests. A completed malformed native response fails delivery and retains usable usage without automatic retry. The [BitRouter native Decisions reference](https://github.com/bitrouter/bitrouter/blob/main/skills/bitrouter/references/decisions.md) documents admission, tariff configuration, and cost-coverage limits.

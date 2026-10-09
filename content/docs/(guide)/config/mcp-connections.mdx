@@ -1,0 +1,96 @@
+---
+title: MCP connections
+description: Configure upstream MCP transports, aggregate routes, name prefixes, and discovery caches.
+---
+
+Declare upstream MCP servers in `bitrouter.yaml`. The router connects to these servers and exposes their capabilities through direct or aggregate routes. [MCP servers](/docs/context-routing/mcp-servers) explains the gateway behavior and how agents consume it.
+
+## Configure upstream servers
+
+Add servers under `mcp_servers` in the [`bitrouter.yaml` router policy](/docs/config/configuration-file). Stdio entries launch a child process; HTTP entries connect to a Streamable HTTP endpoint.
+
+```yaml
+mcp_servers:
+  filesystem:
+    name: filesystem
+    transport:
+      type: stdio
+      command: npx
+      args: ["-y", "@modelcontextprotocol/server-filesystem", "/data"]
+  context7:
+    name: context7
+    transport:
+      type: http
+      url: https://mcp.context7.com/mcp
+      headers:
+        Authorization: "Bearer ${CONTEXT7_TOKEN}"
+```
+
+A stdio child inherits the ambient environment, with configured `env` values added or overridden. HTTP headers are sent to that upstream on every request.
+
+<Callout type="info">
+When `mcp_servers` is empty, the daemon does not mount MCP routes. A `404` on `/mcp` before configuring an upstream is expected.
+</Callout>
+
+## Configure the aggregate gateway
+
+The aggregate is enabled by default and can be moved or disabled:
+
+```yaml
+mcp:
+  aggregate:
+    enabled: true
+    route: /mcp
+```
+
+Aggregate tool and prompt names are prefixed with the server id to avoid collisions. Override the prefix or exclude one server from aggregation without disabling its direct route:
+
+```yaml
+mcp_servers:
+  context7:
+    name: context7
+    transport:
+      type: http
+      url: https://mcp.context7.com/mcp
+    tool_prefix: "docs__"
+    aggregate: false
+```
+
+## Cache discovery, not execution
+
+Aggregate list calls use bounded TTL caches by default. Tool execution is never cached.
+
+| Setting | Default | Method |
+| --- | --- | --- |
+| `tools_list_ttl_secs` | `60` | `tools/list` |
+| `resources_list_ttl_secs` | `60` | `resources/list` |
+| `resources_templates_list_ttl_secs` | `300` | `resources/templates/list` |
+| `prompts_list_ttl_secs` | `300` | `prompts/list` |
+
+Set an individual TTL to `0`, or disable the cache as a whole:
+
+```yaml
+mcp:
+  cache:
+    enabled: false
+```
+
+## Enable use by server tools
+
+Declaring an upstream makes it available to the gateway. To use its tools inside BitRouter's model loop, also select it under [Server tools configuration](/docs/config/server-tools#mcp-backed-tools).
+
+## Validate and check
+
+```bash
+bro config validate -c bitrouter.yaml
+bro reload -c bitrouter.yaml
+bro mcp check
+bro mcp check context7
+```
+
+The check performs a `tools/list` round trip against configured upstreams; it does not create a separate registry. [Configuration file](/docs/config/configuration-file#apply-and-review-changes) covers applying changes and when a restart is required.
+
+<Cards>
+  <Card title="MCP servers" href="/docs/context-routing/mcp-servers" description="Use the gateway, discover tools, and connect an agent." />
+  <Card title="Server tools" href="/docs/config/server-tools" description="Select MCP upstreams for the router-owned tool loop." />
+</Cards>

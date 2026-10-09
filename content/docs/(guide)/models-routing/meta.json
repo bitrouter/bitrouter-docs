@@ -1,10 +1,8 @@
 {
-  "title": "Models & routing",
+  "title": "Model",
   "pages": [
     "bitrouter-auto",
-    "providers",
     "models",
-    "guardrails",
     "evaluations",
     "policy",
     "local-inference"

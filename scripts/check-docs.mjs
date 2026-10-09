@@ -25,11 +25,12 @@ import { COMPONENT_WHITELIST } from "../lib/docs-sync/constants.mjs";
 // under the `(guide)` folder group, which fumadocs strips from the URL.
 const SECTIONS = [
   "(guide)/overview",
+  "(guide)/config",
   "(guide)/models-routing",
   "(guide)/context-routing",
   "(guide)/cli",
   "(guide)/integration",
-  "(guide)/development",
+  "(guide)/api",
   "self-hosting",
 ];
 // Reference endpoint pages are generated, but its overview is hand-authored
@@ -39,35 +40,43 @@ const ROOT = "content/docs";
 // Generated output, exempt from the hand-authoring contract: it is emitted by
 // scripts/generate-cli.mjs from the binary's own `--help`.
 const GENERATED = new Set(["(guide)/cli/reference.mdx"]);
+const isGenerated = (path) => GENERATED.has(path) || path.startsWith("(guide)/cli/reference/");
 // Intentional exceptions to the otherwise complete public sidebar. Keep this
 // list short and document each product-navigation decision.
 const HIDDEN_SIDEBAR_ROUTES = new Set([
   "/docs/cli/agent",
   "/docs/models-routing/local-inference",
+  "/docs/cli/reference",
+  // Retained for existing links after replacing the generic Integration entry.
+  "/docs/integration/coding-agents",
 ]);
 const NAV_FILES = [
   "(overview-nav)/meta.json",
+  "(config-nav)/meta.json",
   "(models-routing-nav)/meta.json",
   "(context-routing-nav)/meta.json",
   "(cli-nav)/meta.json",
+  "(cli-reference-nav)/meta.json",
   "(integration-nav)/meta.json",
-  "(development-nav)/meta.json",
+  "(api-nav)/meta.json",
 ];
 const ROOT_NAV_PAGES = [
   "---Overview---",
   "...(overview-nav)",
-  "---Models & routing---",
+  "---Config---",
+  "...(config-nav)",
+  "---Model---",
   "...(models-routing-nav)",
-  "---Context & routing---",
+  "---Context---",
   "...(context-routing-nav)",
   "---CLI---",
   "...(cli-nav)",
+  "(cli-reference-nav)",
   "---Integration---",
   "...(integration-nav)",
-  "---Reference---",
-  "...reference",
-  "---Development---",
-  "...(development-nav)",
+  "---API---",
+  "...(api-nav)",
+  "reference",
 ];
 
 async function walk(dir) {
@@ -131,7 +140,7 @@ async function main() {
   const files = [];
   for (const s of SECTIONS) files.push(...(await walk(join(ROOT, s))));
   files.push(...STANDALONE_DOCS.map((path) => join(ROOT, path)));
-  const docs = files.filter(isDoc).filter((p) => !GENERATED.has(relative(ROOT, p)));
+  const docs = files.filter(isDoc).filter((p) => !isGenerated(relative(ROOT, p)));
   const errors = [];
 
   const rootMeta = JSON.parse(await readFile(join(ROOT, "meta.json"), "utf8"));
@@ -158,7 +167,7 @@ async function main() {
 
   for (const navFile of NAV_FILES) {
     const meta = JSON.parse(await readFile(join(ROOT, navFile), "utf8"));
-    const entries = [meta.pagesIndex, ...(meta.pages ?? [])];
+    const entries = [meta.pagesIndex, ...(meta.pages ?? [])].filter((entry) => entry !== undefined);
     for (const entry of entries) {
       const route = navRoute(entry);
       if (!route) {
@@ -167,8 +176,15 @@ async function main() {
       }
       seenRoutes.set(route, (seenRoutes.get(route) ?? 0) + 1);
       if (!expectedRoutes.has(route)) {
-        errors.push(`${navFile}  sidebar link has no non-Reference MDX page: ${route}`);
+        errors.push(`${navFile}  sidebar link has no guide or CLI-reference MDX page: ${route}`);
       }
+    }
+  }
+
+  for (const navFile of ["(cli-reference-nav)/meta.json", "reference/meta.json"]) {
+    const meta = JSON.parse(await readFile(join(ROOT, navFile), "utf8"));
+    if (meta.collapsible !== true || meta.defaultOpen !== false) {
+      errors.push(`${navFile}  Reference must be collapsible and closed by default`);
     }
   }
 
@@ -215,7 +231,7 @@ async function main() {
   console.log(
     `check-docs: OK — ${docs.length} doc(s) across ${SECTIONS.length} sections ` +
       `and ${STANDALONE_DOCS.length} standalone page(s) pass the authoring contract; ` +
-      `${expectedRoutes.size} visible non-Reference page(s) appear exactly once in the sidebar; ` +
+      `${expectedRoutes.size} visible guide/CLI-reference page(s) appear exactly once in the sidebar; ` +
       `${HIDDEN_SIDEBAR_ROUTES.size} page(s) are intentionally hidden`,
   );
 }

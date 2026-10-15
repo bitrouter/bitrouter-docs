@@ -11,10 +11,7 @@ import {
 const cache = new Map<string, string>();
 
 /**
- * "Copy page" for the v3 docs meta row — the same clipboard behaviour as
- * `LLMCopyButton`, wearing the row's type (uppercase mono, ruled underline)
- * instead of a secondary button. Shares the cache above, so hitting either one
- * warms the other.
+ * Compact page actions for the shared light documentation layout.
  */
 export function CopyPageButton({ markdownUrl }: { markdownUrl: string }) {
   const [isLoading, setLoading] = useState(false);
@@ -43,7 +40,7 @@ export function CopyPageButton({ markdownUrl }: { markdownUrl: string }) {
       type="button"
       disabled={isLoading}
       onClick={onClick}
-      className="cursor-pointer border-b border-[var(--z-rule-2)] pb-0.5 font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--z-ink-5)] transition-colors hover:border-[var(--z-ink-3)] hover:text-[var(--z-ink-2)] disabled:opacity-60"
+      className="cursor-pointer rounded-sm font-sans text-xs text-[var(--z-ink-5)] transition-colors hover:text-[var(--z-ink-2)] disabled:opacity-60"
     >
       {checked ? 'Copied' : 'Copy page'}
     </button>
@@ -102,18 +99,18 @@ export function ViewOptions({
 
   return (
     <Popover>
-      <PopoverTrigger className="inline-flex cursor-pointer items-center gap-1.5 border-b border-[var(--z-rule-2)] pb-0.5 font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--z-ink-5)] transition-colors hover:border-[var(--z-ink-3)] hover:text-[var(--z-ink-2)]">
+      <PopoverTrigger className="inline-flex cursor-pointer items-center gap-1.5 rounded-sm font-sans text-xs text-[var(--z-ink-5)] transition-colors hover:text-[var(--z-ink-2)]">
         Open in…
         <ChevronDown className="size-3" />
       </PopoverTrigger>
-      <PopoverContent className="flex w-56 flex-col gap-0 rounded-none border-[var(--z-rule)] bg-[var(--z-bg)] p-1">
+      <PopoverContent className="flex w-56 flex-col gap-0 rounded-lg border-[var(--z-rule)] bg-[var(--z-bg)] p-1">
         {items.map((item) => (
           <a
             key={item.href}
             href={item.href}
             rel="noreferrer noopener"
             target="_blank"
-            className="zed-chrome-link inline-flex items-center gap-2.5 p-2 font-mono text-[12.5px] text-[var(--z-ink-3)] no-underline transition-colors hover:bg-[var(--z-wash)] hover:text-[var(--z-ink)] [&_svg]:size-3.5"
+            className="zed-chrome-link inline-flex items-center gap-2.5 rounded-md p-2 font-sans text-[12.5px] text-[var(--z-ink-3)] no-underline transition-colors hover:bg-[var(--z-wash)] hover:text-[var(--z-ink)] [&_svg]:size-3.5"
           >
             {item.icon}
             {item.title}

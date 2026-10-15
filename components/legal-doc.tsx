@@ -18,7 +18,7 @@ export function renderLegalPage(slug: string, components: MDXComponents = {}) {
   const MDX = page.data.body;
 
   return (
-    <div className="zed-bg">
+    <main className="zed-bg" id="main">
       <section style={{ position: "relative" }}>
         <article
           className="zed-wrap"
@@ -38,7 +38,7 @@ export function renderLegalPage(slug: string, components: MDXComponents = {}) {
           {page.data.description && (
             <p
               style={{
-                fontFamily: "var(--font-mono)",
+                fontFamily: "var(--font-sans)",
                 fontSize: 14.5,
                 lineHeight: 1.75,
                 color: "var(--z-ink-5)",
@@ -55,11 +55,11 @@ export function renderLegalPage(slug: string, components: MDXComponents = {}) {
               style={{
                 marginTop: 28,
                 paddingTop: 20,
-                borderTop: "1px solid var(--z-rule)",
-                fontFamily: "var(--font-mono)",
+
+                fontFamily: "var(--font-sans)",
                 fontSize: 10,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
+                letterSpacing: "0",
+                textTransform: "none",
                 color: "var(--z-ink-6)",
               }}
             >
@@ -77,7 +77,7 @@ export function renderLegalPage(slug: string, components: MDXComponents = {}) {
           </div>
         </article>
       </section>
-    </div>
+    </main>
   );
 }
 

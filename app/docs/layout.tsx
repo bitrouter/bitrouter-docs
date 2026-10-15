@@ -12,7 +12,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         tabs={false}
         sidebar={{ prefetch: false }}
         nav={{ mode: "top" }}
-        slots={{ header: DocsHeader }}
+        slots={{ header: DocsHeader, themeSwitch: false }}
       >
         {children}
       </DocsLayout>

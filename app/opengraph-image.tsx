@@ -1,72 +1,17 @@
 import { ImageResponse } from "next/og";
-import { HERO } from "@/components/landing/zed/data";
 
-export const alt = "BitRouter — The open-source model router for your workflow";
+export const alt = "BitRouter — Time is money. More done per token.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default function OGImage() {
   return new ImageResponse(
-    (
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "#09090b",
-          color: "#fafafa",
-          fontFamily: "monospace",
-          padding: "60px",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "24px",
-          }}
-        >
-          <div
-            style={{
-              fontSize: 72,
-              fontWeight: 700,
-              letterSpacing: "-2px",
-            }}
-          >
-            BitRouter
-          </div>
-          <div
-            style={{
-              fontSize: 28,
-              color: "#a1a1aa",
-              textAlign: "center",
-              maxWidth: "800px",
-            }}
-          >
-            {HERO.headline}
-          </div>
-          <div
-            style={{
-              display: "flex",
-              gap: "40px",
-              marginTop: "32px",
-              fontSize: 20,
-              color: "#71717a",
-            }}
-          >
-            <span>Apache-2.0</span>
-            <span>&#183;</span>
-            <span>Self-host or Cloud</span>
-            <span>&#183;</span>
-            <span>Policy you own</span>
-          </div>
-        </div>
-      </div>
-    ),
-    { ...size },
+    <div style={{ width:"100%", height:"100%", display:"flex", flexDirection:"column", justifyContent:"center", backgroundColor:"#ffffff", color:"#171717", padding:"80px" }}>
+      <div style={{ fontSize:26, marginBottom:60 }}>bitrouter.</div>
+      <div style={{ fontSize:76, letterSpacing:"-3px" }}>Time is money.</div>
+      <div style={{ fontSize:64, fontStyle:"italic", letterSpacing:"-2px", marginTop:8 }}>More done per token.</div>
+      <div style={{ display:"flex", gap:24, fontSize:21, color:"#737373", marginTop:60 }}><span>Your agents.</span><span>Your models.</span><span>Your infrastructure.</span></div>
+    </div>,
+    size,
   );
 }

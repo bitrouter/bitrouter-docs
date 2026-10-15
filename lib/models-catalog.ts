@@ -9,6 +9,8 @@ export type ModelRow = {
   maxInputTokens: number | null;
   inputUsdPerM: number | null;
   outputUsdPerM: number | null;
+  cacheReadUsdPerM?: number | null;
+  cacheWriteUsdPerM?: number | null;
   inputModalities: string[];
   /**
    * Open-weight licensing, from the registry via `/v1/models`. `null` means the
@@ -53,6 +55,8 @@ function normalize(m: any): ModelRow {
     providers: m.providers?.total_online ?? 0,
     inputUsdPerM: p?.input_tokens?.no_cache ?? null,
     outputUsdPerM: outputPrice(p?.output_tokens),
+    cacheReadUsdPerM: p?.input_tokens?.cache_read ?? null,
+    cacheWriteUsdPerM: p?.input_tokens?.cache_write ?? null,
     openWeights:
       typeof m.open_weights === "boolean"
         ? m.open_weights
@@ -65,7 +69,7 @@ function normalize(m: any): ModelRow {
  * every 10 min); falls back to the build-time snapshot if the API is
  * unreachable, so pages never render empty.
  *
- * Shared by the docs Models & Providers table and the `/models` registry page —
+ * Shared by the docs Models & Providers table and the `/pricing` catalog —
  * both read the same live catalog so they cannot drift apart.
  */
 export async function getDocsModels(): Promise<ModelRow[]> {

@@ -5,16 +5,13 @@ export type FooterLink = { label: string; href: string; external?: boolean };
 /**
  * The footer, as one row of cells.
  *
- * The compact strip keeps writing and releases close, then points to the three
- * places to find the project, datasets, and community.
+ * The compact strip keeps pricing, releases, and community links close.
  */
 export const FOOTER_LINKS: FooterLink[] = [
-  { label: "Blog", href: "/blog" },
   { label: "Changelog", href: "/changelog" },
   { label: "GitHub", href: socialHref("github"), external: true },
   { label: "Discord", href: socialHref("discord"), external: true },
   { label: "X", href: socialHref("x"), external: true },
-  { label: "Hugging Face", href: socialHref("huggingface"), external: true },
 ];
 
 /** Compliance links for the bottom row — these are not navigation. */

@@ -48,6 +48,7 @@ function normalize(model, registryOpenWeights) {
     // agent loop actually pays on turn two onward, so the catalog carries it
     // beside the uncached rate. Null where the model prices no cache tier.
     cacheReadUsdPerM: p?.input_tokens?.cache_read ?? null,
+    cacheWriteUsdPerM: p?.input_tokens?.cache_write ?? null,
     outputUsdPerM: outUsd,
     openWeights:
       typeof model.open_weights === "boolean"

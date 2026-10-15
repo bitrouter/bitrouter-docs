@@ -12,7 +12,13 @@ function formatStars(n: number): string {
   return `${n}`;
 }
 
-export function GitHubStarsBadge({ className }: { className?: string }) {
+interface GitHubStarsBadgeProps {
+  className?: string;
+  label?: string;
+  compact?: boolean;
+}
+
+export function GitHubStarsBadge({ className, label, compact = true }: GitHubStarsBadgeProps) {
   const [stars, setStars] = useState<number | null>(null);
 
   useEffect(() => {
@@ -20,7 +26,7 @@ export function GitHubStarsBadge({ className }: { className?: string }) {
     fetch("/api/github-stars")
       .then((r) => r.json())
       .then((d: { stars?: number | null }) => {
-        if (active && typeof d.stars === "number") setStars(d.stars);
+        if (active && typeof d.stars === "number" && Number.isSafeInteger(d.stars) && d.stars >= 0) setStars(d.stars);
       })
       .catch(() => {});
     return () => {
@@ -43,11 +49,12 @@ export function GitHubStarsBadge({ className }: { className?: string }) {
         className,
       )}
     >
-      <GitHubIcon className="size-[15px]" />
+      <GitHubIcon className={label ? "size-[16px]" : "size-[15px]"} aria-hidden="true" />
+      {label && <span>{label}</span>}
       <Star aria-hidden="true" className="size-[13px]" strokeWidth={1.7} />
       {stars !== null && (
         <span className="font-mono text-[11px] tabular-nums">
-          {formatStars(stars)}
+          {compact ? formatStars(stars) : stars.toLocaleString("en-US")}
         </span>
       )}
     </a>

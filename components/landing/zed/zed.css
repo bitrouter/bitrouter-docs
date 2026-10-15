@@ -1966,3 +1966,55 @@
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Shared light editorial system: typography and whitespace carry hierarchy. */
+.site-page-heading { display:flex; align-items:flex-end; gap:32px; flex-wrap:wrap; padding-top:72px; }
+.site-page-label { margin:0 0 22px; color:var(--muted-foreground); font:13px var(--font-sans); }
+.site-page-heading h1 { font-family:var(--font-sans); font-size:clamp(38px,5.4vw,64px); font-weight:450; letter-spacing:-.045em; line-height:1.08; margin:0; max-width:24ch; text-wrap:balance; }
+.site-page-heading h1 em { font-family:var(--font-display); font-weight:400; }
+.site-page-description { font-size:16px; line-height:1.8; color:var(--muted-foreground); margin:24px 0 0; }
+.site-page-aside { margin-left:auto; }
+.zed-kicker,.zed-eyebrow,.zed-label { font-family:var(--font-sans); font-size:12px; letter-spacing:0; text-transform:none; }
+.zed-btn { font-family:var(--font-sans); border-radius:6px; letter-spacing:0; text-transform:none; }
+.zed-btn-primary { background:var(--primary); color:var(--primary-foreground); }
+.zed-btn-primary:hover { background:var(--primary); color:var(--primary-foreground); opacity:.9; }
+.zed-btn-underline { font-family:var(--font-sans); letter-spacing:0; text-transform:none; }
+.zed-pricing-table { border:0; border-collapse:separate; border-spacing:14px 0; }
+.zed-pricing-table th,.zed-pricing-table td { border:0; }
+.zed-pricing-table thead th:not(:first-child) { background:var(--muted); border-radius:10px 10px 0 0; padding:28px 22px; }
+.zed-pricing-table tbody td { background:var(--muted); }
+.zed-pricing-table tbody tr:last-child td { border-radius:0 0 10px 10px; padding-bottom:28px; }
+.zed-pricing-table thead th:first-child,.zed-pricing-plan-descriptor,.zed-pricing-plan-price-detail { font-family:var(--font-sans); font-size:12px; letter-spacing:0; text-transform:none; }
+.zed-pricing-plan-price { font-size:48px; font-weight:400; }
+.zed-pricing-plan-label { font-weight:500; }
+.zed-enterprise-heading { font-family:var(--font-sans); font-style:normal; font-size:32px; font-weight:450; letter-spacing:-.035em; max-width:30ch; }
+.zed-enterprise-paths { gap:28px; background:transparent; border:0; }
+.zed-enterprise-path { padding:28px; border-radius:10px; background:var(--muted); }
+.zed-enterprise-path dl>div { border:0; padding-block:12px; }
+.zed-enterprise-path dt { font-family:var(--font-sans); letter-spacing:0; text-transform:none; font-size:12px; }
+.zed-enterprise-boundary,.zed-enterprise-contact { border:0; }
+.zed-enterprise-links { font-family:var(--font-sans); }
+.zed-article h2 { border:0; font-weight:500; }
+.zed-article :is(p,li) { font-size:15px; }
+.zed-article img,.zed-article pre { border-radius:8px; }
+.zed-article hr { border:0; }
+.zed-changelog-body :is(h2,h3,h4) { font-family:var(--font-sans)!important; text-transform:none; letter-spacing:0; font-size:14px; }
+.zed-changelog-body :is(p,li) { font-size:14px; }
+.zed-post-row { border-radius:8px; }
+@media(max-width:699px) {
+ .site-page-heading { padding-top:40px; }
+ .site-page-heading h1 { font-size:40px; }
+ .site-page-description { font-size:14px; }
+ .zed-pricing-mobile-plan { border:0; border-radius:10px; background:var(--muted); padding:24px; margin-bottom:24px; }
+ .zed-pricing-mobile-plan dl>div { border:0; }
+ .zed-enterprise-heading { font-size:28px; }
+}
+.site-model-filter-toggle { display:none; }
+.site-model-filters { background:var(--muted); border-radius:8px; align-self:start; margin-right:16px; }
+@media(max-width:699px) {
+ .site-model-filter-toggle { display:inline-flex; background:var(--muted); color:var(--foreground); border-radius:6px; padding:10px 16px; font-size:13px; margin-bottom:16px; cursor:pointer; }
+ .site-model-filters { display:none; margin:0 0 16px; }
+ .site-model-filters.is-open { display:block; }
+}
+.zed-article ul { list-style:disc; }
+.zed-article ol { list-style:decimal; }

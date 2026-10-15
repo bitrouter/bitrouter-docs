@@ -26,8 +26,8 @@ const newsreader = Newsreader({
 
 const BASE_URL = "https://bitrouter.ai";
 const SITE_DESCRIPTION =
-  "BitRouter is an open-source model router you can run, inspect, and extend. Bring your models, define your routing rules, and make it work your way.";
-const SITE_TITLE = "BitRouter — Open-Source Model Router";
+  "Make every step of your agent’s work count. Open-source model routing, through an API or your terminal. Your agents. Your models. Your infrastructure.";
+const SITE_TITLE = "BitRouter — Time is money. More done per token.";
 
 const siteJsonLd = {
   "@context": "https://schema.org",
@@ -98,14 +98,14 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0C0D10",
+  themeColor: "#ffffff",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"
-      className={`dark ${geistSans.variable} ${geistMono.variable} ${newsreader.variable}`}
+      className={`light ${geistSans.variable} ${geistMono.variable} ${newsreader.variable}`}
       suppressHydrationWarning
     >
       <head>

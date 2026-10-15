@@ -12,21 +12,21 @@ export default async function BlogIndexPage() {
   );
 
   return (
-    <div className="zed-bg">
+    <main className="zed-bg" id="main">
       <section style={{ position: "relative" }}>
         <div className="zed-wrap" style={{ maxWidth: 1180 }}>
           <PageHead
             eyebrow="Blog"
-            title="Field notes from production."
+            title={<>From the work.<br /><em>For your workflow.</em></>}
             sub="How the router actually decides — routing, evals, cost and the self-tuning loop, written by the people building it."
           />
 
           {pages.length === 0 ? (
-            <p style={{ padding: "64px 0", textAlign: "center", fontFamily: "var(--font-mono)", color: "var(--z-ink-5)" }}>
+            <p style={{ padding: "64px 0", textAlign: "center", fontFamily: "var(--font-sans)", color: "var(--z-ink-5)" }}>
               No posts yet. Check back soon.
             </p>
           ) : (
-            <div style={{ marginTop: 64, borderTop: "1px solid var(--z-rule)", marginBottom: "var(--z-sec)" }}>
+            <div style={{ marginTop: 64,  marginBottom: "var(--z-sec)" }}>
               {pages.map((page) => {
                 const author = AUTHORS[(page.data as { author?: string }).author ?? ""];
                 return (
@@ -34,14 +34,14 @@ export default async function BlogIndexPage() {
                     key={page.url}
                     href={page.url}
                     className="zed-metagrid zed-post-row"
-                    style={{ borderBottom: "1px solid var(--z-rule)", padding: "34px 0" }}
+                    style={{  padding: "34px 0" }}
                   >
                     <div>
-                      <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--z-ink-6)" }}>
+                      <div style={{ fontFamily: "var(--font-sans)", fontSize: 12, color: "var(--z-ink-6)" }}>
                         {blogDate(page as BlogPage)}
                       </div>
                       {author && (
-                        <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--z-ink-7)", marginTop: 6 }}>
+                        <div style={{ fontFamily: "var(--font-sans)", fontSize: 12, color: "var(--z-ink-7)", marginTop: 6 }}>
                           {author.name}
                         </div>
                       )}
@@ -81,7 +81,7 @@ export default async function BlogIndexPage() {
                           alignItems: "center",
                           gap: 10,
                           marginTop: 18,
-                          fontFamily: "var(--font-mono)",
+                          fontFamily: "var(--font-sans)",
                           fontSize: 12,
                           color: "var(--z-ink-6)",
                         }}
@@ -106,7 +106,7 @@ export default async function BlogIndexPage() {
                             <span style={{ color: "var(--z-ink-2)" }}>{author.name}</span>
                           </>
                         )}
-                        <span style={{ marginLeft: "auto", letterSpacing: "0.14em", textTransform: "uppercase", fontSize: 11 }}>
+                        <span style={{ marginLeft: "auto", letterSpacing: "0", textTransform: "none", fontSize: 11 }}>
                           Read →
                         </span>
                       </div>
@@ -118,7 +118,7 @@ export default async function BlogIndexPage() {
           )}
         </div>
       </section>
-    </div>
+    </main>
   );
 }
 

@@ -458,8 +458,9 @@ function spinAt(cur: Harness, f: Frame): number {
   return streaming ? Math.floor(Date.now() / SPIN_MS) % SPIN.length : -1;
 }
 
-function useDemoClock() {
-  const [h, setH] = useState(0);
+function useDemoClock(singleHarnessId?: string) {
+  const initialHarness = Math.max(0, HARNESSES.findIndex((harness) => harness.id === singleHarnessId));
+  const [h, setH] = useState(initialHarness);
   const [, bump] = useReducer((x: number) => x + 1, 0);
   const reduced = useMediaQuery("(prefers-reduced-motion: reduce)");
   const narrow = useMediaQuery(`(max-width: ${NARROW_MAX}px)`);
@@ -468,13 +469,13 @@ function useDemoClock() {
    * 620ms is noise, so the loop doesn't run: the section rests on a finished
    * session and a tab tap plays that harness once. `playing` is that latch.
    */
-  const [playing, setPlaying] = useState(false);
+  const [playing, setPlaying] = useState(Boolean(singleHarnessId));
   // Anchored on first render rather than in the effect, so the server and the
   // hydrating client both compute elapsed ≈ 0 and agree on an empty prompt —
   // instead of the server rendering a finished session that then snaps to boot.
   const startedAt = useRef(0);
   if (startedAt.current === 0) startedAt.current = Date.now();
-  const hRef = useRef(0);
+  const hRef = useRef(initialHarness);
   hRef.current = h;
   /** Last frame pushed to React, so a tick that changes nothing doesn't re-render. */
   const lastKey = useRef("");
@@ -486,12 +487,12 @@ function useDemoClock() {
       startedAt.current = Date.now();
       lastKey.current = "";
       setH(i);
-      if (narrow && !reduced) setPlaying(true);
+      if ((narrow || singleHarnessId) && !reduced) setPlaying(true);
     },
-    [narrow, reduced],
+    [narrow, reduced, singleHarnessId],
   );
 
-  const running = !reduced && (!narrow || playing);
+  const running = !reduced && (singleHarnessId ? playing : (!narrow || playing));
 
   useEffect(() => {
     if (!running) return;
@@ -503,7 +504,7 @@ function useDemoClock() {
       if (f.done) {
         lastKey.current = "";
         // A phone plays the harness the reader asked for, once, and stops.
-        if (narrow) setPlaying(false);
+        if (narrow || singleHarnessId) setPlaying(false);
         else {
           startedAt.current = Date.now();
           setH((i) => (i + 1) % HARNESSES.length);
@@ -519,7 +520,7 @@ function useDemoClock() {
       }
     }, TICK_MS);
     return () => clearInterval(id);
-  }, [running, narrow]);
+  }, [running, narrow, singleHarnessId]);
 
   const cur = HARNESSES[h];
   // At rest — reduced motion, or a phone between taps — the window holds a
@@ -534,8 +535,8 @@ function useDemoClock() {
 
 /* ── the section ─────────────────────────────────────────────────────────── */
 
-export function TuiDemo() {
-  const { h, cur, frame, narrow, select } = useDemoClock();
+export function TuiDemo({ singleHarnessId }: { singleHarnessId?: string } = {}) {
+  const { h, cur, frame, narrow, select } = useDemoClock(singleHarnessId);
   // Re-measure when the harness changes: `dsh` and `claude` are different widths.
   const { outer, inner, fit } = useFitToWidth([h, narrow]);
 
@@ -557,9 +558,11 @@ export function TuiDemo() {
                   : { margin: "0 auto" }
               }
             >
-            <TerminalWindow title={cur.title}>
+            <TerminalWindow title={cur.title} actions={singleHarnessId ? (
+                <button type="button" onClick={() => select(h)} aria-label={`Replay ${cur.tab} terminal`} style={{ color: "#d8d8d8", background: "transparent", border: 0, padding: "5px 3px", cursor: "pointer", fontSize: 11 }}>Replay ↻</button>
+              ) : undefined}>
               {/* ── tab bar ───────────────────────────────────────────── */}
-              <div style={{ display: "flex", background: "#232326", borderBottom: "1px solid #17171a" }}>
+              {!singleHarnessId && <div style={{ display: "flex", background: "#232326", borderBottom: "1px solid #17171a" }}>
                 {HARNESSES.map((x, i) => {
                   const on = i === h;
                   return (
@@ -602,7 +605,7 @@ export function TuiDemo() {
                     </button>
                   );
                 })}
-              </div>
+              </div>}
 
               <WTermFrame harness={cur} frame={frame} narrow={narrow} />
             </TerminalWindow>

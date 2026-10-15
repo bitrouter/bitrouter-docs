@@ -58,10 +58,10 @@ export default async function ModelDetailPage({ params }: Props) {
     : modelDisplayName(model);
 
   return (
-    <div className="zed-bg">
+    <main className="zed-bg" id="main">
       <article className="zed-wrap" style={{ paddingBottom: "var(--z-sec)" }}>
         <Link
-          href="/models"
+          href="/pricing#models"
           className="zed-eyebrow"
           style={{
             display: "inline-flex",
@@ -71,7 +71,7 @@ export default async function ModelDetailPage({ params }: Props) {
             transition: "color .15s ease",
           }}
         >
-          ← Back to catalog
+          ← Back to model prices
         </Link>
 
         {/* ── Header ─────────────────────────────────────── */}
@@ -83,7 +83,7 @@ export default async function ModelDetailPage({ params }: Props) {
             flexWrap: "wrap",
             marginTop: 40,
             paddingBottom: 30,
-            borderBottom: "1px solid var(--z-rule)",
+
           }}
         >
           <div style={{ minWidth: 0, flex: 1 }}>
@@ -95,7 +95,7 @@ export default async function ModelDetailPage({ params }: Props) {
               {provider}
             </div>
             <h1
-              className="zed-display"
+              className="zed-display-up"
               style={{
                 fontSize: "clamp(32px, 5vw, 44px)",
                 lineHeight: 1.06,
@@ -146,9 +146,8 @@ export default async function ModelDetailPage({ params }: Props) {
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(4, 1fr)",
-              gap: 1,
-              background: "var(--z-rule)",
-              border: "1px solid var(--z-rule)",
+              gap: 16,
+              background: "transparent",
               marginTop: 22,
             }}
           >
@@ -191,13 +190,14 @@ export default async function ModelDetailPage({ params }: Props) {
           </div>
         </section>
       </article>
-    </div>
+    </main>
   );
 }
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div style={{ background: "var(--z-bg)", padding: "18px 20px 20px" }}>
+    <div style={{ background: "var(--muted)",
+      borderRadius: 8, padding: "18px 20px 20px" }}>
       <div
         style={{
           fontFamily: "var(--font-mono)",
@@ -244,7 +244,7 @@ function SnippetCard({
           alignItems: "baseline",
           gap: 12,
           paddingBottom: 12,
-          borderBottom: "1px solid var(--z-rule)",
+
         }}
       >
         <span

@@ -34,7 +34,7 @@ function NotebookHeader() {
       id="nd-subnav"
       className={cn(
         "sticky [grid-area:header] flex flex-col top-(--fd-docs-row-1) z-10",
-        "border-b border-[var(--z-rule)] bg-background",
+        "bg-background",
         // The `layout:` variant sets the var on the layout container so the
         // sidebar/TOC siblings (which read `--fd-docs-row-2`) get the right
         // offset. Setting it directly on the header would only scope it here.
@@ -50,7 +50,7 @@ function NotebookHeader() {
           SidebarTrigger ? (
             <SidebarTrigger
               aria-label="Toggle docs navigation"
-              className="-ms-1.5 flex items-center rounded-[9px] p-2 text-[var(--z-ink-4)] transition-colors hover:bg-white/[0.05] hover:text-[var(--z-ink)] md:hidden"
+              className="-ms-1.5 flex items-center rounded-[9px] p-2 text-[var(--z-ink-4)] transition-colors hover:bg-muted hover:text-[var(--z-ink)] md:hidden"
             >
               <PanelLeft className="size-[18px]" />
             </SidebarTrigger>

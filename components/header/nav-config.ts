@@ -1,14 +1,4 @@
-/**
- * Nav model for the website header.
- *
- * All marketing/docs links resolve to the website. The console no longer
- * renders this header (its nav is its sidebar), so there is no cross-app
- * route resolution — only `consoleBaseUrl` is used for the auth CTA.
- *
- * The list is deliberately capped at five: the nav is `lg:flex` with a 44px
- * gap, so it has ~550px between the logo and the utility cluster at the 1024px
- * breakpoint. A sixth label overflows that and breaks the centring.
- */
+/** Shared marketing and documentation navigation. */
 
 export interface HeaderConfig {
   webBaseUrl: string; // e.g. https://bitrouter.ai
@@ -24,12 +14,10 @@ export interface NavItem {
   activePaths?: string[];
 }
 
-// Marketing/docs links — they always point at the website. Ordered as the
-// decision path a visitor walks: what it routes to, what it costs, how teams
-// can deploy it, then how to build on it.
+// The shared product navigation follows the homepage's OSS entry path.
 export const NAV_ITEMS: NavItem[] = [
-  { key: "models", label: "Models", webPath: "/models" },
-  { key: "pricing", label: "Pricing", webPath: "/pricing" },
+  { key: "pricing", label: "Pricing", webPath: "/pricing", activePaths: ["/pricing", "/models"] },
+  { key: "changelog", label: "Changelog", webPath: "/changelog" },
   { key: "enterprise", label: "Enterprise", webPath: "/enterprise" },
   { key: "docs", label: "Docs", webPath: "/docs" },
 ];

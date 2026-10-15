@@ -1,14 +1,16 @@
 import { ZedPricingPage } from "@/components/landing/zed/pricing-page";
 import type { Metadata } from "next";
+import { getDocsModels } from "@/lib/models-catalog";
+import { toPriceModels } from "@/lib/pricing-catalog";
 
-export default function Page() {
-  return <ZedPricingPage />;
+export default async function Page() {
+  return <ZedPricingPage models={toPriceModels(await getDocsModels())} />;
 }
 
 export function generateMetadata(): Metadata {
   const description =
-    "BitRouter routing is free. Self-host the router, pay provider token prices for hosted models with 0% markup, or discuss enterprise requirements.";
-  const ogTitle = "BitRouter Pricing — free, pay as you go, or enterprise";
+    "Free model routing and 0% token markup. Compare input, output, and cache prices across the complete BitRouter model catalog.";
+  const ogTitle = "BitRouter Pricing — provider prices, zero markup";
   return {
     title: "Pricing",
     description,

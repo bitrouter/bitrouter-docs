@@ -3,13 +3,13 @@ import { ZED_LINKS } from "./primitives";
 const PLANS = [
   {
     id: "free",
-    label: "Free",
+    label: "Open source",
     descriptor: "Self-hosted",
     price: "$0",
     priceDetail: "for the router",
     description: "Run BitRouter in your own infrastructure with your provider keys or local models.",
     action: "Self-host BitRouter",
-    href: ZED_LINKS.quickstart,
+    href: `${ZED_LINKS.quickstart}#run-self-hosted`,
   },
   {
     id: "pay-as-you-go",

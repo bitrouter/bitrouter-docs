@@ -89,8 +89,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: Entry[] = (
     [
       { url: BASE_URL, file: "app/(home)/page.tsx", priority: 1.0, changeFrequency: "weekly" },
-      { url: `${BASE_URL}/models`, file: "app/(home)/models/page.tsx", priority: 0.9, changeFrequency: "weekly" },
-      { url: `${BASE_URL}/pricing`, file: "app/(home)/pricing/page.tsx", priority: 0.8, changeFrequency: "monthly" },
+      { url: `${BASE_URL}/pricing`, file: "app/(home)/pricing/page.tsx", priority: 0.9, changeFrequency: "weekly" },
       { url: `${BASE_URL}/enterprise`, file: "app/(home)/enterprise/page.tsx", priority: 0.8, changeFrequency: "monthly" },
       // The per-harness routes (/claude-code, /codex, …) were retired in 2026-08
       // and now redirect into canonical docs routes already covered above.

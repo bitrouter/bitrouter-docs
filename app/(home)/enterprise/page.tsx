@@ -1,6 +1,8 @@
 import { ZedEnterprisePage } from "@/components/landing/zed/enterprise-page";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export default function Page() {
   return <ZedEnterprisePage />;
 }
@@ -8,12 +10,12 @@ export default function Page() {
 export const metadata: Metadata = {
   title: "Enterprise",
   description:
-    "Choose the BitRouter deployment path that fits your security, procurement, and operating requirements.",
+    "Match inference resources to your agents’ work. Discuss model routing, private deployment, and your team’s requirements with BitRouter.",
   alternates: { canonical: "https://bitrouter.ai/enterprise" },
   openGraph: {
     title: "Enterprise | BitRouter",
     description:
-      "Choose the BitRouter deployment path that fits your security, procurement, and operating requirements.",
+      "Match inference resources to your agents’ work. Discuss model routing, private deployment, and your team’s requirements with BitRouter.",
     url: "https://bitrouter.ai/enterprise",
     type: "website",
   },

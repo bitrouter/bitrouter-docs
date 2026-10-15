@@ -1,19 +1,7 @@
-import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { SiteProviders } from "@/components/site-providers";
-import { baseOptions } from "@/lib/layout.shared";
-import { SiteZedFooter } from "@/components/landing/zed/site-footer";
+import { WebHeader } from "@/components/site-header-wired";
+import { SiteFooter } from "@/components/landing/site-footer";
 
-export default function HomeGroupLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <SiteProviders>
-      <HomeLayout {...baseOptions()}>
-        {children}
-        <SiteZedFooter />
-      </HomeLayout>
-    </SiteProviders>
-  );
+export default function HomeGroupLayout({ children }: { children: React.ReactNode }) {
+  return <SiteProviders><WebHeader />{children}<SiteFooter /></SiteProviders>;
 }

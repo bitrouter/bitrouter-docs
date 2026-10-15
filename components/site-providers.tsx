@@ -17,8 +17,8 @@ export function SiteProviders({
   return (
     <RootProvider
       theme={{
-        forcedTheme: "dark",
-        defaultTheme: "dark",
+        forcedTheme: "light",
+        defaultTheme: "light",
         enableSystem: false,
         storageKey: "bitrouter-theme",
       }}

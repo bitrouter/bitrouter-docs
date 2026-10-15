@@ -19,7 +19,7 @@ export default function ChangelogLayout({
         tree={getChangelogTree()}
         tabs={false}
         nav={{ mode: "top" }}
-        slots={{ header: ChangelogHeader }}
+        slots={{ header: ChangelogHeader, themeSwitch: false }}
       >
         {children}
       </DocsLayout>

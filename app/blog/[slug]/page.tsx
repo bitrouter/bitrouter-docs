@@ -28,10 +28,10 @@ export default async function BlogPostPage({ params }: Props) {
   const older = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : null;
 
   return (
-    <div className="zed-bg">
+    <main className="zed-bg" id="main">
       <section style={{ position: "relative" }}>
         <div className="zed-wrap" style={{ maxWidth: 760 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "48px 0 0", fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--z-ink-6)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "48px 0 0", fontFamily: "var(--font-sans)", fontSize: 11, letterSpacing: "0", textTransform: "none", color: "var(--z-ink-6)" }}>
             <Link href="/blog" style={{ color: "var(--z-ink-6)" }}>
               Blog
             </Link>
@@ -46,7 +46,7 @@ export default async function BlogPostPage({ params }: Props) {
             {page.data.title}
           </h1>
           {page.data.description && (
-            <p style={{ fontFamily: "var(--font-mono)", fontSize: 14.5, lineHeight: 1.75, color: "var(--z-ink-5)", margin: "20px 0 0", maxWidth: "68ch", textWrap: "pretty" }}>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: 14.5, lineHeight: 1.75, color: "var(--z-ink-5)", margin: "20px 0 0", maxWidth: "68ch", textWrap: "pretty" }}>
               {page.data.description}
             </p>
           )}
@@ -58,11 +58,11 @@ export default async function BlogPostPage({ params }: Props) {
               gap: 12,
               margin: "28px 0 0",
               paddingTop: 20,
-              borderTop: "1px solid var(--z-rule)",
-              fontFamily: "var(--font-mono)",
+
+              fontFamily: "var(--font-sans)",
               fontSize: 11,
               letterSpacing: "0.1em",
-              textTransform: "uppercase",
+              textTransform: "none",
               color: "var(--z-ink-6)",
             }}
           >
@@ -98,7 +98,7 @@ export default async function BlogPostPage({ params }: Props) {
           {(newer || older) && (
             <div
               className="zed-grid-2"
-              style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1, background: "var(--z-rule)", borderTop: "1px solid var(--z-rule)", margin: "80px 0 var(--z-sec)" }}
+              style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1, background: "var(--z-rule)",  margin: "80px 0 var(--z-sec)" }}
             >
               {older ? (
                 <Link href={older.url} style={navCard()}>
@@ -120,7 +120,7 @@ export default async function BlogPostPage({ params }: Props) {
           )}
         </div>
       </section>
-    </div>
+    </main>
   );
 }
 
@@ -128,10 +128,10 @@ function navCard(): React.CSSProperties {
   return { background: "var(--z-bg)", padding: "24px 0", display: "block" };
 }
 function navKick(): React.CSSProperties {
-  return { fontFamily: "var(--font-mono)", fontSize: 10.5, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--z-ink-6)" };
+  return { fontFamily: "var(--font-sans)", fontSize: 10.5, letterSpacing: "0.16em", textTransform: "none", color: "var(--z-ink-6)" };
 }
 function navTitle(): React.CSSProperties {
-  return { fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--z-ink-2)", marginTop: 10 };
+  return { fontFamily: "var(--font-sans)", fontSize: 14, color: "var(--z-ink-2)", marginTop: 10 };
 }
 
 export function generateStaticParams() {

@@ -1,7 +1,7 @@
 import { CopyPageButton, ViewOptions } from "@/components/page-actions";
 
 /**
- * The rule under a docs page title: when it was last touched, how long it is,
+ * The metadata under a docs page title: when it was last touched, how long it is,
  * and the two ways to take it elsewhere.
  *
  * fumadocs' own `editOnGithub` / `lastUpdate` props on `fumadocs-ui/page`
@@ -56,7 +56,7 @@ export function DocsMeta({
   const updated = lastModified ? formatUpdated(lastModified) : null;
 
   return (
-    <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-[var(--z-rule)] pt-5 font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--z-ink-6)]">
+    <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 pt-2 font-sans text-[12px] text-[var(--z-ink-6)]">
       {updated && (
         <>
           <span>Updated {updated}</span>

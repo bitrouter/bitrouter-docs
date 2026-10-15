@@ -57,17 +57,20 @@ type TerminalWindowProps = {
   children: ReactNode;
   actions?: ReactNode;
   className?: string;
+  theme?: "dark" | "light";
 };
 
 /** Native macOS terminal chrome shared by the hero and feature demos. */
-export function TerminalWindow({ title, children, actions, className }: TerminalWindowProps) {
+export function TerminalWindow({ title, children, actions, className, theme = "dark" }: TerminalWindowProps) {
+  const light = theme === "light";
   return (
     <div
       className={className}
       style={{
         borderRadius: 10,
         overflow: "hidden",
-        boxShadow: "0 34px 80px -34px rgba(0,0,0,0.85)",
+        border: light ? "1px solid var(--border)" : undefined,
+        boxShadow: light ? "0 16px 48px -24px rgba(0,0,0,0.18)" : "0 34px 80px -34px rgba(0,0,0,0.85)",
       }}
     >
       <div
@@ -77,8 +80,8 @@ export function TerminalWindow({ title, children, actions, className }: Terminal
           gap: 9,
           height: 38,
           padding: "0 13px",
-          background: "#333336",
-          borderBottom: "1px solid #262628",
+          background: light ? "var(--muted)" : "#333336",
+          borderBottom: light ? undefined : "1px solid #262628",
         }}
       >
         <span aria-hidden="true" style={{ width: 12, height: 12, flex: "0 0 auto", borderRadius: "50%", background: "#ff5f57" }} />
@@ -102,7 +105,7 @@ export function TerminalWindow({ title, children, actions, className }: Terminal
             fontFamily: "var(--font-sans)",
             fontSize: 12.5,
             fontWeight: 600,
-            color: "#d8d8d8",
+            color: light ? "var(--muted-foreground)" : "#d8d8d8",
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",

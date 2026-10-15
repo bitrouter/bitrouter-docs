@@ -1,507 +1,85 @@
 "use client";
 
-import * as React from "react";
-import posthog from "posthog-js";
-import { getCalApi } from "@calcom/embed-react";
+import { useEffect, useState, type ReactNode } from "react";
+import { Download, Menu, X } from "lucide-react";
 import {
-  NAV_ITEMS,
-  isNavItemActive,
-  resolveHref,
-  type HeaderConfig,
-} from "./nav-config";
-
-/**
- * Auth-aware site header for the marketing/docs website.
- *
- * Design language: the v3 dark nav. A bare ≋ mask mark + lowercase mono
- * `bitrouter` wordmark, a centred row of uppercase mono nav links
- * (11.5px / 0.16em, ink-3 → ink on hover), then the utility cluster — the
- * "Ask AI…" search box, GitHub, "book demo" and "Try bitrouter/auto". The shell is
- * sticky + translucent (`rgba(12,13,16,0.85)`) with a `--z-rule` hairline. All
- * colours come from the global Zed tokens (`--z-*`), so it matches every page.
- *
- * Takes `session`, `pathname`, and `onSignOut` as props supplied by the web
- * app, plus slots for app-specific content. Imports nothing app-local.
- */
-
-// ── public types ─────────────────────────────────────────
-
-/** Minimal session shape the header needs (subset of Better Auth). */
-export interface HeaderSession {
-  user: { email: string; name?: string | null; image?: string | null };
-}
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  NavigationMenuViewport,
+} from "fumadocs-ui/components/ui/navigation-menu";
+import { GitHubStarsBadge } from "@/components/landing/github-stars-badge";
+import { socialHref } from "@/components/landing/social-links";
+import { NAV_ITEMS, isNavItemActive } from "./nav-config";
+import "./site-header.css";
 
 export interface SiteHeaderProps {
-  config: HeaderConfig;
-  /** Null/undefined => logged out. Passed in by each app. */
-  session: HeaderSession | null | undefined;
-  /** Current pathname, for active-link highlighting. */
   pathname?: string;
-  onSignOut?: () => void;
-  /** Show "Sign out" in the account dropdown / mobile menu. */
-  showSignOut?: boolean;
-  /** Optional leading cell (generally empty on the web header). */
-  leadingSlot?: React.ReactNode;
-  /** Responsive visibility for the leading cell (for example, a docs drawer trigger). */
-  leadingSlotClassName?: string;
-  /** web: ⌘K command palette. */
-  searchSlot?: React.ReactNode;
-  /** web: GitHub stars. */
-  utilitySlot?: React.ReactNode;
+  leadingSlot?: ReactNode;
+  searchSlot?: ReactNode;
 }
 
-// ── internal helpers ─────────────────────────────────────
-
-function cn(...parts: Array<string | false | null | undefined>): string {
-  return parts.filter(Boolean).join(" ");
+export function Brand() {
+  return <a className="site-brand" href="/" aria-label="BitRouter home"><span aria-hidden="true" />bitrouter.</a>;
 }
 
-// Shared nav-item base: uppercase mono at the v3 label size, muted → ink on
-// hover. The tracking is what makes the row read as a rule of labels rather
-// than a list of words, so it stays on every nav link.
-const NAV_ITEM =
-  "whitespace-nowrap font-mono text-[11.5px] uppercase tracking-[0.16em] transition-colors";
-
-// The right-hand utility links share the nav's type, one step brighter so the
-// cluster reads as actions rather than navigation.
-const UTIL_LINK =
-  "shrink-0 whitespace-nowrap font-mono text-[11.5px] uppercase tracking-[0.16em] transition-colors";
-
-/**
- * "book demo" — the secondary header CTA that opens the founder-call Cal.com
- * embed. Always shown, for prospects and customers alike. Cal's `getCalApi("ui")` must be
- * initialised once on the page (see `useCalFounderCall`) for the data-cal
- * attributes to take over the click.
- */
-function BookDemoButton({
-  className,
-  location,
-}: {
-  className: string;
-  location: string;
-}): React.ReactElement {
-  return (
-    <button
-      type="button"
-      data-cal-namespace="founder-call"
-      data-cal-link="kelsenliu/founder-call"
-      data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
-      onClick={() => posthog.capture("founder_call_booked", { location })}
-      className={className}
-    >
-      book demo
-    </button>
-  );
+function CommunityLinks() {
+  return <div className="site-community" role="group" aria-label="Community">
+    <a href={socialHref("x")} aria-label="BitRouter on Twitter/X" title="Twitter/X" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817-5.967 6.817H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg></a>
+    <a href={socialHref("discord")} aria-label="Join BitRouter on Discord" title="Discord" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor" aria-hidden="true"><path d="M20.3 4.4a20 20 0 0 0-4.9-1.5l-.6 1.2a18 18 0 0 0-5.5 0l-.6-1.2a20 20 0 0 0-5 1.5C.6 9-.3 13.6.1 18.1a20 20 0 0 0 6 3l1.3-2.1-1.9-.9.4-.3a15 15 0 0 0 12.1 0l.4.3-1.9.9 1.2 2.1a20 20 0 0 0 6-3c.5-5.2-.8-9.7-3.5-13.7ZM8 15.3c-1.2 0-2.2-1.1-2.2-2.4s1-2.4 2.2-2.4 2.2 1.1 2.2 2.4-1 2.4-2.2 2.4Zm8 0c-1.2 0-2.2-1.1-2.2-2.4s1-2.4 2.2-2.4 2.2 1.1 2.2 2.4-1 2.4-2.2 2.4Z" /></svg></a>
+    <GitHubStarsBadge />
+  </div>;
 }
 
-/** Initialise the Cal.com founder-call embed once for the header CTA. */
-function useCalFounderCall(): void {
-  React.useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const cal = await getCalApi({ namespace: "founder-call" });
-      if (!cancelled) cal("ui", { hideEventTypeDetails: false, layout: "month_view" });
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-}
+/** Shared by marketing pages and the native Fumadocs notebook header. */
+export function SiteHeaderBody({ pathname, leadingSlot, searchSlot }: SiteHeaderProps) {
+  const [menu, setMenu] = useState("");
+  const isDocs = Boolean(searchSlot);
 
-function initials(session: HeaderSession): string {
-  const base = session.user.name?.trim() || session.user.email;
-  const parts = base.split(/[\s@._-]+/).filter(Boolean);
-  const a = parts[0]?.[0] ?? base[0] ?? "?";
-  const b = parts.length > 1 ? parts[1][0] : (base[1] ?? "");
-  return (a + b).toUpperCase();
-}
+  useEffect(() => {
+    const desktop = window.matchMedia(isDocs ? "(min-width:1101px)" : "(min-width:1024px)");
+    const closeOnDesktop = () => { if (desktop.matches) setMenu(""); };
+    desktop.addEventListener("change", closeOnDesktop);
+    return () => desktop.removeEventListener("change", closeOnDesktop);
+  }, [isDocs]);
 
-function TryAutoLabel(): React.ReactElement {
-  return (
-    <>
-      <span>Try</span>
-      <code className="rounded-[3px] border border-current/20 bg-current/[0.04] px-1.5 py-0.5 font-mono text-[11px] normal-case tracking-normal text-current">
-        bitrouter/auto
-      </code>
-    </>
-  );
-}
-
-// ── component ────────────────────────────────────────────
-
-/**
- * Headerless variant — the flex row only, no `<header>` element, no sticky
- * positioning, no border/background. Drops into a host header that owns
- * positioning (e.g. the fumadocs notebook docs grid header).
- */
-export function SiteHeaderBody({
-  config,
-  session,
-  pathname,
-  onSignOut,
-  showSignOut = true,
-  leadingSlot,
-  leadingSlotClassName,
-  searchSlot,
-  utilitySlot,
-}: SiteHeaderProps): React.ReactElement {
-  const isAuthed = Boolean(session);
-  const items = NAV_ITEMS;
-  useCalFounderCall();
-  return (
-    <div className="flex h-[62px] w-full items-center gap-6 px-[22px] sm:px-6 lg:px-6 xl:px-10">
-      {leadingSlot ? (
-        <div className={cn("flex shrink-0 items-center", leadingSlotClassName)}>
-          {leadingSlot}
-        </div>
-      ) : null}
-
-      {/* Logo — bare ≋ mask mark + lowercase mono wordmark. v3 drops the
-          blue-bordered box: the mark carries ink, not accent. */}
-      <a
-        href={config.webBaseUrl}
-        aria-label="BitRouter home"
-        className="flex shrink-0 items-center gap-[9px] transition-opacity hover:opacity-80"
-      >
-        <span
-          aria-hidden
-          className="block size-5 bg-[var(--z-ink)]"
-          style={{
-            WebkitMaskImage: "url(/bitrouter-mark.png)",
-            maskImage: "url(/bitrouter-mark.png)",
-            WebkitMaskRepeat: "no-repeat",
-            maskRepeat: "no-repeat",
-            WebkitMaskPosition: "center",
-            maskPosition: "center",
-            WebkitMaskSize: "contain",
-            maskSize: "contain",
-          }}
-        />
-        {/* Wordmark drops below `sm`: the row is logo + search + CTA + menu,
-            which overflows a 375px viewport and pushes the CTA over the search
-            trigger. The mark alone still identifies and links home. */}
-        <span className="hidden font-mono text-[13px] tracking-[0.02em] text-[var(--z-ink)] sm:inline">
-          bitrouter
-        </span>
-      </a>
-
-      {/* Primary nav — centred in the leftover space. Hidden below `lg`, where
-          the mobile menu takes over. */}
-      <nav className="hidden flex-1 items-center justify-center gap-6 lg:flex xl:gap-11">
-        {items.map((item) => {
-          const href = resolveHref(item, config);
-          const active = isNavItemActive(pathname, item);
-          return (
-            <a
-              key={item.key}
-              href={href}
-              aria-current={active ? "page" : undefined}
-              className={cn(
-                NAV_ITEM,
-                active
-                  ? "text-[var(--z-ink)]"
-                  : "text-[var(--z-ink-3)] hover:text-[var(--z-ink)]",
-              )}
-            >
-              {item.label}
-            </a>
-          );
-        })}
-      </nav>
-
-      {/* Utility cluster — search, GitHub, demo, auth. `ml-auto` keeps it right
-          even when the nav is hidden and the centring flex-1 is gone. */}
-      <div className="ml-auto flex min-w-0 shrink-0 items-center gap-3 sm:gap-[22px]">
-        {searchSlot ? <div className="flex min-w-0 items-center">{searchSlot}</div> : null}
-
-        {utilitySlot ? (
-          <div className="flex items-center">{utilitySlot}</div>
-        ) : null}
-
-        {/* Secondary CTA — book a founder call. Shown for all visitors. */}
-        <BookDemoButton
-          location="header"
-          className={cn(
-            UTIL_LINK,
-            "hidden cursor-pointer text-[var(--z-ink-3)] hover:text-[var(--z-ink)] lg:inline-flex",
-          )}
-        />
-
-        {/* Auth zone */}
-        {isAuthed && session ? (
-          <AccountMenu
-            config={config}
-            session={session}
-            onSignOut={onSignOut}
-            showSignOut={showSignOut}
-          />
-        ) : (
-          // Single auth CTA — the auto route is the product entry point, and
-          // the link routes to the console's sign-in.
-          // (social sign-in auto-creates the account, so it is sign-in/sign-up).
-          <a
-            href={`${config.consoleBaseUrl}/sign-in`}
-            aria-label="Try bitrouter/auto"
-            className={cn(
-              UTIL_LINK,
-              "inline-flex items-center gap-1.5 text-[var(--z-ink)] hover:text-[var(--z-ink-3)]",
-            )}
-          >
-            <TryAutoLabel />
-          </a>
-        )}
-
-        {/* Mobile nav trigger */}
-        <MobileMenu
-          config={config}
-          session={session}
-          pathname={pathname}
-          onSignOut={onSignOut}
-          showSignOut={showSignOut}
-        />
-      </div>
-    </div>
-  );
-}
-
-/**
- * Full header: the body wrapped in a sticky, translucent, blurred `<header>`
- * shell. Used as the fumadocs `nav.component` and anywhere the header owns its
- * own positioning.
- */
-export function SiteHeader(props: SiteHeaderProps): React.ReactElement {
-  return (
-    <header
-      className="sticky top-0 z-40 w-full border-b border-[var(--z-rule)] bg-[rgba(12,13,16,0.85)] backdrop-blur-lg"
-      style={{ ["--fd-nav-height" as string]: "62px" }}
-    >
-      <SiteHeaderBody {...props} />
-    </header>
-  );
-}
-
-// ── account dropdown (logged in) ─────────────────────────
-
-function AccountMenu({
-  config,
-  session,
-  onSignOut,
-  showSignOut,
-}: {
-  config: HeaderConfig;
-  session: HeaderSession;
-  onSignOut?: () => void;
-  showSignOut: boolean;
-}) {
-  const [open, setOpen] = React.useState(false);
-  const ref = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    if (!open) return;
-    function onDocClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    }
-    function onEsc(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpen(false);
-    }
-    document.addEventListener("mousedown", onDocClick);
-    document.addEventListener("keydown", onEsc);
-    return () => {
-      document.removeEventListener("mousedown", onDocClick);
-      document.removeEventListener("keydown", onEsc);
-    };
-  }, [open]);
-
-  const item =
-    "block rounded-[7px] px-3 py-2 font-mono text-xs lowercase tracking-tight text-[var(--z-ink-3)] transition-colors hover:bg-white/[0.05] hover:text-[var(--z-ink)]";
-
-  return (
-    <div ref={ref} className="relative ml-1 flex shrink-0 items-center">
-      <button
-        type="button"
-        aria-haspopup="menu"
-        aria-expanded={open}
-        onClick={() => setOpen((o) => !o)}
-        title={session.user.email}
-        className="flex items-center gap-2 rounded-[10px] px-2 py-1.5 transition-colors hover:bg-white/[0.04]"
-      >
-        <span className="flex size-7 items-center justify-center overflow-hidden rounded-full border border-[var(--z-rule-2)] bg-white/[0.06] font-mono text-[10px] font-semibold uppercase tracking-wide text-[var(--z-ink-2)]">
-          {session.user.image ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={session.user.image} alt="" className="size-7 rounded-full object-cover" />
-          ) : (
-            initials(session)
-          )}
-        </span>
-        <svg
-          width="10"
-          height="10"
-          viewBox="0 0 10 10"
-          aria-hidden
-          className={cn(
-            "hidden text-[var(--z-ink-6)] transition-transform sm:block",
-            open && "rotate-180",
-          )}
-        >
-          <path
-            d="M2 3.5L5 6.5L8 3.5"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            fill="none"
-            strokeLinecap="round"
-          />
-        </svg>
-      </button>
-
-      {open ? (
-        <div
-          role="menu"
-          className="absolute right-0 top-full z-50 mt-1.5 w-60 origin-top-right rounded-[12px] border border-[var(--z-rule-2)] bg-[var(--z-bg)] p-1.5 shadow-[0_12px_32px_-14px_rgba(0,0,0,0.7)]"
-        >
-          <div className="border-b border-[var(--z-rule)] px-3 py-2.5">
-            <div className="truncate font-mono text-xs text-[var(--z-ink)]">
-              {session.user.name || "Account"}
-            </div>
-            <div className="truncate font-mono text-[11px] text-[var(--z-ink-5)]">
-              {session.user.email}
-            </div>
+  return <NavigationMenu value={menu} onValueChange={setMenu} asChild aria-label="Site navigation">
+    <div className={`site-navigation ${isDocs ? "site-navigation-docs" : ""}`}>
+      <NavigationMenuList asChild>
+        <div className={`site-header-body ${isDocs ? "site-header-docs" : ""}`}>
+          {leadingSlot && <div className="site-docs-trigger">{leadingSlot}</div>}
+          <Brand />
+          <nav className="site-primary-nav" aria-label="Main navigation">{NAV_ITEMS.map(item => <a key={item.key} href={item.webPath} aria-current={isNavItemActive(pathname, item) ? "page" : undefined}>{item.label}</a>)}</nav>
+          <div className="site-header-tools">
+            {searchSlot}
+            <div className="site-desktop-community"><CommunityLinks /></div>
+            <a className="site-download" href="https://github.com/bitrouter/bitrouter/releases/latest"><Download size={15} aria-hidden="true" /><span>Download</span></a>
+            <NavigationMenuItem value="mobile" asChild>
+              <div className="site-menu-item">
+                <NavigationMenuTrigger className="site-menu-trigger" aria-label={menu ? "Close navigation" : "Open navigation"} onPointerMove={event => event.preventDefault()} onPointerLeave={event => event.preventDefault()}>
+                  {menu ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
+                </NavigationMenuTrigger>
+                <NavigationMenuContent className="site-menu-content" onPointerEnter={event => event.preventDefault()} onPointerLeave={event => event.preventDefault()}>
+                  <div className="site-menu-inner">
+                    <nav className="site-mobile-primary" aria-label="Mobile navigation">{NAV_ITEMS.map(item => <NavigationMenuLink key={item.key} asChild active={isNavItemActive(pathname, item)}>
+                      <a href={item.webPath} aria-current={isNavItemActive(pathname, item) ? "page" : undefined} onClick={() => setMenu("")}>{item.label}</a>
+                    </NavigationMenuLink>)}</nav>
+                    <div className="site-menu-community" onClick={event => { if ((event.target as HTMLElement).closest("a")) setMenu(""); }}><CommunityLinks /></div>
+                  </div>
+                </NavigationMenuContent>
+              </div>
+            </NavigationMenuItem>
           </div>
-          <div className="py-1">
-            <a role="menuitem" href={`${config.consoleBaseUrl}/dashboard`} className={item}>
-              Dashboard
-            </a>
-            <a
-              role="menuitem"
-              href={`${config.consoleBaseUrl}/dashboard/api-keys`}
-              className={item}
-            >
-              API Keys
-            </a>
-            <a role="menuitem" href={`${config.consoleBaseUrl}/dashboard/billing`} className={item}>
-              Billing
-            </a>
-            <a role="menuitem" href={`${config.consoleBaseUrl}/settings/general`} className={item}>
-              Settings
-            </a>
-          </div>
-          {showSignOut && onSignOut ? (
-            <div className="border-t border-[var(--z-rule)] pt-1">
-              <button
-                role="menuitem"
-                type="button"
-                onClick={() => {
-                  setOpen(false);
-                  onSignOut();
-                }}
-                className={cn(item, "w-full text-left")}
-              >
-                Sign out
-              </button>
-            </div>
-          ) : null}
         </div>
-      ) : null}
+      </NavigationMenuList>
+      <NavigationMenuViewport className="site-menu-viewport" />
     </div>
-  );
+  </NavigationMenu>;
 }
 
-// ── mobile menu ──────────────────────────────────────────
-
-function MobileMenu({
-  config,
-  session,
-  pathname,
-  onSignOut,
-  showSignOut,
-}: {
-  config: HeaderConfig;
-  session: HeaderSession | null | undefined;
-  pathname?: string;
-  onSignOut?: () => void;
-  showSignOut: boolean;
-}) {
-  const [open, setOpen] = React.useState(false);
-  const isAuthed = Boolean(session);
-  const items = NAV_ITEMS;
-
-  return (
-    <div className="flex items-center lg:hidden">
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        aria-label="Toggle menu"
-        className="flex cursor-pointer items-center p-0.5 text-[var(--z-ink-3)] transition-colors hover:text-[var(--z-ink)]"
-      >
-        <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden>
-          {open ? (
-            <path
-              d="M4 4l10 10M14 4L4 14"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-            />
-          ) : (
-            <path
-              d="M2 5h14M2 9h14M2 13h14"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-            />
-          )}
-        </svg>
-      </button>
-
-      {open ? (
-        <div className="absolute inset-x-0 top-[62px] z-50 border-b border-[var(--z-rule)] bg-[rgba(12,13,16,0.95)] px-[22px] pb-6 pt-2 backdrop-blur-lg">
-          <nav className="flex flex-col gap-0.5">
-            {items.map((item) => {
-              const active = isNavItemActive(pathname, item);
-              return (
-                <a
-                  key={item.key}
-                  href={resolveHref(item, config)}
-                  onClick={() => setOpen(false)}
-                  aria-current={active ? "page" : undefined}
-                  className={cn(
-                    "py-[11px] font-mono text-xs uppercase tracking-[0.16em] transition-colors hover:text-[var(--z-ink)]",
-                    active ? "text-[var(--z-ink)]" : "text-[var(--z-ink-3)]",
-                  )}
-                >
-                  {item.label}
-                </a>
-              );
-            })}
-            <BookDemoButton
-              location="header_mobile"
-              className="mt-2 flex cursor-pointer items-center justify-center border border-[var(--z-rule)] px-4 py-3 font-mono text-[11.5px] uppercase tracking-[0.16em] text-[var(--z-ink)] transition-colors hover:border-[var(--z-rule-2)] hover:bg-white/[0.02]"
-            />
-            <div className="mt-2 flex items-center gap-2">
-              {isAuthed && session ? (
-                showSignOut && onSignOut ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setOpen(false);
-                      onSignOut();
-                    }}
-                    className="flex flex-1 cursor-pointer items-center justify-center border border-[var(--z-rule)] px-4 py-3 font-mono text-[11.5px] uppercase tracking-[0.16em] text-[var(--z-ink-3)] transition-colors hover:bg-white/[0.03]"
-                  >
-                    Sign out
-                  </button>
-                ) : null
-              ) : (
-                <a
-                  href={`${config.consoleBaseUrl}/sign-in`}
-                  aria-label="Try bitrouter/auto"
-                  className="flex flex-1 items-center justify-center gap-2 rounded-[2px] bg-primary px-4 py-3 font-mono text-[11.5px] uppercase tracking-[0.12em] text-primary-foreground transition-colors hover:bg-primary/90"
-                >
-                  <TryAutoLabel />
-                </a>
-              )}
-            </div>
-          </nav>
-        </div>
-      ) : null}
-    </div>
-  );
+export function SiteHeader(props: SiteHeaderProps) {
+  return <><a className="site-skip-link" href="#main">Skip to content</a><header className="site-header"><SiteHeaderBody {...props} /></header></>;
 }

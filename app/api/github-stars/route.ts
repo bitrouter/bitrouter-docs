@@ -1,4 +1,4 @@
-// Public, unauthenticated star count for the header badge. Cached at the edge
+// Public, unauthenticated star count for the header badge and homepage CTA. Cached at the edge
 // for an hour so visitors never hit GitHub's 60/hr anon rate limit directly.
 export const revalidate = 3600;
 

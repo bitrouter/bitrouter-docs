@@ -2,13 +2,21 @@ import { describe, expect, it } from "vitest";
 import { NAV_ITEMS, isNavItemActive } from "./nav-config";
 
 describe("global navigation", () => {
-  it("links to the four primary site sections", () => {
+  it("links to the primary product sections", () => {
     expect(NAV_ITEMS.map((item) => item.webPath)).toEqual([
-      "/models",
       "/pricing",
+      "/changelog",
       "/enterprise",
       "/docs",
     ]);
+  });
+
+  it("keeps model details under pricing in the global navigation", () => {
+    const pricing = NAV_ITEMS.find((item) => item.key === "pricing")!;
+    expect(isNavItemActive("/pricing", pricing)).toBe(true);
+    expect(isNavItemActive("/models/openai/example", pricing)).toBe(true);
+    expect(isNavItemActive("/pricing-preview", pricing)).toBe(false);
+    expect(isNavItemActive("/docs/models-routing/models", pricing)).toBe(false);
   });
 
   it("keeps enterprise and docs as distinct global sections", () => {

@@ -36,49 +36,14 @@ export function PageHead({
   /** Measure for the standfirst, in ch. */
   maxWidth?: string;
 }) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "flex-end",
-        gap: 20,
-        flexWrap: "wrap",
-        padding: "72px 0 0",
-      }}
-    >
-      <div style={{ minWidth: 0 }}>
-        <div className="zed-eyebrow">{eyebrow}</div>
-        <h1
-          className="zed-display"
-          style={{
-            fontSize: "clamp(34px, 5.2vw, 48px)",
-            lineHeight: 1.06,
-            margin: "20px 0 0",
-            maxWidth: "20ch",
-            textWrap: "pretty",
-          }}
-        >
-          {title}
-        </h1>
-        {sub && (
-          <p
-            style={{
-              fontFamily: "var(--font-sans)",
-              fontSize: 16,
-              lineHeight: 1.7,
-              color: "var(--z-ink-5)",
-              margin: "20px 0 0",
-              maxWidth: maxWidth ?? "58ch",
-              textWrap: "pretty",
-            }}
-          >
-            {sub}
-          </p>
-        )}
-      </div>
-      {aside ? <div style={{ marginLeft: "auto" }}>{aside}</div> : null}
+  return <div className="site-page-heading">
+    <div>
+      <p className="site-page-label">{eyebrow}</p>
+      <h1>{title}</h1>
+      {sub && <p className="site-page-description" style={{ maxWidth: maxWidth ?? "58ch" }}>{sub}</p>}
     </div>
-  );
+    {aside && <div className="site-page-aside">{aside}</div>}
+  </div>;
 }
 
 // ── YAML / policy syntax highlighter ────────────────────────────────────────
@@ -225,7 +190,7 @@ export const ZED_LINKS = {
   docs: "/docs",
   quickstart: "/docs/overview/quickstart",
   selfHosting: "/docs/self-hosting",
-  models: "/models",
+  models: "/pricing#models",
   pricing: "/pricing",
   blog: "/blog",
   changelog: "/changelog",

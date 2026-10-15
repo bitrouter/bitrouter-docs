@@ -42,7 +42,7 @@ function LatestBadge() {
         textTransform: "uppercase",
         color: "var(--z-ink-2)",
         border: "1px solid var(--z-rule-2)",
-        borderRadius: 0,
+        borderRadius: 5,
         padding: "2px 6px",
       }}
     >
@@ -57,7 +57,7 @@ function BreakingBadge({ label = "Breaking" }: { label?: string }) {
       style={{
         color: "var(--z-red)",
         border: "1px solid rgba(224,108,108,0.35)",
-        borderRadius: 0,
+        borderRadius: 5,
         padding: "2px 7px",
         textTransform: "uppercase",
         letterSpacing: "0.06em",
@@ -75,7 +75,7 @@ function TagChip({ children }: { children: ReactNode }) {
       style={{
         color: "var(--z-ink-5)",
         border: ROW_BORDER,
-        borderRadius: 0,
+        borderRadius: 5,
         padding: "2px 8px",
         fontSize: 11.5,
       }}
@@ -116,7 +116,7 @@ function ReleaseSection({
   return (
     <div
       className="zed-metagrid"
-      style={{ borderBottom: ROW_BORDER, padding: routine ? "30px 8px" : "46px 8px" }}
+      style={{  padding: routine ? "30px 8px" : "46px 8px" }}
     >
       <div style={{ position: "relative" }}>
         <div style={{ position: "sticky", top: 96 }}>
@@ -207,7 +207,7 @@ function TrainGroup({
     <div>
       <div
         className="zed-metagrid"
-        style={{ borderBottom: ROW_BORDER, padding: "26px 8px 20px" }}
+        style={{  padding: "26px 8px 20px" }}
       >
         <div style={{ ...MONO, fontSize: 13.5, fontWeight: 500, color: "var(--z-ink-3)" }}>
           {group.line || "releases"}

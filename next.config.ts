@@ -31,6 +31,8 @@ for (const [slug, dest] of Object.entries(finalPath)) {
 }
 // overview + root + special
 pairs.push(
+  // Model discovery and prices share one page; individual model URLs remain.
+  ["/models", "/pricing#models"],
   ["/docs/api", "/docs/api/responses"],
   // Config owns operator-authored BitRouter settings (2026-10).
   ["/docs/config", "/docs/config/configuration-file"],
@@ -365,7 +367,7 @@ pairs.push(
 const docsRedirects = pairs.map(([source, destination]) => ({
   source,
   destination,
-  permanent: true,
+  ...(source === "/models" ? { statusCode: 301 } : { permanent: true }),
 }));
 
 const nextConfig: NextConfig = {

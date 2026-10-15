@@ -75,13 +75,9 @@ export default defineConfig({
   mdxOptions: {
     remarkPlugins: [remarkGfm],
     rehypePlugins: [rehypeSlug],
-    // One-Dark token colours site-wide (docs, blog, changelog). fumadocs'
-    // rehype-code always runs in dual-theme mode (codeToTokensWithThemes), so a
-    // `themes` map is required — both slots are one-dark-pro (dark-only). Token
-    // colours come through as --shiki-dark CSS vars; the panel background is set
-    // in globals.css (Shiki doesn't emit a static bg in dual mode).
+    // Light code panels for the site; retain a matching dark token map.
     rehypeCodeOptions: {
-      themes: { light: "one-dark-pro", dark: "one-dark-pro" },
+      themes: { light: "github-light", dark: "github-dark" },
     },
   },
   plugins: [lastModified()],

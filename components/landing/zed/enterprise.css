@@ -1,0 +1,51 @@
+.enterprise-main { overflow-x:clip; }
+.enterprise-page { max-width:1180px; padding-top:76px; padding-bottom:96px; }
+.enterprise-main-layout { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:clamp(48px,7vw,96px); align-items:start; }
+.enterprise-eyebrow { color:var(--muted-foreground); font-size:12px; margin:0 0 22px; }
+.enterprise-article h1 { margin:0; font-size:clamp(40px,4.5vw,58px); font-weight:450; letter-spacing:-.045em; line-height:1.08; }
+.enterprise-article h1 em,.enterprise-contact h2 em { font-family:var(--font-display); font-weight:400; }
+.enterprise-article p:where(:not(.enterprise-eyebrow)) { font-size:16px; line-height:1.8; color:var(--muted-foreground); margin:16px 0 0; text-wrap:pretty; }
+.enterprise-article .enterprise-summary { max-width:58ch; margin-top:26px; }
+.enterprise-contact { position:sticky; top:104px; margin:0; }
+.enterprise-contact h2 { margin:0; font-size:32px; letter-spacing:-.035em; font-weight:450; line-height:1.15; }
+.enterprise-form-intro { margin:20px 0 28px; font-size:14px; line-height:1.75; color:var(--muted-foreground); }
+.enterprise-contact fieldset { padding:0; margin:0; border:0; display:flex; flex-direction:column; gap:20px; min-width:0; }
+.enterprise-contact label { display:flex; flex-direction:column; gap:8px; font-size:13px; font-weight:500; }
+.enterprise-contact input,.enterprise-contact textarea { width:100%; padding:11px 13px; border:1px solid var(--input); border-radius:6px; color:var(--foreground); background:var(--background); font:14px/1.5 var(--font-sans); outline:none; }
+.enterprise-contact textarea { resize:vertical; min-height:116px; }
+.enterprise-contact :is(input,textarea):focus-visible { border-color:var(--ring); box-shadow:0 0 0 3px color-mix(in srgb,var(--ring) 20%,transparent); }
+.enterprise-contact :is(input,textarea)::placeholder { color:var(--muted-foreground); font-weight:400; }
+.enterprise-contact .enterprise-form-trap { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+.enterprise-form-privacy,.enterprise-form-alternative { margin:0; font-size:11px; line-height:1.7; color:var(--muted-foreground); }
+.enterprise-contact a,.enterprise-faq a { text-decoration:underline; text-underline-offset:3px; }
+.enterprise-submit { display:flex; align-items:center; justify-content:center; gap:10px; min-height:44px; padding:12px 16px; border:0; border-radius:6px; background:var(--primary); color:var(--primary-foreground); font-size:13px; font-weight:500; cursor:pointer; }
+.enterprise-submit:hover { opacity:.9; }
+.enterprise-submit:disabled { opacity:.55; cursor:not-allowed; }
+.enterprise-submit:focus-visible { outline:2px solid var(--ring); outline-offset:3px; }
+.enterprise-form-alternative { margin-top:14px; }
+.enterprise-form-error { color:var(--destructive); font-size:13px; line-height:1.6; margin-top:16px; }
+.enterprise-form-success { margin-top:36px; }
+.enterprise-form-success h3 { font-size:18px; font-weight:500; margin:14px 0; }
+.enterprise-form-success p { font-size:14px; line-height:1.7; color:var(--muted-foreground); }
+.enterprise-faq { margin:104px auto 0; max-width:1000px; }
+.enterprise-faq>h2 { margin:0 0 28px; font-family:var(--font-display); font-size:48px; font-style:italic; font-weight:400; }
+.enterprise-faq details { scroll-margin-top:100px; }
+.enterprise-faq summary { display:flex; justify-content:space-between; align-items:center; gap:24px; padding:22px 0; font-size:19px; letter-spacing:-.025em; cursor:pointer; list-style:none; }
+.enterprise-faq summary::-webkit-details-marker { display:none; }
+.enterprise-faq summary span { color:var(--muted-foreground); font-size:22px; font-weight:300; }
+.enterprise-faq details[open] summary span { transform:rotate(45deg); }
+.enterprise-faq-answer { color:var(--muted-foreground); font-size:15px; line-height:1.8; max-width:78ch; padding:0 40px 20px 0; }
+@media(max-width:899px) {
+ .enterprise-page { max-width:720px; padding-top:44px; }
+ .enterprise-main-layout { grid-template-columns:1fr; gap:56px; }
+ .enterprise-contact { position:static; max-width:520px; }
+ .enterprise-faq { margin-top:72px; }
+}
+@media(max-height:1040px) { .enterprise-contact { position:static; } }
+@media(max-width:479px) {
+ .enterprise-page { padding-bottom:64px; }
+ .enterprise-article h1 { font-size:42px; }
+ .enterprise-article p:where(:not(.enterprise-eyebrow)) { font-size:15px; }
+ .enterprise-faq summary { font-size:17px; line-height:1.5; padding:18px 0; }
+ .enterprise-faq-answer { font-size:14px; padding-right:0; }
+}

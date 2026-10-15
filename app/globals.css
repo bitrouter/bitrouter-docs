@@ -2,8 +2,7 @@
 @import "fumadocs-ui/css/shadcn.css";
 @import "fumadocs-ui/css/preset.css";
 @import "fumadocs-openapi/css/preset.css";
-/* shadcn Neutral is the source of truth. The site stays dark-only; legacy
-   --z-* aliases below keep older landing components on the same palette. */
+/* shadcn Neutral is the shared source of truth. */
 @theme inline {
   --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Newsreader", Georgia, "Times New Roman", serif;
@@ -49,79 +48,79 @@
   --radius-3xl: calc(var(--radius) * 3);
 }
 
-:root,
-.dark {
-  color-scheme: dark;
+/* Default shadcn Neutral light palette, shared by every site surface. */
+:root, .light {
+  color-scheme: light;
   --radius: 0.625rem;
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.922 0 0);
-  --chart-2: oklch(0.708 0 0);
-  --chart-3: oklch(0.556 0 0);
-  --chart-4: oklch(0.439 0 0);
-  --chart-5: oklch(0.371 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.922 0 0);
-  --sidebar-primary-foreground: oklch(0.205 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.205 0 0);
+  --chart-2: oklch(0.371 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.556 0 0);
+  --chart-5: oklch(0.708 0 0);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--accent-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
   --color-fd-primary: var(--foreground);
   --accent-brand: var(--foreground);
 
+  /* Compatibility aliases while existing page components share the new theme. */
   --z-bg: var(--background);
   --z-panel: var(--card);
-  --z-panel-header: oklch(0.185 0 0);
+  --z-panel-header: var(--muted);
   --z-panel-sel: var(--accent);
-  --z-inset: oklch(0.17 0 0);
-  --z-wash: oklch(0.18 0 0);
+  --z-inset: var(--muted);
+  --z-wash: var(--muted);
   --z-rule: var(--border);
-  --z-rule-2: oklch(1 0 0 / 18%);
+  --z-rule-2: oklch(0.85 0 0);
   --z-rule-code: var(--input);
-  --z-rule-faint: oklch(1 0 0 / 6%);
+  --z-rule-faint: var(--muted);
   --z-ink: var(--foreground);
-  --z-ink-bright: oklch(0.95 0 0);
-  --z-ink-2: oklch(0.86 0 0);
-  --z-ink-3: oklch(0.78 0 0);
+  --z-ink-bright: var(--foreground);
+  --z-ink-2: oklch(0.3 0 0);
+  --z-ink-3: oklch(0.4 0 0);
   --z-ink-4: var(--muted-foreground);
-  --z-ink-5: oklch(0.66 0 0);
-  --z-ink-6: oklch(0.58 0 0);
-  --z-ink-7: oklch(0.5 0 0);
-  --z-ink-8: oklch(0.4 0 0);
+  --z-ink-5: var(--muted-foreground);
+  --z-ink-6: var(--muted-foreground);
+  --z-ink-7: var(--muted-foreground);
+  --z-ink-8: oklch(0.65 0 0);
   --z-blue: var(--foreground);
   --z-blue-hi: var(--foreground);
   --z-blue-chip-bg: var(--accent);
   --z-blue-chip-border: var(--border);
   --z-cta: var(--primary);
-  --z-green: #a1c181; /* success text */
-  --z-green-dot: #5bbf6a; /* status dot */
+  --z-green: #28743b;
+  --z-green-dot: #28743b;
   --z-amber: var(--z-ink-3);
   --z-cost: var(--z-ink-3);
   --z-purple: var(--z-ink-3);
   --z-code: var(--foreground);
-  --z-red: #e06c6c; /* traffic light red */
-  --z-yellow: #e0b45b; /* traffic light yellow */
-
-  --z-sec: 116px;
+  --z-red: #b42318;
+  --z-yellow: #8a6100;
+  --z-sec: 88px;
   --z-wrap: 1180px;
   --z-gutter: 40px;
 }
@@ -141,27 +140,11 @@
   }
 }
 
-/* ─── Fixed header offset ─── */
-/* ─── Zed code panels ───
-   Rounded One-Dark surfaces. The background comes from the Shiki `one-dark-pro`
-   theme (#282c34, configured in source.config.ts) — do NOT force a background
-   here or the One-Dark tokens lose their surface. */
-pre:has(code),
-[data-rehype-pretty-code-figure],
-[data-rehype-pretty-code-figure] pre,
-.nd-codeblock,
-figure[class*="code"] {
-  border-radius: 9px;
+/* Code panels follow the light syntax theme configured in source.config.ts. */
+pre:has(code), [data-rehype-pretty-code-figure], .nd-codeblock, figure[class*="code"] {
+  border-radius: 8px;
 }
-/* One-Dark panel surface. Shiki's inline background (same #282c34) wins when
-   present; this guarantees the panel look even if it isn't emitted. */
-pre:has(code) {
-  background: #282c34;
-  border: 1px solid var(--z-rule);
-}
-
-/* ─── Drafting-board typography ───
-   Plain CSS classes (in @layer components so Tailwind utilities can override).
+pre:has(code) { background:var(--muted); border:1px solid var(--border); }
 
 /* ─── Content links ───
    Scoped to long-form bodies only. fumadocs DocsBody renders `.prose`
@@ -212,8 +195,8 @@ pre:has(code) {
 
 
 
-/* ═══ Docs · v3 dark ══════════════════════════════════════════════════════
-   Re-skins the fumadocs notebook surface to the "BitRouter Docs dark" file.
+/* ═══ Docs · light workspace ══════════════════════════════════════════════════════
+   Shared typography and spacing for the light documentation workspace.
    Layout, sidebar, TOC and prose only — the page header (breadcrumb, title,
    meta row) is composed in `app/docs/[[...slug]]/page.tsx`.
 
@@ -242,16 +225,16 @@ pre:has(code) {
 }
 #nd-toc h3,
 #nd-toc [data-toc-header] {
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  text-transform: none;
+  letter-spacing: 0;
   color: var(--z-ink-6);
   padding-bottom: 16px;
 }
 #nd-toc a {
-  font-family: var(--font-mono);
-  font-size: 12px;
+  font-family: var(--font-sans);
+  font-size: 13px;
   line-height: 1.55;
   border-left: 1px solid var(--z-rule);
   padding: 6px 0 6px 14px;
@@ -283,10 +266,10 @@ pre:has(code) {
 
 /* Breadcrumb. */
 #nd-page > div:first-child {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 0;
+  text-transform: none;
   color: var(--z-ink-6);
 }
 #nd-page > div:first-child > *:last-child {
@@ -297,7 +280,7 @@ pre:has(code) {
 .zed-doc-title {
   font-family: var(--font-sans) !important;
   font-style: normal !important;
-  font-weight: 600 !important;
+  font-weight: 500 !important;
   letter-spacing: -0.035em;
   font-size: 44px !important;
   line-height: 1.06;
@@ -338,7 +321,7 @@ pre:has(code) {
   line-height: 1.25;
   margin: 68px 0 0 !important;
   padding-top: 22px;
-  border-top: 1px solid var(--z-rule);
+  border-top: 0;
 }
 .zed-docs h3 {
   font-size: 20px !important;
@@ -375,7 +358,7 @@ pre:has(code) {
 .zed-docs pre {
   background: var(--z-wash) !important;
   border: none !important;
-  border-radius: 0 !important;
+  border-radius: 8px !important;
   box-shadow: none !important;
 }
 .zed-docs pre {
@@ -390,7 +373,7 @@ pre:has(code) {
   background: transparent !important;
   border: none !important;
   border-left: 1px solid var(--callout-color, var(--z-blue)) !important;
-  border-radius: 0 !important;
+  border-radius: 8px !important;
   box-shadow: none !important;
   padding: 2px 0 2px 18px !important;
   margin: 28px 0 !important;
@@ -421,17 +404,17 @@ pre:has(code) {
 .zed-docs div[class~="@container"]:has(> [data-card]) {
   display: grid !important;
   grid-template-columns: 1fr 1fr;
-  gap: 1px !important;
-  background: var(--z-rule);
-  border: 1px solid var(--z-rule);
-  border-radius: 0 !important;
+  gap: 16px !important;
+  background: transparent;
+  border: none;
+  border-radius: 8px !important;
   margin-top: 26px;
   max-width: 72ch;
 }
 .zed-docs [data-card][class~="rounded-xl"] {
-  background: var(--z-bg) !important;
+  background: var(--muted) !important;
   border: none !important;
-  border-radius: 0 !important;
+  border-radius: 8px !important;
   padding: 22px 22px 24px !important;
   box-shadow: none !important;
 }
@@ -482,13 +465,13 @@ pre:has(code) {
   display: grid;
   gap: 1px !important;
   background: var(--z-rule);
-  border-top: 1px solid var(--z-rule);
+  border-top: 0;
   margin-top: 80px;
 }
 #nd-page > div[class~="@container"] > a {
   background: var(--z-bg);
   border: none !important;
-  border-radius: 0 !important;
+  border-radius: 8px !important;
   padding: 24px 0 !important;
   color: var(--z-ink-2) !important;
   text-decoration: none !important;

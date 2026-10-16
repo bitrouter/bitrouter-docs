@@ -1,9 +1,9 @@
 {
   "title": "Model",
-  "pagesIndex": "[bitrouter/auto](/docs/models-routing/bitrouter-auto)",
+  "pagesIndex": "[Virtual Models](/docs/models-routing/virtual-models)",
   "pages": [
-    "[Model routing](/docs/models-routing/models)",
-    "[Evaluations](/docs/models-routing/evaluations)",
-    "[Routing policy](/docs/models-routing/policy)"
+    "[Model Fallback](/docs/models-routing/model-fallback)",
+    "[BYOK & Subscriptions](/docs/models-routing/byok-subscriptions)",
+    "[Local Models](/docs/models-routing/local-models)"
   ]
 }

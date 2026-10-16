@@ -1,9 +1,9 @@
 {
   "title": "Context",
-  "pagesIndex": "[MCP servers](/docs/context-routing/mcp-servers)",
+  "pagesIndex": "[ACP servers](/docs/context-routing/acp-servers)",
   "pages": [
+    "[MCP servers](/docs/context-routing/mcp-servers)",
     "[Agent Skills](/docs/context-routing/skills)",
-    "[AGENTS.md](/docs/context-routing/agents-md)",
-    "[Server tools](/docs/context-routing/server-tools)"
+    "[AGENTS.md](/docs/context-routing/agents-md)"
   ]
 }

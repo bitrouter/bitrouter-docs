@@ -3,8 +3,11 @@
   "pages": [
     "---Overview---",
     "...(overview-nav)",
-    "---Config---",
-    "...(config-nav)",
+    "(comparison-nav)",
+    "---Coding Agents---",
+    "...(integration-nav)",
+    "---Routing---",
+    "...(routing-nav)",
     "---Model---",
     "...(models-routing-nav)",
     "---Context---",
@@ -12,8 +15,6 @@
     "---CLI---",
     "...(cli-nav)",
     "(cli-reference-nav)",
-    "---Integration---",
-    "...(integration-nav)",
     "---API---",
     "...(api-nav)",
     "reference"

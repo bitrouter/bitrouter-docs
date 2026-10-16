@@ -7,7 +7,7 @@ description: bitrouter-agent — a CLI wizard that reads your agentic codebase a
 
 | Artifact | What it is |
 |----------|------------|
-| `bitrouter.yaml` | An MVP router policy to try — see [Configuration](/docs/config/configuration-file) |
+| `bitrouter.yaml` | An MVP router policy to try — see [bitrouter.yaml](/docs/routing/configuration) |
 | `bitrouter-audit.md` | An audit of your LLM usage, with a savings estimate |
 | `.bitrouter/analysis.json` | The same analysis, machine-readable |
 
@@ -94,7 +94,7 @@ The list is namespaced under `bitrouter` on purpose: pi reads the top-level `ski
 bitrouter-agent is an **adoption and tuning** tool, not a runtime surface — it writes policy, it doesn't serve traffic. Once the generated `bitrouter.yaml` is in place, the router runs it like any other config:
 
 <Cards>
-  <Card title="Configuration" href="/docs/config/configuration-file" description="Understand how bitrouter.yaml expresses the router's complete desired behavior." />
+  <Card title="Configuration (YAML)" href="/docs/routing/configuration" description="Understand how bitrouter.yaml expresses the router's complete desired behavior." />
   <Card title="CLI" href="/docs/cli/reference/init" description="Start the daemon the agent routes through, and validate the policy it wrote." />
-  <Card title="TUI" href="/docs/cli/tui" description="Run an interactive ACP conversation with attributed session cost." />
+  <Card title="Interactive TUI" href="/docs/cli/tui" description="Preview Goals, ongoing work, and read-only Workflow inspection." />
 </Cards>

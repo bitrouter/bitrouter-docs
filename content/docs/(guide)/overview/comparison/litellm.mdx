@@ -1,0 +1,46 @@
+---
+title: LiteLLM
+description: Compare BitRouter with LiteLLM's SDK and proxy across gateway operations, automatic routing, and migration.
+---
+
+[LiteLLM](https://docs.litellm.ai/docs/) offers a Python SDK and a self-hosted proxy with provider translation, retries, fallbacks, virtual keys, spend tracking, and administration. It also documents [Auto Routing in beta](https://docs.litellm.ai/docs/proxy/auto_routing), including classifiers and adaptive model pools. Compare your required integration shape, gateway controls, and policy workflow.
+
+## Key differences
+
+| Question | LiteLLM | BitRouter |
+| --- | --- | --- |
+| How is it integrated? | Python SDK in an application or a separate proxy | Standalone daemon/API and CLI; managed Cloud option |
+| What is the gateway surface? | Broad provider/endpoint support and centralized administration | Routed generation, model-source configuration, and supported agent connections |
+| How are routing decisions configured? | Deployment strategies and beta classification/adaptive routing | Virtual-model endpoints and a separately bound routing policy |
+| How are changes reviewed? | Configure the selected gateway and routing features | Inspect policy-lock changes and explicitly apply reviewed candidates |
+
+BitRouter's [Strategies](/docs/routing/strategies) and [Evaluations](/docs/routing/strategies#evaluations) describe runtime outcome observations and objective evaluation evidence separately. LiteLLM's beta adaptive routing also accepts feedback. Having feedback support does not establish that two systems use the same outcome, attribution, or publication rules.
+
+## Choose BitRouter when
+
+- A standalone routing service and CLI fit your operating model.
+- You want to inspect and version a policy artifact alongside your deployment configuration.
+- You want to connect [API keys, subscriptions](/docs/models-routing/byok-subscriptions), and [local inference](/docs/models-routing/local-models) through BitRouter's supported routes.
+
+Self-hosted BYOK requests have no BitRouter inference fee. Provider charges and infrastructure costs still apply; BitRouter Cloud has separate managed terms.
+
+## Choose LiteLLM when
+
+- Your application relies on its importable Python SDK and integrations.
+- You need its documented endpoint coverage or existing gateway administration workflows.
+- You already operate its virtual-key, budget, logging, caching, or enterprise controls and have no replacement requirement.
+
+Check the [current LiteLLM documentation](https://docs.litellm.ai/docs/) and [commercial packaging](https://www.litellm.ai/pricing) for the features and deployment edition you use. Compare required capabilities individually before replacing a gateway.
+
+## Migrate from LiteLLM
+
+If you call `litellm.completion` in-process, migration changes application architecture: use a compatible HTTP client against BitRouter. Replacing LiteLLM Proxy can preserve a supported client wire format, but its gateway settings still need translation.
+
+1. Choose [Cloud or a local daemon](/docs/overview/quickstart) and configure the required upstream credentials.
+2. Change the client base URL to `https://api.bitrouter.ai/v1` or `http://127.0.0.1:4356/v1`, with the corresponding BitRouter credential.
+3. Translate `model_list` aliases and deployments into [Virtual Models](/docs/models-routing/virtual-models), [Model Routing](/docs/routing/model-routing) constraints, and [Model Fallback](/docs/models-routing/model-fallback).
+4. If using auto routing, define and validate the destination [policy binding](/docs/routing/strategies#initialize-a-policy-binding). Existing classifier, tier, or feedback settings do not transfer automatically.
+5. Inventory hooks, budgets, keys, caching, non-generation endpoints, and admin dependencies. Keep a workload on its existing gateway until each required capability has a verified replacement.
+6. Replay representative requests, inspect settled [receipts](/docs/cli/request-receipts), and configure [OpenTelemetry export](/docs/self-hosting#opentelemetry) before retiring the previous proxy.
+
+Use [Chat Completions / Messages](/docs/api/chat-completions-messages) for an existing compatible client or [Responses (default)](/docs/api/responses) for a new integration.

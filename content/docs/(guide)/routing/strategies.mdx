@@ -1,0 +1,291 @@
+---
+title: Strategies
+description: Choose a configured routing strategy, customize candidate rules and policy settings, and evaluate changes before publication.
+---
+
+Start from an existing routing approach, configure the models and constraints it may use, then verify its behavior before serving traffic. [Model Routing](/docs/routing/model-routing) explains the selection mechanics; this page covers choosing and customizing them. Use [Configuration (YAML)](/docs/routing/configuration) for file loading, validation, and reload.
+
+## Choose a strategy
+
+| Approach | Choose it when | Configuration surface |
+| --- | --- | --- |
+| Ordered endpoints | You want a declared primary endpoint and explicit replacements | A virtual model with `strategy: priority` |
+| Candidate-based selection | Endpoints are interchangeable and provider preferences should filter or reorder them | A bare logical model or a virtual model with `strategy: cascade`, plus routing preferences |
+| Policy-bound selection | Different request fingerprints should use configured strong/economy tiers | A preset bound to `policy-lock.yaml`, such as `bitrouter/auto` |
+
+The available building blocks have different scopes. A request preset under `presets` supplies a model and defaults; it is not an independent routing algorithm. The `strategy` field on a virtual model controls its endpoint resolution. A policy binding adds tier selection. Account strategies select credentials within a provider and are described in [Model Fallback](/docs/models-routing/model-fallback#account-fallback).
+
+### Ordered endpoints
+
+Define a [virtual model](/docs/models-routing/virtual-models#define-a-virtual-model) with `strategy: priority` and put its endpoints in the order you want them attempted. Change the endpoint list to customize that order. A retryable failure may advance the chain; an unsatisfactory successful answer does not itself trigger fallback.
+
+### Candidate-based selection
+
+Use `strategy: cascade` when endpoint preferences may filter and reorder a virtual model's alternatives. A bare logical model resolves across connected providers declaring that model. Both paths can use the routing preferences below; connected models still need compatible capabilities and protocols.
+
+### Policy-bound selection
+
+Use the auto binding below when model selection should depend on request fingerprints and configured policy tiers. Calling `bitrouter/auto` without the binding fails visibly; the model name alone does not install a usable policy.
+
+## Customize a strategy
+
+Choose the models and providers first, then configure candidate constraints, endpoint order, or policy tiers as appropriate to the chosen approach. This guide covers composing existing settings and policy artifacts; it does not define an arbitrary user-code plugin interface for new selection algorithms.
+
+### Request presets
+
+Give a supported configuration a reusable name under `presets`. For example,
+this fragment selects one logical model and restricts its provider candidates:
+
+```yaml
+presets:
+  openai_only:
+    model: openai/gpt-5.4
+    routing:
+      only: [openai]
+      sort: alphabetical
+```
+
+Configure the `openai` provider separately, then inspect the preset:
+
+```bash
+bro config validate -c bitrouter.yaml
+bro route @openai_only -c bitrouter.yaml
+bro claude --model @openai_only
+```
+
+Change the model or provider list to customize this profile. To choose among
+different models by request fingerprint, initialize a policy binding instead.
+[Virtual Models](/docs/models-routing/virtual-models#presets) covers request defaults
+and their precedence; a preset can also refer to a virtual model.
+
+### Variants
+
+A variant applies reusable candidate preferences:
+
+```yaml
+variants:
+  private:
+    routing:
+      require_tags: [private]
+  primary:
+    routing:
+      only: [openai]
+```
+
+Append a known variant to a logical model or preset, for example `openai/gpt-5.4:primary` or `@fast:primary`. Configure the referenced providers and presets first. The `private` variant requires matching provider tags; its name does not establish a privacy guarantee. An unknown suffix remains part of the selector.
+
+Preset and variant `routing` blocks accept `only`, `ignore`, and `require_tags`. These constrain bare-model and cascade selection. They do not prune a `priority` virtual model's authoritative endpoint list: remove disallowed endpoints from that list instead. Filters do not grant access, bypass guardrails, or supply credentials.
+
+### Ordering and release limits
+
+Use provider `priority` for explicit provider order in candidate-based selection, or `strategy: priority` and endpoint order for an explicit virtual-model chain. Presets and variants also accept these sort values:
+
+| Value | alpha.31 behavior |
+| --- | --- |
+| `alphabetical` | Provider priority, then provider ID |
+| `cost` | Accepted, but currently uses the same deterministic fallback order |
+| `latency` | Accepted, but currently uses the same deterministic fallback order |
+
+<Callout type="warning">
+Cost- and latency-based live scoring are not active in alpha.31. Do not treat a `cost` or `latency` sort as measured optimization. Check the behavior supported by the binary you deploy.
+</Callout>
+
+### Policy tiers and runtime adequacy
+
+Initialize a binding with usable models for its tiers, then adjust the policy's supported adequacy settings. An unmatched fingerprint uses the conservative default; escalation, cooldown, and exploration settings govern subsequent runtime behavior. The next sections show that workflow.
+
+Context-view selection has separate runtime rules. The model policy lock does not configure an external harness's history, and this page does not introduce unsupported context-strategy YAML. See [Context Routing](/docs/routing/context-routing).
+
+## Initialize a policy binding
+
+`bitrouter/auto` uses the routing policy bound to the `auto` preset. An explicit logical model id selects that model while retaining eligible provider fallback; a provider-qualified id pins one provider. Automatic selection and failure-driven fallback are separate decisions.
+
+For a local deployment, initialize the policy binding with connected, usable tier models:
+
+```bash
+bro policy init auto --preset auto \
+  --strong openai/gpt-5.4 \
+  --economy moonshotai/kimi-k2.7-code
+bro policy check
+bro route bitrouter/auto
+```
+
+The initializer writes `policy-lock.yaml` and updates `bitrouter.yaml`. The endpoint fails visibly if the required binding is missing. Cloud callers need an `auto` policy available to their active workspace.
+
+Use the selector in an API request or native harness launch:
+
+```bash
+bro claude --model bitrouter/auto
+bro codex --model bitrouter/auto
+```
+
+[Responses API](/docs/api/responses) shows a routed generation request. Inspect the actual serving model with [Request receipts](/docs/cli/request-receipts); a selector preview does not prove which fallback ultimately served the call.
+
+## Override one call
+
+Use an explicit selector when the caller should choose the model for one invocation:
+
+```bash
+bro claude --model openai/gpt-5.4
+bro codex --model openai:openai/gpt-5.4
+```
+
+An explicit logical id retains eligible provider alternatives. A provider-qualified id also pins the provider. See [Virtual Models](/docs/models-routing/virtual-models#model-selector-forms) for selector resolution and named endpoint definitions.
+
+## Let evidence improve the policy
+
+The policy starts conservatively: an unmatched request fingerprint uses its configured default tier. With `adequacy` enabled, BitRouter records deterministic outcome observations for policy-bound traffic.
+
+```yaml
+# policy-lock.yaml
+adequacy:
+  enabled: true
+  escalation_tier: strong
+  escalation_threshold: 2
+  pin_cooldown_secs: 1800
+  explore_enabled: true
+  explore_tier: economy
+  explore_threshold: 3
+  explore_interval: 5
+```
+
+The two directions are intentionally asymmetric:
+
+- **Escalation:** repeated hard failures pin a downgraded fingerprint back to the strong tier; the pin expires after its cooldown.
+- **Exploration:** a cheaper tier must succeed repeatedly before its fingerprint qualifies for that route; a failed trial stops the downgrade.
+
+## Review and publish a change
+
+Qualified changes remain in the local evidence store until you explicitly project and publish them:
+
+```bash
+bro policy status
+bro policy evolve          # dry-run the candidate
+bro policy unlock
+bro policy evolve --apply  # atomically update policy-lock.yaml
+bro policy reload
+bro policy lock
+```
+
+`evolve --apply` adds qualified routes without overwriting routes you authored, and it aborts when the policy changed after the candidate was derived. Review and commit the resulting lock-file diff.
+
+## Evaluations
+
+An evaluation answers whether a result met an objective. It is deliberately separate from telemetry, which records what ran, and from optimization, which decides how admitted evidence may change a routing policy.
+
+| Responsibility | Question it answers | Primary surface |
+| --- | --- | --- |
+| Telemetry | What route ran, what did it cost, and what happened on each attempt? | Request receipts, traces, and metrics |
+| Evaluation | Did the result satisfy the declared objective? | Subjects, evaluator results, and evidence snapshots |
+| Optimization | What policy transition is justified by admitted evidence? | Controller state and policy candidates |
+
+An HTTP `200`, a completed stream, or a cheaper route is not proof of task success. Those are observations that an evaluator may use, not the objective result itself.
+
+### Two evidence paths
+
+BitRouter keeps runtime adequacy and objective-scored evaluations distinct:
+
+- **Runtime adequacy** records deterministic outcome classes for policy-bound live traffic. It supports fast escalation and conservative exploration for a request fingerprint.
+- **Evaluator-neutral exchange** accepts immutable evaluation subjects and results from an evaluator you choose. Admitted results can be frozen into a reproducible snapshot for optimization or policy compilation.
+
+The two paths can inform the same routing-policy lifecycle, but their records are not interchangeable. An adequacy observation does not silently become an evaluator result, and exporting a trace does not evaluate its outcome.
+
+### Evidence lifecycle
+
+#### 1. Define and seal a subject
+
+An evaluation subject identifies what is being evaluated and carries redacted evidence items. Seal a draft to calculate its canonical digest and write validated JSON:
+
+```bash
+bro eval subject seal --output subject.json subject.yaml
+bro eval subject put subject.json
+```
+
+The digest makes the subject content-addressed. Changing the evidence creates a different subject rather than mutating the one an evaluator already scored.
+
+#### 2. Evaluate outside the router
+
+Run the evaluator appropriate to the objective: a test suite, benchmark harness, rubric implementation, human review, or another process whose configuration you can identify. BitRouter does not infer task success from model text or choose an evaluator for you.
+
+The result should name the sealed subject and preserve enough evaluator identity to distinguish materially different scoring configurations.
+
+#### 3. Submit the result
+
+Submit the result through the configured authority boundary:
+
+```bash
+bro eval result submit result.json
+bro eval status
+```
+
+Admission determines which results are eligible evidence. A stored result is not permission to rewrite a policy, and an unadmitted or malformed result must not influence optimization.
+
+#### 4. Freeze a snapshot
+
+Freeze the currently admitted results into an immutable, content-addressed manifest:
+
+```bash
+bro eval snapshot freeze
+bro eval snapshot get <EVIDENCE_ROOT>
+```
+
+The evidence root pins the exact set used for a later decision. This prevents a candidate from changing meaning when new results arrive.
+
+#### 5. Consume the evidence explicitly
+
+Optimization can advance its controller from admitted evaluation history:
+
+```bash
+bro optimize status --policy auto
+bro optimize run --policy auto
+```
+
+Policy compilation can also pin a frozen evaluation snapshot:
+
+```bash
+bro policy compile \
+  --eval-snapshot <EVIDENCE_ROOT> \
+  --output candidate-policy.yaml
+bro policy diff policy-lock.yaml candidate-policy.yaml
+```
+
+Compilation and optimization do not make every candidate active. Review the candidate and use the explicit policy publication workflow when it should serve traffic.
+
+### Reproducibility boundary
+
+A defensible evaluation decision needs all of the following to stay identifiable:
+
+- the sealed subject and its evidence digest;
+- the evaluator and materially relevant evaluator configuration;
+- the submitted result and admission decision;
+- the frozen evidence root consumed by optimization or compilation;
+- the active and candidate policy digests being compared.
+
+Keep private prompts, responses, and artifacts out of the subject unless the evaluator requires them. Redaction changes the evidence and therefore belongs before sealing, not as an undocumented post-processing step.
+
+### What evaluation does not establish
+
+- A successful transport or HTTP status does not establish task success.
+- Lower token cost does not establish acceptable quality.
+- A trace or request receipt does not become evaluation evidence merely because it is detailed.
+- One admitted result does not prove a general routing policy is better.
+- A candidate policy is not active until it passes the explicit publication boundary.
+
+Use repeated, comparable subjects and an evaluator aligned with the workload objective. Keep exploratory conclusions separate from policy changes you are prepared to serve.
+
+## Verify and apply a strategy
+
+```bash
+bro config validate -c bitrouter.yaml
+bro route bitrouter/auto -c bitrouter.yaml
+bro policy check -c bitrouter.yaml
+bro requests --limit 25
+```
+
+Replace `bitrouter/auto` with your configured selector when inspecting another strategy. Use `policy check` when a policy binding is involved. Route previews do not send inference or establish task quality; settled [Request receipts](/docs/cli/request-receipts) show what actually served a call. Apply configuration changes through [Configuration (YAML)](/docs/routing/configuration#apply-and-review-changes), and publish policy candidates through the explicit review workflow above.
+
+<Cards>
+  <Card title="Model Routing" href="/docs/routing/model-routing" description="Understand selector resolution, eligibility, and policy-bound selection." />
+  <Card title="Configuration (YAML)" href="/docs/routing/configuration" description="Load, validate, and apply routing configuration." />
+  <Card title="CLI reference" href="/docs/cli/reference/policy#bro-eval" description="Inspect captured evaluation, optimization, and policy commands." />
+</Cards>

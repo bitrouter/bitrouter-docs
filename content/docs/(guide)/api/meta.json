@@ -1,4 +1,4 @@
 {
   "title": "API",
-  "pages": ["responses", "decisions"]
+  "pages": ["responses", "decisions", "chat-completions-messages"]
 }

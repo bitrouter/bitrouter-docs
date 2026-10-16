@@ -1,7 +1,8 @@
 {
   "title": "CLI",
-  "pagesIndex": "[TUI](/docs/cli/tui)",
+  "pagesIndex": "[Self-driving](/docs/cli/orchestrator)",
   "pages": [
-    "[Headless](/docs/cli/headless)"
+    "[Interactive TUI](/docs/cli/tui)",
+    "[Headless & Scripting](/docs/cli/headless)"
   ]
 }

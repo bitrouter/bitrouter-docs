@@ -1,84 +1,144 @@
 ---
-title: Headless
-description: Run one ACP prompt from scripts with explicit output formats and tool approval policies.
+title: Headless & Scripting
+description: Run BRO's native executor from scripts, consume structured progress, verify results, and prepare goal-oriented automation.
 ---
 
-`bro run` sends one prompt to an ACP agent without opening the [TUI](/docs/cli/tui). Use it in scripts or automation when you need streamed updates or an assistant reply.
+<Callout type="info">
+**Development preview.** The native BRO commands below follow the development implementation and may be absent from installed releases or the captured [CLI reference](/docs/cli/reference/harnesses). The complete headless Goal lifecycle is still being defined. A native task invocation executes work without the interactive terminal; it does not establish that a persistent Goal was created or completed.
+</Callout>
 
-## Send a prompt
+Use BRO's native headless executor for repository work in CI, local scripts, or an automated pipeline. Supply a task and workspace, choose the permitted execution mode, collect structured progress, and check the actual terminal and verification results before continuing.
 
-Choose an [ACP server](/docs/integration/acp-servers) from the bundled catalog or your `agents:` configuration. Supply the prompt as an argument, through stdin, or from a file:
+The same execution foundations support the goal-oriented [Self-driving Workflows](/docs/cli/orchestrator) design. Use [Interactive TUI](/docs/cli/tui) to delegate and steer a persistent Goal in the terminal. Sending one prompt to an external harness remains a separate [headless ACP invocation](/docs/context-routing/acp-servers#run-one-headless-turn).
 
-```bash
-bro run codex "Summarize this repository"
-printf 'Review this diff' | bro run claude -
-bro run codex --prompt-file task.md --format quiet
-```
+## Choose the native execution mode
 
-Use `--cwd <PATH>` to set the working directory supplied to the agent session.
-
-## Choose the output
-
-| Format | Output |
+| Entry point | Execution and state |
 | --- | --- |
-| `ndjson` | One self-describing JSON object per line; the default |
-| `text` | A readable transcript |
-| `quiet` | Assistant text only |
+| `bro task run` | Submit one native coding Turn to the local BRO server and wait for its terminal result |
+| `bro task managed` | Run the native workspace harness with a named managed session and durable context |
+
+The built-in executor runs the work; neither entry requires choosing an external ACP agent. These are local execution interfaces. Explicit remote contexts are rejected rather than silently falling back to a local workspace.
+
+## Run a native task
+
+From a project with a configured model route, submit the work and its verification command:
 
 ```bash
-bro run codex "Summarize this repository" --format ndjson
-bro run codex --prompt-file task.md --format text
+bro task run "Fix the failing test and keep the public API unchanged." \
+  --workspace . \
+  --check "pnpm test"
 ```
 
-Use `--result-schema @schema.json` when the final reply must satisfy a JSON Schema, or supply the schema as inline JSON. Set `--turn-timeout <SECS>` to bound the turn. The generated [CLI reference](/docs/cli/reference/harnesses#bro-run) lists the complete options.
+Replace `pnpm test` with the check appropriate to your project. `--workspace` identifies the server-local working directory; it defaults to the client's current directory. Use `--model` to select a configured model when a default is unavailable or an explicit route is required.
+
+For an inspection-only task:
+
+```bash
+bro task run "Explain the authentication flow and identify missing coverage." \
+  --workspace . \
+  --read-only
+```
+
+Read-only execution exposes the native read, glob, and grep tools. It excludes write, edit, and shell tools, and cannot be combined with `--check`. Without a verification command, verification is recorded as `not_requested`.
+
+## Continue a managed session
+
+Choose a session name when the next invocation should continue retained native context:
+
+```bash
+bro task managed "Investigate the session-expiry failure." \
+  --workspace . \
+  --session session-expiry \
+  --read-only
+
+bro task managed "Continue the investigation and summarize the affected modules." \
+  --workspace . \
+  --session session-expiry \
+  --read-only
+```
+
+Reuse the name after the previous invocation has released cleanly, with the same workspace and execution mode. Abrupt process loss can leave recovery blocked; a session name does not authorize automatic takeover of an active or uncertain execution.
+
+A managed session retains execution context. A persistent Goal additionally carries completion conditions, budget, work dependencies, and coordination history. Reusing a session does not by itself create that Goal lifecycle.
+
+## Consume structured output
+
+`bro task run` writes newline-delimited JSON to stdout. Keep stdout intact as an event artifact and send diagnostics to a separate log when needed.
+
+| Record | How a script uses it |
+| --- | --- |
+| `accepted` | Retain the admitted `thread_id`, `turn_id`, server identity, workspace, and cursor |
+| `snapshot` | Read the current Thread view, including resynchronization information |
+| `event` | Follow recorded public changes using their durable cursors |
+| `live` | Display transient output without treating it as durable completion evidence |
+| `terminal` | Inspect `status`, `verification`, evidence, `final_answer`, and `unknown_effect` |
+| `blocked` | Preserve the reported snapshot and inspect the recovery state |
+
+Thread cursors are monotonic and can have gaps. Live output and assistant text do not replace a terminal record. If observation disconnects, the work may still be running; the client reports the uncertainty without resubmitting a new task.
+
+`bro task managed` has a different output shape: `managed_session` identifies the session, followed by a `terminal` record containing the native run. Use the parser for the chosen command rather than assuming the two terminal schemas are identical.
+
+## Gate a script on verified completion
+
+This Bash example captures native task events and requires both a completed Turn and a passed verification check. It uses `jq` to inspect the terminal record:
+
+```bash
+#!/usr/bin/env bash
+set -uo pipefail
+
+events_file="${BRO_EVENTS_FILE:-bro-events.ndjson}"
+
+if bro task run \
+  "Fix the failing tests. Keep the public API unchanged and deliver a reviewable diff." \
+  --workspace . \
+  --check "pnpm test" >"$events_file"; then
+  jq -e '
+    select(.type == "terminal")
+    | .status == "completed"
+      and .verification == "passed"
+      and .unknown_effect == false
+  ' "$events_file" >/dev/null
+else
+  task_status=$?
+  printf 'BRO task stopped; inspect %s\n' "$events_file" >&2
+  exit "$task_status"
+fi
+```
+
+Keep the event file and changed artifact together for review. A failed, cancelled, interrupted, or recovery-blocked task exits nonzero. Even when the process succeeds, a script that requires verification must check the verification result; `not_requested`, `unavailable`, `denied`, and `failed` do not satisfy that requirement.
+
+The check covers the artifact and command actually verified. A later edit, merge, or deployment requires its own applicable evidence. A completed native Turn also does not prove that every condition of a larger BRO Goal has been met.
 
 ## Permissions
 
-`bro run` denies permission requests by default. Choose the policy required by the task:
+Native headless coding approves its own identified tool requests within the admitted execution. It does not inherit the external ACP client's `--deny-all` or `--approve-reads` policy flags. Use `--read-only` for inspection and an execution environment appropriate to the authorized effects for coding tasks.
 
-| Option | Behavior |
-| --- | --- |
-| `--deny-all` | Deny every permission request; the default |
-| `--approve-reads` | Approve calls labeled `read` or `search` by the harness; deny other and unlabeled calls |
-| `--approve-all` | Approve every permission request from the harness |
-| `--permission-policy <JSON\|@PATH>` | Apply explicit per-tool rules |
+The workspace and native file-tool path checks do not provide an operating-system sandbox for shell commands or trusted MCP processes. Provider credentials, tool access, and any required isolation must be configured for the environment running BRO.
 
-For an inspection task:
+## Handle interruption and recovery
 
-```bash
-bro run codex "Review this repository" --approve-reads
-```
+Retain the identities emitted at admission. An unresolved acceptance or disconnected observer must not be treated as proof that nothing ran. Inspect the retained execution before submitting replacement work with potentially duplicate effects.
 
-For rules stored in a file:
+Cancellation coordinates the admitted task and reports its final or blocked state when available. Interrupted or unknown effects need reconciliation. The process's termination alone does not prove that every downstream effect stopped.
 
-```json
-{
-  "autoApprove": ["read", "search"],
-  "autoDeny": ["edit", "execute"],
-  "defaultAction": "deny"
-}
-```
+## Automate a persistent Goal
 
-```bash
-bro run codex "Review this repository" --permission-policy @permissions.json
-```
+Full Goal scripting should use the same goal, authorization, budget, evidence, and completion semantics as [Interactive TUI](/docs/cli/tui). Its command names, request schema, and process-control contract remain pending implementation validation. The native examples above are the execution foundation, not a proposed spelling for Goal creation or control.
 
-Entries match the ACP tool kind, the tool-call title, or its first word. `autoDeny` wins over `autoApprove`. Unmatched requests use `defaultAction`, or the selected mode flag when no default action is supplied. See the generated [CLI reference](/docs/cli/reference/harnesses#bro-run) for the complete contract.
+The intended automation lifecycle is:
 
-## Routing and sessions
+1. Submit an outcome, completion conditions, workspace, budget, and authorized scope through an explicitly supported Goal interface.
+2. Retain the accepted Goal and operation identities so retries can refer to the original work.
+3. Observe progress, applicable artifact versions, required decisions, and recorded evidence.
+4. Distinguish completion from budget exhaustion, blocking, pause, and unknown execution effects.
+5. Continue only when the Goal's actual conditions are satisfied and its result is available; otherwise preserve partial results and recovery requirements.
 
-Supported adapters attempt to route model traffic through the local daemon by default. Use `--model` to pin a model, `--base-url` to select an explicit gateway, or `--direct` to use the harness's own provider authentication. `--no-start` fails when the local daemon is unavailable instead of starting it.
-
-When the adapter supports native session persistence, `--load <id>` replays a harness-native session and `--resume <id>` continues one without replaying history. The harness owns the session identity and history.
-
-## Execution boundaries
-
-These options govern permission requests made by an ACP harness. [Native harness launch](/docs/integration/coding-agents#choose-the-interface) uses the harness's own permission configuration. They do not define an execution sandbox or grant upstream credentials.
-
-[Server tools](/docs/context-routing/server-tools) have a separate activation contract: the deployment enables the implementation and the request opts into it. Caller access policy, upstream credentials, and the tool's own approval rules still apply.
+A pipeline can prepare the project and checks now. It should add Goal submission, pause/resume, and durable retry automation once those interfaces have a verified contract. This guide does not assign future flags or turn `bro run <agent>` into a Goal API.
 
 <Cards>
-  <Card title="TUI" href="/docs/cli/tui" description="Work interactively and answer permission requests in the terminal." />
-  <Card title="ACP servers" href="/docs/integration/acp-servers" description="Discover and configure the agent adapter to run." />
-  <Card title="CLI reference" href="/docs/cli/reference/harnesses#bro-run" description="Inspect every headless command option." />
+  <Card title="Self-driving" href="/docs/cli/orchestrator" description="Understand persistent Goals and evidence-backed delivery." />
+  <Card title="Interactive TUI" href="/docs/cli/tui" description="Delegate, steer, and inspect work in the terminal." />
+  <Card title="ACP servers" href="/docs/context-routing/acp-servers#run-one-headless-turn" description="Run a separate one-prompt invocation against an external harness." />
+  <Card title="CLI reference" href="/docs/cli/reference/harnesses" description="Inspect the captured release command set." />
 </Cards>

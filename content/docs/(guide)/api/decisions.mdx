@@ -1,6 +1,6 @@
 ---
-title: Decisions API
-description: Evaluate evidence with native predicate, choice, and score questions through a supported local BitRouter gateway.
+title: Decisions / System One
+description: Evaluate evidence with typed questions and understand how System One classification supplies routing signals.
 ---
 
 `POST /v1/decisions` evaluates shared evidence against typed questions and returns an ordered `answers` array with provider-reported `usage`. Use the [Responses API](/docs/api/responses) when the workflow needs generated messages or tool calls.
@@ -8,6 +8,14 @@ description: Evaluate evidence with native predicate, choice, and score question
 <Callout type="info">
 This guide covers a local BitRouter build with native Decisions support. The hosted OpenAPI reference currently does not declare a Decisions endpoint; it does not establish Cloud availability. Verify the contract of a hosted deployment before sending Decisions traffic to it.
 </Callout>
+
+## How System One uses decisions
+
+BitRouter's SDK routing runtime uses System One classification to turn admitted routing evidence into semantic signals: the task family, the role of the next useful step, and observed progress. It asks fixed choice questions, retains the reported distributions, and accepts a signal only when it meets the configured confidence threshold. Unaccepted signals become `unknown`.
+
+The Decisions API is the general interface for evaluating typed questions; System One is a routing use of that decision capability. The SDK's internal classification contract is separate from the HTTP request examples below. Calling `POST /v1/decisions` returns answers for your supplied questions. The routing runtime must separately apply its policy to choose a model or context view.
+
+Use [Strategies](/docs/routing/strategies) for model-selection behavior and [Context Routing](/docs/routing/context-routing) for native evidence selection. This page covers the decision interface and how to interpret its results.
 
 ## Configure a native target
 
@@ -84,4 +92,4 @@ Input supports text and user-message parts with inline base64 image data URLs. E
 
 Decisions uses its own `pricing_by_protocol` tariff and does not inherit generation pricing. The current local metering implementation preserves usage while marking cost unavailable for nonzero native cache counters. Keep unavailable cost distinct from zero cost.
 
-Use [Telemetry](/docs/config/telemetry) to inspect settled requests. A completed malformed native response fails delivery and retains usable usage without automatic retry. The [BitRouter native Decisions reference](https://github.com/bitrouter/bitrouter/blob/main/skills/bitrouter/references/decisions.md) documents admission, tariff configuration, and cost-coverage limits.
+Use [Request receipts](/docs/cli/request-receipts) to inspect settled requests. A completed malformed native response fails delivery and retains usable usage without automatic retry. The [BitRouter native Decisions reference](https://github.com/bitrouter/bitrouter/blob/main/skills/bitrouter/references/decisions.md) documents admission, tariff configuration, and cost-coverage limits.

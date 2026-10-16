@@ -1,8 +1,8 @@
 {
-  "title": "Integration",
+  "title": "Coding Agents",
   "icon": "Plug",
   "pages": [
-    "acp-servers",
+    "bro-harness",
     "deepseek-harness",
     "opencode",
     "pi"

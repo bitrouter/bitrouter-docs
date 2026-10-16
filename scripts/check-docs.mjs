@@ -25,11 +25,11 @@ import { COMPONENT_WHITELIST } from "../lib/docs-sync/constants.mjs";
 // under the `(guide)` folder group, which fumadocs strips from the URL.
 const SECTIONS = [
   "(guide)/overview",
-  "(guide)/config",
+  "(guide)/integration",
+  "(guide)/routing",
   "(guide)/models-routing",
   "(guide)/context-routing",
   "(guide)/cli",
-  "(guide)/integration",
   "(guide)/api",
   "self-hosting",
 ];
@@ -44,27 +44,34 @@ const isGenerated = (path) => GENERATED.has(path) || path.startsWith("(guide)/cl
 // Intentional exceptions to the otherwise complete public sidebar. Keep this
 // list short and document each product-navigation decision.
 const HIDDEN_SIDEBAR_ROUTES = new Set([
+  // Deployment guide remains accessible through content links, outside Overview.
+  "/docs/self-hosting",
   "/docs/cli/agent",
-  "/docs/models-routing/local-inference",
+  // Supporting guides remain linked from content, without CLI sidebar entries.
+  "/docs/cli/request-receipts",
   "/docs/cli/reference",
-  // Retained for existing links after replacing the generic Integration entry.
+  // Retained for existing links after replacing the generic Coding Agents entry.
   "/docs/integration/coding-agents",
 ]);
 const NAV_FILES = [
   "(overview-nav)/meta.json",
-  "(config-nav)/meta.json",
+  "(comparison-nav)/meta.json",
+  "(integration-nav)/meta.json",
+  "(routing-nav)/meta.json",
   "(models-routing-nav)/meta.json",
   "(context-routing-nav)/meta.json",
   "(cli-nav)/meta.json",
   "(cli-reference-nav)/meta.json",
-  "(integration-nav)/meta.json",
   "(api-nav)/meta.json",
 ];
 const ROOT_NAV_PAGES = [
   "---Overview---",
   "...(overview-nav)",
-  "---Config---",
-  "...(config-nav)",
+  "(comparison-nav)",
+  "---Coding Agents---",
+  "...(integration-nav)",
+  "---Routing---",
+  "...(routing-nav)",
   "---Model---",
   "...(models-routing-nav)",
   "---Context---",
@@ -72,8 +79,6 @@ const ROOT_NAV_PAGES = [
   "---CLI---",
   "...(cli-nav)",
   "(cli-reference-nav)",
-  "---Integration---",
-  "...(integration-nav)",
   "---API---",
   "...(api-nav)",
   "reference",
@@ -181,10 +186,17 @@ async function main() {
     }
   }
 
-  for (const navFile of ["(cli-reference-nav)/meta.json", "reference/meta.json"]) {
+  for (const navFile of [
+    "(comparison-nav)/meta.json",
+    "(cli-reference-nav)/meta.json",
+    "reference/meta.json",
+  ]) {
     const meta = JSON.parse(await readFile(join(ROOT, navFile), "utf8"));
     if (meta.collapsible !== true || meta.defaultOpen !== false) {
-      errors.push(`${navFile}  Reference must be collapsible and closed by default`);
+      errors.push(`${navFile}  navigation folder must be collapsible and closed by default`);
+    }
+    if (navFile === "(comparison-nav)/meta.json" && meta.pagesIndex !== undefined) {
+      errors.push(`${navFile}  Comparison is a folder-only entry without an index page`);
     }
   }
 

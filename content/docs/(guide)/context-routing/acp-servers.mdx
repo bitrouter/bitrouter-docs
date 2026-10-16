@@ -1,0 +1,163 @@
+---
+title: ACP servers
+description: Connect external agents over ACP and understand who owns their sessions, history, instructions, and tools.
+---
+
+[Agent Client Protocol](https://agentclientprotocol.com) gives an editor, terminal client, or another agent a common way to start sessions, send prompts, stream updates, and handle permission requests.
+
+An ACP server exposes an agent's working loop to a client. It can use its own instructions, tools, and session history while the client supplies prompts and handles interaction. BitRouter connects to external ACP servers through agent adapters in two directions:
+
+- `bro run` acts as an ACP client that sends one prompt to an agent adapter.
+- `bro acp serve <agent>` exposes a BitRouter-managed adapter over protocol-pure stdio to another ACP client.
+
+The current adapter surface is local and stdio-based. The [Self-driving preview](/docs/cli/orchestrator) separately describes optional managed ACP workers within a BRO Goal. A worker needs the relevant managed execution capabilities; adapter discovery or native launch alone does not establish that support. Neither `bro run` nor `bro acp serve <agent>` automatically creates or coordinates a Goal.
+
+## ACP, MCP, and context
+
+[MCP servers](/docs/context-routing/mcp-servers) expose tools, resources, and prompts for an agent to use. An ACP server exposes the agent itself: the client sends a task prompt and receives progress, results, and permission requests while the agent runs its own loop.
+
+Connecting through ACP does not give every agent the same context. For an external harness, ownership remains explicit:
+
+| Concern | Owner |
+| --- | --- |
+| Session identity, history, and compaction | The external harness |
+| Instruction discovery and skill activation | The external harness, following its own rules |
+| Available tools and execution environment | The harness and its configured integrations |
+| Permission interaction | The harness requests a decision; the client presents or handles it under the invocation's policy |
+| Routed model calls | BitRouter applies routing to supported adapter traffic sent through the gateway |
+
+See [AGENTS.md](/docs/context-routing/agents-md) and [Agent Skills](/docs/context-routing/skills) for instruction and skill boundaries. Native [Context Routing](/docs/routing/context-routing) explains how BitRouter selects evidence for its own managed runtime; that behavior is not automatically applied to an external ACP session.
+
+## Choose an ACP server
+
+BitRouter ships a catalog of maintained adapters, including Claude and Codex. The CLI identifies these servers as agents, so discovery and configuration use `bro agents` and the `agents:` policy field. A catalog id does not need an `agents:` entry.
+
+```bash
+bro agents list
+bro agents check codex
+bro agents inspect codex
+```
+
+- `list` shows the bundled catalog and configured agents; `--remote` also reads the public ACP registry.
+- `check` starts an adapter and verifies initialization and routing.
+- `inspect` opens a fresh session and reports the commands advertised by the agent.
+
+For an agent outside the bundled catalog, generate a configuration stub and review it before adding it to the [ACP agents configuration](/docs/context-routing/acp-servers#configure-a-custom-agent):
+
+```bash
+bro agents scaffold <id>
+```
+
+Keep transport commands, arguments, and environment overrides in `bitrouter.yaml`, as shown below.
+
+### Configure a custom agent
+
+Bundled catalog agents do not need an `agents:` entry. For a custom local ACP server, declare its transport in `bitrouter.yaml`:
+
+```yaml
+agents:
+  house-agent:
+    name: house-agent
+    transport:
+      type: stdio
+      command: ./bin/our-acp-agent
+      args: ["--profile", "review"]
+      env:
+        RUST_LOG: warn
+```
+
+The child inherits the ambient environment; `env` adds or overrides entries for that process. Agent names must be non-empty and cannot contain `/`. You can generate a starting stub with `bro agents scaffold <id>`.
+
+## Serve an adapter to an ACP client
+
+An ACP-capable editor or parent process can launch BitRouter as its agent command:
+
+```bash
+bro acp serve codex
+```
+
+The client owns the stdio connection and initializes first. One connection may carry multiple harness-native sessions. Standard output is reserved for ACP JSON-RPC; diagnostics go to standard error.
+
+## Run one headless turn
+
+`bro run` sends one prompt to an external ACP harness without a terminal. The harness owns the session and executes that invocation. This path does not create a BRO Goal. For BRO's native executor and CI workflows, see [Headless & Scripting](/docs/cli/headless).
+
+### Supply an ACP prompt
+
+Choose an [ACP server](/docs/context-routing/acp-servers) from the bundled catalog or your `agents:` configuration. Supply the prompt as an argument, through stdin, or from a file:
+
+```bash
+bro run codex "Summarize this repository"
+printf 'Review this diff' | bro run claude -
+bro run codex --prompt-file task.md --format quiet
+```
+
+Use `--cwd <PATH>` to set the working directory supplied to the agent session.
+
+### ACP output formats
+
+| Format | Output |
+| --- | --- |
+| `ndjson` | One self-describing JSON object per line; the default |
+| `text` | A readable transcript |
+| `quiet` | Assistant text only |
+
+```bash
+bro run codex "Summarize this repository" --format ndjson
+bro run codex --prompt-file task.md --format text
+```
+
+Use `--result-schema @schema.json` when the final reply must satisfy a JSON Schema, or supply the schema as inline JSON. Set `--turn-timeout <SECS>` to bound the turn. The generated [CLI reference](/docs/cli/reference/harnesses#bro-run) lists the complete options.
+
+### Headless permissions
+
+`bro run` denies permission requests by default. Choose the policy required by the task:
+
+| Option | Behavior |
+| --- | --- |
+| `--deny-all` | Deny every permission request; the default |
+| `--approve-reads` | Approve calls labeled `read` or `search` by the harness; deny other and unlabeled calls |
+| `--approve-all` | Approve every permission request from the harness |
+| `--permission-policy <JSON\|@PATH>` | Apply explicit per-tool rules |
+
+For an inspection task:
+
+```bash
+bro run codex "Review this repository" --approve-reads
+```
+
+For rules stored in a file:
+
+```json
+{
+  "autoApprove": ["read", "search"],
+  "autoDeny": ["edit", "execute"],
+  "defaultAction": "deny"
+}
+```
+
+```bash
+bro run codex "Review this repository" --permission-policy @permissions.json
+```
+
+Entries match the ACP tool kind, the tool-call title, or its first word. `autoDeny` wins over `autoApprove`. Unmatched requests use `defaultAction`, or the selected mode flag when no default action is supplied. See the generated [CLI reference](/docs/cli/reference/harnesses#bro-run) for the complete contract.
+
+## Routing and session ownership
+
+Supported adapters route model traffic through the local daemon by default, inheriting its provider selection, fallback, policy, and metering. Use `--direct` to keep an adapter on its own credentials, or `--base-url` to target an explicit gateway.
+
+For these external ACP sessions, identity and history remain owned by the harness:
+
+- `--load <id>` asks the harness to replay a native session.
+- `--resume <id>` continues a native session without replay.
+- The native id refers to that harness's session, not a BitRouter-owned native Thread.
+
+Optional `acp_recording` configuration can mirror observable ACP content into the local BitRouter database for inspection. A recording is an audit copy, not the source of truth for the agent's session. Loading or resuming one harness's session does not migrate its private state into another harness.
+
+<Cards>
+  <Card title="Context Routing" href="/docs/routing/context-routing" description="Select the evidence supplied to the next native model call." />
+  <Card title="Self-driving" href="/docs/cli/orchestrator" description="Understand the Goal coordinator and its optional ACP workers." />
+  <Card title="Interactive TUI" href="/docs/cli/tui" description="Preview the Goal-oriented terminal interface." />
+  <Card title="Coding agents" href="/docs/integration/coding-agents" description="Launch Claude, Codex, OpenCode, Pi, and other supported harnesses." />
+  <Card title="CLI reference" href="/docs/cli/reference/tools" description="Agent catalog, ACP, and headless run commands." />
+</Cards>

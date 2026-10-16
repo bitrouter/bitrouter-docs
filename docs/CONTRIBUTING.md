@@ -9,32 +9,41 @@ is rendered from this repo — docs are committed directly here under
 Documentation uses one unified Fumadocs page tree with no layout tabs. Its
 top-level order is the `pages` list in `content/docs/meta.json`:
 
-1. **Overview** — quickstart, product explanation, models, comparison, and
-   the Enterprise deployment-decision entry.
-2. **Config** — configuration file, providers, model routes, MCP connections,
-   server tools, and telemetry.
-3. **Model** — model selection, fallback and compatibility behavior,
-   evaluations and routing policy.
-4. **Context** — MCP gateway use, Agent Skills, AGENTS.md, and server-tool requests.
-5. **CLI** — TUI, Headless, and a collapsed Reference folder with generated
-   command-group pages.
-6. **Integration** — coding-agent guides and ACP servers.
-7. **API** — Responses API and Decisions API guides, followed by a collapsed
+1. **Overview** — Quickstart, Supported Models, How BitRouter Works, then a
+   collapsed Comparison folder. Enterprise remains a linked deployment-decision entry.
+2. **Coding Agents** — shared `bro [harness]` launch configuration and product-specific guides.
+3. **Routing** — Configuration (YAML), Model Routing, Context Routing, and Strategies.
+4. **Model** — Virtual Models, Model Fallback, BYOK & Subscriptions, and Local Models.
+5. **Context** — ACP servers, MCP gateway configuration/use,
+   Agent Skills, and AGENTS.md.
+6. **CLI** — Self-driving, Interactive TUI, Headless & Scripting, and a collapsed Reference folder
+   with generated command-group pages.
+7. **API** — Responses (default), Decisions / System One, and
+   Chat Completions / Messages guides, followed by a collapsed
    Reference folder containing the generated Cloud endpoint families.
 
 Each group name in `content/docs/meta.json` is a native Fumadocs separator, not
 a page or collapsible folder. Seven meta-only guide folders —
-`content/docs/(overview-nav)/`, `(config-nav)/`, `(models-routing-nav)/`,
-`(context-routing-nav)/`,
+`content/docs/(overview-nav)/`, `(models-routing-nav)/`,
+`(context-routing-nav)/`, `(routing-nav)/`,
 `(cli-nav)/`, `(integration-nav)/`, and `(api-nav)/` — are
-extracted into the root with Fumadocs' `...folder` syntax. They contain links to canonical pages rather
-than copies of those pages, so every public non-Reference page appears directly
-below its section label.
+extracted into the root with Fumadocs' `...folder` syntax. They contain links to
+canonical pages rather than copies, so public guide pages appear directly below
+their section labels, except for the Comparison folder described below.
 
-API and CLI references are the deliberate hierarchy exceptions. Keep their guide
-pages flat, then include a native Reference folder with `collapsible: true` and
-`defaultOpen: false`. Fumadocs opens the containing folder when its page is active.
+Comparison under Overview and the API/CLI references are the deliberate hierarchy
+exceptions. Keep other guide pages flat, then include these native folders with
+`collapsible: true` and `defaultOpen: false`. Fumadocs opens the containing folder
+when its page is active.
 
+- Overview adds the unextracted `(comparison-nav)` folder after `(overview-nav)`.
+  It has no `pagesIndex` or index MDX page: the header only expands/collapses
+  its four children, like CLI Reference. The children link to the canonical
+  OpenRouter, Router (Ramp), vLLM Semantic Router, and LiteLLM pages under
+  `(guide)/overview/comparison/`. The retired folder URL redirects to OpenRouter;
+  content links and legacy migration redirects target the relevant child. Cite
+  official competitor documentation and distinguish supported behavior from
+  comparative benchmarks.
 - API retains `content/docs/reference/` as a folder, with its overview and generated
   native API families and endpoint children. Edit `scripts/generate-openapi.mjs`;
   generated metadata is replaced during `prebuild`. Existing API URLs stay stable.
@@ -63,34 +72,93 @@ Three rules keep the unified navigation intact:
 ### Keep non-Reference sections flat
 
 Source pages can remain nested where that keeps related files together, but the
-public sidebar is a flat list beneath each section separator. Every public page
-must be listed exactly once in the matching `*-nav/meta.json`; cards and inline
-links provide additional discovery, not a substitute for sidebar visibility.
+public sidebar is a flat list beneath each section separator, with Comparison
+and the Reference folders as explicit exceptions. Every public page
+must be listed exactly once in the matching `*-nav/meta.json`, including the
+four Comparison children. Cards and inline links provide additional
+discovery, not a substitute for sidebar visibility.
 Rare intentional exceptions must be added to `HIDDEN_SIDEBAR_ROUTES` in
-`scripts/check-docs.mjs`. BitRouter Agent, Local inference, the compatibility CLI manual, and the retained
-Coding agents guide are hidden while retaining their direct URLs. Coding agents
-is kept for existing cross-links after replacing its Integration sidebar entry
-with individual harness pages; compatibility guides are excluded from search,
-sitemap, and full-text ingestion.
+`scripts/check-docs.mjs`. BitRouter Agent, the compatibility CLI manual, and the
+retained Coding agents guide remain hidden. The supporting Request receipts page has no sidebar entry; feature guides retain
+its links. Configuration (YAML) is visible under Routing.
+Self-hosting is also omitted from Overview navigation and remains accessible through
+deployment-related content links.
+Routing's four guides and Local Models are public sidebar pages and participate
+in search, sitemap, and full-text ingestion. Retained compatibility guides carry
+`noindex` metadata while remaining directly readable.
 
-Use this boundary when classifying new pages:
+Use this boundary when classifying content:
 
-- **Config** explains operator-authored BitRouter settings and how to validate
-  and apply them. Keep providers, route definitions, MCP connections, server-tool
-  enablement/backends/limits, and telemetry setup, receipts, and Cloud activity here.
-- **Model** explains selector resolution, candidate eligibility, fallback and
-  compatibility behavior, evaluations, and routing-policy evidence/publication.
-  Link to Config for route authoring and telemetry.
-- **Context** explains available instructions and capabilities, gateway use,
-  request declarations, and execution behavior. Keep its four pages: MCP servers,
-  Agent Skills, AGENTS.md, Server tools. Harness-owned instruction discovery and
-  skill activation belong here rather than in BitRouter Config.
-- **CLI** explains interactive and headless operation and its command reference.
-  Headless approval flags are invocation controls; deployment configuration lives
-  in Config.
-- **Integration** explains external coding-agent and ACP server connections.
-- **API** explains routed generation and typed decision requests. Deployment
-  availability belongs in each guide; SDK support does not establish Cloud support.
+- **Model** explains named model endpoint definitions, selectors, request
+  profiles, compatibility, failure-driven fallback, credentials and subscription
+  sources, custom endpoints, and local inference. Its four visible
+  guides are Virtual Models, Model Fallback, BYOK & Subscriptions, and Local Models.
+  Do not reintroduce Providers or a generic Config group.
+- **Routing** owns Configuration (YAML) (file discovery, secrets references,
+  schema validation, reload, and configuration/policy artifact boundaries),
+  Model Routing (candidate eligibility and selection mechanics), Context Routing
+  (native context-view selection), and Strategies (existing routing approaches,
+  customization, policy bindings, adequacy, objective evaluation evidence, and
+  reviewed publication). Keep feature-specific YAML examples with their owning
+  guide and link to them. Strategy customization composes supported settings;
+  it does not imply an arbitrary algorithm plugin interface. Keep model and
+  context ownership explicit: proxying an external harness's calls does not give
+  BitRouter control over its history. Decisions API remains under API.
+- **Context** shows ACP servers, MCP servers, Agent Skills, and AGENTS.md. It keeps
+  ACP session ownership and transport
+  configuration, MCP configuration and use, and harness-owned instructions/skills.
+  Both Server tools guides are retired during their implementation refactor.
+- **CLI** owns request receipts, interactive/headless operation, and command
+  references. Common configuration-file mechanics belong to Routing's
+  Configuration (YAML) guide. Self-driving, Interactive TUI, Headless & Scripting, and Reference appear
+  in the sidebar; receipts remain a supporting guide. The Self-driving guide
+  owns Goal coordination and completion semantics; Interactive TUI owns navigation, input
+  scope, decisions, and result inspection. Headless & Scripting describes native BRO
+  task execution, managed sessions, structured output, verification gates, and
+  the pending full Goal automation contract. External one-prompt ACP invocation
+  and its approval policies live in ACP servers. Keep each feature's YAML example in its guide.
+- **Coding Agents** explains native harness launch configuration and product-specific
+  connections. Native launch keeps the harness's interface and does not create a
+  BRO Goal. Native launch support, ACP connectivity, and managed worker execution
+  are separate capabilities. Link to Self-driving for Goal coordination, Model
+  for inference sources, and Context for ACP/MCP behavior.
+- **API** explains Responses as the default generation interface, typed decisions
+  and their System One classification use, Chat Completions/Messages compatibility,
+  request-format examples,
+  and generated endpoint references. Availability is stated per deployment.
+
+### BRO design preview and merge validation
+
+The Self-driving and Interactive TUI guides describe the target product contract from
+`006-BRO-Goal-Oriented-Workflow-PRD.md`, Draft v0.8 (2026-10-15), sections 1,
+4, 6, 7, 8, 9, and 10. The Self-driving page retains `/docs/cli/orchestrator` and introduces the product
+as BitRouter Orchestrator (BRO). Both guides are preview documentation pending the BRO refactor;
+the PRD is not evidence that a released binary supports the behavior.
+
+Before merging or removing the preview notices, validate the Goals entry for
+`bro` / `bro code`, independent built-in execution, supported ACP workers, input
+scope and in-flight steering, read-only Workflow, evidence-backed completion,
+and pause/budget/recovery behavior against the implemented runtime. Confirm that
+`bro code <agent>` is removed without silently interpreting its old argument as
+Goal input. Check native launch and external `bro acp serve <agent>` independently.
+
+Regenerate command references only after capturing a verified implementation's
+CLI snapshot. Update the matching `cli-overlays/harnesses.md` explanations from
+that verified command behavior before regenerating. The current reference retains the older ACP conversation
+contract; do not rewrite it by hand or invent future flags or headless Goal
+commands from the PRD. Keep external ACP invocation semantics separate from native BRO tasks.
+
+Headless & Scripting's native examples are source-checked against the local BRO
+refactor checkout's `apps/bitrouter/src/main.rs` (`TaskRunArgs`, `TaskAction`, and
+`run_native_task`), `managed_task.rs`, `crates/bitrouter-orchestrator/src/turn.rs`,
+and `docs/CLI.md`. This is static source evidence, not released-binary or live
+provider validation. `task run` executes one native Turn; `task managed` retains a
+native managed session. Neither establishes the full persistent Goal lifecycle.
+Verify native argument parsing, output/exit behavior, permissions, verification,
+and recovery against the eventual binary before removing the development notice.
+A full Goal scripting contract must independently define creation/control,
+identity, retry, budgets, observation, and completion; no future syntax is inferred
+from 006 or from the existing one-prompt ACP flags.
 
 ### Documentation vs Self-hosting
 
@@ -105,10 +173,9 @@ boundary has to be held deliberately or they rot into two half-answers per topic
 
 Enterprise is the Overview decision page and links into Self-hosting for the
 open-source operational path. Self-hosting **links** to feature pages rather
-than restating them. The Configuration file page in Config defines what the complete
-`bitrouter.yaml` desired state means without becoming an exhaustive field
-reference; Self-hosting covers the operational contract around that policy
-(resolution, secrets, CI validation, and rollout).
+than restating them. The Configuration (YAML) page in Routing covers common file mechanics. Feature guides
+own their configuration examples. Self-hosting covers process supervision,
+authentication, rollout, state, and OpenTelemetry exporter setup, capture, and sampling.
 
 Folders under `content/docs/(guide)/` own their routes and local source
 ordering. Public sidebar order comes from the `*-nav/meta.json` files, which

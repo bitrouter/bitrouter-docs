@@ -1,0 +1,118 @@
+---
+title: Virtual Models
+description: Give configured model endpoints a reusable name, then call that name from an application or harness.
+---
+
+A **virtual model** is a named entry under `models` in `bitrouter.yaml`. It exposes configured provider/model endpoints through one callable name, such as `coding`, so an application can keep using that name when you change its backing endpoints.
+
+Connect the sources first with [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions) or [Local Models](/docs/models-routing/local-models). Use [Model Fallback](/docs/models-routing/model-fallback) for the failure conditions and replacement behavior of a multi-endpoint route.
+
+## Define a virtual model
+
+```yaml
+models:
+  coding:
+    strategy: priority
+    endpoints:
+      - provider: openai
+        service_id: gpt-5
+      - provider: anthropic
+        service_id: claude-sonnet-4-6
+```
+
+`coding` is the name callers use. Each endpoint identifies a configured provider and a model id that provider serves. With `strategy: priority`, eligible endpoints are tried in the configured order; [Model Fallback](/docs/models-routing/model-fallback#fallback-chains) explains when another endpoint is attempted.
+
+A virtual model defines a named route. It does not by itself evaluate answer quality or introduce an automatic cost optimizer.
+
+## Call the name
+
+Use the virtual model wherever the API accepts a model selector:
+
+```bash
+curl http://127.0.0.1:4356/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "coding",
+    "messages": [{"role": "user", "content": "Summarize this change."}]
+  }'
+```
+
+An authenticated deployment also requires a BitRouter credential. A native harness launch can use the same name:
+
+```bash
+bro claude --model coding
+bro codex --model coding
+```
+
+See [bro [harness]](/docs/integration/bro-harness) for launch configuration and [Responses API](/docs/api/responses) for the Responses request format.
+
+## Model selector forms
+
+| Selector | Meaning |
+| --- | --- |
+| `coding` | A matching virtual model defined under `models` |
+| `openai/gpt-5.4` | A logical model id that may be served by multiple connected providers |
+| `openai:openai/gpt-5.4` | An explicit route through one configured provider |
+| `@fast` | A preset that supplies a model and request defaults |
+| `@fast:primary` | A preset with a configured variant |
+| `bitrouter/auto` | The public spelling of a routing-policy-bound `auto` preset |
+
+The slash in a logical model id is part of the model's identity; it does not pin the serving provider. The colon form explicitly selects a provider. Subscription sources require an explicit provider-qualified route, as described in [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions#subscriptions).
+
+## Resolution order
+
+BitRouter resolves a selector in this order:
+
+1. Apply a known `@preset` and optional `:variant`.
+2. Treat `provider:model` as an explicit provider route.
+3. Resolve a matching entry under `models` as a virtual model.
+4. Otherwise, resolve the logical model id across active providers that declare it.
+
+Choose a virtual name that does not collide with a logical model id when both should remain separately addressable.
+
+## Presets
+
+A preset supplies a model and reusable request defaults. It can refer to a virtual model:
+
+```yaml
+presets:
+  fast:
+    model: coding
+    system_prompt: "Be concise."
+    params:
+      temperature: 0.2
+```
+
+Call `@fast` to apply those defaults. Request fields take precedence over preset defaults. The virtual model owns the endpoint definition; the preset adds a reusable request profile.
+
+`bitrouter/auto` requires a policy binding in addition to the preset name. See the [Strategies guide](/docs/routing/strategies#initialize-a-policy-binding) for initializing that binding.
+
+## Variants
+
+A configured variant applies routing preferences to a selector, for example `coding:private` or `@fast:primary`. It does not create another virtual-model definition. An unknown suffix remains part of the selector instead of being silently removed.
+
+Variants do not grant access, bypass guardrails, or supply provider credentials. Configure candidate filters in [Model Routing](/docs/routing/strategies#variants).
+
+## Protocol compatibility
+
+Every endpoint must support the capabilities required by the request. Giving several endpoints one virtual name does not make their tools, structured outputs, or provider continuity interchangeable.
+
+For custom endpoints, declare only verified model capabilities in [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions#custom-endpoints-and-models). [Responses API](/docs/api/responses#structured-outputs-across-protocols) explains response-format fields across supported protocols. Use a schema supported by every model that may serve a fallback request.
+
+## Inspect and verify
+
+```bash
+bro config validate -c bitrouter.yaml
+bro route coding -c bitrouter.yaml
+bro route @fast -c bitrouter.yaml
+bro requests --limit 25
+```
+
+`bro route` previews resolution without sending an inference request. It uses the running daemon when available and otherwise resolves from the selected configuration file. [Request receipts](/docs/cli/request-receipts) identify the model and provider that actually served a call.
+
+<Cards>
+  <Card title="Model Fallback" href="/docs/models-routing/model-fallback" description="Understand replacement order and retryable failures." />
+  <Card title="BYOK & Subscriptions" href="/docs/models-routing/byok-subscriptions" description="Connect the accounts and endpoints behind a virtual model." />
+  <Card title="Local Models" href="/docs/models-routing/local-models" description="Add a local inference endpoint." />
+  <Card title="Configuration (YAML)" href="/docs/routing/configuration" description="Find, validate, and apply the configuration." />
+</Cards>

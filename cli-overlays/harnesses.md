@@ -35,4 +35,4 @@ bro run codex-acp "Review the current diff" --format quiet
 
 The default permission policy denies requests. Choose an explicit approval mode or pass a per-tool policy when the task needs tools.
 
-See [Headless](/docs/cli/headless) for prompt input, output formats, session controls, and approval policies.
+See [Headless ACP](/docs/context-routing/acp-servers#run-one-headless-turn) for prompt input, output formats, session controls, and approval policies.

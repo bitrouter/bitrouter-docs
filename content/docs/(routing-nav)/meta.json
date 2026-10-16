@@ -1,0 +1,9 @@
+{
+  "title": "Routing",
+  "pagesIndex": "[Configuration (YAML)](/docs/routing/configuration)",
+  "pages": [
+    "[Model Routing](/docs/routing/model-routing)",
+    "[Context Routing](/docs/routing/context-routing)",
+    "[Strategies](/docs/routing/strategies)"
+  ]
+}

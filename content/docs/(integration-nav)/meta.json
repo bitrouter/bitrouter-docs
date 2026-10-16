@@ -1,6 +1,6 @@
 {
-  "title": "Integration",
-  "pagesIndex": "[ACP servers](/docs/integration/acp-servers)",
+  "title": "Coding Agents",
+  "pagesIndex": "[bro <harness>](/docs/integration/bro-harness)",
   "pages": [
     "[DeepSeek Harness](/docs/integration/deepseek-harness)",
     "[OpenCode](/docs/integration/opencode)",

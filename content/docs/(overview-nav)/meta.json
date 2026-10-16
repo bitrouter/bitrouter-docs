@@ -1,10 +1,8 @@
 {
   "title": "Overview",
-  "pagesIndex": "[What is BitRouter?](/docs/overview/what-is-bitrouter)",
+  "pagesIndex": "[Quickstart](/docs/overview/quickstart)",
   "pages": [
-    "[Quickstart](/docs/overview/quickstart)",
     "[Supported Models](/docs/overview/supported-models)",
-    "[Self-hosting](/docs/self-hosting)",
-    "[Comparison](/docs/overview/comparison)"
+    "[How BitRouter Works](/docs/overview/what-is-bitrouter)"
   ]
 }

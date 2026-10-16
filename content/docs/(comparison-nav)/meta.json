@@ -1,0 +1,11 @@
+{
+  "title": "Comparison",
+  "defaultOpen": false,
+  "collapsible": true,
+  "pages": [
+    "[OpenRouter](/docs/overview/comparison/openrouter)",
+    "[Router (Ramp)](/docs/overview/comparison/router-ramp)",
+    "[vLLM Semantic Router](/docs/overview/comparison/vllm-semantic-router)",
+    "[LiteLLM](/docs/overview/comparison/litellm)"
+  ]
+}

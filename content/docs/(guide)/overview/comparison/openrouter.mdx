@@ -1,0 +1,53 @@
+---
+title: OpenRouter
+description: Compare BitRouter and OpenRouter across model selection, policy ownership, deployment, and migration.
+---
+
+OpenRouter offers hosted access to models and providers through one API. Its [Auto Router](https://openrouter.ai/docs/guides/routing/routers/auto-router) classifies requests by task and ranks models using aggregate market spend, with model restrictions and cost tiers. Both products can choose models automatically; compare the selection signal and who controls the deployed policy.
+
+## Key differences
+
+| Question | OpenRouter | BitRouter |
+| --- | --- | --- |
+| Who operates the router? | Hosted service | Self-hosted Apache-2.0 runtime or BitRouter Cloud |
+| How is automatic model selection configured? | Auto Router settings and hosted rankings | A policy bound to a preset such as `bitrouter/auto` |
+| How are eligible routes constrained? | Model restrictions and [provider preferences](https://openrouter.ai/docs/guides/routing/provider-selection) | Configured sources and [Model Routing](/docs/routing/model-routing) filters |
+| How can operators review policy changes? | Configure the service's exposed controls | Inspect a versioned policy lock and explicitly apply reviewed candidates |
+
+BitRouter's [Strategies](/docs/routing/strategies) separates model selection from failure-driven fallback. Its [evaluation workflow](/docs/routing/strategies#evaluations) uses admitted objective results and frozen evidence snapshots to assess policy candidates. Collecting traffic or enabling an auto selector alone does not prove that the policy improved your workflow.
+
+## Choose BitRouter when
+
+- You need to run the routing process alongside your own credentials, private endpoints, or local models.
+- You want to inspect and version the policy artifact that your deployment uses.
+- You can supply representative workflow outcomes and review candidate changes before publication.
+
+Self-hosted BYOK has no BitRouter inference fee; you still pay upstream inference and infrastructure costs. Cloud is a separate managed offering. The [Quickstart](/docs/overview/quickstart) explains both deployment paths.
+
+## Choose OpenRouter when
+
+- You want a hosted catalog and provider access through one account.
+- You prefer its managed Auto Router and cost-tier controls.
+- Your application already depends on its provider preferences or other hosted features.
+
+Check [OpenRouter pricing](https://openrouter.ai/pricing) for current model rates and BYOK terms. A catalog listing, low token rate, or routing strategy is not a measurement of end-to-end task cost; test your actual workload.
+
+## Migrate from OpenRouter
+
+For a compatible client, replace the base URL and credential:
+
+```diff
+- base_url="https://openrouter.ai/api/v1"
+- api_key=OPENROUTER_API_KEY
++ base_url="https://api.bitrouter.ai/v1"
++ api_key=BITROUTER_API_KEY
+```
+
+For a local daemon, use `http://127.0.0.1:4356/v1` and the authentication configured for that deployment. Configure upstream sources through [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions) or [Local Models](/docs/models-routing/local-models).
+
+1. Resolve each explicit model id against the destination catalog; matching spellings do not guarantee matching availability or capabilities.
+2. If replacing `openrouter/auto`, initialize the [BitRouter auto binding](/docs/routing/strategies#initialize-a-policy-binding) before using `bitrouter/auto`. The selectors do not imply equivalent policies.
+3. Translate provider restrictions, fallback lists, and router/plugin settings into BitRouter's model and routing configuration. Review OpenRouter-specific headers and extensions individually.
+4. Replay representative streaming, tool, and structured-output requests. Inspect [Request receipts](/docs/cli/request-receipts) for the actual serving model, usage, and fallback behavior.
+
+See [Chat Completions / Messages](/docs/api/chat-completions-messages) for existing client formats and [Responses (default)](/docs/api/responses) for a new generation integration.

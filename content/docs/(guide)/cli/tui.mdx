@@ -1,89 +1,102 @@
 ---
-title: TUI
-description: Use BitRouter's terminal interface for interactive agent work, route selection, permission decisions, and attributed cost.
+title: Interactive TUI
+description: Navigate Goals, steer ongoing work, inspect workflow evidence, and review the result in BitRouter's terminal interface.
 ---
 
-`bro code` is BitRouter's interactive ACP client. It keeps the conversation, composer, selected agent, route, activity, and attributed session cost in one terminal interface.
-
-```bash
-bro code           # open the conversation and choose an agent
-bro code codex     # connect directly to the Codex ACP adapter
-bro code claude    # connect directly to the Claude ACP adapter
-```
-
 <Callout type="info">
-`bro code` renders a BitRouter-owned conversation. To use an agent's own native interface, use [`bro launch`](/docs/integration/coding-agents) or the `bro claude` and `bro codex` shortcuts.
+**Goal-oriented preview.** This guide describes the BRO terminal interface under development. Earlier builds may still expose `bro code <agent>` as an ACP conversation. The generated [command reference](/docs/cli/reference/harnesses) retains that captured contract until the implementation and CLI snapshot are updated.
 </Callout>
 
-## Start a conversation
+The TUI gives you three views of the same ongoing work: a **Goals** list, the **current Goal**, and its read-only **Workflow**. [Self-driving Workflows](/docs/cli/orchestrator) explains how planning, execution, verification, and completion fit together.
 
-Bare `bro code` opens an empty conversation and a searchable agent picker. An explicit agent id skips the picker. Claude and Codex adapters are bundled, so they do not need an `agents:` entry.
+## Open Goals
 
-When an adapter supports native session persistence, you can load its history or resume it without replaying the history:
-
-```bash
-bro code codex --load <native-session-id>
-bro code codex --resume <native-session-id>
-```
-
-The id belongs to the harness. BitRouter does not create a second session id or read the harness's private session files.
-
-## Routing
-
-BitRouter attempts to route supported ACP adapters through the local daemon. The usual routing controls are available on an explicit session:
+In the goal-oriented interface, either entry opens Goals:
 
 ```bash
-bro code codex --model bitrouter/auto
-bro code codex --direct
-bro code codex --base-url http://127.0.0.1:4356
+bro
+bro code
 ```
 
-- `--model` pins the model exposed to the adapter.
-- `--direct` leaves the adapter on its own provider authentication.
-- `--base-url` targets an explicit gateway instead of deriving it from `bitrouter.yaml`.
-- `--no-start` fails when the local daemon is unavailable instead of starting it.
+Choose an existing Goal or explicitly create a new one. Opening the interface does not itself start work or select an external agent for you. If setup is needed, finish configuration and return to Goals; [Quickstart](/docs/overview/quickstart) covers model sources and the local daemon.
 
-The route picker and router-attributed cost appear only when the active adapter and daemon connection advertise those capabilities. Direct traffic is not attributed as router spend.
+To work directly in a harness's native interface, use [`bro claude`, `bro codex`, or `bro launch`](/docs/integration/bro-harness). An external harness is optional when delegating a BRO Goal.
 
-## Conversation controls
+## Find and manage your Goals
 
-| Key | Action |
+The Goals view shows the project, desired outcome, progress summary, available results, items that need your decision, and how recently the state was confirmed. Open, search, or filter Goals without changing their execution priority.
+
+Each Goal retains its own draft, reading position, and expanded details. Switching views does not submit a draft, approve a pending decision, or redirect an unconfirmed submission to another Goal.
+
+Create a Goal by describing its outcome, completion conditions, scope, and any budget or authorization limits. Ordinary work already within those limits can proceed without a separate routine plan-approval form.
+
+## Work in the current Goal
+
+The center view keeps the Goal, active completion conditions, input scope, and current result version visible. Its progress summary distinguishes verified work, active work, remaining conditions, and decisions that need you.
+
+Important events include requirement changes, material plan adjustments, verification results, and deliveries. Raw worker output belongs in execution details so background activity does not displace the result or decision you are reading.
+
+A Goal can keep progressing while you inspect it or enter another instruction. Your input is addressed to BRO for that Goal, rather than directly to whichever worker is currently active.
+
+## Submit input while work runs
+
+Explicitly submit input to the current Goal with `Enter` or the submit action. Pasting and editing retain their editing meaning. Use multiline input for longer instructions; exact shortcut combinations will be documented with the implemented interface.
+
+| You submit | What BRO should do |
 | --- | --- |
-| `Enter` | Send the current draft while idle |
-| `Shift-Enter`, `Alt-Enter`, or `Ctrl-J` | Insert a newline |
-| `Tab` | Accept a completion, or queue a follow-up while the agent is working |
-| `Ctrl-P` | Open commands and temporary inspectors |
-| `PageUp` / `PageDown` | Read transcript history |
-| `F2` | Focus the oldest pending permission request |
-| `Esc` | Close a temporary surface or request cancellation |
-| `Ctrl-C` | Cancel work, clear an idle draft, or exit when idle and empty |
-| `Ctrl-D` | Exit from an idle, empty composer |
+| “What has been verified?” | Answer using current evidence |
+| “Why choose approach A?” | Explain or discuss without changing requirements |
+| “Keep the API unchanged and verify Safari first.” | Save the constraint and coordinate the affected work |
+| A response to a specific decision | Apply it only to that decision while it remains valid |
+| A change explicitly referencing a task or result | Apply it to the identified scope within the current Goal |
 
-Permission requests require an explicit choice. `bro code` does not silently approve a tool call on the agent's behalf. See [headless approval policies](/docs/cli/headless#permissions) for automation.
+Browsing a branch in Workflow does not change the input scope. Reference the task, result, or decision explicitly when the instruction should target it. Creating another Goal or changing a global setting requires an explicit action or instruction.
+
+Feedback reports the stages supported by actual evidence: a requirement may be saved, work adjusted, input delivered, an instruction adopted by execution, or an artifact verified. These stages need not all happen at submission time. A saved instruction does not establish that every running worker has already adopted it.
+
+## Inspect the Workflow
+
+Open Workflow to inspect tasks, dependencies, blockers, execution attempts, resource choices, and evidence. Expand a task to inspect its inputs, output versions, actual execution, and the results other tasks depend on.
+
+| Detail | What to look for |
+| --- | --- |
+| Task and dependencies | Its scope, state, required results, and affected downstream work |
+| Execution | Which built-in executor or ACP worker actually received the work |
+| Resources | Configured model, context, tools, or skills, and what actual execution confirms |
+| Evidence | Artifact versions, checks, observations, and their applicable requirements |
+| History | Earlier attempts, requirement changes, and worker replacements |
+
+Workflow and underlying session details are read-only. They do not expose branch editing, resource switching, permission approval, dispatch controls, or an interactive worker terminal. Return to the current Goal to give a scoped instruction or control execution.
+
+On a narrow terminal, task hierarchy, state, and blockers take priority. Browsing execution evidence does not pause work, change priority, or retarget the center input. Returning restores the previous draft and reading position.
+
+## Handle necessary decisions
+
+A decision explains what is needed, why, which work it affects, and what each available choice authorizes. Independent work can continue while a particular branch waits.
+
+Answer the decision in its own scope. A decision that is already resolved or whose conditions changed cannot authorize new work. Allowing a migration file to be generated, for example, does not authorize applying it to a production database.
+
+## Pause and resume
+
+Use an explicit pause or stop action for the current Goal, or clearly identify a task when controlling a smaller scope. Navigating back from a detail view does not cancel the Goal. Confirmed execution stops and work still being reconciled are shown separately.
+
+Pausing retains the Goal and partial results for later continuation. A budget limit or blocker shows unmet conditions and what is needed to continue. Increasing a limit, changing requirements, and resuming are separate actions with their own effects; viewing a paused Goal does not restart it.
+
+## Review the result
+
+Open a result to inspect its changes, verification evidence, remaining unknowns, and delivery state. Review is tied to the requirements and artifact version it covers. A newer version is announced without replacing the result currently open for review.
+
+A verified, reviewable delivery can complete a Goal without an additional acceptance click. If the Goal explicitly requires human acceptance, the result remains available while completion waits for the applicable decision.
+
+An explicit follow-up change starts another work cycle on the same Goal within its budget and authorization. Opening a result or asking about it does not itself restart execution.
 
 ## Operations-only targets
 
-A named remote context or explicit control socket opens an operations inspector instead of an ACP conversation:
-
-```bash
-bro --context production code
-bro code --socket /path/to/bitrouter.sock
-```
-
-These targets can inspect status, models, requests, routes, providers, telemetry, policy, agents, and reload state. They do not launch an agent, expose a composer, or fall back to local data after a remote failure.
-
-## Interactive, headless, or native
-
-| Goal | Command |
-| --- | --- |
-| Work interactively in BitRouter's conversation | `bro code <agent>` |
-| Run one prompt for automation | `bro run <agent> "..."` |
-| Expose an adapter to another ACP client | `bro acp serve <agent>` |
-| Drive the harness's own native interface | `bro launch <agent>` |
+Remote administration and named daemon contexts remain operational interfaces. Use the [daemon command reference](/docs/cli/reference/daemon) for target selection and the captured control contract. Opening an operations target does not establish a remote BRO Goal or transfer an external harness's session.
 
 <Cards>
-  <Card title="Headless" href="/docs/cli/headless" description="Run one ACP prompt from a script." />
-  <Card title="ACP servers" href="/docs/integration/acp-servers" description="Agent discovery, headless runs, and the stdio adapter." />
-  <Card title="Coding agents" href="/docs/integration/coding-agents" description="Choose between BitRouter's ACP conversation and native harness launch." />
-  <Card title="CLI reference" href="/docs/cli/reference/harnesses" description="Every code, run, and launch flag." />
+  <Card title="Self-driving" href="/docs/cli/orchestrator" description="Understand Goal coordination and evidence-backed completion." />
+  <Card title="Headless & Scripting" href="/docs/cli/headless" description="Run native BRO tasks, verify results, and consume structured output from scripts." />
+  <Card title="Coding Agents" href="/docs/integration/bro-harness" description="Use the harness's native terminal interface." />
+  <Card title="CLI reference" href="/docs/cli/reference/harnesses" description="Inspect commands captured from the CLI binary." />
 </Cards>

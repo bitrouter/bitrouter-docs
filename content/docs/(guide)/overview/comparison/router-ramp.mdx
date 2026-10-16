@@ -1,0 +1,54 @@
+---
+title: Router (Ramp)
+description: Compare BitRouter with Ramp Router across managed routing, model evaluation, policy control, and integration.
+---
+
+[Router from Ramp](https://docs.router.com/) provides a managed model endpoint with fallbacks, spend tracking, and request inspection. Ramp also describes evaluating models and routing production workloads in its [launch announcement](https://ramp.com/blog/router-launch). The useful comparison is how you select models, evaluate changes, and control deployment.
+
+## Key differences
+
+| Question | Router (Ramp) | BitRouter |
+| --- | --- | --- |
+| What do clients connect to? | Ramp's managed endpoint | Your local/self-hosted daemon or BitRouter Cloud |
+| How do clients select routes? | Catalog model ids, provider pins, and ordered fallback lists | Virtual models, logical ids, provider-qualified selectors, or a policy-bound preset |
+| What can you inspect? | Request, model, usage, and spend through the service | Settled request receipts and the policy/configuration used by your deployment |
+| How do you assess a policy change? | Use the service's supported evaluation and strategy controls | Submit objective evaluation results, freeze evidence, and review a candidate before publication |
+
+Router documents its [model selectors and capability constraints](https://docs.router.com/guides/choose-a-model). BitRouter documents its [Virtual Models](/docs/models-routing/virtual-models), [model-routing mechanics](/docs/routing/model-routing), and [evaluation evidence](/docs/routing/strategies#evaluations) so a named endpoint, selection policy, and evaluation result have distinct roles.
+
+A vendor's reported savings describe its own workload and baseline. Measure successful-task cost, quality, retries, and latency on your workload before treating a routing strategy as an improvement.
+
+## Choose BitRouter when
+
+- You need a routing process you can operate on your own infrastructure.
+- You want private or local inference sources in your eligible pool.
+- You want to version the model-selection policy and explicitly review publication of evidence-derived candidates.
+
+BitRouter's native [Context Routing](/docs/routing/context-routing) also selects evidence for the next model call when its managed runtime owns that task. Proxying an external harness's requests does not transfer ownership of its history to BitRouter.
+
+## Choose Router (Ramp) when
+
+- You prefer Ramp's managed endpoint and request inspection.
+- Its supported models, routing strategies, and evaluation workflow fit your application.
+- You want to keep an existing Router integration and its account-level operations.
+
+Consult the current [Router documentation](https://docs.router.com/) for availability, limits, supported strategies, and account requirements.
+
+## Migrate from Router (Ramp)
+
+For a Responses-compatible SDK, change the base URL and credential:
+
+```diff
+- base_url="https://api.router.com/v1"
+- api_key=RAMP_ROUTER_API_KEY
++ base_url="https://api.bitrouter.ai/v1"
++ api_key=BITROUTER_API_KEY
+```
+
+A local BitRouter daemon uses `http://127.0.0.1:4356/v1` and its configured authentication.
+
+1. Map source catalog ids to configured BitRouter [model selectors](/docs/models-routing/virtual-models#model-selector-forms).
+2. Translate ordered alternatives into [Model Fallback](/docs/models-routing/model-fallback). Configure [Strategies](/docs/routing/strategies) separately if BitRouter should choose a model before execution.
+3. Review service-tier pins and provider-specific fields individually; a shared wire format does not make route settings interchangeable.
+4. Start a fresh test conversation when moving deployments. Retained response ids belong to the deployment that issued them; see [Responses continuation](/docs/api/responses#continue-a-conversation).
+5. Compare representative requests and settled [receipts](/docs/cli/request-receipts), including tool calls, streaming, usage, and failure handling.

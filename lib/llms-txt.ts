@@ -47,7 +47,6 @@ References:
 
 - [bro [harness]](${BASE_URL}/docs/integration/bro-harness): Launch a native harness with process-scoped routing, model, and supported MCP configuration
 - [DeepSeek Harness](${BASE_URL}/docs/integration/deepseek-harness): Coming soon
-- [OpenCode](${BASE_URL}/docs/integration/opencode): Coming soon
 - [Pi](${BASE_URL}/docs/integration/pi): Coming soon
 
 ## Routing

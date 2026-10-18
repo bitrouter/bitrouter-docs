@@ -3,7 +3,6 @@
   "pagesIndex": "[bro <harness>](/docs/integration/bro-harness)",
   "pages": [
     "[DeepSeek Harness](/docs/integration/deepseek-harness)",
-    "[OpenCode](/docs/integration/opencode)",
     "[Pi](/docs/integration/pi)"
   ]
 }

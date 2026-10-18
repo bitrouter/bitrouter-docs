@@ -1,5 +1,5 @@
 ---
-title: Configuration reference
+title: config reference
 description: Look up local bitrouter.yaml fields, schema defaults, environment references, and reload boundaries.
 ---
 

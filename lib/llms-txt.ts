@@ -75,7 +75,7 @@ References:
 
 - [Changelog](${BASE_URL}/docs/changelog): All release notes on one page
 - [CLI reference](${BASE_URL}/docs/cli/reference): Complete captured command and flag reference on one page
-- [Configuration reference](${BASE_URL}/docs/configuration-reference): Pinned local YAML schema, field types, defaults, environment references, and reload boundaries
+- [config reference](${BASE_URL}/docs/configuration-reference): Pinned local YAML schema, field types, defaults, environment references, and reload boundaries
 - [API reference](${BASE_URL}/docs/reference): Authentication, typed decisions, compatibility guides, and generated endpoint families
 
 ## Optional

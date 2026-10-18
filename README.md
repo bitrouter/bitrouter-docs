@@ -35,7 +35,7 @@ subscribers and `RESEND_FROM` for a verified sender; it uses the `RESEND_API_KEY
 secret. Broadcasts stay as drafts until a human reviews and sends them in Resend.
 The website no longer provides a public email signup flow.
 
-## Configuration reference
+## config reference
 
 `pnpm generate:config` renders the local configuration reference and downloadable
 JSON Schema from a committed upstream snapshot. It runs at prebuild without

@@ -3,6 +3,6 @@
   "pages": [
     "[Changelog](/docs/changelog)",
     "[CLI reference](/docs/cli/reference)",
-    "[Configuration reference](/docs/configuration-reference)"
+    "[config reference](/docs/configuration-reference)"
   ]
 }

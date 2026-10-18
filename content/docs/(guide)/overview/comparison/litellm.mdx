@@ -38,7 +38,7 @@ If you call `litellm.completion` in-process, migration changes application archi
 
 1. Choose [Cloud or a local daemon](/docs/overview/quickstart) and configure the required upstream credentials.
 2. Change the client base URL to `https://api.bitrouter.ai/v1` or `http://127.0.0.1:4356/v1`, with the corresponding BitRouter credential.
-3. Translate `model_list` aliases and deployments into [Virtual Models](/docs/models-routing/virtual-models), [Model Routing](/docs/routing/model-routing) constraints, and [Model Fallback](/docs/models-routing/model-fallback).
+3. Translate `model_list` aliases and deployments into [Virtual Models](/docs/models-routing/virtual-models), [Model Routing](/docs/routing/model-routing) constraints, and [Model Fallbacks](/docs/models-routing/model-fallback).
 4. If using auto routing, define and validate the destination [policy binding](/docs/routing/strategies#initialize-a-policy-binding). Existing classifier, tier, or feedback settings do not transfer automatically.
 5. Inventory hooks, budgets, keys, caching, non-generation endpoints, and admin dependencies. Keep a workload on its existing gateway until each required capability has a verified replacement.
 6. Replay representative requests, inspect settled [receipts](/docs/cli/request-receipts), and configure [OpenTelemetry export](/docs/self-hosting#opentelemetry) before retiring the previous proxy.

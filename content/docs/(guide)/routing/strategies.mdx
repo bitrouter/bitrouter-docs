@@ -13,7 +13,7 @@ Start from an existing routing approach, configure the models and constraints it
 | Candidate-based selection | Endpoints are interchangeable and provider preferences should filter or reorder them | A bare logical model or a virtual model with `strategy: cascade`, plus routing preferences |
 | Policy-bound selection | Different request fingerprints should use configured strong/economy tiers | A preset bound to `policy-lock.yaml`, such as `bitrouter/auto` |
 
-The available building blocks have different scopes. A request preset under `presets` supplies a model and defaults; it is not an independent routing algorithm. The `strategy` field on a virtual model controls its endpoint resolution. A policy binding adds tier selection. Account strategies select credentials within a provider and are described in [Model Fallback](/docs/models-routing/model-fallback#account-fallback).
+The available building blocks have different scopes. A request preset under `presets` supplies a model and defaults; it is not an independent routing algorithm. The `strategy` field on a virtual model controls its endpoint resolution. A policy binding adds tier selection. Account strategies select credentials within a provider and are described in [Model Fallbacks](/docs/models-routing/model-fallback#account-fallback).
 
 ### Ordered endpoints
 

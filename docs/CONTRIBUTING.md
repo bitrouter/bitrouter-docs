@@ -16,8 +16,8 @@ top-level order is the `pages` list in `content/docs/meta.json`:
    CLI combines the self-driving, interactive terminal, and headless guides.
 3. **Coding Agents** — shared `bro [harness]` launch configuration and product-specific guides.
 4. **Routing** — Configuration (YAML), Model Routing, Context Routing, and Strategies.
-5. **Model** — Virtual Models and Model Fallback.
-6. **Provider** — BYOK & Subscriptions and Local Models.
+5. **Model** — Virtual Models, Model Fallbacks, and Model Variants.
+6. **Provider** — BYOK & Subscriptions, Local Models, Custom Provider, and Sell Inference.
 7. **Context** — ACP servers, MCP gateway configuration/use,
    Agent Skills, and AGENTS.md.
 8. **Reference** — Changelog, CLI reference, config reference, and API reference. Changelog and CLI
@@ -87,11 +87,14 @@ in search, sitemap, and full-text ingestion. Retained compatibility guides carry
 Use this boundary when classifying content:
 
 - **Model** explains named model endpoint definitions, selectors, request
-  profiles, compatibility, and failure-driven fallback. Its two visible guides
-  are Virtual Models and Model Fallback.
+  profiles, compatibility, failure-driven fallback, and model variants. Its three
+  visible guides are Virtual Models, Model Fallbacks, and Model Variants.
 - **Provider** follows Model and owns credentials, subscription sources, custom
-  endpoints, and self-run inference. It currently contains BYOK & Subscriptions
-  and Local Models, canonically under `/docs/providers/`.
+  endpoints, self-run inference, and optional marketplace supply. It contains
+  BYOK & Subscriptions, Local Models, Custom Provider, and Sell Inference,
+  canonically under `/docs/providers/`. Model Variants, Custom Provider, and
+  Sell Inference currently have only titles and descriptions; detailed content
+  and marketplace implementation remain unverified.
 - **Routing** owns Configuration (YAML) (file discovery, secrets references,
   schema validation, reload, and configuration/policy artifact boundaries),
   Model Routing (candidate eligibility and selection mechanics), Context Routing

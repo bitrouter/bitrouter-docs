@@ -5,7 +5,7 @@ description: Give configured model endpoints a reusable name, then call that nam
 
 A **virtual model** is a named entry under `models` in `bitrouter.yaml`. It exposes configured provider/model endpoints through one callable name, such as `coding`, so an application can keep using that name when you change its backing endpoints.
 
-Connect the sources first with [BYOK & Subscriptions](/docs/providers/byok-subscriptions) or [Local Models](/docs/providers/local-models). Use [Model Fallback](/docs/models-routing/model-fallback) for the failure conditions and replacement behavior of a multi-endpoint route.
+Connect the sources first with [BYOK & Subscriptions](/docs/providers/byok-subscriptions) or [Local Models](/docs/providers/local-models). Use [Model Fallbacks](/docs/models-routing/model-fallback) for the failure conditions and replacement behavior of a multi-endpoint route.
 
 ## Define a virtual model
 
@@ -20,7 +20,7 @@ models:
         service_id: claude-sonnet-4-6
 ```
 
-`coding` is the name callers use. Each endpoint identifies a configured provider and a model id that provider serves. With `strategy: priority`, eligible endpoints are tried in the configured order; [Model Fallback](/docs/models-routing/model-fallback#fallback-chains) explains when another endpoint is attempted.
+`coding` is the name callers use. Each endpoint identifies a configured provider and a model id that provider serves. With `strategy: priority`, eligible endpoints are tried in the configured order; [Model Fallbacks](/docs/models-routing/model-fallback#fallback-chains) explains when another endpoint is attempted.
 
 A virtual model defines a named route. It does not by itself evaluate answer quality or introduce an automatic cost optimizer.
 
@@ -111,7 +111,7 @@ bro requests --limit 25
 `bro route` previews resolution without sending an inference request. It uses the running daemon when available and otherwise resolves from the selected configuration file. [Request receipts](/docs/cli/request-receipts) identify the model and provider that actually served a call.
 
 <Cards>
-  <Card title="Model Fallback" href="/docs/models-routing/model-fallback" description="Understand replacement order and retryable failures." />
+  <Card title="Model Fallbacks" href="/docs/models-routing/model-fallback" description="Understand replacement order and retryable failures." />
   <Card title="BYOK & Subscriptions" href="/docs/providers/byok-subscriptions" description="Connect the accounts and endpoints behind a virtual model." />
   <Card title="Local Models" href="/docs/providers/local-models" description="Add a local inference endpoint." />
   <Card title="Configuration (YAML)" href="/docs/routing/configuration" description="Find, validate, and apply the configuration." />

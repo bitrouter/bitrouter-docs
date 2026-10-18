@@ -60,7 +60,7 @@ For custom sources, declare only verified capabilities in [BYOK & Subscriptions]
 - Subscription sources require an explicit provider-qualified route. Bare model selection does not silently consume a personal subscription.
 - A virtual model names configured endpoints; it does not automatically include every connected model.
 - Routing filters narrow candidates. They do not grant credentials or caller access.
-- [Model Fallback](/docs/models-routing/model-fallback) controls replacement after a retryable failure; it does not make an incompatible model eligible.
+- [Model Fallbacks](/docs/models-routing/model-fallback) controls replacement after a retryable failure; it does not make an incompatible model eligible.
 
 [Context Routing](/docs/routing/context-routing) selects the evidence supplied to the next native model call. That context view is a separate selection from the model/provider candidate pool.
 
@@ -77,6 +77,6 @@ The [Strategies guide](/docs/routing/strategies#initialize-a-policy-binding) cov
 <Cards>
   <Card title="Configuration (YAML)" href="/docs/routing/configuration" description="Find, validate, and apply the configuration and its policy binding." />
   <Card title="Strategies" href="/docs/routing/strategies" description="Choose a routing approach, customize its settings, and evaluate updates." />
-  <Card title="Model Fallback" href="/docs/models-routing/model-fallback" description="Understand when failed attempts advance to another endpoint." />
+  <Card title="Model Fallbacks" href="/docs/models-routing/model-fallback" description="Understand when failed attempts advance to another endpoint." />
   <Card title="Context Routing" href="/docs/routing/context-routing" description="Select evidence for the next native model call." />
 </Cards>

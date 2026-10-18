@@ -60,12 +60,15 @@ References:
 ## Model
 
 - [Virtual Models](${BASE_URL}/docs/models-routing/virtual-models): Define named model endpoints, request selectors, and reusable presets
-- [Model Fallback](${BASE_URL}/docs/models-routing/model-fallback): Define failure-driven replacement across providers, models, and accounts
+- [Model Fallbacks](${BASE_URL}/docs/models-routing/model-fallback): Define failure-driven replacement across providers, models, and accounts
+- [Model Variants](${BASE_URL}/docs/models-routing/model-variants): Documentation placeholder for model variants
 
 ## Provider
 
 - [BYOK & Subscriptions](${BASE_URL}/docs/providers/byok-subscriptions): Connect keys, subscription logins, multiple accounts, and custom endpoints
 - [Local Models](${BASE_URL}/docs/providers/local-models): Connect and verify inference servers you run yourself
+- [Custom Provider](${BASE_URL}/docs/providers/custom-provider): Documentation placeholder for connecting custom inference providers
+- [Sell Inference](${BASE_URL}/docs/providers/sell-inference): Documentation placeholder for optional marketplace supply
 
 ## Context
 

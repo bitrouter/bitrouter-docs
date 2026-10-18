@@ -2,6 +2,7 @@
   "title": "Model",
   "pages": [
     "virtual-models",
-    "model-fallback"
+    "model-fallback",
+    "model-variants"
   ]
 }

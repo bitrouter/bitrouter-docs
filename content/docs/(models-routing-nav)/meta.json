@@ -2,6 +2,7 @@
   "title": "Model",
   "pagesIndex": "[Virtual Models](/docs/models-routing/virtual-models)",
   "pages": [
-    "[Model Fallback](/docs/models-routing/model-fallback)"
+    "[Model Fallbacks](/docs/models-routing/model-fallback)",
+    "[Model Variants](/docs/models-routing/model-variants)"
   ]
 }

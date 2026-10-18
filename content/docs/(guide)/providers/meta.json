@@ -2,6 +2,8 @@
   "title": "Provider",
   "pages": [
     "byok-subscriptions",
-    "local-models"
+    "local-models",
+    "custom-provider",
+    "sell-inference"
   ]
 }

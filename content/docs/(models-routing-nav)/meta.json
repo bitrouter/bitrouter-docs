@@ -1,9 +1,9 @@
 {
   "title": "Model",
-  "pagesIndex": "[Buy Inference](/docs/models-routing/buy-inference)",
+  "pagesIndex": "[Model Fallbacks](/docs/models-routing/model-fallback)",
   "pages": [
+    "[Model Variants](/docs/models-routing/model-variants)",
     "[Virtual Models](/docs/models-routing/virtual-models)",
-    "[Model Fallbacks](/docs/models-routing/model-fallback)",
-    "[Model Variants](/docs/models-routing/model-variants)"
+    "[Buy Inference](/docs/models-routing/buy-inference)"
   ]
 }

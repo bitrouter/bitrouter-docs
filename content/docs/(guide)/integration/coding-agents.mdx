@@ -118,7 +118,7 @@ For Cloud, use `https://api.bitrouter.ai` and set `ANTHROPIC_AUTH_TOKEN` to a Bi
 
 ### Use a Claude subscription
 
-Use [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions#use-a-claude-subscription) for login, explicit subscription routes, and logout. The subscription source is independent of the harness interface.
+Use [BYOK & Subscriptions](/docs/providers/byok-subscriptions#use-a-claude-subscription) for login, explicit subscription routes, and logout. The subscription source is independent of the harness interface.
 
 ## Codex
 
@@ -172,7 +172,7 @@ Codex model-provider configuration belongs in the user-level `~/.codex/config.to
 
 ### Use a Codex subscription
 
-Use [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions#use-a-codex-subscription) for login, explicit subscription routes, and logout. The subscription source is independent of the harness interface.
+Use [BYOK & Subscriptions](/docs/providers/byok-subscriptions#use-a-codex-subscription) for login, explicit subscription routes, and logout. The subscription source is independent of the harness interface.
 
 ## Model sources
 
@@ -217,8 +217,8 @@ bro start
 To combine sources, define a [virtual model](/docs/models-routing/virtual-models#define-a-virtual-model) or fallback chain. A common pattern is local inference first and a hosted source second.
 
 <Cards>
-  <Card title="Local Models" href="/docs/models-routing/local-models" description="Connect Ollama, vLLM, Unsloth, or another OpenAI-compatible server." />
-  <Card title="BYOK & Subscriptions" href="/docs/models-routing/byok-subscriptions" description="Add a hosted API or provider account with a key." />
+  <Card title="Local Models" href="/docs/providers/local-models" description="Connect Ollama, vLLM, Unsloth, or another OpenAI-compatible server." />
+  <Card title="BYOK & Subscriptions" href="/docs/providers/byok-subscriptions" description="Add a hosted API or provider account with a key." />
   <Card title="Interactive TUI" href="/docs/usage/cli#interactive-tui" description="Preview the goal-oriented BitRouter terminal interface." />
   <Card title="ACP servers" href="/docs/context-routing/acp-servers" description="Inspect adapters and run headless turns." />
 </Cards>

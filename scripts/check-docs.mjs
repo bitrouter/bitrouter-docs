@@ -28,6 +28,7 @@ const SECTIONS = [
   "(guide)/integration",
   "(guide)/routing",
   "(guide)/models-routing",
+  "(guide)/providers",
   "(guide)/context-routing",
   "(guide)/cli",
   "(guide)/usage",
@@ -63,6 +64,7 @@ const NAV_FILES = [
   "(integration-nav)/meta.json",
   "(routing-nav)/meta.json",
   "(models-routing-nav)/meta.json",
+  "(providers-nav)/meta.json",
   "(context-routing-nav)/meta.json",
   "(usage-nav)/meta.json",
   "(reference-nav)/meta.json",
@@ -79,6 +81,8 @@ const ROOT_NAV_PAGES = [
   "...(routing-nav)",
   "---Model---",
   "...(models-routing-nav)",
+  "---Provider---",
+  "...(providers-nav)",
   "---Context---",
   "...(context-routing-nav)",
   "---Reference---",
@@ -153,7 +157,7 @@ async function main() {
   const rootMeta = JSON.parse(await readFile(join(ROOT, "meta.json"), "utf8"));
   if (JSON.stringify(rootMeta.pages) !== JSON.stringify(ROOT_NAV_PAGES)) {
     errors.push(
-      "meta.json  top-level navigation must use the seven section separators and extracted folders",
+      "meta.json  top-level navigation must use the eight section separators and extracted folders",
     );
   }
 

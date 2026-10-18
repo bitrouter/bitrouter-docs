@@ -6,6 +6,7 @@
     "integration",
     "routing",
     "models-routing",
+    "providers",
     "context-routing",
     "cli"
   ]

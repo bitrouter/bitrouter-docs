@@ -2,8 +2,6 @@
   "title": "Model",
   "pagesIndex": "[Virtual Models](/docs/models-routing/virtual-models)",
   "pages": [
-    "[Model Fallback](/docs/models-routing/model-fallback)",
-    "[BYOK & Subscriptions](/docs/models-routing/byok-subscriptions)",
-    "[Local Models](/docs/models-routing/local-models)"
+    "[Model Fallback](/docs/models-routing/model-fallback)"
   ]
 }

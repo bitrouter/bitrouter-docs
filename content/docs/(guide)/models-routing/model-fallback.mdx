@@ -29,7 +29,7 @@ That selector does not automatically expand into other providers or a different 
 
 Use a [virtual model](/docs/models-routing/virtual-models#define-a-virtual-model) to expose an ordered chain behind one name. The `coding` example in that guide declares an OpenAI endpoint followed by an Anthropic endpoint with `strategy: priority`.
 
-A request for `coding` tries its eligible endpoints in YAML order. Connect and validate both sources first using [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions). Adding another model to the available catalog does not automatically make it a replacement for the first.
+A request for `coding` tries its eligible endpoints in YAML order. Connect and validate both sources first using [BYOK & Subscriptions](/docs/providers/byok-subscriptions). Adding another model to the available catalog does not automatically make it a replacement for the first.
 
 Use `strategy: cascade` only when the endpoints are interchangeable and selection preferences may reorder or filter them. The documented alpha.31 `cost` and `latency` sorts use deterministic priority/provider-id ordering rather than measured live optimization.
 
@@ -49,13 +49,13 @@ Fallback remains subject to the request's capabilities, protocol, access policy,
 
 Multiple credentials for one provider are a separate level of replacement:
 
-Use `account_strategy: failover` to preserve declared account order, or `balance` to rotate the first account while retaining the remaining fallback chain. Configure credentials in [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions#multiple-accounts).
+Use `account_strategy: failover` to preserve declared account order, or `balance` to rotate the first account while retaining the remaining fallback chain. Configure credentials in [BYOK & Subscriptions](/docs/providers/byok-subscriptions#multiple-accounts).
 
 These settings change credential selection; they do not substitute a different model.
 
 ## Local-first fallback
 
-A local server can participate like any other provider. Connect it with [Local Models](/docs/models-routing/local-models), then include its served model in an explicit priority chain before a hosted replacement.
+A local server can participate like any other provider. Connect it with [Local Models](/docs/providers/local-models), then include its served model in an explicit priority chain before a hosted replacement.
 
 Keep the selector distinction clear: `local:llama3.1` pins the local provider, while a virtual model can name a local endpoint followed by a different hosted model. The models in that chain must support the request's required features.
 
@@ -71,6 +71,6 @@ bro requests --limit 25
 
 <Cards>
   <Card title="Virtual Models" href="/docs/models-routing/virtual-models" description="Define the named endpoints used by a fallback chain." />
-  <Card title="BYOK & Subscriptions" href="/docs/models-routing/byok-subscriptions" description="Connect the accounts and endpoints in your chain." />
-  <Card title="Local Models" href="/docs/models-routing/local-models" description="Add a local inference endpoint." />
+  <Card title="BYOK & Subscriptions" href="/docs/providers/byok-subscriptions" description="Connect the accounts and endpoints in your chain." />
+  <Card title="Local Models" href="/docs/providers/local-models" description="Add a local inference endpoint." />
 </Cards>

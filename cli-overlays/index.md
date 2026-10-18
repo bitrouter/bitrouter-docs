@@ -19,7 +19,7 @@ Every command below is **generated from the binary's own `--help`**, so the flag
 
 | Variable | Effect |
 | --- | --- |
-| `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `OPENCODE_ZEN_API_KEY` | Zero-config BYOK — auto-enables the provider. See [BYOK](/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key) |
+| `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `OPENCODE_ZEN_API_KEY` | Zero-config BYOK — auto-enables the provider. See [BYOK](/docs/providers/byok-subscriptions#built-in-providers-with-your-own-key) |
 | `BITROUTER_API_KEY` | Cloud API key; enables the managed `bitrouter` provider |
 | `BITROUTER_HOME` | Config discovery override (see above) |
 | `BITROUTER_OAUTH_AS` | Override the OAuth authorization server for self-hosted Cloud |

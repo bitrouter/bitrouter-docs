@@ -28,7 +28,7 @@ Schema defaults and onboarding defaults differ. The schema declares `server.list
 | What you are configuring | Root fields | Usage guide |
 | --- | --- | --- |
 | Listener, authentication, upstream timeouts, and storage | `server`, `upstream`, `database` | [Self-hosting](/docs/self-hosting) |
-| Provider keys, multiple accounts, and custom endpoints | `providers`, `registry`, `inherit_defaults` | [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions) |
+| Provider keys, multiple accounts, and custom endpoints | `providers`, `registry`, `inherit_defaults` | [BYOK & Subscriptions](/docs/providers/byok-subscriptions) |
 | Named model endpoints and request defaults | `models`, `presets`, `variants` | [Virtual Models](/docs/models-routing/virtual-models) |
 | Named routers, policy artifacts, and checks | `routers`, `policy`, `checkers` | [Strategies](/docs/routing/strategies) |
 | Native semantic decision backend | `decision_model` | [Context Routing](/docs/routing/context-routing) |
@@ -51,7 +51,7 @@ Native harness launch prepares connection settings for the child process. `agent
 | `RUST_LOG` | Overrides `server.log_level`. The log filter is resolved at process startup. |
 | A field named `token_env` | Names the variable containing a dedicated credential; enter the variable's name in YAML, not the token itself. Consult that field's description. |
 
-Provider-specific automatic credential discovery is covered by [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key). Provider credentials, a client's BitRouter virtual key, and a dedicated control/task API token serve different authentication hops. A YAML `${NAME}` reference can use a variable name you choose; it does not itself register a new automatic provider environment variable.
+Provider-specific automatic credential discovery is covered by [BYOK & Subscriptions](/docs/providers/byok-subscriptions#built-in-providers-with-your-own-key). Provider credentials, a client's BitRouter virtual key, and a dedicated control/task API token serve different authentication hops. A YAML `${NAME}` reference can use a variable name you choose; it does not itself register a new automatic provider environment variable.
 
 These file-loading conventions are source-checked against the pinned [configuration loader]({{SOURCE_BASE}}/crates/bitrouter-sdk/src/config/mod.rs) and [application paths]({{SOURCE_BASE}}/apps/bitrouter/src/paths.rs).
 

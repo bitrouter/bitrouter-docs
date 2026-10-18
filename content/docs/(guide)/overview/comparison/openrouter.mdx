@@ -43,7 +43,7 @@ For a compatible client, replace the base URL and credential:
 + api_key=BITROUTER_API_KEY
 ```
 
-For a local daemon, use `http://127.0.0.1:4356/v1` and the authentication configured for that deployment. Configure upstream sources through [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions) or [Local Models](/docs/models-routing/local-models).
+For a local daemon, use `http://127.0.0.1:4356/v1` and the authentication configured for that deployment. Configure upstream sources through [BYOK & Subscriptions](/docs/providers/byok-subscriptions) or [Local Models](/docs/providers/local-models).
 
 1. Resolve each explicit model id against the destination catalog; matching spellings do not guarantee matching availability or capabilities.
 2. If replacing `openrouter/auto`, initialize the [BitRouter auto binding](/docs/routing/strategies#initialize-a-policy-binding) before using `bitrouter/auto`. The selectors do not imply equivalent policies.

@@ -5,7 +5,7 @@ description: Give configured model endpoints a reusable name, then call that nam
 
 A **virtual model** is a named entry under `models` in `bitrouter.yaml`. It exposes configured provider/model endpoints through one callable name, such as `coding`, so an application can keep using that name when you change its backing endpoints.
 
-Connect the sources first with [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions) or [Local Models](/docs/models-routing/local-models). Use [Model Fallback](/docs/models-routing/model-fallback) for the failure conditions and replacement behavior of a multi-endpoint route.
+Connect the sources first with [BYOK & Subscriptions](/docs/providers/byok-subscriptions) or [Local Models](/docs/providers/local-models). Use [Model Fallback](/docs/models-routing/model-fallback) for the failure conditions and replacement behavior of a multi-endpoint route.
 
 ## Define a virtual model
 
@@ -57,7 +57,7 @@ See [bro [harness]](/docs/integration/bro-harness) for launch configuration and 
 | `@fast:primary` | A preset with a configured variant |
 | `bitrouter/auto` | The public spelling of a routing-policy-bound `auto` preset |
 
-The slash in a logical model id is part of the model's identity; it does not pin the serving provider. The colon form explicitly selects a provider. Subscription sources require an explicit provider-qualified route, as described in [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions#subscriptions).
+The slash in a logical model id is part of the model's identity; it does not pin the serving provider. The colon form explicitly selects a provider. Subscription sources require an explicit provider-qualified route, as described in [BYOK & Subscriptions](/docs/providers/byok-subscriptions#subscriptions).
 
 ## Resolution order
 
@@ -97,7 +97,7 @@ Variants do not grant access, bypass guardrails, or supply provider credentials.
 
 Every endpoint must support the capabilities required by the request. Giving several endpoints one virtual name does not make their tools, structured outputs, or provider continuity interchangeable.
 
-For custom endpoints, declare only verified model capabilities in [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions#custom-endpoints-and-models). [Responses API](/docs/usage/responses-api#structured-outputs-across-protocols) explains response-format fields across supported protocols. Use a schema supported by every model that may serve a fallback request.
+For custom endpoints, declare only verified model capabilities in [BYOK & Subscriptions](/docs/providers/byok-subscriptions#custom-endpoints-and-models). [Responses API](/docs/usage/responses-api#structured-outputs-across-protocols) explains response-format fields across supported protocols. Use a schema supported by every model that may serve a fallback request.
 
 ## Inspect and verify
 
@@ -112,7 +112,7 @@ bro requests --limit 25
 
 <Cards>
   <Card title="Model Fallback" href="/docs/models-routing/model-fallback" description="Understand replacement order and retryable failures." />
-  <Card title="BYOK & Subscriptions" href="/docs/models-routing/byok-subscriptions" description="Connect the accounts and endpoints behind a virtual model." />
-  <Card title="Local Models" href="/docs/models-routing/local-models" description="Add a local inference endpoint." />
+  <Card title="BYOK & Subscriptions" href="/docs/providers/byok-subscriptions" description="Connect the accounts and endpoints behind a virtual model." />
+  <Card title="Local Models" href="/docs/providers/local-models" description="Add a local inference endpoint." />
   <Card title="Configuration (YAML)" href="/docs/routing/configuration" description="Find, validate, and apply the configuration." />
 </Cards>

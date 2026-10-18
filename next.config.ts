@@ -10,8 +10,8 @@ const finalPath = {
   // models & routing
   "provider-selection":"/docs/routing/model-routing#candidate-eligibility","model-fallback":"/docs/models-routing/model-fallback#fallback-chains",
   "model-variants":"/docs/models-routing/virtual-models#variants","presets":"/docs/models-routing/virtual-models#presets",
-  "structured-outputs":"/docs/models-routing/virtual-models#protocol-compatibility","byok":"/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
-  "local-models":"/docs/models-routing/local-models","guardrails":"/docs/routing/configuration#create-a-configuration",
+  "structured-outputs":"/docs/models-routing/virtual-models#protocol-compatibility","byok":"/docs/providers/byok-subscriptions#built-in-providers-with-your-own-key",
+  "local-models":"/docs/providers/local-models","guardrails":"/docs/routing/configuration#create-a-configuration",
   "observability":"/docs/cli/request-receipts","opentelemetry":"/docs/self-hosting#opentelemetry",
   "tracing":"/docs/cli/request-receipts#cloud-activity","telemetry":"/docs/cli/request-receipts",
   "evaluation":"/docs/routing/strategies#evaluations","evaluations":"/docs/routing/strategies#evaluations",
@@ -20,7 +20,7 @@ const finalPath = {
   // bitrouter cloud (was: infrastructure)
   "managed-provider":"/docs/overview/supported-models","discounted-models":"/docs/overview/supported-models",
   "payment":"/docs/overview/quickstart#self-host-or-cloud","workspaces":"/docs/reference/management/listNamespaces",
-  "for-providers":"/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
+  "for-providers":"/docs/providers/byok-subscriptions#built-in-providers-with-your-own-key",
   // usage (CLI + MCP moved out of reference/ into the Documentation tab, 2026-08)
   "cli":"/docs/usage/cli",
 };
@@ -39,6 +39,9 @@ for (const file of readdirSync("content/changelog")) {
 }
 // overview + root + special
 pairs.push(
+  // Provider connections moved out of Model.
+  ["/docs/models-routing/byok-subscriptions", "/docs/providers/byok-subscriptions"],
+  ["/docs/models-routing/local-models", "/docs/providers/local-models"],
   // Retired public email signup and confirmation pages.
   ["/newsletter", "/"],
   ["/newsletter/confirm", "/"],
@@ -79,14 +82,14 @@ pairs.push(
   ["/docs/models-routing/inference-pool", "/docs/routing/model-routing"],
   // Config retired; model guides now follow inference resource tasks.
   ["/docs/config/configuration-file", "/docs/routing/configuration"],
-  ["/docs/config/providers", "/docs/models-routing/byok-subscriptions"],
+  ["/docs/config/providers", "/docs/providers/byok-subscriptions"],
   ["/docs/config/model-routes", "/docs/models-routing/virtual-models"],
   ["/docs/config/mcp-connections", "/docs/context-routing/mcp-servers"],
   ["/docs/config/server-tools", "/docs/overview/what-is-bitrouter"],
   ["/docs/config/telemetry", "/docs/cli/request-receipts"],
   ["/docs/models-routing/models", "/docs/models-routing/virtual-models"],
   ["/docs/models-routing/bitrouter-auto", "/docs/routing/strategies#initialize-a-policy-binding"],
-  ["/docs/models-routing/local-inference", "/docs/models-routing/local-models"],
+  ["/docs/models-routing/local-inference", "/docs/providers/local-models"],
   // Context guides reorganized; retain retired canonical URLs.
   ["/docs/integration/acp-servers", "/docs/context-routing/acp-servers"],
   ["/docs/context-routing/server-tools", "/docs/overview/what-is-bitrouter"],
@@ -99,7 +102,7 @@ pairs.push(
   ["/docs/config/telemetry-export", "/docs/cli/request-receipts"],
   ["/docs/models-routing/telemetry", "/docs/cli/request-receipts"],
   ["/docs/cli/configuration", "/docs/routing/configuration"],
-  ["/docs/models-routing/providers", "/docs/models-routing/byok-subscriptions"],
+  ["/docs/models-routing/providers", "/docs/providers/byok-subscriptions"],
   ["/docs/models-routing/guardrails", "/docs/routing/configuration#create-a-configuration"],
   // Development section retired; retain entry points to related product guides.
   ["/docs/development", "/docs/overview/what-is-bitrouter"],
@@ -109,7 +112,7 @@ pairs.push(
   ["/docs/cli/permissions", "/docs/context-routing/acp-servers#headless-permissions"],
   // Documentation reorganized around models, context, and CLI (2026-10).
   ["/docs/usage/bitrouter-auto", "/docs/routing/strategies#initialize-a-policy-binding"],
-  ["/docs/customization/models", "/docs/models-routing/byok-subscriptions"],
+  ["/docs/customization/models", "/docs/providers/byok-subscriptions"],
   ["/docs/configuration/models", "/docs/models-routing/virtual-models"],
   ["/docs/configuration/guardrails", "/docs/routing/configuration#create-a-configuration"],
   ["/docs/configuration/evaluations", "/docs/routing/strategies#evaluations"],
@@ -119,7 +122,7 @@ pairs.push(
   ["/docs/usage/mcp", "/docs/context-routing/mcp-servers"],
   ["/docs/usage/skills", "/docs/context-routing/skills"],
   ["/docs/usage/coding-agents", "/docs/integration/coding-agents"],
-  ["/docs/usage/model-sources/local-inference", "/docs/models-routing/local-models"],
+  ["/docs/usage/model-sources/local-inference", "/docs/providers/local-models"],
   ["/docs/usage/agent", "/docs/cli/agent"],
   ["/docs/customization/tools/server-tools", "/docs/overview/what-is-bitrouter"],
   ["/docs/customization/tools/model-backed-tools", "/docs/overview/what-is-bitrouter"],
@@ -131,7 +134,7 @@ pairs.push(
   // its first concrete task page.
   ["/docs/usage", "/docs/usage/desktop"],
   ["/docs/configuration", "/docs/routing/configuration"],
-  ["/docs/customization", "/docs/models-routing/byok-subscriptions"],
+  ["/docs/customization", "/docs/providers/byok-subscriptions"],
   // Claude Code, Codex, and model-source guidance now live on one Coding
   // agents page. Preserve the former canonical URLs at stable anchors.
   ["/docs/usage/coding-agents/claude-code", "/docs/integration/coding-agents#claude-code"],
@@ -155,9 +158,9 @@ pairs.push(
   ["/docs/usage/coding-agents/opencode", "/docs/integration/coding-agents"],
   ["/docs/usage/coding-agents/pi", "/docs/integration/coding-agents"],
   ["/docs/usage/coding-agents/deepseek-harness", "/docs/integration/coding-agents#other-harnesses"],
-  ["/docs/usage/model-sources/ollama", "/docs/models-routing/local-models"],
-  ["/docs/usage/model-sources/vllm", "/docs/models-routing/local-models"],
-  ["/docs/usage/model-sources/unsloth", "/docs/models-routing/local-models"],
+  ["/docs/usage/model-sources/ollama", "/docs/providers/local-models"],
+  ["/docs/usage/model-sources/vllm", "/docs/providers/local-models"],
+  ["/docs/usage/model-sources/unsloth", "/docs/providers/local-models"],
   // Configuration details collapsed into maintained task pages (2026-09).
   ["/docs/configuration/config-file", "/docs/routing/configuration"],
   ["/docs/configuration/routing", "/docs/models-routing/virtual-models"],
@@ -174,8 +177,8 @@ pairs.push(
   ["/docs/configuration/observability/evaluation", "/docs/routing/strategies#evaluations"],
   ["/docs/configuration/observability/:slug*", "/docs/cli/request-receipts"],
   // Customization recipes collapsed around capability families (2026-09).
-  ["/docs/customization/models/bring-your-own-model", "/docs/models-routing/byok-subscriptions#custom-endpoints-and-models"],
-  ["/docs/customization/models/bring-your-own-provider", "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key"],
+  ["/docs/customization/models/bring-your-own-model", "/docs/providers/byok-subscriptions#custom-endpoints-and-models"],
+  ["/docs/customization/models/bring-your-own-provider", "/docs/providers/byok-subscriptions#built-in-providers-with-your-own-key"],
   ["/docs/customization/tools/advisor", "/docs/overview/what-is-bitrouter"],
   ["/docs/customization/tools/subagent", "/docs/overview/what-is-bitrouter"],
   ["/docs/customization/tools/fusion", "/docs/overview/what-is-bitrouter"],
@@ -202,14 +205,14 @@ pairs.push(
   ["/docs/routers", "/docs/routing/configuration"],
   ["/docs/routers/configuration", "/docs/routing/configuration"],
   ["/docs/routers/:slug+", "/docs/configuration/:slug+"],
-  ["/docs/extensions", "/docs/models-routing/byok-subscriptions"],
+  ["/docs/extensions", "/docs/providers/byok-subscriptions"],
   ["/docs/extensions/:slug+", "/docs/customization/:slug+"],
   // The former Guides section is now organized around usage tasks.
   ["/docs/guides", "/docs/cli/reference#init-and-config"],
   ["/docs/guides/overview", "/docs/overview/what-is-bitrouter"],
   ["/docs/guides/overview/quickstart", "/docs/overview/quickstart"],
   ["/docs/guides/overview/comparison", "/docs/overview/comparison/openrouter"],
-  ["/docs/guides/overview/provider", "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key"],
+  ["/docs/guides/overview/provider", "/docs/providers/byok-subscriptions#built-in-providers-with-your-own-key"],
   // intro page renamed (2026-07): recursive-self-improvement → what-is-bitrouter
   ["/docs/overview/recursive-self-improvement", "/docs/overview/what-is-bitrouter"],
   // overview/get-started split + features→models-and-routing (2026-07 reorg)
@@ -221,7 +224,7 @@ pairs.push(
   ["/docs/features/model-variants", "/docs/models-routing/virtual-models#variants"],
   ["/docs/features/presets", "/docs/models-routing/virtual-models#presets"],
   ["/docs/features/structured-outputs", "/docs/models-routing/virtual-models#protocol-compatibility"],
-  ["/docs/features/byok", "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key"],
+  ["/docs/features/byok", "/docs/providers/byok-subscriptions#built-in-providers-with-your-own-key"],
   // concepts/ section dissolved (2026-07 reorg) → pages land next to their features
   ["/docs/concepts", "/docs/overview/what-is-bitrouter"],
   ["/docs/concepts/models", "/docs/overview/supported-models#how-model-ids-work"],
@@ -255,12 +258,12 @@ pairs.push(
   ["/docs/infrastructure/discounted-models", "/docs/overview/supported-models"],
   ["/docs/infrastructure/payment", "/docs/overview/quickstart#self-host-or-cloud"],
   ["/docs/infrastructure/workspaces", "/docs/reference/management/listNamespaces"],
-  ["/docs/infrastructure/for-providers", "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key"],
+  ["/docs/infrastructure/for-providers", "/docs/providers/byok-subscriptions#built-in-providers-with-your-own-key"],
   // cloud/ section dissolved (2026-06 reorg) → new homes (preserve old links)
   ["/docs/cloud", "/docs/overview/quickstart#self-host-or-cloud"],
   ["/docs/cloud/overview", "/docs/overview/quickstart#self-host-or-cloud"],
   ["/docs/cloud/get-started", "/docs/overview/quickstart#self-host-or-cloud"],
-  ["/docs/cloud/byok", "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key"],
+  ["/docs/cloud/byok", "/docs/providers/byok-subscriptions#built-in-providers-with-your-own-key"],
   ["/docs/cloud/tracing", "/docs/cli/request-receipts#cloud-activity"],
   ["/docs/cloud/managed-models", "/docs/overview/supported-models"],
   ["/docs/cloud/workspaces", "/docs/reference/management/listNamespaces"],
@@ -302,7 +305,7 @@ pairs.push(
   // observability & evaluation split out of features/ (2026-08); the single
   // opentelemetry page was two pages welded together — OSS export vs hosted view
   ["/docs/features/opentelemetry", "/docs/self-hosting#opentelemetry"],
-  ["/docs/features/local-models", "/docs/models-routing/local-models"],
+  ["/docs/features/local-models", "/docs/providers/local-models"],
   ["/docs/features/toolsets", "/docs/overview/what-is-bitrouter"],
   ["/docs/guides/export-telemetry", "/docs/self-hosting#opentelemetry"],
   ["/docs/cloud/managed-tools", "/docs/overview/quickstart#self-host-or-cloud"],
@@ -315,8 +318,8 @@ pairs.push(
   ["/docs/integrations/harnesses/:slug+", "/docs/usage/coding-agents/:slug+"],
   ["/docs/cookbook/integration/:slug*", "/docs/usage/coding-agents/:slug*"],
   // the local-models page was unpublished; the model catalog absorbed it
-  ["/docs/cookbook/local-models", "/docs/models-routing/local-models"],
-  ["/docs/integrations/local-models", "/docs/models-routing/local-models"],
+  ["/docs/cookbook/local-models", "/docs/providers/local-models"],
+  ["/docs/integrations/local-models", "/docs/providers/local-models"],
   ["/docs/cookbook", "/docs/integration/coding-agents"],
   // Migration walkthroughs now live on the relevant comparison pages.
   ["/docs/integrations/migrate/litellm", "/docs/overview/comparison/litellm#migrate-from-litellm"],
@@ -325,7 +328,7 @@ pairs.push(
   ["/docs/cookbook/migration/openrouter", "/docs/overview/comparison/openrouter#migrate-from-openrouter"],
   // Earlier router-section names now resolve into Router or Extensions.
   ["/docs/models-and-routing/presets", "/docs/models-routing/virtual-models#presets"],
-  ["/docs/models-and-routing/byok", "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key"],
+  ["/docs/models-and-routing/byok", "/docs/providers/byok-subscriptions#built-in-providers-with-your-own-key"],
   ["/docs/models-and-routing", "/docs/models-routing/virtual-models#resolution-order"],
   // gateway-and-routing/ split (2026-09): the routing pages went back to
   // models-and-routing/, the tool-calling pages to what became
@@ -334,8 +337,8 @@ pairs.push(
   ["/docs/gateway-and-routing/provider-selection", "/docs/routing/model-routing#candidate-eligibility"],
   ["/docs/gateway-and-routing/virtual-model", "/docs/models-routing/virtual-models#define-a-virtual-model"],
   ["/docs/gateway-and-routing/model-variants", "/docs/models-routing/virtual-models#variants"],
-  ["/docs/gateway-and-routing/bring-your-own-model", "/docs/models-routing/byok-subscriptions#custom-endpoints-and-models"],
-  ["/docs/gateway-and-routing/bring-your-own-provider", "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key"],
+  ["/docs/gateway-and-routing/bring-your-own-model", "/docs/providers/byok-subscriptions#custom-endpoints-and-models"],
+  ["/docs/gateway-and-routing/bring-your-own-provider", "/docs/providers/byok-subscriptions#built-in-providers-with-your-own-key"],
   ["/docs/gateway-and-routing/structured-outputs", "/docs/models-routing/virtual-models#protocol-compatibility"],
   ["/docs/gateway-and-routing/guardrails", "/docs/routing/configuration#create-a-configuration"],
   ["/docs/gateway-and-routing/mcp-gateway", "/docs/context-routing/mcp-servers#mcp-gateway"],
@@ -370,7 +373,7 @@ pairs.push(
   // Retired guide slugs resolve to the current task pages.
   ["/docs/guides/cloud-api", "/docs/cli/reference#init-and-config"],
   ["/docs/guides/build-a-plugin", "/docs/overview/what-is-bitrouter"],
-  ["/docs/guides/register-as-a-provider", "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key"],
+  ["/docs/guides/register-as-a-provider", "/docs/providers/byok-subscriptions#built-in-providers-with-your-own-key"],
   // observability/ → Router telemetry
   ["/docs/observability/:slug*", "/docs/cli/request-receipts"],
   // tools/agents pages retitled to name their protocol; features/ dissolved —
@@ -404,7 +407,7 @@ pairs.push(
   // (2026-08): presets → virtual model, external providers (BYOK) → bring your
   // own provider. The API keeps `routing-presets` and `byok`; the docs don't.
   ["/docs/gateway-and-routing/presets", "/docs/models-routing/virtual-models#presets"],
-  ["/docs/gateway-and-routing/byok", "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key"],
+  ["/docs/gateway-and-routing/byok", "/docs/providers/byok-subscriptions#built-in-providers-with-your-own-key"],
   // the OpenRouter page was unpublished (2026-08); the aggregator provider block
   // it documented is the worked example on the model-sources page. The
   // migrate-from-openrouter guide is unaffected.
@@ -421,6 +424,8 @@ pairs.push(
 // rule at the end of redirects() folds them to the English path, which then
 // takes its own 301 to the final destination. One extra hop, on a dead locale.
 const movedGuideRoutes = new Set([
+  "/docs/models-routing/byok-subscriptions",
+  "/docs/models-routing/local-models",
   "/newsletter",
   "/newsletter/confirm",
   "/newsletter/confirmed",
@@ -536,9 +541,9 @@ const nextConfig: NextConfig = {
       { source: "/docs/integrations/models", destination: "/docs/integration/coding-agents#model-sources", permanent: true },
       { source: "/docs/integrations/claude-subscription", destination: "/docs/integration/coding-agents#use-a-claude-subscription", permanent: true },
       { source: "/docs/integrations/codex-subscription", destination: "/docs/integration/coding-agents#use-a-codex-subscription", permanent: true },
-      { source: "/docs/integrations/ollama", destination: "/docs/models-routing/local-models", permanent: true },
-      { source: "/docs/integrations/vllm", destination: "/docs/models-routing/local-models", permanent: true },
-      { source: "/docs/integrations/unsloth", destination: "/docs/models-routing/local-models", permanent: true },
+      { source: "/docs/integrations/ollama", destination: "/docs/providers/local-models", permanent: true },
+      { source: "/docs/integrations/vllm", destination: "/docs/providers/local-models", permanent: true },
+      { source: "/docs/integrations/unsloth", destination: "/docs/providers/local-models", permanent: true },
 
 
       // ── Legal pages moved off /legal to flat top-level URLs ──

@@ -12,6 +12,8 @@
     "...(routing-nav)",
     "---Model---",
     "...(models-routing-nav)",
+    "---Provider---",
+    "...(providers-nav)",
     "---Context---",
     "...(context-routing-nav)",
     "---Reference---",

@@ -25,7 +25,7 @@ See [Strategies](/docs/routing/strategies) to choose and customize these behavio
 
 The **inference pool** is the set of connected models and provider routes a request may consider. Connection alone does not make a source eligible for every request. Membership uses the existing provider, preset, and variant settings in `bitrouter.yaml`; there is no separate `pool:` block.
 
-Connect sources with [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions) or [Local Models](/docs/models-routing/local-models).
+Connect sources with [BYOK & Subscriptions](/docs/providers/byok-subscriptions) or [Local Models](/docs/providers/local-models).
 
 ## Inspect the connected sources
 
@@ -50,7 +50,7 @@ For filter configuration and the release-specific limits of cost/latency sorting
 
 The request can require tool calling, structured outputs, or another model capability. An endpoint that explicitly lacks a required capability cannot become eligible merely because it is included in a virtual model or a preferred provider list.
 
-For custom sources, declare only verified capabilities in [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions#custom-endpoints-and-models). BitRouter normalizes the request, derives its requirements, and renders the selected route in its outbound protocol. A protocol's ability to encode a feature does not establish that a specific model implements it.
+For custom sources, declare only verified capabilities in [BYOK & Subscriptions](/docs/providers/byok-subscriptions#custom-endpoints-and-models). BitRouter normalizes the request, derives its requirements, and renders the selected route in its outbound protocol. A protocol's ability to encode a feature does not establish that a specific model implements it.
 
 [Responses API](/docs/usage/responses-api#structured-outputs-across-protocols) documents response-format fields across supported protocols. Use the subset supported by every endpoint that may receive the request; translation cannot invent fields the destination cannot represent.
 

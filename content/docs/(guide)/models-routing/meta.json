@@ -2,8 +2,6 @@
   "title": "Model",
   "pages": [
     "virtual-models",
-    "model-fallback",
-    "byok-subscriptions",
-    "local-models"
+    "model-fallback"
   ]
 }

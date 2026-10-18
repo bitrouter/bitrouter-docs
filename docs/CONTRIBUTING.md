@@ -16,18 +16,19 @@ top-level order is the `pages` list in `content/docs/meta.json`:
    CLI combines the self-driving, interactive terminal, and headless guides.
 3. **Coding Agents** — shared `bro [harness]` launch configuration and product-specific guides.
 4. **Routing** — Configuration (YAML), Model Routing, Context Routing, and Strategies.
-5. **Model** — Virtual Models, Model Fallback, BYOK & Subscriptions, and Local Models.
-6. **Context** — ACP servers, MCP gateway configuration/use,
+5. **Model** — Virtual Models and Model Fallback.
+6. **Provider** — BYOK & Subscriptions and Local Models.
+7. **Context** — ACP servers, MCP gateway configuration/use,
    Agent Skills, and AGENTS.md.
-7. **Reference** — Changelog, CLI reference, config reference, and API reference. Changelog and CLI
+8. **Reference** — Changelog, CLI reference, config reference, and API reference. Changelog and CLI
    reference are each one page. API reference has one collapsed outer folder,
    with endpoints directly visible beneath static family separators, alongside
    Decisions / System One and Chat Completions / Messages.
 
 Each group name in `content/docs/meta.json` is a native Fumadocs separator, not
-a page or collapsible folder. Seven meta-only guide folders — `(overview-nav)`,
+a page or collapsible folder. Eight meta-only guide folders — `(overview-nav)`,
 `(usage-nav)`, `(integration-nav)`, `(routing-nav)`, `(models-routing-nav)`,
-`(context-routing-nav)`, and `(reference-nav)` — are extracted into the root with `...folder`.
+`(providers-nav)`, `(context-routing-nav)`, and `(reference-nav)` — are extracted into the root with `...folder`.
 They link to canonical pages rather than copies.
 
 Comparison under Overview and API reference are the only hierarchy exceptions.
@@ -86,10 +87,11 @@ in search, sitemap, and full-text ingestion. Retained compatibility guides carry
 Use this boundary when classifying content:
 
 - **Model** explains named model endpoint definitions, selectors, request
-  profiles, compatibility, failure-driven fallback, credentials and subscription
-  sources, custom endpoints, and local inference. Its four visible
-  guides are Virtual Models, Model Fallback, BYOK & Subscriptions, and Local Models.
-  Do not reintroduce Providers or a generic Config group.
+  profiles, compatibility, and failure-driven fallback. Its two visible guides
+  are Virtual Models and Model Fallback.
+- **Provider** follows Model and owns credentials, subscription sources, custom
+  endpoints, and self-run inference. It currently contains BYOK & Subscriptions
+  and Local Models, canonically under `/docs/providers/`.
 - **Routing** owns Configuration (YAML) (file discovery, secrets references,
   schema validation, reload, and configuration/policy artifact boundaries),
   Model Routing (candidate eligibility and selection mechanics), Context Routing
@@ -117,7 +119,7 @@ Use this boundary when classifying content:
   connections. Native launch keeps the harness's interface and does not create a
   BRO Goal. Native launch support, ACP connectivity, and managed worker execution
   are separate capabilities. Link to Self-driving for Goal coordination, Model
-  for inference sources, and Context for ACP/MCP behavior.
+  for named routes, Provider for inference sources, and Context for ACP/MCP behavior.
 - **Usage > Responses API** explains the default generation interface and its
   request examples. **API reference** owns typed decisions and System One,
   Chat Completions/Messages compatibility, and generated endpoint schemas.

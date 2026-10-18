@@ -3,6 +3,7 @@
   "pages": [
     "desktop",
     "cli",
-    "responses-api"
+    "responses-api",
+    "cloud"
   ]
 }

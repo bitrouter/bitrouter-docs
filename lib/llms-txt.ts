@@ -42,6 +42,7 @@ References:
 - [Desktop](${BASE_URL}/docs/usage/desktop): Coming soon; current terminal and API alternatives
 - [CLI](${BASE_URL}/docs/usage/cli): Self-driving workflows, interactive terminal, and native headless scripting, with preview boundaries
 - [Responses API](${BASE_URL}/docs/usage/responses-api): Recommended generation interface, streaming, tool results, and continuation
+- [Cloud](${BASE_URL}/docs/usage/cloud): Coming soon
 
 ## Coding Agents
 

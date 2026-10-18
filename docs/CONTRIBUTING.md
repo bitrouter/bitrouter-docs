@@ -11,7 +11,8 @@ top-level order is the `pages` list in `content/docs/meta.json`:
 
 1. **Overview** — Quickstart, Supported Models, How BitRouter Works, then a
    collapsed Comparison folder. Enterprise remains a linked deployment-decision entry.
-2. **Usage** — Desktop, CLI, and Responses API. Desktop is Coming soon until
+2. **Usage** — Desktop, CLI, Responses API, and Cloud. Cloud is a Coming soon
+   placeholder. Desktop is Coming soon until
    its installation and behavior can be documented from a verified implementation.
    CLI combines the self-driving, interactive terminal, and headless guides.
 3. **Coding Agents** — shared `bro [harness]` launch configuration and product-specific guides.

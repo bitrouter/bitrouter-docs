@@ -3,6 +3,7 @@
   "pages": [
     "[Desktop](/docs/usage/desktop)",
     "[CLI](/docs/usage/cli)",
-    "[Responses API](/docs/usage/responses-api)"
+    "[Responses API](/docs/usage/responses-api)",
+    "[Cloud](/docs/usage/cloud)"
   ]
 }

@@ -39,6 +39,10 @@ for (const file of readdirSync("content/changelog")) {
 }
 // overview + root + special
 pairs.push(
+  // Retired public email signup and confirmation pages.
+  ["/newsletter", "/"],
+  ["/newsletter/confirm", "/"],
+  ["/newsletter/confirmed", "/"],
   // Usage guides and single-page references (2026-10).
   ["/docs/cli/orchestrator", "/docs/usage/cli"],
   ["/docs/cli/tui", "/docs/usage/cli"],
@@ -417,6 +421,9 @@ pairs.push(
 // rule at the end of redirects() folds them to the English path, which then
 // takes its own 301 to the final destination. One extra hop, on a dead locale.
 const movedGuideRoutes = new Set([
+  "/newsletter",
+  "/newsletter/confirm",
+  "/newsletter/confirmed",
   "/changelog",
   "/docs/cli/orchestrator",
   "/docs/cli/tui",

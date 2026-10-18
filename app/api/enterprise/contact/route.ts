@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { enterpriseContactConfig, enterpriseContactSchema } from "../../../../lib/enterprise-contact";
-import { resendRequest } from "../../../../lib/newsletter";
-import { allowNewsletterConfirmation } from "../../../../lib/newsletter-rate-limit";
+import { resendRequest } from "../../../../lib/resend";
+import { allowEnterpriseContact } from "../../../../lib/enterprise-contact-rate-limit";
 
 export const runtime = "nodejs";
 export async function POST(request: Request) {
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
   if (!config) return NextResponse.json({ error: "The form is currently unavailable. Please email contact@bitrouter.ai." }, { status: 503 });
   const input = parsed.data;
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-  if (!allowNewsletterConfirmation(`enterprise:${ip}`, `enterprise:${input.email}`)) return NextResponse.json({ error: "Please wait before sending another request." }, { status: 429 });
+  if (!allowEnterpriseContact(`enterprise:${ip}`, `enterprise:${input.email}`)) return NextResponse.json({ error: "Please wait before sending another request." }, { status: 429 });
   try {
     const response = await resendRequest(config.apiKey, "/emails", {
       method: "POST", body: {

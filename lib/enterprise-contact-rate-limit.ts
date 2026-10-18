@@ -15,7 +15,7 @@ function allowed(key: string, limit: number, now: number) {
 
 // A local guard for accidental repeats and simple abuse on the Railway service.
 // Shared edge rate limiting can be added if the site runs multiple replicas.
-export function allowNewsletterConfirmation(ip: string, email: string, now = Date.now()) {
+export function allowEnterpriseContact(ip: string, email: string, now = Date.now()) {
   if (attempts.size > 5000) {
     for (const [key, value] of attempts) {
       if (value.expiresAt <= now) attempts.delete(key);

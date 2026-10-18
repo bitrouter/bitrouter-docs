@@ -22,16 +22,15 @@ pnpm build   # prebuild regenerates the API reference from openapi.yaml + the mo
 of truth for the rendered API reference and is updated by an automated PR from
 `bitrouter-cloud` on each release — do not hand-edit it.
 
-## Newsletter setup
+## Email setup
 
-The homepage signup sends a confirmation email. Only a confirmed address is added
-to a Resend segment. Configure the Railway site service with the server-only
-variables in `.env.example`: a Resend API key with sending and contact access,
-the newsletter segment ID, a verified sender address, and a random token secret
-of at least 32 characters. Keep `NEXT_PUBLIC_WEB_URL` set to the public site
-origin so confirmation links return to this site.
+The Enterprise contact form uses the server-only `RESEND_API_KEY` and
+`RESEND_ENTERPRISE_FROM` variables in `.env.example`. Configure a sending API key
+and verified sender on the Railway site service. Inquiries are delivered to
+`contact@bitrouter.ai`, with the visitor's address as reply-to.
 
-The changelog announcer drafts email for highlight releases only. Set its
-GitHub Actions `RESEND_SEGMENT_ID` variable to the **same** segment and
-`RESEND_FROM` to a verified sender; it uses the `RESEND_API_KEY` secret.
-Broadcasts stay as drafts until a human reviews and sends them in Resend.
+The independent changelog announcer drafts email for highlight releases only.
+Configure its GitHub Actions `RESEND_SEGMENT_ID` variable for existing opted-in
+subscribers and `RESEND_FROM` for a verified sender; it uses the `RESEND_API_KEY`
+secret. Broadcasts stay as drafts until a human reviews and sends them in Resend.
+The website no longer provides a public email signup flow.

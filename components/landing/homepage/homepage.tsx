@@ -6,7 +6,6 @@ import { ArrowUpRight, Download } from "lucide-react";
 import { ValueTui } from "./value-tui";
 import { InstallTabs } from "./install-tabs";
 import { HomepageFeatures } from "./features";
-import { NewsletterReturn } from "./newsletter-return";
 import { GitHubStarsBadge } from "../github-stars-badge";
 import "./homepage.css";
 
@@ -206,7 +205,6 @@ const faqs = [
 
 export function Homepage() {
   return <div className="workspace-site">
-    <NewsletterReturn />
     <main id="main">
       <section className="ws-hero ws-wrap"><h1 aria-label="Time is money. More work done per token."><span>Time is money.</span><em className="ws-hero-line" aria-hidden="true"><span className="ws-hero-changing">More <HeroPhrase /></span><span className="ws-hero-suffix">per token.</span></em></h1><p>Make every step of your agent’s work count. Open-source model routing, through an API or your terminal.</p><InstallTabs /></section>
       <ValueTabs />

@@ -4,6 +4,7 @@
   "pages": [
     "bro-harness",
     "deepseek-harness",
+    "opencode",
     "pi"
   ]
 }

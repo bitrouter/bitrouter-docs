@@ -39,6 +39,7 @@ const STANDALONE_DOCS = [
   "reference/decisions.mdx",
   "reference/chat-completions-messages.mdx",
   "changelog.mdx",
+  "configuration-reference.mdx",
 ];
 const ROOT = "content/docs";
 // Generated output, exempt from the hand-authoring contract: it is emitted by

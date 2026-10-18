@@ -34,3 +34,21 @@ Configure its GitHub Actions `RESEND_SEGMENT_ID` variable for existing opted-in
 subscribers and `RESEND_FROM` for a verified sender; it uses the `RESEND_API_KEY`
 secret. Broadcasts stay as drafts until a human reviews and sends them in Resend.
 The website no longer provides a public email signup flow.
+
+## Configuration reference
+
+`pnpm generate:config` renders the local configuration reference and downloadable
+JSON Schema from a committed upstream snapshot. It runs at prebuild without
+network access or an upstream checkout. Edit `config-reference/index.md` for the
+page introduction and source-checked loading/reload guidance.
+
+To update the schema, capture an explicit commit or tag from a BitRouter checkout:
+
+```bash
+pnpm snapshot:config --repo /path/to/bitrouter --ref <commit-or-tag>
+pnpm generate:config
+pnpm lint:config
+```
+
+Review the pinned revision and its runtime behavior before updating the prose.
+The schema does not prove released-binary support or encode reloadability.

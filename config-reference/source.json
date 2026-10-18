@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/bitrouter/bitrouter",
+  "revision": "54c822a34d4dbfd75d484ca35e108b497048efef",
+  "schemaPath": "dist/schema/bitrouter.config.schema.json",
+  "version": "1.0.0-alpha.33",
+  "sourceDate": "2026-10-16T16:32:33+08:00",
+  "sha256": "d4aaacc1d5e9b162cd168c08cc4de2b495ba9fbec3b1c582999684b2a1883135"
+}

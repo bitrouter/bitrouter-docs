@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "prebuild": "node scripts/generate-openapi.mjs && node scripts/generate-cli.mjs && node scripts/generate-models.mjs && node scripts/generate-supported-tables.mjs && node scripts/generate-changelog-latest.mjs && node scripts/check-changelog.mjs && node scripts/check-docs.mjs",
+    "prebuild": "node scripts/generate-openapi.mjs && node scripts/generate-cli.mjs && node scripts/generate-config.mjs && node scripts/generate-models.mjs && node scripts/generate-supported-tables.mjs && node scripts/generate-changelog-latest.mjs && node scripts/check-changelog.mjs && node scripts/check-docs.mjs",
     "start": "next start",
     "test": "vitest run",
     "postinstall": "fumadocs-mdx",
@@ -18,7 +18,10 @@
     "snapshot:cli": "node scripts/snapshot-cli.mjs",
     "generate:tables": "node scripts/generate-supported-tables.mjs",
     "lint:tables": "node scripts/generate-supported-tables.mjs --check",
-    "lint:changelog": "node scripts/check-changelog.mjs"
+    "lint:changelog": "node scripts/check-changelog.mjs",
+    "generate:config": "node scripts/generate-config.mjs",
+    "snapshot:config": "node scripts/snapshot-config.mjs",
+    "lint:config": "node scripts/generate-config.mjs --check"
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^2.0.35",

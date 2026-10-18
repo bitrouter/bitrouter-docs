@@ -19,7 +19,7 @@ top-level order is the `pages` list in `content/docs/meta.json`:
 5. **Model** — Virtual Models, Model Fallback, BYOK & Subscriptions, and Local Models.
 6. **Context** — ACP servers, MCP gateway configuration/use,
    Agent Skills, and AGENTS.md.
-7. **Reference** — Changelog, CLI reference, and API reference. Changelog and CLI
+7. **Reference** — Changelog, CLI reference, Configuration reference, and API reference. Changelog and CLI
    reference are each one page. API reference keeps its collapsed endpoint-family
    hierarchy and includes Decisions / System One and Chat Completions / Messages.
 
@@ -235,7 +235,7 @@ the section list and page descriptions.
 
 ## Generated reference pages
 
-Three parts of the docs are generated at build time:
+Four parts of the docs are generated at build time:
 
 - **API reference** (`content/docs/reference/<tag>/`) — `pnpm generate:openapi`
   regenerates endpoints, families, and metadata from `openapi.yaml`. Root authored
@@ -249,3 +249,15 @@ Three parts of the docs are generated at build time:
 - **Changelog** (`content/docs/changelog.mdx`) — `pnpm generate:changelog` combines
   `content/changelog/*.mdx` into one newest-first page with stable release anchors.
   It also refreshes the latest-date data. Edit source release files and regenerate.
+
+- **Configuration reference** (`content/docs/configuration-reference.mdx`) —
+  `pnpm generate:config` renders the committed `config-reference/schema.json`
+  snapshot and `config-reference/index.md`. It also publishes the same schema at
+  `public/schemas/bitrouter.config.schema.json`. `config-reference/source.json`
+  records the upstream commit, schema version, date, and SHA-256 checksum.
+  Builds are offline and deterministic for these artifacts. Use
+  `pnpm snapshot:config --repo /path/to/bitrouter --ref <commit-or-tag>` to refresh
+  from a committed upstream schema, review the source-checked prose at the same
+  revision, then regenerate. Never edit snapshots or generated output by hand.
+  `pnpm lint:config` checks for drift. This root page stays outside the collapsed
+  API reference folder; Routing's Configuration (YAML) remains the workflow guide.

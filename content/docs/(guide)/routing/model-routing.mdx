@@ -23,7 +23,9 @@ See [Strategies](/docs/routing/strategies) to choose and customize these behavio
 
 ## Inference pool
 
-The **inference pool** is the set of connected models and provider routes a request may consider. Connection alone does not make a source eligible for every request. Membership uses the existing provider, preset, and variant settings in `bitrouter.yaml`; there is no separate `pool:` block.
+The **inference pool** is the set of connected models and provider routes a request may consider. Supply can come from your own provider credentials, local or private endpoints, or inference access obtained through BitRouter. Buying or selling inference is optional; routing uses existing access and does not purchase supply.
+
+Connection alone does not make a source eligible for every request. Membership uses the existing provider, preset, and variant settings in `bitrouter.yaml`; there is no separate `pool:` block.
 
 Connect sources with [BYOK & Subscriptions](/docs/providers/byok-subscriptions) or [Local Models](/docs/providers/local-models).
 

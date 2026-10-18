@@ -1,6 +1,7 @@
 {
   "title": "Model",
   "pages": [
+    "buy-inference",
     "virtual-models",
     "model-fallback",
     "model-variants"

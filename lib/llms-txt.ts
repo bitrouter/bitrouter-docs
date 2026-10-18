@@ -59,6 +59,7 @@ References:
 
 ## Model
 
+- [Buy Inference](${BASE_URL}/docs/models-routing/buy-inference): Documentation placeholder for obtaining inference access through BitRouter
 - [Virtual Models](${BASE_URL}/docs/models-routing/virtual-models): Define named model endpoints, request selectors, and reusable presets
 - [Model Fallbacks](${BASE_URL}/docs/models-routing/model-fallback): Define failure-driven replacement across providers, models, and accounts
 - [Model Variants](${BASE_URL}/docs/models-routing/model-variants): Documentation placeholder for model variants

@@ -16,7 +16,7 @@ top-level order is the `pages` list in `content/docs/meta.json`:
    CLI combines the self-driving, interactive terminal, and headless guides.
 3. **Coding Agents** — shared `bro [harness]` launch configuration and product-specific guides.
 4. **Routing** — Configuration (YAML), Model Routing, Context Routing, and Strategies.
-5. **Model** — Virtual Models, Model Fallbacks, and Model Variants.
+5. **Model** — Buy Inference, Virtual Models, Model Fallbacks, and Model Variants.
 6. **Provider** — BYOK & Subscriptions, Local Models, Custom Provider, and Sell Inference.
 7. **Context** — ACP servers, MCP gateway configuration/use,
    Agent Skills, and AGENTS.md.
@@ -86,16 +86,21 @@ in search, sitemap, and full-text ingestion. Retained compatibility guides carry
 
 Use this boundary when classifying content:
 
-- **Model** explains named model endpoint definitions, selectors, request
-  profiles, compatibility, failure-driven fallback, and model variants. Its three
-  visible guides are Virtual Models, Model Fallbacks, and Model Variants.
+- **Model** owns model access and callable interfaces: obtaining inference access,
+  named model endpoints, selectors, request profiles, compatibility, fallbacks,
+  and variants. Its four visible guides, in order, are Buy Inference, Virtual
+  Models, Model Fallbacks, and Model Variants. Feature definitions, configuration
+  examples, and usage belong here; Routing links to them when explaining execution.
 - **Provider** follows Model and owns credentials, subscription sources, custom
   endpoints, self-run inference, and optional marketplace supply. It contains
   BYOK & Subscriptions, Local Models, Custom Provider, and Sell Inference,
-  canonically under `/docs/providers/`. Model Variants, Custom Provider, and
-  Sell Inference currently have only titles and descriptions; detailed content
-  and marketplace implementation remain unverified.
-- **Routing** owns Configuration (YAML) (file discovery, secrets references,
+  canonically under `/docs/providers/`. Buy Inference, Model Variants, Custom
+  Provider, and Sell Inference currently have only titles and descriptions;
+  detailed content and marketplace implementation remain unverified.
+- **Routing** explains runtime selection among sources the caller can already
+  access, including BYOK, local, private, and purchased sources. Buying or selling
+  inference is optional; routing does not grant access or purchase supply.
+  Routing owns Configuration (YAML) (file discovery, secrets references,
   schema validation, reload, and configuration/policy artifact boundaries),
   Model Routing (candidate eligibility and selection mechanics), Context Routing
   (native context-view selection), and Strategies (existing routing approaches,

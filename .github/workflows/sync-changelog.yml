@@ -111,10 +111,10 @@ jobs:
           set -euo pipefail
           git config user.name "bitrouter-bot"
           git config user.email "bot@bitrouter.ai"
-          # Only the changelog and its generated date — `prebuild` also
+          # Only the changelog source, single-page docs, and generated date — `prebuild` also
           # regenerates the model/provider tables from upstream, and that drift
           # is not ours to commit here.
-          git add content/changelog lib/changelog-latest.ts
+          git add content/changelog content/docs/changelog.mdx lib/changelog-latest.ts
           if git diff --cached --quiet; then
             echo "Nothing staged; nothing to publish."
             exit 0

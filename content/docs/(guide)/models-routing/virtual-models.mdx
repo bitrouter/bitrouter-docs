@@ -44,7 +44,7 @@ bro claude --model coding
 bro codex --model coding
 ```
 
-See [bro [harness]](/docs/integration/bro-harness) for launch configuration and [Responses API](/docs/api/responses) for the Responses request format.
+See [bro [harness]](/docs/integration/bro-harness) for launch configuration and [Responses API](/docs/usage/responses-api) for the Responses request format.
 
 ## Model selector forms
 
@@ -97,7 +97,7 @@ Variants do not grant access, bypass guardrails, or supply provider credentials.
 
 Every endpoint must support the capabilities required by the request. Giving several endpoints one virtual name does not make their tools, structured outputs, or provider continuity interchangeable.
 
-For custom endpoints, declare only verified model capabilities in [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions#custom-endpoints-and-models). [Responses API](/docs/api/responses#structured-outputs-across-protocols) explains response-format fields across supported protocols. Use a schema supported by every model that may serve a fallback request.
+For custom endpoints, declare only verified model capabilities in [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions#custom-endpoints-and-models). [Responses API](/docs/usage/responses-api#structured-outputs-across-protocols) explains response-format fields across supported protocols. Use a schema supported by every model that may serve a fallback request.
 
 ## Inspect and verify
 

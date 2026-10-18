@@ -1,8 +1,0 @@
-{
-  "title": "API",
-  "pagesIndex": "[Responses (default)](/docs/api/responses)",
-  "pages": [
-    "[Decisions / System One](/docs/api/decisions)",
-    "[Chat Completions / Messages](/docs/api/chat-completions-messages)"
-  ]
-}

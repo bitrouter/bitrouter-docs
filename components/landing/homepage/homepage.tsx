@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { GeistPixelSquare } from "geist/font/pixel";
-import { ArrowUpRight, Check, Code2, Download, Terminal, X, Copy } from "lucide-react";
+import { ArrowUpRight, Download } from "lucide-react";
 import { ValueTui } from "./value-tui";
+import { InstallTabs } from "./install-tabs";
 import { HomepageFeatures } from "./features";
 import { NewsletterReturn } from "./newsletter-return";
 import { GitHubStarsBadge } from "../github-stars-badge";
@@ -35,10 +36,6 @@ function HeroPhrase() {
       {["work done", "bugs fixed", "tests passed", "work done"].map((text, index) => <span key={index}>{text}</span>)}
     </span>
   </span>;
-}
-
-function EntryButtons({ onChoose }: { onChoose: (mode: "API" | "CLI") => void }) {
-  return <div className="ws-actions"><button className="ws-button ws-primary" onClick={() => onChoose("API")}><Code2 size={16} /> Start with API <ArrowUpRight size={15} /></button><button className="ws-button" onClick={() => onChoose("CLI")}><Terminal size={16} /> Start with CLI <ArrowUpRight size={15} /></button></div>;
 }
 
 const values = [
@@ -208,17 +205,10 @@ const faqs = [
 ];
 
 export function Homepage() {
-  const dialog = useRef<HTMLDialogElement>(null);
-  const [entry, setEntry] = useState<"API" | "CLI">("API");
-  const [copied, setCopied] = useState(false);
-  const [copyError, setCopyError] = useState(false);
-  function choose(mode: "API" | "CLI") { setEntry(mode); setCopied(false); setCopyError(false); dialog.current?.showModal(); }
-  const command = entry === "API" ? "npm install -g bitrouter\nexport OPENAI_API_KEY=your-provider-key\nbro start" : "npm install -g bitrouter\nexport OPENAI_API_KEY=your-provider-key\nbro code";
-  async function copy() { try { await navigator.clipboard.writeText(command); setCopied(true); } catch { setCopyError(true); } }
   return <div className="workspace-site">
     <NewsletterReturn />
     <main id="main">
-      <section className="ws-hero ws-wrap"><h1 aria-label="Time is money. More work done per token."><span>Time is money.</span><em className="ws-hero-line" aria-hidden="true"><span className="ws-hero-changing">More <HeroPhrase /></span><span className="ws-hero-suffix">per token.</span></em></h1><p>Make every step of your agent’s work count. Open-source model routing, through an API or your terminal.</p><EntryButtons onChoose={choose} /><div className="ws-hero-note">Your agents. Your models. Your infrastructure.</div></section>
+      <section className="ws-hero ws-wrap"><h1 aria-label="Time is money. More work done per token."><span>Time is money.</span><em className="ws-hero-line" aria-hidden="true"><span className="ws-hero-changing">More <HeroPhrase /></span><span className="ws-hero-suffix">per token.</span></em></h1><p>Make every step of your agent’s work count. Open-source model routing, through an API or your terminal.</p><InstallTabs /></section>
       <ValueTabs />
       <HomepageFeatures />
       <PricingSection />
@@ -226,6 +216,5 @@ export function Homepage() {
       <section className="ws-faq ws-wrap" id="faq" aria-labelledby="ws-faq-title"><div className="ws-faq-list"><h2 id="ws-faq-title">FAQ</h2>{faqs.map(([q, a]) => <details key={q}><summary>{q}<span className="ws-faq-plus" aria-hidden="true">+</span></summary><p>{a}</p></details>)}</div></section>
       <section className="ws-final ws-wrap"><h2>Make your agent<br /><em>self-driving.</em></h2><p>Keep your agent. Let BitRouter handle the routing.</p><div className="ws-actions"><a className="ws-button ws-primary" href="https://github.com/bitrouter/bitrouter/releases/latest"><Download size={16} aria-hidden="true" />Download BitRouter</a><GitHubStarsBadge className="ws-button" label="Star on GitHub" compact={false} /></div><span className="ws-hero-note">Open source. Ready for your workspace.</span></section>
     </main>
-    <dialog ref={dialog} className="ws-dialog" aria-labelledby="ws-start-title"><button className="ws-dialog-close" aria-label="Close quickstart" onClick={() => dialog.current?.close()}><X size={20} /></button><h2 id="ws-start-title">Start with <em>{entry}.</em></h2><p>{entry === "API" ? "Run the router locally with your own provider credentials. Point your application at the local API." : "Install BitRouter, configure a supported agent and provider, and open your terminal workspace."}</p><div className="ws-command"><pre>{command}</pre><button onClick={copy} aria-label="Copy install commands">{copied ? <Check size={17} /> : <Copy size={17} />}</button></div><p className="ws-dialog-note" role="status">{copyError ? "Select the commands above to copy them manually." : copied ? "Commands copied." : entry === "API" ? "Replace the placeholder with your own key. Local endpoint: http://127.0.0.1:4356/v1" : "Replace the placeholder with your own provider key. Other providers and supported subscriptions are also available."}</p><a className="ws-button ws-primary" href={entry === "API" ? "/docs/overview/quickstart#run-self-hosted" : "/docs/cli/tui"}>Read the setup guide <ArrowUpRight size={15} /></a></dialog>
   </div>;
 }

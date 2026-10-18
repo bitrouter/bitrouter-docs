@@ -3,7 +3,7 @@ title: Decisions / System One
 description: Evaluate evidence with typed questions and understand how System One classification supplies routing signals.
 ---
 
-`POST /v1/decisions` evaluates shared evidence against typed questions and returns an ordered `answers` array with provider-reported `usage`. Use the [Responses API](/docs/api/responses) when the workflow needs generated messages or tool calls.
+`POST /v1/decisions` evaluates shared evidence against typed questions and returns an ordered `answers` array with provider-reported `usage`. Use the [Responses API](/docs/usage/responses-api) when the workflow needs generated messages or tool calls.
 
 <Callout type="info">
 This guide covers a local BitRouter build with native Decisions support. The hosted OpenAPI reference currently does not declare a Decisions endpoint; it does not establish Cloud availability. Verify the contract of a hosted deployment before sending Decisions traffic to it.

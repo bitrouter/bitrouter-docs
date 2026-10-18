@@ -133,7 +133,7 @@ async function main() {
 
     const significance = resolveSignificance(frontmatter);
     const channels = channelsFor(significance);
-    const url = `${SITE_URL}/changelog/${slug}`;
+    const url = `${SITE_URL}/docs/changelog#${slug}`;
     const copy = copyFor(entry, url);
     console.log(`\n${slug}  (${significance}) → ${channels.join(", ")}`);
 

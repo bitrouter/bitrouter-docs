@@ -39,8 +39,8 @@ export async function getLLMText(page: DocsPage) {
   return `# ${page.data.title} (${page.url})\n\n${processed}`;
 }
 
-// Flatten changelog pages into the pure ChangelogItem shape used by the index
-// page, the client feed component, and the RSS/Atom routes.
+// Release metadata for RSS/Atom. Keep the original URLs as subscriber GUIDs;
+// buildChangelogFeed points readers at the single-page docs anchors.
 export function getChangelogItems(): ChangelogItem[] {
   return changelogSource.getPages().map((page) => ({
     url: page.url,

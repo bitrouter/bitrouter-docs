@@ -1,10 +1,8 @@
 {
   "title": "CLI",
   "pages": [
-    "orchestrator",
-    "tui",
-    "headless",
     "reference",
+    "request-receipts",
     "agent"
   ]
 }

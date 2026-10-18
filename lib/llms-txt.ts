@@ -37,6 +37,12 @@ References:
 - [vLLM Semantic Router](${BASE_URL}/docs/overview/comparison/vllm-semantic-router): Programmable signals, model paths, and context ownership
 - [LiteLLM](${BASE_URL}/docs/overview/comparison/litellm): SDK/proxy integration, gateway operations, and routing configuration
 
+## Usage
+
+- [Desktop](${BASE_URL}/docs/usage/desktop): Coming soon; current terminal and API alternatives
+- [CLI](${BASE_URL}/docs/usage/cli): Self-driving workflows, interactive terminal, and native headless scripting, with preview boundaries
+- [Responses API](${BASE_URL}/docs/usage/responses-api): Recommended generation interface, streaming, tool results, and continuation
+
 ## Coding Agents
 
 - [bro [harness]](${BASE_URL}/docs/integration/bro-harness): Launch a native harness with process-scoped routing, model, and supported MCP configuration
@@ -65,42 +71,11 @@ References:
 - [Agent Skills](${BASE_URL}/docs/context-routing/skills): Inspect and scaffold instruction packages with host-owned activation
 - [AGENTS.md](${BASE_URL}/docs/context-routing/agents-md): Write repository instructions and verify the selected harness's loading behavior
 
-## CLI
+## Reference
 
-- [Self-driving](${BASE_URL}/docs/cli/orchestrator): Design preview of BitRouter Orchestrator (BRO), persistent Goals, coordination, and verified delivery
-- [Interactive TUI](${BASE_URL}/docs/cli/tui): Design preview of Goals, current Goal input, and read-only Workflow inspection
-- [Headless & Scripting](${BASE_URL}/docs/cli/headless): Development preview of native BRO tasks, managed sessions, NDJSON, verification gates, and Goal automation boundaries
-
-### Reference
-
-- [Daemon lifecycle](${BASE_URL}/docs/cli/reference/daemon): Generated command reference
-- [Init and config](${BASE_URL}/docs/cli/reference/init): Generated command reference
-- [Routing introspection](${BASE_URL}/docs/cli/reference/route): Generated command reference
-- [Providers](${BASE_URL}/docs/cli/reference/providers): Generated command reference
-- [Policy](${BASE_URL}/docs/cli/reference/policy): Generated command reference
-- [Cloud](${BASE_URL}/docs/cli/reference/cloud): Generated command reference
-- [Agents, ACP, and MCP](${BASE_URL}/docs/cli/reference/tools): Generated command reference
-- [Skills](${BASE_URL}/docs/cli/reference/skills): Generated command reference
-- [Coding agents](${BASE_URL}/docs/cli/reference/harnesses): Generated command reference
-- [Key, workflow-state, and update](${BASE_URL}/docs/cli/reference/misc): Generated command reference
-
-## API
-
-- [Responses (default)](${BASE_URL}/docs/api/responses): Recommended generation interface, streaming, tool results, and continuation
-- [Decisions / System One](${BASE_URL}/docs/api/decisions): Typed evidence questions and System One routing classification
-- [Chat Completions / Messages](${BASE_URL}/docs/api/chat-completions-messages): Existing client formats, streaming, and caller-owned tool loops
-
-### Reference
-
-- [Overview & authentication](${BASE_URL}/docs/reference): Choose an API family and apply the correct authentication
-- [OpenAI Chat Completions](${BASE_URL}/docs/reference/openai-compatible/createChatCompletion): \`/v1/chat/completions\` — OpenAI Chat Completions request and response format
-- [OpenAI Responses](${BASE_URL}/docs/reference/openai-responses/createResponse): \`/v1/responses\` — OpenAI Responses request and event format
-- [Anthropic Messages](${BASE_URL}/docs/reference/anthropic-compatible/createMessage): \`/v1/messages\` — Anthropic Messages request and response format
-- [Google GenerateContent](${BASE_URL}/docs/reference/google-compatible/googleGenerateContent): \`/v1beta/models/{model}:generateContent\` — Google Generative Language format
-- [Models & providers](${BASE_URL}/docs/reference/discovery/listModels): Inspect the public catalog and aggregate platform usage
-- [Cloud management](${BASE_URL}/docs/reference/management/listNamespaces): Manage namespaces, keys, billing, policy, presets, and OAuth clients
-- [BYOK encryption](${BASE_URL}/docs/reference/byok/getEncryptionPubkey): Bootstrap client-side encryption of upstream provider keys
-- [Health](${BASE_URL}/docs/reference/health/ping): Liveness probe
+- [Changelog](${BASE_URL}/docs/changelog): All release notes on one page
+- [CLI reference](${BASE_URL}/docs/cli/reference): Complete captured command and flag reference on one page
+- [API reference](${BASE_URL}/docs/reference): Authentication, typed decisions, compatibility guides, and generated endpoint families
 
 ## Optional
 

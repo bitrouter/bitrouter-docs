@@ -1,9 +1,11 @@
 {
-  "title": "Reference",
+  "title": "API reference",
   "defaultOpen": false,
   "collapsible": true,
   "pages": [
     "index",
+    "decisions",
+    "chat-completions-messages",
     "openai-compatible",
     "openai-responses",
     "anthropic-compatible",

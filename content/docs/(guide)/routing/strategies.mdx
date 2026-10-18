@@ -119,7 +119,7 @@ bro claude --model bitrouter/auto
 bro codex --model bitrouter/auto
 ```
 
-[Responses API](/docs/api/responses) shows a routed generation request. Inspect the actual serving model with [Request receipts](/docs/cli/request-receipts); a selector preview does not prove which fallback ultimately served the call.
+[Responses API](/docs/usage/responses-api) shows a routed generation request. Inspect the actual serving model with [Request receipts](/docs/cli/request-receipts); a selector preview does not prove which fallback ultimately served the call.
 
 ## Override one call
 
@@ -287,5 +287,5 @@ Replace `bitrouter/auto` with your configured selector when inspecting another s
 <Cards>
   <Card title="Model Routing" href="/docs/routing/model-routing" description="Understand selector resolution, eligibility, and policy-bound selection." />
   <Card title="Configuration (YAML)" href="/docs/routing/configuration" description="Load, validate, and apply routing configuration." />
-  <Card title="CLI reference" href="/docs/cli/reference/policy#bro-eval" description="Inspect captured evaluation, optimization, and policy commands." />
+  <Card title="CLI reference" href="/docs/cli/reference#bro-eval" description="Inspect captured evaluation, optimization, and policy commands." />
 </Cards>

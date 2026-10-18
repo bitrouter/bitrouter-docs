@@ -3,7 +3,7 @@ title: Chat Completions / Messages
 description: Connect existing OpenAI Chat Completions and Anthropic Messages clients to BitRouter while retaining their request formats.
 ---
 
-Use these endpoints when your client already speaks OpenAI Chat Completions or Anthropic Messages. For a new generation integration, start with [Responses (default)](/docs/api/responses).
+Use these endpoints when your client already speaks OpenAI Chat Completions or Anthropic Messages. For a new generation integration, start with [Responses (default)](/docs/usage/responses-api).
 
 | Client format | Local endpoint | Cloud endpoint |
 | --- | --- | --- |
@@ -64,10 +64,10 @@ For caller-owned tools, your application validates arguments, executes permitted
 | Chat Completions | Assistant `tool_calls` | A `tool` message with the matching `tool_call_id` |
 | Messages | A `tool_use` content block | A `tool_result` block with the matching `tool_use_id` in a user message |
 
-Keep the assistant tool call and its matching result in the conversation history. Subsequent requests supply the required history in `messages`; use the [Responses continuation guide](/docs/api/responses#continue-a-conversation) when working with `previous_response_id`.
+Keep the assistant tool call and its matching result in the conversation history. Subsequent requests supply the required history in `messages`; use the [Responses continuation guide](/docs/usage/responses-api#continue-a-conversation) when working with `previous_response_id`.
 
 ## Routing and compatibility
 
 The inbound format determines the client contract. BitRouter can translate a compatible request to a different upstream protocol after model resolution. Choose routes that support the capabilities your request needs; protocol translation alone does not establish support for every provider-specific field or tool.
 
-See [Virtual Models](/docs/models-routing/virtual-models#protocol-compatibility) for route compatibility, [structured outputs](/docs/api/responses#structured-outputs-across-protocols) for each protocol's schema field, and [Request receipts](/docs/cli/request-receipts) for the model and provider that actually served the request.
+See [Virtual Models](/docs/models-routing/virtual-models#protocol-compatibility) for route compatibility, [structured outputs](/docs/usage/responses-api#structured-outputs-across-protocols) for each protocol's schema field, and [Request receipts](/docs/cli/request-receipts) for the model and provider that actually served the request.

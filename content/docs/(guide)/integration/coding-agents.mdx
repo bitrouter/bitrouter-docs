@@ -22,7 +22,7 @@ bro launch opencode
 
 `bro run` and `bro acp serve` use ACP adapters. `bro launch` starts the harness's native interface with process-local routing overrides and leaves normal harness configuration in place. Neither invocation automatically creates a BRO Goal.
 
-The [Self-driving preview](/docs/cli/orchestrator) describes the separate goal-oriented `bro` / `bro code` contract. In that design, a built-in executor can complete work and ACP-compatible harnesses are optional managed workers. Check native launch, ACP connectivity, and managed execution capabilities independently. Earlier `bro code <agent>` behavior remains in the captured [command reference](/docs/cli/reference/harnesses#bro-code); it is not the preview Goal entry point.
+The [Self-driving preview](/docs/usage/cli#self-driving-workflows) describes the separate goal-oriented `bro` / `bro code` contract. In that design, a built-in executor can complete work and ACP-compatible harnesses are optional managed workers. Check native launch, ACP connectivity, and managed execution capabilities independently. Earlier `bro code <agent>` behavior remains in the captured [command reference](/docs/cli/reference#bro-code); it is not the preview Goal entry point.
 
 ## Supported agents
 
@@ -219,6 +219,6 @@ To combine sources, define a [virtual model](/docs/models-routing/virtual-models
 <Cards>
   <Card title="Local Models" href="/docs/models-routing/local-models" description="Connect Ollama, vLLM, Unsloth, or another OpenAI-compatible server." />
   <Card title="BYOK & Subscriptions" href="/docs/models-routing/byok-subscriptions" description="Add a hosted API or provider account with a key." />
-  <Card title="Interactive TUI" href="/docs/cli/tui" description="Preview the goal-oriented BitRouter terminal interface." />
+  <Card title="Interactive TUI" href="/docs/usage/cli#interactive-tui" description="Preview the goal-oriented BitRouter terminal interface." />
   <Card title="ACP servers" href="/docs/context-routing/acp-servers" description="Inspect adapters and run headless turns." />
 </Cards>

@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import { createMDX } from "fumadocs-mdx/next";
+import { readdirSync } from "node:fs";
 
 // page slug → final nested path
 const finalPath = {
@@ -21,7 +22,7 @@ const finalPath = {
   "payment":"/docs/overview/quickstart#self-host-or-cloud","workspaces":"/docs/reference/management/listNamespaces",
   "for-providers":"/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
   // usage (CLI + MCP moved out of reference/ into the Documentation tab, 2026-08)
-  "cli":"/docs/cli/reference/init",
+  "cli":"/docs/usage/cli",
 };
 const legacyBuckets = ["core","cloud","features","routing"]; // /docs/guides/<bucket>/<slug>
 const pairs: Array<[string, string]> = [];
@@ -29,8 +30,32 @@ for (const [slug, dest] of Object.entries(finalPath)) {
   pairs.push(["/docs/" + slug, dest]);                          // current flat form
   for (const b of legacyBuckets) pairs.push(["/docs/guides/" + b + "/" + slug, dest]); // production+branch buckets
 }
+// Exact release redirects leave the established RSS/Atom endpoints reachable.
+for (const file of readdirSync("content/changelog")) {
+  if (!file.endsWith(".mdx")) continue;
+  const slug = file.replace(/\.mdx$/, "");
+  pairs.push([`/changelog/${slug}`, `/docs/changelog#${slug}`]);
+  pairs.push([`/docs/changelog/${slug}`, `/docs/changelog#${slug}`]);
+}
 // overview + root + special
 pairs.push(
+  // Usage guides and single-page references (2026-10).
+  ["/docs/cli/orchestrator", "/docs/usage/cli"],
+  ["/docs/cli/tui", "/docs/usage/cli"],
+  ["/docs/cli/headless", "/docs/usage/cli"],
+  ["/docs/api/responses", "/docs/usage/responses-api"],
+  ["/docs/api/decisions", "/docs/reference/decisions"],
+  ["/docs/api/chat-completions-messages", "/docs/reference/chat-completions-messages"],
+  ["/docs/cli/reference/daemon", "/docs/cli/reference"],
+  ["/docs/cli/reference/init", "/docs/cli/reference"],
+  ["/docs/cli/reference/route", "/docs/cli/reference"],
+  ["/docs/cli/reference/providers", "/docs/cli/reference"],
+  ["/docs/cli/reference/policy", "/docs/cli/reference"],
+  ["/docs/cli/reference/cloud", "/docs/cli/reference"],
+  ["/docs/cli/reference/tools", "/docs/cli/reference"],
+  ["/docs/cli/reference/skills", "/docs/cli/reference"],
+  ["/docs/cli/reference/harnesses", "/docs/cli/reference"],
+  ["/docs/cli/reference/misc", "/docs/cli/reference"],
   // Comparison is a folder only; its retired index opens the first comparison.
   ["/docs/overview/comparison", "/docs/overview/comparison/openrouter"],
   ["/compare/bitrouter-vs-openrouter", "/docs/overview/comparison/openrouter"],
@@ -63,7 +88,7 @@ pairs.push(
   ["/docs/context-routing/server-tools", "/docs/overview/what-is-bitrouter"],
   // Model discovery and prices share one page; individual model URLs remain.
   ["/models", "/pricing#models"],
-  ["/docs/api", "/docs/api/responses"],
+  ["/docs/api", "/docs/usage/responses-api"],
   // Earlier Config aliases now resolve to the task-specific guides.
   ["/docs/config", "/docs/routing/configuration"],
   ["/docs/config/guardrails", "/docs/routing/configuration#create-a-configuration"],
@@ -86,8 +111,7 @@ pairs.push(
   ["/docs/configuration/evaluations", "/docs/routing/strategies#evaluations"],
   ["/docs/configuration/policy", "/docs/routing/configuration"],
   ["/docs/configuration/telemetry", "/docs/cli/request-receipts"],
-  ["/docs/usage/cli", "/docs/cli/reference/init"],
-  ["/docs/usage/tui", "/docs/cli/tui"],
+  ["/docs/usage/tui", "/docs/usage/cli#interactive-tui"],
   ["/docs/usage/mcp", "/docs/context-routing/mcp-servers"],
   ["/docs/usage/skills", "/docs/context-routing/skills"],
   ["/docs/usage/coding-agents", "/docs/integration/coding-agents"],
@@ -101,7 +125,7 @@ pairs.push(
   ["/docs/enterprise", "/enterprise"],
   // Section overview pages retired in 2026-09. Each section now starts with
   // its first concrete task page.
-  ["/docs/usage", "/docs/routing/strategies#initialize-a-policy-binding"],
+  ["/docs/usage", "/docs/usage/desktop"],
   ["/docs/configuration", "/docs/routing/configuration"],
   ["/docs/customization", "/docs/models-routing/byok-subscriptions"],
   // Claude Code, Codex, and model-source guidance now live on one Coding
@@ -111,8 +135,8 @@ pairs.push(
   ["/docs/usage/model-sources", "/docs/integration/coding-agents#model-sources"],
   // 2026-09 information-architecture cleanup. The command remains `bro code`;
   // TUI is the user-facing documentation name.
-  ["/docs/usage/code", "/docs/cli/tui"],
-  ["/docs/usage/protocols", "/docs/cli/reference/init"],
+  ["/docs/usage/code", "/docs/usage/cli#interactive-tui"],
+  ["/docs/usage/protocols", "/docs/cli/reference#init-and-config"],
   ["/docs/usage/mcp-gateway", "/docs/context-routing/mcp-servers#mcp-gateway"],
   ["/docs/usage/model-sources/claude-subscription", "/docs/integration/coding-agents#use-a-claude-subscription"],
   ["/docs/usage/model-sources/codex-subscription", "/docs/integration/coding-agents#use-a-codex-subscription"],
@@ -177,7 +201,7 @@ pairs.push(
   ["/docs/extensions", "/docs/models-routing/byok-subscriptions"],
   ["/docs/extensions/:slug+", "/docs/customization/:slug+"],
   // The former Guides section is now organized around usage tasks.
-  ["/docs/guides", "/docs/cli/reference/init"],
+  ["/docs/guides", "/docs/cli/reference#init-and-config"],
   ["/docs/guides/overview", "/docs/overview/what-is-bitrouter"],
   ["/docs/guides/overview/quickstart", "/docs/overview/quickstart"],
   ["/docs/guides/overview/comparison", "/docs/overview/comparison/openrouter"],
@@ -200,7 +224,7 @@ pairs.push(
   ["/docs/concepts/policy", "/docs/routing/strategies#initialize-a-policy-binding"],
   ["/docs/concepts/tools", "/docs/context-routing/mcp-servers"],
   ["/docs/concepts/agents", "/docs/context-routing/acp-servers"],
-  ["/docs/concepts/cli", "/docs/cli/reference/init"],
+  ["/docs/concepts/cli", "/docs/cli/reference#init-and-config"],
   ["/docs/concepts/mcp", "/docs/context-routing/mcp-servers"],
   ["/docs/concepts/agent-skill", "/docs/overview/quickstart"],
   // get-started consolidation (2026-07): onboarding merge, FAQs dissolved, cli/mcp → reference
@@ -208,7 +232,7 @@ pairs.push(
   ["/docs/get-started/wizard", "/docs/overview/quickstart"],
   ["/docs/get-started/agent-skill", "/docs/overview/quickstart"],
   ["/docs/get-started/faqs", "/docs/overview/quickstart"],
-  ["/docs/get-started/cli", "/docs/cli/reference/init"],
+  ["/docs/get-started/cli", "/docs/cli/reference#init-and-config"],
   ["/docs/get-started/mcp", "/docs/context-routing/mcp-servers"],
   // get-started/ section dissolved (2026-08): onboarding → overview/quickstart,
   // the four set-up-* walkthroughs → the quickstart or the page that owns each topic
@@ -239,23 +263,23 @@ pairs.push(
   ["/docs/cloud/payment", "/docs/overview/quickstart#self-host-or-cloud"],
   // CLI + MCP left the API Reference tab for Documentation → Usage (2026-08).
   // These must stay above the /docs/reference wildcards below.
-  ["/docs/reference/cli", "/docs/cli/reference/init"],
+  ["/docs/reference/cli", "/docs/cli/reference#init-and-config"],
   ["/docs/reference/cli/:slug*", "/docs/usage/cli/:slug*"],
   ["/docs/reference/mcp", "/docs/context-routing/mcp-servers"],
   // The CLI reference collapsed from ten pages into one (2026-08). Each retired
   // page lands on its `##` section anchor — keep these in sync with the section
   // titles in cli-overlays/<group>.md, which is where the anchors come from.
-  ["/docs/usage/cli/index", "/docs/cli/reference/init"],
-  ["/docs/usage/cli/daemon", "/docs/cli/reference/daemon"],
-  ["/docs/usage/cli/init", "/docs/cli/reference/init"],
-  ["/docs/usage/cli/route", "/docs/cli/reference/route"],
-  ["/docs/usage/cli/providers", "/docs/cli/reference/providers"],
-  ["/docs/usage/cli/policy", "/docs/cli/reference/policy"],
-  ["/docs/usage/cli/cloud", "/docs/cli/reference/cloud"],
-  ["/docs/usage/cli/tools", "/docs/cli/reference/tools"],
-  ["/docs/usage/cli/skills", "/docs/cli/reference/skills"],
-  ["/docs/usage/cli/harnesses", "/docs/cli/reference/harnesses"],
-  ["/docs/usage/cli/misc", "/docs/cli/reference/misc"],
+  ["/docs/usage/cli/index", "/docs/cli/reference#init-and-config"],
+  ["/docs/usage/cli/daemon", "/docs/cli/reference#daemon-lifecycle"],
+  ["/docs/usage/cli/init", "/docs/cli/reference#init-and-config"],
+  ["/docs/usage/cli/route", "/docs/cli/reference#routing-introspection"],
+  ["/docs/usage/cli/providers", "/docs/cli/reference#providers"],
+  ["/docs/usage/cli/policy", "/docs/cli/reference#policy"],
+  ["/docs/usage/cli/cloud", "/docs/cli/reference#cloud"],
+  ["/docs/usage/cli/tools", "/docs/cli/reference#agents-acp-and-mcp"],
+  ["/docs/usage/cli/skills", "/docs/cli/reference#skills"],
+  ["/docs/usage/cli/harnesses", "/docs/cli/reference#coding-agents"],
+  ["/docs/usage/cli/misc", "/docs/cli/reference#key-workflow-state-and-update"],
   // AI Resources dissolved (2026-08): skills and the docs MCP server moved into
   // Usage; the llms.txt page retired (the endpoints themselves still serve).
   ["/docs/ai-resources", "/docs/context-routing/skills"],
@@ -265,10 +289,8 @@ pairs.push(
   // reference wildcards (api-reference unwrapped into /docs/reference)
   ["/docs/api-reference/:slug*", "/docs/reference/:slug*"],
   ["/docs/reference/api-reference/:slug*", "/docs/reference/:slug*"],
-  // Changelog is a standalone top-level section using the native Fumadocs
-  // notebook layout; these aliases preserve its established canonical route.
-  ["/docs/changelog/:slug*", "/changelog/:slug*"],
-  ["/docs/changelog", "/changelog"],
+  // Changelog release permalinks now resolve to anchors on the docs page.
+  ["/changelog", "/docs/changelog"],
   // moved/removed pages (2026-06 refactor) → live destinations
   ["/docs/features/observability", "/docs/cli/request-receipts"],
   ["/docs/features/tracing", "/docs/cli/request-receipts#cloud-activity"],
@@ -342,7 +364,7 @@ pairs.push(
   ["/docs/models-and-routing/tool-calling/:slug*", "/docs/customization/tools/:slug*"],
   ["/docs/agents-and-orchestration", "/docs/integration/coding-agents"],
   // Retired guide slugs resolve to the current task pages.
-  ["/docs/guides/cloud-api", "/docs/cli/reference/init"],
+  ["/docs/guides/cloud-api", "/docs/cli/reference#init-and-config"],
   ["/docs/guides/build-a-plugin", "/docs/overview/what-is-bitrouter"],
   ["/docs/guides/register-as-a-provider", "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key"],
   // observability/ → Router telemetry
@@ -395,6 +417,23 @@ pairs.push(
 // rule at the end of redirects() folds them to the English path, which then
 // takes its own 301 to the final destination. One extra hop, on a dead locale.
 const movedGuideRoutes = new Set([
+  "/changelog",
+  "/docs/cli/orchestrator",
+  "/docs/cli/tui",
+  "/docs/cli/headless",
+  "/docs/api/responses",
+  "/docs/api/decisions",
+  "/docs/api/chat-completions-messages",
+  "/docs/cli/reference/daemon",
+  "/docs/cli/reference/init",
+  "/docs/cli/reference/route",
+  "/docs/cli/reference/providers",
+  "/docs/cli/reference/policy",
+  "/docs/cli/reference/cloud",
+  "/docs/cli/reference/tools",
+  "/docs/cli/reference/skills",
+  "/docs/cli/reference/harnesses",
+  "/docs/cli/reference/misc",
   "/docs/cli/configuration",
   "/docs/routing/inference-pool",
   "/docs/routing/policy",
@@ -420,7 +459,7 @@ const movedGuideRoutes = new Set([
 const docsRedirects = pairs.map(([source, destination]) => ({
   source,
   destination,
-  ...(source === "/models" || movedGuideRoutes.has(source) || destination.startsWith("/docs/overview/comparison")
+  ...(source === "/models" || movedGuideRoutes.has(source) || source.startsWith("/changelog/") || source.startsWith("/docs/changelog/") || destination.startsWith("/docs/overview/comparison")
     ? { statusCode: 301 }
     : { permanent: true }),
 }));

@@ -52,7 +52,7 @@ The request can require tool calling, structured outputs, or another model capab
 
 For custom sources, declare only verified capabilities in [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions#custom-endpoints-and-models). BitRouter normalizes the request, derives its requirements, and renders the selected route in its outbound protocol. A protocol's ability to encode a feature does not establish that a specific model implements it.
 
-[Responses API](/docs/api/responses#structured-outputs-across-protocols) documents response-format fields across supported protocols. Use the subset supported by every endpoint that may receive the request; translation cannot invent fields the destination cannot represent.
+[Responses API](/docs/usage/responses-api#structured-outputs-across-protocols) documents response-format fields across supported protocols. Use the subset supported by every endpoint that may receive the request; translation cannot invent fields the destination cannot represent.
 
 ## Scope and routing boundaries
 
@@ -72,7 +72,7 @@ The [Strategies guide](/docs/routing/strategies#initialize-a-policy-binding) cov
 
 ## Decisions API and policy ownership
 
-[Decisions API](/docs/api/decisions) evaluates typed questions over supplied evidence. A decision response alone does not create a routing policy, admit evaluation results, or publish a candidate. The routing runtime applies its own policy and execution constraints.
+[Decisions API](/docs/reference/decisions) evaluates typed questions over supplied evidence. A decision response alone does not create a routing policy, admit evaluation results, or publish a candidate. The routing runtime applies its own policy and execution constraints.
 
 <Cards>
   <Card title="Configuration (YAML)" href="/docs/routing/configuration" description="Find, validate, and apply the configuration and its policy binding." />

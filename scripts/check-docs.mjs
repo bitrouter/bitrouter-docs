@@ -30,12 +30,16 @@ const SECTIONS = [
   "(guide)/models-routing",
   "(guide)/context-routing",
   "(guide)/cli",
-  "(guide)/api",
+  "(guide)/usage",
   "self-hosting",
 ];
-// Reference endpoint pages are generated, but its overview is hand-authored
-// and must obey the same import-free contract.
-const STANDALONE_DOCS = ["reference/index.mdx"];
+// Root API guides and the generated changelog obey the import-free contract.
+const STANDALONE_DOCS = [
+  "reference/index.mdx",
+  "reference/decisions.mdx",
+  "reference/chat-completions-messages.mdx",
+  "changelog.mdx",
+];
 const ROOT = "content/docs";
 // Generated output, exempt from the hand-authoring contract: it is emitted by
 // scripts/generate-cli.mjs from the binary's own `--help`.
@@ -49,7 +53,6 @@ const HIDDEN_SIDEBAR_ROUTES = new Set([
   "/docs/cli/agent",
   // Supporting guides remain linked from content, without CLI sidebar entries.
   "/docs/cli/request-receipts",
-  "/docs/cli/reference",
   // Retained for existing links after replacing the generic Coding Agents entry.
   "/docs/integration/coding-agents",
 ]);
@@ -60,14 +63,15 @@ const NAV_FILES = [
   "(routing-nav)/meta.json",
   "(models-routing-nav)/meta.json",
   "(context-routing-nav)/meta.json",
-  "(cli-nav)/meta.json",
-  "(cli-reference-nav)/meta.json",
-  "(api-nav)/meta.json",
+  "(usage-nav)/meta.json",
+  "(reference-nav)/meta.json",
 ];
 const ROOT_NAV_PAGES = [
   "---Overview---",
   "...(overview-nav)",
   "(comparison-nav)",
+  "---Usage---",
+  "...(usage-nav)",
   "---Coding Agents---",
   "...(integration-nav)",
   "---Routing---",
@@ -76,11 +80,8 @@ const ROOT_NAV_PAGES = [
   "...(models-routing-nav)",
   "---Context---",
   "...(context-routing-nav)",
-  "---CLI---",
-  "...(cli-nav)",
-  "(cli-reference-nav)",
-  "---API---",
-  "...(api-nav)",
+  "---Reference---",
+  "...(reference-nav)",
   "reference",
 ];
 
@@ -188,7 +189,6 @@ async function main() {
 
   for (const navFile of [
     "(comparison-nav)/meta.json",
-    "(cli-reference-nav)/meta.json",
     "reference/meta.json",
   ]) {
     const meta = JSON.parse(await readFile(join(ROOT, navFile), "utf8"));

@@ -1,8 +1,0 @@
-{
-  "title": "CLI",
-  "pagesIndex": "[Self-driving](/docs/cli/orchestrator)",
-  "pages": [
-    "[Interactive TUI](/docs/cli/tui)",
-    "[Headless & Scripting](/docs/cli/headless)"
-  ]
-}

@@ -1,11 +1,11 @@
 ---
-title: Responses (default)
+title: Responses API
 description: Send routed generation requests, stream output, and manage tool results and continuation through BitRouter.
 ---
 
 Start with `POST /v1/responses` for new generation integrations. It accepts the OpenAI Responses request format and returns a Responses-shaped result for workflows that exchange messages, reasoning items, and tool calls. Here, **default** means the recommended starting interface; clients still choose the endpoint explicitly.
 
-For typed questions over shared evidence, use [Decisions / System One](/docs/api/decisions). Existing clients can keep their [Chat Completions or Messages](/docs/api/chat-completions-messages) request format.
+For typed questions over shared evidence, use [Decisions / System One](/docs/reference/decisions). Existing clients can keep their [Chat Completions or Messages](/docs/reference/chat-completions-messages) request format.
 
 ## Choose an endpoint and model
 
@@ -113,6 +113,6 @@ Use [Request receipts](/docs/cli/request-receipts) to inspect the model and prov
 
 <Cards>
   <Card title="Responses endpoint reference" href="/docs/reference/openai-responses/createResponse" description="Read the generated hosted request and response schema." />
-  <Card title="Decisions / System One" href="/docs/api/decisions" description="Evaluate typed questions over shared evidence." />
-  <Card title="Chat Completions / Messages" href="/docs/api/chat-completions-messages" description="Connect clients using either compatibility format." />
+  <Card title="Decisions / System One" href="/docs/reference/decisions" description="Evaluate typed questions over shared evidence." />
+  <Card title="Chat Completions / Messages" href="/docs/reference/chat-completions-messages" description="Connect clients using either compatibility format." />
 </Cards>

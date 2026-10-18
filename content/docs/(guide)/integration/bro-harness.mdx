@@ -11,7 +11,7 @@ For other supported native harnesses, use the general form `bro launch <harness>
 
 Native launch keeps you in the harness's interface. It prepares the connection for that process and does not create a BRO Goal or register the process as a managed worker.
 
-For a persistent outcome that BitRouter coordinates, use the [Self-driving preview](/docs/cli/orchestrator). BRO is designed to execute with its built-in executor and optional ACP-compatible workers. Native launch support, ACP connectivity, and managed worker support are separate capabilities; check each capability for the adapter and version you use.
+For a persistent outcome that BitRouter coordinates, use the [Self-driving preview](/docs/usage/cli#self-driving-workflows). BRO is designed to execute with its built-in executor and optional ACP-compatible workers. Native launch support, ACP connectivity, and managed worker support are separate capabilities; check each capability for the adapter and version you use.
 
 The harness retains its private history, compaction, tools, and permission behavior. See [ACP servers](/docs/context-routing/acp-servers) for session ownership and external-client integration, and [headless ACP calls](/docs/context-routing/acp-servers#run-one-headless-turn) for sending one prompt from a script.
 
@@ -44,7 +44,7 @@ BitRouter prepares the harness's connection and starts its native interface. For
 | Hermes | `bro launch hermes` | A generated launch configuration |
 | OpenClaw | `bro launch openclaw` | A generated launch profile |
 
-The `bro [harness]` short form is available for Claude and Codex; `bro claude-code` is also an alias for `bro claude`. Use `bro launch <harness>` for the other entries above. Native launch support depends on the catalog shipped with your installed version; see the [CLI reference](/docs/cli/reference/harnesses#bro-launch) for the full command contract.
+The `bro [harness]` short form is available for Claude and Codex; `bro claude-code` is also an alias for `bro claude`. Use `bro launch <harness>` for the other entries above. Native launch support depends on the catalog shipped with your installed version; see the [CLI reference](/docs/cli/reference#bro-launch) for the full command contract.
 
 ## What gets configured
 
@@ -100,9 +100,9 @@ bro launch pi --check
 Review the launch report for the route and MCP injection actually applied. `--no-start` prevents automatic daemon startup, and `--no-install` prevents an offer to install a missing supported harness. Passing the launch checks verifies the connection setup; a completed model request provides the next check of the working integration.
 
 <Cards>
-  <Card title="Self-driving" href="/docs/cli/orchestrator" description="Delegate a persistent Goal rather than driving a harness directly." />
+  <Card title="Self-driving" href="/docs/usage/cli#self-driving-workflows" description="Delegate a persistent Goal rather than driving a harness directly." />
   <Card title="Quickstart" href="/docs/overview/quickstart" description="Set up BitRouter and a working model route." />
   <Card title="Configuration (YAML)" href="/docs/routing/configuration" description="Choose the BitRouter policy used by the launcher." />
   <Card title="ACP servers" href="/docs/context-routing/acp-servers" description="Connect an external agent through the ACP interface." />
-  <Card title="CLI reference" href="/docs/cli/reference/harnesses" description="Inspect launch commands and every available option." />
+  <Card title="CLI reference" href="/docs/cli/reference#coding-agents" description="Inspect launch commands and every available option." />
 </Cards>

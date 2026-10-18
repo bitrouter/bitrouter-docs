@@ -20,8 +20,9 @@ top-level order is the `pages` list in `content/docs/meta.json`:
 6. **Context** — ACP servers, MCP gateway configuration/use,
    Agent Skills, and AGENTS.md.
 7. **Reference** — Changelog, CLI reference, config reference, and API reference. Changelog and CLI
-   reference are each one page. API reference keeps its collapsed endpoint-family
-   hierarchy and includes Decisions / System One and Chat Completions / Messages.
+   reference are each one page. API reference has one collapsed outer folder,
+   with endpoints directly visible beneath static family separators, alongside
+   Decisions / System One and Chat Completions / Messages.
 
 Each group name in `content/docs/meta.json` is a native Fumadocs separator, not
 a page or collapsible folder. Seven meta-only guide folders — `(overview-nav)`,
@@ -34,8 +35,12 @@ Both are native folders with `collapsible: true` and `defaultOpen: false`.
 Comparison has no index page: its header only expands or collapses its four
 canonical comparison guides. Keep competitor claims sourced and qualified.
 
-API reference retains `content/docs/reference/` and its generated native API
-families and endpoints. Its overview and the Decisions and compatibility guides
+API reference retains `content/docs/reference/` and its generated endpoint URLs.
+Only the outer API reference folder collapses: generated tag folders are extracted
+with `...folder` beneath native separators, so no family needs a second expansion.
+New operations and tags stay visible automatically; undeclared tags are inferred
+from operations, and untagged operations use an Other endpoints group.
+Its overview and the Decisions and compatibility guides
 are hand-authored root files. Change generated ordering through
 `scripts/generate-openapi.mjs`; builds replace generated metadata.
 

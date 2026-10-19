@@ -16,7 +16,7 @@ BitRouter can start from in-memory defaults, but a file makes the intended behav
 | Artifact | Role |
 | --- | --- |
 | `bitrouter.yaml` | Operator-authored desired state for the router and its integrations |
-| `policy-lock.yaml` | Versioned routing decisions linked to policy-bound presets |
+| `policy-lock.yaml` | Versioned routing decisions linked to policy-bound routers |
 | Environment variables | Secret values and deployment-specific inputs resolved into the policy |
 | Database evidence | Observed runtime state that can inform a later decision; not policy by itself |
 
@@ -40,7 +40,7 @@ The policy file brings deployment settings together. Use Config to author each b
 ## Create a policy file
 
 ```bash
-bro init
+bro init -c ./bitrouter.yaml
 bro config validate -c bitrouter.yaml
 ```
 
@@ -134,7 +134,7 @@ BitRouter uses narrower policy terms within the broader router policy:
 | Term | Scope |
 | --- | --- |
 | **Router policy** | The complete desired behavior expressed by `bitrouter.yaml` and linked artifacts |
-| **Routing policy** | Model-selection rules used by a policy-bound preset such as `bitrouter/auto` |
+| **Routing policy** | Model-selection rules used by a policy-bound router such as `bitrouter/auto` |
 | **Access-control policy** | Caller-specific allowed models, budgets, rate limits, guardrails, and presets |
 
 `bro policy init`, `check`, `compile`, and `publish` operate on routing policy. `bro policy create` creates an access-control policy file. Both are components of the router policy, but they are not interchangeable.

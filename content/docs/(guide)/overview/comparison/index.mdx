@@ -44,7 +44,7 @@ For BitRouter Cloud, replace the base URL and credential:
 + api_key=BITROUTER_API_KEY
 ```
 
-Keep explicit model ids such as `openai/gpt-4o`; replace `openrouter/auto` with `bitrouter/auto`. Remove OpenRouter-specific `HTTP-Referer`, `X-Title`, `transforms`, and `route` fields because BitRouter does not use them.
+Keep explicit model ids such as `openai/gpt-4o` after checking availability. Cloud routing presets use `@<name>` and must be enabled in the workspace; do not substitute the self-hosted `bitrouter/auto` selector for `openrouter/auto` on the hosted endpoint. Remove OpenRouter-specific `HTTP-Referer`, `X-Title`, `transforms`, and `route` fields because BitRouter does not use them.
 
 For self-hosting, [install and start BitRouter](/docs/self-hosting#install), provide upstream provider keys, and point the client at `http://127.0.0.1:4356/v1`. Verify required models in the [catalog](/docs/overview/supported-models) before moving production traffic.
 

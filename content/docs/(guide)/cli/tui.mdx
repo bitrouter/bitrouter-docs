@@ -49,17 +49,15 @@ The route picker and router-attributed cost appear only when the active adapter 
 
 | Key | Action |
 | --- | --- |
-| `Enter` | Send the current draft while idle |
+| `Enter` | Send the current draft while idle, or queue a follow-up while the agent is working |
 | `Shift-Enter`, `Alt-Enter`, or `Ctrl-J` | Insert a newline |
-| `Tab` | Accept a completion, or queue a follow-up while the agent is working |
-| `Ctrl-P` | Open commands and temporary inspectors |
-| `PageUp` / `PageDown` | Read transcript history |
-| `F2` | Focus the oldest pending permission request |
+| `/` | Open the command menu at the start of the composer; select **Review permission** to handle a pending request |
+| `PageUp` / `PageDown` | Scroll an open inspector |
 | `Esc` | Close a temporary surface or request cancellation |
 | `Ctrl-C` | Cancel work, clear an idle draft, or exit when idle and empty |
 | `Ctrl-D` | Exit from an idle, empty composer |
 
-Permission requests require an explicit choice. `bro code` does not silently approve a tool call on the agent's behalf. See [headless approval policies](/docs/cli/headless#permissions) for automation.
+Permission requests require an explicit choice. You can configure a shortcut for **Review permission** through `/hotkeys`; `F2` is not assigned by default. See [headless approval policies](/docs/cli/headless#permissions) for automation.
 
 ## Operations-only targets
 

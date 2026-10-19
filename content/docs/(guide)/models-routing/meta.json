@@ -1,10 +1,9 @@
 {
   "title": "Model",
   "pages": [
-    "bitrouter-auto",
-    "models",
-    "evaluations",
-    "policy",
-    "local-inference"
+    "model-fallback",
+    "model-variants",
+    "virtual-models",
+    "buy-inference"
   ]
 }

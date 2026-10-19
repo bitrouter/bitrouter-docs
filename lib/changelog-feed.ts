@@ -9,7 +9,7 @@ export function buildChangelogFeed(items: ChangelogItem[]): Feed {
     title: "BitRouter Changelog",
     description: "Product updates and release notes for BitRouter.",
     id: `${SITE}/changelog`,
-    link: `${SITE}/changelog`,
+    link: `${SITE}/docs/changelog`,
     language: "en",
     copyright: `© ${new Date().getUTCFullYear()} BitRouter`,
     feedLinks: {
@@ -21,10 +21,14 @@ export function buildChangelogFeed(items: ChangelogItem[]): Feed {
   // Every release stays in the feed, routine ones included — RSS is the
   // developer channel, where the collapsing the page does would only hide things.
   for (const item of sortReleasesDesc(items)) {
+    const link = item.url.startsWith("/changelog/")
+      ? `/docs/changelog#${item.url.slice("/changelog/".length)}`
+      : item.url;
     feed.addItem({
+      // Keep subscriber GUIDs stable while moving links to the single docs page.
       id: `${SITE}${item.url}`,
       title: item.title,
-      link: `${SITE}${item.url}`,
+      link: `${SITE}${link}`,
       description: item.description,
       date: new Date(item.date),
     });

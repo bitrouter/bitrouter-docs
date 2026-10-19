@@ -1,0 +1,6 @@
+{
+  "title": "Comparison",
+  "defaultOpen": false,
+  "collapsible": true,
+  "pages": ["openrouter", "router-ramp", "vllm-semantic-router", "litellm"]
+}

@@ -1,0 +1,204 @@
+---
+title: BYOK & Subscriptions
+description: Connect API keys, subscription logins, multiple accounts, and custom endpoints to BitRouter.
+---
+
+A **provider** tells BitRouter where and how to call an upstream. A **model** is a routable id declared by one or more providers. Bring an API key, sign in to a supported subscription provider, or configure a custom endpoint to make its models available to your deployment. A provider account and an agent harness are separate choices.
+
+## Choose the path
+
+| Need | Use |
+| --- | --- |
+| A supported provider with your API key | Environment variable or an empty built-in provider block |
+| Claude or Codex subscription | [Subscription login](#subscriptions) |
+| Local inference | [Local Models](/docs/providers/local-models) |
+| A private or OpenAI-compatible endpoint | A custom `providers` entry below |
+| A provider everyone should discover | A pull request to the open registry |
+| Your provider key on BitRouter Cloud | Cloud BYOK |
+
+## Built-in providers with your own key
+
+The local binary detects common provider credentials without a config file:
+
+```bash
+export OPENAI_API_KEY=sk-...
+export ANTHROPIC_API_KEY=sk-ant-...
+export GEMINI_API_KEY=...
+
+bro providers list
+bro start
+```
+
+To make the enabled set explicit, add empty provider blocks and let them inherit the bundled registry definition:
+
+```yaml
+providers:
+  openai: {}
+  anthropic: {}
+  google: {}
+```
+
+Keep credentials in environment variables. Run `bro reload` after rotating a key and `bro providers list` to confirm which sources are active.
+
+## Subscriptions
+
+Subscription credentials are separate from API keys and from the harness you launch. A configured subscription source requires an explicit provider-qualified route; bare model selection does not silently consume a personal subscription. Available models and protocols depend on the selected source.
+
+### Use a Claude subscription
+
+The `claude-code` provider uses a Claude Pro or Max credential instead of an Anthropic API key. It is separate from the standard `anthropic` provider, but it can be used with [the Claude Code harness](/docs/integration/coding-agents#claude-code).
+
+Sign in:
+
+```bash
+bro providers login claude-code
+```
+
+BitRouter adopts a compatible local Claude Code login when possible and otherwise starts the provider's login flow. The stored credential refreshes automatically; no `providers:` block is required.
+
+Verify the models and route:
+
+```bash
+bro models --provider claude-code
+bro route claude-code:claude-sonnet-4-6
+```
+
+Use the provider-qualified id to require the subscription source. A request routed to `anthropic:<model>` uses `ANTHROPIC_API_KEY` instead.
+
+Then launch any Claude Code mode normally:
+
+```bash
+bro start
+bro claude
+# or: bro run claude "Summarize this repo"
+```
+
+Sign out with:
+
+```bash
+bro providers logout claude-code
+```
+
+This removes BitRouter's stored subscription credential and route. It does not modify Claude Code's own configuration.
+
+<Callout type="info">
+Provider login and BitRouter Cloud login are separate. `bro providers login claude-code` authenticates the upstream subscription; `bro cloud login` authenticates your BitRouter account.
+</Callout>
+
+### Use a Codex subscription
+
+The `openai-codex` provider uses a ChatGPT Plus or Pro credential and the Codex Responses backend. It is separate from the standard `openai` API-key provider, but it can be used with [the Codex harness](/docs/integration/coding-agents#codex).
+
+Sign in:
+
+```bash
+bro providers login openai-codex
+```
+
+BitRouter can import a compatible local Codex login or start the provider's browser flow. For automation that must not open a browser:
+
+```bash
+bro providers login openai-codex --import-existing --no-browser
+```
+
+No `providers:` block is required. Verify the models and route:
+
+```bash
+bro models --provider openai-codex
+bro route openai-codex:gpt-5-codex
+```
+
+Use the provider-qualified id to require the subscription source. A request routed to `openai:<model>` uses `OPENAI_API_KEY` and the public OpenAI API instead.
+
+Then launch any Codex mode normally:
+
+```bash
+bro start
+bro codex
+# or: bro run codex "Summarize this repo"
+```
+
+Sign out with:
+
+```bash
+bro providers logout openai-codex
+```
+
+This removes BitRouter's stored subscription credential. It does not sign the Codex CLI out of its own account.
+
+<Callout type="info">
+Provider login and BitRouter Cloud login are separate. `bro providers login openai-codex` authenticates the upstream subscription; `bro cloud login` authenticates your BitRouter account.
+</Callout>
+
+## Custom endpoints and models
+
+Any endpoint using a supported outbound protocol can become a provider:
+
+```yaml
+providers:
+  my-cluster:
+    api_base: "https://llm.internal.example/v1"
+    api_key: "${MY_CLUSTER_TOKEN}"
+    api_protocol:
+      - "*": chat_completions
+    models:
+      - id: team/llama-3.1-8b
+        capabilities: [tools, structured_outputs]
+```
+
+| Field | Purpose |
+| --- | --- |
+| `api_base` | Upstream base URL |
+| `api_key` | Optional credential; use an environment reference |
+| `api_protocol` | Model-pattern to ordered protocol mapping |
+| `models[].id` | Canonical model id the provider declares |
+| `models[].capabilities` | Positively verified features used during route filtering |
+| `priority` / `tags` | Deterministic ordering and routing filters |
+
+Supported built-in protocol names are `chat_completions`, `responses`, `messages`, and `generate_content`. A model-specific `api_protocol` overrides the provider pattern.
+
+Do not advertise a capability merely because the protocol can encode it. Declare only behavior verified for that exact provider/model route.
+
+### Validate and route
+
+```bash
+bro config validate -c bitrouter.yaml
+bro models --provider my-cluster
+bro route my-cluster:team/llama-3.1-8b -c bitrouter.yaml
+```
+
+The `provider:model` selector pins one provider. The bare model id joins every active provider that declares that id; use [Virtual Models](/docs/models-routing/virtual-models) to define a named route and [Model Fallbacks](/docs/models-routing/model-fallback) for replacement behavior.
+
+For Ollama, vLLM, Unsloth, and similar servers, use the shorter [Local Models](/docs/providers/local-models) recipe.
+
+## Multiple accounts
+
+One provider can expose several credentials:
+
+```yaml
+providers:
+  openai:
+    account_strategy: failover
+    accounts:
+      - label: primary
+        api_key: "${OPENAI_KEY_PRIMARY}"
+      - label: backup
+        api_key: "${OPENAI_KEY_BACKUP}"
+```
+
+`failover` preserves declared order and advances after retryable or credit-exhaustion failures. `balance` rotates the first account, while the remaining accounts still form the request's fallback chain.
+
+## BitRouter Cloud BYOK
+
+Cloud BYOK stores a provider credential for your account and routes eligible calls through it. The recommended path is the Cloud console, which fetches the node's encryption public key and seals the provider key in the browser before upload.
+
+For automated onboarding, start with the [BYOK API reference](/docs/reference/byok/getEncryptionPubkey). Keep encryption and upload code in the client; never send a plaintext provider key to a logging or application endpoint.
+
+## Contribute a provider
+
+Private config affects only your deployment. To make a provider discoverable to every BitRouter installation, add its manifest to the [open provider registry](https://github.com/bitrouter/bitrouter/tree/main/registry) and submit a pull request. Registry data can describe endpoints, protocols, models, capabilities, pricing, and authentication conventions; provider-specific executors or OAuth flows still require code.
+
+<Cards>
+  <Card title="Virtual Models" href="/docs/models-routing/virtual-models" description="Give connected model endpoints a reusable name." />
+  <Card title="Configuration (YAML)" href="/docs/routing/configuration" description="Validate and apply the complete desired-state contract." />
+</Cards>

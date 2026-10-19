@@ -1,9 +1,9 @@
 {
   "title": "Model",
-  "pagesIndex": "[bitrouter/auto](/docs/models-routing/bitrouter-auto)",
+  "pagesIndex": "[Model Fallbacks](/docs/models-routing/model-fallback)",
   "pages": [
-    "[Model routing](/docs/models-routing/models)",
-    "[Evaluations](/docs/models-routing/evaluations)",
-    "[Routing policy](/docs/models-routing/policy)"
+    "[Model Variants](/docs/models-routing/model-variants)",
+    "[Virtual Models](/docs/models-routing/virtual-models)",
+    "[Buy Inference](/docs/models-routing/buy-inference)"
   ]
 }

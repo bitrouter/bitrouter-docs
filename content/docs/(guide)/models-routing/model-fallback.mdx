@@ -1,0 +1,76 @@
+---
+title: Model Fallbacks
+description: Define replacement routes and understand when a failed inference request advances to another provider or model.
+---
+
+Fallback tries another eligible endpoint after a retryable inference failure. A [virtual model](/docs/models-routing/virtual-models) gives configured endpoints one callable name; fallback determines how a failed attempt is replaced.
+
+Selecting a cheaper model for a normal call is a routing decision. An HTTP success does not trigger fallback merely because the answer is poor; task quality requires a separate evaluation.
+
+## Same-model provider fallback
+
+A logical model id can be served by more than one connected provider. Request the logical id to keep eligible provider alternatives available:
+
+```text
+openai/gpt-5.4
+```
+
+BitRouter applies provider filters, capability and protocol requirements, then orders eligible providers by configured or registry priority and provider id. A retryable failure can advance through that chain.
+
+A provider-qualified selector pins one provider:
+
+```text
+openai:openai/gpt-5.4
+```
+
+That selector does not automatically expand into other providers or a different model. A configured provider can still have its own account fallback.
+
+## Fallback chains
+
+Use a [virtual model](/docs/models-routing/virtual-models#define-a-virtual-model) to expose an ordered chain behind one name. The `coding` example in that guide declares an OpenAI endpoint followed by an Anthropic endpoint with `strategy: priority`.
+
+A request for `coding` tries its eligible endpoints in YAML order. Connect and validate both sources first using [BYOK & Subscriptions](/docs/providers/byok-subscriptions). Adding another model to the available catalog does not automatically make it a replacement for the first.
+
+Use `strategy: cascade` only when the endpoints are interchangeable and selection preferences may reorder or filter them. The documented alpha.31 `cost` and `latency` sorts use deterministic priority/provider-id ordering rather than measured live optimization.
+
+## Which failures advance the chain?
+
+| Failure | Behavior |
+| --- | --- |
+| Upstream `5xx` | Retryable; another endpoint may serve the request |
+| `408`, `429`, transport failure, or timeout | Retryable |
+| Invalid upstream response or exhausted provider credit | Retryable |
+| Other upstream client-side `4xx` | Fail immediately rather than advancing |
+| Successful response with an unsatisfactory answer | Does not establish a retryable transport failure |
+
+Fallback remains subject to the request's capabilities, protocol, access policy, and execution limits. It cannot make an incompatible model eligible or guarantee that any replacement succeeds.
+
+## Account fallback
+
+Multiple credentials for one provider are a separate level of replacement:
+
+Use `account_strategy: failover` to preserve declared account order, or `balance` to rotate the first account while retaining the remaining fallback chain. Configure credentials in [BYOK & Subscriptions](/docs/providers/byok-subscriptions#multiple-accounts).
+
+These settings change credential selection; they do not substitute a different model.
+
+## Local-first fallback
+
+A local server can participate like any other provider. Connect it with [Local Models](/docs/providers/local-models), then include its served model in an explicit priority chain before a hosted replacement.
+
+Keep the selector distinction clear: `local:llama3.1` pins the local provider, while a virtual model can name a local endpoint followed by a different hosted model. The models in that chain must support the request's required features.
+
+## Verify the chain and the serving route
+
+```bash
+bro config validate -c bitrouter.yaml
+bro route coding -c bitrouter.yaml
+bro requests --limit 25
+```
+
+`bro route` previews the candidate chain without making an inference request. A settled [request receipt](/docs/cli/request-receipts) identifies the actual serving model and provider. [OpenTelemetry](/docs/self-hosting#opentelemetry) exposes individual upstream attempts when you need to investigate retries and fallback.
+
+<Cards>
+  <Card title="Virtual Models" href="/docs/models-routing/virtual-models" description="Define the named endpoints used by a fallback chain." />
+  <Card title="BYOK & Subscriptions" href="/docs/providers/byok-subscriptions" description="Connect the accounts and endpoints in your chain." />
+  <Card title="Local Models" href="/docs/providers/local-models" description="Add a local inference endpoint." />
+</Cards>

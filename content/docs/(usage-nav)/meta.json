@@ -1,0 +1,9 @@
+{
+  "title": "Usage",
+  "pages": [
+    "[Desktop](/docs/usage/desktop)",
+    "[CLI](/docs/usage/cli)",
+    "[Responses API](/docs/usage/responses-api)",
+    "[Cloud](/docs/usage/cloud)"
+  ]
+}

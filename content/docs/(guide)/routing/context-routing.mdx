@@ -1,0 +1,77 @@
+---
+title: Context Routing
+description: Adjust what the next model call sees while preserving the evidence collected during the same task.
+---
+
+A task can collect more history than its next step needs: file reads, tool results, failed attempts, and earlier conclusions. BitRouter's native managed runtime builds a **context view** for the next model call from that retained evidence. As the task progresses, the view can change while the original evidence remains available. This selects what the next call sees; [Model Routing](/docs/routing/model-routing) explains model and provider selection.
+
+<Callout type="info">
+This page describes context views in the native managed runtime. Availability depends on the runtime and build you use. Routing an external harness's model traffic through BitRouter does not give BitRouter control of that harness's history or compaction. See [ACP servers](/docs/context-routing/acp-servers) for that ownership boundary.
+</Callout>
+
+## One task, different views
+
+The task and its acceptance criteria stay in place. What changes is the historical material supplied to the next model call.
+
+For example, an agent fixing an authentication bug might first inspect several modules, then focus on a failing test. The next view can retain the relevant source and failure output, use an available summary for an earlier investigation, and leave unrelated historical output out of that call. If the agent later needs an omitted detail, it can search the retained evidence and recall its original source.
+
+| Stage | Evidence available to the task | Context for the next call |
+| --- | --- | --- |
+| Investigate | File reads, searches, and initial findings | Required instructions, recent work, and relevant source material |
+| Fix | Investigation history plus a failing test | Required and recent material, with eligible older evidence kept, summarized, extracted, or omitted |
+| Verify | Earlier investigation, edits, and new test output | Recent verification evidence plus any older source explicitly recalled |
+
+This example illustrates how a view can evolve; a particular reduction is subject to the evidence's eligibility and the selection decision.
+
+## How a view is built
+
+1. **Retain the evidence.** Historical messages are grouped into source blocks. Tool calls and their results stay together, and each block retains its source identity.
+2. **Protect required material.** Instructions, user messages, provider continuity data, recent groups, and explicitly recalled sources are retained as required by the runtime's rules.
+3. **Assess eligible history.** A bounded set of older, optional blocks is assessed against the current task, acceptance criteria, and instructions. Blocks outside that candidate set remain in full.
+4. **Compile the next input.** BitRouter applies eligible selections, validates the resulting history, and checks its hard size limit before execution.
+
+The selection can use these representations:
+
+| Representation | What the model receives | What remains stored |
+| --- | --- | --- |
+| Full | The complete source group | The original group |
+| Extract | Exact selected spans, labeled as historical evidence | The original group and its source references |
+| Summary | An available task-specific summary, labeled as derived evidence | The original group and the summary's source references |
+| Omitted | No content from that optional block in this call | The original group, available for search and recall |
+
+Extracts and summaries are eligible only when a compatible representation already exists and the context policy detects size pressure. Selecting a smaller view does not itself generate a summary of every old block.
+
+## Search and recall
+
+The native runtime provides evidence operations to the model when context views are enabled:
+
+| Operation | Purpose |
+| --- | --- |
+| `context_search` | Find retained evidence, including material omitted from the current view |
+| `context_recall` | Pin complete source groups into the next task view |
+| `context_publish` | Publish a task-specific summary of an optional source group the agent has read |
+| `context_extract` | Publish exact text spans as a smaller representation of an optional source group |
+
+These operations work within the task's admitted evidence. Recalling historical file contents does not establish that the workspace is still in that state; the agent should read current files again before relying on them for an edit.
+
+## When reduction is unsafe
+
+An uncertain or missing selection keeps the source in full. Required blocks cannot be omitted, and a summary or extract cannot replace a source when its compatibility checks fail. Provider continuity data and complete tool exchanges must preserve a valid model history.
+
+If the required and conservatively retained material still exceeds the hard prompt limit, BitRouter rejects that execution plan. It does not silently discard required evidence to make the call fit.
+
+A smaller input can reduce input-token use, but assessment and summary generation also consume resources. Savings depend on the selected model, the retained material, and the work needed to build the view.
+
+## Context selection and model routing
+
+Context selection determines **what the next call sees**. Model routing determines **which model serves it**. [Virtual Models](/docs/models-routing/virtual-models) explains how callers name model endpoints; changing the context does not require changing that name.
+
+The task continues with its retained evidence as the view changes. This does not migrate an external agent's session or switch the CLI's named remote target. The separate [`bro context` commands](/docs/cli/reference#bro-context) select remote administration targets.
+
+<Cards>
+  <Card title="Model Routing" href="/docs/routing/model-routing" description="Understand policy-bound model selection separately from context views." />
+  <Card title="ACP servers" href="/docs/context-routing/acp-servers" description="Understand the boundary between BitRouter and an external harness's session." />
+  <Card title="MCP servers" href="/docs/context-routing/mcp-servers" description="Connect the tools that supply evidence to an agent." />
+  <Card title="AGENTS.md" href="/docs/context-routing/agents-md" description="Provide repository instructions for the selected harness." />
+  <Card title="Virtual Models" href="/docs/models-routing/virtual-models" description="Give model endpoints a reusable name." />
+</Cards>

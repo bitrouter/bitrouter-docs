@@ -5,7 +5,7 @@ describe("global navigation", () => {
   it("links to the primary product sections", () => {
     expect(NAV_ITEMS.map((item) => item.webPath)).toEqual([
       "/pricing",
-      "/changelog",
+      "/blog",
       "/enterprise",
       "/docs",
     ]);

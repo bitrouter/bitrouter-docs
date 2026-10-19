@@ -1,0 +1,1574 @@
+---
+title: config reference
+description: Look up local bitrouter.yaml fields, schema defaults, environment references, and reload boundaries.
+---
+
+Use this reference to look up the accepted shape of `bitrouter.yaml`. Start with [Configuration (YAML)](/docs/routing/configuration) to find, create, validate, and apply a file. For connecting a coding agent, use [bro [harness]](/docs/integration/bro-harness).
+
+## Version and scope
+
+The field tables are generated from the **1.0.0-alpha.33 configuration schema**, pinned to [BitRouter source `54c822a34d4d`](https://github.com/bitrouter/bitrouter/blob/54c822a34d4dbfd75d484ca35e108b497048efef/dist/schema/bitrouter.config.schema.json) (source commit dated 2026-10-16). This is a source/schema snapshot, not a claim that every installed binary supports these fields. Check `bro --version` and validate with the binary that will run the file. The [CLI reference](/docs/cli/reference) has its own captured command version.
+
+[Download the pinned JSON Schema](/schemas/bitrouter.config.schema.json) for an editor or offline validation. The schema describes file structure; runtime validation, credentials, model capabilities, and policy bindings can impose additional requirements.
+
+```yaml
+# yaml-language-server: $schema=https://bitrouter.ai/schemas/bitrouter.config.schema.json
+```
+
+This site URL serves the snapshot documented here and can change with a docs update. Save the schema locally, or use the commit-pinned source link above, when matching an older deployment.
+
+**Reading the tables:** `Required` applies to the containing object or tagged alternative. `Not declared` means the schema does not publish a default; it does not mean the field is required, disabled, or empty. A schema `null` default is distinct from an inherited or resolved runtime value. Map keys such as provider and agent ids are user-defined; follow the linked type to inspect each value's fields. Types and enum values reflect the pinned schema.
+
+<Callout type="warning">
+Schema defaults and onboarding defaults differ. The schema declares `server.listen: "0.0.0.0:4356"` and `server.skip_auth: false`. The local configuration written by `bro init` uses `127.0.0.1:4356` with `skip_auth: true`. Inspect your actual file before assuming a listener or authentication mode. Neither setting grants access to the separate control or task APIs.
+</Callout>
+
+## Find a setting
+
+| What you are configuring | Root fields | Usage guide |
+| --- | --- | --- |
+| Listener, authentication, upstream timeouts, and storage | `server`, `upstream`, `database` | [Self-hosting](/docs/self-hosting) |
+| Provider keys, multiple accounts, and custom endpoints | `providers`, `registry`, `inherit_defaults` | [BYOK & Subscriptions](/docs/providers/byok-subscriptions) |
+| Named model endpoints and request defaults | `models`, `presets`, `variants` | [Virtual Models](/docs/models-routing/virtual-models) |
+| Named routers, policy artifacts, and checks | `routers`, `policy`, `checkers` | [Strategies](/docs/routing/strategies) |
+| Native semantic decision backend | `decision_model` | [Context Routing](/docs/routing/context-routing) |
+| ACP adapters and saved interactive defaults | `agents`, `chat` | [ACP servers](/docs/context-routing/acp-servers) |
+| Upstream MCP connections and aggregation | `mcp_servers`, `mcp` | [MCP servers](/docs/context-routing/mcp-servers) |
+| Retention, recording, and continuation | `trajectory`, `acp_recording`, `continuation` | [Request receipts](/docs/cli/request-receipts) |
+
+Native harness launch prepares connection settings for the child process. `agents` configures ACP adapters; it is not a replacement for the harness's own configuration. See [native launch settings](/docs/integration/bro-harness#what-gets-configured) for that boundary.
+
+`plugins` is an open map whose values are arbitrary JSON; this schema does not define a universal plugin contract. `server_tools` and its supporting types are retained in the schema tables for completeness while their product guides are retired during refactoring. Their presence does not establish current feature availability. `policy-lock.yaml` is a separate artifact, not another block to paste into `bitrouter.yaml`.
+
+## Environment references
+
+| Input | Meaning |
+| --- | --- |
+| `-c/--config PATH` | Select an explicit configuration file for commands that accept it. A missing explicit file is an error. |
+| `BITROUTER_HOME` | Configuration discovery and runtime home override. A project-local file takes precedence during file discovery. See the [complete discovery order](/docs/routing/configuration#find-the-active-configuration). |
+| `${NAME}` inside YAML | Substitute the named environment variable; an undefined variable is a configuration load error. |
+| `${NAME:-fallback}` inside YAML | Use the fallback when the variable is unavailable. Substitution in YAML comments is ignored. |
+| `RUST_LOG` | Overrides `server.log_level`. The log filter is resolved at process startup. |
+| A field named `token_env` | Names the variable containing a dedicated credential; enter the variable's name in YAML, not the token itself. Consult that field's description. |
+
+Provider-specific automatic credential discovery is covered by [BYOK & Subscriptions](/docs/providers/byok-subscriptions#built-in-providers-with-your-own-key). Provider credentials, a client's BitRouter virtual key, and a dedicated control/task API token serve different authentication hops. A YAML `${NAME}` reference can use a variable name you choose; it does not itself register a new automatic provider environment variable.
+
+These file-loading conventions are source-checked against the pinned [configuration loader](https://github.com/bitrouter/bitrouter/blob/54c822a34d4dbfd75d484ca35e108b497048efef/crates/bitrouter-sdk/src/config/mod.rs) and [application paths](https://github.com/bitrouter/bitrouter/blob/54c822a34d4dbfd75d484ca35e108b497048efef/apps/bitrouter/src/paths.rs).
+
+## Reload and restart
+
+The schema does not encode hot-reload support. The pinned [reload implementation](https://github.com/bitrouter/bitrouter/blob/54c822a34d4dbfd75d484ca35e108b497048efef/apps/bitrouter/src/reload.rs) classifies changes against the daemon's startup configuration and live consumers.
+
+| Change | Activation boundary |
+| --- | --- |
+| Listener, control socket, log filter, authentication mode, or known-pricing admission under `server` | Restart required. |
+| Named `routers`, compiled `checkers`, `agents`, MCP connections/aggregation, or plugin configuration | Restart required in this source snapshot. |
+| Database URL, native decision backend, recording/retention settings, or continuation retention | Restart required. |
+| Provider routing and credentials | Some changes reload, but provider adapter membership, pricing, and other startup-owned consumers can require restart. Do not treat the entire `providers` map as hot-reloadable. |
+| Any unclassified or unsupported change | Inspect the daemon's result; do not infer successful activation from a saved file or a valid schema. |
+
+Local `bro reload` can forward provider environment values from the invoking shell. SIGHUP cannot carry newly exported shell values; remote-context reload uses server-owned files without forwarding the client's environment. Check the reload result and `bro status` (`config_state` when available) before relying on new settings. Older daemons may not expose this evidence. See [apply and review changes](/docs/routing/configuration#apply-and-review-changes) for the workflow.
+
+{/* Generated by scripts/generate-config.mjs. Edit config-reference/index.md or refresh the pinned schema; do not edit this page. */}
+
+## Top-level fields
+
+These keys belong directly in `bitrouter.yaml`. Unknown top-level keys are rejected.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `acp_recording` | [Acp Recording Config](#acp-recording-config) | No | `{"enabled":false}` |
+| `agent_api` | [Agent Api Config](#agent-api-config) | No | Not declared |
+| `agents` | Map of `string` → [Acp Agent Config](#acp-agent-config) | No | `{}` |
+| `chat` | [Chat Config](#chat-config) | No | Not declared |
+| `checkers` | Map of `string` → [Checker Config](#checker-config) | No | `{}` |
+| `continuation` | [Continuation Config](#continuation-config) | No | `{"prune_batch_size":1000,"retention_days":30}` |
+| `control` | [Control Config](#control-config) | No | Not declared |
+| `database` | [Database Config](#database-config) | No | Not declared |
+| `decision_model` | [Decision Model Config](#decision-model-config) or `null` | No | `null` |
+| `eval` | [Eval Config](#eval-config) | No | `{"authorities":{}}` |
+| `inherit_defaults` | `boolean` | No | `true` |
+| `mcp` | [Mcp Config](#mcp-config) | No | Not declared |
+| `mcp_servers` | Map of `string` → [Mcp Server Config](#mcp-server-config) | No | `{}` |
+| `models` | Map of `string` → [Virtual Model](#virtual-model) | No | Not declared |
+| `plugins` | Map of `string` → Any JSON value | No | `{}` |
+| `policy` | [Policy Config](#policy-config) | No | `{"mode":"frozen","path":null}` |
+| `presets` | Map of `string` → [Preset Config](#preset-config) | No | Not declared |
+| `providers` | Map of `string` → [Provider Config](#provider-config) | No | Not declared |
+| `registry` | [Registry Config](#registry-config) | No | Not declared |
+| `routers` | Map of `string` → [Router Config](#router-config) | No | `{}` |
+| `server` | [Server Config](#server-config) | No | Not declared |
+| `server_tools` | [Server Tools Config](#server-tools-config) | No | Not declared |
+| `trajectory` | [Trajectory Config](#trajectory-config) | No | `{"enabled":false,"outbox_batch_size":100,"retention_days":30}` |
+| `upstream` | [Upstream Config](#upstream-config) | No | Not declared |
+| `variants` | Map of `string` → [Variant Config](#variant-config) | No | Not declared |
+
+- `acp_recording` — Opt-in local storage of observable ACP conversation content.
+- `agent_api` — Opt-in privileged BRO coding task API, separate from inference and control.
+- `agents` — Upstream ACP agents, keyed by agent id. Surfaced by the `bro agents` CLI (list / check / install). Empty by default.
+- `chat` — The interactive session's own configuration.
+- `checkers` — Compiled request-check extensions, keyed by the ids referenced from named routers.
+- `continuation` — Durable provider continuation mapping lifecycle.
+- `control` — Opt-in, read-only operator control API settings.
+- `database` — Database connection settings.
+- `decision_model` — Typed decision backend for native context routing. Absent means the conservative compiler runs without remote semantic judgments.
+- `eval` — Generic evaluation exchange authorities and admission scopes.
+- `inherit_defaults` — Whether providers inherit workspace defaults.
+- `mcp` — Top-level MCP gateway settings (aggregation, caching). All fields default — `mcp:` is optional in `bitrouter.yaml`.
+- `mcp_servers` — Upstream MCP servers, keyed by server id. The id is what appears in `POST /mcp/{id}` and what the `mcp` pipeline's routing table looks up. Empty by default — when empty, the binary does not mount the MCP route.
+- `models` — Explicit virtual-model definitions (Strategy 2.2). Optional — when absent, bare model names fall through to Strategy 3 auto-cascade.
+- `plugins` — Plugin config, keyed by plugin / bundle id.
+- `policy` — Adaptive model-policy settings. A file-backed config resolves the optional path relative to its own directory; when omitted the app looks for `policy-lock.yaml` next to `bitrouter.yaml`. The SDK only carries this declaration -- loading and evolving policy locks belongs to the BitRouter app layer.
+- `presets` — `@preset` definitions.
+- `providers` — Upstream providers, keyed by provider id.
+- `registry` — Public registry integration: whether to fetch + merge the registry's BYOK providers, where to fetch it from, and the provider-class priority ladder used to order the auto-cascade.
+- `routers` — Named request routers, addressed as `bitrouter/<id>`.
+- `server` — HTTP server settings.
+- `server_tools` — Server-side tool loop: MCP server ids whose tools BitRouter injects into LLM requests and executes itself. Empty by default — the pipeline stays single-shot.
+- `trajectory` — Durable trajectory progress-control and local operations settings.
+- `upstream` — Outbound / upstream HTTP settings (the client that calls providers).
+- `variants` — `:variant` definitions.
+
+## Server and connections
+
+### Server Config
+
+HTTP server settings.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `control_socket` | `string` | No | `"./bitrouter.sock"` |
+| `listen` | `string` | No | `"0.0.0.0:4356"` |
+| `log_level` | `string` | No | `"info"` |
+| `require_known_pricing` | `boolean` | No | `false` |
+| `skip_auth` | `boolean` | No | `false` |
+
+- `control_socket` — Unix control socket path.
+- `listen` — `host:port` to listen on.
+- `log_level` — Log filter for the daemon, in `tracing-subscriber` `EnvFilter` syntax — a bare level (`debug`) or a per-target list (`info,bitrouter=debug`). `RUST_LOG` overrides this when set, following the Rust convention. The filter is resolved once at startup, so changing it needs a restart — `bro reload` will not pick it up. Applies to `bro serve` (and therefore `start`); other subcommands install their subscriber before any config is read and honour `RUST_LOG` only.
+- `require_known_pricing` — Deny dispatch when any routed tariff cannot guarantee complete known-price coverage. Decisions caching remains unverified and fails this admission.
+- `skip_auth` — SDK-level flag: when `true`, credential-less requests are admitted with a synthesised local caller. Code default is **`false`** — only the config file produced by `bro init` writes `true`.
+
+### Upstream Config
+
+Outbound / upstream HTTP settings — the client BitRouter uses to call providers. Distinct from `ServerConfig`, which is the inbound listen socket. Currently just `timeouts`; grouped under `upstream:` so future outbound knobs have a home.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `fallback_backoff_ms` | Array of `integer` (`format`: `uint64`; `minimum`: `0`) | No | `[]` |
+| `timeouts` | [Timeout Config](#timeout-config) | No | Not declared |
+
+- `fallback_backoff_ms` — Optional delay schedule before advancing through a retryable fallback chain, in milliseconds. The first value applies before the second candidate, the second before the third, and the last value repeats when the chain is longer than the schedule. Empty (the default) preserves immediate fallback.
+- `timeouts` — Global upstream timeout defaults. A provider may override any field under `providers.<id>.timeouts:`.
+
+### Database Config
+
+Database connection settings.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `url` | `string` | No | `"sqlite://./bitrouter.db"` |
+
+- `url` — Connection URL (e.g. `sqlite://./bitrouter.db`).
+
+### Control Config
+
+Scoped operator administration API settings. The control API is deliberately separate from the inference listener and the local control socket. It is disabled by default, may bind only to a loopback address, and authenticates named credentials when configured. Otherwise `BITROUTER_CONTROL_TOKEN` grants read-only access. `ServerConfig::skip_auth` never applies to it.
+
+Unknown fields are rejected in this object.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `credentials` | Array of [Control Credential Config](#control-credential-config) | No | Not declared |
+| `enabled` | `boolean` | No | `false` |
+| `listen` | `string` | No | `"127.0.0.1:4358"` |
+
+- `credentials` — Explicit operator credentials. Empty keeps the legacy read-only token.
+- `enabled` — Whether to start the HTTP control listener.
+- `listen` — Loopback `host:port` to listen on.
+
+### Agent Api Config
+
+Privileged HTTP access to the BRO task service. The app validates a loopback listener, nonempty token environment variable, and workspace allowlist before binding; `server.skip_auth` never grants this authority.
+
+Unknown fields are rejected in this object.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `enabled` | `boolean` | No | `false` |
+| `listen` | `string` | No | `"127.0.0.1:4359"` |
+| `token_env` | `string` | No | `""` |
+| `workspaces` | Array of `string` | No | `[]` |
+
+- `enabled` — Whether to bind the task HTTP listener.
+- `listen` — Loopback host and port, distinct from inference and control.
+- `token_env` — Environment variable containing the dedicated task bearer token.
+- `workspaces` — Exact server-owned workspace paths admitted for task submission.
+
+### Timeout Config
+
+Upstream HTTP timeout knobs, in seconds. Every field is optional; an unset field inherits the level above — a provider override inherits the resolved global value, and an unset global inherits the built-in default (`HttpTimeouts::default`). `total_secs` is opt-in at every level: unset ⇒ no overall wall-clock cap (the right default for long agentic streams). Used both as the top-level `upstream.timeouts` block and as the per-provider `providers.<id>.timeouts` override; timeouts are **not** inherited via a provider's `derives:` chain.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `connect_secs` | `integer` or `null` | No | `null` |
+| `pool_idle_secs` | `integer` or `null` | No | `null` |
+| `read_secs` | `integer` or `null` | No | `null` |
+| `tcp_keepalive_secs` | `integer` or `null` | No | `null` |
+| `total_secs` | `integer` or `null` | No | `null` |
+
+- `connect_secs` — TCP connect timeout, seconds. `format`: `uint64`; `minimum`: `0`
+- `pool_idle_secs` — Idle pooled-connection eviction, seconds. `format`: `uint64`; `minimum`: `0`
+- `read_secs` — Idle (per-read) timeout, seconds — fires when the upstream sends no bytes for this long, including mid-stream. The effective stream-idle guard. `format`: `uint64`; `minimum`: `0`
+- `tcp_keepalive_secs` — TCP keepalive probe interval, seconds. `format`: `uint64`; `minimum`: `0`
+- `total_secs` — Overall wall-clock cap for the entire request/stream, seconds. Opt-in: unset ⇒ no cap. Setting it bounds total stream duration, so keep it generous for reasoning / agentic providers. `format`: `uint64`; `minimum`: `0`
+
+### Control Credential Config
+
+A token reference only; configuration never stores the bearer value.
+
+Unknown fields are rejected in this object.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | Not declared |
+| `scopes` | Array of [Control Scope](#control-scope) | Yes | Not declared |
+| `token_env` | `string` | Yes | Not declared |
+
+- `id` — Non-secret operator identifier used for ownership and audit events.
+- `scopes` — Explicit management authority, unrelated to inference authentication.
+- `token_env` — Host environment variable that contains this credential's bearer token.
+
+### Control Scope
+
+Authority granted by a host operator, independently of inference credentials.
+
+Exactly one of the following shapes:
+
+**`Alternative 1`**
+
+Host-wide operational inspection, including usage and policy metadata.
+
+Accepted value: `"control:read"`.
+
+**`Alternative 2`**
+
+Reload server-owned configuration; requires the read grant as well.
+
+Accepted value: `"control:reload"`.
+
+## Providers and models
+
+### Provider Config
+
+One upstream provider entry — registry-style. `Debug` redacts `api_key` (v0 audit S9) so a future `tracing::error!(?config, …)` can't dump the platform credential straight into structured logs.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `account_strategy` | [Account Strategy](#account-strategy) | No | Not declared |
+| `accounts` | Array of [Provider Account](#provider-account) | No | Not declared |
+| `active` | `boolean` | No | `true` |
+| `api_base` | `string` | No | `""` |
+| `api_key` | `string` | No | `""` |
+| `api_protocol` | [Pattern Map for Protocol List](#pattern-map-for-protocol-list) | No | Not declared |
+| `auto_discover` | `boolean` | No | `false` |
+| `class` | [Provider Class](#provider-class) or `null` | No | Not declared |
+| `derives` | `string` or `null` | No | `null` |
+| `headers` | Map of `string` → [Provider Header Config](#provider-header-config) | No | Not declared |
+| `models` | Array of [Provider Model](#provider-model) | No | Not declared |
+| `priority` | `integer` or `null` | No | `null` |
+| `protocol_endpoints` | Map of `string` → `string` | No | `{}` |
+| `rate_limits` | [Pattern Map for Rate Limit](#pattern-map-for-rate-limit) | No | Not declared |
+| `tags` | Array of `string` | No | `[]` |
+| `timeouts` | [Timeout Config](#timeout-config) | No | Not declared |
+
+- `account_strategy` — How the per-account targets are ordered when `accounts` is set.
+- `accounts` — Multiple credentials for this one provider — e.g. two subscriptions to the same upstream. When non-empty, the routing table expands the provider into one routing target per account; `account_strategy` decides their order. Empty = a single-credential provider keyed off the top-level `api_key` (the common case).
+- `active` — Whether this provider is active / routable.
+- `api_base` — Upstream API base URL.
+- `api_key` — Upstream API key (often a `${VAR}` reference).
+- `api_protocol` — Glob-prefix `api_protocol` pattern list — each pattern maps to an ordered set of supported wire protocols (the head is the preferred default). Precedence: per-model override &gt; longest matching pattern &gt; host-inferred default. A bare protocol string still parses to a one-element set, so single-protocol providers are unchanged.
+- `auto_discover` — When `true` and `models` is empty, discover models from the provider's `/models` endpoint at startup and on reload.
+- `class` — Routing-preference class. Set by the public registry merge (or directly in config), then mapped to a numeric rank via `RegistryConfig::provider_priority`. `None` ⇒ unclassed: the provider sorts after every classed one in the auto-cascade (Strategy 3). Plain configs leave this `None`, preserving the alphabetical default order.
+- `derives` — Inherit defaults from another provider in this config (acceptance F20 / v0 `derives`). The named provider's `headers`, `api_protocol`, `rate_limits`, `models`, `tags` and `auto_discover` flow into *this* provider's empty fields; explicit fields here win. Resolved by `resolve_derivations` after the config is parsed.
+- `headers` — Additional headers applied to every inference request for this provider. A string is shorthand for a static default. The expanded form can opt into forwarding the same inbound header, which overrides the default for that request.
+- `models` — Declared model entries. Empty + `auto_discover` triggers discovery.
+- `priority` — Explicit routing priority (lower = preferred). When set it overrides the class-derived rank, so an operator can pin one provider ahead of others regardless of class. `None` ⇒ derive the rank from `class`. `format`: `int32`
+- `protocol_endpoints` — Optional per-protocol base-URL override, keyed by protocol name (`ApiProtocol::as_str`). When one provider serves different protocols at different paths under a single host — e.g. OpenAI-style under `BASE/v1` and Anthropic Messages under `BASE/anthropic` — give each protocol's base here; protocol-native routing copies the chosen protocol's base onto the routing target. Protocols absent here use `api_base`.
+- `rate_limits` — Glob-prefix `rate_limits` pattern list, keyed per matched pattern.
+- `tags` — Free-form tags, used by `RoutingPrefs.require_tags` filtering.
+- `timeouts` — Per-provider upstream timeout overrides. Each set field layers over the resolved global `UpstreamConfig::timeouts`; unset fields inherit it. Not inherited via `derives`.
+
+### Virtual Model
+
+An explicit virtual-model definition (Strategy 2).
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `endpoints` | Array of [Virtual Endpoint](#virtual-endpoint) | Yes | Not declared |
+| `pricing` | [Pricing Config](#pricing-config) or `null` | No | Not declared |
+| `strategy` | [Virtual Model Strategy](#virtual-model-strategy) | No | Not declared |
+
+- `endpoints` — The endpoints this virtual model maps to. Their meaning depends on `strategy`: under `priority` they are an *ordered* preference list; under `cascade` the order is a starting point that the cascade ordering then re-sorts.
+- `pricing` — Optional pricing for the virtual model.
+- `strategy` — How this virtual model's `endpoints` are ordered into the fallback chain. See `VirtualModelStrategy`. Defaults to `Priority`.
+
+### Registry Config
+
+Runtime public registry integration settings — the top-level `registry:` block in `bitrouter.yaml`.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `enabled` | `boolean` | No | `true` |
+| `provider_priority` | Array of [Provider Class](#provider-class) | No | Not declared |
+| `url` | `string` | No | `"https://raw.githubusercontent.com/bitrouter/bitrouter/main/dist/registry"` |
+
+- `enabled` — Whether to fetch the registry and merge its BYOK providers into the routing table. Default `true`. Also gated by `inherit_defaults` — either being false disables the merge.
+- `provider_priority` — Provider-class priority, highest first. A provider's auto-cascade rank is its class's index here; a per-provider `ProviderConfig::priority` overrides it, and a class absent from this list ranks last. Defaults to `ProviderClass::default_priority`.
+- `url` — Base URL of the registry `dist/` artifacts. Defaults to `DEFAULT_REGISTRY_URL`. Point it at a pinned `reg-<timestamp>` tag or an internal mirror for reproducible deployments.
+
+### Preset Config
+
+An `@preset` definition.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `model` | `string` or `null` | No | `null` |
+| `params` | Map of `string` → Any JSON value | No | `{}` |
+| `policy` | `string` or `null` | No | `null` |
+| `routing` | [Routing Config](#routing-config) | No | `{"ignore":[],"only":[],"require_tags":[],"sort":null}` |
+| `system_prompt` | `string` or `null` | No | `null` |
+
+- `model` — Substitute the request's model with this one.
+- `params` — Generation-parameter overrides, merged shallowly into the request.
+- `policy` — Name of a policy in `policy-lock.yaml`. Only requests that explicitly select this preset opt into adaptive model selection.
+- `routing` — Routing knobs fed into the cascade.
+- `system_prompt` — Prepend / replace the system prompt.
+
+### Variant Config
+
+A `:variant` definition — a routing modifier only.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `routing` | [Routing Config](#routing-config) | No | `{"ignore":[],"only":[],"require_tags":[],"sort":null}` |
+
+- `routing` — Routing knobs fed into the cascade.
+
+### Account Strategy
+
+How a multi-account provider's per-account targets are ordered.
+
+Exactly one of the following shapes:
+
+**`Alternative 1`**
+
+Accounts in declared order — the first is primary; routing drops to the next on a retryable failure (5xx / 429 / timeout) or a payment / credit-exhaustion error. The default.
+
+Accepted value: `"failover"`.
+
+**`Alternative 2`**
+
+Accounts ordered with a process-random rotation so the primary (and therefore the load) spreads evenly across accounts. The remaining accounts still act as failover targets for that request.
+
+Accepted value: `"balance"`.
+
+### Provider Account
+
+One credential within a multi-account provider. An account varies only the credential (and optionally the base URL) — the protocol, model catalog, and rate limits are the provider's.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `api_base` | `string` | No | `""` |
+| `api_key` | `string` | No | `""` |
+| `label` | `string` | No | `""` |
+
+- `api_base` — Optional per-account `api_base` override. Empty inherits the provider's `api_base` — set it only for multi-region / multi-org deployments where each account lives on a different host.
+- `api_key` — This account's API key (often a `${VAR}` reference).
+- `label` — Optional human label, surfaced in the request log so an operator can see which account served a request. Defaults to `account-<n>` (1-based) when empty.
+
+### Pattern Map for Protocol List
+
+Glob-prefix pattern list; each entry is a single-key object mapping a pattern (`*`, `prefix*`, or an exact literal) to its value.
+
+Accepted value: Array of Map of `string` → [Protocol List](#protocol-list).
+
+### Provider Class
+
+A provider's routing-preference class. Its position in `RegistryConfig::provider_priority` is its rank (earlier = preferred); the default ladder, highest first, is: first-party subscription ▸ gateway subscription ▸ first-party token API ▸ bitrouter-cloud ▸ third-party token API.
+
+Exactly one of the following shapes:
+
+**`Alternative 1`**
+
+A first-party / official upstream billed by flat-rate subscription (e.g. a first-party coding plan).
+
+Accepted value: `"first-party-subscription"`.
+
+**`Alternative 2`**
+
+A gateway / aggregator billed by subscription.
+
+Accepted value: `"gateway-subscription"`.
+
+**`Alternative 3`**
+
+A first-party / official upstream billed pay-as-you-go per token.
+
+Accepted value: `"first-party-api"`.
+
+**`Alternative 4`**
+
+The bitrouter hosted gateway.
+
+Accepted value: `"bitrouter-cloud"`.
+
+**`Alternative 5`**
+
+A third-party / community reseller billed pay-as-you-go per token.
+
+Accepted value: `"third-party-api"`.
+
+### Provider Header Config
+
+One provider header entry in `bitrouter.yaml`. A scalar string is shorthand for a static default with passthrough disabled. The mapping form supports an optional `default` and an explicit inbound `passthrough` switch.
+
+Accepts the following alternatives:
+
+**`Alternative 1`**
+
+Static value; equivalent to `{ default: value, passthrough: false }`.
+
+Accepted value: `string`.
+
+**`Alternative 2`**
+
+Expanded default/passthrough policy.
+
+Accepted value: [Provider Header Policy](#provider-header-policy).
+
+### Provider Model
+
+One model entry under a provider.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `api_protocol` | [Protocol List](#protocol-list) or `null` | No | `null` |
+| `capabilities` | Array of [Capability](#capability) | No | `[]` |
+| `compatibility` | [Model Compatibility](#model-compatibility) | No | `{"chat_completions":{"google_extensions":false,"supports_store":null,"supports_stream_options":null,"token_limit_field":null}}` |
+| `id` | `string` | Yes | Not declared |
+| `input_token_counting` | [Input Token Counting](#input-token-counting) or `null` | No | `null` |
+| `pricing` | [Pricing Config](#pricing-config) or `null` | No | Not declared |
+| `pricing_by_protocol` | Map of `string` → [Pricing Config](#pricing-config) | No | Not declared |
+| `provider_model_id` | `string` or `null` | No | `null` |
+| `rate_limits` | [Rate Limit](#rate-limit) or `null` | No | Not declared |
+| `reasoning_effort` | [Reasoning Effort Config](#reasoning-effort-config) or `null` | No | `null` |
+| `token_limits` | [Model Token Limits](#model-token-limits) | No | `{"context_window":null,"max_input_tokens":null,"max_output_tokens":null}` |
+
+- `api_protocol` — Per-model protocol override (highest precedence) — an ordered set of supported protocols, or a bare string for a single one.
+- `capabilities` — Features this concrete provider/model route explicitly advertises. An empty list means unknown, not unsupported. Runtime routing preserves legacy unknown entries; policy code that grants a capability-specific exception requires a positive declaration.
+- `compatibility` — Provider/model request-shape quirks that do not change model semantics.
+- `id` — The id this model is addressed by — a canonical `<org>/<model>` id when the entry comes from the provider registry, or the upstream id for a hand-written config. This is the **match key** the auto-cascade compares the requested model against.
+- `input_token_counting` — Explicit support for a provider input-token counting endpoint. Managed requests require a successful count when enabled; ordinary calls do not invoke it. API wire compatibility alone does not enable counting.
+- `pricing` — Per-model pricing.
+- `pricing_by_protocol` — Independent complete tariffs by outbound wire. Missing buckets never inherit ordinary generation rates; Decisions requires its own tariff.
+- `provider_model_id` — The provider's own upstream model id — what is sent on the wire. When `None`, `id` is used for both matching and dispatch (the hand-written-config case, where the two coincide). The registry merge sets this so a canonical `id` routes to the provider's upstream name (e.g. `anthropic/claude-sonnet-4.6` → `claude-sonnet-4-6`).
+- `rate_limits` — Per-model rate-limit override.
+- `reasoning_effort` — Positively verified qualitative effort levels for this exact route. Absence means unknown, not unsupported.
+- `token_limits` — Concrete route token limits. Missing fields remain unknown. In particular, an input limit does not imply a combined context window.
+
+### Pattern Map for Rate Limit
+
+Glob-prefix pattern list; each entry is a single-key object mapping a pattern (`*`, `prefix*`, or an exact literal) to its value.
+
+Accepted value: Array of Map of `string` → [Rate Limit](#rate-limit).
+
+### Virtual Endpoint
+
+One endpoint of a virtual model.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `provider` | `string` | Yes | Not declared |
+| `service_id` | `string` | Yes | Not declared |
+
+- `provider` — The provider id this endpoint routes to.
+- `service_id` — The service / model id at that provider.
+
+### Pricing Config
+
+Per-model pricing as written in config: micro-USD per token. The top-level rates are the **base bracket**. `context_tiers` optionally raises the per-token rate once a request's input (prompt) token count crosses a threshold — some upstreams bill a steeper rate above a context length (e.g. a higher rate past 128k input tokens). Empty ⇒ flat pricing. `context_tiers`: PricingConfig::context_tiers
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `cache_read_micro_usd_per_token` | `number` or `null` | No | `null` |
+| `cache_write_micro_usd_per_token` | `number` or `null` | No | `null` |
+| `context_tiers` | Array of [Pricing Tier Config](#pricing-tier-config) | No | Not declared |
+| `endpoint_profile` | [Pricing Endpoint Profile](#pricing-endpoint-profile) or `null` | No | `null` |
+| `input_micro_usd_per_token` | `number` or `null` | No | `null` |
+| `output_micro_usd_per_token` | `number` or `null` | No | `null` |
+
+- `cache_read_micro_usd_per_token` — Micro-USD per cache-read prompt token (base bracket). `format`: `double`
+- `cache_write_micro_usd_per_token` — Micro-USD per cache-write prompt token (base bracket). `format`: `double`
+- `context_tiers` — Optional higher context brackets, applied by total input-token count. The selected bracket's rates apply to the whole request (a step function); the consumer's bracket pick is order-independent.
+- `endpoint_profile` — Published tariff's processing profile. A mismatch with the effective endpoint makes application price evidence unavailable.
+- `input_micro_usd_per_token` — Micro-USD per uncached prompt token (base bracket). `None` means the provider did not publish a rate; explicit `0` remains free. `format`: `double`
+- `output_micro_usd_per_token` — Micro-USD per completion (output) token (base bracket). `format`: `double`
+
+### Virtual Model Strategy
+
+How a `VirtualModel`'s endpoints are ordered into its fallback chain (Strategy 2). Mirrors the typed-enum + serde pattern of `AccountStrategy`. Both strategies build a chain that `execute_with_fallback` walks: a retryable failure (5xx / 408 / 429 / timeout / credit-exhaustion) always advances to the next endpoint — that failover-on-error behaviour is a property of *any* chain and is shared by both. They differ only in the **order** the endpoints take in that chain.
+
+Exactly one of the following shapes:
+
+**`Alternative 1`**
+
+Endpoints are tried in **declared YAML order** — the first is the preferred endpoint, the rest are failover targets reached only when a preceding one fails with a retryable error. Routing preferences (`sort` / `only` / `ignore`) do **not** reorder or filter the chain: the operator's declared priority is authoritative. This is the default and matches the historical (pre-typed-`strategy`) behaviour.
+
+Accepted value: `"priority"`.
+
+**`Alternative 2`**
+
+Endpoints are treated as an unordered candidate set and **re-ordered by the request's `SortOrder`** (the same cascade ordering Strategy-3 auto-cascade applies to providers), and filtered by `only` / `ignore` / `require_tags`. Use this when the endpoints are interchangeable and you want cost/latency-aware (or, today, alphabetical) selection rather than a fixed priority order. `Latency` / `Cost` have no metrics source yet, so they currently fall back to alphabetical-by-provider — the same honest limitation Strategy-3 documents.
+
+Accepted value: `"cascade"`.
+
+### Routing Config
+
+Routing knobs shared by presets and variants.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `ignore` | Array of `string` | No | `[]` |
+| `only` | Array of `string` | No | `[]` |
+| `require_tags` | Array of `string` | No | `[]` |
+| `sort` | [Sort Order](#sort-order) or `null` | No | `null` |
+
+- `ignore` — Drop these providers from the chain.
+- `only` — Restrict the chain to exactly these providers.
+- `require_tags` — Require providers carrying all these tags.
+- `sort` — Cascade-chain ordering.
+
+### Protocol List
+
+One protocol (bare string) or an ordered set of them (array); the head is the preferred outbound protocol.
+
+Accepts the following alternatives:
+
+**`Alternative 1`**
+
+Accepted value: [Api Protocol](#api-protocol).
+
+**`Alternative 2`**
+
+Accepted value: Array of [Api Protocol](#api-protocol).
+
+### Provider Header Policy
+
+Expanded provider header behavior.
+
+Unknown fields are rejected in this object.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `default` | `string` or `null` | No | `null` |
+| `passthrough` | `boolean` | No | `false` |
+
+- `default` — Static value used when no allowed inbound value is present.
+- `passthrough` — Allow the inbound request's value(s) to override the static default.
+
+### Capability
+
+An optional inference feature a request may require and a provider may advertise. Capabilities are API-agnostic: the same capability maps to a different wire parameter in each protocol (structured outputs is Chat Completions' `response_format`, Messages' `output_config.format`, Generate Content's `responseSchema`, Responses' `text.format`). The serde representation (e.g. `structured_outputs`) is the stable token used to match a request's needs against a provider's advertised capabilities. A capability-aware `RoutingTable` can read the set a request requires (`Prompt::required_capabilities`) and restrict the chain to providers advertising all of them.
+
+Exactly one of the following shapes:
+
+**`Alternative 1`**
+
+JSON-Schema-constrained output — `ResponseFormat::JsonSchema`.
+
+Accepted value: `"structured_outputs"`.
+
+**`Alternative 2`**
+
+Tool / function calling — the request supplies a non-empty tool list.
+
+Accepted value: `"tools"`.
+
+**`Alternative 3`**
+
+Extended reasoning / thinking — the request sets a reasoning-effort hint.
+
+Accepted value: `"reasoning"`.
+
+**`Alternative 4`**
+
+Provider-side web search / browsing.
+
+Accepted value: `"web_search"`.
+
+**`Alternative 5`**
+
+Token log-probabilities in the response.
+
+Accepted value: `"logprobs"`.
+
+**`Alternative 6`**
+
+Image input (vision) — a message carries an `image/*` file part.
+
+Accepted value: `"image_input"`.
+
+**`Alternative 7`**
+
+Audio input — a message carries an `audio/*` file part.
+
+Accepted value: `"audio_input"`.
+
+**`Alternative 8`**
+
+Video input — a message carries a `video/*` file part.
+
+Accepted value: `"video_input"`.
+
+**`Alternative 9`**
+
+Document / file input — a message carries a non-image/audio/video file part (e.g. `application/pdf`).
+
+Accepted value: `"file_input"`.
+
+**`Alternative 10`**
+
+Image output (generation) — the request asks for an `image` output modality.
+
+Accepted value: `"image_output"`.
+
+**`Alternative 11`**
+
+Audio output (speech) — the request asks for an `audio` output modality.
+
+Accepted value: `"audio_output"`.
+
+### Model Compatibility
+
+Provider/model request-shape compatibility settings.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `chat_completions` | [Chat Completions Compatibility](#chat-completions-compatibility) | No | `{"google_extensions":false,"supports_store":null,"supports_stream_options":null,"token_limit_field":null}` |
+
+- `chat_completions` — Chat Completions-specific request settings.
+
+### Input Token Counting
+
+Explicit provider support, never inferred from a compatible generation API.
+
+Exactly one of the following shapes:
+
+**`Alternative 1`**
+
+POST /responses/input_tokens on the same provider endpoint.
+
+Accepted value: `"responses"`.
+
+### Rate Limit
+
+A rate limit for one `(provider, pattern)` bucket. Limits are keyed per-`(provider, matched pattern)` — two patterns with different RPMs get independent windows.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `requests_per_minute` | `integer` or `null` | No | `null` |
+| `tokens_per_minute` | `integer` or `null` | No | `null` |
+
+- `requests_per_minute` — Requests-per-minute ceiling for this bucket. `format`: `uint32`; `minimum`: `0`
+- `tokens_per_minute` — Tokens-per-minute ceiling for this bucket. `format`: `uint32`; `minimum`: `0`
+
+### Reasoning Effort Config
+
+Exact qualitative reasoning-effort support for one provider/model route. Absence means unknown rather than unsupported. Policy-owned effort targets require this positive declaration; ordinary caller-authored parameters keep their existing pass-through behavior when support is unknown.
+
+Unknown fields are rejected in this object.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `default` | [Reasoning Effort](#reasoning-effort) or `null` | No | Not declared |
+| `levels` | Array of [Reasoning Effort](#reasoning-effort) | Yes | Not declared |
+
+- `default` — Provider default when the request omits an effort value.
+- `levels` — Effort values accepted by this exact provider/model route.
+
+### Model Token Limits
+
+Independently declared token limits. An input limit is not a combined context window, and an absent limit is unknown rather than unbounded.
+
+Unknown fields are rejected in this object.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `context_window` | `integer` or `null` | No | `null` |
+| `max_input_tokens` | `integer` or `null` | No | `null` |
+| `max_output_tokens` | `integer` or `null` | No | `null` |
+
+- `context_window` — Combined input and output capacity, only when explicitly known. `format`: `uint64`; `minimum`: `0`
+- `max_input_tokens` — Maximum input tokens, independently of the output allowance. `format`: `uint64`; `minimum`: `0`
+- `max_output_tokens` — Maximum generated tokens for one request. `format`: `uint64`; `minimum`: `0`
+
+### Pricing Tier Config
+
+One higher context-pricing bracket in config — see `PricingConfig::context_tiers`.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `above_input_tokens` | `integer` | Yes | Not declared |
+| `cache_read_micro_usd_per_token` | `number` or `null` | No | `null` |
+| `cache_write_micro_usd_per_token` | `number` or `null` | No | `null` |
+| `input_micro_usd_per_token` | `number` or `null` | No | `null` |
+| `output_micro_usd_per_token` | `number` or `null` | No | `null` |
+
+- `above_input_tokens` — Exclusive lower bound on total input tokens: a request whose input size is strictly greater than this enters the bracket (a base bracket documented as "≤ 128k" is written as `above_input_tokens: 128000`). `format`: `uint64`; `minimum`: `0`
+- `cache_read_micro_usd_per_token` — Micro-USD per cache-read prompt token for this bracket. `None` inherits the base rate. `format`: `double`
+- `cache_write_micro_usd_per_token` — Micro-USD per cache-write prompt token for this bracket. `None` inherits the base rate. `format`: `double`
+- `input_micro_usd_per_token` — Micro-USD per uncached prompt token for this bracket. `None` inherits the base rate. `format`: `double`
+- `output_micro_usd_per_token` — Micro-USD per completion (output) token for this bracket. `None` inherits the base rate. `format`: `double`
+
+### Pricing Endpoint Profile
+
+Published processing-profile provenance; application pricing validates the effective endpoint rather than inferring premiums from this declaration.
+
+Exactly one of the following shapes:
+
+**`Alternative 1`**
+
+OpenAI global processing.
+
+Accepted value: `"openai_global"`.
+
+**`Alternative 2`**
+
+OpenAI US regional processing.
+
+Accepted value: `"openai_us"`.
+
+**`Alternative 3`**
+
+OpenAI European regional processing.
+
+Accepted value: `"openai_europe"`.
+
+### Sort Order
+
+How a cascade chain should be ordered.
+
+Exactly one of the following shapes:
+
+**`Alternative 1`**
+
+Sort by provider name, ascending. The Phase-1 default; later replaced by a recommender (cost / latency / throughput scoring).
+
+Accepted value: `"alphabetical"`.
+
+**`Alternative 2`**
+
+Sort by lowest latency first.
+
+Accepted value: `"latency"`.
+
+**`Alternative 3`**
+
+Sort by lowest cost first.
+
+Accepted value: `"cost"`.
+
+### Api Protocol
+
+Wire protocol. Known values: `chat_completions`, `messages`, `responses`, `decisions`; any other string names an externally-registered (outbound-only) custom protocol.
+
+Accepted value: `string`.
+
+### Chat Completions Compatibility
+
+Chat Completions request-shape compatibility settings.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `google_extensions` | `boolean` | No | `false` |
+| `supports_store` | `boolean` or `null` | No | `null` |
+| `supports_stream_options` | `boolean` or `null` | No | `null` |
+| `token_limit_field` | [Chat Token Limit Field](#chat-token-limit-field) or `null` | No | `null` |
+
+- `google_extensions` — Enable the demonstrated Google Chat extensions for this selected model. Signed tool history additionally requires a credential-bound replay proof.
+- `supports_store` — Whether this target accepts the optional `store` request field. `None` preserves the OpenAI-compatible default (supported).
+- `supports_stream_options` — Whether this target accepts `stream_options`. `None` preserves the OpenAI-compatible default (supported, with `include_usage` injected). Setting this to `false` also disables the router's usage-chunk request, so it is appropriate only when the target rejects the entire object.
+- `token_limit_field` — Token-limit field required by this upstream model.
+
+### Reasoning Effort
+
+Qualitative reasoning-effort levels understood by BitRouter's built-in OpenAI, Anthropic, and Gemini protocol adapters. This is the cross-provider superset, not a claim that every model supports every value. Exact provider/model routes advertise their supported subset separately and policy-owned effort targets are validated against it before dispatch.
+
+Exactly one of the following shapes:
+
+**`Alternative 1`**
+
+Disable reasoning where the selected model supports doing so.
+
+Accepted value: `"none"`.
+
+**`Alternative 2`**
+
+Use the smallest non-zero reasoning setting exposed by the model.
+
+Accepted value: `"minimal"`.
+
+**`Alternative 3`**
+
+Prefer low reasoning cost and latency.
+
+Accepted value: `"low"`.
+
+**`Alternative 4`**
+
+Balance reasoning depth with cost and latency.
+
+Accepted value: `"medium"`.
+
+**`Alternative 5`**
+
+Prefer deeper reasoning over cost and latency.
+
+Accepted value: `"high"`.
+
+**`Alternative 6`**
+
+Use the provider's extra-high reasoning setting.
+
+Accepted value: `"xhigh"`.
+
+**`Alternative 7`**
+
+Use the provider's maximum reasoning setting.
+
+Accepted value: `"max"`.
+
+### Chat Token Limit Field
+
+Chat Completions field used to carry the output-token budget. OpenAI-compatible providers are split between the legacy `max_tokens` spelling and the current `max_completion_tokens` spelling. The canonical prompt keeps one semantic token budget; this enum only records which wire spelling should be used when the prompt is rendered back to Chat Completions.
+
+Exactly one of the following shapes:
+
+**`Alternative 1`**
+
+Legacy Chat Completions field.
+
+Accepted value: `"max_tokens"`.
+
+**`Alternative 2`**
+
+Current Chat Completions field, including reasoning tokens.
+
+Accepted value: `"max_completion_tokens"`.
+
+## Routing and decisions
+
+### Router Config
+
+One named router definition.
+
+Unknown fields are rejected in this object.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `checks` | [Router Checks](#router-checks) | No | `{"request":[]}` |
+| `defaults` | [Router Defaults](#router-defaults) | No | `{"params":{},"system_prompt":null}` |
+| `selection` | [Router Selection](#router-selection) | Yes | Not declared |
+
+- `checks` — Fail-closed checks run before this router may contact an upstream.
+- `defaults` — Request values filled only when the caller omitted them.
+- `selection` — The model or policy selection performed by this router.
+
+### Checker Config
+
+A request-check implementation explicitly linked by a custom host. The existing `native.revision` configuration shape remains supported. Former HTTP declarations are rejected with a migration diagnostic, never ignored.
+
+Accepts the following alternatives:
+
+**`Alternative 1`**
+
+A callback registered under this checker id by the host.
+
+Unknown fields are rejected in this object.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `native` | [Native Checker Config](#native-checker-config) | Yes | Not declared |
+
+- `native` — Expected code/rules revision; registration must match exactly.
+
+### Policy Config
+
+Current routing-policy artifact configuration.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `mode` | [Policy Runtime Mode](#policy-runtime-mode) | No | `"frozen"` |
+| `path` | `string` or `null` | No | `null` |
+
+- `mode` — Runtime authority for adaptive routing and active policy publication. `writeback` is accepted as a migration alias for older configuration.
+- `path` — Override for the policy lock. Relative paths are resolved against the directory containing the parsed `bitrouter.yaml`. `None` means the sibling `policy-lock.yaml` default.
+
+### Decision Model Config
+
+An optional `decision_model:` block enables native context decisions.
+
+Unknown fields are rejected in this object.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `api_key_env` | `string` | No | `"TYPESAFE_API_KEY"` |
+| `base_url` | `string` | No | `"https://api.typesafe.ai"` |
+| `max_response_bytes` | `integer` | No | `1048576` |
+| `model` | `string` | Yes | Not declared |
+| `policy` | [Decision Policy](#decision-policy) | No | `{"candidate_excerpt_bytes":2048,"confidence_threshold":0.85,"max_candidates":32,"max_request_bytes":131072,"minimum_savings_fraction":0.1,"model_switch_penalty_microusd":1000,"prefix_loss_penalty_microusd_per_kib":0,"retain_recent_groups":2,"target_context_bytes":98304}` |
+| `pricing` | [Decision Pricing](#decision-pricing) or `null` | No | `null` |
+| `timeout_ms` | `integer` | No | `30000` |
+
+- `api_key_env` — Environment variable containing the API credential.
+- `base_url` — TypeSafe API root; a compatible local endpoint can be used for testing.
+- `max_response_bytes` — Maximum response bytes; independent of context and checkpoint limits. `format`: `uint`; `minimum`: `0`
+- `model` — Decision model name or alias from TypeSafe's authenticated model list.
+- `policy` — Native context planning limits, frozen into each decision intent.
+- `pricing` — Optional operator-supplied token prices; estimates, never settled bills.
+- `timeout_ms` — Whole-attempt timeout, including reading and validating the response. `format`: `uint64`; `minimum`: `0`
+
+### Eval Config
+
+Generic evaluation exchange configuration.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `authorities` | Map of `string` → [Eval Authority Config](#eval-authority-config) | No | `{}` |
+
+- `authorities` — Trusted evaluator authorities keyed by stable authority id.
+
+### Router Checks
+
+Request checks attached to a named router.
+
+Unknown fields are rejected in this object.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `request` | Array of [Router Request Check](#router-request-check) | No | `[]` |
+
+- `request` — Ordered compiled checks. Every checker must allow the request.
+
+### Router Defaults
+
+Defaults supplied by a named router.
+
+Unknown fields are rejected in this object.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `params` | Map of `string` → Any JSON value | No | `{}` |
+| `system_prompt` | `string` or `null` | No | `null` |
+
+- `params` — Generation parameters shallow-merged behind explicit request values.
+- `system_prompt` — System prompt used only when the request did not provide one.
+
+### Router Selection
+
+Model selection performed by a named router.
+
+Exactly one of the following shapes:
+
+**`kind: "model"`**
+
+Resolve one existing model selector.
+
+Unknown fields are rejected in this object.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `kind` | `"model"` | Yes | Not declared |
+| `model` | `string` | Yes | Not declared |
+| `routing` | [Router Routing Config](#router-routing-config) | No | `{"ignore":[],"only":[],"require_tags":[],"sort":null}` |
+
+- `model` — Existing physical or virtual model selector.
+- `routing` — Provider preferences applied by the existing cascade resolver.
+
+**`kind: "policy"`**
+
+Let one existing policy choose the effective model.
+
+Unknown fields are rejected in this object.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `base_model` | `string` | Yes | Not declared |
+| `kind` | `"policy"` | Yes | Not declared |
+| `policy` | `string` | Yes | Not declared |
+| `routing` | [Router Routing Config](#router-routing-config) | No | `{"ignore":[],"only":[],"require_tags":[],"sort":null}` |
+
+- `base_model` — Exact base-model input retained by the current policy runtime.
+- `policy` — Policy name in `policy-lock.yaml`.
+- `routing` — Provider preferences applied after the policy selects a model.
+
+### Native Checker Config
+
+Startup identity for trusted, compiled-in request-check code.
+
+Unknown fields are rejected in this object.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `revision` | `string` | Yes | Not declared |
+
+- `revision` — Operator-chosen code/rules revision. Change it when behavior changes.
+
+### Policy Runtime Mode
+
+Process-owned routing-policy behavior.
+
+Exactly one of the following shapes:
+
+**`Alternative 1`**
+
+Route from the static lock while continuing to record evidence. Learned database state cannot affect live routing or replace the active lock.
+
+Accepted value: `"frozen"`.
+
+**`Alternative 2`**
+
+Permit explicit validated publication to atomically replace the active lock. Request-time routing remains identical to frozen mode.
+
+Accepted value: `"adaptive"`.
+
+### Decision Policy
+
+Bounds used by the native harness when compiling task-specific context. These are local planning limits, not claims about provider capacity.
+
+Unknown fields are rejected in this object.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `candidate_excerpt_bytes` | `integer` | No | `2048` |
+| `confidence_threshold` | `number` | No | `0.85` |
+| `max_candidates` | `integer` | No | `32` |
+| `max_request_bytes` | `integer` | No | `131072` |
+| `minimum_savings_fraction` | `number` | No | `0.1` |
+| `model_switch_penalty_microusd` | `integer` | No | `1000` |
+| `prefix_loss_penalty_microusd_per_kib` | `integer` | No | `0` |
+| `retain_recent_groups` | `integer` | No | `2` |
+| `target_context_bytes` | `integer` | No | `98304` |
+
+- `candidate_excerpt_bytes` — Maximum text preview per candidate sent to the decision model. `format`: `uint`; `minimum`: `0`
+- `confidence_threshold` — Minimum confidence for a lossy representation or context omission. `format`: `double`
+- `max_candidates` — Most candidate evidence groups judged in one planning pass. `format`: `uint`; `minimum`: `0`
+- `max_request_bytes` — Maximum serialized decision request, including rubrics and task text. `format`: `uint`; `minimum`: `0`
+- `minimum_savings_fraction` — Required relative improvement before changing a feasible prior plan. `format`: `double`
+- `model_switch_penalty_microusd` — Planning penalty for changing models; not a provider charge. `format`: `uint64`; `minimum`: `0`
+- `prefix_loss_penalty_microusd_per_kib` — Optional planning penalty per KiB of lost exact prompt prefix. Matching bytes never establish an actual provider cache hit. `format`: `uint64`; `minimum`: `0`
+- `retain_recent_groups` — Recent complete groups always kept in the active worker's view. `format`: `uint`; `minimum`: `0`
+- `target_context_bytes` — Soft prompt byte target. Required evidence may exceed it up to hard limits. `format`: `uint`; `minimum`: `0`
+
+### Decision Pricing
+
+Optional token prices supplied by the operator, distinct from provider bills.
+
+Unknown fields are rejected in this object.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `input_usd_per_million` | `number` | Yes | Not declared |
+| `output_usd_per_million` | `number` | Yes | Not declared |
+
+- `input_usd_per_million` — USD per million input tokens. `format`: `double`
+- `output_usd_per_million` — USD per million output tokens. `format`: `double`
+
+### Eval Authority Config
+
+Identity and metric scope admitted for one evaluator authority.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `allow_hard_fail` | `boolean` | No | `false` |
+| `allowed_metrics` | Array of `string` | No | `[]` |
+| `api_key_ids` | Array of `string` | No | `[]` |
+| `kind` | [Eval Authority Kind](#eval-authority-kind) | No | `"generic"` |
+| `user_ids` | Array of `string` | No | `[]` |
+
+- `allow_hard_fail` — Whether submissions may declare hard violations.
+- `allowed_metrics` — Exact metric ids, namespace wildcards, or `*` accepted from this authority.
+- `api_key_ids` — Virtual-key record ids authorized for submissions.
+- `kind` — Evaluator class this authority may claim.
+- `user_ids` — Authenticated user ids authorized for submissions.
+
+### Router Request Check
+
+One router-to-checker binding.
+
+Unknown fields are rejected in this object.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `checker` | `string` | Yes | Not declared |
+| `max_input_bytes` | `integer` | No | `262144` |
+| `timeout_ms` | `integer` | No | `500` |
+
+- `checker` — Checker id under the top-level `checkers` map.
+- `max_input_bytes` — Maximum projected text bytes. Oversize input is rejected, never truncated. `format`: `uint64`; `minimum`: `0`
+- `timeout_ms` — Total checker deadline, including queue admission and callback execution. `format`: `uint64`; `minimum`: `0`
+
+### Router Routing Config
+
+Provider routing preferences accepted by a named router.
+
+Unknown fields are rejected in this object.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `ignore` | Array of `string` | No | `[]` |
+| `only` | Array of `string` | No | `[]` |
+| `require_tags` | Array of `string` | No | `[]` |
+| `sort` | [Sort Order](#sort-order) or `null` | No | `null` |
+
+### Eval Authority Kind
+
+Evaluator trust class configured by the operator.
+
+Exactly one of the following shapes:
+
+**`Alternative 1`**
+
+Benchmark- or task-native verifier.
+
+Accepted value: `"task_native"`.
+
+**`Alternative 2`**
+
+Human review.
+
+Accepted value: `"human"`.
+
+**`Alternative 3`**
+
+Enterprise-owned private evaluator.
+
+Accepted value: `"enterprise"`.
+
+**`Alternative 4`**
+
+Agent-driven review.
+
+Accepted value: `"agentic"`.
+
+**`Alternative 5`**
+
+Evaluator without a stronger domain-specific class.
+
+Accepted value: `"generic"`.
+
+## Agents and MCP
+
+### Acp Agent Config
+
+One configured upstream ACP agent, as written in `bitrouter.yaml` under `agents:`. The same `name` is what every `bro acp` subcommand addresses an agent by, and what `AcpAgentConfig::validate` constrains.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `name` | `string` | Yes | Not declared |
+| `transport` | [Acp Transport](#acp-transport) | Yes | Not declared |
+
+- `name` — Agent id. Non-empty; no `/`.
+- `transport` — Wire transport.
+
+### Chat Config
+
+`bro chat`'s own configuration.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `agent` | `string` or `null` | No | `null` |
+| `commands` | Array of [Prompt Command Config](#prompt-command-config) | No | Not declared |
+| `model` | `string` or `null` | No | `null` |
+
+- `agent` — Default ACP harness for bare `bitrouter` (catalog id or configured agent).
+- `commands` — Prompt-expansion commands. `/name args` in `bro chat`, or `bro acp prompt "/name args"`, sends `prompt` with `$ARGUMENTS` replaced by everything typed after the name. There is deliberately no key that *runs* anything. A command here produces a prompt and nothing else, which is what lets the registry be open — user-authored, unreviewed — while the registry of commands that reach BitRouter's own ports stays closed and guarded.
+- `model` — Default daemon-routable model for the chat session.
+
+### Mcp Config
+
+Top-level MCP gateway settings.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `aggregate` | [Mcp Aggregate Config](#mcp-aggregate-config) | No | Not declared |
+| `cache` | [Mcp Cache Config](#mcp-cache-config) | No | Not declared |
+| `upstream_protocol` | [Mcp Upstream Protocol](#mcp-upstream-protocol) | No | Not declared |
+
+- `aggregate` — Aggregation (fan-out) endpoint settings.
+- `cache` — List-call cache settings.
+- `upstream_protocol` — MCP startup lifecycle and protocol version for upstream servers.
+
+### Mcp Server Config
+
+One configured upstream MCP server, as written in `bitrouter.yaml`. The same `name` becomes the URL segment in `POST /mcp/{name}` and the identifier the `super::RoutingTable` resolves against. Restrictions chosen to match the v0 config schema for paste-compatibility: - non-empty - no `/` (collides with the URL path segment) - not literally `sse` (reserved by the spec's deprecated transport name)
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `aggregate` | `boolean` | No | `true` |
+| `name` | `string` | Yes | Not declared |
+| `tool_prefix` | `string` or `null` | No | `null` |
+| `transport` | [Mcp Transport](#mcp-transport) | Yes | Not declared |
+
+- `aggregate` — Whether this server participates in the aggregate fan-out endpoint (typically `POST /mcp`). Default: `true`.
+- `name` — Server id. URL-safe; no slashes.
+- `tool_prefix` — Prefix prepended to upstream tool/prompt names when this server participates in aggregate fan-out. When `None`, the config-load layer fills in `{server_name}__`.
+- `transport` — Wire transport.
+
+### Server Tools Config
+
+The OSS `server_tools` config section. Names the MCP servers whose tools BitRouter attaches to LLM requests and executes inside the loop, with an optional override of the loop's iteration cap. An empty `mcp_servers` leaves the pipeline strictly single-shot.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `advisor` | `boolean` | No | `false` |
+| `fusion` | [Fusion Settings](#fusion-settings) or `null` | No | Not declared |
+| `max_iterations` | `integer` or `null` | No | `null` |
+| `mcp_servers` | Array of `string` | No | `[]` |
+| `subagent` | `boolean` | No | `false` |
+| `web_fetch` | [Web Fetch Settings](#web-fetch-settings) or `null` | No | Not declared |
+| `web_search` | [Web Search Settings](#web-search-settings) or `null` | No | Not declared |
+
+- `advisor` — Enable the `advisor` server tool (consult a stronger model mid-task). Advertised per-request only when the caller declares `bitrouter:advisor`.
+- `fusion` — Multi-model deliberation (Fusion). When set, the `bitrouter:fusion` server tool and the `bitrouter/fusion` model alias are enabled.
+- `max_iterations` — Optional override of the loop's maximum tool-execution rounds. `format`: `uint32`; `minimum`: `0`
+- `mcp_servers` — MCP server names (keys of `mcp_servers`) whose tools are injected into LLM requests and executed by the loop.
+- `subagent` — Enable the `subagent` server tool (delegate a task to a worker model). Advertised per-request only when the caller declares `bitrouter:subagent`.
+- `web_fetch` — Built-in `web_fetch` server tool (BYOK). When set, the `bitrouter:web_fetch` tool is enabled, served by the configured fetch backends. Advertised per-request only when the caller declares it.
+- `web_search` — Built-in `web_search` server tool (BYOK). When set, the `bitrouter:web_search` tool is enabled, served by the configured search backends. Advertised per-request only when the caller declares it.
+
+### Acp Transport
+
+How to dial one upstream ACP agent. v1.0 ships stdio only — the spec lists stdio as the primary transport for agent processes spawned by an IDE / CLI client.
+
+Exactly one of the following shapes:
+
+**`type: "stdio"`**
+
+Stdio transport: launch `command` with `args` and exchange JSON-RPC over the child's stdin/stdout.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `args` | Array of `string` | No | `[]` |
+| `command` | `string` | Yes | Not declared |
+| `env` | Map of `string` → `string` | No | `{}` |
+| `type` | `"stdio"` | Yes | Not declared |
+
+- `args` — Arguments to pass to the child.
+- `command` — The program to spawn (resolved via `$PATH`).
+- `env` — Extra environment variables for the child. Inherited env is kept.
+
+### Prompt Command Config
+
+One user-authored command that expands to a prompt.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `description` | `string` | No | `""` |
+| `name` | `string` | Yes | Not declared |
+| `prompt` | `string` | Yes | Not declared |
+
+- `description` — One line for `/commands`.
+- `name` — What to type after the slash. May not be a name BitRouter answers — that is rejected when the config is loaded, not resolved at runtime.
+- `prompt` — The prompt to send. `$ARGUMENTS` is replaced by whatever was typed after the name; a template that uses it twice gets it twice.
+
+### Mcp Aggregate Config
+
+`mcp.aggregate` — the virtual aggregate endpoint.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `enabled` | `boolean` | No | `true` |
+| `route` | `string` | No | `"/mcp"` |
+
+- `enabled` — When `true` (the default), mount the aggregate route. When `false`, only per-server routes (`/mcp/{server}`) are mounted.
+- `route` — HTTP path for the aggregate endpoint. Default `/mcp`.
+
+### Mcp Cache Config
+
+`mcp.cache` — the TTL cache wrapping cheap list calls.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `enabled` | `boolean` | No | `true` |
+| `max_entries_per_server` | `integer` | No | `64` |
+| `prompts_list_ttl_secs` | `integer` | No | `300` |
+| `resources_list_ttl_secs` | `integer` | No | `60` |
+| `resources_templates_list_ttl_secs` | `integer` | No | `300` |
+| `tools_list_ttl_secs` | `integer` | No | `60` |
+
+- `enabled` — When `false`, the cache layer is not installed.
+- `max_entries_per_server` — LRU safety bound — max entries per server. `format`: `uint`; `minimum`: `0`
+- `prompts_list_ttl_secs` — TTL for `prompts/list`. `0` disables for this method. `format`: `uint64`; `minimum`: `0`
+- `resources_list_ttl_secs` — TTL for `resources/list`. `0` disables for this method. `format`: `uint64`; `minimum`: `0`
+- `resources_templates_list_ttl_secs` — TTL for `resources/templates/list`. `0` disables for this method. `format`: `uint64`; `minimum`: `0`
+- `tools_list_ttl_secs` — TTL for `tools/list`. `0` disables for this method. `format`: `uint64`; `minimum`: `0`
+
+### Mcp Upstream Protocol
+
+`mcp.upstream_protocol` — the startup lifecycle and protocol version the gateway uses when dialing upstream MCP servers. `auto` (the default) starts with modern `server/discover` and uses rmcp's classified legacy fallback. `latest` forces the legacy `initialize` path; `2026-07-28` is the explicit spelling of the modern preference.
+
+Exactly one of the following shapes:
+
+**`Alternative 1`**
+
+Prefer `server/discover` and `2026-07-28`, falling back through rmcp's compatibility path when the upstream identifies itself as legacy.
+
+Accepted value: `"auto"`.
+
+**`Alternative 2`**
+
+Use the legacy `initialize` lifecycle with the latest version the MCP SDK treats as current — today `2025-11-25`.
+
+Accepted value: `"latest"`.
+
+**`Alternative 3`**
+
+Use `server/discover` and the modern `2026-07-28` lifecycle. rmcp falls back after its discovery timeout or a correlated JSON-RPC error it classifies as legacy; transport failures, malformed or uncorrelated responses, and modern rejection codes fail the connection. Opting in also lets upstreams answer `tools/call` with MRTR `input_required` or a Tasks `task` handle; neither is a shape this gateway can carry, so both surface as explicit errors (see `docs/MCP_2026_07_28_SPEC.md` D1).
+
+Accepted value: `"2026-07-28"`.
+
+### Mcp Transport
+
+How to dial one upstream MCP server. Serde tag is `type: "http" | "stdio"` to match the wire shape used in `bitrouter.yaml`.
+
+Exactly one of the following shapes:
+
+**`type: "http"`**
+
+Streamable HTTP transport — `POST <url>` JSON-RPC with optional SSE responses.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `headers` | Map of `string` → `string` | No | `{}` |
+| `type` | `"http"` | Yes | Not declared |
+| `url` | `string` | Yes | Not declared |
+
+- `headers` — Static headers added to every request (e.g. `Authorization`).
+- `url` — The MCP endpoint URL (e.g. `https://mcp.example.com/v1/mcp`).
+
+**`type: "stdio"`**
+
+Stdio transport — spawn `command` with `args` and exchange JSON-RPC over the child's stdin/stdout.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `args` | Array of `string` | No | `[]` |
+| `command` | `string` | Yes | Not declared |
+| `env` | Map of `string` → `string` | No | `{}` |
+| `type` | `"stdio"` | Yes | Not declared |
+
+- `args` — Arguments to pass to the child.
+- `command` — The program to spawn (resolved via `$PATH`).
+- `env` — Extra environment variables for the child. Inherited env is kept.
+
+### Fusion Settings
+
+The `server_tools.fusion` config section. Its presence enables the Fusion server tool and the `bitrouter/fusion` model alias; its fields supply the alias defaults (the panel/judge a bare `bitrouter/fusion` request expands to). An explicit `bitrouter:fusion` declaration on a request overrides these.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `alias` | `string` or `null` | No | `null` |
+| `judge` | `string` or `null` | No | `null` |
+| `outer_model` | `string` or `null` | No | `null` |
+| `panel` | Array of `string` | No | `[]` |
+| `synthesizer` | `string` or `null` | No | `null` |
+| `web_tools` | Array of Any JSON value | No | `[]` |
+
+- `alias` — Alias slug (defaults to `bitrouter/fusion`). Custom aliases cannot use `@preset`, `bitrouter:`, or the reserved `bitrouter/` namespace.
+- `judge` — Default judge model (defaults to the first panel model).
+- `outer_model` — The model the alias resolves to (defaults to the judge, then the first panel model).
+- `panel` — Default panel models the alias expands to.
+- `synthesizer` — Optional dedicated synthesizer model.
+- `web_tools` — Provider web tools forwarded to every panel member, in provider-namespaced declaration form (e.g. `{type: "<provider>:<tool>"}`).
+
+### Web Fetch Settings
+
+The `server_tools.web_fetch` section. Its presence enables the `bitrouter:web_fetch` server tool (advertised only when a request declares it). An empty `backends` list leaves the tool effectively off.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `backends` | Array of [Web Fetch Backend Config](#web-fetch-backend-config) | No | Not declared |
+| `max_content_tokens` | `integer` or `null` | No | `null` |
+
+- `backends` — Extraction backends in preference/failover order; the first that resolves a key is the default.
+- `max_content_tokens` — Default cap on returned content per fetch, in tokens (caller may lower it). Defaults to `DEFAULT_MAX_CONTENT_TOKENS`. `format`: `uint32`; `minimum`: `0`
+
+### Web Search Settings
+
+The `server_tools.web_search` section. Its presence enables the `bitrouter:web_search` server tool (advertised only when a request declares it). An empty `backends` list leaves the tool effectively off.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `backends` | Array of [Web Search Backend Config](#web-search-backend-config) | No | Not declared |
+| `max_results` | `integer` or `null` | No | `null` |
+
+- `backends` — Search backends in preference/failover order; the first that resolves a key is the default.
+- `max_results` — Default maximum results per call (caller may lower it). Defaults to `DEFAULT_MAX_RESULTS`. `format`: `uint32`; `minimum`: `0`
+
+### Web Fetch Backend Config
+
+One configured extraction backend. The `kind` tag selects the engine; the BYOK key resolves from `api_key` (supports `${VAR}` substitution) or, when omitted, the engine's conventional environment variable.
+
+Exactly one of the following shapes:
+
+**`kind: "exa"`**
+
+exa.ai `/contents` — key `api_key` or `EXA_API_KEY`.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `api_base` | `string` or `null` | No | `null` |
+| `api_key` | `string` or `null` | No | `null` |
+| `kind` | `"exa"` | Yes | Not declared |
+
+- `api_base` — Endpoint override (else the engine default).
+- `api_key` — Explicit API key (else `EXA_API_KEY`).
+
+**`kind: "firecrawl"`**
+
+firecrawl.dev `/v2/scrape` — key `api_key` or `FIRECRAWL_API_KEY`.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `api_base` | `string` or `null` | No | `null` |
+| `api_key` | `string` or `null` | No | `null` |
+| `kind` | `"firecrawl"` | Yes | Not declared |
+
+- `api_base` — Endpoint override (else the engine default).
+- `api_key` — Explicit API key (else `FIRECRAWL_API_KEY`).
+
+**`kind: "tavily"`**
+
+tavily.com `/extract` — key `api_key` or `TAVILY_API_KEY`.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `api_base` | `string` or `null` | No | `null` |
+| `api_key` | `string` or `null` | No | `null` |
+| `kind` | `"tavily"` | Yes | Not declared |
+
+- `api_base` — Endpoint override (else the engine default).
+- `api_key` — Explicit API key (else `TAVILY_API_KEY`).
+
+### Web Search Backend Config
+
+One configured search backend. The `kind` tag selects the engine; the BYOK key resolves from `api_key` (supports `${VAR}` substitution) or, when omitted, the engine's conventional environment variable.
+
+Exactly one of the following shapes:
+
+**`kind: "parallel"`**
+
+parallel.ai — key `api_key` or `PARALLEL_API_KEY`.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `api_base` | `string` or `null` | No | `null` |
+| `api_key` | `string` or `null` | No | `null` |
+| `kind` | `"parallel"` | Yes | Not declared |
+
+- `api_base` — Endpoint override (else the engine default).
+- `api_key` — Explicit API key (else `PARALLEL_API_KEY`).
+
+**`kind: "exa"`**
+
+exa.ai — key `api_key` or `EXA_API_KEY`.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `api_base` | `string` or `null` | No | `null` |
+| `api_key` | `string` or `null` | No | `null` |
+| `kind` | `"exa"` | Yes | Not declared |
+
+- `api_base` — Endpoint override (else the engine default).
+- `api_key` — Explicit API key (else `EXA_API_KEY`).
+
+**`kind: "firecrawl"`**
+
+firecrawl.dev — key `api_key` or `FIRECRAWL_API_KEY`.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `api_base` | `string` or `null` | No | `null` |
+| `api_key` | `string` or `null` | No | `null` |
+| `kind` | `"firecrawl"` | Yes | Not declared |
+
+- `api_base` — Endpoint override (else the engine default).
+- `api_key` — Explicit API key (else `FIRECRAWL_API_KEY`).
+
+**`kind: "tavily"`**
+
+tavily.com — key `api_key` or `TAVILY_API_KEY`.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `api_base` | `string` or `null` | No | `null` |
+| `api_key` | `string` or `null` | No | `null` |
+| `kind` | `"tavily"` | Yes | Not declared |
+
+- `api_base` — Endpoint override (else the engine default).
+- `api_key` — Explicit API key (else `TAVILY_API_KEY`).
+
+**`kind: "native"`**
+
+A web-search-capable model whose *native* search tool is forwarded, made available to every model routed through BitRouter.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `kind` | `"native"` | Yes | Not declared |
+| `model` | `string` | Yes | Not declared |
+| `name` | `string` or `null` | No | `null` |
+| `tool` | `any` | Yes | Not declared |
+
+- `model` — The search-capable model serving the call.
+- `name` — Backend id the caller pins (e.g. `"native"`); defaults to `"native"`.
+- `tool` — The provider-defined native search tool, e.g. `{ "type": "anthropic:web_search_20250305" }`.
+
+## Retention and recording
+
+### Trajectory Config
+
+Durable trajectory progress-control settings.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `enabled` | `boolean` | No | `false` |
+| `outbox_batch_size` | `integer` | No | `100` |
+| `retention_days` | `integer` | No | `30` |
+
+- `enabled` — Explicit opt-in for durable trajectory routing and settlement.
+- `outbox_batch_size` — Maximum durable outbox rows attempted in one publication batch. `format`: `uint`; `minimum`: `0`
+- `retention_days` — Age boundary used by startup retention, in whole days. `format`: `uint32`; `minimum`: `0`
+
+### Acp Recording Config
+
+Local ACP conversation content recording, independent of routing evidence.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `enabled` | `boolean` | No | `false` |
+
+- `enabled` — Store observable session messages and tool results until explicitly deleted. No content is recorded or sent to an evaluator by default.
+
+### Continuation Config
+
+Always-active durable provider continuation lifecycle settings.
+
+| Field | Type | Required | Schema default |
+| --- | --- | --- | --- |
+| `prune_batch_size` | `integer` | No | `1000` |
+| `retention_days` | `integer` | No | `30` |
+
+- `prune_batch_size` — Maximum expired rows removed by one prune operation. `format`: `uint`; `minimum`: `0`
+- `retention_days` — Days before a continuation becomes unusable. `format`: `uint32`; `minimum`: `0`

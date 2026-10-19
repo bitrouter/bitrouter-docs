@@ -1,0 +1,45 @@
+---
+title: vLLM Semantic Router
+description: Compare programmable routing signals, model paths, evidence selection, and deployment responsibilities.
+---
+
+[vLLM Semantic Router](https://github.com/vllm-project/semantic-router) is an Apache-2.0 decision layer that selects or combines models across configured backends. It overlaps directly with BitRouter in programmable model routing. Compare the policy and runtime contracts your application needs.
+
+## Key differences
+
+| Question | vLLM Semantic Router | BitRouter |
+| --- | --- | --- |
+| How is behavior expressed? | Entrypoints and recipes with signals and route behavior | Model definitions, policy-bound presets, and versioned policy artifacts |
+| What can a route do? | Select a model or compose a bounded model workflow | Select eligible endpoints, apply fallback, and execute supported requests |
+| What evidence supports improvement? | Routing metadata, feedback, replay, and evaluation | Settled receipts, objective result admission, and frozen evaluation snapshots |
+| Who owns task history? | The external harness owns its agent loop and task state | External harnesses retain ownership; the native managed runtime can own retained evidence and context views |
+
+The project's [architecture introduction](https://github.com/vllm-project/semantic-router/blob/main/website/docs/intro.md) describes its signals, route behaviors, standalone frontend, optional Envoy integration, and separate model runtime. External inference platforms serve its chat backends. It also exposes System One judgments; decision-model access alone is therefore not a distinguishing feature.
+
+BitRouter's [Model Routing](/docs/routing/model-routing) explains candidate eligibility and model selection. [Strategies](/docs/routing/strategies) covers their configuration, while [Context Routing](/docs/routing/context-routing) selects evidence supplied to the next call. Native context views depend on runtime/build support and require ownership of the retained evidence.
+
+## Choose BitRouter when
+
+- You want the BitRouter daemon and CLI as the operating surface for model sources, routes, and request receipts.
+- You want to manage a preset-bound model policy and explicitly review candidate publication.
+- You need the native managed runtime's retained-evidence operations and can validate that runtime for your task.
+
+The [evaluation guide](/docs/routing/strategies#evaluations) describes which results can enter BitRouter's evidence store. A classification result, a routing log, and an objective task outcome are different kinds of evidence.
+
+## Choose vLLM Semantic Router when
+
+- You want its recipe and signal system for model selection or bounded multi-model workflows.
+- Its separation of frontend, model runtime, and inference backends fits your deployment.
+- Your harness should keep task state while a programmable layer controls each model call.
+
+Both projects offer open-source routing. Compare the components you will operate and the policy behavior you can reproduce on your workload. This page makes no latency, quality, or cost ranking between them.
+
+## Plan a migration
+
+1. Inventory the current entrypoints, signals, recipes, and route behaviors. Record which ones are required by the application.
+2. Connect the same usable backends through [BYOK & Subscriptions](/docs/providers/byok-subscriptions) or [Local Models](/docs/providers/local-models), then define BitRouter [Virtual Models](/docs/models-routing/virtual-models).
+3. Recreate model-selection and fallback behavior using BitRouter's documented controls. Recipe actions and bounded multi-model workflows need an explicit replacement in the application or runtime; changing the base URL does not translate them.
+4. Keep the harness responsible for its history unless you explicitly adopt a native task runtime. Test tools, continuation, and context handling in that ownership model.
+5. Replay a fixed workload and compare task outcomes, full execution cost, latency, and failure recovery before switching traffic.
+
+Use [Responses (default)](/docs/usage/responses-api) or [Chat Completions / Messages](/docs/reference/chat-completions-messages) for the destination client contract.

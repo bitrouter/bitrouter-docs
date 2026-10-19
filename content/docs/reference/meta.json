@@ -1,17 +1,28 @@
 {
-  "title": "Reference",
+  "title": "API reference",
   "defaultOpen": false,
   "collapsible": true,
   "pages": [
     "index",
-    "openai-compatible",
-    "openai-responses",
-    "anthropic-compatible",
-    "google-compatible",
-    "discovery",
-    "byok",
-    "management",
-    "observability",
-    "health"
+    "decisions",
+    "chat-completions-messages",
+    "---OpenAI Chat Completions---",
+    "...openai-compatible",
+    "---OpenAI Responses---",
+    "...openai-responses",
+    "---Anthropic Messages---",
+    "...anthropic-compatible",
+    "---Google GenerateContent---",
+    "...google-compatible",
+    "---Models & providers---",
+    "...discovery",
+    "---BYOK encryption---",
+    "...byok",
+    "---Cloud management---",
+    "...management",
+    "---Metrics---",
+    "...observability",
+    "---Health---",
+    "...health"
   ]
 }

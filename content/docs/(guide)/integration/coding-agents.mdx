@@ -1,6 +1,6 @@
 ---
 title: Coding agents
-description: Run supported coding agents through BitRouter interactively, headlessly, or in their native interface.
+description: Connect coding harnesses through native launch or ACP, with session ownership separate from BRO Goal coordination.
 ---
 
 BitRouter separates the **agent harness** that drives the loop from the **model source** that supplies tokens. The same Claude, Codex, OpenCode, or Pi harness can use a hosted model, a subscription, or a model running on your machine.
@@ -9,18 +9,20 @@ BitRouter separates the **agent harness** that drives the loop from the **model 
 
 | Goal | Command | Interface owner |
 | --- | --- | --- |
-| Work in BitRouter's conversation | `bro code <agent>` | BitRouter |
+| Delegate a persistent Goal (design preview) | `bro` / `bro code` | BRO coordination |
 | Run one turn from a script | `bro run <agent> "..."` | BitRouter, headless |
 | Use the harness's own terminal UI | `bro launch <agent>` | The harness |
 | Let another ACP client launch the adapter | `bro acp serve <agent>` | The ACP client |
 
 ```bash
-bro code codex
+bro codex
 bro run claude "Review the current diff" --format quiet
 bro launch opencode
 ```
 
-`bro code`, `bro run`, and `bro acp serve` use ACP adapters. `bro launch` starts the harness's native interface with process-local routing overrides. It does not rewrite the user's normal harness configuration.
+`bro run` and `bro acp serve` use ACP adapters. `bro launch` starts the harness's native interface with process-local routing overrides and leaves normal harness configuration in place. Neither invocation automatically creates a BRO Goal.
+
+The [Self-driving preview](/docs/usage/cli#self-driving-workflows) describes the separate goal-oriented `bro` / `bro code` contract. In that design, a built-in executor can complete work and ACP-compatible harnesses are optional managed workers. Check native launch, ACP connectivity, and managed execution capabilities independently. Earlier `bro code <agent>` behavior remains in the captured [command reference](/docs/cli/reference#bro-code); it is not the preview Goal entry point.
 
 ## Supported agents
 
@@ -39,6 +41,8 @@ Run `bro agents list` for the catalog shipped by your installed version. Alpha.3
 Use `bro agents check <agent>` before a long task. It verifies that the adapter can initialize and reports whether its model traffic can be routed through BitRouter.
 
 ## What launch changes
+
+See [bro [harness]](/docs/integration/bro-harness) for the shared setup workflow, launch configuration, and command options.
 
 For Claude and Codex, BitRouter passes temporary environment variables or command-line overrides. For OpenCode, Pi, Hermes, and OpenClaw, it writes a generated profile under the working tree's self-ignoring `.bitrouter/launch/` directory and points only the child process at it.
 
@@ -70,7 +74,6 @@ Claude Code owns the agent loop and tools. BitRouter supplies its model route, f
 ### Pick a mode
 
 ```bash
-bro code claude                         # BitRouter conversation
 bro run claude "Summarize this repo"   # headless ACP turn
 bro claude                              # Claude Code's native interface
 ```
@@ -115,45 +118,7 @@ For Cloud, use `https://api.bitrouter.ai` and set `ANTHROPIC_AUTH_TOKEN` to a Bi
 
 ### Use a Claude subscription
 
-The `claude-code` provider uses a Claude Pro or Max credential instead of an Anthropic API key. It is separate from the standard `anthropic` provider, but it can be used with the Claude Code harness described above.
-
-Sign in:
-
-```bash
-bro providers login claude-code
-```
-
-BitRouter adopts a compatible local Claude Code login when possible and otherwise starts the provider's login flow. The stored credential refreshes automatically; no `providers:` block is required.
-
-Verify the models and route:
-
-```bash
-bro models --provider claude-code
-bro route claude-code:claude-sonnet-4-6
-```
-
-Use the provider-qualified id to require the subscription source. A request routed to `anthropic:<model>` uses `ANTHROPIC_API_KEY` instead.
-
-Then launch any Claude Code mode normally:
-
-```bash
-bro start
-bro claude
-# or: bro code claude
-# or: bro run claude "Summarize this repo"
-```
-
-Sign out with:
-
-```bash
-bro providers logout claude-code
-```
-
-This removes BitRouter's stored subscription credential and route. It does not modify Claude Code's own configuration.
-
-<Callout type="info">
-Provider login and BitRouter Cloud login are separate. `bro providers login claude-code` authenticates the upstream subscription; `bro cloud login` authenticates your BitRouter account.
-</Callout>
+Use [BYOK & Subscriptions](/docs/providers/byok-subscriptions#use-a-claude-subscription) for login, explicit subscription routes, and logout. The subscription source is independent of the harness interface.
 
 ## Codex
 
@@ -162,7 +127,6 @@ Codex owns the agent loop and tools. BitRouter supplies its model route, fallbac
 ### Pick a mode
 
 ```bash
-bro code codex                         # BitRouter conversation
 bro run codex "Summarize this repo"   # headless ACP turn
 bro codex                              # Codex's native interface
 ```
@@ -208,49 +172,7 @@ Codex model-provider configuration belongs in the user-level `~/.codex/config.to
 
 ### Use a Codex subscription
 
-The `openai-codex` provider uses a ChatGPT Plus or Pro credential and the Codex Responses backend. It is separate from the standard `openai` API-key provider, but it can be used with the Codex harness described above.
-
-Sign in:
-
-```bash
-bro providers login openai-codex
-```
-
-BitRouter can import a compatible local Codex login or start the provider's browser flow. For automation that must not open a browser:
-
-```bash
-bro providers login openai-codex --import-existing --no-browser
-```
-
-No `providers:` block is required. Verify the models and route:
-
-```bash
-bro models --provider openai-codex
-bro route openai-codex:gpt-5-codex
-```
-
-Use the provider-qualified id to require the subscription source. A request routed to `openai:<model>` uses `OPENAI_API_KEY` and the public OpenAI API instead.
-
-Then launch any Codex mode normally:
-
-```bash
-bro start
-bro codex
-# or: bro code codex
-# or: bro run codex "Summarize this repo"
-```
-
-Sign out with:
-
-```bash
-bro providers logout openai-codex
-```
-
-This removes BitRouter's stored subscription credential. It does not sign the Codex CLI out of its own account.
-
-<Callout type="info">
-Provider login and BitRouter Cloud login are separate. `bro providers login openai-codex` authenticates the upstream subscription; `bro cloud login` authenticates your BitRouter account.
-</Callout>
+Use [BYOK & Subscriptions](/docs/providers/byok-subscriptions#use-a-codex-subscription) for login, explicit subscription routes, and logout. The subscription source is independent of the harness interface.
 
 ## Model sources
 
@@ -292,11 +214,11 @@ bro start
 - `route` previews resolution without making an inference request.
 - The provider-qualified form pins one source; the bare model id lets BitRouter select among every source that serves it.
 
-To combine sources, define a [virtual model](/docs/models-routing/models#presets) or fallback chain. A common pattern is local inference first and a hosted source second.
+To combine sources, define a [virtual model](/docs/models-routing/virtual-models#define-a-virtual-model) or fallback chain. A common pattern is local inference first and a hosted source second.
 
 <Cards>
-  <Card title="Local inference" href="/docs/models-routing/local-inference" description="Connect Ollama, vLLM, Unsloth, or another OpenAI-compatible server." />
-  <Card title="Providers" href="/docs/config/providers" description="Add a hosted API or provider account with a key." />
-  <Card title="TUI" href="/docs/cli/tui" description="Use BitRouter's interactive ACP conversation." />
-  <Card title="ACP servers" href="/docs/integration/acp-servers" description="Inspect adapters and run headless turns." />
+  <Card title="Local Models" href="/docs/providers/local-models" description="Connect Ollama, vLLM, Unsloth, or another OpenAI-compatible server." />
+  <Card title="BYOK & Subscriptions" href="/docs/providers/byok-subscriptions" description="Add a hosted API or provider account with a key." />
+  <Card title="Interactive TUI" href="/docs/usage/cli#interactive-tui" description="Preview the goal-oriented BitRouter terminal interface." />
+  <Card title="ACP servers" href="/docs/context-routing/acp-servers" description="Inspect adapters and run headless turns." />
 </Cards>

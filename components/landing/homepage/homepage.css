@@ -216,66 +216,6 @@
   color:var(--muted-foreground);
   margin-bottom:27px
 }
-.ws-dialog {
-  background:var(--paper);
-  color:var(--ink);
-  border:1px solid var(--line);
-  border-radius:12px;
-  width:min(540px,calc(100% - 32px));
-  padding:38px;
-  margin:auto;
-  box-shadow:0 25px 100px rgb(0 0 0 / 0.15)
-}
-.ws-dialog::backdrop {
-  background:rgb(0 0 0 / 0.5);
-  backdrop-filter:blur(4px)
-}
-.ws-dialog h2 {
-  font-size:38px;
-  letter-spacing:-1.4px;
-  margin:20px 0
-}
-.ws-dialog>p {
-  font-size:13px;
-  line-height:1.8;
-  color:var(--muted-foreground)
-}
-.ws-dialog-close {
-  position:absolute;
-  right:17px;
-  top:17px;
-  border:0;
-  background:transparent;
-  padding:5px
-}
-.ws-command {
-  background:var(--muted);
-  position:relative;
-  border:1px solid var(--border);
-  border-radius:6px;
-  margin:22px 0;
-  padding:16px 38px 16px 15px
-}
-.ws-command pre {
-  font-size:10px;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  line-height:1.9;
-  margin:0;
-  font-family:var(--font-geist-mono),monospace
-}
-.ws-command button {
-  position:absolute;
-  right:10px;
-  top:12px;
-  background:transparent;
-  border:0;
-  padding:4px
-}
-.ws-dialog .ws-dialog-note {
-  font-size:10px;
-  margin-bottom:20px
-}
 @media(min-width:1500px) {
 .ws-wrap {
     max-width:1250px
@@ -364,12 +304,6 @@
 .ws-final>p {
     font-size:11px;
     line-height:1.8
-  }
-.ws-dialog {
-    padding:28px 22px
-  }
-.ws-dialog h2 {
-    font-size:34px
   }
 }
 @media(prefers-reduced-motion:reduce) {
@@ -502,3 +436,32 @@
   width:100%; padding:12px 16px; border-radius:0; box-shadow:none;
 }
 .ws-light-terminal .term-grid { background:transparent!important; min-width:max-content; }
+
+/* Hero installation commands. */
+.ws-install { max-width:790px; margin:32px auto 0; text-align:left; }
+.ws-install-header { display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom:14px; }
+.ws-install-title { font-size:16px; font-weight:500; letter-spacing:-.4px; }
+.ws-install-tabs { display:flex; gap:3px; padding:4px; background:var(--muted); border-radius:999px; }
+.ws-install-tabs [role="tab"] { border:0; background:transparent; color:var(--muted-foreground); border-radius:999px; padding:9px 15px; font-size:12px; line-height:1.4; white-space:nowrap; }
+.ws-install-tabs [role="tab"]:hover { color:var(--foreground); }
+.ws-install-tabs [aria-selected="true"] { background:var(--background); color:var(--foreground); box-shadow:0 1px 3px rgb(0 0 0 / .04); }
+.ws-install-command { display:flex; align-items:center; gap:14px; min-height:80px; padding:18px 20px; border-radius:14px; background:var(--muted); }
+.ws-install-prompt { color:var(--muted-foreground); font:16px/1.7 var(--font-geist-mono),monospace; user-select:none; }
+.ws-install-command pre { flex:1; min-width:0; margin:0; padding:0; border:0; border-radius:0; background:transparent; box-shadow:none; font:14px/1.7 var(--font-geist-mono),monospace; white-space:pre-wrap; overflow-wrap:anywhere; }
+.ws-install-command code { display:inline; padding:0; border:0; border-radius:0; background:transparent; box-shadow:none; font:inherit; }
+.ws-install-copy { flex-shrink:0; display:grid; place-items:center; width:36px; height:36px; border:0; background:transparent; border-radius:6px; color:var(--muted-foreground); }
+.ws-install-copy:hover { background:var(--background); color:var(--foreground); }
+.ws-install-hint { min-height:34px; padding-top:12px; font-size:11px; line-height:1.6; color:var(--muted-foreground); text-align:center; }
+.ws-install-hint code { font-family:var(--font-geist-mono),monospace; color:var(--foreground); }
+@media(max-width:620px) {
+  .ws-install { margin-top:26px; }
+  .ws-install-header { flex-direction:column; align-items:stretch; gap:10px; margin-bottom:12px; }
+  .ws-install-title { font-size:14px; }
+  .ws-install-tabs { display:grid; grid-template-columns:1fr 1fr 1fr 1.7fr; gap:2px; border-radius:18px; }
+  .ws-install-tabs [role="tab"] { padding:8px 5px; font-size:10px; white-space:normal; border-radius:14px; }
+  .ws-install-command { gap:9px; padding:16px 12px; min-height:88px; border-radius:12px; }
+  .ws-install-command pre { font-size:12px; }
+  .ws-install-prompt { font-size:12px; }
+  .ws-install-copy { width:30px; height:34px; }
+  .ws-install-hint { font-size:10px; }
+}

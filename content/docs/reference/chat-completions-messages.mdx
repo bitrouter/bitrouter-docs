@@ -1,0 +1,73 @@
+---
+title: Chat Completions / Messages
+description: Connect existing OpenAI Chat Completions and Anthropic Messages clients to BitRouter while retaining their request formats.
+---
+
+Use these endpoints when your client already speaks OpenAI Chat Completions or Anthropic Messages. For a new generation integration, start with [Responses (default)](/docs/usage/responses-api).
+
+| Client format | Local endpoint | Cloud endpoint |
+| --- | --- | --- |
+| Chat Completions | `http://127.0.0.1:4356/v1/chat/completions` | `https://api.bitrouter.ai/v1/chat/completions` |
+| Messages | `http://127.0.0.1:4356/v1/messages` | `https://api.bitrouter.ai/v1/messages` |
+
+When local authentication is enabled, send a BitRouter virtual key. Cloud requests use a Cloud API key or supported bearer credential. The examples use the `Authorization: Bearer` header; the gateway also accepts `x-api-key`. Upstream provider credentials belong in [BYOK & Subscriptions](/docs/providers/byok-subscriptions) configuration.
+
+The `model` field uses the same [model selectors](/docs/models-routing/virtual-models#model-selector-forms) as Responses. The examples assume an initialized [auto policy binding](/docs/routing/strategies#initialize-a-policy-binding); replace `bitrouter/auto` with a configured logical model id to choose that model directly.
+
+## Chat Completions
+
+```bash
+curl http://127.0.0.1:4356/v1/chat/completions \
+  -H "Authorization: Bearer $BITROUTER_VIRTUAL_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "bitrouter/auto",
+    "messages": [
+      {"role": "system", "content": "Answer in two sentences."},
+      {"role": "user", "content": "What does a routing policy control?"}
+    ]
+  }'
+```
+
+Read assistant output from `choices[].message`, checking the finish reason and any tool calls before treating the turn as complete. The [Chat Completions reference](/docs/reference/openai-compatible/createChatCompletion) contains the hosted request and response schemas.
+
+For an OpenAI-compatible SDK, set its base URL to `http://127.0.0.1:4356/v1` locally or `https://api.bitrouter.ai/v1` in Cloud, then call its Chat Completions method.
+
+## Messages
+
+```bash
+curl http://127.0.0.1:4356/v1/messages \
+  -H "Authorization: Bearer $BITROUTER_VIRTUAL_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "bitrouter/auto",
+    "max_tokens": 256,
+    "system": "Answer in two sentences.",
+    "messages": [
+      {"role": "user", "content": "What does a routing policy control?"}
+    ]
+  }'
+```
+
+Read the response's `content` blocks by type and inspect `stop_reason`. Text blocks and tool-use blocks need different handling. The [Messages reference](/docs/reference/anthropic-compatible/createMessage) contains the hosted request and response schemas.
+
+For an Anthropic-compatible SDK, set its base URL to `http://127.0.0.1:4356` locally or `https://api.bitrouter.ai` in Cloud. The SDK appends `/v1/messages`; adding `/v1` to that base would duplicate the path segment.
+
+## Streaming and tool results
+
+Set `stream` to `true` and consume Server-Sent Events in the chosen format. Chat Completions emits completion chunks and ends with `data: [DONE]`. Messages uses typed events such as `message_start`, `content_block_delta`, and `message_stop`. Preserve usage when available and handle error or incomplete output before continuing the workflow.
+
+For caller-owned tools, your application validates arguments, executes permitted tools, and returns their results in the same protocol:
+
+| Format | Returned tool call | Caller-supplied result |
+| --- | --- | --- |
+| Chat Completions | Assistant `tool_calls` | A `tool` message with the matching `tool_call_id` |
+| Messages | A `tool_use` content block | A `tool_result` block with the matching `tool_use_id` in a user message |
+
+Keep the assistant tool call and its matching result in the conversation history. Subsequent requests supply the required history in `messages`; use the [Responses continuation guide](/docs/usage/responses-api#continue-a-conversation) when working with `previous_response_id`.
+
+## Routing and compatibility
+
+The inbound format determines the client contract. BitRouter can translate a compatible request to a different upstream protocol after model resolution. Choose routes that support the capabilities your request needs; protocol translation alone does not establish support for every provider-specific field or tool.
+
+See [Virtual Models](/docs/models-routing/virtual-models#protocol-compatibility) for route compatibility, [structured outputs](/docs/usage/responses-api#structured-outputs-across-protocols) for each protocol's schema field, and [Request receipts](/docs/cli/request-receipts) for the model and provider that actually served the request.

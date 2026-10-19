@@ -1,0 +1,35 @@
+---
+title: Request receipts
+description: Inspect the model, provider, usage, cost, latency, and status recorded for local and Cloud requests.
+---
+
+A receipt records what served a request. It distinguishes the requested selector from the resolved model and serving provider, so you can inspect [virtual-model resolution](/docs/models-routing/virtual-models) and [Model Fallbacks](/docs/models-routing/model-fallback) outcomes.
+
+## Local request receipts
+
+The local metering store records settled requests independently of OpenTelemetry export:
+
+```bash
+bro requests --limit 25
+```
+
+Each receipt distinguishes the requested selector, resolved model, serving provider, token usage, cost, latency, and status. It remains available when the exporter is disabled and can be inspected with no daemon running.
+
+## Cloud Activity
+
+BitRouter Cloud records request receipts without storing prompt or response bodies. The Activity view shows spend, request count, tokens, model, provider, latency, status, routing profile, and funding source for the active workspace.
+
+The same data is available from the CLI:
+
+```bash
+bro cloud usage
+bro cloud requests --limit 25
+```
+
+Cloud receipts are not span waterfalls. Use your own OTLP backend when you need the complete trace across an agent, router, tools, and every upstream attempt.
+
+## Traces and outcome evidence
+
+Request receipts summarize settled traffic. For an ingress span, routing span, and each upstream attempt, configure [OpenTelemetry in Self-hosting](/docs/self-hosting#opentelemetry). Export and local metering are separate surfaces.
+
+Receipts establish what ran and what it cost. A successful status or a cheaper model does not establish that the task met its objective.

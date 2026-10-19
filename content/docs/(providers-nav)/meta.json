@@ -1,0 +1,9 @@
+{
+  "title": "Provider",
+  "pages": [
+    "[BYOK & Subscriptions](/docs/providers/byok-subscriptions)",
+    "[Local Models](/docs/providers/local-models)",
+    "[Custom Provider](/docs/providers/custom-provider)",
+    "[Sell Inference](/docs/providers/sell-inference)"
+  ]
+}

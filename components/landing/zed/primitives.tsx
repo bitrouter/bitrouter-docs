@@ -193,7 +193,7 @@ export const ZED_LINKS = {
   models: "/pricing#models",
   pricing: "/pricing",
   blog: "/blog",
-  changelog: "/changelog",
+  changelog: "/docs/changelog",
   github: "https://github.com/bitrouter/bitrouter",
   cloneSource: "https://github.com/bitrouter/bitrouter",
 };

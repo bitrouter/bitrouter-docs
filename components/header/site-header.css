@@ -9,8 +9,8 @@
 .site-header-tools,.site-community { display:flex; align-items:center; gap:20px; }
 .site-community>a { display:inline-flex; align-items:center; min-height:36px; color:var(--muted-foreground); }
 .site-community>a:hover { color:var(--foreground); }
-.site-download { display:inline-flex; align-items:center; justify-content:center; gap:8px; border-radius:6px; padding:10px 16px; background:var(--primary); color:var(--primary-foreground); font-size:12px; white-space:nowrap; }
-.site-download:hover { opacity:.9; }
+.site-sign-in { display:inline-flex; align-items:center; justify-content:center; gap:8px; border-radius:6px; padding:10px 16px; background:var(--primary); color:var(--primary-foreground); font-size:12px; white-space:nowrap; }
+.site-sign-in:hover { opacity:.9; }
 .site-menu-item { display:none; }
 .site-menu-trigger { display:flex; align-items:center; justify-content:center; padding:8px; min-height:40px; min-width:40px; background:transparent!important; border:0; color:var(--foreground); cursor:pointer; }
 .site-navigation .site-menu-viewport { position:relative; width:100%; background:var(--background); border:0; border-radius:0; box-shadow:none; transition:height 180ms ease; animation:none; }
@@ -46,8 +46,7 @@
  .site-menu-inner { padding-inline:22px; }
  .site-header-docs { min-height:62px; padding-inline:16px; gap:14px; }
  .site-navigation-docs .site-menu-inner { padding-inline:16px; }
- .site-header-docs .site-download { padding:9px; }
- .site-header-docs .site-download>span { display:none; }
+ .site-header-docs .site-sign-in { padding:9px 12px; }
 }
 @media(max-width:767px) {
  .site-primary-nav { display:none; }

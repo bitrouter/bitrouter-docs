@@ -157,7 +157,7 @@ providers:
     api_key: "${OPENAI_API_KEY}"
 ```
 
-Supply credentials through a process-manager environment file or secrets mount. Use the same released version for the binary, policy schema, and CI validator. See [Configuration](/docs/config/configuration-file) for how `bitrouter.yaml` and its linked artifacts define the complete desired state.
+Supply credentials through a process-manager environment file or secrets mount. Use the same released version for the binary, policy schema, and CI validator. See [bitrouter.yaml](/docs/routing/configuration) for how `bitrouter.yaml` and its linked artifacts define the complete desired state.
 
 ### Run as a service
 
@@ -297,7 +297,7 @@ Anyone who can write to that socket can reload, restart, or stop the process. Pu
 
 ### Public read endpoints
 
-`GET /health` and `GET /v1/models` are not protected by the inference authentication hook. If model and provider discovery is sensitive, restrict those paths at the reverse proxy or network layer. Use [OpenTelemetry](/docs/config/telemetry#self-hosted-opentelemetry) for operational telemetry.
+`GET /health` and `GET /v1/models` are not protected by the inference authentication hook. If model and provider discovery is sensitive, restrict those paths at the reverse proxy or network layer. Use [OpenTelemetry](/docs/self-hosting#opentelemetry) for operational telemetry.
 
 ### Production checklist
 
@@ -399,12 +399,72 @@ For redundancy, prefer independent single-node routers behind a load balancer, w
 bro observe status -c /etc/bitrouter/bitrouter.yaml
 ```
 
-Use an OpenTelemetry Collector when the destination is Prometheus-based. See [Telemetry](/docs/config/telemetry) for exporter configuration, spans, and usage attribution.
+Use an OpenTelemetry Collector when the destination is Prometheus-based. See [OpenTelemetry](#opentelemetry) for exporter configuration, spans, and usage attribution.
+
+## OpenTelemetry
+
+OpenTelemetry export is opt-in. Configure the current `bitrouter-telemetry` plugin and point it at an OTLP endpoint:
+
+```yaml
+plugins:
+  bitrouter-telemetry:
+    otel:
+      endpoint: "http://otel-collector:4318"
+      service_name: "bitrouter"
+```
+
+Or enable it with standard environment variables:
+
+```bash
+export OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+export OTEL_SERVICE_NAME=bitrouter
+bro serve
+```
+
+Each request produces an ingress span, a routing span, one client span per upstream attempt, and settlement metadata. Retry and fallback attempts therefore remain visible as separate hops. Metrics include request counts, latency, token usage, errors, and streaming activity.
+
+The binary pushes OTLP; it does not expose a production Prometheus scrape endpoint. Use an OpenTelemetry Collector when Prometheus is the destination.
+
+### Privacy and sampling
+
+Message bodies are excluded by default. Enabling full capture copies prompts and responses into your telemetry backend:
+
+```yaml
+plugins:
+  bitrouter-telemetry:
+    otel:
+      endpoint: "http://otel-collector:4318"
+      content_capture: full
+```
+
+The equivalent environment override is `BITROUTER_TELEMETRY_CONTENT_CAPTURE=full`. Apply backend access control and retention before enabling it.
+
+For high-volume deployments, configure a standard sampler:
+
+```yaml
+plugins:
+  bitrouter-telemetry:
+    otel:
+      sampler: parentbased_traceidratio
+      sampler_arg: 0.1
+```
+
+Standard `OTEL_*` environment variables take precedence over YAML.
+
+### Verify export
+
+```bash
+bro reload
+bro observe status
+bro observe status --json
+```
+
+Then send one request and confirm that the collector receives the trace. A `stopped` status means no endpoint opted the exporter in or the installed binary lacks the required OTLP transport feature.
 
 ## Next steps
 
 <Cards>
-  <Card title="Configuration" href="/docs/config/configuration-file" description="Define, validate, and apply the router's desired behavior." />
-  <Card title="Telemetry" href="/docs/config/telemetry" description="Configure traces, capture, sampling, and exporter verification." />
-  <Card title="CLI reference" href="/docs/cli/reference/init" description="Inspect every command and flag used here." />
+  <Card title="Configuration (YAML)" href="/docs/routing/configuration" description="Define, validate, and apply the router's desired behavior." />
+  <Card title="Request receipts" href="/docs/cli/request-receipts" description="Inspect actual serving routes and usage." />
+  <Card title="CLI reference" href="/docs/cli/reference#init-and-config" description="Inspect every command and flag used here." />
 </Cards>

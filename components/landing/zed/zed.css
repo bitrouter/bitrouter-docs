@@ -1710,17 +1710,9 @@
   transition: background 0.15s ease;
 }
 .zed-post-row:hover,
-.zed-release-row:hover,
-.zed-row-hover:hover {
+.zed-release-row:hover {
   background: var(--z-wash);
 }
-/* Models registry: rail + main → single column on small screens. */
-@media (max-width: 900px) {
-  .zed-models-body {
-    grid-template-columns: 1fr !important;
-  }
-}
-
 /* ── Responsive ── */
 @media (max-width: 900px) {
   .zed-wrap {
@@ -1897,13 +1889,6 @@
  .zed-pricing-mobile-plan { border:0; border-radius:10px; background:var(--muted); padding:24px; margin-bottom:24px; }
  .zed-pricing-mobile-plan dl>div { border:0; }
  .zed-enterprise-heading { font-size:28px; }
-}
-.site-model-filter-toggle { display:none; }
-.site-model-filters { background:var(--muted); border-radius:8px; align-self:start; margin-right:16px; }
-@media(max-width:699px) {
- .site-model-filter-toggle { display:inline-flex; background:var(--muted); color:var(--foreground); border-radius:6px; padding:10px 16px; font-size:13px; margin-bottom:16px; cursor:pointer; }
- .site-model-filters { display:none; margin:0 0 16px; }
- .site-model-filters.is-open { display:block; }
 }
 .zed-article ul { list-style:disc; }
 .zed-article ol { list-style:decimal; }

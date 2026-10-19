@@ -6,7 +6,7 @@ import { ProviderIcon } from "@/components/models/provider-icon";
 import { CopyIdButton } from "@/components/models/copy-id-button";
 import { CopySnippet } from "@/components/models/copy-snippet";
 import { fetchModelById } from "@/lib/models-server";
-import { modelDisplayName, providerFromId } from "@/lib/models-filter";
+import { modelDisplayName, providerFromId } from "@/lib/model-identity";
 import { formatPricePerMillionTokens } from "@/lib/model-pricing";
 
 const API_BASE_URL = "https://api.bitrouter.ai/v1";

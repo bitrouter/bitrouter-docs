@@ -1,9 +1,9 @@
 ---
 title: Model routes
-description: Author virtual models, ordered fallbacks, presets, variants, and routing filters.
+description: Author named routers, virtual models, ordered fallbacks, and routing filters.
 ---
 
-Use `models`, `presets`, and `variants` in [the configuration file](/docs/config/configuration-file) to make reusable model routes. Connect [Providers](/docs/config/providers) first. [Model routing](/docs/models-routing/models) explains how a request selector resolves and which candidates are eligible.
+Use `routers`, `models`, and `variants` in [the configuration file](/docs/config/configuration-file) to make reusable local model routes. Connect [Providers](/docs/config/providers) first. [Model routing](/docs/models-routing/models) explains how a request selector resolves and which candidates are eligible.
 
 ## Fallback chains
 
@@ -22,11 +22,31 @@ models:
 
 A request for `coding` tries endpoints in YAML order. BitRouter advances after retryable upstream failures: `5xx`, `408`, `429`, transport or timeout failures, invalid upstream responses, and exhausted provider credit. Other client-side `4xx` errors fail immediately.
 
-Use `strategy: cascade` only when the endpoints are interchangeable and selection preferences may reorder or filter them. In alpha.31, cost and latency sorts still use the deterministic priority/provider-ID fallback described in [candidate eligibility](/docs/models-routing/models#candidate-eligibility).
+Use `strategy: cascade` only when the endpoints are interchangeable and selection preferences may reorder or filter them. In alpha.33, cost and latency sorts still use the deterministic priority/provider-ID fallback described in [candidate eligibility](/docs/models-routing/models#candidate-eligibility).
 
-## Presets
+## Named routers
 
-Presets put model substitution, prompt defaults, parameters, routing-policy binding, and candidate filters behind a short name:
+Define a reusable local router under `routers:` and address it as `bitrouter/<name>`:
+
+```yaml
+routers:
+  fast:
+    selection:
+      kind: model
+      model: coding
+      routing:
+        only: [openai, anthropic]
+    defaults:
+      system_prompt: "Be concise."
+      params:
+        temperature: 0.2
+```
+
+For policy-driven selection, use `bro policy init` to bind a policy to a named router. [bitrouter/auto](/docs/models-routing/bitrouter-auto) walks through the `auto` binding. Named-router selectors do not generally accept variant suffixes; `bitrouter/auto` retains its compatibility variants.
+
+## Legacy presets
+
+Existing local presets put model substitution, prompt defaults, parameters, routing-policy binding, and candidate filters behind a short name:
 
 ```yaml
 presets:
@@ -41,7 +61,7 @@ presets:
 
 Call it as `@fast`. Request fields win over preset defaults, so a preset provides a stable baseline without taking control away from the caller.
 
-`bitrouter/auto` is the public spelling of the `auto` preset and requires that preset to be bound to a routing policy. Create the binding with `bro policy init` rather than hand-authoring a partial lock file.
+Existing `@name` selectors remain available for compatibility. Use `bro config migrate-routers --candidate <path>` to preview a migration and review it before applying.
 
 See [bitrouter/auto](/docs/models-routing/bitrouter-auto) for the operational walkthrough: send traffic, inspect the settled route, override one call, and publish reviewed policy changes.
 
@@ -68,7 +88,7 @@ Variants do not grant access, bypass guardrails, or change virtual-key policy.
 Preset and variant `routing` blocks can restrict candidates with `only`, `ignore`, or `require_tags`. Provider `priority` also controls deterministic ordering. These settings narrow model selection; they do not grant caller access or bypass guardrails.
 
 <Callout type="warning">
-In alpha.31, `cost` and `latency` sorts use the same deterministic priority/provider-ID order as `alphabetical`. They do not provide measured live optimization. See [candidate eligibility](/docs/models-routing/models#candidate-eligibility).
+In alpha.33, `cost` and `latency` sorts use the same deterministic priority/provider-ID order as `alphabetical`. They do not provide measured live optimization. See [candidate eligibility](/docs/models-routing/models#candidate-eligibility).
 </Callout>
 
 ## Validate and preview

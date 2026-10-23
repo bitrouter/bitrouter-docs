@@ -27,7 +27,7 @@ curl http://127.0.0.1:4356/v1/responses \
   }'
 ```
 
-For Cloud, replace the URL and bearer value with the Cloud endpoint and credential. Upstream provider credentials belong in BitRouter's provider configuration, rather than in this client request.
+For Cloud, replace the URL and bearer value with the Cloud endpoint and credential, and use a catalog model ID or an enabled workspace routing preset such as `@<name>` as the model. `bitrouter/auto` is a local router selector. Upstream provider credentials belong in BitRouter's provider configuration, rather than in this client request.
 
 Read the result's `output` items according to their type. A raw HTTP response can contain message, reasoning, or tool-call items; a completed request does not necessarily contain only assistant text. The generated [endpoint reference](/docs/reference/openai-responses/createResponse) owns the full hosted request schema.
 

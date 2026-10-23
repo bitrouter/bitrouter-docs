@@ -292,7 +292,7 @@ bro start
 - `route` previews resolution without making an inference request.
 - The provider-qualified form pins one source; the bare model id lets BitRouter select among every source that serves it.
 
-To combine sources, define a [virtual model](/docs/models-routing/models#presets) or fallback chain. A common pattern is local inference first and a hosted source second.
+To combine sources, define a [virtual model or fallback chain](/docs/models-routing/models#fallback-chains). A common pattern is local inference first and a hosted source second.
 
 <Cards>
   <Card title="Local inference" href="/docs/models-routing/local-inference" description="Connect Ollama, vLLM, Unsloth, or another OpenAI-compatible server." />

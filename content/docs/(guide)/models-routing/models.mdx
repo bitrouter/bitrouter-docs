@@ -20,9 +20,9 @@ Prefer the slash form in application code. Use the colon form when the provider 
 
 ## Resolution order
 
-BitRouter resolves a request in four stages:
+The self-hosted router resolves a request in four stages:
 
-1. Apply a known `@preset` and optional `:variant`.
+1. Resolve a named `bitrouter/<name>` router or a legacy `@preset` and optional `:variant`.
 2. Treat `provider:model` as an explicit provider route.
 3. Resolve a matching entry under `models` as a virtual model.
 4. Otherwise, build a cascade from active providers that declare the bare model.
@@ -34,9 +34,12 @@ Subscription-backed providers are explicit-route-only. A bare model never silent
 | `openai:openai/gpt-5.4` | Pin one provider and logical model |
 | `openai/gpt-5.4` | Route a logical model through eligible providers |
 | `coding` | Use a named chain from `models` |
-| `@fast` | Apply a reusable preset |
+| `bitrouter/fast` | Apply a named local router |
+| `@fast` | Apply a compatible legacy preset |
 | `@fast:cost` | Apply a preset, then a known variant |
-| `bitrouter/auto` | Use the routing policy bound to the `auto` preset |
+| `bitrouter/auto` | Use the routing policy bound to the local `auto` router |
+
+Cloud uses catalog model IDs and enabled workspace routing presets addressed as `@<name>`. Its `:cost`, `:latency`, and `:throughput` profiles bias hosted provider ranking toward those dimensions. The `bitrouter/<name>` local-router syntax is not a hosted routing preset.
 
 ## Candidate eligibility
 
@@ -44,14 +47,14 @@ For a bare model, BitRouter filters active providers by `only`, `ignore`, requir
 
 Presets and variants accept three sort values:
 
-| Value | alpha.31 behavior |
+| Value | alpha.33 behavior |
 | --- | --- |
 | `alphabetical` | Provider priority, then provider ID |
 | `cost` | Accepted, but currently uses the same deterministic fallback order |
 | `latency` | Accepted, but currently uses the same deterministic fallback order |
 
 <Callout type="warning">
-Cost- and latency-based live scoring are not active in alpha.31. Do not describe `:cost` or `:latency` as measured optimization until a release provides the corresponding metrics-backed recommender.
+Cost- and latency-based live scoring are not active in the self-hosted alpha.33 proxy. Its `:cost` and `:latency` variants do not provide measured optimization; hosted routing profiles use a separate ranking.
 </Callout>
 
 Use `routing.only`, `routing.ignore`, or provider `priority` when the order must be explicit today.
@@ -66,7 +69,7 @@ A virtual model selects an ordered chain of endpoints. With `strategy: priority`
 
 A preset combines model substitution, prompt defaults, parameters, routing-policy binding, and candidate filters behind a name such as `@fast`. Request fields win over preset defaults.
 
-`bitrouter/auto` is the public spelling of the `auto` preset and requires a routing-policy binding. Its [walkthrough](/docs/models-routing/bitrouter-auto) covers sending traffic, inspecting the settled route, and publishing reviewed policy changes. See [preset configuration](/docs/config/model-routes#presets) to author ordinary reusable defaults.
+`bitrouter/auto` addresses the named local `auto` router and requires a routing-policy binding. Its [walkthrough](/docs/models-routing/bitrouter-auto) covers sending traffic, inspecting the settled route, and publishing reviewed policy changes. See [model routes](/docs/config/model-routes#named-routers) to author named routers or retain existing presets.
 
 ## Variants
 

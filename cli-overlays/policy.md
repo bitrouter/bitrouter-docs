@@ -2,7 +2,7 @@
 title: Policy
 ---
 
-Routing policies are the artifact the [self-improving loop](/docs/overview/what-is-bitrouter) learns into: `init` scaffolds `policy-lock.yaml` and binds it to a preset, live traffic teaches the adequacy ledger, and `evolve --apply` folds proven downgrades back into the file. The walkthrough, table, and ledger semantics are in [Routing policy](/docs/models-routing/policy#let-evidence-improve-the-policy).
+Local routing policies are the artifact used by the [self-improving loop](/docs/overview/what-is-bitrouter): `init` scaffolds `policy-lock.yaml` and binds it to a named router. Operators can compile candidates from evidence and publish them, or authorize an optimizer step that may publish a transition. See [Routing policy](/docs/models-routing/policy#let-evidence-improve-the-policy).
 
 <Callout type="info">
 `bro policy create` + `bro key sign` are a **different surface** — per-virtual-key access control (allowed models, budgets, rate limits), not routing. See [access-control policies](/docs/config/configuration-file#three-meanings-of-policy).
@@ -11,22 +11,21 @@ Routing policies are the artifact the [self-improving loop](/docs/overview/what-
 ## @policy init
 
 ```bash
-bro policy init coding --preset coding \
-  --economy moonshotai/kimi-k2.7-code
+bro policy init coding --router coding \
+  --strong openai:openai/gpt-5.6-sol \
+  --economy moonshotai:moonshotai/kimi-k2.7-code
 ```
 
-Writes `policy-lock.yaml` (strong/economy tiers, adequacy pre-seeded) and edits `bitrouter.yaml` comment-preservingly to bind the preset with `writeback: locked`.
+The tiers must be configured, active `provider:model` routes; substitute routes available in your deployment. The command writes `policy-lock.yaml` and edits `bitrouter.yaml` to bind the named router. The router binding preserves the configured policy mode.
 
 ## @policy evolve
 
 ```bash
 bro policy evolve          # dry-run candidate projection
-bro policy unlock
-bro policy evolve --apply  # atomically republish policy-lock.yaml
-bro policy lock
+bro policy evolve --apply  # atomically republish policy-lock.yaml in adaptive mode
 ```
 
-Only **adds** qualified routes — never overwrites or removes yours — and refuses to publish while `writeback: locked`.
+Qualified changes may add or update compiler-owned routes; operator-authored routes are preserved. Publishing requires `policy.mode: adaptive`; frozen mode refuses writes.
 
 ## @policy reload
 

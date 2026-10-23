@@ -123,7 +123,7 @@
       "providers": 2,
       "inputUsdPerM": 5,
       "cacheReadUsdPerM": 0.5,
-      "cacheWriteUsdPerM": 6.25,
+      "cacheWriteUsdPerM": null,
       "outputUsdPerM": 25,
       "openWeights": false
     },
@@ -341,11 +341,11 @@
         "reasoning",
         "tools"
       ],
-      "providers": 4,
-      "inputUsdPerM": 0.3,
-      "cacheReadUsdPerM": 0.06,
-      "cacheWriteUsdPerM": null,
-      "outputUsdPerM": 1.2,
+      "providers": 5,
+      "inputUsdPerM": 0.23,
+      "cacheReadUsdPerM": 0.05,
+      "cacheWriteUsdPerM": 0,
+      "outputUsdPerM": 0.96,
       "openWeights": true
     },
     {

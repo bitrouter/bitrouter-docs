@@ -23,8 +23,8 @@ The routing contract is shared, while operational surfaces follow the deployment
 | Local / private model endpoints | ✅ | — |
 | Model fallback & provider selection | ✅ | ✅ |
 | Model variants & presets | ✅ | ✅ |
-| Adaptive routing policies | ✅ | ✅ |
-| Guardrails | ✅ | ✅ |
+| Local evidence-based routing policies | ✅ | — |
+| Request checks / guardrails | Custom host | ✅ |
 | OTLP trace + metric export | ✅ | — |
 | Local MCP gateway & server tools | ✅ | — |
 | Local ACP adapters | ✅ | — |
@@ -33,6 +33,8 @@ The routing contract is shared, while operational surfaces follow the deployment
 | Managed provider network (no upstream keys needed) | — | ✅ |
 | Hosted activity and request receipts | — | ✅ |
 | Hosted models (one balance, 0% token markup) | — | ✅ |
+
+Self-hosted request checks require a [compiled extension in a custom host](https://github.com/bitrouter/bitrouter/blob/main/docs/GUARDRAILS_EXTENSION.md); the default `bro` binary does not include a matcher.
 
 BitRouter does not package a separate enterprise suite today. Teams with deployment, security, procurement, or support requirements can [contact the founders](mailto:contact@bitrouter.ai) and help shape the team offering.
 
@@ -44,7 +46,7 @@ Do you need your own provider keys? Not for BitRouter-hosted models: one Cloud s
 <Tab value="macOS / Linux">
 
 ```bash
-curl --proto '=https' --tlsv1.2 -LsSf https://github.com/bitrouter/bitrouter/releases/latest/download/bitrouter-installer.sh | sh
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/bitrouter/bitrouter/releases/download/v1.0.0-alpha.33/bitrouter-installer.sh | sh
 ```
 
 </Tab>
@@ -93,13 +95,13 @@ For terminal-first setup, launch the wizard:
 bro
 ```
 
-Bare `bro` runs a **network-free credential probe** — BYOK env keys, the cloud session file, and the local credential store — then launches the wizard when nothing is configured. After setup, it opens the configured TUI conversation. The wizard walks three steps:
+Bare `bro` opens the saved default agent when one is configured; otherwise, in a terminal, it starts the wizard and probes local credentials. After setup, it can open the configured TUI conversation. The wizard walks three steps:
 
 1. **Credentials** — sign in to BitRouter Cloud (default), log in to a provider, or paste a BYOK key.
-2. **Harness** — `claude` or `codex`, installed via the native installer when missing.
-3. **Finish** — launch the harness, start the proxy at `http://127.0.0.1:4356`, or exit.
+2. **Harness** — choose a default ACP adapter. Adapters use a compatible local CLI when available.
+3. **Finish** — open BitRouter Code, start the proxy at `http://127.0.0.1:4356`, or exit.
 
-Every step maps to a flag, so an agent (or CI) can run the whole flow without a human. `--yes` never blocks: it consumes flag-supplied credentials, reports-and-skips anything that would need interactive OAuth, and emits a JSON result envelope on stdout:
+Every step maps to a flag, so an agent or CI can configure BitRouter without a human. With `--yes`, the wizard consumes flag-supplied credentials, reports and skips interactive OAuth, and emits a JSON result envelope on stdout. Select `--after exit` to finish without opening Code or starting the proxy:
 
 ```bash
 bro init --yes --provider openai --provider-api-key "sk-..." --harness claude --after serve
@@ -108,7 +110,7 @@ bro init --yes --api-key "brk_..." --after exit                # Cloud key, no l
 bro init --reset                                               # clear credentials, start over
 ```
 
-Every flag is documented in the [`bro init` reference](/docs/cli/reference/init#bro-init). The wizard never writes `bitrouter.yaml` beyond the canned starter template — your routing config stays yours to edit.
+Every flag is documented in the [`bro init` reference](/docs/cli/reference/init#bro-init). The wizard creates or updates the resolved `bitrouter.yaml`, recording the selected agent, optional model, and provider entries. Without `--force` it starts from the existing configuration; `--force` starts from the starter template.
 
 ## Run self-hosted
 
@@ -122,10 +124,10 @@ bro start
 
 BitRouter auto-detects any key set in the environment — no config file needed. Any provider whose key is present is immediately available. See [BYOK](/docs/config/providers#built-in-providers-with-your-own-key) for the full list of recognized variables, or [local inference](/docs/models-routing/local-inference) to point BitRouter at Ollama, vLLM, or LM Studio for free.
 
-For advanced routing rules, guardrails, or multi-account failover, scaffold a config file:
+For advanced routing rules or multi-account failover, scaffold a config file:
 
 ```bash
-bro init          # writes ./bitrouter.yaml (override with `-c <path>`)
+bro init -c ./bitrouter.yaml  # choose an explicit destination
 bro start
 ```
 
@@ -175,7 +177,7 @@ Use the slash form by default. Use the colon form only when you intentionally ne
 
 ## Adaptive routing
 
-Explicit model ids give you deterministic model selection. To let the router apply the policy bound to its `auto` preset, keep one stable model id in your agent or application:
+Explicit model ids give you deterministic model selection. To let a self-hosted router apply the policy bound to its named `auto` router, keep one stable model id in your agent or application:
 
 ```bash
 curl http://127.0.0.1:4356/v1/chat/completions \
@@ -183,7 +185,7 @@ curl http://127.0.0.1:4356/v1/chat/completions \
   -d '{"model": "bitrouter/auto", "messages": [{"role": "user", "content": "..."}]}'
 ```
 
-`bitrouter/auto` requires an `auto` policy binding and fails visibly when the binding is missing. The dedicated [bitrouter/auto guide](/docs/models-routing/bitrouter-auto) shows how to create it, inspect the selected route, override one call, learn from runtime adequacy, and explicitly publish a reviewed policy update. [Evaluations](/docs/models-routing/evaluations) covers the separate objective-scored evidence path.
+`bitrouter/auto` requires an `auto` policy binding and fails visibly when the binding is missing. The [bitrouter/auto guide](/docs/models-routing/bitrouter-auto) shows how to create it, inspect the selected route, and publish a reviewed policy update. Cloud uses catalog model IDs or enabled workspace routing presets such as `@<name>`; it does not use this local selector. [Evaluations](/docs/models-routing/evaluations) covers objective-scored evidence.
 
 ## Next steps
 

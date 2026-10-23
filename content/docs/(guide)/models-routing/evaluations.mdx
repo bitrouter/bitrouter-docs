@@ -13,14 +13,11 @@ An evaluation answers whether a result met an objective. It is deliberately sepa
 
 An HTTP `200`, a completed stream, or a cheaper route is not proof of task success. Those are observations that an evaluator may use, not the objective result itself.
 
-## Two evidence paths
+## Evaluation evidence
 
-BitRouter keeps runtime adequacy and objective-scored evaluations distinct:
+The evaluator-neutral exchange accepts immutable evaluation subjects and results from an evaluator you choose. Admitted results can be frozen into a reproducible snapshot for optimization or policy compilation. A trace does not evaluate its outcome by itself.
 
-- **Runtime adequacy** records deterministic outcome classes for policy-bound live traffic. It supports fast escalation and conservative exploration for a request fingerprint.
-- **Evaluator-neutral exchange** accepts immutable evaluation subjects and results from an evaluator you choose. Admitted results can be frozen into a reproducible snapshot for optimization or policy compilation.
-
-The two paths can inform the same routing-policy lifecycle, but their records are not interchangeable. An adequacy observation does not silently become an evaluator result, and exporting a trace does not evaluate its outcome.
+In alpha.33, legacy request-time adequacy learning is disabled in both policy modes. Adequacy fields remain compiler inputs; they do not enable live escalation or exploration.
 
 ## Evidence lifecycle
 
@@ -65,7 +62,7 @@ The evidence root pins the exact set used for a later decision. This prevents a 
 
 ### 5. Consume the evidence explicitly
 
-Optimization can advance its controller from admitted evaluation history:
+Optimization can advance its controller from admitted evaluation history. `status` is read-only; `run` authorizes one controller step, may enable adaptive mode, and can publish a policy change without a separate approval:
 
 ```bash
 bro optimize status --policy auto
@@ -81,7 +78,7 @@ bro policy compile \
 bro policy diff policy-lock.yaml candidate-policy.yaml
 ```
 
-Compilation and optimization do not make every candidate active. Review the candidate and use the explicit policy publication workflow when it should serve traffic.
+Compilation does not make the candidate active. Review it and use `bro policy publish candidate-policy.yaml` when it should serve traffic. The optimizer is a separate, explicitly authorized workflow and can publish its own transition during `bro optimize run`.
 
 ## Reproducibility boundary
 
@@ -101,7 +98,7 @@ Keep private prompts, responses, and artifacts out of the subject unless the eva
 - Lower token cost does not establish acceptable quality.
 - A trace or request receipt does not become evaluation evidence merely because it is detailed.
 - One admitted result does not prove a general routing policy is better.
-- A candidate policy is not active until it passes the explicit publication boundary.
+- A compiled candidate is not active until it passes publication; an authorized optimizer step can publish its own transition.
 
 Use repeated, comparable subjects and an evaluator aligned with the workload objective. Keep exploratory conclusions separate from policy changes you are prepared to serve.
 

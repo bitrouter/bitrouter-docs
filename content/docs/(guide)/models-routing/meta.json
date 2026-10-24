@@ -2,8 +2,8 @@
   "title": "Model",
   "pages": [
     "model-fallback",
-    "model-variants",
     "virtual-models",
+    "structured-output",
     "byok-subscriptions",
     "local-models"
   ]

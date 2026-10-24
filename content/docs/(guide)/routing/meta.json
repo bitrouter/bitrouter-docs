@@ -1,9 +1,9 @@
 {
-  "title": "Routing",
+  "title": "Router",
   "pages": [
-    "configuration",
-    "model-routing",
+    "auto-router",
+    "routing-rules",
     "context-routing",
-    "strategies"
+    "configuration"
   ]
 }

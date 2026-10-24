@@ -41,7 +41,7 @@ References:
 ## Usage
 
 - [Desktop](${BASE_URL}/docs/usage/desktop): Coming soon; current terminal and API alternatives
-- [CLI](${BASE_URL}/docs/usage/cli): Self-driving workflows, interactive terminal, and native headless scripting, with preview boundaries
+- [CLI](${BASE_URL}/docs/usage/cli): Self-driving workflows, interactive terminal, and native headless scripting, and the complete captured command reference, with preview boundaries
 - [Responses API](${BASE_URL}/docs/usage/responses-api): Recommended generation interface, streaming, tool results, and continuation
 - [MCP](${BASE_URL}/docs/usage/mcp): Coming soon
 - [Web](${BASE_URL}/docs/usage/web): Coming soon
@@ -54,25 +54,25 @@ References:
 - [OpenCode](${BASE_URL}/docs/integration/opencode): Coming soon
 - [Pi](${BASE_URL}/docs/integration/pi): Coming soon
 
-## Routing
-
-- [Configuration (YAML)](${BASE_URL}/docs/routing/configuration): Load, validate, and apply bitrouter.yaml and its policy bindings
-- [Model Routing](${BASE_URL}/docs/routing/model-routing): Resolve selectors, candidate eligibility, and policy-driven model selection
-- [Context Routing](${BASE_URL}/docs/routing/context-routing): Select retained evidence for the next native model call
-- [Strategies](${BASE_URL}/docs/routing/strategies): Choose and customize routing strategies, evaluate evidence, and publish reviewed changes
-
-## Model
-
-- [Model Fallbacks](${BASE_URL}/docs/models-routing/model-fallback): Define failure-driven replacement across providers, models, and accounts
-- [Model Variants](${BASE_URL}/docs/models-routing/model-variants): Documentation placeholder for model variants
-- [Virtual Models](${BASE_URL}/docs/models-routing/virtual-models): Define named model endpoints, request selectors, and reusable presets
-- [BYOK & Subscriptions](${BASE_URL}/docs/models-routing/byok-subscriptions): Connect keys, subscription logins, multiple accounts, and custom endpoints
-- [Local Models](${BASE_URL}/docs/models-routing/local-models): Connect and verify inference servers you run yourself
-
 ## Market
 
 - [Buy Inference](${BASE_URL}/docs/market/buy-inference): Documentation placeholder for obtaining inference access through BitRouter
 - [Sell Inference](${BASE_URL}/docs/market/sell-inference): Documentation placeholder for optional marketplace supply
+
+## Router
+
+- [Auto Router](${BASE_URL}/docs/routing/auto-router): Initialize bitrouter/auto, inspect its policy, evaluate evidence, and publish reviewed changes
+- [Routing Rules](${BASE_URL}/docs/routing/routing-rules): Resolve selectors, constrain candidates, and reuse presets and named routing variants
+- [Context Routing](${BASE_URL}/docs/routing/context-routing): Select retained evidence for the next native model call
+- [Configuration (YAML)](${BASE_URL}/docs/routing/configuration): Load, validate, and apply bitrouter.yaml; look up pinned schema fields in the inline configuration reference
+
+## Model
+
+- [Model Fallbacks](${BASE_URL}/docs/models-routing/model-fallback): Define failure-driven replacement across providers, models, and accounts
+- [Virtual Models](${BASE_URL}/docs/models-routing/virtual-models): Define named model endpoints, request selectors, and reusable presets
+- [Structured Output](${BASE_URL}/docs/models-routing/structured-output): Coming soon
+- [BYOK & Subscriptions](${BASE_URL}/docs/models-routing/byok-subscriptions): Connect keys, subscription logins, multiple accounts, and custom endpoints
+- [Local Models](${BASE_URL}/docs/models-routing/local-models): Connect and verify inference servers you run yourself
 
 ## Context
 
@@ -84,9 +84,9 @@ References:
 ## Reference
 
 - [Changelog](${BASE_URL}/docs/changelog): All release notes on one page
-- [Data handling](${BASE_URL}/docs/data-handling): Coming soon
-- [CLI reference](${BASE_URL}/docs/cli/reference): Complete captured command and flag reference on one page
-- [config reference](${BASE_URL}/docs/configuration-reference): Pinned local YAML schema, field types, defaults, environment references, and reload boundaries
+- [Privacy Policy](${BASE_URL}/docs/privacy-policy): Data collection, storage, third-party processing, and privacy contact
+- [Terms of Service](${BASE_URL}/docs/terms-of-service): Service terms, usage policies, payments, and availability
+- [Troubleshooting](${BASE_URL}/docs/troubleshooting): Coming soon
 - [API reference](${BASE_URL}/docs/reference): Authentication, typed decisions, compatibility guides, and generated endpoint families
 
 ## Optional

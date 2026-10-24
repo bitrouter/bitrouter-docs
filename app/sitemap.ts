@@ -60,8 +60,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // The legal MDX source has baseUrl "/legal", but each page is served at its
   // own top-level route, so map slugs to their real URLs.
   const LEGAL_ROUTES: Record<string, string> = {
-    privacy: "/privacy-policy",
-    terms: "/terms-of-service",
     subprocessors: "/subprocessors",
   };
   const legalPages: Entry[] = legalSource.getPages().map((page) => {

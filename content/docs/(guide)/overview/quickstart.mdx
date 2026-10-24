@@ -108,7 +108,7 @@ bro init --yes --api-key "brk_..." --after exit                # Cloud key, no l
 bro init --reset                                               # clear credentials, start over
 ```
 
-Every flag is documented in the [`bro init` reference](/docs/cli/reference#bro-init). The wizard never writes `bitrouter.yaml` beyond the canned starter template — your routing config stays yours to edit.
+Every flag is documented in the [`bro init` reference](/docs/usage/cli#bro-init). The wizard never writes `bitrouter.yaml` beyond the canned starter template — your routing config stays yours to edit.
 
 ## Run self-hosted
 
@@ -183,13 +183,13 @@ curl http://127.0.0.1:4356/v1/chat/completions \
   -d '{"model": "bitrouter/auto", "messages": [{"role": "user", "content": "..."}]}'
 ```
 
-`bitrouter/auto` requires an `auto` policy binding and fails visibly when the binding is missing. The [Strategies guide](/docs/routing/strategies#initialize-a-policy-binding) shows how to create it, inspect the selected route, override one call, learn from runtime adequacy, and explicitly publish a reviewed policy update. [Evaluations](/docs/routing/strategies#evaluations) covers the separate objective-scored evidence path.
+`bitrouter/auto` requires an `auto` policy binding and fails visibly when the binding is missing. The [Auto Router guide](/docs/routing/auto-router#initialize-a-policy-binding) shows how to create it, inspect the selected route, override one call, learn from runtime adequacy, and explicitly publish a reviewed policy update. [Evaluations](/docs/routing/auto-router#evaluations) covers the separate objective-scored evidence path.
 
 ## Next steps
 
 <Cards>
   <Card title="Virtual Models" href="/docs/models-routing/virtual-models" description="Define named model endpoints and request profiles." />
-  <Card title="bitrouter/auto" href="/docs/routing/strategies#initialize-a-policy-binding" description="Use one stable model id and inspect the policy-driven route." />
+  <Card title="bitrouter/auto" href="/docs/routing/auto-router#initialize-a-policy-binding" description="Use one stable model id and inspect the policy-driven route." />
   <Card title="Coding agents" href="/docs/integration/coding-agents" description="Step-by-step guides for every supported agent runtime." />
-  <Card title="CLI reference" href="/docs/cli/reference#init-and-config" description="The full command surface of the binary." />
+  <Card title="CLI reference" href="/docs/usage/cli#init-and-config" description="The full command surface of the binary." />
 </Cards>

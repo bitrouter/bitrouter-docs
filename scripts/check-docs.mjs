@@ -36,17 +36,19 @@ const SECTIONS = [
 ];
 // Root reference guides and the generated changelog obey the import-free contract.
 const STANDALONE_DOCS = [
-  "data-handling.mdx",
+  "privacy-policy.mdx",
+  "terms-of-service.mdx",
+  "troubleshooting.mdx",
   "reference/index.mdx",
   "reference/decisions.mdx",
   "reference/chat-completions-messages.mdx",
   "changelog.mdx",
-  "configuration-reference.mdx",
 ];
 const ROOT = "content/docs";
-// Generated output, exempt from the hand-authoring contract: it is emitted by
-// scripts/generate-cli.mjs from the binary's own `--help`.
-const GENERATED = new Set(["(guide)/cli/reference.mdx"]);
+// Full guide outputs are generated; lint their authored guide inputs below.
+// Captured command help and schema field tables remain generator-owned.
+const GENERATED = new Set(["(guide)/usage/cli.mdx", "(guide)/routing/configuration.mdx"]);
+const AUTHORED_GUIDES = ["cli-overlays/guide.md", "config-reference/guide.md"];
 const isGenerated = (path) => GENERATED.has(path) || path.startsWith("(guide)/cli/reference/");
 // Intentional exceptions to the otherwise complete public sidebar. Keep this
 // list short and document each product-navigation decision.
@@ -84,17 +86,17 @@ const ROOT_NAV_PAGES = [
   "...(usage-nav)",
   "---Coding Agents---",
   "...(integration-nav)",
-  "---Routing---",
+  "---Market---",
+  "...(market-nav)",
+  "---Router---",
   "...(routing-nav)",
   "---Model---",
   "...(models-routing-nav)",
-  "---Market---",
-  "...(market-nav)",
   "---Context---",
   "...(context-routing-nav)",
   "---Reference---",
   "...(reference-nav)",
-  "reference",
+  "reference"
 ];
 
 async function walk(dir) {
@@ -158,7 +160,7 @@ async function main() {
   const files = [];
   for (const s of SECTIONS) files.push(...(await walk(join(ROOT, s))));
   files.push(...STANDALONE_DOCS.map((path) => join(ROOT, path)));
-  const docs = files.filter(isDoc).filter((p) => !isGenerated(relative(ROOT, p)));
+  const docs = [...files.filter(isDoc).filter((p) => !isGenerated(relative(ROOT, p))), ...AUTHORED_GUIDES];
   const errors = [];
 
   const rootMeta = JSON.parse(await readFile(join(ROOT, "meta.json"), "utf8"));
@@ -219,7 +221,7 @@ async function main() {
   }
 
   for (const abs of docs) {
-    const rel = relative(ROOT, abs);
+    const rel = abs.startsWith(`${ROOT}/`) ? relative(ROOT, abs) : abs;
     const raw = await readFile(abs, "utf8");
     const { body } = splitFrontmatter(raw);
     const offset = bodyOffset(raw, body);

@@ -43,7 +43,7 @@ export function EnterpriseContactForm({ available }: { available: boolean }) {
           <label htmlFor="enterprise-role">Role<input id="enterprise-role" name="role" autoComplete="organization-title" required maxLength={100} placeholder="Your role" /></label>
           <label htmlFor="enterprise-workload">What problem are you trying to solve?<textarea id="enterprise-workload" name="workload" required minLength={10} maxLength={3000} rows={4} placeholder="Model costs, time spent waiting, private deployment, or something else…" /></label>
           <div className="enterprise-form-trap" aria-hidden="true"><label htmlFor="enterprise-website">Website<input id="enterprise-website" name="website" tabIndex={-1} autoComplete="off" /></label></div>
-          <p className="enterprise-form-privacy">By submitting, you agree that we may contact you about this request. See our <Link href="/privacy-policy">Privacy Policy</Link>.</p>
+          <p className="enterprise-form-privacy">By submitting, you agree that we may contact you about this request. See our <Link href="/docs/privacy-policy">Privacy Policy</Link>.</p>
           <button className="enterprise-submit" type="submit" disabled={!available || status === "sending"}>{status === "sending" ? "Sending…" : "Talk to the founders"}<ArrowUpRight size={16} aria-hidden="true" /></button>
         </fieldset>
         {status === "error" && <p className="enterprise-form-error" role="alert">{error}</p>}

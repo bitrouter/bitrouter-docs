@@ -1,96 +1,26 @@
 ---
-title: Strategies
-description: Choose a configured routing strategy, customize candidate rules and policy settings, and evaluate changes before publication.
+title: Auto Router
+description: Configure bitrouter/auto, inspect its model-selection policy, and evaluate evidence before publishing changes.
 ---
 
-Start from an existing routing approach, configure the models and constraints it may use, then verify its behavior before serving traffic. [Model Routing](/docs/routing/model-routing) explains the selection mechanics; this page covers choosing and customizing them. Use [Configuration (YAML)](/docs/routing/configuration) for file loading, validation, and reload.
+Use `bitrouter/auto` when a bound policy should select the model for each request. Connect usable inference sources first, initialize the policy binding, then inspect the serving route and review evidence before publishing policy changes.
 
-## Choose a strategy
+[Routing Rules](/docs/routing/routing-rules) explains selector resolution, candidate eligibility, and named variants. [Configuration (YAML)](/docs/routing/configuration) covers file discovery, validation, and reload. Automatic model selection remains separate from [Model Fallbacks](/docs/models-routing/model-fallback) after a retryable failure.
 
-| Approach | Choose it when | Configuration surface |
-| --- | --- | --- |
-| Ordered endpoints | You want a declared primary endpoint and explicit replacements | A virtual model with `strategy: priority` |
-| Candidate-based selection | Endpoints are interchangeable and provider preferences should filter or reorder them | A bare logical model or a virtual model with `strategy: cascade`, plus routing preferences |
-| Policy-bound selection | Different request fingerprints should use configured strong/economy tiers | A preset bound to `policy-lock.yaml`, such as `bitrouter/auto` |
+## Routing rules
 
-The available building blocks have different scopes. A request preset under `presets` supplies a model and defaults; it is not an independent routing algorithm. The `strategy` field on a virtual model controls its endpoint resolution. A policy binding adds tier selection. Account strategies select credentials within a provider and are described in [Model Fallbacks](/docs/models-routing/model-fallback#account-fallback).
+<a id="choose-a-strategy" />
+<a id="ordered-endpoints" />
+<a id="candidate-based-selection" />
+<a id="policy-bound-selection" />
+<a id="customize-a-strategy" />
+<a id="request-presets" />
+<a id="variants" />
+<a id="ordering-and-release-limits" />
 
-### Ordered endpoints
+To constrain candidate providers, reuse preferences with `variants:`, or choose ordered endpoints instead of policy-bound selection, use [Routing Rules](/docs/routing/routing-rules#choose-a-routing-approach). Its examples cover [request presets](/docs/routing/routing-rules#request-presets), [variants](/docs/routing/routing-rules#variants), and [ordering limits](/docs/routing/routing-rules#ordering-and-release-limits).
 
-Define a [virtual model](/docs/models-routing/virtual-models#define-a-virtual-model) with `strategy: priority` and put its endpoints in the order you want them attempted. Change the endpoint list to customize that order. A retryable failure may advance the chain; an unsatisfactory successful answer does not itself trigger fallback.
-
-### Candidate-based selection
-
-Use `strategy: cascade` when endpoint preferences may filter and reorder a virtual model's alternatives. A bare logical model resolves across connected providers declaring that model. Both paths can use the routing preferences below; connected models still need compatible capabilities and protocols.
-
-### Policy-bound selection
-
-Use the auto binding below when model selection should depend on request fingerprints and configured policy tiers. Calling `bitrouter/auto` without the binding fails visibly; the model name alone does not install a usable policy.
-
-## Customize a strategy
-
-Choose the models and providers first, then configure candidate constraints, endpoint order, or policy tiers as appropriate to the chosen approach. This guide covers composing existing settings and policy artifacts; it does not define an arbitrary user-code plugin interface for new selection algorithms.
-
-### Request presets
-
-Give a supported configuration a reusable name under `presets`. For example,
-this fragment selects one logical model and restricts its provider candidates:
-
-```yaml
-presets:
-  openai_only:
-    model: openai/gpt-5.4
-    routing:
-      only: [openai]
-      sort: alphabetical
-```
-
-Configure the `openai` provider separately, then inspect the preset:
-
-```bash
-bro config validate -c bitrouter.yaml
-bro route @openai_only -c bitrouter.yaml
-bro claude --model @openai_only
-```
-
-Change the model or provider list to customize this profile. To choose among
-different models by request fingerprint, initialize a policy binding instead.
-[Virtual Models](/docs/models-routing/virtual-models#presets) covers request defaults
-and their precedence; a preset can also refer to a virtual model.
-
-### Variants
-
-A variant applies reusable candidate preferences:
-
-```yaml
-variants:
-  private:
-    routing:
-      require_tags: [private]
-  primary:
-    routing:
-      only: [openai]
-```
-
-Append a known variant to a logical model or preset, for example `openai/gpt-5.4:primary` or `@fast:primary`. Configure the referenced providers and presets first. The `private` variant requires matching provider tags; its name does not establish a privacy guarantee. An unknown suffix remains part of the selector.
-
-Preset and variant `routing` blocks accept `only`, `ignore`, and `require_tags`. These constrain bare-model and cascade selection. They do not prune a `priority` virtual model's authoritative endpoint list: remove disallowed endpoints from that list instead. Filters do not grant access, bypass guardrails, or supply credentials.
-
-### Ordering and release limits
-
-Use provider `priority` for explicit provider order in candidate-based selection, or `strategy: priority` and endpoint order for an explicit virtual-model chain. Presets and variants also accept these sort values:
-
-| Value | alpha.31 behavior |
-| --- | --- |
-| `alphabetical` | Provider priority, then provider ID |
-| `cost` | Accepted, but currently uses the same deterministic fallback order |
-| `latency` | Accepted, but currently uses the same deterministic fallback order |
-
-<Callout type="warning">
-Cost- and latency-based live scoring are not active in alpha.31. Do not treat a `cost` or `latency` sort as measured optimization. Check the behavior supported by the binary you deploy.
-</Callout>
-
-### Policy tiers and runtime adequacy
+## Policy tiers and runtime adequacy
 
 Initialize a binding with usable models for its tiers, then adjust the policy's supported adequacy settings. An unmatched fingerprint uses the conservative default; escalation, cooldown, and exploration settings govern subsequent runtime behavior. The next sections show that workflow.
 
@@ -273,7 +203,9 @@ Keep private prompts, responses, and artifacts out of the subject unless the eva
 
 Use repeated, comparable subjects and an evaluator aligned with the workload objective. Keep exploratory conclusions separate from policy changes you are prepared to serve.
 
-## Verify and apply a strategy
+<a id="verify-and-apply-a-strategy" />
+
+## Verify and apply the policy
 
 ```bash
 bro config validate -c bitrouter.yaml
@@ -282,10 +214,10 @@ bro policy check -c bitrouter.yaml
 bro requests --limit 25
 ```
 
-Replace `bitrouter/auto` with your configured selector when inspecting another strategy. Use `policy check` when a policy binding is involved. Route previews do not send inference or establish task quality; settled [Request receipts](/docs/cli/request-receipts) show what actually served a call. Apply configuration changes through [Configuration (YAML)](/docs/routing/configuration#apply-and-review-changes), and publish policy candidates through the explicit review workflow above.
+Use `policy check` to inspect the binding used by `bitrouter/auto`. For other selectors and candidate constraints, use [Routing Rules](/docs/routing/routing-rules). Route previews do not send inference or establish task quality; settled [Request receipts](/docs/cli/request-receipts) show what actually served a call. Apply configuration changes through [Configuration (YAML)](/docs/routing/configuration#apply-and-review-changes), and publish policy candidates through the explicit review workflow above.
 
 <Cards>
-  <Card title="Model Routing" href="/docs/routing/model-routing" description="Understand selector resolution, eligibility, and policy-bound selection." />
+  <Card title="Routing Rules" href="/docs/routing/routing-rules" description="Understand selector resolution, candidate constraints, and named routing variants." />
   <Card title="Configuration (YAML)" href="/docs/routing/configuration" description="Load, validate, and apply routing configuration." />
-  <Card title="CLI reference" href="/docs/cli/reference#bro-eval" description="Inspect captured evaluation, optimization, and policy commands." />
+  <Card title="CLI reference" href="/docs/usage/cli#bro-eval" description="Inspect captured evaluation, optimization, and policy commands." />
 </Cards>

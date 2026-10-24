@@ -8,13 +8,13 @@ const finalPath = {
   installation: "/docs/overview/quickstart", quickstart: "/docs/overview/quickstart",
   comparison: "/docs/overview/comparison/openrouter", "self-host-vs-cloud": "/docs/overview/quickstart#self-host-or-cloud",
   // models & routing
-  "provider-selection":"/docs/routing/model-routing#candidate-eligibility","model-fallback":"/docs/models-routing/model-fallback#fallback-chains",
-  "model-variants":"/docs/models-routing/virtual-models#variants","presets":"/docs/models-routing/virtual-models#presets",
+  "provider-selection":"/docs/routing/routing-rules#candidate-eligibility","model-fallback":"/docs/models-routing/model-fallback#fallback-chains",
+  "model-variants":"/docs/routing/routing-rules#variants","presets":"/docs/models-routing/virtual-models#presets",
   "structured-outputs":"/docs/models-routing/virtual-models#protocol-compatibility","byok":"/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
   "local-models":"/docs/models-routing/local-models","guardrails":"/docs/routing/configuration#create-a-configuration",
   "observability":"/docs/cli/request-receipts","opentelemetry":"/docs/self-hosting#opentelemetry",
   "tracing":"/docs/cli/request-receipts#cloud-activity","telemetry":"/docs/cli/request-receipts",
-  "evaluation":"/docs/routing/strategies#evaluations","evaluations":"/docs/routing/strategies#evaluations",
+  "evaluation":"/docs/routing/auto-router#evaluations","evaluations":"/docs/routing/auto-router#evaluations",
   "mcp":"/docs/context-routing/mcp-servers","acp":"/docs/context-routing/acp-servers",
   "agentskills":"/docs/context-routing/skills",
   // bitrouter cloud (was: infrastructure)
@@ -39,6 +39,16 @@ for (const file of readdirSync("content/changelog")) {
 }
 // overview + root + special
 pairs.push(
+  // Guides include their references; legal policies use the documentation layout.
+  ["/docs/cli/reference", "/docs/usage/cli"],
+  ["/docs/configuration-reference", "/docs/routing/configuration"],
+  ["/docs/data-handling", "/docs/privacy-policy"],
+  ["/privacy-policy", "/docs/privacy-policy"],
+  ["/terms-of-service", "/docs/terms-of-service"],
+  // Router separates auto policy workflows from reusable routing rules.
+  ["/docs/routing/strategies", "/docs/routing/auto-router"],
+  ["/docs/routing/model-routing", "/docs/routing/routing-rules"],
+  ["/docs/models-routing/model-variants", "/docs/routing/routing-rules#variants"],
   // Model owns source connections; Market owns buying and selling inference.
   ["/docs/providers/byok-subscriptions", "/docs/models-routing/byok-subscriptions"],
   ["/docs/providers/local-models", "/docs/models-routing/local-models"],
@@ -56,16 +66,16 @@ pairs.push(
   ["/docs/api/responses", "/docs/usage/responses-api"],
   ["/docs/api/decisions", "/docs/reference/decisions"],
   ["/docs/api/chat-completions-messages", "/docs/reference/chat-completions-messages"],
-  ["/docs/cli/reference/daemon", "/docs/cli/reference"],
-  ["/docs/cli/reference/init", "/docs/cli/reference"],
-  ["/docs/cli/reference/route", "/docs/cli/reference"],
-  ["/docs/cli/reference/providers", "/docs/cli/reference"],
-  ["/docs/cli/reference/policy", "/docs/cli/reference"],
-  ["/docs/cli/reference/cloud", "/docs/cli/reference"],
-  ["/docs/cli/reference/tools", "/docs/cli/reference"],
-  ["/docs/cli/reference/skills", "/docs/cli/reference"],
-  ["/docs/cli/reference/harnesses", "/docs/cli/reference"],
-  ["/docs/cli/reference/misc", "/docs/cli/reference"],
+  ["/docs/cli/reference/daemon", "/docs/usage/cli#command-reference"],
+  ["/docs/cli/reference/init", "/docs/usage/cli#command-reference"],
+  ["/docs/cli/reference/route", "/docs/usage/cli#command-reference"],
+  ["/docs/cli/reference/providers", "/docs/usage/cli#command-reference"],
+  ["/docs/cli/reference/policy", "/docs/usage/cli#command-reference"],
+  ["/docs/cli/reference/cloud", "/docs/usage/cli#command-reference"],
+  ["/docs/cli/reference/tools", "/docs/usage/cli#command-reference"],
+  ["/docs/cli/reference/skills", "/docs/usage/cli#command-reference"],
+  ["/docs/cli/reference/harnesses", "/docs/usage/cli#command-reference"],
+  ["/docs/cli/reference/misc", "/docs/usage/cli#command-reference"],
   // Comparison is a folder only; its retired index opens the first comparison.
   ["/docs/overview/comparison", "/docs/overview/comparison/openrouter"],
   ["/compare/bitrouter-vs-openrouter", "/docs/overview/comparison/openrouter"],
@@ -74,15 +84,15 @@ pairs.push(
   ["/compare", "/docs/overview/comparison/openrouter"],
   ["/zh/compare/:slug*", "/docs/overview/comparison/openrouter"],
   // Routing guides consolidated into configuration, mechanisms, and strategies.
-  ["/docs/routing/inference-pool", "/docs/routing/model-routing"],
-  ["/docs/routing/policy", "/docs/routing/strategies"],
-  ["/docs/routing/evaluations", "/docs/routing/strategies#evaluations"],
+  ["/docs/routing/inference-pool", "/docs/routing/routing-rules"],
+  ["/docs/routing/policy", "/docs/routing/auto-router"],
+  ["/docs/routing/evaluations", "/docs/routing/auto-router#evaluations"],
   // Routing decisions have their own section.
-  ["/docs/models-routing/policy", "/docs/routing/strategies"],
-  ["/docs/models-routing/evaluations", "/docs/routing/strategies#evaluations"],
+  ["/docs/models-routing/policy", "/docs/routing/auto-router"],
+  ["/docs/models-routing/evaluations", "/docs/routing/auto-router#evaluations"],
   ["/docs/context-routing/context-switch", "/docs/routing/context-routing"],
   // Model resources and routing decisions now have separate ownership.
-  ["/docs/models-routing/inference-pool", "/docs/routing/model-routing"],
+  ["/docs/models-routing/inference-pool", "/docs/routing/routing-rules"],
   // Config retired; model guides now follow inference resource tasks.
   ["/docs/config/configuration-file", "/docs/routing/configuration"],
   ["/docs/config/providers", "/docs/models-routing/byok-subscriptions"],
@@ -91,7 +101,7 @@ pairs.push(
   ["/docs/config/server-tools", "/docs/context-routing/server-tools"],
   ["/docs/config/telemetry", "/docs/cli/request-receipts"],
   ["/docs/models-routing/models", "/docs/models-routing/virtual-models"],
-  ["/docs/models-routing/bitrouter-auto", "/docs/routing/strategies#initialize-a-policy-binding"],
+  ["/docs/models-routing/bitrouter-auto", "/docs/routing/auto-router#initialize-a-policy-binding"],
   ["/docs/models-routing/local-inference", "/docs/models-routing/local-models"],
   // Context guides reorganized; retain retired canonical URLs.
   ["/docs/integration/acp-servers", "/docs/context-routing/acp-servers"],
@@ -114,11 +124,11 @@ pairs.push(
   ["/docs/cli/telemetry", "/docs/cli/request-receipts"],
   ["/docs/cli/permissions", "/docs/context-routing/acp-servers#headless-permissions"],
   // Documentation reorganized around models, context, and CLI (2026-10).
-  ["/docs/usage/bitrouter-auto", "/docs/routing/strategies#initialize-a-policy-binding"],
+  ["/docs/usage/bitrouter-auto", "/docs/routing/auto-router#initialize-a-policy-binding"],
   ["/docs/customization/models", "/docs/models-routing/byok-subscriptions"],
   ["/docs/configuration/models", "/docs/models-routing/virtual-models"],
   ["/docs/configuration/guardrails", "/docs/routing/configuration#create-a-configuration"],
-  ["/docs/configuration/evaluations", "/docs/routing/strategies#evaluations"],
+  ["/docs/configuration/evaluations", "/docs/routing/auto-router#evaluations"],
   ["/docs/configuration/policy", "/docs/routing/configuration"],
   ["/docs/configuration/telemetry", "/docs/cli/request-receipts"],
   ["/docs/usage/tui", "/docs/usage/cli#interactive-tui"],
@@ -145,7 +155,7 @@ pairs.push(
   // 2026-09 information-architecture cleanup. The command remains `bro code`;
   // TUI is the user-facing documentation name.
   ["/docs/usage/code", "/docs/usage/cli#interactive-tui"],
-  ["/docs/usage/protocols", "/docs/cli/reference#init-and-config"],
+  ["/docs/usage/protocols", "/docs/usage/cli#init-and-config"],
   ["/docs/usage/mcp-gateway", "/docs/context-routing/mcp-servers#mcp-gateway"],
   ["/docs/usage/model-sources/claude-subscription", "/docs/integration/coding-agents#use-a-claude-subscription"],
   ["/docs/usage/model-sources/codex-subscription", "/docs/integration/coding-agents#use-a-codex-subscription"],
@@ -168,15 +178,15 @@ pairs.push(
   ["/docs/configuration/routing", "/docs/models-routing/virtual-models"],
   ["/docs/usage/structured-outputs", "/docs/models-routing/virtual-models#protocol-compatibility"],
   ["/docs/configuration/structured-outputs", "/docs/models-routing/virtual-models#protocol-compatibility"],
-  ["/docs/configuration/provider-selection", "/docs/routing/model-routing#candidate-eligibility"],
+  ["/docs/configuration/provider-selection", "/docs/routing/routing-rules#candidate-eligibility"],
   ["/docs/configuration/model-fallback", "/docs/models-routing/model-fallback#fallback-chains"],
   ["/docs/configuration/virtual-model", "/docs/models-routing/virtual-models#define-a-virtual-model"],
-  ["/docs/configuration/model-variants", "/docs/models-routing/virtual-models#variants"],
+  ["/docs/configuration/model-variants", "/docs/routing/routing-rules#variants"],
   // Observability was split into the narrower Telemetry and Evaluations pages.
   ["/docs/configuration/observability", "/docs/cli/request-receipts"],
   ["/docs/configuration/observability/opentelemetry", "/docs/self-hosting#opentelemetry"],
   ["/docs/configuration/observability/tracing", "/docs/cli/request-receipts#cloud-activity"],
-  ["/docs/configuration/observability/evaluation", "/docs/routing/strategies#evaluations"],
+  ["/docs/configuration/observability/evaluation", "/docs/routing/auto-router#evaluations"],
   ["/docs/configuration/observability/:slug*", "/docs/cli/request-receipts"],
   // Customization recipes collapsed around capability families (2026-09).
   ["/docs/customization/models/bring-your-own-model", "/docs/models-routing/byok-subscriptions#custom-endpoints-and-models"],
@@ -210,7 +220,7 @@ pairs.push(
   ["/docs/extensions", "/docs/models-routing/byok-subscriptions"],
   ["/docs/extensions/:slug+", "/docs/customization/:slug+"],
   // The former Guides section is now organized around usage tasks.
-  ["/docs/guides", "/docs/cli/reference#init-and-config"],
+  ["/docs/guides", "/docs/usage/cli#init-and-config"],
   ["/docs/guides/overview", "/docs/overview/what-is-bitrouter"],
   ["/docs/guides/overview/quickstart", "/docs/overview/quickstart"],
   ["/docs/guides/overview/comparison", "/docs/overview/comparison/openrouter"],
@@ -221,19 +231,19 @@ pairs.push(
   ["/docs/get-started/introduction", "/docs/overview/what-is-bitrouter"],
   ["/docs/get-started/supported-models", "/docs/overview/supported-models"],
   ["/docs/get-started/supported-providers", "/docs/overview/supported-models"],
-  ["/docs/features/provider-selection", "/docs/routing/model-routing#candidate-eligibility"],
+  ["/docs/features/provider-selection", "/docs/routing/routing-rules#candidate-eligibility"],
   ["/docs/features/model-fallback", "/docs/models-routing/model-fallback#fallback-chains"],
-  ["/docs/features/model-variants", "/docs/models-routing/virtual-models#variants"],
+  ["/docs/features/model-variants", "/docs/routing/routing-rules#variants"],
   ["/docs/features/presets", "/docs/models-routing/virtual-models#presets"],
   ["/docs/features/structured-outputs", "/docs/models-routing/virtual-models#protocol-compatibility"],
   ["/docs/features/byok", "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key"],
   // concepts/ section dissolved (2026-07 reorg) → pages land next to their features
   ["/docs/concepts", "/docs/overview/what-is-bitrouter"],
   ["/docs/concepts/models", "/docs/overview/supported-models#how-model-ids-work"],
-  ["/docs/concepts/policy", "/docs/routing/strategies#initialize-a-policy-binding"],
+  ["/docs/concepts/policy", "/docs/routing/auto-router#initialize-a-policy-binding"],
   ["/docs/concepts/tools", "/docs/context-routing/mcp-servers"],
   ["/docs/concepts/agents", "/docs/context-routing/acp-servers"],
-  ["/docs/concepts/cli", "/docs/cli/reference#init-and-config"],
+  ["/docs/concepts/cli", "/docs/usage/cli#init-and-config"],
   ["/docs/concepts/mcp", "/docs/context-routing/mcp-servers"],
   ["/docs/concepts/agent-skill", "/docs/overview/quickstart"],
   // get-started consolidation (2026-07): onboarding merge, FAQs dissolved, cli/mcp → reference
@@ -241,7 +251,7 @@ pairs.push(
   ["/docs/get-started/wizard", "/docs/overview/quickstart"],
   ["/docs/get-started/agent-skill", "/docs/overview/quickstart"],
   ["/docs/get-started/faqs", "/docs/overview/quickstart"],
-  ["/docs/get-started/cli", "/docs/cli/reference#init-and-config"],
+  ["/docs/get-started/cli", "/docs/usage/cli#init-and-config"],
   ["/docs/get-started/mcp", "/docs/context-routing/mcp-servers"],
   // get-started/ section dissolved (2026-08): onboarding → overview/quickstart,
   // the four set-up-* walkthroughs → the quickstart or the page that owns each topic
@@ -253,8 +263,8 @@ pairs.push(
   ["/docs/get-started/comparison", "/docs/overview/comparison/openrouter"],
   ["/docs/get-started/set-up-routing", "/docs/models-routing/virtual-models#resolution-order"],
   ["/docs/get-started/set-up-tracing", "/docs/self-hosting#opentelemetry"],
-  ["/docs/get-started/set-up-evaling", "/docs/routing/strategies#evaluations"],
-  ["/docs/get-started/set-up-looping", "/docs/routing/strategies#initialize-a-policy-binding"],
+  ["/docs/get-started/set-up-evaling", "/docs/routing/auto-router#evaluations"],
+  ["/docs/get-started/set-up-looping", "/docs/routing/auto-router#initialize-a-policy-binding"],
   // infrastructure → bitrouter cloud (folder renamed; pages merged/moved)
   ["/docs/infrastructure/managed-provider", "/docs/overview/supported-models"],
   ["/docs/infrastructure/discounted-models", "/docs/overview/supported-models"],
@@ -272,23 +282,23 @@ pairs.push(
   ["/docs/cloud/payment", "/docs/overview/quickstart#self-host-or-cloud"],
   // CLI + MCP left the API Reference tab for Documentation → Usage (2026-08).
   // These must stay above the /docs/reference wildcards below.
-  ["/docs/reference/cli", "/docs/cli/reference#init-and-config"],
+  ["/docs/reference/cli", "/docs/usage/cli#init-and-config"],
   ["/docs/reference/cli/:slug*", "/docs/usage/cli/:slug*"],
   ["/docs/reference/mcp", "/docs/context-routing/mcp-servers"],
   // The CLI reference collapsed from ten pages into one (2026-08). Each retired
   // page lands on its `##` section anchor — keep these in sync with the section
   // titles in cli-overlays/<group>.md, which is where the anchors come from.
-  ["/docs/usage/cli/index", "/docs/cli/reference#init-and-config"],
-  ["/docs/usage/cli/daemon", "/docs/cli/reference#daemon-lifecycle"],
-  ["/docs/usage/cli/init", "/docs/cli/reference#init-and-config"],
-  ["/docs/usage/cli/route", "/docs/cli/reference#routing-introspection"],
-  ["/docs/usage/cli/providers", "/docs/cli/reference#providers"],
-  ["/docs/usage/cli/policy", "/docs/cli/reference#policy"],
-  ["/docs/usage/cli/cloud", "/docs/cli/reference#cloud"],
-  ["/docs/usage/cli/tools", "/docs/cli/reference#agents-acp-and-mcp"],
-  ["/docs/usage/cli/skills", "/docs/cli/reference#skills"],
-  ["/docs/usage/cli/harnesses", "/docs/cli/reference#coding-agents"],
-  ["/docs/usage/cli/misc", "/docs/cli/reference#key-workflow-state-and-update"],
+  ["/docs/usage/cli/index", "/docs/usage/cli#init-and-config"],
+  ["/docs/usage/cli/daemon", "/docs/usage/cli#daemon-lifecycle"],
+  ["/docs/usage/cli/init", "/docs/usage/cli#init-and-config"],
+  ["/docs/usage/cli/route", "/docs/usage/cli#routing-introspection"],
+  ["/docs/usage/cli/providers", "/docs/usage/cli#providers"],
+  ["/docs/usage/cli/policy", "/docs/usage/cli#policy"],
+  ["/docs/usage/cli/cloud", "/docs/usage/cli#cloud"],
+  ["/docs/usage/cli/tools", "/docs/usage/cli#agents-acp-and-mcp"],
+  ["/docs/usage/cli/skills", "/docs/usage/cli#skills"],
+  ["/docs/usage/cli/harnesses", "/docs/usage/cli#coding-agents"],
+  ["/docs/usage/cli/misc", "/docs/usage/cli#key-workflow-state-and-update"],
   // AI Resources dissolved (2026-08): skills and the docs MCP server moved into
   // Usage; the llms.txt page retired (the endpoints themselves still serve).
   ["/docs/ai-resources", "/docs/context-routing/skills"],
@@ -336,9 +346,9 @@ pairs.push(
   // models-and-routing/, the tool-calling pages to what became
   // models-and-routing/tool-calling/ (see the section dissolve below).
   ["/docs/gateway-and-routing/model-fallback", "/docs/models-routing/model-fallback#fallback-chains"],
-  ["/docs/gateway-and-routing/provider-selection", "/docs/routing/model-routing#candidate-eligibility"],
+  ["/docs/gateway-and-routing/provider-selection", "/docs/routing/routing-rules#candidate-eligibility"],
   ["/docs/gateway-and-routing/virtual-model", "/docs/models-routing/virtual-models#define-a-virtual-model"],
-  ["/docs/gateway-and-routing/model-variants", "/docs/models-routing/virtual-models#variants"],
+  ["/docs/gateway-and-routing/model-variants", "/docs/routing/routing-rules#variants"],
   ["/docs/gateway-and-routing/bring-your-own-model", "/docs/models-routing/byok-subscriptions#custom-endpoints-and-models"],
   ["/docs/gateway-and-routing/bring-your-own-provider", "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key"],
   ["/docs/gateway-and-routing/structured-outputs", "/docs/models-routing/virtual-models#protocol-compatibility"],
@@ -362,9 +372,9 @@ pairs.push(
   ["/docs/mcp-and-tool-calling/:slug*", "/docs/customization/tools/:slug*"],
   // evals-and-tracing/ split into objective evidence and operational telemetry.
   ["/docs/evals-and-tracing", "/docs/cli/request-receipts"],
-  ["/docs/evals-and-tracing/evaluation", "/docs/routing/strategies#evaluations"],
-  ["/docs/evals-and-tracing/evaluations", "/docs/routing/strategies#evaluations"],
-  ["/docs/evals-and-tracing/evals", "/docs/routing/strategies#evaluations"],
+  ["/docs/evals-and-tracing/evaluation", "/docs/routing/auto-router#evaluations"],
+  ["/docs/evals-and-tracing/evaluations", "/docs/routing/auto-router#evaluations"],
+  ["/docs/evals-and-tracing/evals", "/docs/routing/auto-router#evaluations"],
   ["/docs/evals-and-tracing/:slug*", "/docs/cli/request-receipts"],
   // agent and tool protocol history → Usage and Extensions.
   ["/docs/models-and-routing/acp-gateway", "/docs/context-routing/acp-servers"],
@@ -373,7 +383,7 @@ pairs.push(
   ["/docs/models-and-routing/tool-calling/:slug*", "/docs/customization/tools/:slug*"],
   ["/docs/agents-and-orchestration", "/docs/integration/coding-agents"],
   // Retired guide slugs resolve to the current task pages.
-  ["/docs/guides/cloud-api", "/docs/cli/reference#init-and-config"],
+  ["/docs/guides/cloud-api", "/docs/usage/cli#init-and-config"],
   ["/docs/guides/build-a-plugin", "/docs/overview/what-is-bitrouter"],
   ["/docs/guides/register-as-a-provider", "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key"],
   // observability/ → Router telemetry
@@ -399,7 +409,7 @@ pairs.push(
   // search-provider integrations into the web search feature page.
   ["/docs/overview/supported-providers", "/docs/overview/supported-models"],
   ["/docs/gateway-and-routing/models", "/docs/overview/supported-models#how-model-ids-work"],
-  ["/docs/gateway-and-routing/policy", "/docs/routing/strategies#initialize-a-policy-binding"],
+  ["/docs/gateway-and-routing/policy", "/docs/routing/auto-router#initialize-a-policy-binding"],
   ["/docs/integrations/tools", "/docs/overview/what-is-bitrouter"],
   ["/docs/integrations/exa", "/docs/overview/what-is-bitrouter"],
   ["/docs/integrations/parallel", "/docs/overview/what-is-bitrouter"],
@@ -426,6 +436,16 @@ pairs.push(
 // rule at the end of redirects() folds them to the English path, which then
 // takes its own 301 to the final destination. One extra hop, on a dead locale.
 const movedGuideRoutes = new Set([
+  "/docs/cli/reference",
+  "/docs/configuration-reference",
+  "/docs/data-handling",
+  "/privacy-policy",
+  "/terms-of-service",
+
+  "/docs/routing/strategies",
+  "/docs/routing/model-routing",
+  "/docs/models-routing/model-variants",
+
   "/docs/providers/byok-subscriptions",
   "/docs/providers/local-models",
   "/docs/models-routing/buy-inference",
@@ -553,33 +573,33 @@ const nextConfig: NextConfig = {
 
 
       // ── Legal pages moved off /legal to flat top-level URLs ──
-      { source: "/legal/privacy", destination: "/privacy-policy", permanent: true },
-      { source: "/legal/terms", destination: "/terms-of-service", permanent: true },
-      { source: "/zh/legal/privacy", destination: "/privacy-policy", permanent: true },
-      { source: "/zh/legal/terms", destination: "/terms-of-service", permanent: true },
-      { source: "/zh/legal", destination: "/privacy-policy", permanent: true },
-      { source: "/legal", destination: "/privacy-policy", permanent: true },
-      { source: "/zh/privacy-policy", destination: "/privacy-policy", permanent: true },
-      { source: "/zh/terms-of-service", destination: "/terms-of-service", permanent: true },
+      { source: "/legal/privacy", destination: "/docs/privacy-policy", permanent: true },
+      { source: "/legal/terms", destination: "/docs/terms-of-service", permanent: true },
+      { source: "/zh/legal/privacy", destination: "/docs/privacy-policy", permanent: true },
+      { source: "/zh/legal/terms", destination: "/docs/terms-of-service", permanent: true },
+      { source: "/zh/legal", destination: "/docs/privacy-policy", permanent: true },
+      { source: "/legal", destination: "/docs/privacy-policy", permanent: true },
+      { source: "/zh/privacy-policy", destination: "/docs/privacy-policy", permanent: true },
+      { source: "/zh/terms-of-service", destination: "/docs/terms-of-service", permanent: true },
 
       {
         source: "/docs/overview/privacy-policy",
-        destination: "/privacy-policy",
+        destination: "/docs/privacy-policy",
         permanent: true,
       },
       {
         source: "/zh/docs/overview/privacy-policy",
-        destination: "/privacy-policy",
+        destination: "/docs/privacy-policy",
         permanent: true,
       },
       {
         source: "/docs/overview/terms-of-service",
-        destination: "/terms-of-service",
+        destination: "/docs/terms-of-service",
         permanent: true,
       },
       {
         source: "/zh/docs/overview/terms-of-service",
-        destination: "/terms-of-service",
+        destination: "/docs/terms-of-service",
         permanent: true,
       },
 

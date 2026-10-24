@@ -4,9 +4,9 @@
     "overview",
     "usage",
     "integration",
+    "market",
     "routing",
     "models-routing",
-    "market",
     "context-routing",
     "cli"
   ]

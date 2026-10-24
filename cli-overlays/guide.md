@@ -1,0 +1,341 @@
+---
+title: CLI
+description: Use BitRouter from the terminal, coordinate Goals, and run native tasks from scripts.
+---
+
+Install and configure BitRouter using the [Quickstart](/docs/overview/quickstart). This guide brings together self-driving workflows, the interactive terminal, and headless scripting. The [command reference below](/docs/usage/cli#command-reference) lists the commands and flags captured from the binary.
+
+## Self-driving workflows
+
+<Callout type="info">
+**Design preview.** Self-driving workflows with BitRouter Orchestrator are under development. This page describes the intended product behavior and entry points. The generated [CLI reference](/docs/usage/cli#coding-agents) still reflects the captured command set; released builds may use the earlier ACP conversation interface.
+</Callout>
+
+**BitRouter Orchestrator (BRO)** coordinates long-running work around a **Goal**: the outcome you want, its completion conditions, and the scope, budget, and permissions within which work can proceed. You delegate the outcome; BRO plans the work, coordinates execution, checks results, and decides what remains.
+
+The built-in executor can carry a Goal through to completion. External ACP-compatible coding harnesses are optional workers. You can also keep using a harness directly through [Coding Agents](/docs/integration/bro-harness).
+
+### Delegate a goal
+
+Describe the result and its boundaries. For example:
+
+```text
+Fix session expiry after a browser refresh and add regression coverage.
+Keep the public API unchanged. Verify the patch locally.
+Deliver a reviewable diff; deployment is outside scope.
+```
+
+BRO keeps that Goal across planning, execution attempts, worker changes, and recovery. A Goal includes its requirements, completion conditions, budget, authorization, results, and progress history. Selecting or opening a Goal changes your view; creating and submitting one is an explicit action.
+
+In the goal-oriented interface, `bro` and `bro code` open Goals. Use the [Interactive TUI guide](/docs/usage/cli#interactive-tui) to understand the Goals list, current Goal, and read-only Workflow view.
+
+### Coordinate the work
+
+BRO breaks work into tracked tasks, arranges dependencies, and chooses execution resources within the available capabilities. Independent tasks can proceed in parallel. Tasks that depend on a result wait for an applicable, verified version of that result.
+
+For the session-expiry example, implementation and an independent compatibility investigation might run separately. Browser verification needs an actual patch; completion needs evidence for the integrated result. Separate passing branches do not establish that their combined artifact works.
+
+The work keeps its identity when a worker is replaced. BRO retains the previous attempt and its evidence, coordinates outstanding effects, and hands the remaining work to the next executor. Concurrent writes require isolation or serialization supported by the execution environment.
+
+### Steer a running goal
+
+You can ask a question, change a requirement, or control execution while work is running. Input goes to the current Goal. An explicit task or result reference narrows its scope; inspecting a branch does not redirect your next instruction.
+
+| Input | Intended effect |
+| --- | --- |
+| “What is blocking verification?” | Answer from recorded status and evidence |
+| “Would approach B be simpler?” | Discuss the alternative |
+| “Use approach B and retain the API contract.” | Update the requirement and coordinate affected work |
+| “Also verify the older client.” | Extend the completion conditions and verification work |
+| “Pause this Goal.” | Save the pause intent, stop new dispatch, and coordinate active execution |
+
+A question or hypothetical alternative leaves the current requirements in place. A clear, authorized change can proceed after validation without a second routine plan approval. Ambiguous scope, conflicting requirements, and work beyond existing authorization need a concrete decision.
+
+BRO distinguishes a saved requirement from a change delivered to an executor, adopted in an execution, or verified in an artifact. Bounded decision models help interpret input; reasoning handles open planning and review. Model confidence alone does not establish that a change took effect.
+
+### Deliver verified results
+
+Workers produce artifacts and evidence. BRO checks them against the current completion conditions, performs the required verification and review, and records completion only when the relevant execution has settled and the conditions are satisfied.
+
+The delivery identifies what changed, what was verified, what remains unknown, and which artifact version the evidence covers. A worker's final reply is one execution result; the Goal has its own completion decision.
+
+A verified, reviewable result can complete the Goal autonomously. Human acceptance becomes required when the Goal explicitly includes it. Preparing a diff, creating a pull request, merging, and deploying have different completion conditions; the delegated scope determines the required delivery.
+
+Completion ends that execution cycle. An explicit follow-up change can start another cycle on the same Goal while preserving the earlier result and its evidence.
+
+### Pause, recover, and continue
+
+A budget limit or blocker explains why progress stopped. It does not establish that the Goal succeeded. BRO retains partial results, unmet conditions, the stopping reason, and the conditions needed to continue.
+
+Budget accounting includes coordination and verification as well as worker execution within the resources the runtime can measure and control. Recorded cost, estimates, work still in flight, and unknown cost remain distinguishable.
+
+Pausing stops new dispatch and coordinates work already running. Confirmed stops and uncertain effects are reported separately. Recovery reconciles recorded work and execution state before retrying actions whose effects are uncertain. Resuming preserves the Goal and applies its current requirements, authorization, and remaining budget.
+
+### Inspect execution and resource choices
+
+The [Workflow view](/docs/usage/cli#inspect-the-workflow) shows tasks, dependencies, attempts, resources, and supporting evidence. It is read-only. Available resources, configured resources, and resources confirmed in actual execution are distinct; missing model or usage evidence remains unknown.
+
+BRO reuses BitRouter's [model routing](/docs/routing/auto-router) and supported native [context views](/docs/routing/context-routing). An external harness continues to own its private conversation, compaction, and tools. ACP integration exposes only the capabilities that the adapter actually supports.
+
+### Choose your entry point
+
+| Work you want to do | Entry point | Responsibility |
+| --- | --- | --- |
+| Delegate a persistent Goal in the goal-oriented preview | `bro` or `bro code` | BRO coordinates; built-in or optional ACP workers execute |
+| Work directly in a harness's native interface | `bro claude`, `bro codex`, or `bro launch <harness>` | You interact with the harness |
+| Run one native BRO task (development preview) | `bro task run` | The built-in executor performs the admitted task |
+| Send one ACP prompt from a script | `bro run <agent> "..."` | The selected harness executes that invocation |
+| Connect an external ACP client to a harness | `bro acp serve <agent>` | The external client drives the harness |
+
+See [Headless & Scripting](/docs/usage/cli#headless--scripting) for native execution, structured output, and verification gates. A native task invocation is an execution unit; persistent Goal automation needs its own verified lifecycle contract.
+
+The goal-oriented entry replaces the earlier `bro code <agent>` conversation contract. Use native launch for direct interaction or ACP serve for an external client. Neither a native launch nor a headless ACP invocation automatically creates a BRO Goal.
+
+<Cards>
+  <Card title="Interactive TUI" href="/docs/usage/cli#interactive-tui" description="Navigate Goals, steer work, and inspect its evidence." />
+  <Card title="Coding Agents" href="/docs/integration/bro-harness" description="Launch an external harness in its native interface." />
+  <Card title="Headless & Scripting" href="/docs/usage/cli#headless--scripting" description="Automate native BRO execution and verification from CI or local scripts." />
+  <Card title="ACP servers" href="/docs/context-routing/acp-servers" description="Check adapter capabilities and session ownership." />
+</Cards>
+
+## Interactive TUI
+
+<Callout type="info">
+**Goal-oriented preview.** This guide describes the BRO terminal interface under development. Earlier builds may still expose `bro code <agent>` as an ACP conversation. The generated [command reference](/docs/usage/cli#coding-agents) retains that captured contract until the implementation and CLI snapshot are updated.
+</Callout>
+
+The TUI gives you three views of the same ongoing work: a **Goals** list, the **current Goal**, and its read-only **Workflow**. [Self-driving Workflows](/docs/usage/cli#self-driving-workflows) explains how planning, execution, verification, and completion fit together.
+
+### Open Goals
+
+In the goal-oriented interface, either entry opens Goals:
+
+```bash
+bro
+bro code
+```
+
+Choose an existing Goal or explicitly create a new one. Opening the interface does not itself start work or select an external agent for you. If setup is needed, finish configuration and return to Goals; [Quickstart](/docs/overview/quickstart) covers model sources and the local daemon.
+
+To work directly in a harness's native interface, use [`bro claude`, `bro codex`, or `bro launch`](/docs/integration/bro-harness). An external harness is optional when delegating a BRO Goal.
+
+### Find and manage your Goals
+
+The Goals view shows the project, desired outcome, progress summary, available results, items that need your decision, and how recently the state was confirmed. Open, search, or filter Goals without changing their execution priority.
+
+Each Goal retains its own draft, reading position, and expanded details. Switching views does not submit a draft, approve a pending decision, or redirect an unconfirmed submission to another Goal.
+
+Create a Goal by describing its outcome, completion conditions, scope, and any budget or authorization limits. Ordinary work already within those limits can proceed without a separate routine plan-approval form.
+
+### Work in the current Goal
+
+The center view keeps the Goal, active completion conditions, input scope, and current result version visible. Its progress summary distinguishes verified work, active work, remaining conditions, and decisions that need you.
+
+Important events include requirement changes, material plan adjustments, verification results, and deliveries. Raw worker output belongs in execution details so background activity does not displace the result or decision you are reading.
+
+A Goal can keep progressing while you inspect it or enter another instruction. Your input is addressed to BRO for that Goal, rather than directly to whichever worker is currently active.
+
+### Submit input while work runs
+
+Explicitly submit input to the current Goal with `Enter` or the submit action. Pasting and editing retain their editing meaning. Use multiline input for longer instructions; exact shortcut combinations will be documented with the implemented interface.
+
+| You submit | What BRO should do |
+| --- | --- |
+| “What has been verified?” | Answer using current evidence |
+| “Why choose approach A?” | Explain or discuss without changing requirements |
+| “Keep the API unchanged and verify Safari first.” | Save the constraint and coordinate the affected work |
+| A response to a specific decision | Apply it only to that decision while it remains valid |
+| A change explicitly referencing a task or result | Apply it to the identified scope within the current Goal |
+
+Browsing a branch in Workflow does not change the input scope. Reference the task, result, or decision explicitly when the instruction should target it. Creating another Goal or changing a global setting requires an explicit action or instruction.
+
+Feedback reports the stages supported by actual evidence: a requirement may be saved, work adjusted, input delivered, an instruction adopted by execution, or an artifact verified. These stages need not all happen at submission time. A saved instruction does not establish that every running worker has already adopted it.
+
+### Inspect the Workflow
+
+Open Workflow to inspect tasks, dependencies, blockers, execution attempts, resource choices, and evidence. Expand a task to inspect its inputs, output versions, actual execution, and the results other tasks depend on.
+
+| Detail | What to look for |
+| --- | --- |
+| Task and dependencies | Its scope, state, required results, and affected downstream work |
+| Execution | Which built-in executor or ACP worker actually received the work |
+| Resources | Configured model, context, tools, or skills, and what actual execution confirms |
+| Evidence | Artifact versions, checks, observations, and their applicable requirements |
+| History | Earlier attempts, requirement changes, and worker replacements |
+
+Workflow and underlying session details are read-only. They do not expose branch editing, resource switching, permission approval, dispatch controls, or an interactive worker terminal. Return to the current Goal to give a scoped instruction or control execution.
+
+On a narrow terminal, task hierarchy, state, and blockers take priority. Browsing execution evidence does not pause work, change priority, or retarget the center input. Returning restores the previous draft and reading position.
+
+### Handle necessary decisions
+
+A decision explains what is needed, why, which work it affects, and what each available choice authorizes. Independent work can continue while a particular branch waits.
+
+Answer the decision in its own scope. A decision that is already resolved or whose conditions changed cannot authorize new work. Allowing a migration file to be generated, for example, does not authorize applying it to a production database.
+
+### Pause and resume
+
+Use an explicit pause or stop action for the current Goal, or clearly identify a task when controlling a smaller scope. Navigating back from a detail view does not cancel the Goal. Confirmed execution stops and work still being reconciled are shown separately.
+
+Pausing retains the Goal and partial results for later continuation. A budget limit or blocker shows unmet conditions and what is needed to continue. Increasing a limit, changing requirements, and resuming are separate actions with their own effects; viewing a paused Goal does not restart it.
+
+### Review the result
+
+Open a result to inspect its changes, verification evidence, remaining unknowns, and delivery state. Review is tied to the requirements and artifact version it covers. A newer version is announced without replacing the result currently open for review.
+
+A verified, reviewable delivery can complete a Goal without an additional acceptance click. If the Goal explicitly requires human acceptance, the result remains available while completion waits for the applicable decision.
+
+An explicit follow-up change starts another work cycle on the same Goal within its budget and authorization. Opening a result or asking about it does not itself restart execution.
+
+### Operations-only targets
+
+Remote administration and named daemon contexts remain operational interfaces. Use the [daemon command reference](/docs/usage/cli#daemon-lifecycle) for target selection and the captured control contract. Opening an operations target does not establish a remote BRO Goal or transfer an external harness's session.
+
+<Cards>
+  <Card title="Self-driving" href="/docs/usage/cli#self-driving-workflows" description="Understand Goal coordination and evidence-backed completion." />
+  <Card title="Headless & Scripting" href="/docs/usage/cli#headless--scripting" description="Run native BRO tasks, verify results, and consume structured output from scripts." />
+  <Card title="Coding Agents" href="/docs/integration/bro-harness" description="Use the harness's native terminal interface." />
+  <Card title="CLI reference" href="/docs/usage/cli#coding-agents" description="Inspect commands captured from the CLI binary." />
+</Cards>
+
+## Headless & Scripting
+
+<Callout type="info">
+**Development preview.** The native BRO commands below follow the development implementation and may be absent from installed releases or the captured [CLI reference](/docs/usage/cli#coding-agents). The complete headless Goal lifecycle is still being defined. A native task invocation executes work without the interactive terminal; it does not establish that a persistent Goal was created or completed.
+</Callout>
+
+Use BRO's native headless executor for repository work in CI, local scripts, or an automated pipeline. Supply a task and workspace, choose the permitted execution mode, collect structured progress, and check the actual terminal and verification results before continuing.
+
+The same execution foundations support the goal-oriented [Self-driving Workflows](/docs/usage/cli#self-driving-workflows) design. Use [Interactive TUI](/docs/usage/cli#interactive-tui) to delegate and steer a persistent Goal in the terminal. Sending one prompt to an external harness remains a separate [headless ACP invocation](/docs/context-routing/acp-servers#run-one-headless-turn).
+
+### Choose the native execution mode
+
+| Entry point | Execution and state |
+| --- | --- |
+| `bro task run` | Submit one native coding Turn to the local BRO server and wait for its terminal result |
+| `bro task managed` | Run the native workspace harness with a named managed session and durable context |
+
+The built-in executor runs the work; neither entry requires choosing an external ACP agent. These are local execution interfaces. Explicit remote contexts are rejected rather than silently falling back to a local workspace.
+
+### Run a native task
+
+From a project with a configured model route, submit the work and its verification command:
+
+```bash
+bro task run "Fix the failing test and keep the public API unchanged." \
+  --workspace . \
+  --check "pnpm test"
+```
+
+Replace `pnpm test` with the check appropriate to your project. `--workspace` identifies the server-local working directory; it defaults to the client's current directory. Use `--model` to select a configured model when a default is unavailable or an explicit route is required.
+
+For an inspection-only task:
+
+```bash
+bro task run "Explain the authentication flow and identify missing coverage." \
+  --workspace . \
+  --read-only
+```
+
+Read-only execution exposes the native read, glob, and grep tools. It excludes write, edit, and shell tools, and cannot be combined with `--check`. Without a verification command, verification is recorded as `not_requested`.
+
+### Continue a managed session
+
+Choose a session name when the next invocation should continue retained native context:
+
+```bash
+bro task managed "Investigate the session-expiry failure." \
+  --workspace . \
+  --session session-expiry \
+  --read-only
+
+bro task managed "Continue the investigation and summarize the affected modules." \
+  --workspace . \
+  --session session-expiry \
+  --read-only
+```
+
+Reuse the name after the previous invocation has released cleanly, with the same workspace and execution mode. Abrupt process loss can leave recovery blocked; a session name does not authorize automatic takeover of an active or uncertain execution.
+
+A managed session retains execution context. A persistent Goal additionally carries completion conditions, budget, work dependencies, and coordination history. Reusing a session does not by itself create that Goal lifecycle.
+
+### Consume structured output
+
+`bro task run` writes newline-delimited JSON to stdout. Keep stdout intact as an event artifact and send diagnostics to a separate log when needed.
+
+| Record | How a script uses it |
+| --- | --- |
+| `accepted` | Retain the admitted `thread_id`, `turn_id`, server identity, workspace, and cursor |
+| `snapshot` | Read the current Thread view, including resynchronization information |
+| `event` | Follow recorded public changes using their durable cursors |
+| `live` | Display transient output without treating it as durable completion evidence |
+| `terminal` | Inspect `status`, `verification`, evidence, `final_answer`, and `unknown_effect` |
+| `blocked` | Preserve the reported snapshot and inspect the recovery state |
+
+Thread cursors are monotonic and can have gaps. Live output and assistant text do not replace a terminal record. If observation disconnects, the work may still be running; the client reports the uncertainty without resubmitting a new task.
+
+`bro task managed` has a different output shape: `managed_session` identifies the session, followed by a `terminal` record containing the native run. Use the parser for the chosen command rather than assuming the two terminal schemas are identical.
+
+### Gate a script on verified completion
+
+This Bash example captures native task events and requires both a completed Turn and a passed verification check. It uses `jq` to inspect the terminal record:
+
+```bash
+#!/usr/bin/env bash
+set -uo pipefail
+
+events_file="${BRO_EVENTS_FILE:-bro-events.ndjson}"
+
+if bro task run \
+  "Fix the failing tests. Keep the public API unchanged and deliver a reviewable diff." \
+  --workspace . \
+  --check "pnpm test" >"$events_file"; then
+  jq -e '
+    select(.type == "terminal")
+    | .status == "completed"
+      and .verification == "passed"
+      and .unknown_effect == false
+  ' "$events_file" >/dev/null
+else
+  task_status=$?
+  printf 'BRO task stopped; inspect %s\n' "$events_file" >&2
+  exit "$task_status"
+fi
+```
+
+Keep the event file and changed artifact together for review. A failed, cancelled, interrupted, or recovery-blocked task exits nonzero. Even when the process succeeds, a script that requires verification must check the verification result; `not_requested`, `unavailable`, `denied`, and `failed` do not satisfy that requirement.
+
+The check covers the artifact and command actually verified. A later edit, merge, or deployment requires its own applicable evidence. A completed native Turn also does not prove that every condition of a larger BRO Goal has been met.
+
+### Permissions
+
+Native headless coding approves its own identified tool requests within the admitted execution. It does not inherit the external ACP client's `--deny-all` or `--approve-reads` policy flags. Use `--read-only` for inspection and an execution environment appropriate to the authorized effects for coding tasks.
+
+The workspace and native file-tool path checks do not provide an operating-system sandbox for shell commands or trusted MCP processes. Provider credentials, tool access, and any required isolation must be configured for the environment running BRO.
+
+### Handle interruption and recovery
+
+Retain the identities emitted at admission. An unresolved acceptance or disconnected observer must not be treated as proof that nothing ran. Inspect the retained execution before submitting replacement work with potentially duplicate effects.
+
+Cancellation coordinates the admitted task and reports its final or blocked state when available. Interrupted or unknown effects need reconciliation. The process's termination alone does not prove that every downstream effect stopped.
+
+### Automate a persistent Goal
+
+Full Goal scripting should use the same goal, authorization, budget, evidence, and completion semantics as [Interactive TUI](/docs/usage/cli#interactive-tui). Its command names, request schema, and process-control contract remain pending implementation validation. The native examples above are the execution foundation, not a proposed spelling for Goal creation or control.
+
+The intended automation lifecycle is:
+
+1. Submit an outcome, completion conditions, workspace, budget, and authorized scope through an explicitly supported Goal interface.
+2. Retain the accepted Goal and operation identities so retries can refer to the original work.
+3. Observe progress, applicable artifact versions, required decisions, and recorded evidence.
+4. Distinguish completion from budget exhaustion, blocking, pause, and unknown execution effects.
+5. Continue only when the Goal's actual conditions are satisfied and its result is available; otherwise preserve partial results and recovery requirements.
+
+A pipeline can prepare the project and checks now. It should add Goal submission, pause/resume, and durable retry automation once those interfaces have a verified contract. This guide does not assign future flags or turn `bro run <agent>` into a Goal API.
+
+<Cards>
+  <Card title="Self-driving" href="/docs/usage/cli#self-driving-workflows" description="Understand persistent Goals and evidence-backed delivery." />
+  <Card title="Interactive TUI" href="/docs/usage/cli#interactive-tui" description="Delegate, steer, and inspect work in the terminal." />
+  <Card title="ACP servers" href="/docs/context-routing/acp-servers#run-one-headless-turn" description="Run a separate one-prompt invocation against an external harness." />
+  <Card title="CLI reference" href="/docs/usage/cli#coding-agents" description="Inspect the captured release command set." />
+</Cards>

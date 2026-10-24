@@ -107,7 +107,7 @@ bro run codex "Summarize this repository" --format ndjson
 bro run codex --prompt-file task.md --format text
 ```
 
-Use `--result-schema @schema.json` when the final reply must satisfy a JSON Schema, or supply the schema as inline JSON. Set `--turn-timeout <SECS>` to bound the turn. The generated [CLI reference](/docs/cli/reference#bro-run) lists the complete options.
+Use `--result-schema @schema.json` when the final reply must satisfy a JSON Schema, or supply the schema as inline JSON. Set `--turn-timeout <SECS>` to bound the turn. The generated [CLI reference](/docs/usage/cli#bro-run) lists the complete options.
 
 ### Headless permissions
 
@@ -140,7 +140,7 @@ For rules stored in a file:
 bro run codex "Review this repository" --permission-policy @permissions.json
 ```
 
-Entries match the ACP tool kind, the tool-call title, or its first word. `autoDeny` wins over `autoApprove`. Unmatched requests use `defaultAction`, or the selected mode flag when no default action is supplied. See the generated [CLI reference](/docs/cli/reference#bro-run) for the complete contract.
+Entries match the ACP tool kind, the tool-call title, or its first word. `autoDeny` wins over `autoApprove`. Unmatched requests use `defaultAction`, or the selected mode flag when no default action is supplied. See the generated [CLI reference](/docs/usage/cli#bro-run) for the complete contract.
 
 ## Routing and session ownership
 
@@ -159,5 +159,5 @@ Optional `acp_recording` configuration can mirror observable ACP content into th
   <Card title="Self-driving" href="/docs/usage/cli#self-driving-workflows" description="Understand the Goal coordinator and its optional ACP workers." />
   <Card title="Interactive TUI" href="/docs/usage/cli#interactive-tui" description="Preview the Goal-oriented terminal interface." />
   <Card title="Coding agents" href="/docs/integration/coding-agents" description="Launch Claude, Codex, OpenCode, Pi, and other supported harnesses." />
-  <Card title="CLI reference" href="/docs/cli/reference#agents-acp-and-mcp" description="Agent catalog, ACP, and headless run commands." />
+  <Card title="CLI reference" href="/docs/usage/cli#agents-acp-and-mcp" description="Agent catalog, ACP, and headless run commands." />
 </Cards>

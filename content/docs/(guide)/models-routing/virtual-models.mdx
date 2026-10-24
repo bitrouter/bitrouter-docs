@@ -85,13 +85,13 @@ presets:
 
 Call `@fast` to apply those defaults. Request fields take precedence over preset defaults. The virtual model owns the endpoint definition; the preset adds a reusable request profile.
 
-`bitrouter/auto` requires a policy binding in addition to the preset name. See the [Strategies guide](/docs/routing/strategies#initialize-a-policy-binding) for initializing that binding.
+`bitrouter/auto` requires a policy binding in addition to the preset name. See the [Auto Router guide](/docs/routing/auto-router#initialize-a-policy-binding) for initializing that binding.
 
 ## Variants
 
 A configured variant applies routing preferences to a selector, for example `coding:private` or `@fast:primary`. It does not create another virtual-model definition. An unknown suffix remains part of the selector instead of being silently removed.
 
-Variants do not grant access, bypass guardrails, or supply provider credentials. Configure candidate filters in [Model Routing](/docs/routing/strategies#variants).
+Variants do not grant access, bypass guardrails, or supply provider credentials. Configure candidate filters in [Routing Rules](/docs/routing/routing-rules#variants).
 
 ## Protocol compatibility
 

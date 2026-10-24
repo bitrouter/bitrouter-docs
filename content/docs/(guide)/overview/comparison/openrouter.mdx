@@ -11,10 +11,10 @@ OpenRouter offers hosted access to models and providers through one API. Its [Au
 | --- | --- | --- |
 | Who operates the router? | Hosted service | Self-hosted Apache-2.0 runtime or BitRouter Cloud |
 | How is automatic model selection configured? | Auto Router settings and hosted rankings | A policy bound to a preset such as `bitrouter/auto` |
-| How are eligible routes constrained? | Model restrictions and [provider preferences](https://openrouter.ai/docs/guides/routing/provider-selection) | Configured sources and [Model Routing](/docs/routing/model-routing) filters |
+| How are eligible routes constrained? | Model restrictions and [provider preferences](https://openrouter.ai/docs/guides/routing/provider-selection) | Configured sources and [Routing Rules](/docs/routing/routing-rules) filters |
 | How can operators review policy changes? | Configure the service's exposed controls | Inspect a versioned policy lock and explicitly apply reviewed candidates |
 
-BitRouter's [Strategies](/docs/routing/strategies) separates model selection from failure-driven fallback. Its [evaluation workflow](/docs/routing/strategies#evaluations) uses admitted objective results and frozen evidence snapshots to assess policy candidates. Collecting traffic or enabling an auto selector alone does not prove that the policy improved your workflow.
+BitRouter's [Auto Router](/docs/routing/auto-router) separates model selection from failure-driven fallback. Its [evaluation workflow](/docs/routing/auto-router#evaluations) uses admitted objective results and frozen evidence snapshots to assess policy candidates. Collecting traffic or enabling an auto selector alone does not prove that the policy improved your workflow.
 
 ## Choose BitRouter when
 
@@ -46,7 +46,7 @@ For a compatible client, replace the base URL and credential:
 For a local daemon, use `http://127.0.0.1:4356/v1` and the authentication configured for that deployment. Configure upstream sources through [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions) or [Local Models](/docs/models-routing/local-models).
 
 1. Resolve each explicit model id against the destination catalog; matching spellings do not guarantee matching availability or capabilities.
-2. If replacing `openrouter/auto`, initialize the [BitRouter auto binding](/docs/routing/strategies#initialize-a-policy-binding) before using `bitrouter/auto`. The selectors do not imply equivalent policies.
+2. If replacing `openrouter/auto`, initialize the [BitRouter auto binding](/docs/routing/auto-router#initialize-a-policy-binding) before using `bitrouter/auto`. The selectors do not imply equivalent policies.
 3. Translate provider restrictions, fallback lists, and router/plugin settings into BitRouter's model and routing configuration. Review OpenRouter-specific headers and extensions individually.
 4. Replay representative streaming, tool, and structured-output requests. Inspect [Request receipts](/docs/cli/request-receipts) for the actual serving model, usage, and fallback behavior.
 

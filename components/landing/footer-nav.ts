@@ -16,7 +16,7 @@ export const FOOTER_LINKS: FooterLink[] = [
 
 /** Compliance links for the bottom row — these are not navigation. */
 export const LEGAL_LINKS: FooterLink[] = [
-  { label: "Privacy", href: "/privacy-policy" },
-  { label: "Terms", href: "/terms-of-service" },
+  { label: "Privacy", href: "/docs/privacy-policy" },
+  { label: "Terms", href: "/docs/terms-of-service" },
   { label: "Subprocessors", href: "/subprocessors" },
 ];

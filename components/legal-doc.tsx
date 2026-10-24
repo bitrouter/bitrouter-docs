@@ -5,12 +5,9 @@ import type { MDXComponents } from "mdx/types";
 import "@/components/landing/zed/zed.css";
 import { Kicker } from "@/components/landing/zed/primitives";
 
-// Shared renderer for the standalone legal pages (/privacy-policy,
-// /terms-of-service, /subprocessors). Each route is a thin wrapper that passes
-// its slug here; the MDX still lives in content/legal/{slug}.mdx. Routes that
-// embed custom components in their MDX (e.g. the subprocessors tables) pass
-// them in via `components`. Rendered on the "Zed dark" system — the MDX body
-// reuses `.zed-article` (Newsreader headings + mono body + blue links).
+// Renderer for the standalone /subprocessors page. Privacy Policy and Terms
+// of Service live in the docs tree. Subprocessors keeps its custom tables and
+// landing-page styling through the legal collection.
 export function renderLegalPage(slug: string, components: MDXComponents = {}) {
   const page = legalSource.getPage([slug]);
   if (!page) notFound();

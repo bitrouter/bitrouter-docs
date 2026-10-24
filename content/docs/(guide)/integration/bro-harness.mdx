@@ -44,7 +44,7 @@ BitRouter prepares the harness's connection and starts its native interface. For
 | Hermes | `bro launch hermes` | A generated launch configuration |
 | OpenClaw | `bro launch openclaw` | A generated launch profile |
 
-The `bro [harness]` short form is available for Claude and Codex; `bro claude-code` is also an alias for `bro claude`. Use `bro launch <harness>` for the other entries above. Native launch support depends on the catalog shipped with your installed version; see the [CLI reference](/docs/cli/reference#bro-launch) for the full command contract.
+The `bro [harness]` short form is available for Claude and Codex; `bro claude-code` is also an alias for `bro claude`. Use `bro launch <harness>` for the other entries above. Native launch support depends on the catalog shipped with your installed version; see the [CLI reference](/docs/usage/cli#bro-launch) for the full command contract.
 
 ## What gets configured
 
@@ -57,7 +57,7 @@ For the routed harnesses above, BitRouter prepares the connection for the child 
 
 Claude and Codex receive routing through environment variables or command-line overrides. Harnesses that need generated files receive them under the project's self-ignoring `.bitrouter/launch/` directory. These settings apply to the launched process; BitRouter leaves the harness's normal user configuration in place.
 
-This command prepares the harness to use an existing router configuration. Author providers, credentials, and routes in [bitrouter.yaml](/docs/routing/configuration); look up their field types and defaults in [config reference](/docs/configuration-reference). A catalog harness using its own authentication, such as `grok` or `agy`, launches directly rather than receiving gateway redirection.
+This command prepares the harness to use an existing router configuration. Author providers, credentials, and routes in [bitrouter.yaml](/docs/routing/configuration); look up their field types and defaults in [config reference](/docs/routing/configuration#configuration-reference). A catalog harness using its own authentication, such as `grok` or `agy`, launches directly rather than receiving gateway redirection.
 
 ## Select a configuration or endpoint
 
@@ -104,5 +104,5 @@ Review the launch report for the route and MCP injection actually applied. `--no
   <Card title="Quickstart" href="/docs/overview/quickstart" description="Set up BitRouter and a working model route." />
   <Card title="Configuration (YAML)" href="/docs/routing/configuration" description="Choose the BitRouter policy used by the launcher." />
   <Card title="ACP servers" href="/docs/context-routing/acp-servers" description="Connect an external agent through the ACP interface." />
-  <Card title="CLI reference" href="/docs/cli/reference#coding-agents" description="Inspect launch commands and every available option." />
+  <Card title="CLI reference" href="/docs/usage/cli#coding-agents" description="Inspect launch commands and every available option." />
 </Cards>

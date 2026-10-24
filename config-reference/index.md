@@ -7,7 +7,7 @@ Use this reference to look up the accepted shape of `bitrouter.yaml`. Start with
 
 ## Version and scope
 
-The field tables are generated from the **{{VERSION}} configuration schema**, pinned to [BitRouter source `{{REVISION}}`]({{SOURCE_BASE}}/dist/schema/bitrouter.config.schema.json) (source commit dated {{SOURCE_DATE}}). This is a source/schema snapshot, not a claim that every installed binary supports these fields. Check `bro --version` and validate with the binary that will run the file. The [CLI reference](/docs/cli/reference) has its own captured command version.
+The field tables are generated from the **{{VERSION}} configuration schema**, pinned to [BitRouter source `{{REVISION}}`]({{SOURCE_BASE}}/dist/schema/bitrouter.config.schema.json) (source commit dated {{SOURCE_DATE}}). This is a source/schema snapshot, not a claim that every installed binary supports these fields. Check `bro --version` and validate with the binary that will run the file. The [CLI reference](/docs/usage/cli#command-reference) has its own captured command version.
 
 [Download the pinned JSON Schema](/schemas/bitrouter.config.schema.json) for an editor or offline validation. The schema describes file structure; runtime validation, credentials, model capabilities, and policy bindings can impose additional requirements.
 
@@ -30,7 +30,7 @@ Schema defaults and onboarding defaults differ. The schema declares `server.list
 | Listener, authentication, upstream timeouts, and storage | `server`, `upstream`, `database` | [Self-hosting](/docs/self-hosting) |
 | Provider keys, multiple accounts, and custom endpoints | `providers`, `registry`, `inherit_defaults` | [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions) |
 | Named model endpoints and request defaults | `models`, `presets`, `variants` | [Virtual Models](/docs/models-routing/virtual-models) |
-| Named routers, policy artifacts, and checks | `routers`, `policy`, `checkers` | [Strategies](/docs/routing/strategies) |
+| Named routers, policy artifacts, and checks | `routers`, `policy`, `checkers` | [Auto Router](/docs/routing/auto-router) |
 | Native semantic decision backend | `decision_model` | [Context Routing](/docs/routing/context-routing) |
 | ACP adapters and saved interactive defaults | `agents`, `chat` | [ACP servers](/docs/context-routing/acp-servers) |
 | Upstream MCP connections and aggregation | `mcp_servers`, `mcp` | [MCP servers](/docs/context-routing/mcp-servers) |

@@ -3,7 +3,7 @@ title: Context Routing
 description: Adjust what the next model call sees while preserving the evidence collected during the same task.
 ---
 
-A task can collect more history than its next step needs: file reads, tool results, failed attempts, and earlier conclusions. BitRouter's native managed runtime builds a **context view** for the next model call from that retained evidence. As the task progresses, the view can change while the original evidence remains available. This selects what the next call sees; [Model Routing](/docs/routing/model-routing) explains model and provider selection.
+A task can collect more history than its next step needs: file reads, tool results, failed attempts, and earlier conclusions. BitRouter's native managed runtime builds a **context view** for the next model call from that retained evidence. As the task progresses, the view can change while the original evidence remains available. This selects what the next call sees; [Routing Rules](/docs/routing/routing-rules) explains model and provider selection.
 
 <Callout type="info">
 This page describes context views in the native managed runtime. Availability depends on the runtime and build you use. Routing an external harness's model traffic through BitRouter does not give BitRouter control of that harness's history or compaction. See [ACP servers](/docs/context-routing/acp-servers) for that ownership boundary.
@@ -66,10 +66,10 @@ A smaller input can reduce input-token use, but assessment and summary generatio
 
 Context selection determines **what the next call sees**. Model routing determines **which model serves it**. [Virtual Models](/docs/models-routing/virtual-models) explains how callers name model endpoints; changing the context does not require changing that name.
 
-The task continues with its retained evidence as the view changes. This does not migrate an external agent's session or switch the CLI's named remote target. The separate [`bro context` commands](/docs/cli/reference#bro-context) select remote administration targets.
+The task continues with its retained evidence as the view changes. This does not migrate an external agent's session or switch the CLI's named remote target. The separate [`bro context` commands](/docs/usage/cli#bro-context) select remote administration targets.
 
 <Cards>
-  <Card title="Model Routing" href="/docs/routing/model-routing" description="Understand policy-bound model selection separately from context views." />
+  <Card title="Routing Rules" href="/docs/routing/routing-rules" description="Understand policy-bound model selection separately from context views." />
   <Card title="ACP servers" href="/docs/context-routing/acp-servers" description="Understand the boundary between BitRouter and an external harness's session." />
   <Card title="MCP servers" href="/docs/context-routing/mcp-servers" description="Connect the tools that supply evidence to an agent." />
   <Card title="Server tools" href="/docs/context-routing/server-tools" description="Server-side tool configuration and execution in BitRouter." />

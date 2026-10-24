@@ -1,9 +1,9 @@
 {
-  "title": "Routing",
-  "pagesIndex": "[Configuration (YAML)](/docs/routing/configuration)",
+  "title": "Router",
+  "pagesIndex": "[Auto Router](/docs/routing/auto-router)",
   "pages": [
-    "[Model Routing](/docs/routing/model-routing)",
+    "[Routing Rules](/docs/routing/routing-rules)",
     "[Context Routing](/docs/routing/context-routing)",
-    "[Strategies](/docs/routing/strategies)"
+    "[Configuration (YAML)](/docs/routing/configuration)"
   ]
 }

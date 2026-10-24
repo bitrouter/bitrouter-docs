@@ -2,7 +2,8 @@
   "title": "Overview",
   "pagesIndex": "[Quickstart](/docs/overview/quickstart)",
   "pages": [
-    "[Supported Models](/docs/overview/supported-models)",
-    "[How BitRouter Works](/docs/overview/what-is-bitrouter)"
+    "[How BitRouter Works](/docs/overview/what-is-bitrouter)",
+    "[Inference Spot](/docs/overview/inference-spot)",
+    "[Inference Forwards](/docs/overview/inference-forwards)"
   ]
 }

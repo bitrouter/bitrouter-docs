@@ -2,8 +2,10 @@
   "title": "Overview",
   "pagesIndex": "quickstart",
   "pages": [
-    "supported-models",
     "what-is-bitrouter",
-    "comparison"
+    "inference-spot",
+    "inference-forwards",
+    "comparison",
+    "supported-models"
   ]
 }

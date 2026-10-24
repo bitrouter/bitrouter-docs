@@ -24,8 +24,9 @@ References:
 ## Overview
 
 - [Quickstart](${BASE_URL}/docs/overview/quickstart): Install via Agent Skills or the CLI, start routing in under a minute, then optimize against your own workflow
-- [Supported Models](${BASE_URL}/docs/overview/supported-models): The curated catalog the router can score, downgrade, and fail over between, with pricing
 - [How BitRouter Works](${BASE_URL}/docs/overview/what-is-bitrouter): The one-page explanation — \`bitrouter/auto\`, how routing reads each call, and the two loops that improve it
+- [Inference Spot](${BASE_URL}/docs/overview/inference-spot): Coming soon
+- [Inference Forwards](${BASE_URL}/docs/overview/inference-forwards): Coming soon
 - [Agent Skill](https://github.com/bitrouter/bitrouter/tree/main/skills/bitrouter): Versioned instructions that teach an agent to install and operate BitRouter
 - [BitRouter CLI](https://github.com/bitrouter/bitrouter): \`cargo install bitrouter\` — the Rust binary, onboarding, and TUI conversation
 - [Enterprise](${BASE_URL}/enterprise): Choose between self-hosted OSS, BitRouter Cloud, and a design partnership for requirements not shipped today
@@ -42,11 +43,13 @@ References:
 - [Desktop](${BASE_URL}/docs/usage/desktop): Coming soon; current terminal and API alternatives
 - [CLI](${BASE_URL}/docs/usage/cli): Self-driving workflows, interactive terminal, and native headless scripting, with preview boundaries
 - [Responses API](${BASE_URL}/docs/usage/responses-api): Recommended generation interface, streaming, tool results, and continuation
-- [Cloud](${BASE_URL}/docs/usage/cloud): Coming soon
+- [MCP](${BASE_URL}/docs/usage/mcp): Coming soon
+- [Web](${BASE_URL}/docs/usage/web): Coming soon
 
 ## Coding Agents
 
-- [bro [harness]](${BASE_URL}/docs/integration/bro-harness): Launch a native harness with process-scoped routing, model, and supported MCP configuration
+- [Claude Code](${BASE_URL}/docs/integration/claude-code): Coming soon
+- [Codex](${BASE_URL}/docs/integration/codex): Coming soon
 - [DeepSeek Harness](${BASE_URL}/docs/integration/deepseek-harness): Coming soon
 - [OpenCode](${BASE_URL}/docs/integration/opencode): Coming soon
 - [Pi](${BASE_URL}/docs/integration/pi): Coming soon
@@ -63,21 +66,20 @@ References:
 - [Model Fallbacks](${BASE_URL}/docs/models-routing/model-fallback): Define failure-driven replacement across providers, models, and accounts
 - [Model Variants](${BASE_URL}/docs/models-routing/model-variants): Documentation placeholder for model variants
 - [Virtual Models](${BASE_URL}/docs/models-routing/virtual-models): Define named model endpoints, request selectors, and reusable presets
-- [Buy Inference](${BASE_URL}/docs/models-routing/buy-inference): Documentation placeholder for obtaining inference access through BitRouter
+- [BYOK & Subscriptions](${BASE_URL}/docs/models-routing/byok-subscriptions): Connect keys, subscription logins, multiple accounts, and custom endpoints
+- [Local Models](${BASE_URL}/docs/models-routing/local-models): Connect and verify inference servers you run yourself
 
-## Provider
+## Market
 
-- [BYOK & Subscriptions](${BASE_URL}/docs/providers/byok-subscriptions): Connect keys, subscription logins, multiple accounts, and custom endpoints
-- [Local Models](${BASE_URL}/docs/providers/local-models): Connect and verify inference servers you run yourself
-- [Custom Provider](${BASE_URL}/docs/providers/custom-provider): Documentation placeholder for connecting custom inference providers
-- [Sell Inference](${BASE_URL}/docs/providers/sell-inference): Documentation placeholder for optional marketplace supply
+- [Buy Inference](${BASE_URL}/docs/market/buy-inference): Documentation placeholder for obtaining inference access through BitRouter
+- [Sell Inference](${BASE_URL}/docs/market/sell-inference): Documentation placeholder for optional marketplace supply
 
 ## Context
 
 - [ACP servers](${BASE_URL}/docs/context-routing/acp-servers): Connect external agents and understand session and context ownership
 - [MCP servers](${BASE_URL}/docs/context-routing/mcp-servers): Use MCP discovery, direct and aggregate gateways, and agent connections
 - [Agent Skills](${BASE_URL}/docs/context-routing/skills): Inspect and scaffold instruction packages with host-owned activation
-- [AGENTS.md](${BASE_URL}/docs/context-routing/agents-md): Write repository instructions and verify the selected harness's loading behavior
+- [Server tools](${BASE_URL}/docs/context-routing/server-tools): Server-side tool configuration and execution in BitRouter
 
 ## Reference
 

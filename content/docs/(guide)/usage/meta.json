@@ -4,6 +4,8 @@
     "desktop",
     "cli",
     "responses-api",
+    "mcp",
+    "web",
     "cloud"
   ]
 }

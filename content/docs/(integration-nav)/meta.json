@@ -1,7 +1,8 @@
 {
   "title": "Coding Agents",
-  "pagesIndex": "[bro <harness>](/docs/integration/bro-harness)",
+  "pagesIndex": "[Claude Code](/docs/integration/claude-code)",
   "pages": [
+    "[Codex](/docs/integration/codex)",
     "[DeepSeek Harness](/docs/integration/deepseek-harness)",
     "[OpenCode](/docs/integration/opencode)",
     "[Pi](/docs/integration/pi)"

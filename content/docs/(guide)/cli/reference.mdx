@@ -21,7 +21,7 @@ Every command below is **generated from the binary's own `--help`**, so the flag
 
 | Variable | Effect |
 | --- | --- |
-| `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `OPENCODE_ZEN_API_KEY` | Zero-config BYOK — auto-enables the provider. See [BYOK](/docs/providers/byok-subscriptions#built-in-providers-with-your-own-key) |
+| `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `OPENCODE_ZEN_API_KEY` | Zero-config BYOK — auto-enables the provider. See [BYOK](/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key) |
 | `BITROUTER_API_KEY` | Cloud API key; enables the managed `bitrouter` provider |
 | `BITROUTER_HOME` | Config discovery override (see above) |
 | `BITROUTER_OAUTH_AS` | Override the OAuth authorization server for self-hosted Cloud |
@@ -339,7 +339,7 @@ Reports the OTel exporter's live state — endpoint, sampler, cardinality usage,
 
 ## Providers
 
-Two ways a provider becomes available: **BYOK** (its API key in the environment — see [BYOK](/docs/providers/byok-subscriptions#built-in-providers-with-your-own-key)) and **`providers login`** (OAuth against subscription providers such as Claude or Codex subscriptions — see [Model sources](/docs/integration/coding-agents#model-sources)). `providers list` shows the catalog and which providers are active in the current config.
+Two ways a provider becomes available: **BYOK** (its API key in the environment — see [BYOK](/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key)) and **`providers login`** (OAuth against subscription providers such as Claude or Codex subscriptions — see [Model sources](/docs/integration/coding-agents#model-sources)). `providers list` shows the catalog and which providers are active in the current config.
 
 ### `bro providers`
 

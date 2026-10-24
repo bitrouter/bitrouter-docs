@@ -2,9 +2,11 @@
   "title": "Coding Agents",
   "icon": "Plug",
   "pages": [
-    "bro-harness",
+    "claude-code",
+    "codex",
     "deepseek-harness",
     "opencode",
-    "pi"
+    "pi",
+    "bro-harness"
   ]
 }

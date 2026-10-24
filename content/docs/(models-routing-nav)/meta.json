@@ -4,6 +4,7 @@
   "pages": [
     "[Model Variants](/docs/models-routing/model-variants)",
     "[Virtual Models](/docs/models-routing/virtual-models)",
-    "[Buy Inference](/docs/models-routing/buy-inference)"
+    "[BYOK & Subscriptions](/docs/models-routing/byok-subscriptions)",
+    "[Local Models](/docs/models-routing/local-models)"
   ]
 }

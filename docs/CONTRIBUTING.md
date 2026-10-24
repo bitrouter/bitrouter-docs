@@ -9,18 +9,22 @@ is rendered from this repo — docs are committed directly here under
 Documentation uses one unified Fumadocs page tree with no layout tabs. Its
 top-level order is the `pages` list in `content/docs/meta.json`:
 
-1. **Overview** — Quickstart, Supported Models, How BitRouter Works, then a
-   collapsed Comparison folder. Enterprise remains a linked deployment-decision entry.
-2. **Usage** — Desktop, CLI, Responses API, and Cloud. Cloud is a Coming soon
-   placeholder. Desktop is Coming soon until
+1. **Overview** — Quickstart, How BitRouter Works, Inference Spot, Inference
+   Forwards, then a collapsed Comparison folder. Inference Spot and Inference
+   Forwards are Coming soon placeholders. Enterprise remains a linked deployment-decision entry.
+2. **Usage** — Desktop, CLI, Responses API, MCP, and Web, in that order.
+   MCP and Web are Coming soon placeholders. Desktop is Coming soon until
    its installation and behavior can be documented from a verified implementation.
    CLI combines the self-driving, interactive terminal, and headless guides.
-3. **Coding Agents** — shared `bro [harness]` launch configuration and product-specific guides.
+3. **Coding Agents** — Claude Code, Codex, DeepSeek Harness, OpenCode, and Pi,
+   in that order. These product-specific pages are Coming soon placeholders.
 4. **Routing** — Configuration (YAML), Model Routing, Context Routing, and Strategies.
-5. **Model** — Model Fallbacks, Model Variants, Virtual Models, and Buy Inference.
-6. **Provider** — BYOK & Subscriptions, Local Models, Custom Provider, and Sell Inference.
+5. **Model** — Model Fallbacks, Model Variants, Virtual Models, BYOK & Subscriptions,
+   and Local Models.
+6. **Market** — Buy Inference and Sell Inference. Both are title/description-only
+   placeholders until their implementation is verified.
 7. **Context** — ACP servers, MCP gateway configuration/use,
-   Agent Skills, and AGENTS.md.
+   Agent Skills, and Server tools.
 8. **Reference** — Changelog, CLI reference, config reference, and API reference. Changelog and CLI
    reference are each one page. API reference has one collapsed outer folder,
    with endpoints directly visible beneath static family separators, alongside
@@ -29,7 +33,7 @@ top-level order is the `pages` list in `content/docs/meta.json`:
 Each group name in `content/docs/meta.json` is a native Fumadocs separator, not
 a page or collapsible folder. Eight meta-only guide folders — `(overview-nav)`,
 `(usage-nav)`, `(integration-nav)`, `(routing-nav)`, `(models-routing-nav)`,
-`(providers-nav)`, `(context-routing-nav)`, and `(reference-nav)` — are extracted into the root with `...folder`.
+`(market-nav)`, `(context-routing-nav)`, and `(reference-nav)` — are extracted into the root with `...folder`.
 They link to canonical pages rather than copies.
 
 Comparison under Overview and API reference are the only hierarchy exceptions.
@@ -76,8 +80,11 @@ must be listed exactly once in the matching `*-nav/meta.json`, including the
 four Comparison children. Cards and inline links provide additional
 discovery, not a substitute for sidebar visibility.
 Rare intentional exceptions must be added to `HIDDEN_SIDEBAR_ROUTES` in
-`scripts/check-docs.mjs`. BitRouter Agent and the
-retained Coding agents guide remain hidden. The supporting Request receipts page has no sidebar entry; feature guides retain
+`scripts/check-docs.mjs`. The Cloud placeholder remains accessible at
+`/docs/usage/cloud` without a sidebar entry. Supported Models remains accessible through existing
+links at `/docs/overview/supported-models` without a sidebar entry. BitRouter Agent and the
+retained Coding agents guide remain hidden. The shared `bro [harness]` launch
+guide also remains accessible at `/docs/integration/bro-harness` without a sidebar entry. The supporting Request receipts page has no sidebar entry; feature guides retain
 its links. Configuration (YAML) is visible under Routing.
 Self-hosting is also omitted from Overview navigation and remains accessible through
 deployment-related content links.
@@ -87,17 +94,23 @@ in search, sitemap, and full-text ingestion. Retained compatibility guides carry
 
 Use this boundary when classifying content:
 
-- **Model** owns model access and callable interfaces: obtaining inference access,
-  named model endpoints, selectors, request profiles, compatibility, fallbacks,
-  and variants. Its four visible guides, in order, are Model Fallbacks, Model
-  Variants, Virtual Models, and Buy Inference. Feature definitions, configuration
-  examples, and usage belong here; Routing links to them when explaining execution.
-- **Provider** follows Model and owns credentials, subscription sources, custom
-  endpoints, self-run inference, and optional marketplace supply. It contains
-  BYOK & Subscriptions, Local Models, Custom Provider, and Sell Inference,
-  canonically under `/docs/providers/`. Buy Inference, Model Variants, Custom
-  Provider, and Sell Inference currently have only titles and descriptions;
-  detailed content and marketplace implementation remain unverified.
+- **Model** owns source connections and callable model interfaces: provider keys,
+  subscription accounts, custom endpoints, self-run inference, named model
+  endpoints, selectors, request profiles, compatibility, fallbacks, and variants.
+  Its five guides, in order, are Model Fallbacks, Model Variants, Virtual Models,
+  BYOK & Subscriptions, and Local Models, canonically under `/docs/models-routing/`.
+  Model Variants has a title and description only. Custom Provider is retired;
+  its URL redirects to the custom endpoints section of BYOK & Subscriptions.
+  Feature definitions, configuration examples, and usage belong here; Routing
+  links to them when explaining execution. Model and provider remain distinct
+  technical concepts within the same navigation group.
+- **Market** follows Model and owns buying and selling inference, with future
+  trading, delivery, and settlement guides. Buy Inference and Sell Inference
+  are canonical under `/docs/market/` and currently have titles and descriptions
+  only; detailed content and marketplace implementation remain unverified.
+  Connecting an endpoint belongs to Model; offering its inference for sale belongs
+  to Market. Overview's Inference Spot and Inference Forwards introduce the product
+  concepts; Market owns the operational workflows.
 - **Routing** explains runtime selection among sources the caller can already
   access, including BYOK, local, private, and purchased sources. Buying or selling
   inference is optional; routing does not grant access or purchase supply.
@@ -111,10 +124,11 @@ Use this boundary when classifying content:
   it does not imply an arbitrary algorithm plugin interface. Keep model and
   context ownership explicit: proxying an external harness's calls does not give
   BitRouter control over its history. Decisions API lives inside API reference.
-- **Context** shows ACP servers, MCP servers, Agent Skills, and AGENTS.md. It keeps
+- **Context** shows ACP servers, MCP servers, Agent Skills, and Server tools. It keeps
   ACP session ownership and transport
   configuration, MCP configuration and use, and harness-owned instructions/skills.
-  Both Server tools guides are retired during their implementation refactor.
+  Server tools has a title and description only during its implementation refactor.
+  The former Config Server tools guide redirects to this Context placeholder.
 - **Usage > CLI** owns interactive/headless operation. Request receipts stays
   a supporting guide; the command manual lives under Reference. Common configuration-file mechanics belong to Routing's
   Configuration (YAML) guide. Self-driving, Interactive TUI, and Headless & Scripting are sections of
@@ -124,11 +138,15 @@ Use this boundary when classifying content:
   task execution, managed sessions, structured output, verification gates, and
   the pending full Goal automation contract. External one-prompt ACP invocation
   and its approval policies live in ACP servers. Keep each feature's YAML example in its guide.
-- **Coding Agents** explains native harness launch configuration and product-specific
-  connections. Native launch keeps the harness's interface and does not create a
+- **Coding Agents** shows Claude Code, Codex, DeepSeek Harness, OpenCode, and Pi
+  as Coming soon placeholders. The shared `bro [harness]` guide retains native
+  harness launch configuration without a sidebar entry. Native launch keeps the harness's interface and does not create a
   BRO Goal. Native launch support, ACP connectivity, and managed worker execution
   are separate capabilities. Link to Self-driving for Goal coordination, Model
-  for named routes, Provider for inference sources, and Context for ACP/MCP behavior.
+  for named routes and inference sources, Market for buying and selling, and
+  Context for ACP/MCP behavior.
+- **Usage > MCP and Web** are Coming soon entry pages. Context retains the MCP
+  servers configuration/use guide.
 - **Usage > Responses API** explains the default generation interface and its
   request examples. **API reference** owns typed decisions and System One,
   Chat Completions/Messages compatibility, and generated endpoint schemas.

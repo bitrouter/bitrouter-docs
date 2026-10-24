@@ -28,7 +28,7 @@ const SECTIONS = [
   "(guide)/integration",
   "(guide)/routing",
   "(guide)/models-routing",
-  "(guide)/providers",
+  "(guide)/market",
   "(guide)/context-routing",
   "(guide)/cli",
   "(guide)/usage",
@@ -50,11 +50,17 @@ const isGenerated = (path) => GENERATED.has(path) || path.startsWith("(guide)/cl
 // Intentional exceptions to the otherwise complete public sidebar. Keep this
 // list short and document each product-navigation decision.
 const HIDDEN_SIDEBAR_ROUTES = new Set([
+  // Retain the Cloud placeholder URL after removing its Usage navigation entry.
+  "/docs/usage/cloud",
+  // Catalog remains accessible through existing links, outside Overview navigation.
+  "/docs/overview/supported-models",
   // Deployment guide remains accessible through content links, outside Overview.
   "/docs/self-hosting",
   "/docs/cli/agent",
   // Supporting guides remain linked from content, without CLI sidebar entries.
   "/docs/cli/request-receipts",
+  // Shared native-launch guide remains reachable without a sidebar entry.
+  "/docs/integration/bro-harness",
   // Retained for existing links after replacing the generic Coding Agents entry.
   "/docs/integration/coding-agents",
 ]);
@@ -64,7 +70,7 @@ const NAV_FILES = [
   "(integration-nav)/meta.json",
   "(routing-nav)/meta.json",
   "(models-routing-nav)/meta.json",
-  "(providers-nav)/meta.json",
+  "(market-nav)/meta.json",
   "(context-routing-nav)/meta.json",
   "(usage-nav)/meta.json",
   "(reference-nav)/meta.json",
@@ -81,8 +87,8 @@ const ROOT_NAV_PAGES = [
   "...(routing-nav)",
   "---Model---",
   "...(models-routing-nav)",
-  "---Provider---",
-  "...(providers-nav)",
+  "---Market---",
+  "...(market-nav)",
   "---Context---",
   "...(context-routing-nav)",
   "---Reference---",

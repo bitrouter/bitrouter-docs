@@ -10,7 +10,7 @@ Use these endpoints when your client already speaks OpenAI Chat Completions or A
 | Chat Completions | `http://127.0.0.1:4356/v1/chat/completions` | `https://api.bitrouter.ai/v1/chat/completions` |
 | Messages | `http://127.0.0.1:4356/v1/messages` | `https://api.bitrouter.ai/v1/messages` |
 
-When local authentication is enabled, send a BitRouter virtual key. Cloud requests use a Cloud API key or supported bearer credential. The examples use the `Authorization: Bearer` header; the gateway also accepts `x-api-key`. Upstream provider credentials belong in [BYOK & Subscriptions](/docs/providers/byok-subscriptions) configuration.
+When local authentication is enabled, send a BitRouter virtual key. Cloud requests use a Cloud API key or supported bearer credential. The examples use the `Authorization: Bearer` header; the gateway also accepts `x-api-key`. Upstream provider credentials belong in [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions) configuration.
 
 The `model` field uses the same [model selectors](/docs/models-routing/virtual-models#model-selector-forms) as Responses. The examples assume an initialized [auto policy binding](/docs/routing/strategies#initialize-a-policy-binding); replace `bitrouter/auto` with a configured logical model id to choose that model directly.
 

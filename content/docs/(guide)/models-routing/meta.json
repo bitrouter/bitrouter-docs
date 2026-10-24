@@ -4,6 +4,7 @@
     "model-fallback",
     "model-variants",
     "virtual-models",
-    "buy-inference"
+    "byok-subscriptions",
+    "local-models"
   ]
 }

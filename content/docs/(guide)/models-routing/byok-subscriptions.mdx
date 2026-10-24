@@ -11,7 +11,7 @@ A **provider** tells BitRouter where and how to call an upstream. A **model** is
 | --- | --- |
 | A supported provider with your API key | Environment variable or an empty built-in provider block |
 | Claude or Codex subscription | [Subscription login](#subscriptions) |
-| Local inference | [Local Models](/docs/providers/local-models) |
+| Local inference | [Local Models](/docs/models-routing/local-models) |
 | A private or OpenAI-compatible endpoint | A custom `providers` entry below |
 | A provider everyone should discover | A pull request to the open registry |
 | Your provider key on BitRouter Cloud | Cloud BYOK |
@@ -169,7 +169,7 @@ bro route my-cluster:team/llama-3.1-8b -c bitrouter.yaml
 
 The `provider:model` selector pins one provider. The bare model id joins every active provider that declares that id; use [Virtual Models](/docs/models-routing/virtual-models) to define a named route and [Model Fallbacks](/docs/models-routing/model-fallback) for replacement behavior.
 
-For Ollama, vLLM, Unsloth, and similar servers, use the shorter [Local Models](/docs/providers/local-models) recipe.
+For Ollama, vLLM, Unsloth, and similar servers, use the shorter [Local Models](/docs/models-routing/local-models) recipe.
 
 ## Multiple accounts
 

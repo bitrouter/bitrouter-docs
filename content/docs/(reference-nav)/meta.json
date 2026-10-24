@@ -2,6 +2,7 @@
   "title": "Reference",
   "pages": [
     "[Changelog](/docs/changelog)",
+    "[Data handling](/docs/data-handling)",
     "[CLI reference](/docs/cli/reference)",
     "[config reference](/docs/configuration-reference)"
   ]

@@ -34,8 +34,9 @@ const SECTIONS = [
   "(guide)/usage",
   "self-hosting",
 ];
-// Root API guides and the generated changelog obey the import-free contract.
+// Root reference guides and the generated changelog obey the import-free contract.
 const STANDALONE_DOCS = [
+  "data-handling.mdx",
   "reference/index.mdx",
   "reference/decisions.mdx",
   "reference/chat-completions-messages.mdx",

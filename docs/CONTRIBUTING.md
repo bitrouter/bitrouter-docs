@@ -25,7 +25,8 @@ top-level order is the `pages` list in `content/docs/meta.json`:
    placeholders until their implementation is verified.
 7. **Context** — ACP servers, MCP gateway configuration/use,
    Agent Skills, and Server tools.
-8. **Reference** — Changelog, CLI reference, config reference, and API reference. Changelog and CLI
+8. **Reference** — Changelog, Data handling, CLI reference, config reference, and API reference.
+   Data handling is a Coming soon placeholder. Changelog and CLI
    reference are each one page. API reference has one collapsed outer folder,
    with endpoints directly visible beneath static family separators, alongside
    Decisions / System One and Chat Completions / Messages.
@@ -207,6 +208,10 @@ ordering. Public sidebar order comes from the `*-nav/meta.json` files, which
 must expose the non-Reference source tree except for the explicit hidden-page
 allowlist. `pnpm lint:docs` fails when a public page is missing, duplicated, or
 points to a route that does not exist.
+
+Data handling is a hand-authored root reference page at `/docs/data-handling`.
+It currently contains Coming soon; technical data-flow and retention statements
+must be verified against the relevant implementation and deployment before publication.
 
 ## Authoring contract (import-free MDX)
 

@@ -87,6 +87,7 @@ Supporting guides linked from Strategies:
 - [MCP servers](${BASE_URL}/docs/context-routing/mcp-servers): Use MCP discovery, direct and aggregate gateways, and agent connections
 - [Agent Skills](${BASE_URL}/docs/context-routing/skills): Inspect and scaffold instruction packages with host-owned activation
 - [Server tools](${BASE_URL}/docs/context-routing/server-tools): Server-side tool configuration and execution in BitRouter
+- [Context Switcher](${BASE_URL}/docs/context-routing/context-switcher): Coming soon
 
 ## Reference
 

@@ -4,6 +4,7 @@
     "acp-servers",
     "mcp-servers",
     "skills",
-    "server-tools"
+    "server-tools",
+    "context-switcher"
   ]
 }

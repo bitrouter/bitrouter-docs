@@ -4,6 +4,7 @@
   "pages": [
     "[MCP servers](/docs/context-routing/mcp-servers)",
     "[Agent Skills](/docs/context-routing/skills)",
-    "[Server tools](/docs/context-routing/server-tools)"
+    "[Server tools](/docs/context-routing/server-tools)",
+    "[Context Switcher](/docs/context-routing/context-switcher)"
   ]
 }

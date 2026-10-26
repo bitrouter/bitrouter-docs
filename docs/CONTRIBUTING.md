@@ -39,7 +39,7 @@ top-level order is the `pages` list in `content/docs/meta.json`:
 6. **Model** — Model Fallbacks, Virtual Models, Structured Output, BYOK & Subscriptions,
    and Local Models. Structured Output is a Coming soon placeholder.
 7. **Context** — ACP servers, MCP gateway configuration/use,
-   Agent Skills, and Server tools.
+   Agent Skills, Server tools, and Context Switcher. Context Switcher is Coming soon.
 8. **Reference** — Changelog, Privacy Policy, Terms of Service, Troubleshooting,
    and API reference. The two policies are authored docs pages; Troubleshooting
    is Coming soon. API reference has one collapsed outer folder, with endpoints
@@ -160,7 +160,10 @@ Use this boundary when classifying content:
   Model and provider remain distinct technical concepts in the same navigation group.
   Keep feature-specific configuration examples with their owning guide and link
   from Router when explaining execution.
-- **Context** shows ACP servers, MCP servers, Agent Skills, and Server tools. It keeps
+- **Context** shows ACP servers, MCP servers, Agent Skills, Server tools, and
+  Context Switcher. Context Switcher is a Coming soon placeholder at
+  `/docs/context-routing/context-switcher`; the existing native Context Routing
+  supporting guide and its historical redirects retain their current URLs. It keeps
   ACP session ownership and transport
   configuration, MCP configuration and use, and harness-owned instructions/skills.
   Server tools has a title and description only during its implementation refactor.

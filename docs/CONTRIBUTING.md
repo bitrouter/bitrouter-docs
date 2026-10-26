@@ -28,7 +28,8 @@ top-level order is the `pages` list in `content/docs/meta.json`:
    its installation and behavior can be documented from a verified implementation.
    CLI combines the self-driving, interactive terminal, and headless guides.
 3. **Coding Agents** — Claude Code, Codex, DeepSeek Harness, OpenCode, and Pi,
-   in that order. These product-specific pages are Coming soon placeholders.
+   in that order. Claude Code and Codex have authored integration guides;
+   DeepSeek Harness, OpenCode, and Pi remain Coming soon placeholders.
 4. **Market** — Buy Inference, Sell Inference, Agentic Payment, Auto-bidding,
    and Market Data, in that order. Buy Inference and Sell Inference are placeholders with links
    to Cache Affinity; Agentic Payment, Auto-bidding, and Market Data are Coming soon until their
@@ -178,7 +179,13 @@ Use this boundary when classifying content:
   the pending full Goal automation contract. External one-prompt ACP invocation
   and its approval policies live in ACP servers. Keep each feature's YAML example in its guide.
 - **Coding Agents** shows Claude Code, Codex, DeepSeek Harness, OpenCode, and Pi
-  as Coming soon placeholders. The shared `bro [harness]` guide retains native
+  in that order. Claude Code and Codex cover prerequisites and one launch command,
+  official local/Cloud proxy configuration, default model pools and customization,
+  and Verify & troubleshoot. Claude Code pools contain only Claude models; Codex
+  pools contain only GPT models. Example pools require explicit configuration and
+  do not promise account access or install a routing policy. Keep Codex catalog
+  metadata distinct from BitRouter model routing. DeepSeek Harness, OpenCode, and
+  Pi remain Coming soon. The shared `bro [harness]` guide retains native
   harness launch configuration without a sidebar entry. Native launch keeps the harness's interface and does not create a
   BRO Goal. Native launch support, ACP connectivity, and managed worker execution
   are separate capabilities. Link to Self-driving for Goal coordination, Model

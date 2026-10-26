@@ -1,6 +1,133 @@
 ---
 title: Codex
-description: Codex integration documentation is coming soon.
+description: Connect Codex to local or Cloud BitRouter, configure a GPT-only model pool, and verify the serving route.
 ---
 
-Coming soon.
+Keep Codex's interface, tools, and permission controls while BitRouter handles its model requests. This guide starts with the Codex CLI.
+
+## Prerequisites & launch
+
+Install [Codex](https://learn.chatgpt.com/docs/codex/cli) and [BitRouter](/docs/overview/quickstart). Connect a GPT inference source with [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions), and confirm that it has a working route. Then run from your project:
+
+```bash
+bro codex
+```
+
+The launcher supplies a BitRouter provider through process-specific configuration overrides and can start the local daemon if needed. It leaves `~/.codex/config.toml` in place. Without a model override, Codex keeps its native model selection. Native launch does not create a BRO Goal; see [the shared launch guide](/docs/integration/bro-harness).
+
+## Proxy configuration
+
+Codex's [official gateway configuration](https://learn.chatgpt.com/docs/enterprise/connect-to-a-gateway) uses a custom provider in the user-level `~/.codex/config.toml` file. On Windows, use `%USERPROFILE%\.codex\config.toml`. Merge the following settings into your existing file; do not duplicate keys or provider tables.
+
+### Local
+
+Start the router with `bro start`. Make a valid gateway key available as `BITROUTER_API_KEY`; only for a local router with authentication disabled, the placeholder can be set with `export BITROUTER_API_KEY=bitrouter-local`.
+
+```toml
+model = "gpt-6.1-sol"
+model_provider = "bitrouter"
+
+[model_providers.bitrouter]
+name = "BitRouter"
+base_url = "http://127.0.0.1:4356/v1"
+wire_api = "responses"
+env_key = "BITROUTER_API_KEY"
+http_headers = { "x-bitrouter-harness" = "codex-acp" }
+```
+
+Then run `codex`. The `x-bitrouter-harness` header matches BitRouter's native launcher: current BitRouter builds can map declared native GPT names to an active `openai-codex` subscription source. It is a routing hint, not authentication. For an OpenAI API-key source, configure the native-name routes in the next section.
+
+### Cloud
+
+Obtain a BitRouter Cloud API key, expose it as `BITROUTER_API_KEY` to the Codex process, and use the following provider settings instead of the local table:
+
+```toml
+model = "gpt-6.1-sol"
+model_provider = "bitrouter"
+
+[model_providers.bitrouter]
+name = "BitRouter Cloud"
+base_url = "https://api.bitrouter.ai/v1"
+wire_api = "responses"
+env_key = "BITROUTER_API_KEY"
+```
+
+Confirm the model selector enabled for your Cloud account and replace the example if needed. A Cloud key does not import a local ChatGPT subscription. For API-key inference, configure [Cloud BYOK](/docs/models-routing/byok-subscriptions#bitrouter-cloud-byok); see [pricing](/pricing) for Cloud fees.
+
+Keep `model` and `model_provider` before the first TOML table. Use a Responses-compatible endpoint and stop the base URL at `/v1`, without `/responses`. Keep the credential itself out of TOML. Restart Codex after changing its configuration; a desktop-launched app also needs access to the credential environment variable.
+
+## Default model pool & customization
+
+Use a GPT-only starting pool, selecting only models available to your account and client:
+
+| Native model ID | Starting role |
+| --- | --- |
+| `gpt-6.1-sol` | Default coding model in this guide |
+| `gpt-6-astra` | Complex work |
+| `gpt-6-luna` | Smaller tasks |
+
+These are configuration examples, not a universal account default or an automatically installed routing policy. Codex's [model picker](https://learn.chatgpt.com/docs/models) determines the available client choices; changing the provider does not grant model access.
+
+For a local OpenAI API-key source, merge these native-name routes into `bitrouter.yaml`. Connect the `openai` provider first, then reload the daemon after saving:
+
+```yaml
+models:
+  gpt-6.1-sol:
+    strategy: priority
+    endpoints:
+      - provider: openai
+        service_id: gpt-6.1-sol
+  gpt-6-astra:
+    strategy: priority
+    endpoints:
+      - provider: openai
+        service_id: gpt-6-astra
+  gpt-6-luna:
+    strategy: priority
+    endpoints:
+      - provider: openai
+        service_id: gpt-6-luna
+```
+
+These [virtual models](/docs/models-routing/virtual-models) keep the native GPT names while explicitly choosing the upstream source. To require a connected ChatGPT subscription instead, replace `provider: openai` with `provider: openai-codex`. Keep API-key billing separate from subscription access and limits. Cloud routes are configured on the Cloud side, rather than by this local YAML.
+
+Select a pool member with `/model` or for one launch:
+
+```bash
+bro codex --model gpt-6.1-sol
+```
+
+To customize the pool, add or remove GPT routes and choose the matching model in Codex. Inspect local sources with `bro models --provider openai` or `bro models --provider openai-codex`. Keep custom subagent model settings on GPT models too. For automatic selection, configure a GPT-only policy in [Auto Router](/docs/routing/auto-router).
+
+<Callout type="info">
+Codex uses model metadata for context limits, tools, and reasoning settings. A custom alias such as `coding` or `bitrouter/auto` needs a matching catalog entry before you rely on those capabilities. A standard OpenAI model list is not the Codex model catalog. Follow the [official catalog configuration](https://learn.chatgpt.com/docs/model-catalogs); do not add `model_catalog_url` unless that endpoint actually serves the required format.
+</Callout>
+
+## Verify & troubleshoot
+
+Check a local route and launcher without making an inference call:
+
+```bash
+bro route gpt-6.1-sol
+bro codex --model gpt-6.1-sol --check
+```
+
+If you use the subscription's native-name mapping without a virtual model, inspect the explicit route with `bro route openai-codex:gpt-6.1-sol` instead. The generic route command does not carry the harness header.
+
+Then verify the actual session:
+
+1. Run `/status` in Codex and inspect the active provider and model.
+2. Ask it to list files in a small test directory using its tools, then summarize one file in a follow-up turn. Review any permission request normally.
+3. For local routing, run `bro requests --limit 10` and match the request time, serving model, and provider. For Cloud, inspect the account's request records. See [Request receipts](/docs/cli/request-receipts).
+
+A successful reply or launcher check alone does not prove the serving route. Check streaming, tools, and follow-up turns with the client and source versions you use.
+
+| Symptom | What to check |
+| --- | --- |
+| Connection refused or `404` | Check the daemon, host, and `/v1` base URL. Codex needs Responses support; a Chat Completions-only endpoint is insufficient. |
+| `401` | Check that `BITROUTER_API_KEY` reaches the Codex process. Separate gateway authentication from upstream provider authentication. |
+| Unexpected provider or model | Check `/status`, TOML table placement, and command-line/profile overrides. Restart after changing settings. |
+| Model not found | Check account access and the exact local alias or Cloud selector. Confirm the intended API-key or subscription source. |
+| Unknown-model warning or incorrect context limits | Check the client catalog and its metadata for the selected model. A working inference route does not establish correct client metadata. |
+| Streaming or later tool turns fail | Check Responses event handling and conversation continuity against the [official gateway compatibility guide](https://learn.chatgpt.com/docs/enterprise/gateway-compatibility). Keep the model fixed while diagnosing the failure. |
+| No matching request record | Confirm the process's provider base URL and the BitRouter instance being inspected. |

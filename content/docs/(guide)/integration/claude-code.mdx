@@ -1,6 +1,106 @@
 ---
 title: Claude Code
-description: Claude Code integration documentation is coming soon.
+description: Connect Claude Code to local or Cloud BitRouter, configure a Claude-only model pool, and verify the serving route.
 ---
 
-Coming soon.
+Keep Claude Code's interface, tools, and permission controls while BitRouter handles its model requests. This guide covers the Claude Code CLI.
+
+## Prerequisites & launch
+
+Install [Claude Code](https://code.claude.com/docs/en/setup) and [BitRouter](/docs/overview/quickstart). Connect a Claude inference source with [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions), and confirm that it has a working route. Then run from your project:
+
+```bash
+bro claude
+```
+
+The launcher configures the child process and can start the local daemon if needed. It leaves your normal Claude Code settings file in place. Without a model override, Claude Code keeps its own model selection. Native launch does not create a BRO Goal; see [the shared launch guide](/docs/integration/bro-harness) for additional options.
+
+## Proxy configuration
+
+Claude Code's [official gateway configuration](https://code.claude.com/docs/en/llm-gateway-connect) uses `ANTHROPIC_BASE_URL` and a gateway credential. The examples below use BitRouter's bearer-token authentication. The BitRouter key authenticates the client to the router; upstream provider credentials are configured separately.
+
+### Local
+
+Start the local router with `bro start`, then run these commands in the shell where you launch Claude Code:
+
+```bash
+export ANTHROPIC_BASE_URL="http://127.0.0.1:4356"
+export ANTHROPIC_AUTH_TOKEN="${BITROUTER_API_KEY:-bitrouter-local}"
+export ANTHROPIC_MODEL="anthropic:claude-sonnet-5"
+claude
+```
+
+`bitrouter-local` works only when the local router allows unauthenticated requests. If authentication is enabled, export a valid `BITROUTER_API_KEY` first. Use the base URL without `/v1/messages`; Claude Code adds the request path.
+
+### Cloud
+
+Obtain a BitRouter Cloud API key, make it available as `BITROUTER_API_KEY`, and select a Claude route enabled for your Cloud account:
+
+```bash
+export ANTHROPIC_BASE_URL="https://api.bitrouter.ai"
+export ANTHROPIC_AUTH_TOKEN="$BITROUTER_API_KEY"
+export ANTHROPIC_MODEL="anthropic:claude-sonnet-5"
+claude
+```
+
+The model ID is an example: confirm account access before using it. A Cloud key does not import your local Claude subscription. Configure [Cloud BYOK](/docs/models-routing/byok-subscriptions#bitrouter-cloud-byok) when bringing an API key; see [pricing](/pricing) for Cloud fees. Self-hosted routing has no BitRouter fee.
+
+Environment changes apply to newly launched processes. Claude Desktop uses a different [third-party inference setup](https://code.claude.com/docs/en/llm-gateway-connect#desktop-app).
+
+## Default model pool & customization
+
+Use a Claude-only starting pool. These are explicit example pins, rather than aliases for the newest release or a promise of account availability:
+
+| Claude Code choice | BitRouter model selector | Starting role |
+| --- | --- | --- |
+| `sonnet` | `anthropic:claude-sonnet-5` | Default coding model |
+| `opus` | `anthropic:claude-opus-4-8` | Complex work |
+| `haiku` | `anthropic:claude-haiku-4-5` | Smaller tasks |
+
+Set the mappings before launching Claude Code, using either connection above:
+
+```bash
+export ANTHROPIC_DEFAULT_SONNET_MODEL="anthropic:claude-sonnet-5"
+export ANTHROPIC_DEFAULT_OPUS_MODEL="anthropic:claude-opus-4-8"
+export ANTHROPIC_DEFAULT_HAIKU_MODEL="anthropic:claude-haiku-4-5"
+export ANTHROPIC_MODEL="$ANTHROPIC_DEFAULT_SONNET_MODEL"
+claude
+```
+
+Use `/model` to select a configured choice. The [official model configuration](https://code.claude.com/docs/en/model-config) explains alias resolution and model precedence. These mappings select models; they do not install an automatic routing policy or a fallback chain. `bro claude` alone does not install this pool.
+
+To customize it, replace a mapping with another accessible Claude model. Inspect your local sources first:
+
+```bash
+bro models --provider anthropic
+bro route anthropic:claude-sonnet-5
+```
+
+The examples pin the `anthropic` API-key source. A logical ID such as `anthropic/claude-sonnet-5` can instead use eligible connected providers. After separately connecting the `claude-code` subscription provider, set a mapping to `claude-code:claude-sonnet-5` to require that source. Subscription access and limits remain account-dependent. See [subscriptions](/docs/models-routing/byok-subscriptions#subscriptions) and [model selectors](/docs/models-routing/virtual-models#model-selector-forms).
+
+Keep every mapping in this pool on a Claude model, including any additional family or subagent overrides in your existing settings. For policy-driven selection, configure a Claude-only policy in [Auto Router](/docs/routing/auto-router) before requesting `bitrouter/auto`.
+
+## Verify & troubleshoot
+
+For a local launcher check, run:
+
+```bash
+bro claude --model anthropic:claude-sonnet-5 --check
+```
+
+Then verify the actual session:
+
+1. Run `/status` in Claude Code and inspect the active model and connection.
+2. Ask it to list the files in a small test directory using its tools, then summarize one file in a follow-up turn. Review any permission request normally.
+3. For local routing, run `bro requests --limit 10` and match the request time, serving model, and provider. For Cloud, inspect the account's request records. See [Request receipts](/docs/cli/request-receipts).
+
+A successful reply or launcher check alone does not prove the serving route. Verify streaming, tools, and follow-up turns on the client and source versions you use.
+
+| Symptom | What to check |
+| --- | --- |
+| Connection refused | Start the local daemon; check the host and port. A remote shell's `127.0.0.1` refers to that remote machine. |
+| `401` or an unexpected login prompt | Check that the gateway token reaches the Claude process. Separate gateway authentication from upstream authentication; review conflicting credentials using the [official troubleshooting guide](https://code.claude.com/docs/en/llm-gateway-connect#troubleshoot-gateway-errors). |
+| Model not found | Check the exact selector, provider activation, account access, and the model mappings. Use `bro route` for the local route. |
+| Wrong model after changing settings | Restart Claude Code and inspect `/status`; check `--model`, environment variables, and settings precedence. |
+| Tools, thinking, or later turns fail | Check the source's Messages compatibility and beta-field handling against the [gateway compatibility guide](https://code.claude.com/docs/en/llm-gateway-protocol). Keep the model fixed while diagnosing the failure. |
+| No matching request record | Confirm the session's base URL and the BitRouter instance being inspected; another already-running session may retain its original connection. |

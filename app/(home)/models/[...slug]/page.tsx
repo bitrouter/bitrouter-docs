@@ -156,6 +156,11 @@ export default async function ModelDetailPage({ params }: Props) {
             <Stat label="Output / 1M" value={formatPricePerMillionTokens(model.pricing.output)} />
             <Stat label="Modalities" value={model.modalities.join(", ") || "text"} />
           </div>
+          <p style={{ color: "var(--z-ink-5)", fontSize: 13, lineHeight: 1.7, marginTop: 16 }}>
+            Supplier rates exclude the 5% Flex Inference transaction fee. Flex has no separate Cloud Auto Routing fee.
+            Cloud BYOK inference is billed by your provider, separately from the $0.01 per million routing input token fee.
+            See <Link href="/pricing">pricing</Link>.
+          </p>
         </section>
 
         {/* ── Quickstart ─────────────────────────────────── */}
@@ -305,6 +310,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     : modelDisplayName(model);
   return {
     title: `${friendlyName} — BitRouter`,
-    description: `Route ${model.id} through BitRouter. ${formatPricePerMillionTokens(model.pricing.input)} input, ${formatPricePerMillionTokens(model.pricing.output)} output, ${formatTokens(model.maxInputTokens)} context.`,
+    description: `Route ${model.id} through BitRouter. Supplier rates: ${formatPricePerMillionTokens(model.pricing.input)} input, ${formatPricePerMillionTokens(model.pricing.output)} output, before the 5% Flex transaction fee. ${formatTokens(model.maxInputTokens)} context.`,
   };
 }

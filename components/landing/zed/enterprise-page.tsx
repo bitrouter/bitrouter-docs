@@ -7,6 +7,10 @@ import "./enterprise.css";
 
 const faqs = [
   {
+    question: "How is Enterprise priced?",
+    answer: <>Enterprise services and terms are custom. The OSS router remains free to self-host. Standard Cloud Auto Routing with BYOK is $0.01 per million routing input tokens; Flex Inference has a 5% transaction fee and no separate Cloud Auto Routing fee. See <Link href="/pricing">pricing</Link> for the standard service terms.</>,
+  },
+  {
     question: "Do we need to change our agents?",
     answer: <>Keep the agents you already use. Connect supported harnesses through BitRouter&apos;s API or CLI, then configure the models and routes they can use. See the <Link href="/docs/integration/coding-agents">integration guide</Link> for supported paths.</>,
   },

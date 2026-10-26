@@ -1,24 +1,6 @@
 import { ZED_LINKS } from "./primitives";
+import { PRICING_OPTIONS } from "@/lib/commercial-pricing";
 
-const OPERATING_PATHS = [
-  {
-    label: "Free",
-    value: "$0 router fee",
-    detail: "Your infrastructure · your provider keys · no platform or request fee",
-  },
-  {
-    label: "Pay as you go",
-    value: "0% token markup",
-    detail: "Managed inference · routing included · processor top-up fees may apply",
-  },
-  {
-    label: "Enterprise",
-    value: "Custom services",
-    detail: "Free router · deployment · security · procurement · support",
-  },
-] as const;
-
-/** Three pricing paths, without implying an enterprise package that is not GA. */
 export function EnterprisePricing() {
   return (
     <section className="zed-wrap zed-sec" id="enterprise-pricing">
@@ -30,8 +12,8 @@ export function EnterprisePricing() {
             <span>Scale on your terms.</span>
           </h2>
           <p>
-            Routing is free whether you run the Apache-2.0 router yourself or use BitRouter Cloud.
-            Pay provider token prices for hosted models, or work with us on your team requirements.
+            Self-host the open-source router free. Cloud BYOK is billed by routing input usage;
+            Flex Inference adds a 5% transaction fee with no separate Cloud Auto Routing fee. Enterprise terms are custom.
           </p>
           <div className="zed-action-row">
             <a className="zed-btn zed-btn-ghost" href={ZED_LINKS.pricing}>
@@ -44,11 +26,11 @@ export function EnterprisePricing() {
         </div>
 
         <div className="zed-commercial-ledger" aria-label="BitRouter operating and pricing paths">
-          {OPERATING_PATHS.map((path) => (
+          {PRICING_OPTIONS.map((path) => (
             <div className="zed-commercial-row" key={path.label}>
               <div className="zed-commercial-label">{path.label}</div>
-              <strong>{path.value}</strong>
-              <p>{path.detail}</p>
+              <strong>{path.price}</strong>
+              <p>{path.unit}. {path.description}</p>
             </div>
           ))}
         </div>

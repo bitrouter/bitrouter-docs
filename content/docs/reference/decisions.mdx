@@ -92,4 +92,6 @@ Input supports text and user-message parts with inline base64 image data URLs. E
 
 Decisions uses its own `pricing_by_protocol` tariff and does not inherit generation pricing. The current local metering implementation preserves usage while marking cost unavailable for nonzero native cache counters. Keep unavailable cost distinct from zero cost.
 
+Cloud Auto Routing is a separate service charge: $0.01 per million verifiable routing input tokens with BYOK. This commercial rate does not replace the protocol-specific model tariff for a standalone Decisions call. Flex Inference has a 5% transaction fee and no separate Cloud Auto Routing charge. See [pricing](/pricing).
+
 Use [Request receipts](/docs/cli/request-receipts) to inspect settled requests. A completed malformed native response fails delivery and retains usable usage without automatic retry. The [BitRouter native Decisions reference](https://github.com/bitrouter/bitrouter/blob/main/skills/bitrouter/references/decisions.md) documents admission, tariff configuration, and cost-coverage limits.

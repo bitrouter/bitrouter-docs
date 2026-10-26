@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { GeistPixelSquare } from "geist/font/pixel";
+import { PRICING_OPTIONS } from "@/lib/commercial-pricing";
 import { ArrowUpRight, Download } from "lucide-react";
 import { ValueTui } from "./value-tui";
 import { InstallTabs } from "./install-tabs";
@@ -131,56 +131,32 @@ function ValueTabs() {
   </section>;
 }
 
+const CLOUD_PRICING_OPTIONS = PRICING_OPTIONS.filter(
+  (option) => option.id === "cloud-auto-routing" || option.id === "flex-inference",
+);
+
 function PricingSection() {
-  const section = useRef<HTMLElement>(null);
-  const [markup, setMarkup] = useState(0);
-
-  useEffect(() => {
-    const element = section.current;
-    if (!element) return;
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let frame = 0;
-    const finish = () => {
-      cancelAnimationFrame(frame);
-      setMarkup(0);
-    };
-    const observer = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting) return;
-      observer.disconnect();
-      if (reducedMotion.matches) return;
-      const start = performance.now();
-      setMarkup(100);
-      const tick = (now: number) => {
-        const progress = Math.min((now - start) / 1800, 1);
-        setMarkup(Math.round(100 * (1 - progress) ** 3));
-        if (progress < 1) frame = requestAnimationFrame(tick);
-      };
-      frame = requestAnimationFrame(tick);
-    }, { threshold: 0.3 });
-    observer.observe(element);
-    reducedMotion.addEventListener("change", finish);
-    return () => {
-      observer.disconnect();
-      cancelAnimationFrame(frame);
-      reducedMotion.removeEventListener("change", finish);
-    };
-  }, []);
-
-  return <section ref={section} className="ws-pricing ws-wrap" id="pricing" aria-label="Pricing">
-    <div>
-      <h2 className="ws-markup-heading">
-        <span className={`ws-zero ${GeistPixelSquare.className}`} aria-label="0%">
-          <span aria-hidden="true" className="ws-zero-placeholder">100%</span>
-          <span aria-hidden="true" className="ws-zero-value">{markup}%</span>
-        </span>{" "}<em>markup.</em>
-      </h2>
-      <p className="ws-pricing-note">On hosted inference. Third-party fees may apply.</p>
-      <a className="ws-text-link" href="/pricing">The pricing details <ArrowUpRight size={15} /></a>
+  return <section className="ws-pricing ws-wrap" id="pricing" aria-labelledby="home-pricing-title">
+    <div className="ws-pricing-header">
+      <h2 id="home-pricing-title">Open source. <span>Free to self-host.</span></h2>
+      <p className="ws-pricing-intro">Use your own keys, subscriptions, or local models.</p>
     </div>
-    <div>
-      <h2 className="ws-bring-heading">Bring Your Own<br /><em>Key / Subscription.</em></h2>
-      <p className="ws-pricing-note">Connect your existing keys or supported subscriptions.<br />Provider charges and subscription limits apply.</p>
+
+    <div className="ws-cloud-pricing">
+      {CLOUD_PRICING_OPTIONS.map((option) => <article key={option.id}>
+        <h3>{option.label}{option.id === "cloud-auto-routing" ? " · BYOK" : ""}</h3>
+        <p className="ws-cloud-rate">
+          <strong>{option.price}</strong>
+          <span>{option.id === "cloud-auto-routing" ? "/ 1M routing input tokens" : "transaction fee"}</span>
+        </p>
+        <p className="ws-pricing-note">{option.id === "cloud-auto-routing"
+          ? "Your provider bills inference separately."
+          : `Supplier charges + ${option.price}. Cloud routing included.`}</p>
+      </article>)}
     </div>
+
+    <a className="ws-text-link ws-pricing-details" href="/pricing">View pricing <ArrowUpRight size={15} aria-hidden="true" /></a>
+
   </section>;
 }
 
@@ -199,7 +175,7 @@ const faqs = [
   ["Do I need to switch agents?", "Keep your existing agent. Connect through BitRouter’s API or use the CLI. The setup and supported capabilities depend on your agent; the integration guides cover each supported path."],
   ["What’s the difference between the API and CLI?", "The API gives applications and agents a local routing endpoint. The CLI lets you configure BitRouter, inspect routes, and work with supported agents from your terminal. Both use the open-source router."],
   ["Can I use my existing subscription?", "Supported subscription-backed providers can be configured in BitRouter. Availability, authentication, and usage limits depend on the provider. Check the provider guide for your subscription."],
-  ["What do I pay for?", "The open-source router is free. With your own keys or subscription, your provider’s charges and limits apply. Optional BitRouter-hosted inference has 0% token markup; processor top-up fees may apply."],
+  ["What do I pay for?", "Self-hosting is free of BitRouter fees. Cloud Auto Routing with BYOK costs $0.01 per million metered routing input tokens, with provider inference billed separately. Flex Inference adds a 5% transaction fee to supplier charges and has no separate Cloud Auto Routing fee. Enterprise terms are custom."],
   ["Can I run it on my own infrastructure?", "Yes. Self-host the Apache-2.0 router and connect your own provider keys, local models, or private inference endpoints. A BitRouter Cloud account is not required for local routing."],
 ];
 

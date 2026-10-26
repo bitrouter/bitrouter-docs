@@ -1,3 +1,12 @@
+.price-options { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:24px; margin:30px 0 40px; scroll-margin-top:104px; }
+.price-option { min-width:0; display:flex; flex-direction:column; padding-top:20px; border-top:1px solid var(--border); scroll-margin-top:104px; }
+.price-option h2 { margin:0; font-size:16px; font-weight:500; letter-spacing:-.02em; }
+.price-option-price { margin:20px 0 0; font-size:42px; font-weight:450; line-height:1.15; letter-spacing:-.04em; }
+.price-option-unit { min-height:40px; margin:8px 0 0; font-size:12px; line-height:1.6; color:var(--muted-foreground); }
+.price-option-description { margin:16px 0 20px; font-size:13px; line-height:1.8; color:var(--muted-foreground); }
+.price-option-link { margin-top:auto; font-size:12px; text-decoration:underline; text-underline-offset:4px; }
+@media(max-width:1000px) { .price-options { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:600px) { .price-options { grid-template-columns:1fr; gap:28px; } .price-option-unit { min-height:0; } }
 .unified-pricing { max-width:1180px; padding-bottom:96px; }
 .unified-pricing .site-page-heading { padding-top:40px; }
 .unified-pricing .site-page-label { margin-bottom:16px; }

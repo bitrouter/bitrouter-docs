@@ -16,8 +16,8 @@ export default async function Page() {
 
 export function generateMetadata(): Metadata {
   const description =
-    "Free model routing and 0% token markup. Compare input, output, and cache prices for selected hosted models.";
-  const ogTitle = "BitRouter Pricing — provider prices, zero markup";
+    "Free OSS self-hosting, Cloud Auto Routing at $0.01 per million routing input tokens with BYOK, Flex Inference with a 5% transaction fee, and custom Enterprise services.";
+  const ogTitle = "BitRouter Pricing — self-hosted, Cloud BYOK, Flex, and Enterprise";
   return {
     title: "Pricing",
     description,

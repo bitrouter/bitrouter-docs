@@ -1,9 +1,13 @@
 const questions = [
-  ["Is the router free?", "Yes. The Apache-2.0 router has no platform or request fee. You cover your infrastructure and any model-provider charges. Routing is also included with BitRouter-hosted inference."],
-  ["Who bills me for model usage?", "With your own keys or supported subscriptions, your provider bills you and its limits apply. With BitRouter-hosted inference, usage is paid through your BitRouter balance at the listed model rates."],
-  ["How do cache prices work?", "Cache read and cache write rates are listed separately where the provider publishes them. Whether a request uses caching depends on the model, provider, and request. A dash means no rate is listed, not that caching is free."],
-  ["Does 0% markup mean there are no other fees?", "BitRouter adds no margin to the listed token prices. Third-party payment-processing fees may apply when you add funds; those fees are separate from inference pricing."],
-  ["Can I combine local models, my own keys, and hosted inference?", "Yes. A self-hosted router can use local models, your provider keys, and BitRouter-hosted models in the same setup. Provider charges, subscription limits, and your infrastructure costs still apply."],
+  ["Is self-hosted BitRouter free?", "Yes. The Apache-2.0 router has no BitRouter platform or request fee when you self-host. You cover your infrastructure and provider charges. Optional Cloud services have their own pricing."],
+  ["How is Cloud Auto Routing with BYOK billed?", "Cloud Auto Routing costs $0.01 per million routing input tokens. Charges are based on verifiable input usage processed by the routing service. Your model provider bills inference separately."],
+  ["Are model output tokens charged by the routing service?", "The Cloud Auto Routing fee is based on routing input tokens only. Your upstream provider still charges for generation, including output tokens, according to its own rates. Routing input usage and provider inference usage are separate meters."],
+  ["How much does Flex Inference cost?", "You pay the supplier’s actual settled inference charge plus a 5% transaction fee on that amount. For a $1.00 supplier charge, the fee is $0.05 and the total is $1.05. The fee is based on the supplier charge, not your budget cap or top-up amount."],
+  ["Does Flex also charge for Cloud Auto Routing?", "No. Requests served through Flex Inference do not incur a separate Cloud Auto Routing fee. The transaction fee covers the market service, including routing."],
+  ["Does my Flex price cap include the transaction fee?", "Yes. The maximum buyer charge includes the 5% transaction fee. An offer qualifies only when the full maximum authorized charge fits your cap. Estimated charges and final metered charges remain distinct."],
+  ["Do the listed model prices include the transaction fee?", "The model table shows supplier token rates before the 5% Flex transaction fee. Cache read and write rates are shown where published. A dash means no rate is listed. Cache use depends on the model, provider, and request."],
+  ["Are payment-processing fees included?", "Third-party payment-processing fees may apply when adding funds. Those fees are separate from Cloud Auto Routing usage and Flex transaction fees."],
+  ["How is Enterprise priced?", "Enterprise services and terms are custom. Deployment, security, procurement, and support requirements are scoped with your team. The open-source router remains free to self-host."],
 ] as const;
 
 export function PricingFaq() {

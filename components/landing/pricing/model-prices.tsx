@@ -46,8 +46,8 @@ export function ModelPrices({ models }: { models: PriceModel[] }) {
   function reset() { setQuery(""); setProvider("all"); setLicense("all"); setContext("all"); setModality("all"); setInputMax("all"); }
 
   return <section className="price-catalog" id="models" aria-labelledby="model-prices-title">
-    <div className="price-catalog-heading"><h2 id="model-prices-title">Model prices</h2><span>{models.length} models</span></div>
-    <p className="price-catalog-note">Hosted inference · USD per 1M tokens. Your own keys and subscriptions are billed by your provider.</p>
+    <div className="price-catalog-heading"><h2 id="model-prices-title">Supplier model prices</h2><span>{models.length} models</span></div>
+    <p className="price-catalog-note">Supplier rates · USD per 1M tokens, before the 5% Flex transaction fee. Cloud BYOK provider inference is billed separately from Cloud Auto Routing usage.</p>
     <div className="price-toolbar">
       <label className="price-search"><Search size={16} aria-hidden="true" /><input aria-label="Search models" placeholder="Search models…" value={query} onChange={event => setQuery(event.target.value)} /></label>
       <label className="price-select price-provider"><span className="sr-only">Provider</span><select aria-label="Provider" value={provider} onChange={event => setProvider(event.target.value)}><option value="all">All providers</option>{providers.map(name => <option key={name}>{name}</option>)}</select><ChevronDown size={14} aria-hidden="true" /></label>
@@ -62,11 +62,11 @@ export function ModelPrices({ models }: { models: PriceModel[] }) {
     </div>}
     <div className="price-results" role="status">{rows.length} of {models.length} models{active && <button type="button" onClick={reset}>Clear filters</button>}</div>
     {rows.length === 0 ? <div className="price-empty"><p>No models match your filters.</p><button type="button" onClick={reset}>Show all models</button></div> : <>
-      <table className="price-table"><caption className="sr-only">Hosted model prices in USD per million tokens</caption><thead><tr><th scope="col">Model</th>{rates.map(([label, key]) => <th scope="col" key={key}>{label}</th>)}<th scope="col">Context</th></tr></thead><tbody>
+      <table className="price-table"><caption className="sr-only">Supplier model rates in USD per million tokens, excluding the Flex transaction fee</caption><thead><tr><th scope="col">Model</th>{rates.map(([label, key]) => <th scope="col" key={key}>{label}</th>)}<th scope="col">Context</th></tr></thead><tbody>
         {rows.map(model => <tr key={model.id}><th scope="row"><ModelIdentity model={model} /></th>{rates.map(([label, key]) => <td key={key} aria-label={`${label}: ${formatCatalogPrice(model[key])}`}>{formatCatalogPrice(model[key])}</td>)}<td>{formatContext(model.context)}</td></tr>)}
       </tbody></table>
       <div className="price-mobile-list">{rows.map(model => <article key={model.id} className="price-mobile-model"><ModelIdentity model={model} /><dl>{rates.map(([label, key]) => <div key={key}><dt>{label}</dt><dd>{formatCatalogPrice(model[key])}</dd></div>)}<div><dt>Context</dt><dd>{formatContext(model.context)}</dd></div></dl></article>)}</div>
     </>}
-    <p className="price-rate-note">Standard token rates. — means no rate is listed. View a model for its capabilities and setup.</p>
+    <p className="price-rate-note">Flex adds 5% to the supplier’s actual settled charge and includes Cloud Auto Routing without a separate fee. — means no rate is listed. View a model for capabilities and setup.</p>
   </section>;
 }

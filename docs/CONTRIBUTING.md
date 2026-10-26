@@ -287,6 +287,20 @@ beyond the whitelisted components. The build enforces this:
 5. **English only** — the site no longer ships localized docs; don't add
    `<name>.zh.md` translation files.
 
+## Pricing language
+
+Use four commercial paths consistently: OSS Self-hosted (no BitRouter fee),
+Cloud Auto Routing with BYOK ($0.01 per million verifiable routing input tokens),
+Flex Inference (supplier’s actual settled charge plus a 5% transaction fee,
+without a separate Cloud Auto Routing fee), and Enterprise (custom terms).
+Routing input and upstream inference usage are separate meters. Flex buyer caps
+include the transaction fee; catalog rates are supplier rates before that fee.
+Payment-processing fees are separate. Do not invent token floors, minimums,
+retry/failed-request billing rules, or new refund terms.
+
+`lib/commercial-pricing.ts` supplies website options; authored docs use the same
+terms. These publication changes do not verify deployed billing behavior.
+
 ## Adding a page
 
 1. Create `content/docs/(guide)/<section>/<name>.mdx`.

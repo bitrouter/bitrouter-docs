@@ -104,14 +104,7 @@
 .ws-values {
   padding-top:0
 }
-.ws-pricing h2 {
-  font-size:45px;
-  line-height:1.08;
-  letter-spacing:-1.7px;
-  font-weight:450;
-  margin:19px 0 0
-}
-.ws-pricing,.ws-privacy {
+.ws-privacy {
   padding-top:60px;
   padding-bottom:60px;
   display:grid;
@@ -127,45 +120,23 @@
   font-size:11px;
   margin-top:25px
 }
-.ws-pricing .ws-markup-heading {
-  font-size:38px;
-  line-height:1.1;
-  letter-spacing:-2.8px;
-  margin:0;
-  white-space:nowrap;
-}
-.ws-pricing .ws-bring-heading,.ws-privacy h2 {
-  font-size:38px;
-  line-height:1.12;
-  letter-spacing:-1.2px;
-  margin:0;
-}
-.ws-pricing-note {
-  color:var(--muted-foreground);
-  font-size:12px;
-  line-height:1.8;
-  margin:20px 0 0;
-}
-.ws-zero {
-  position:relative;
-  display:inline-block;
-  font-size:64px;
-  font-weight:500;
-  line-height:1;
-  letter-spacing:-.03em;
-  font-variant-numeric:tabular-nums;
-}
-@media(min-width:900px) {
-.ws-pricing .ws-markup-heading { font-size:48px; }
-.ws-zero { font-size:80px; }
-}
-.ws-zero-placeholder {
-  visibility:hidden;
-}
-.ws-zero-value {
-  position:absolute;
-  inset:0;
-  text-align:right;
+.ws-privacy h2 { font-size:38px; line-height:1.12; letter-spacing:-1.2px; margin:0; }
+.ws-pricing { padding-top:48px; padding-bottom:48px; scroll-margin-top:96px; }
+.ws-pricing-header h2 { margin:0; font-size:30px; line-height:1.2; letter-spacing:-.9px; font-weight:450; }
+.ws-pricing-header h2 span { white-space:nowrap; }
+.ws-pricing-intro { margin:10px 0 0; color:var(--muted-foreground); font-size:13px; line-height:1.7; }
+.ws-cloud-pricing { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:48px; margin-top:32px; }
+.ws-cloud-pricing article { min-width:0; }
+.ws-cloud-pricing h3 { margin:0; font-size:14px; line-height:1.5; font-weight:500; }
+.ws-cloud-rate { display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; margin:12px 0 0; }
+.ws-cloud-rate strong { font-size:34px; line-height:1.15; font-weight:450; letter-spacing:-1px; }
+.ws-cloud-rate span { font-size:13px; line-height:1.6; }
+.ws-pricing-note { margin:10px 0 0; font-size:13px; line-height:1.7; color:var(--muted-foreground); }
+.ws-pricing-details { margin-top:22px; width:fit-content; }
+@media(max-width:620px) {
+  .ws-pricing { padding-top:36px; padding-bottom:36px; }
+  .ws-pricing-header h2 { font-size:27px; }
+  .ws-cloud-pricing { grid-template-columns:1fr; gap:24px; margin-top:26px; }
 }
 .ws-privacy p { margin:0; max-width:54ch; color:var(--muted-foreground); font-size:12px; line-height:1.8; }
 .ws-faq { padding-top:90px; padding-bottom:90px; }
@@ -235,7 +206,7 @@
 .ws-hero h1 {
     letter-spacing:-3px
   }
-.ws-pricing,.ws-privacy {
+.ws-privacy {
     gap:40px
   }
 }
@@ -273,20 +244,13 @@
 .ws-hero-note {
     font-size:9px
   }
-.ws-pricing,.ws-privacy {
+.ws-privacy {
     grid-template-columns:1fr;
     gap:32px;
     padding-top:40px;
     padding-bottom:40px
   }
-.ws-pricing h2 {
-    font-size:39px
-  }
-.ws-pricing .ws-markup-heading {
-    font-size:36px;
-  }
-.ws-zero { font-size:60px; }
-.ws-pricing .ws-bring-heading,.ws-privacy h2 {
+.ws-privacy h2 {
     font-size:34px;
   }
 .ws-faq { padding-top:55px; padding-bottom:55px; }

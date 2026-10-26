@@ -24,6 +24,15 @@ Next.js 16 (App Router) + fumadocs site for [bitrouter.ai](https://bitrouter.ai)
   - `.cli-snapshot.json` — re-capture from the binary with `pnpm snapshot:cli`; never edit by hand.
   - `.models-snapshot.json` / changelog page and latest-date data — `pnpm generate:models` / `pnpm generate:changelog`.
 
+## Commercial pricing
+
+- OSS self-hosting is free of BitRouter fees; provider and infrastructure costs remain separate.
+- Cloud Auto Routing with BYOK is $0.01 per million verifiable routing input tokens actually processed by the cloud routing service. Provider inference, including generation output, is billed separately. Do not substitute provider inference usage for the routing input meter.
+- Flex Inference adds a 5% buyer transaction fee to the supplier’s actual settled charge. It has no separate Cloud Auto Routing fee; buyer caps include the transaction fee. Do not apply Liquid’s token floors or invent minimums, failed-request rules, or retry billing semantics.
+- Enterprise pricing stays custom. Payment-processing charges remain a separate category.
+- `lib/commercial-pricing.ts` owns the four website pricing options. The homepage presents a compact OSS-free heading, two Cloud pricing options, and one Pricing link; the dedicated Pricing page retains all four full options. Keep homepage, Pricing/FAQ, model-rate labels, structured metadata, LLM discovery, and affected docs consistent. Catalog snapshots remain supplier rates; never alter snapshots to bake in the platform fee.
+- These are user-approved publication terms. Website changes do not implement or validate Cloud billing. Preserve existing refund/privacy commitments unless separately authorized.
+
 ## Commands
 
 - `pnpm dev` / `pnpm build` / `pnpm start`

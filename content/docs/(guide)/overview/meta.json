@@ -3,9 +3,8 @@
   "pagesIndex": "quickstart",
   "pages": [
     "what-is-bitrouter",
-    "inference-spot",
-    "inference-forwards",
-    "comparison",
-    "supported-models"
+    "supported-models",
+    "flex-inference",
+    "comparison"
   ]
 }

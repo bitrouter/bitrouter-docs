@@ -16,7 +16,7 @@ For a complete field lookup, use [config reference](/docs/routing/configuration#
 
 A request preset supplies a model and defaults. A policy binding adds model-selection decisions to that preset. A valid configuration file alone does not create the binding required by `bitrouter/auto`.
 
-[Routing Rules](/docs/routing/routing-rules) explains candidate eligibility and selection. [Auto Router](/docs/routing/auto-router) covers policy-bound model selection, evidence, and reviewed publication. [Context Routing](/docs/routing/context-routing) describes native evidence views; this guide does not imply that every context-view rule has a public YAML setting.
+[Strategies](/docs/routing/strategies) explains candidate eligibility and selection. [Auto Router](/docs/routing/auto-router) covers policy-bound model selection. [Auditable Policies](/docs/routing/auditable-policies) covers evidence and reviewed publication. [Context Routing](/docs/routing/context-routing) describes native evidence views; this guide does not imply that every context-view rule has a public YAML setting.
 
 ## Create a configuration
 
@@ -39,8 +39,9 @@ Use the guide for the setting you need:
 | --- | --- |
 | Add an API key, subscription, or custom endpoint | [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions) |
 | Define named endpoints and reusable request defaults | [Virtual Models](/docs/models-routing/virtual-models) |
-| Initialize and evaluate an auto policy | [Auto Router](/docs/routing/auto-router) |
-| Restrict candidates or reuse named routing variants | [Routing Rules](/docs/routing/routing-rules#configure-routing-rules) |
+| Initialize an auto policy | [Auto Router](/docs/routing/auto-router) |
+| Evaluate evidence and review policy changes | [Auditable Policies](/docs/routing/auditable-policies) |
+| Restrict candidates or reuse named routing variants | [Strategies](/docs/routing/strategies#configure-routing-rules) |
 | Define failure-driven replacement routes | [Model Fallbacks](/docs/models-routing/model-fallback) |
 | Connect an upstream MCP server | [MCP servers](/docs/context-routing/mcp-servers) |
 | Configure a custom ACP adapter | [ACP servers](/docs/context-routing/acp-servers#configure-a-custom-agent) |

@@ -53,10 +53,12 @@ const isGenerated = (path) => GENERATED.has(path) || path.startsWith("(guide)/cl
 // Intentional exceptions to the otherwise complete public sidebar. Keep this
 // list short and document each product-navigation decision.
 const HIDDEN_SIDEBAR_ROUTES = new Set([
+  // Router main navigation is limited to the four product guides.
+  // Strategies links to these supporting context and configuration guides.
+  "/docs/routing/context-routing",
+  "/docs/routing/configuration",
   // Retain the Cloud placeholder URL after removing its Usage navigation entry.
   "/docs/usage/cloud",
-  // Catalog remains accessible through existing links, outside Overview navigation.
-  "/docs/overview/supported-models",
   // Deployment guide remains accessible through content links, outside Overview.
   "/docs/self-hosting",
   "/docs/cli/agent",

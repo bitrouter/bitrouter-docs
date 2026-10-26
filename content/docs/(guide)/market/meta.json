@@ -2,6 +2,9 @@
   "title": "Market",
   "pages": [
     "buy-inference",
-    "sell-inference"
+    "sell-inference",
+    "agentic-payment",
+    "auto-bidding",
+    "market-data"
   ]
 }

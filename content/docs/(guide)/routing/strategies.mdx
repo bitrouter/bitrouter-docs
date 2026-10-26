@@ -1,9 +1,9 @@
 ---
-title: Routing Rules
+title: Strategies
 description: Resolve selectors, constrain eligible providers, and reuse routing rules through presets and named variants.
 ---
 
-Routing rules determine **which models and providers are eligible for a call and how their candidates are ordered**. A [virtual model](/docs/models-routing/virtual-models) defines a reusable model endpoint; routing resolves the caller's selector, forms the eligible candidate set, and applies the configured selection behavior. [Context Routing](/docs/routing/context-routing) independently determines what retained evidence the next native model call sees.
+Routing strategies determine **which models and providers are eligible for a call and how their candidates are ordered**. A [virtual model](/docs/models-routing/virtual-models) defines a reusable model endpoint; routing resolves the caller's selector, forms the eligible candidate set, and applies the configured selection behavior. [Context Routing](/docs/routing/context-routing) independently determines what retained evidence the next native model call sees.
 
 ## How a call is routed
 
@@ -157,7 +157,7 @@ For custom sources, declare only verified capabilities in [BYOK & Subscriptions]
 
 A bound model policy maps request fingerprints to configured tiers. Runtime adequacy can temporarily escalate a fingerprint after repeated hard failures and conservatively explore an economy tier. These observations are distinct from objective-scored evaluations: a successful transport or lower cost does not establish task success.
 
-The [Auto Router guide](/docs/routing/auto-router#initialize-a-policy-binding) covers initialization, adequacy settings, reviewed publication, and evaluation evidence. Evidence collection does not automatically publish a candidate policy. The policy artifact does not establish a context-loading contract for an external harness.
+[Auto Router](/docs/routing/auto-router#initialize-a-policy-binding) covers initialization. [Auditable Policies](/docs/routing/auditable-policies) covers adequacy settings, reviewed publication, and evaluation evidence. Evidence collection does not automatically publish a candidate policy. The policy artifact does not establish a context-loading contract for an external harness.
 
 ## Decisions API and policy ownership
 
@@ -165,7 +165,39 @@ The [Auto Router guide](/docs/routing/auto-router#initialize-a-policy-binding) c
 
 <Cards>
   <Card title="Configuration (YAML)" href="/docs/routing/configuration" description="Find, validate, and apply the configuration and its policy binding." />
-  <Card title="Auto Router" href="/docs/routing/auto-router" description="Initialize bitrouter/auto, evaluate evidence, and publish reviewed policy changes." />
+  <Card title="Auto Router" href="/docs/routing/auto-router" description="Initialize bitrouter/auto and inspect a policy-bound request." />
+  <Card title="Auditable Policies" href="/docs/routing/auditable-policies" description="Inspect evaluation evidence and review policy publication." />
+  <Card title="Cache Affinity" href="/docs/routing/cache-affinity" description="Cache-aware source selection; documentation coming soon." />
   <Card title="Model Fallbacks" href="/docs/models-routing/model-fallback" description="Understand when failed attempts advance to another endpoint." />
   <Card title="Context Routing" href="/docs/routing/context-routing" description="Select evidence for the next native model call." />
 </Cards>
+
+## Auto routing setup
+
+<a id="routing-rules" />
+<a id="choose-a-strategy" />
+<a id="customize-a-strategy" />
+<a id="policy-tiers-and-runtime-adequacy" />
+<a id="initialize-a-policy-binding" />
+<a id="override-one-call" />
+<a id="verify-and-apply-a-strategy" />
+<a id="verify-and-apply-the-policy" />
+
+[Auto Router](/docs/routing/auto-router) explains how to initialize the auto binding, override a call, and inspect the serving route.
+
+## Policy lifecycle and evidence
+
+<a id="let-evidence-improve-the-policy" />
+<a id="review-and-publish-a-change" />
+<a id="evaluations" />
+<a id="two-evidence-paths" />
+<a id="evidence-lifecycle" />
+<a id="1-define-and-seal-a-subject" />
+<a id="2-evaluate-outside-the-router" />
+<a id="3-submit-the-result" />
+<a id="4-freeze-a-snapshot" />
+<a id="5-consume-the-evidence-explicitly" />
+<a id="reproducibility-boundary" />
+<a id="what-evaluation-does-not-establish" />
+
+[Auditable Policies](/docs/routing/auditable-policies) covers runtime adequacy, objective-scored [evaluations](/docs/routing/auditable-policies#evaluations), frozen evidence snapshots, and [reviewed publication](/docs/routing/auditable-policies#review-and-publish-a-change).

@@ -14,7 +14,7 @@ description: Compare BitRouter with LiteLLM's SDK and proxy across gateway opera
 | How are routing decisions configured? | Deployment strategies and beta classification/adaptive routing | Virtual-model endpoints and a separately bound routing policy |
 | How are changes reviewed? | Configure the selected gateway and routing features | Inspect policy-lock changes and explicitly apply reviewed candidates |
 
-BitRouter's [Auto Router](/docs/routing/auto-router) and [Evaluations](/docs/routing/auto-router#evaluations) describe runtime outcome observations and objective evaluation evidence separately. LiteLLM's beta adaptive routing also accepts feedback. Having feedback support does not establish that two systems use the same outcome, attribution, or publication rules.
+BitRouter's [Auto Router](/docs/routing/auto-router) and [Evaluations](/docs/routing/auditable-policies#evaluations) describe runtime outcome observations and objective evaluation evidence separately. LiteLLM's beta adaptive routing also accepts feedback. Having feedback support does not establish that two systems use the same outcome, attribution, or publication rules.
 
 ## Choose BitRouter when
 
@@ -38,7 +38,7 @@ If you call `litellm.completion` in-process, migration changes application archi
 
 1. Choose [Cloud or a local daemon](/docs/overview/quickstart) and configure the required upstream credentials.
 2. Change the client base URL to `https://api.bitrouter.ai/v1` or `http://127.0.0.1:4356/v1`, with the corresponding BitRouter credential.
-3. Translate `model_list` aliases and deployments into [Virtual Models](/docs/models-routing/virtual-models), [Routing Rules](/docs/routing/routing-rules) constraints, and [Model Fallbacks](/docs/models-routing/model-fallback).
+3. Translate `model_list` aliases and deployments into [Virtual Models](/docs/models-routing/virtual-models), [Strategies](/docs/routing/strategies) constraints, and [Model Fallbacks](/docs/models-routing/model-fallback).
 4. If using auto routing, define and validate the destination [policy binding](/docs/routing/auto-router#initialize-a-policy-binding). Existing classifier, tier, or feedback settings do not transfer automatically.
 5. Inventory hooks, budgets, keys, caching, non-generation endpoints, and admin dependencies. Keep a workload on its existing gateway until each required capability has a verified replacement.
 6. Replay representative requests, inspect settled [receipts](/docs/cli/request-receipts), and configure [OpenTelemetry export](/docs/self-hosting#opentelemetry) before retiring the previous proxy.

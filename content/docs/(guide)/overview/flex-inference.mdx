@@ -1,0 +1,132 @@
+---
+title: Flex Inference
+description: Trade inference across price, time, and heterogeneous models.
+---
+
+<Callout type="info">
+Flex Inference is an optional BitRouter Cloud service. BitRouter OSS works independently without it. See [Auto Router](/docs/routing/auto-router) to route requests using your own inference sources.
+</Callout>
+
+## What is Flex Inference?
+
+Flex Inference brings three dimensions into each purchasing decision:
+
+- **Price.** Set a maximum total spend for your request. BitRouter compares eligible offers using estimated charges, while checking that their maximum authorized charges fit your budget.
+- **Time.** Request immediate purchasing or allow BitRouter to seek opportunities within a purchase window. For cost-focused requests, you can authorize waiting for a potentially cheaper opportunity.
+- **Heterogeneous models.** Keep one model fixed or specify several acceptable alternatives. BitRouter compares eligible sources across that selection and purchases one option for the request.
+
+Cache affinity informs source selection: opportunities to reuse context can affect expected cost and latency alongside published rates and available capacity.
+
+You control the acceptable range. BitRouter makes purchasing decisions within it.
+
+## Why Flex Inference?
+
+We believe using tokens should feel as effortless as using electricity. You should be able to focus on the work you want done, without constantly comparing providers, checking prices, and deciding where every request should go.
+
+Behind that simple experience, there should be a market. Just as electricity has exchanges, inference should have a place where demand and available supply can meet.
+
+Fixed-price tiers provide a simple way to purchase inference, but they leave limited room to express the flexibility of an individual request. One task needs an immediate response from a specific model. Another accepts several models and can wait for a lower-cost opportunity. Their purchasing needs are different.
+
+Flex Inference makes those differences actionable. You express your requirements and preferences, and BitRouter handles the purchasing decisions within them.
+
+## How it works
+
+Each limit order defines the terms under which you authorize a trade. A buyer limits the total charge for one complete request; a seller publishes rates and service conditions for eligible requests.
+
+### Buy limit orders
+
+| Order | Acceptable models | Total price cap | Timing and preference |
+| --- | --- | --- | --- |
+| Buy now | Model A | $0.05 | Immediately seek the lowest estimated cost; close if unfilled |
+| Allow cost flexibility | Model A or B | $0.05 | Keep open for one hour; allow waiting for a lower-cost opportunity |
+| Favor earlier completion | Model A or B | $0.05 | Purchase immediately; prefer the earliest estimated completion |
+
+The first and third orders use **Immediate or Cancel (IOC)**: one bounded purchasing round, without waiting for future offers. The second uses **Good Till Date (GTD)**: it remains open until its expiry, with separate permission to wait for a lower-cost opportunity. GTD can also purchase immediately.
+
+The following JSON illustrates the second order. `50000` micro-USD is **$0.05**, and the expiry is one hour after the example entry time of `1793000000000` Unix milliseconds.
+
+<Callout type="info">
+These payloads illustrate the order design. Field names are provisional and are not a released API contract. Model and service references are placeholders.
+</Callout>
+
+```json
+{
+  "client_order_id": "summarize-001",
+  "idempotency_key": "submit-summarize-001",
+  "request": {
+    "request_ref": "request/summary/001",
+    "request_digest": "digest/summary/001",
+    "max_output_tokens": 2048
+  },
+  "acceptable_models": ["model-a", "model-b"],
+  "side": "buy",
+  "order_type": "limit",
+  "price_cap_micro_usd": 50000,
+  "time_in_force": {
+    "kind": "gtd",
+    "expires_at_ms": 1793003600000
+  },
+  "strategy": {
+    "selection_objective": "lowest_estimated_cost",
+    "timing_policy": "allow_cost_wait",
+    "version": 1
+  }
+}
+```
+
+BitRouter compares eligible offers for both models and may purchase immediately or wait and reassess. The order authorizes one selected option. A candidate qualifies only when its maximum authorized charge fits the cap; a lower estimated charge alone is insufficient.
+
+### Sell limit offer
+
+A provider can publish a standing offer with rates and service conditions:
+
+| Term | Example |
+| --- | --- |
+| Model | Model A |
+| Input rate | $0.20 per million tokens |
+| Cached-input rate | $0.05 per million tokens |
+| Output rate | $0.80 per million tokens |
+| Offer validity | 30 minutes |
+| Service conditions | The published conditions for the referenced request-size profile |
+| Repeat sales | Allowed while the offer is valid and capacity is available |
+
+The corresponding JSON uses micro-USD per million tokens. Its expiry is 30 minutes after the same example entry time.
+
+```json
+{
+  "offer_id": "offer-model-a-small",
+  "side": "sell",
+  "order_type": "limit",
+  "supply_mode": "standing",
+  "revision": 7,
+  "deployment_ref": "deployment/model-a@3",
+  "request_profile_ref": "request-profile/small@1",
+  "pricing": {
+    "metering_ref": "llm-three-rates@1",
+    "input_micro_usd_per_mtok": 200000,
+    "cache_input_micro_usd_per_mtok": 50000,
+    "output_micro_usd_per_mtok": 800000
+  },
+  "service_conditions_ref": "quick-delivery/small@1",
+  "time_in_force": {
+    "kind": "gtd",
+    "expires_at_ms": 1793001800000
+  }
+}
+```
+
+Each acceptance checks the request against the offer's scope, service conditions, and available capacity. Input, cached-input, and output rates are applied to the request to check its maximum charge against the buyer's cap.
+
+*All prices, durations, and identifiers above are illustrative.*
+
+An order’s validity determines when a new trade may be accepted. **It does not specify when inference must finish.** Once accepted, the provider proceeds under the agreed service terms, and charges follow actual metered usage. Waiting does not guarantee a cheaper offer or a successful trade.
+
+## What’s next?
+
+Buyers define what they need and the terms they accept. Providers offer inference capacity with published pricing and service conditions. BitRouter connects eligible offers with requests.
+
+- [Buy Inference](/docs/market/buy-inference) — submit requests with your budget, model choices, and purchasing preferences.
+- [Sell Inference](/docs/market/sell-inference) — offer capacity with pricing and service conditions.
+- [Agentic Payment](/docs/market/agentic-payment) — explore payments for agent-driven inference purchases.
+- [Auto-bidding](/docs/market/auto-bidding) — explore automated purchasing strategies.
+- [Market Data](/docs/market/market-data) — explore inference market data.

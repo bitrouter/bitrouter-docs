@@ -30,7 +30,7 @@ Schema defaults and onboarding defaults differ. The schema declares `server.list
 | Listener, authentication, upstream timeouts, and storage | `server`, `upstream`, `database` | [Self-hosting](/docs/self-hosting) |
 | Provider keys, multiple accounts, and custom endpoints | `providers`, `registry`, `inherit_defaults` | [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions) |
 | Named model endpoints and request defaults | `models`, `presets`, `variants` | [Virtual Models](/docs/models-routing/virtual-models) |
-| Named routers, policy artifacts, and checks | `routers`, `policy`, `checkers` | [Auto Router](/docs/routing/auto-router) |
+| Named routers, policy artifacts, and checks | `routers`, `policy`, `checkers` | [Auditable Policies](/docs/routing/auditable-policies) |
 | Native semantic decision backend | `decision_model` | [Context Routing](/docs/routing/context-routing) |
 | ACP adapters and saved interactive defaults | `agents`, `chat` | [ACP servers](/docs/context-routing/acp-servers) |
 | Upstream MCP connections and aggregation | `mcp_servers`, `mcp` | [MCP servers](/docs/context-routing/mcp-servers) |

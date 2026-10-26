@@ -25,8 +25,8 @@ References:
 
 - [Quickstart](${BASE_URL}/docs/overview/quickstart): Install via Agent Skills or the CLI, start routing in under a minute, then optimize against your own workflow
 - [How BitRouter Works](${BASE_URL}/docs/overview/what-is-bitrouter): The one-page explanation — \`bitrouter/auto\`, how routing reads each call, and the two loops that improve it
-- [Inference Spot](${BASE_URL}/docs/overview/inference-spot): Coming soon
-- [Inference Forwards](${BASE_URL}/docs/overview/inference-forwards): Coming soon
+- [Models](${BASE_URL}/docs/overview/supported-models): Hosted model catalog, pricing, and model IDs
+- [Flex Inference](${BASE_URL}/docs/overview/flex-inference): Optional cloud service for buying and selling inference across price, time, and heterogeneous models, with limit-order tables and provisional JSON examples
 - [Agent Skill](https://github.com/bitrouter/bitrouter/tree/main/skills/bitrouter): Versioned instructions that teach an agent to install and operate BitRouter
 - [BitRouter CLI](https://github.com/bitrouter/bitrouter): \`cargo install bitrouter\` — the Rust binary, onboarding, and TUI conversation
 - [Enterprise](${BASE_URL}/enterprise): Choose between self-hosted OSS, BitRouter Cloud, and a design partnership for requirements not shipped today
@@ -58,11 +58,18 @@ References:
 
 - [Buy Inference](${BASE_URL}/docs/market/buy-inference): Documentation placeholder for obtaining inference access through BitRouter
 - [Sell Inference](${BASE_URL}/docs/market/sell-inference): Documentation placeholder for optional marketplace supply
+- [Agentic Payment](${BASE_URL}/docs/market/agentic-payment): Coming soon
+- [Auto-bidding](${BASE_URL}/docs/market/auto-bidding): Coming soon
+- [Market Data](${BASE_URL}/docs/market/market-data): Coming soon
 
 ## Router
 
-- [Auto Router](${BASE_URL}/docs/routing/auto-router): Initialize bitrouter/auto, inspect its policy, evaluate evidence, and publish reviewed changes
-- [Routing Rules](${BASE_URL}/docs/routing/routing-rules): Resolve selectors, constrain candidates, and reuse presets and named routing variants
+- [Auto Router](${BASE_URL}/docs/routing/auto-router): Initialize bitrouter/auto, send requests, and inspect the serving route
+- [Cache Affinity](${BASE_URL}/docs/routing/cache-affinity): Coming soon; canonical guide for cache-aware source selection
+- [Auditable Policies](${BASE_URL}/docs/routing/auditable-policies): Inspect policy artifacts, evaluate evidence, and review changes before publication
+- [Strategies](${BASE_URL}/docs/routing/strategies): Resolve selectors, constrain the inference pool, and reuse endpoint ordering, presets, and variants
+
+Supporting guides linked from Strategies:
 - [Context Routing](${BASE_URL}/docs/routing/context-routing): Select retained evidence for the next native model call
 - [Configuration (YAML)](${BASE_URL}/docs/routing/configuration): Load, validate, and apply bitrouter.yaml; look up pinned schema fields in the inline configuration reference
 

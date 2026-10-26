@@ -8,13 +8,13 @@ const finalPath = {
   installation: "/docs/overview/quickstart", quickstart: "/docs/overview/quickstart",
   comparison: "/docs/overview/comparison/openrouter", "self-host-vs-cloud": "/docs/overview/quickstart#self-host-or-cloud",
   // models & routing
-  "provider-selection":"/docs/routing/routing-rules#candidate-eligibility","model-fallback":"/docs/models-routing/model-fallback#fallback-chains",
-  "model-variants":"/docs/routing/routing-rules#variants","presets":"/docs/models-routing/virtual-models#presets",
+  "provider-selection":"/docs/routing/strategies#candidate-eligibility","model-fallback":"/docs/models-routing/model-fallback#fallback-chains",
+  "model-variants":"/docs/routing/strategies#variants","presets":"/docs/models-routing/virtual-models#presets",
   "structured-outputs":"/docs/models-routing/virtual-models#protocol-compatibility","byok":"/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
   "local-models":"/docs/models-routing/local-models","guardrails":"/docs/routing/configuration#create-a-configuration",
   "observability":"/docs/cli/request-receipts","opentelemetry":"/docs/self-hosting#opentelemetry",
   "tracing":"/docs/cli/request-receipts#cloud-activity","telemetry":"/docs/cli/request-receipts",
-  "evaluation":"/docs/routing/auto-router#evaluations","evaluations":"/docs/routing/auto-router#evaluations",
+  "evaluation":"/docs/routing/auditable-policies#evaluations","evaluations":"/docs/routing/auditable-policies#evaluations",
   "mcp":"/docs/context-routing/mcp-servers","acp":"/docs/context-routing/acp-servers",
   "agentskills":"/docs/context-routing/skills",
   // bitrouter cloud (was: infrastructure)
@@ -39,6 +39,10 @@ for (const file of readdirSync("content/changelog")) {
 }
 // overview + root + special
 pairs.push(
+  // Overview consolidates the former market placeholders into Flex Inference.
+  ["/docs/overview/inference-flex-market", "/docs/overview/flex-inference"],
+  ["/docs/overview/inference-spot", "/docs/overview/flex-inference"],
+  ["/docs/overview/inference-forwards", "/docs/overview/flex-inference"],
   // Guides include their references; legal policies use the documentation layout.
   ["/docs/cli/reference", "/docs/usage/cli"],
   ["/docs/configuration-reference", "/docs/routing/configuration"],
@@ -46,9 +50,9 @@ pairs.push(
   ["/privacy-policy", "/docs/privacy-policy"],
   ["/terms-of-service", "/docs/terms-of-service"],
   // Router separates auto policy workflows from reusable routing rules.
-  ["/docs/routing/strategies", "/docs/routing/auto-router"],
-  ["/docs/routing/model-routing", "/docs/routing/routing-rules"],
-  ["/docs/models-routing/model-variants", "/docs/routing/routing-rules#variants"],
+  ["/docs/routing/routing-rules", "/docs/routing/strategies"],
+  ["/docs/routing/model-routing", "/docs/routing/strategies"],
+  ["/docs/models-routing/model-variants", "/docs/routing/strategies#variants"],
   // Model owns source connections; Market owns buying and selling inference.
   ["/docs/providers/byok-subscriptions", "/docs/models-routing/byok-subscriptions"],
   ["/docs/providers/local-models", "/docs/models-routing/local-models"],
@@ -84,15 +88,15 @@ pairs.push(
   ["/compare", "/docs/overview/comparison/openrouter"],
   ["/zh/compare/:slug*", "/docs/overview/comparison/openrouter"],
   // Routing guides consolidated into configuration, mechanisms, and strategies.
-  ["/docs/routing/inference-pool", "/docs/routing/routing-rules"],
-  ["/docs/routing/policy", "/docs/routing/auto-router"],
-  ["/docs/routing/evaluations", "/docs/routing/auto-router#evaluations"],
+  ["/docs/routing/inference-pool", "/docs/routing/strategies"],
+  ["/docs/routing/policy", "/docs/routing/auditable-policies"],
+  ["/docs/routing/evaluations", "/docs/routing/auditable-policies#evaluations"],
   // Routing decisions have their own section.
-  ["/docs/models-routing/policy", "/docs/routing/auto-router"],
-  ["/docs/models-routing/evaluations", "/docs/routing/auto-router#evaluations"],
+  ["/docs/models-routing/policy", "/docs/routing/auditable-policies"],
+  ["/docs/models-routing/evaluations", "/docs/routing/auditable-policies#evaluations"],
   ["/docs/context-routing/context-switch", "/docs/routing/context-routing"],
   // Model resources and routing decisions now have separate ownership.
-  ["/docs/models-routing/inference-pool", "/docs/routing/routing-rules"],
+  ["/docs/models-routing/inference-pool", "/docs/routing/strategies"],
   // Config retired; model guides now follow inference resource tasks.
   ["/docs/config/configuration-file", "/docs/routing/configuration"],
   ["/docs/config/providers", "/docs/models-routing/byok-subscriptions"],
@@ -128,7 +132,7 @@ pairs.push(
   ["/docs/customization/models", "/docs/models-routing/byok-subscriptions"],
   ["/docs/configuration/models", "/docs/models-routing/virtual-models"],
   ["/docs/configuration/guardrails", "/docs/routing/configuration#create-a-configuration"],
-  ["/docs/configuration/evaluations", "/docs/routing/auto-router#evaluations"],
+  ["/docs/configuration/evaluations", "/docs/routing/auditable-policies#evaluations"],
   ["/docs/configuration/policy", "/docs/routing/configuration"],
   ["/docs/configuration/telemetry", "/docs/cli/request-receipts"],
   ["/docs/usage/tui", "/docs/usage/cli#interactive-tui"],
@@ -178,15 +182,15 @@ pairs.push(
   ["/docs/configuration/routing", "/docs/models-routing/virtual-models"],
   ["/docs/usage/structured-outputs", "/docs/models-routing/virtual-models#protocol-compatibility"],
   ["/docs/configuration/structured-outputs", "/docs/models-routing/virtual-models#protocol-compatibility"],
-  ["/docs/configuration/provider-selection", "/docs/routing/routing-rules#candidate-eligibility"],
+  ["/docs/configuration/provider-selection", "/docs/routing/strategies#candidate-eligibility"],
   ["/docs/configuration/model-fallback", "/docs/models-routing/model-fallback#fallback-chains"],
   ["/docs/configuration/virtual-model", "/docs/models-routing/virtual-models#define-a-virtual-model"],
-  ["/docs/configuration/model-variants", "/docs/routing/routing-rules#variants"],
+  ["/docs/configuration/model-variants", "/docs/routing/strategies#variants"],
   // Observability was split into the narrower Telemetry and Evaluations pages.
   ["/docs/configuration/observability", "/docs/cli/request-receipts"],
   ["/docs/configuration/observability/opentelemetry", "/docs/self-hosting#opentelemetry"],
   ["/docs/configuration/observability/tracing", "/docs/cli/request-receipts#cloud-activity"],
-  ["/docs/configuration/observability/evaluation", "/docs/routing/auto-router#evaluations"],
+  ["/docs/configuration/observability/evaluation", "/docs/routing/auditable-policies#evaluations"],
   ["/docs/configuration/observability/:slug*", "/docs/cli/request-receipts"],
   // Customization recipes collapsed around capability families (2026-09).
   ["/docs/customization/models/bring-your-own-model", "/docs/models-routing/byok-subscriptions#custom-endpoints-and-models"],
@@ -231,9 +235,9 @@ pairs.push(
   ["/docs/get-started/introduction", "/docs/overview/what-is-bitrouter"],
   ["/docs/get-started/supported-models", "/docs/overview/supported-models"],
   ["/docs/get-started/supported-providers", "/docs/overview/supported-models"],
-  ["/docs/features/provider-selection", "/docs/routing/routing-rules#candidate-eligibility"],
+  ["/docs/features/provider-selection", "/docs/routing/strategies#candidate-eligibility"],
   ["/docs/features/model-fallback", "/docs/models-routing/model-fallback#fallback-chains"],
-  ["/docs/features/model-variants", "/docs/routing/routing-rules#variants"],
+  ["/docs/features/model-variants", "/docs/routing/strategies#variants"],
   ["/docs/features/presets", "/docs/models-routing/virtual-models#presets"],
   ["/docs/features/structured-outputs", "/docs/models-routing/virtual-models#protocol-compatibility"],
   ["/docs/features/byok", "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key"],
@@ -263,7 +267,7 @@ pairs.push(
   ["/docs/get-started/comparison", "/docs/overview/comparison/openrouter"],
   ["/docs/get-started/set-up-routing", "/docs/models-routing/virtual-models#resolution-order"],
   ["/docs/get-started/set-up-tracing", "/docs/self-hosting#opentelemetry"],
-  ["/docs/get-started/set-up-evaling", "/docs/routing/auto-router#evaluations"],
+  ["/docs/get-started/set-up-evaling", "/docs/routing/auditable-policies#evaluations"],
   ["/docs/get-started/set-up-looping", "/docs/routing/auto-router#initialize-a-policy-binding"],
   // infrastructure → bitrouter cloud (folder renamed; pages merged/moved)
   ["/docs/infrastructure/managed-provider", "/docs/overview/supported-models"],
@@ -346,9 +350,9 @@ pairs.push(
   // models-and-routing/, the tool-calling pages to what became
   // models-and-routing/tool-calling/ (see the section dissolve below).
   ["/docs/gateway-and-routing/model-fallback", "/docs/models-routing/model-fallback#fallback-chains"],
-  ["/docs/gateway-and-routing/provider-selection", "/docs/routing/routing-rules#candidate-eligibility"],
+  ["/docs/gateway-and-routing/provider-selection", "/docs/routing/strategies#candidate-eligibility"],
   ["/docs/gateway-and-routing/virtual-model", "/docs/models-routing/virtual-models#define-a-virtual-model"],
-  ["/docs/gateway-and-routing/model-variants", "/docs/routing/routing-rules#variants"],
+  ["/docs/gateway-and-routing/model-variants", "/docs/routing/strategies#variants"],
   ["/docs/gateway-and-routing/bring-your-own-model", "/docs/models-routing/byok-subscriptions#custom-endpoints-and-models"],
   ["/docs/gateway-and-routing/bring-your-own-provider", "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key"],
   ["/docs/gateway-and-routing/structured-outputs", "/docs/models-routing/virtual-models#protocol-compatibility"],
@@ -372,9 +376,9 @@ pairs.push(
   ["/docs/mcp-and-tool-calling/:slug*", "/docs/customization/tools/:slug*"],
   // evals-and-tracing/ split into objective evidence and operational telemetry.
   ["/docs/evals-and-tracing", "/docs/cli/request-receipts"],
-  ["/docs/evals-and-tracing/evaluation", "/docs/routing/auto-router#evaluations"],
-  ["/docs/evals-and-tracing/evaluations", "/docs/routing/auto-router#evaluations"],
-  ["/docs/evals-and-tracing/evals", "/docs/routing/auto-router#evaluations"],
+  ["/docs/evals-and-tracing/evaluation", "/docs/routing/auditable-policies#evaluations"],
+  ["/docs/evals-and-tracing/evaluations", "/docs/routing/auditable-policies#evaluations"],
+  ["/docs/evals-and-tracing/evals", "/docs/routing/auditable-policies#evaluations"],
   ["/docs/evals-and-tracing/:slug*", "/docs/cli/request-receipts"],
   // agent and tool protocol history → Usage and Extensions.
   ["/docs/models-and-routing/acp-gateway", "/docs/context-routing/acp-servers"],
@@ -436,13 +440,16 @@ pairs.push(
 // rule at the end of redirects() folds them to the English path, which then
 // takes its own 301 to the final destination. One extra hop, on a dead locale.
 const movedGuideRoutes = new Set([
+  "/docs/overview/inference-flex-market",
+  "/docs/overview/inference-spot",
+  "/docs/overview/inference-forwards",
   "/docs/cli/reference",
   "/docs/configuration-reference",
   "/docs/data-handling",
   "/privacy-policy",
   "/terms-of-service",
 
-  "/docs/routing/strategies",
+  "/docs/routing/routing-rules",
   "/docs/routing/model-routing",
   "/docs/models-routing/model-variants",
 

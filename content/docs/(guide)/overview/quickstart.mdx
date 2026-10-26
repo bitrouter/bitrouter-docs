@@ -138,7 +138,7 @@ bro cloud login   # RFC 8628 device flow against api.bitrouter.ai
 bro start         # the `bitrouter` provider auto-enables once signed in
 ```
 
-Cloud is not a different binary — it's an account you attach. Signing in from a self-hosted binary routes Cloud-managed models alongside your BYOK keys, and you can add or remove the Cloud account at any time without affecting the binary's self-hosted capabilities. You can also point an agent straight at the hosted endpoint without running a local binary at all. See the [Supported Models](/docs/overview/supported-models) catalog for pricing.
+Cloud is not a different binary — it's an account you attach. Signing in from a self-hosted binary routes Cloud-managed models alongside your BYOK keys, and you can add or remove the Cloud account at any time without affecting the binary's self-hosted capabilities. You can also point an agent straight at the hosted endpoint without running a local binary at all. See the [Models](/docs/overview/supported-models) catalog for pricing.
 
 ## Point your agent at the proxy
 
@@ -183,7 +183,7 @@ curl http://127.0.0.1:4356/v1/chat/completions \
   -d '{"model": "bitrouter/auto", "messages": [{"role": "user", "content": "..."}]}'
 ```
 
-`bitrouter/auto` requires an `auto` policy binding and fails visibly when the binding is missing. The [Auto Router guide](/docs/routing/auto-router#initialize-a-policy-binding) shows how to create it, inspect the selected route, override one call, learn from runtime adequacy, and explicitly publish a reviewed policy update. [Evaluations](/docs/routing/auto-router#evaluations) covers the separate objective-scored evidence path.
+`bitrouter/auto` requires an `auto` policy binding and fails visibly when the binding is missing. The [Auto Router guide](/docs/routing/auto-router#initialize-a-policy-binding) shows how to create it, inspect the selected route, override one call, learn from runtime adequacy, and explicitly publish a reviewed policy update. [Evaluations](/docs/routing/auditable-policies#evaluations) covers the separate objective-scored evidence path.
 
 ## Next steps
 

@@ -2,6 +2,9 @@
   "title": "Market",
   "pages": [
     "[Buy Inference](/docs/market/buy-inference)",
-    "[Sell Inference](/docs/market/sell-inference)"
+    "[Sell Inference](/docs/market/sell-inference)",
+    "[Agentic Payment](/docs/market/agentic-payment)",
+    "[Auto-bidding](/docs/market/auto-bidding)",
+    "[Market Data](/docs/market/market-data)"
   ]
 }

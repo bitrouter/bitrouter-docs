@@ -9,18 +9,33 @@ is rendered from this repo — docs are committed directly here under
 Documentation uses one unified Fumadocs page tree with no layout tabs. Its
 top-level order is the `pages` list in `content/docs/meta.json`:
 
-1. **Overview** — Quickstart, How BitRouter Works, Inference Spot, Inference
-   Forwards, then a collapsed Comparison folder. Inference Spot and Inference
-   Forwards are Coming soon placeholders. Enterprise remains a linked deployment-decision entry.
+1. **Overview** — Quickstart, How BitRouter Works, Models, Flex Inference,
+   then a collapsed Comparison folder. Models restores the catalog at its existing
+   `/docs/overview/supported-models` URL. Flex Inference is an authored overview
+   of the optional cloud service, with price/time/model flexibility, the
+   electricity-exchange vision, illustrative buy/sell limit-order tables and JSON,
+   and next-step links to all five Market guides in sidebar order. The concise
+   description replaces a duplicate introduction.
+   An opening info Callout explains the optional Cloud service and standalone OSS
+   path, linking to Auto Router before the What section.
+   JSON payloads are labeled provisional; no released HTTP endpoint is implied.
+   The approved copy is prepared for publication after deployment; its prose
+   does not verify live availability. Purchase validity and completion timing
+   remain distinct. The retired Spot and Forwards URLs redirect to it.
+   Enterprise remains a linked deployment-decision entry.
 2. **Usage** — Desktop, CLI, Responses API, MCP, and Web, in that order.
    MCP and Web are Coming soon placeholders. Desktop is Coming soon until
    its installation and behavior can be documented from a verified implementation.
    CLI combines the self-driving, interactive terminal, and headless guides.
 3. **Coding Agents** — Claude Code, Codex, DeepSeek Harness, OpenCode, and Pi,
    in that order. These product-specific pages are Coming soon placeholders.
-4. **Market** — Buy Inference and Sell Inference. Both are title/description-only
-   placeholders until their implementation is verified.
-5. **Router** — Auto Router, Routing Rules, Context Routing, and Configuration (YAML).
+4. **Market** — Buy Inference, Sell Inference, Agentic Payment, Auto-bidding,
+   and Market Data, in that order. Buy Inference and Sell Inference are placeholders with links
+   to Cache Affinity; Agentic Payment, Auto-bidding, and Market Data are Coming soon until their
+   implementation is verified.
+5. **Router** — Auto Router, Cache Affinity, Auditable Policies, and Strategies,
+   in that order. Cache Affinity is Coming soon. Context Routing and Configuration
+   (YAML) remain supporting guides linked from Strategies, without sidebar entries.
 6. **Model** — Model Fallbacks, Virtual Models, Structured Output, BYOK & Subscriptions,
    and Local Models. Structured Output is a Coming soon placeholder.
 7. **Context** — ACP servers, MCP gateway configuration/use,
@@ -92,15 +107,17 @@ four Comparison children. Cards and inline links provide additional
 discovery, not a substitute for sidebar visibility.
 Rare intentional exceptions must be added to `HIDDEN_SIDEBAR_ROUTES` in
 `scripts/check-docs.mjs`. The Cloud placeholder remains accessible at
-`/docs/usage/cloud` without a sidebar entry. Supported Models remains accessible through existing
-links at `/docs/overview/supported-models` without a sidebar entry. BitRouter Agent and the
+`/docs/usage/cloud` without a sidebar entry. Models is visible under Overview at
+`/docs/overview/supported-models`. BitRouter Agent and the
 retained Coding agents guide remain hidden. The shared `bro [harness]` launch
 guide also remains accessible at `/docs/integration/bro-harness` without a sidebar entry. The supporting Request receipts page has no sidebar entry; feature guides retain
-its links. Configuration (YAML) is visible under Routing.
+its links. Context Routing and Configuration (YAML) are intentional supporting-guide
+exceptions: both remain linked from Strategies without Router sidebar entries.
 Self-hosting is also omitted from Overview navigation and remains accessible through
 deployment-related content links.
-Router's four guides and Local Models are public sidebar pages and participate
-in search, sitemap, and full-text ingestion. Retained compatibility guides carry
+Router's four main guides and Local Models are public sidebar pages. Supporting
+Context Routing and Configuration guides remain discoverable through Strategies,
+search, sitemap, and full-text ingestion. Retained compatibility guides carry
 `noindex` metadata while remaining directly readable.
 
 Use this boundary when classifying content:
@@ -108,35 +125,37 @@ Use this boundary when classifying content:
 - **Market** follows Coding Agents and precedes Router. It owns buying and selling
   inference and future trading, delivery, and settlement guides. Buy Inference
   and Sell Inference are canonical under `/docs/market/` and currently have titles
-  and descriptions only; detailed marketplace behavior remains unverified.
+  and descriptions plus links to Cache Affinity. Agentic Payment, Auto-bidding,
+  and Market Data follow them as Coming soon placeholders; detailed marketplace
+  behavior remains unverified.
   Connecting an endpoint belongs to Model; offering its inference for sale belongs
-  to Market. Overview's Inference Spot and Inference Forwards introduce the product
-  concepts; Market owns the operational workflows.
-- **Router** replaces the Routing section label and keeps its canonical guides
-  under `/docs/routing/`. Its four pages, in order, are Auto Router, Routing Rules,
-  Context Routing, and Configuration (YAML). Auto Router owns `bitrouter/auto`
-  setup, policy bindings, adequacy, objective evaluation evidence, and reviewed
-  publication. Routing Rules combines selector resolution, candidate eligibility,
-  preset routing filters, reusable `variants:`, and ordering limits. The former
-  Model Variants page redirects to its Variants section. Context Routing owns
-  native context-view selection; Configuration (YAML) owns common file discovery,
-  secrets references, validation, reload, and policy artifact boundaries.
-  The former Strategies guide is split between Auto Router and Routing Rules.
-  Retain legacy rule-section anchors on Auto Router for external fragment links,
-  while internal links point directly to the owning canonical section.
-  Routing uses sources the caller can already access, including BYOK, local,
-  private, and purchased sources. Trading is optional; routing does not grant
-  access or purchase supply. Rules and policy settings compose supported features
-  rather than exposing an arbitrary user-code algorithm plugin interface. Keep
-  native context ownership separate from external harness history and compaction.
-  Decisions API remains inside API reference.
+  to Market. Overview's Flex Inference introduces the product concept;
+  Market owns the operational workflows.
+- **Router** contains Auto Router, Cache Affinity, Auditable Policies, and
+  Strategies, in that order, under `/docs/routing/`. Auto Router owns setup,
+  binding initialization, per-call overrides, and serving-route inspection.
+  Auditable Policies owns policy artifacts, runtime adequacy, objective evaluation
+  evidence, reproducibility boundaries, and reviewed publication. Strategies owns
+  selector resolution, the inference pool, candidate eligibility, preset routing
+  filters, reusable `variants:`, and ordering limits. Routing Rules redirects to
+  Strategies; Model Variants redirects to its Variants section. Cache Affinity
+  is the canonical guide for cache-aware source selection, currently Coming soon.
+  Market covers trading applications and Overview introduces product value.
+  Context Routing and Configuration (YAML) remain supporting guides linked from
+  Strategies, explicitly allowlisted without sidebar entries. They retain native
+  context-view selection and common file mechanics plus the inline schema reference.
+  Preserve historical section anchors on Auto Router and Strategies; internal links
+  target the current owning guide. Routing uses already-accessible sources and
+  does not purchase supply or grant access. Keep rules in Strategies and policy
+  lifecycle examples in Auditable Policies. External harnesses retain ownership
+  of their history and compaction. Decisions API remains inside API reference.
 - **Model** owns source connections and callable interfaces: provider credentials,
   subscription accounts, custom endpoints, self-run inference, named model
   endpoints, request defaults, protocol compatibility, and fallback configuration.
   Its five guides, in order, are Model Fallbacks, Virtual Models, Structured Output,
   BYOK & Subscriptions, and Local Models, under `/docs/models-routing/`.
   Structured Output is Coming soon; the existing API response-format guide remains
-  in Responses API. Named routing variants belong to Router's Routing Rules.
+  in Responses API. Named routing variants belong to Router's Strategies.
   Custom Provider is retired and redirects to BYOK's custom endpoints section.
   Model and provider remain distinct technical concepts in the same navigation group.
   Keep feature-specific configuration examples with their owning guide and link

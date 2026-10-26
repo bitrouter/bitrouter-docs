@@ -2,7 +2,9 @@
   "title": "Router",
   "pages": [
     "auto-router",
-    "routing-rules",
+    "cache-affinity",
+    "auditable-policies",
+    "strategies",
     "context-routing",
     "configuration"
   ]

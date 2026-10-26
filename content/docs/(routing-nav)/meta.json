@@ -2,8 +2,8 @@
   "title": "Router",
   "pagesIndex": "[Auto Router](/docs/routing/auto-router)",
   "pages": [
-    "[Routing Rules](/docs/routing/routing-rules)",
-    "[Context Routing](/docs/routing/context-routing)",
-    "[Configuration (YAML)](/docs/routing/configuration)"
+    "[Cache Affinity](/docs/routing/cache-affinity)",
+    "[Auditable Policies](/docs/routing/auditable-policies)",
+    "[Strategies](/docs/routing/strategies)"
   ]
 }

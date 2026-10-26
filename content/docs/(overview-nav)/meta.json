@@ -3,7 +3,7 @@
   "pagesIndex": "[Quickstart](/docs/overview/quickstart)",
   "pages": [
     "[How BitRouter Works](/docs/overview/what-is-bitrouter)",
-    "[Inference Spot](/docs/overview/inference-spot)",
-    "[Inference Forwards](/docs/overview/inference-forwards)"
+    "[Models](/docs/overview/supported-models)",
+    "[Flex Inference](/docs/overview/flex-inference)"
   ]
 }

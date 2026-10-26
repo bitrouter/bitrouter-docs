@@ -16,7 +16,7 @@ description: Compare programmable routing signals, model paths, evidence selecti
 
 The project's [architecture introduction](https://github.com/vllm-project/semantic-router/blob/main/website/docs/intro.md) describes its signals, route behaviors, standalone frontend, optional Envoy integration, and separate model runtime. External inference platforms serve its chat backends. It also exposes System One judgments; decision-model access alone is therefore not a distinguishing feature.
 
-BitRouter's [Routing Rules](/docs/routing/routing-rules) explains candidate eligibility and model selection. [Auto Router](/docs/routing/auto-router) covers policy-bound model selection and evidence, while [Context Routing](/docs/routing/context-routing) selects evidence supplied to the next call. Native context views depend on runtime/build support and require ownership of the retained evidence.
+BitRouter's [Strategies](/docs/routing/strategies) explains candidate eligibility and model selection. [Auto Router](/docs/routing/auto-router) covers policy-bound model selection and evidence, while [Context Routing](/docs/routing/context-routing) selects evidence supplied to the next call. Native context views depend on runtime/build support and require ownership of the retained evidence.
 
 ## Choose BitRouter when
 
@@ -24,7 +24,7 @@ BitRouter's [Routing Rules](/docs/routing/routing-rules) explains candidate elig
 - You want to manage a preset-bound model policy and explicitly review candidate publication.
 - You need the native managed runtime's retained-evidence operations and can validate that runtime for your task.
 
-The [evaluation guide](/docs/routing/auto-router#evaluations) describes which results can enter BitRouter's evidence store. A classification result, a routing log, and an objective task outcome are different kinds of evidence.
+The [evaluation guide](/docs/routing/auditable-policies#evaluations) describes which results can enter BitRouter's evidence store. A classification result, a routing log, and an objective task outcome are different kinds of evidence.
 
 ## Choose vLLM Semantic Router when
 

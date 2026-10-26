@@ -11,10 +11,10 @@ OpenRouter offers hosted access to models and providers through one API. Its [Au
 | --- | --- | --- |
 | Who operates the router? | Hosted service | Self-hosted Apache-2.0 runtime or BitRouter Cloud |
 | How is automatic model selection configured? | Auto Router settings and hosted rankings | A policy bound to a preset such as `bitrouter/auto` |
-| How are eligible routes constrained? | Model restrictions and [provider preferences](https://openrouter.ai/docs/guides/routing/provider-selection) | Configured sources and [Routing Rules](/docs/routing/routing-rules) filters |
+| How are eligible routes constrained? | Model restrictions and [provider preferences](https://openrouter.ai/docs/guides/routing/provider-selection) | Configured sources and [Strategies](/docs/routing/strategies) filters |
 | How can operators review policy changes? | Configure the service's exposed controls | Inspect a versioned policy lock and explicitly apply reviewed candidates |
 
-BitRouter's [Auto Router](/docs/routing/auto-router) separates model selection from failure-driven fallback. Its [evaluation workflow](/docs/routing/auto-router#evaluations) uses admitted objective results and frozen evidence snapshots to assess policy candidates. Collecting traffic or enabling an auto selector alone does not prove that the policy improved your workflow.
+BitRouter's [Auto Router](/docs/routing/auto-router) separates model selection from failure-driven fallback. Its [evaluation workflow](/docs/routing/auditable-policies#evaluations) uses admitted objective results and frozen evidence snapshots to assess policy candidates. Collecting traffic or enabling an auto selector alone does not prove that the policy improved your workflow.
 
 ## Choose BitRouter when
 

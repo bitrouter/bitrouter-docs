@@ -26,8 +26,8 @@ const newsreader = Newsreader({
 
 const BASE_URL = "https://bitrouter.ai";
 const SITE_DESCRIPTION =
-  "Make every step of your agent’s work count. Open-source model routing, through an API or your terminal. Your agents. Your models. Your infrastructure.";
-const SITE_TITLE = "BitRouter — Time is money. More done per token.";
+  "The right inference for your workload, on your terms.";
+const SITE_TITLE = "BitRouter — The Open Market for Elastic Inference";
 
 const siteJsonLd = {
   "@context": "https://schema.org",

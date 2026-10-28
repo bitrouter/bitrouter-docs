@@ -4,6 +4,6 @@
   "pages": [
     "[How BitRouter Works](/docs/overview/what-is-bitrouter)",
     "[Models](/docs/overview/supported-models)",
-    "[Flex Inference](/docs/overview/flex-inference)"
+    "[Elastic Inference](/docs/overview/elastic-inference)"
   ]
 }

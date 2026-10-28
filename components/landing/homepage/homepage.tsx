@@ -9,34 +9,6 @@ import { HomepageFeatures } from "./features";
 import { GitHubStarsBadge } from "../github-stars-badge";
 import "./homepage.css";
 
-function HeroPhrase() {
-  const phrase = useRef<HTMLSpanElement>(null);
-  const [playing, setPlaying] = useState(false);
-
-  useEffect(() => {
-    const element = phrase.current;
-    if (!element) return;
-    let visible = false;
-    const update = () => setPlaying(visible && !document.hidden);
-    const observer = new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting;
-      update();
-    }, { threshold: 0.5 });
-    observer.observe(element);
-    document.addEventListener("visibilitychange", update);
-    return () => {
-      observer.disconnect();
-      document.removeEventListener("visibilitychange", update);
-    };
-  }, []);
-
-  return <span ref={phrase} className="ws-hero-phrase" aria-hidden="true">
-    <span className="ws-hero-phrase-track" style={{ animationPlayState: playing ? "running" : "paused" }}>
-      {["work done", "bugs fixed", "tests passed", "work done"].map((text, index) => <span key={index}>{text}</span>)}
-    </span>
-  </span>;
-}
-
 const values = [
   {
     id: "spending", label: "overspending.",
@@ -132,7 +104,7 @@ function ValueTabs() {
 }
 
 const CLOUD_PRICING_OPTIONS = PRICING_OPTIONS.filter(
-  (option) => option.id === "cloud-auto-routing" || option.id === "flex-inference",
+  (option) => option.id === "cloud-auto-routing" || option.id === "elastic-inference",
 );
 
 function PricingSection() {
@@ -175,14 +147,14 @@ const faqs = [
   ["Do I need to switch agents?", "Keep your existing agent. Connect through BitRouter’s API or use the CLI. The setup and supported capabilities depend on your agent; the integration guides cover each supported path."],
   ["What’s the difference between the API and CLI?", "The API gives applications and agents a local routing endpoint. The CLI lets you configure BitRouter, inspect routes, and work with supported agents from your terminal. Both use the open-source router."],
   ["Can I use my existing subscription?", "Supported subscription-backed providers can be configured in BitRouter. Availability, authentication, and usage limits depend on the provider. Check the provider guide for your subscription."],
-  ["What do I pay for?", "Self-hosting is free of BitRouter fees. Cloud Auto Routing with BYOK costs $0.01 per million metered routing input tokens, with provider inference billed separately. Flex Inference adds a 5% transaction fee to supplier charges and has no separate Cloud Auto Routing fee. Enterprise terms are custom."],
+  ["What do I pay for?", "Self-hosting is free of BitRouter fees. Cloud Auto Routing with BYOK costs $0.01 per million metered routing input tokens, with provider inference billed separately. Elastic Inference adds a 5% transaction fee to supplier charges and has no separate Cloud Auto Routing fee. Enterprise terms are custom."],
   ["Can I run it on my own infrastructure?", "Yes. Self-host the Apache-2.0 router and connect your own provider keys, local models, or private inference endpoints. A BitRouter Cloud account is not required for local routing."],
 ];
 
 export function Homepage() {
   return <div className="workspace-site">
     <main id="main">
-      <section className="ws-hero ws-wrap"><h1 aria-label="Time is money. More work done per token."><span>Time is money.</span><em className="ws-hero-line" aria-hidden="true"><span className="ws-hero-changing">More <HeroPhrase /></span><span className="ws-hero-suffix">per token.</span></em></h1><p>Make every step of your agent’s work count. Open-source model routing, through an API or your terminal.</p><InstallTabs /></section>
+      <section className="ws-hero ws-wrap"><h1 aria-label="The Open Market for Elastic Inference"><span>The Open Market</span>{" "}<em>for Elastic Inference</em></h1><p>The right inference for your workload, on your terms.</p><InstallTabs /></section>
       <ValueTabs />
       <HomepageFeatures />
       <PricingSection />

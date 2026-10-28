@@ -10,9 +10,9 @@ import { MarketOrderBook } from "./market-order-book";
 import { MarketQuoteTicket } from "./market-quote-ticket";
 import { MarketInfo } from "./market-info";
 import { DemoNotice, MarketIdentity, QuoteDetails, PriceChange, WindowControl } from "./market-shared";
-import { MARKET_AS_OF, findMarketAsset, formatMarketPrice, formatMarketTokens, marketStats, type MarketWindow } from "@/lib/flex-market";
-import { marketSuppliers, marketTimeUtc, modelSettlementStats } from "@/lib/flex-market-detail";
-import { availableLiquidity, DEMO_LIQUIDITY, formatMarketAmount } from "@/lib/flex-market-metrics";
+import { MARKET_AS_OF, findMarketAsset, formatMarketPrice, formatMarketTokens, marketStats, type MarketWindow } from "@/lib/elastic-market";
+import { marketSuppliers, marketTimeUtc, modelSettlementStats } from "@/lib/elastic-market-detail";
+import { availableLiquidity, DEMO_LIQUIDITY, formatMarketAmount } from "@/lib/elastic-market-metrics";
 import "./market.css";
 import "./market-terminal.css";
 

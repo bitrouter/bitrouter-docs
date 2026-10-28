@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 import { ProviderIcon } from "@/components/models/provider-icon";
 import { MarketInfo } from "./market-info";
-import { MARKET_AS_OF, MARKET_WINDOWS, type MarketAsset, type MarketWindow } from "@/lib/flex-market";
+import { MARKET_AS_OF, MARKET_WINDOWS, type MarketAsset, type MarketWindow } from "@/lib/elastic-market";
 
 export function MarketIdentity({ asset, link = true }: { asset: MarketAsset; link?: boolean }) {
   const content = <><span className="market-model-icon"><ProviderIcon provider={asset.icon} size={24} /></span><span className="market-model-name"><strong>{asset.name}</strong><span>{asset.developer}</span></span></>;
@@ -28,6 +28,6 @@ export function QuoteDetails({ showUnit = true }: { showUnit?: boolean }) {
     <dl><div><dt>Price basis</dt><dd>Per 1M total tokens · 3:1 input / output · No cache · Standard delivery</dd></div><div><dt>Buyer fee</dt><dd>5% included in bid, ask, and last trade</dd></div><div><dt>Global metrics</dt><dd>All four markets; supplier amounts exclude platform fees</dd></div></dl>
     <p>Each ask uses one complete supplier quote. Other request conditions can change the price.</p>
     <p>Change compares the ask at the selected window’s boundaries. Volume counts fulfilled input + output tokens for the actual model delivered. Last trade can differ from the current ask. No bids and historical gaps mean missing quotes.</p>
-    <p>Flex includes Cloud Auto Routing. Payment-processing charges are separate. <Link href="/pricing">Platform pricing</Link> · <Link href="/docs/overview/flex-inference">Flex Inference docs</Link></p>
+    <p>Elastic includes Cloud Auto Routing. Payment-processing charges are separate. <Link href="/pricing">Platform pricing</Link> · <Link href="/docs/overview/elastic-inference">Elastic Inference docs</Link></p>
   </MarketInfo></div>;
 }

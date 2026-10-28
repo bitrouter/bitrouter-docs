@@ -222,7 +222,7 @@
     flex-direction:column;
     align-items:center;
     gap:0;
-    font-size:49px;
+    font-size:clamp(34px,9.5vw,49px);
     letter-spacing:-2.6px;
     margin-top:25px
   }
@@ -340,57 +340,6 @@
 @media(prefers-reduced-motion:reduce) { .ws-terminal-output { animation:none!important; } }
 .ws-terminal-status { min-height:38px; padding:12px 16px; background:var(--muted); color:var(--muted-foreground); font:10px/14px var(--font-geist-mono),monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 @media(max-width:620px) { .ws-terminal-status { font-size:8px; } }
-.ws-hero h1 em.ws-hero-line {
-  display:flex;
-  flex-wrap:nowrap;
-  align-items:baseline;
-  justify-content:center;
-  column-gap:.18em;
-  font-size:1.085em;
-  letter-spacing:-.045em;
-  line-height:1.25;
-}
-.ws-hero-changing {
-  display:inline-flex;
-  align-items:baseline;
-  gap:.18em;
-  white-space:nowrap;
-}
-.ws-hero-suffix { white-space:nowrap; }
-.ws-hero-phrase {
-  display:inline-block;
-  height:1.25em;
-  overflow:hidden;
-  vertical-align:bottom;
-  padding-inline:.08em;
-  margin-inline:-.08em;
-  mask-image:linear-gradient(to bottom, transparent, black 12%, black 88%, transparent);
-}
-.ws-hero-phrase-track {
-  display:flex;
-  flex-direction:column;
-  width:max-content;
-  animation:ws-hero-outcomes 10s cubic-bezier(.22,1,.36,1) infinite;
-}
-.ws-hero-phrase-track > span {
-  display:block;
-  height:1.25em;
-  line-height:1.25;
-  text-align:center;
-}
-@keyframes ws-hero-outcomes {
-  0%, 27% { transform:translateY(0); }
-  31%, 60% { transform:translateY(-25%); }
-  64%, 93% { transform:translateY(-50%); }
-  97%, 100% { transform:translateY(-75%); }
-}
-@media(max-width:620px) {
-.ws-hero h1 em.ws-hero-line { font-size:38px; flex-wrap:wrap; }
-.ws-hero-suffix { flex-basis:100%; }
-}
-@media(prefers-reduced-motion:reduce) {
-.ws-hero-phrase-track { animation:none; }
-}
 /* Shared read-only terminal sizing; dark demo styles are not loaded by the homepage. */
 .ws-light-terminal {
   --term-font-family:var(--font-geist-mono),monospace;

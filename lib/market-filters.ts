@@ -1,4 +1,4 @@
-import { FLEX_MARKET_ASSETS, marketStats, type MarketAsset } from "./flex-market";
+import { ELASTIC_MARKET_ASSETS, marketStats, type MarketAsset } from "./elastic-market";
 
 export interface MarketFilters {
   developers: readonly string[];
@@ -12,7 +12,7 @@ export interface MarketRow {
 }
 
 export const EMPTY_MARKET_FILTERS: MarketFilters = { developers: [], maxAsk: null, hasBids: false };
-export const ASK_FILTER_CEILING = Math.ceil(Math.max(...FLEX_MARKET_ASSETS.map(asset => asset.history[asset.history.length - 1].ask ?? 0)) * 10) / 10;
+export const ASK_FILTER_CEILING = Math.ceil(Math.max(...ELASTIC_MARKET_ASSETS.map(asset => asset.history[asset.history.length - 1].ask ?? 0)) * 10) / 10;
 
 export function activeMarketFilterCount(filters: MarketFilters): number {
   return filters.developers.length + Number(filters.maxAsk !== null) + Number(filters.hasBids);

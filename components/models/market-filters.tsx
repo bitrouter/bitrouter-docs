@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ChevronDown, SlidersHorizontal, X } from "lucide-react";
 import { Dialog } from "radix-ui";
 import { ProviderIcon } from "./provider-icon";
-import { formatMarketPrice } from "@/lib/flex-market";
+import { formatMarketPrice } from "@/lib/elastic-market";
 import { ASK_FILTER_CEILING, activeMarketFilterCount, type MarketFilters } from "@/lib/market-filters";
 
 export interface DeveloperFilterOption {

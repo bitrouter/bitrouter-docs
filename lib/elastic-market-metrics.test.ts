@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { BUYER_FEE_RATE, FLEX_MARKET_ASSETS, MARKET_AS_OF, REFERENCE_PROFILE, marketStats } from "./flex-market";
-import { availableLiquidity, globalMarketStats, globalMarketSeries, settlementChartSeries, LIQUIDITY_PROFILE, summarizeSettlements, formatSlippageBps, type LiquidityAllocation, type SettlementCohort } from "./flex-market-metrics";
+import { BUYER_FEE_RATE, ELASTIC_MARKET_ASSETS, MARKET_AS_OF, REFERENCE_PROFILE, marketStats } from "./elastic-market";
+import { availableLiquidity, globalMarketStats, globalMarketSeries, settlementChartSeries, LIQUIDITY_PROFILE, summarizeSettlements, formatSlippageBps, type LiquidityAllocation, type SettlementCohort } from "./elastic-market-metrics";
 
 const now = Date.parse(MARKET_AS_OF);
 function cohort(overrides: Partial<SettlementCohort>): SettlementCohort {
@@ -55,7 +55,7 @@ describe("global market metrics", () => {
   it("keeps current liquidity fixed while windowed settlements and token activity agree", () => {
     for (const window of ["24H", "7D", "30D"] as const) {
       const stats = globalMarketStats(window);
-      expect(stats.deliveredTokens).toBe(FLEX_MARKET_ASSETS.reduce((sum, asset) => sum + marketStats(asset, window).volume, 0));
+      expect(stats.deliveredTokens).toBe(ELASTIC_MARKET_ASSETS.reduce((sum, asset) => sum + marketStats(asset, window).volume, 0));
       expect(stats.feesUsd).toBeCloseTo(stats.volumeUsd * BUYER_FEE_RATE);
       expect(stats.liquidityUsd).toBe(globalMarketStats("24H").liquidityUsd);
       expect(stats.comparablePurchases).toBeLessThan(stats.purchases);

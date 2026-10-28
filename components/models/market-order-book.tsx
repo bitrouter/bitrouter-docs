@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
-import { formatMarketPrice, formatMarketTokens, marketStats, type MarketAsset } from "@/lib/flex-market";
-import { marketOrderBook, type BookLevel } from "@/lib/flex-market-detail";
+import { formatMarketPrice, formatMarketTokens, marketStats, type MarketAsset } from "@/lib/elastic-market";
+import { marketOrderBook, type BookLevel } from "@/lib/elastic-market-detail";
 import { MarketInfo } from "./market-info";
 
 const depthConfig = {

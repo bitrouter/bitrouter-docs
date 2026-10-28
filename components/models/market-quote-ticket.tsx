@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { ArrowUpRight, Check, ArrowRight } from "lucide-react";
-import { BUYER_FEE_RATE, MARKET_AS_OF, formatMarketPrice, referenceBuyerPrice, type MarketAsset } from "@/lib/flex-market";
-import { formatQuoteUsd, previewBuyQuote, type MarketSupplier } from "@/lib/flex-market-detail";
+import { BUYER_FEE_RATE, MARKET_AS_OF, formatMarketPrice, referenceBuyerPrice, type MarketAsset } from "@/lib/elastic-market";
+import { formatQuoteUsd, previewBuyQuote, type MarketSupplier } from "@/lib/elastic-market-detail";
 import { MarketInfo } from "./market-info";
 
 export function MarketQuoteTicket({ asset, suppliers, selected, onSelect, side, onSideChange }: {

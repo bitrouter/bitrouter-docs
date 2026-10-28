@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { Tabs } from "radix-ui";
 import { ArrowUpRight, ListOrdered } from "lucide-react";
-import { formatMarketPrice, formatMarketTokens, referenceBuyerPrice, type MarketAsset } from "@/lib/flex-market";
-import { formatQuoteUsd, marketTimeUtc, recentMarketTrades, type MarketSupplier } from "@/lib/flex-market-detail";
+import { formatMarketPrice, formatMarketTokens, referenceBuyerPrice, type MarketAsset } from "@/lib/elastic-market";
+import { formatQuoteUsd, marketTimeUtc, recentMarketTrades, type MarketSupplier } from "@/lib/elastic-market-detail";
 import { MarketInfo } from "./market-info";
 
 function RecentTrades({ asset }: { asset: MarketAsset }) {
@@ -26,8 +26,8 @@ function SupplierTable({ suppliers, selected, onSelect }: { suppliers: MarketSup
 
 function ModelSpecifications({ asset }: { asset: MarketAsset }) {
   return <div className="market-specifications"><dl>
-    <div><dt>Model ID</dt><dd><code>{asset.id}</code></dd></div><div><dt>Developer</dt><dd>{asset.developer}</dd></div><div><dt>Market</dt><dd>Flex Inference · Demo listing</dd></div><div><dt>Quote currency</dt><dd>USD</dd></div><div><dt>Reference request</dt><dd>3K input / 1K output · No cache</dd></div><div><dt>Completion target</dt><dd>Within 5 minutes after acceptance</dd></div><div><dt>Buyer fee</dt><dd>5% of the supplier’s actual settled charge</dd></div><div><dt>Cloud Auto Routing</dt><dd>Included</dd></div><div><dt>Version / precision</dt><dd className="market-unverified">Not verified</dd></div><div><dt>Context / capabilities</dt><dd className="market-unverified">Not verified</dd></div>
-  </dl><div className="market-spec-links"><Link href="/docs/overview/flex-inference">Flex Inference <ArrowUpRight size={13} aria-hidden="true" /></Link><Link href="/docs/market/market-data">Market Data <ArrowUpRight size={13} aria-hidden="true" /></Link></div></div>;
+    <div><dt>Model ID</dt><dd><code>{asset.id}</code></dd></div><div><dt>Developer</dt><dd>{asset.developer}</dd></div><div><dt>Market</dt><dd>Elastic Inference · Demo listing</dd></div><div><dt>Quote currency</dt><dd>USD</dd></div><div><dt>Reference request</dt><dd>3K input / 1K output · No cache</dd></div><div><dt>Completion target</dt><dd>Within 5 minutes after acceptance</dd></div><div><dt>Buyer fee</dt><dd>5% of the supplier’s actual settled charge</dd></div><div><dt>Cloud Auto Routing</dt><dd>Included</dd></div><div><dt>Version / precision</dt><dd className="market-unverified">Not verified</dd></div><div><dt>Context / capabilities</dt><dd className="market-unverified">Not verified</dd></div>
+  </dl><div className="market-spec-links"><Link href="/docs/overview/elastic-inference">Elastic Inference <ArrowUpRight size={13} aria-hidden="true" /></Link><Link href="/docs/market/market-data">Market Data <ArrowUpRight size={13} aria-hidden="true" /></Link></div></div>;
 }
 
 export function MarketActivity({ asset, suppliers, selected, onSelect }: { asset: MarketAsset; suppliers: MarketSupplier[]; selected: string; onSelect: (id: string) => void }) {

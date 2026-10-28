@@ -1,15 +1,17 @@
 ---
-title: Flex Inference
+title: Elastic Inference
 description: Trade inference across price, time, and heterogeneous models.
 ---
 
 <Callout type="info">
-Flex Inference is an optional BitRouter Cloud service. BitRouter OSS works independently without it. See [Auto Router](/docs/routing/auto-router) to route requests using your own inference sources.
+Elastic Inference is an optional BitRouter Cloud service. BitRouter OSS works independently without it. See [Auto Router](/docs/routing/auto-router) to route requests using your own inference sources.
 </Callout>
 
-## What is Flex Inference?
+<a id="what-is-flex-inference" />
 
-Flex Inference brings three dimensions into each purchasing decision:
+## What is Elastic Inference?
+
+Elastic Inference brings three dimensions into each purchasing decision:
 
 - **Price.** Set a maximum total spend for your request. BitRouter compares eligible offers using estimated charges, while checking that their maximum authorized charges fit your budget.
 - **Time.** Request immediate purchasing or allow BitRouter to seek opportunities within a purchase window. For cost-focused requests, you can authorize waiting for a potentially cheaper opportunity.
@@ -19,9 +21,11 @@ Cache affinity informs source selection: opportunities to reuse context can affe
 
 You control the acceptable range. BitRouter makes purchasing decisions within it.
 
-Flex Inference charges a **5% transaction fee** on the supplier’s actual settled inference charge. Cloud Auto Routing is included without a separate routing input fee. Your total price cap includes the transaction fee. See [pricing](/pricing).
+Elastic Inference charges a **5% transaction fee** on the supplier’s actual settled inference charge. Cloud Auto Routing is included without a separate routing input fee. Your total price cap includes the transaction fee. See [pricing](/pricing).
 
-## Why Flex Inference?
+<a id="why-flex-inference" />
+
+## Why Elastic Inference?
 
 We believe using tokens should feel as effortless as using electricity. You should be able to focus on the work you want done, without constantly comparing providers, checking prices, and deciding where every request should go.
 
@@ -29,7 +33,7 @@ Behind that simple experience, there should be a market. Just as electricity has
 
 Fixed-price tiers provide a simple way to purchase inference, but they leave limited room to express the flexibility of an individual request. One task needs an immediate response from a specific model. Another accepts several models and can wait for a lower-cost opportunity. Their purchasing needs are different.
 
-Flex Inference makes those differences actionable. You express your requirements and preferences, and BitRouter handles the purchasing decisions within them.
+Elastic Inference makes those differences actionable. You express your requirements and preferences, and BitRouter handles the purchasing decisions within them.
 
 ## How it works
 

@@ -39,10 +39,11 @@ for (const file of readdirSync("content/changelog")) {
 }
 // overview + root + special
 pairs.push(
-  // Overview consolidates the former market placeholders into Flex Inference.
-  ["/docs/overview/inference-flex-market", "/docs/overview/flex-inference"],
-  ["/docs/overview/inference-spot", "/docs/overview/flex-inference"],
-  ["/docs/overview/inference-forwards", "/docs/overview/flex-inference"],
+  // Overview consolidates the former market placeholders into Elastic Inference.
+  ["/docs/overview/flex-inference", "/docs/overview/elastic-inference"],
+  ["/docs/overview/inference-flex-market", "/docs/overview/elastic-inference"],
+  ["/docs/overview/inference-spot", "/docs/overview/elastic-inference"],
+  ["/docs/overview/inference-forwards", "/docs/overview/elastic-inference"],
   // Guides include their references; legal policies use the documentation layout.
   ["/docs/cli/reference", "/docs/usage/cli"],
   ["/docs/configuration-reference", "/docs/routing/configuration"],
@@ -441,6 +442,7 @@ pairs.push(
 // rule at the end of redirects() folds them to the English path, which then
 // takes its own 301 to the final destination. One extra hop, on a dead locale.
 const movedGuideRoutes = new Set([
+  "/docs/overview/flex-inference",
   "/docs/overview/inference-flex-market",
   "/docs/overview/inference-spot",
   "/docs/overview/inference-forwards",

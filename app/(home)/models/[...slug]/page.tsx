@@ -8,7 +8,7 @@ import { CopySnippet } from "@/components/models/copy-snippet";
 import { fetchModelById } from "@/lib/models-server";
 import { modelDisplayName, providerFromId } from "@/lib/model-identity";
 import { formatPricePerMillionTokens } from "@/lib/model-pricing";
-import { findMarketAsset } from "@/lib/flex-market";
+import { findMarketAsset } from "@/lib/elastic-market";
 import { MarketDetail } from "@/components/models/market-detail";
 
 const API_BASE_URL = "https://api.bitrouter.ai/v1";
@@ -161,7 +161,7 @@ export default async function ModelDetailPage({ params }: Props) {
             <Stat label="Modalities" value={model.modalities.join(", ") || "text"} />
           </div>
           <p style={{ color: "var(--z-ink-5)", fontSize: 13, lineHeight: 1.7, marginTop: 16 }}>
-            Supplier rates exclude the 5% Flex Inference transaction fee. Flex has no separate Cloud Auto Routing fee.
+            Supplier rates exclude the 5% Elastic Inference transaction fee. Elastic has no separate Cloud Auto Routing fee.
             Cloud BYOK inference is billed by your provider, separately from the $0.01 per million routing input token fee.
             See <Link href="/pricing">pricing</Link>.
           </p>
@@ -307,11 +307,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const modelId = slug.join("/");
   const marketAsset = findMarketAsset(modelId);
   if (marketAsset) return {
-    title: `${marketAsset.name} — Flex Inference Market`,
+    title: `${marketAsset.name} — Elastic Inference Market`,
     description: `Explore ${marketAsset.name} bid and ask history and fulfilled token volume. Design preview with illustrative data.`,
     alternates: { canonical: `https://bitrouter.ai/models/${marketAsset.id}` },
     robots: { index: false, follow: true },
-    openGraph: { title: `${marketAsset.name} — Flex Inference Market`, description: "Illustrative model market data for design review.", url: `https://bitrouter.ai/models/${marketAsset.id}` },
+    openGraph: { title: `${marketAsset.name} — Elastic Inference Market`, description: "Illustrative model market data for design review.", url: `https://bitrouter.ai/models/${marketAsset.id}` },
   };
   const model = await fetchModelById(modelId);
   if (!model) {
@@ -322,6 +322,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     : modelDisplayName(model);
   return {
     title: `${friendlyName} — BitRouter`,
-    description: `Route ${model.id} through BitRouter. Supplier rates: ${formatPricePerMillionTokens(model.pricing.input)} input, ${formatPricePerMillionTokens(model.pricing.output)} output, before the 5% Flex transaction fee. ${formatTokens(model.maxInputTokens)} context.`,
+    description: `Route ${model.id} through BitRouter. Supplier rates: ${formatPricePerMillionTokens(model.pricing.input)} input, ${formatPricePerMillionTokens(model.pricing.output)} output, before the 5% Elastic transaction fee. ${formatTokens(model.maxInputTokens)} context.`,
   };
 }

@@ -11,9 +11,9 @@ export const PRICING_OPTIONS = [
     action: "Explore Cloud BYOK", href: "/docs/models-routing/byok-subscriptions#bitrouter-cloud-byok",
   },
   {
-    id: "flex-inference", label: "Flex Inference", price: "5%", unit: "transaction fee",
+    id: "elastic-inference", label: "Elastic Inference", price: "5%", unit: "transaction fee",
     description: "Pay supplier inference charges plus 5% of the supplier’s actual settled charge. Cloud Auto Routing is included without a separate fee.",
-    action: "Explore Flex Inference", href: "/docs/overview/flex-inference",
+    action: "Explore Elastic Inference", href: "/docs/overview/elastic-inference",
   },
   {
     id: "enterprise", label: "Enterprise", price: "Custom", unit: "services and terms",

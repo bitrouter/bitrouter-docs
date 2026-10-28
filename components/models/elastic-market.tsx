@@ -7,7 +7,7 @@ import { MarketCharts } from "./market-charts";
 import { MarketSummary } from "./market-summary";
 import { MarketFilterDialog, MarketFilterSidebar } from "./market-filters";
 import { DemoNotice, MarketIdentity, QuoteDetails, PriceChange, WindowControl } from "./market-shared";
-import { FLEX_MARKET_ASSETS, REFERENCE_PROFILE, formatMarketPrice, formatMarketTokens, marketStats, type MarketAsset, type MarketLayout, type MarketWindow } from "@/lib/flex-market";
+import { ELASTIC_MARKET_ASSETS, REFERENCE_PROFILE, formatMarketPrice, formatMarketTokens, marketStats, type MarketAsset, type MarketLayout, type MarketWindow } from "@/lib/elastic-market";
 import { EMPTY_MARKET_FILTERS, activeMarketFilterCount, filterMarketRows, type MarketFilters } from "@/lib/market-filters";
 import "./market.css";
 
@@ -34,7 +34,7 @@ function AssetCard({ asset, window, showCharts }: { asset: MarketAsset; window: 
   </article>;
 }
 
-export function FlexMarket() {
+export function ElasticMarket() {
   const [window, setWindow] = useState<MarketWindow>("24H");
   const [layout, setLayout] = useState<MarketLayout | "auto">("auto");
   const [query, setQuery] = useState("");
@@ -56,13 +56,13 @@ export function FlexMarket() {
     try { localStorage.setItem(LAYOUT_KEY, value); } catch { /* Keep this session's choice. */ }
   }
 
-  const allRows = FLEX_MARKET_ASSETS.map(asset => ({ asset, stats: marketStats(asset, window) }));
+  const allRows = ELASTIC_MARKET_ASSETS.map(asset => ({ asset, stats: marketStats(asset, window) }));
   const rows = filterMarketRows(allRows, query, filters);
   if (sort === "ask") rows.sort((a, b) => (a.stats.ask ?? Infinity) - (b.stats.ask ?? Infinity));
   if (sort === "volume") rows.sort((a, b) => b.stats.volume - a.stats.volume);
-  const developers = [...new Set(FLEX_MARKET_ASSETS.map(asset => asset.developer))].map(name => ({
+  const developers = [...new Set(ELASTIC_MARKET_ASSETS.map(asset => asset.developer))].map(name => ({
     name,
-    icon: FLEX_MARKET_ASSETS.find(asset => asset.developer === name)!.icon,
+    icon: ELASTIC_MARKET_ASSETS.find(asset => asset.developer === name)!.icon,
     count: filterMarketRows(allRows, query, { ...filters, developers: [name] }).length,
   }));
   const bidCount = filterMarketRows(allRows, query, { ...filters, hasBids: true }).length;
@@ -76,7 +76,7 @@ export function FlexMarket() {
       <MarketSummary window={window} />
       <div className="market-workspace">
       <MarketFilterSidebar {...filterProps} />
-      <section className="market-listing" aria-label="Listed Flex Inference models" data-layout={layout}>
+      <section className="market-listing" aria-label="Listed Elastic Inference models" data-layout={layout}>
         <div className="market-toolbar">
           <label className="market-search"><Search size={16} aria-hidden="true" /><input aria-label="Search market models" placeholder="Search models…" value={query} onChange={event => setQuery(event.target.value)} /></label>
           <div className="market-toolbar-actions"><MarketFilterDialog {...filterProps} resultCount={rows.length} /><WindowControl value={window} onChange={setWindow} /><div className="market-layout-control" role="group" aria-label="Market layout"><button type="button" className="market-table-button" aria-label="Table layout" aria-pressed={resolvedLayout === "table"} onClick={() => chooseLayout("table")}><List size={17} aria-hidden="true" /></button><button type="button" className="market-cards-button" aria-label="Cards layout" aria-pressed={resolvedLayout === "cards"} onClick={() => chooseLayout("cards")}><LayoutGrid size={16} aria-hidden="true" /></button></div></div>
@@ -86,9 +86,9 @@ export function FlexMarket() {
           {filters.maxAsk !== null && <button type="button" aria-label="Remove price filter" onClick={() => setFilters(current => ({ ...current, maxAsk: null }))}>Ask ≤ {formatMarketPrice(filters.maxAsk)}<X size={11} aria-hidden="true" /></button>}
           {filters.hasBids && <button type="button" aria-label="Remove Has bids filter" onClick={() => setFilters(current => ({ ...current, hasBids: false }))}>Has bids<X size={11} aria-hidden="true" /></button>}
         </div>}
-        <div className="market-results"><div className="market-results-meta"><span role="status">{rows.length === FLEX_MARKET_ASSETS.length ? `${rows.length} models` : `${rows.length} / ${FLEX_MARKET_ASSETS.length} models`}</span><QuoteDetails /></div><label>Sort by <select aria-label="Sort market models" value={sort} onChange={event => setSort(event.target.value)}><option value="listed">Listing order</option><option value="ask">Lowest ask</option><option value="volume">Token volume</option></select></label></div>
+        <div className="market-results"><div className="market-results-meta"><span role="status">{rows.length === ELASTIC_MARKET_ASSETS.length ? `${rows.length} models` : `${rows.length} / ${ELASTIC_MARKET_ASSETS.length} models`}</span><QuoteDetails /></div><label>Sort by <select aria-label="Sort market models" value={sort} onChange={event => setSort(event.target.value)}><option value="listed">Listing order</option><option value="ask">Lowest ask</option><option value="volume">Token volume</option></select></label></div>
         {rows.length === 0 ? <div className="market-empty"><Search size={24} aria-hidden="true" /><h2>No models found</h2><p>Try another search or adjust your filters.</p><button type="button" onClick={() => { setQuery(""); resetFilters(); }}>Clear search &amp; filters</button></div> : <>
-          <div className="market-table-scroll"><table className="market-table"><caption className="sr-only">Demo Flex Inference quotes. {REFERENCE_PROFILE.label}. Buyer prices include 5%. All trends and changes use {window}.</caption><thead><tr><th scope="col">Model</th><th scope="col">Best bid</th><th scope="col">Best ask</th><th scope="col">Ask change <span>{window.toLowerCase()}</span></th><th scope="col">Tokens <span>{window.toLowerCase()}</span></th><th scope="col">Ask trend <span>{window.toLowerCase()}</span></th><th scope="col"><span className="sr-only">Market details</span></th></tr></thead><tbody>{rows.map(({ asset, stats }) => <tr key={asset.id}><th scope="row"><MarketIdentity asset={asset} /></th><td>{stats.bid === null ? <span className="market-no-bids">No bids</span> : formatMarketPrice(stats.bid)}</td><td className="market-ask-cell">{formatMarketPrice(stats.ask)}</td><td><PriceChange value={stats.change} /></td><td>{formatMarketTokens(stats.volume)}</td><td>{hydrated && resolvedLayout === "table" ? <MarketCharts asset={asset} window={window} size="sparkline" /> : <div className="market-sparkline-placeholder" aria-hidden="true" />}</td><td><Link href={`/models/${asset.id}`} className="market-row-link" aria-label={`View ${asset.name} market`}><ArrowUpRight size={18} aria-hidden="true" /></Link></td></tr>)}</tbody></table></div>
+          <div className="market-table-scroll"><table className="market-table"><caption className="sr-only">Demo Elastic Inference quotes. {REFERENCE_PROFILE.label}. Buyer prices include 5%. All trends and changes use {window}.</caption><thead><tr><th scope="col">Model</th><th scope="col">Best bid</th><th scope="col">Best ask</th><th scope="col">Ask change <span>{window.toLowerCase()}</span></th><th scope="col">Tokens <span>{window.toLowerCase()}</span></th><th scope="col">Ask trend <span>{window.toLowerCase()}</span></th><th scope="col"><span className="sr-only">Market details</span></th></tr></thead><tbody>{rows.map(({ asset, stats }) => <tr key={asset.id}><th scope="row"><MarketIdentity asset={asset} /></th><td>{stats.bid === null ? <span className="market-no-bids">No bids</span> : formatMarketPrice(stats.bid)}</td><td className="market-ask-cell">{formatMarketPrice(stats.ask)}</td><td><PriceChange value={stats.change} /></td><td>{formatMarketTokens(stats.volume)}</td><td>{hydrated && resolvedLayout === "table" ? <MarketCharts asset={asset} window={window} size="sparkline" /> : <div className="market-sparkline-placeholder" aria-hidden="true" />}</td><td><Link href={`/models/${asset.id}`} className="market-row-link" aria-label={`View ${asset.name} market`}><ArrowUpRight size={18} aria-hidden="true" /></Link></td></tr>)}</tbody></table></div>
           <div className="market-card-grid">{rows.map(({ asset }) => <AssetCard key={asset.id} asset={asset} window={window} showCharts={hydrated && resolvedLayout === "cards"} />)}</div>
         </>}
       </section>

@@ -1,21 +1,21 @@
 import { describe, expect, it } from "vitest";
-import { BUYER_FEE_RATE, FLEX_MARKET_ASSETS, MARKET_AS_OF, marketStats } from "./flex-market";
-import { DEMO_LIQUIDITY, availableLiquidity, globalMarketStats } from "./flex-market-metrics";
-import { marketOrderBook, marketSuppliers, modelSettlementStats, previewBuyQuote, recentMarketTrades, requestCost, type QuoteRequest } from "./flex-market-detail";
+import { BUYER_FEE_RATE, ELASTIC_MARKET_ASSETS, MARKET_AS_OF, marketStats } from "./elastic-market";
+import { DEMO_LIQUIDITY, availableLiquidity, globalMarketStats } from "./elastic-market-metrics";
+import { marketOrderBook, marketSuppliers, modelSettlementStats, previewBuyQuote, recentMarketTrades, requestCost, type QuoteRequest } from "./elastic-market-detail";
 
-const asset = FLEX_MARKET_ASSETS[0];
+const asset = ELASTIC_MARKET_ASSETS[0];
 const request: QuoteRequest = { inputTokens: 3000, estimatedOutputTokens: 1000, maxOutputTokens: 1000, budgetUsd: 0.01, completionMinutes: 5 };
 
 describe("model trading workspace", () => {
   it("reconciles per-model settled USD with market-wide totals and fulfilled tokens", () => {
     for (const window of ["24H", "7D", "30D"] as const) {
-      const stats = FLEX_MARKET_ASSETS.map(asset => modelSettlementStats(asset.id, window));
+      const stats = ELASTIC_MARKET_ASSETS.map(asset => modelSettlementStats(asset.id, window));
       expect(stats.reduce((sum, item) => sum + item.volumeUsd, 0)).toBeCloseTo(globalMarketStats(window).volumeUsd);
-      FLEX_MARKET_ASSETS.forEach((asset, index) => expect(stats[index].deliveredTokens).toBe(marketStats(asset, window).volume));
+      ELASTIC_MARKET_ASSETS.forEach((asset, index) => expect(stats[index].deliveredTokens).toBe(marketStats(asset, window).volume));
     }
   });
   it("reconciles in-band book supply with the board without double-counting or including slow/expired offers", () => {
-    for (const asset of FLEX_MARKET_ASSETS) {
+    for (const asset of ELASTIC_MARKET_ASSETS) {
       const { asks, bids } = marketOrderBook(asset);
       expect(asks).toHaveLength(3);
       expect(new Set(asks.map(row => row.id)).size).toBe(asks.length);
@@ -29,8 +29,8 @@ describe("model trading workspace", () => {
   });
 
   it("preserves an empty demand side rather than fabricating bids", () => {
-    expect(marketOrderBook(FLEX_MARKET_ASSETS[1]).bids).toEqual([]);
-    expect(marketOrderBook(FLEX_MARKET_ASSETS[1]).asks.length).toBeGreaterThan(0);
+    expect(marketOrderBook(ELASTIC_MARKET_ASSETS[1]).bids).toEqual([]);
+    expect(marketOrderBook(ELASTIC_MARKET_ASSETS[1]).asks.length).toBeGreaterThan(0);
   });
 
   it("checks the output ceiling including fees, even when the expected cost fits the budget", () => {
@@ -73,7 +73,7 @@ describe("model trading workspace", () => {
   });
 
   it("does not report accepted contracts as settled usage and keeps the last trade consistent", () => {
-    for (const asset of FLEX_MARKET_ASSETS) {
+    for (const asset of ELASTIC_MARKET_ASSETS) {
       const tape = recentMarketTrades(asset);
       expect(tape[0].buyerPrice).toBe(asset.lastTrade!.price);
       expect(tape[0].time).toBe(asset.lastTrade!.time);

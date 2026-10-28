@@ -1,7 +1,7 @@
 import {
-  BUYER_FEE_RATE, FLEX_MARKET_ASSETS, MARKET_AS_OF,
+  BUYER_FEE_RATE, ELASTIC_MARKET_ASSETS, MARKET_AS_OF,
   referenceBuyerPrice, windowHours, type MarketWindow, type SupplierRates,
-} from "./flex-market";
+} from "./elastic-market";
 
 export const LIQUIDITY_PROFILE = {
   inputTokens: 3_000,
@@ -48,7 +48,7 @@ function supplierCost(rates: SupplierRates, input: number, output: number) {
   return (rates.input * input + rates.output * output) / 1_000_000;
 }
 
-export const DEMO_SETTLEMENTS: SettlementCohort[] = FLEX_MARKET_ASSETS.flatMap((asset, assetIndex) =>
+export const DEMO_SETTLEMENTS: SettlementCohort[] = ELASTIC_MARKET_ASSETS.flatMap((asset, assetIndex) =>
   asset.history.slice(1).flatMap((point, hourIndex) => {
     const count = Math.max(3, Math.round((point.inputTokens + point.outputTokens) / 4_000));
     const counts = [Math.floor(count * 0.5), Math.floor(count * 0.35)];
@@ -80,7 +80,7 @@ export const DEMO_SETTLEMENTS: SettlementCohort[] = FLEX_MARKET_ASSETS.flatMap((
 
 // Independent demo allocations for the four assumed listings. The out-of-band,
 // slow, and expired offers are retained to exercise the displayed eligibility rule.
-export const DEMO_LIQUIDITY: LiquidityAllocation[] = FLEX_MARKET_ASSETS.flatMap((asset, index) => {
+export const DEMO_LIQUIDITY: LiquidityAllocation[] = ELASTIC_MARKET_ASSETS.flatMap((asset, index) => {
   const capacity = [800, 700, 4_000, 6_000][index];
   return [
     { tier: "best", premium: 1, requests: capacity, minutes: 3, expires: asOf + 120_000 },
@@ -118,13 +118,13 @@ export function availableLiquidity(allocations: readonly LiquidityAllocation[], 
 // Preserve offer-expiry offsets and the same admission/profile/price-band rules
 // at every historical snapshot. Missing source quotes leave an unknown total.
 const capacityLevels = [0.82, 0.78, 0.85, 0.88, 0.84, 0.91, 0.94, 0.87, 0.92, 0.98, 0.93, 0.96, 0.89, 0.95, 1.02, 0.97, 1.04, 1.08, 1.0, 0.96, 1.03, 0.98, 1.02, 1.0];
-const assetIndices = new Map(FLEX_MARKET_ASSETS.map((asset, index) => [asset.id, index]));
-const liquidityHistory = FLEX_MARKET_ASSETS[0].history.map((point, index) => {
+const assetIndices = new Map(ELASTIC_MARKET_ASSETS.map((asset, index) => [asset.id, index]));
+const liquidityHistory = ELASTIC_MARKET_ASSETS[0].history.map((point, index) => {
   if (point.time === asOf) return { time: asOf, value: availableLiquidity(DEMO_LIQUIDITY, asOf) };
-  if (FLEX_MARKET_ASSETS.some(asset => asset.history[index].ask === null)) return { time: point.time, value: null };
+  if (ELASTIC_MARKET_ASSETS.some(asset => asset.history[index].ask === null)) return { time: point.time, value: null };
   const capacityFactor = capacityLevels[index % capacityLevels.length] * (1 - Math.floor((asOf - point.time) / 86_400_000) * 0.005);
   const allocations = DEMO_LIQUIDITY.map(offer => {
-    const asset = FLEX_MARKET_ASSETS[assetIndices.get(offer.assetId)!];
+    const asset = ELASTIC_MARKET_ASSETS[assetIndices.get(offer.assetId)!];
     const priceFactor = asset.history[index].ask! / referenceBuyerPrice(asset.supplierAsk);
     return {
       ...offer,

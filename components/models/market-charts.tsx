@@ -3,7 +3,7 @@
 import { useId } from "react";
 import { Bar, BarChart, CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
-import { formatMarketPrice, formatMarketTime, formatMarketTokens, marketSeries, volumeSeries, type MarketAsset, type MarketWindow } from "@/lib/flex-market";
+import { formatMarketPrice, formatMarketTime, formatMarketTokens, marketSeries, volumeSeries, type MarketAsset, type MarketWindow } from "@/lib/elastic-market";
 
 const config = {
   ask: { label: "Best ask", color: "var(--market-ask)" },

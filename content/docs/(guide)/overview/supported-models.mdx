@@ -61,7 +61,7 @@ You are never limited to this list. Any model you run yourself — local or remo
 | `z-ai/glm-5.3-flash` | 1M | text, image, video | ✅ | $0.075 | $0.015 | $0.25 |
 | `z-ai/glm-5.3-flashx` | 1M | image, text, video | — | $0.37 | $0.075 | $1.25 |
 
-Supplier prices are USD per **million tokens**, before the 5% Flex transaction fee, from the cheapest provider actually serving that model (`—` means no per-token provider is currently serving it; cached input is `—` where the model prices no cache tier). **Modalities** are the inputs a model accepts; every model returns text. A provider listed in the public, open-source [registry](https://github.com/bitrouter/bitrouter/tree/main/registry) but not currently reachable isn't priced here, so bringing your own key to one of them can beat these rates — and anyone can register a provider by opening a PR against it.
+Supplier prices are USD per **million tokens**, before the 5% Elastic transaction fee, from the cheapest provider actually serving that model (`—` means no per-token provider is currently serving it; cached input is `—` where the model prices no cache tier). **Modalities** are the inputs a model accepts; every model returns text. A provider listed in the public, open-source [registry](https://github.com/bitrouter/bitrouter/tree/main/registry) but not currently reachable isn't priced here, so bringing your own key to one of them can beat these rates — and anyone can register a provider by opening a PR against it.
 
 ## How model ids work
 
@@ -71,7 +71,7 @@ Because a model is an aggregate, requesting one starts [model resolution](/docs/
 
 ## Calling these models
 
-Every model above is reachable on hosted **BitRouter** — one account against `api.bitrouter.ai`, no upstream provider keys, no per-provider signups. The table lists supplier token rates before the 5% Flex Inference transaction fee. The fee is calculated on the supplier’s actual settled charge; Flex has no separate Cloud Auto Routing fee. Cloud BYOK provider inference is billed separately from the $0.01 per million routing input token service fee. Third-party payment-processing fees may apply when adding funds. See [pricing](/pricing).
+Every model above is reachable on hosted **BitRouter** — one account against `api.bitrouter.ai`, no upstream provider keys, no per-provider signups. The table lists supplier token rates before the 5% Elastic Inference transaction fee. The fee is calculated on the supplier’s actual settled charge; Elastic has no separate Cloud Auto Routing fee. Cloud BYOK provider inference is billed separately from the $0.01 per million routing input token service fee. Third-party payment-processing fees may apply when adding funds. See [pricing](/pricing).
 
 ```bash
 bro cloud login   # one-time device-flow sign-in

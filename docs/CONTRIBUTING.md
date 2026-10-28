@@ -9,9 +9,9 @@ is rendered from this repo — docs are committed directly here under
 Documentation uses one unified Fumadocs page tree with no layout tabs. Its
 top-level order is the `pages` list in `content/docs/meta.json`:
 
-1. **Overview** — Quickstart, How BitRouter Works, Models, Flex Inference,
+1. **Overview** — Quickstart, How BitRouter Works, Models, Elastic Inference,
    then a collapsed Comparison folder. Models restores the catalog at its existing
-   `/docs/overview/supported-models` URL. Flex Inference is an authored overview
+   `/docs/overview/supported-models` URL. Elastic Inference is an authored overview
    of the optional cloud service, with price/time/model flexibility, the
    electricity-exchange vision, illustrative buy/sell limit-order tables and JSON,
    and next-step links to all five Market guides in sidebar order. The concise
@@ -22,6 +22,9 @@ top-level order is the `pages` list in `content/docs/meta.json`:
    The approved copy is prepared for publication after deployment; its prose
    does not verify live availability. Purchase validity and completion timing
    remain distinct. The retired Spot and Forwards URLs redirect to it.
+   `/docs/overview/elastic-inference` is canonical; the previous
+   `/docs/overview/flex-inference` URL redirects directly here. Preserve its
+   historical What/Why section anchors and `/pricing#flex-inference` anchor.
    Enterprise remains a linked deployment-decision entry.
 2. **Usage** — Desktop, CLI, Responses API, MCP, and Web, in that order.
    MCP and Web are Coming soon placeholders. Desktop is Coming soon until
@@ -131,7 +134,7 @@ Use this boundary when classifying content:
   and Market Data follow them as Coming soon placeholders; detailed marketplace
   behavior remains unverified.
   Connecting an endpoint belongs to Model; offering its inference for sale belongs
-  to Market. Overview's Flex Inference introduces the product concept;
+  to Market. Overview's Elastic Inference introduces the product concept;
   Market owns the operational workflows.
 - **Router** contains Auto Router, Workload Optimization, State Affinity, Routing
   Traces, and Strategies, in that order, under `/docs/routing/`. Auto Router owns
@@ -304,9 +307,9 @@ beyond the whitelisted components. The build enforces this:
 
 Use four commercial paths consistently: OSS Self-hosted (no BitRouter fee),
 Cloud Auto Routing with BYOK ($0.01 per million verifiable routing input tokens),
-Flex Inference (supplier’s actual settled charge plus a 5% transaction fee,
+Elastic Inference (supplier’s actual settled charge plus a 5% transaction fee,
 without a separate Cloud Auto Routing fee), and Enterprise (custom terms).
-Routing input and upstream inference usage are separate meters. Flex buyer caps
+Routing input and upstream inference usage are separate meters. Elastic buyer caps
 include the transaction fee; catalog rates are supplier rates before that fee.
 Payment-processing fees are separate. Do not invent token floors, minimums,
 retry/failed-request billing rules, or new refund terms.

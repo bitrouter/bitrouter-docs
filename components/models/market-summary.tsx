@@ -3,8 +3,8 @@
 import { useMemo } from "react";
 import { MarketInfo as MetricInfo } from "./market-info";
 import { MarketMetricChart } from "./market-metric-chart";
-import { formatMarketTokens, MARKET_AS_OF, type MarketWindow } from "@/lib/flex-market";
-import { formatMarketAmount, formatSlippageBps, globalMarketStats, globalMarketSeries, LIQUIDITY_PROFILE_LABEL } from "@/lib/flex-market-metrics";
+import { formatMarketTokens, MARKET_AS_OF, type MarketWindow } from "@/lib/elastic-market";
+import { formatMarketAmount, formatSlippageBps, globalMarketStats, globalMarketSeries, LIQUIDITY_PROFILE_LABEL } from "@/lib/elastic-market-metrics";
 
 export function MarketSummary({ window }: { window: MarketWindow }) {
   const stats = useMemo(() => globalMarketStats(window), [window]);
@@ -25,8 +25,8 @@ export function MarketSummary({ window }: { window: MarketWindow }) {
         <div className="market-metric-value"><strong>{formatSlippageBps(stats.slippageBps)}{stats.slippageBps !== null && <span>bps</span>}</strong><MarketMetricChart metric="slippage" data={series.slippage} window={window} /></div><span className="market-metric-caption">Quote to execution · {period}</span>
       </div>
       <div className="market-metric" data-metric="fees">
-        <div className="market-metric-heading"><span className="market-label">Platform Fees</span><MetricInfo title="Platform Fees"><p>Recorded Flex transaction fees for the same settlements as Trading Volume. Current terms charge 5% of the supplier’s actual settled inference charge.</p><p>Supplier inference charges, payment-processing charges, and BYOK Cloud Auto Routing fees are separate. Flex has no separate Cloud Auto Routing fee.</p><dl><div><dt>Period</dt><dd>Trailing {period} · by settlement time</dd></div><div><dt>Flex transaction fee</dt><dd>5% of supplier charge</dd></div></dl></MetricInfo></div>
-        <div className="market-metric-value"><strong>{formatMarketAmount(stats.feesUsd)}</strong><MarketMetricChart metric="fees" data={series.fees} window={window} /></div><span className="market-metric-caption">Flex transaction fees · {period}</span>
+        <div className="market-metric-heading"><span className="market-label">Platform Fees</span><MetricInfo title="Platform Fees"><p>Recorded Elastic transaction fees for the same settlements as Trading Volume. Current terms charge 5% of the supplier’s actual settled inference charge.</p><p>Supplier inference charges, payment-processing charges, and BYOK Cloud Auto Routing fees are separate. Elastic has no separate Cloud Auto Routing fee.</p><dl><div><dt>Period</dt><dd>Trailing {period} · by settlement time</dd></div><div><dt>Elastic transaction fee</dt><dd>5% of supplier charge</dd></div></dl></MetricInfo></div>
+        <div className="market-metric-value"><strong>{formatMarketAmount(stats.feesUsd)}</strong><MarketMetricChart metric="fees" data={series.fees} window={window} /></div><span className="market-metric-caption">Elastic transaction fees · {period}</span>
       </div>
     </section>;
 }

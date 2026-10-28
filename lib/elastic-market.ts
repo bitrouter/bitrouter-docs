@@ -76,7 +76,7 @@ function makeAsset(
   };
 }
 
-export const FLEX_MARKET_ASSETS: MarketAsset[] = [
+export const ELASTIC_MARKET_ASSETS: MarketAsset[] = [
   makeAsset("glm-5.3", "GLM-5.3", "Z.ai", "z-ai", { input: 0.9, output: 2.7 }, 48_000, 1, 0),
   makeAsset("kimi-k3", "Kimi K3", "Moonshot AI", "moonshot", { input: 0.65, output: 2.1 }, 36_000, -1.3, 1),
   makeAsset("glm-5.3-flash", "GLM-5.3 Flash", "Z.ai", "z-ai", { input: 0.12, output: 0.36 }, 95_000, 1.6, 2),
@@ -84,7 +84,7 @@ export const FLEX_MARKET_ASSETS: MarketAsset[] = [
 ];
 
 export function findMarketAsset(id: string): MarketAsset | undefined {
-  return FLEX_MARKET_ASSETS.find(asset => asset.id === id);
+  return ELASTIC_MARKET_ASSETS.find(asset => asset.id === id);
 }
 
 export function windowHours(window: MarketWindow): number {

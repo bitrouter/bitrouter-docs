@@ -3,8 +3,8 @@
 import { memo } from "react";
 import { Bar, BarChart, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { formatMarketAmount, formatSlippageBps, metricBucketHours, type GlobalMarketMetric, type GlobalMetricPoint } from "@/lib/flex-market-metrics";
-import type { MarketWindow } from "@/lib/flex-market";
+import { formatMarketAmount, formatSlippageBps, metricBucketHours, type GlobalMarketMetric, type GlobalMetricPoint } from "@/lib/elastic-market-metrics";
+import type { MarketWindow } from "@/lib/elastic-market";
 
 const labels = { volume: "Trading Volume", liquidity: "Available Liquidity", slippage: "Avg. Slippage", fees: "Platform Fees" };
 const colors = { volume: "var(--market-volume)", liquidity: "var(--market-ask)", slippage: "var(--market-bid)", fees: "var(--chart-4)" };

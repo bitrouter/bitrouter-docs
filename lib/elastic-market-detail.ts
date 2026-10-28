@@ -1,8 +1,8 @@
 import {
   BUYER_FEE_RATE, MARKET_AS_OF, marketStats, referenceBuyerPrice,
   type MarketAsset, type MarketWindow, type SupplierRates,
-} from "./flex-market";
-import { DEMO_LIQUIDITY, DEMO_SETTLEMENTS, LIQUIDITY_PROFILE, summarizeSettlements } from "./flex-market-metrics";
+} from "./elastic-market";
+import { DEMO_LIQUIDITY, DEMO_SETTLEMENTS, LIQUIDITY_PROFILE, summarizeSettlements } from "./elastic-market-metrics";
 
 const asOf = Date.parse(MARKET_AS_OF);
 export const REFERENCE_TOKENS = LIQUIDITY_PROFILE.inputTokens + LIQUIDITY_PROFILE.outputTokens;

@@ -23,6 +23,7 @@ References:
 
 ## Overview
 
+- [Model markets](${BASE_URL}/models): Flex Inference design preview with four assumed listings, illustrative bid/ask history, token volume, settled trading volume, available liquidity, weighted slippage, and platform fees; all data is demo, not live
 - [Quickstart](${BASE_URL}/docs/overview/quickstart): Install via Agent Skills or the CLI, start routing in under a minute, then optimize against your own workflow
 - [How BitRouter Works](${BASE_URL}/docs/overview/what-is-bitrouter): The one-page explanation — \`bitrouter/auto\`, how routing reads each call, and the two loops that improve it
 - [Models](${BASE_URL}/docs/overview/supported-models): Hosted model catalog, pricing, and model IDs
@@ -65,8 +66,9 @@ References:
 ## Router
 
 - [Auto Router](${BASE_URL}/docs/routing/auto-router): Initialize bitrouter/auto, send requests, and inspect the serving route
-- [Cache Affinity](${BASE_URL}/docs/routing/cache-affinity): Coming soon; canonical guide for cache-aware source selection
-- [Auditable Policies](${BASE_URL}/docs/routing/auditable-policies): Inspect policy artifacts, evaluate evidence, and review changes before publication
+- [Workload Optimization](${BASE_URL}/docs/routing/workload-optimization): Planned workload learning; existing policy artifacts, evaluations, evidence snapshots, and reviewed publication tools
+- [State Affinity](${BASE_URL}/docs/routing/state-affinity): Coming soon; canonical guide for state-aware source selection
+- [Routing Traces](${BASE_URL}/docs/routing/routing-traces): Follow router decisions, serving routes, and upstream attempts across the available workflow trajectory
 - [Strategies](${BASE_URL}/docs/routing/strategies): Resolve selectors, constrain the inference pool, and reuse endpoint ordering, presets, and variants
 
 Supporting guides linked from Strategies:

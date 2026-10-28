@@ -4,6 +4,7 @@ import { NAV_ITEMS, isNavItemActive } from "./nav-config";
 describe("global navigation", () => {
   it("links to the primary product sections", () => {
     expect(NAV_ITEMS.map((item) => item.webPath)).toEqual([
+      "/models",
       "/pricing",
       "/blog",
       "/enterprise",
@@ -11,10 +12,14 @@ describe("global navigation", () => {
     ]);
   });
 
-  it("keeps model details under pricing in the global navigation", () => {
+  it("keeps model markets distinct from platform pricing", () => {
     const pricing = NAV_ITEMS.find((item) => item.key === "pricing")!;
+    const models = NAV_ITEMS.find((item) => item.key === "models")!;
     expect(isNavItemActive("/pricing", pricing)).toBe(true);
-    expect(isNavItemActive("/models/openai/example", pricing)).toBe(true);
+    expect(isNavItemActive("/models/openai/example", pricing)).toBe(false);
+    expect(isNavItemActive("/models/glm-5.3", models)).toBe(true);
+    expect(isNavItemActive("/models", models)).toBe(true);
+    expect(isNavItemActive("/pricing", models)).toBe(false);
     expect(isNavItemActive("/pricing-preview", pricing)).toBe(false);
     expect(isNavItemActive("/docs/models-routing/models", pricing)).toBe(false);
   });

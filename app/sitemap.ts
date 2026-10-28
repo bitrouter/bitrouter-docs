@@ -75,6 +75,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   // ── Static marketing/index pages, git-dated by their source file ──
+  // /models and its four demo market assets are intentionally noindex and absent
+  // until observations come from the market. Legacy catalog detail URLs remain.
   const staticPages: Entry[] = (
     [
       { url: BASE_URL, file: "app/(home)/page.tsx", priority: 1.0, changeFrequency: "weekly" },

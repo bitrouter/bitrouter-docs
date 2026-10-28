@@ -1,0 +1,84 @@
+---
+title: Routing Traces
+description: Trace routing decisions across your workflow, from the requested model to the serving route and its recorded outcome.
+---
+
+See which models served each step of a workflow, how routes changed, and what those choices cost. Routing Traces connects the router's decisions with the requests and upstream attempts that actually ran.
+
+## Follow the workflow trajectory
+
+An agent may inspect files, make changes, call tools, and verify a result across many model requests. Inspect the routing evidence in that execution order, rather than treating each model call as an unrelated event.
+
+For each observable step, compare:
+
+| Question | Evidence to inspect |
+| --- | --- |
+| What did the caller request? | The model selector and the request's workflow or trace association, when available |
+| What did the router select? | The resolved model, provider, and recorded decision evidence |
+| What actually executed? | The upstream attempts, retry or fallback transitions, and final serving route |
+| What did that choice consume? | Recorded token usage, cost, latency, and execution status |
+| What changed between steps? | Model or provider changes and policy identity or context-selection evidence, where recorded |
+
+A selected route and the final serving route can differ after a fallback. Keep the decision, attempted executions, and settled result distinct.
+
+## Start with a request
+
+For a local deployment, inspect recent settled requests:
+
+```bash
+bro requests --limit 25
+```
+
+[Request receipts](/docs/cli/request-receipts) distinguish the requested selector from the resolved model and serving provider. Match a request to your workflow using the available request identifiers and recorded correlation evidence. Timestamp proximity alone does not establish that two requests belong to the same workflow.
+
+Cloud Activity and `bro cloud requests --limit 25` provide Cloud request records. Receipts summarize settled requests; they are not a complete workflow timeline.
+
+## Inspect routing and upstream attempts
+
+For more detail, configure [OpenTelemetry export](/docs/self-hosting#opentelemetry) and inspect the trace in your OTLP backend. BitRouter exports ingress and routing spans, upstream attempt spans, and settlement metadata. Retry and fallback attempts remain separate hops.
+
+Use the parent-child span relationships and propagated trace context to place router activity alongside the caller's instrumented workflow. Expand a request to compare its routing activity with each attempted model execution, then return to the surrounding workflow to see how later steps proceeded.
+
+Recorded rule matches, candidate constraints, policy identity, or decision evidence can explain a choice when the runtime emits them. An absent explanation is missing evidence; it is not permission to infer a model's private reasoning or an unrecorded decision.
+
+## Understand coverage
+
+<Callout type="info">
+Workflow coverage depends on the runtime, correlation evidence, instrumentation, and sampling. Routing an external harness through BitRouter exposes the model requests it sends to the router; it does not automatically expose every tool action, private session event, or internal context change in that harness.
+</Callout>
+
+Check the scope of the evidence before drawing conclusions:
+
+- **Request coverage:** which model requests reached this BitRouter instance and were retained or exported?
+- **Workflow correlation:** which requests have an established shared workflow or trace association?
+- **Attempt coverage:** which upstream attempts and outcomes were recorded?
+- **Agent coverage:** which tool and agent events were emitted by the host itself?
+
+Keep unresolved associations and gaps visible. A successful request does not prove task success, and a lower request cost does not prove that the workflow improved.
+
+## Policy evidence and evaluations
+
+<a id="policy-artifacts-and-audit-boundaries" />
+<a id="let-evidence-improve-the-policy" />
+<a id="review-and-publish-a-change" />
+<a id="evaluations" />
+<a id="two-evidence-paths" />
+<a id="evidence-lifecycle" />
+<a id="1-define-and-seal-a-subject" />
+<a id="2-evaluate-outside-the-router" />
+<a id="3-submit-the-result" />
+<a id="4-freeze-a-snapshot" />
+<a id="5-consume-the-evidence-explicitly" />
+<a id="reproducibility-boundary" />
+<a id="what-evaluation-does-not-establish" />
+<a id="inspect-the-active-policy" />
+
+[Workload Optimization](/docs/routing/workload-optimization) introduces learning from recurring work. Its [existing policy tools](/docs/routing/workload-optimization#existing-policy-tools) document policy artifacts, evaluation evidence, and reviewed publication. A trace can supply observations for evaluation; collecting it does not automatically approve a policy change.
+
+For sections moved from Auditable Policies, continue to [policy artifacts](/docs/routing/workload-optimization#policy-artifacts-and-audit-boundaries), [runtime adequacy](/docs/routing/workload-optimization#let-evidence-improve-the-policy), [evaluations](/docs/routing/workload-optimization#evaluations), or [review and publication](/docs/routing/workload-optimization#review-and-publish-a-change).
+
+<Cards>
+  <Card title="Request receipts" href="/docs/cli/request-receipts" description="Inspect requested selectors, actual serving routes, usage, and status." />
+  <Card title="OpenTelemetry" href="/docs/self-hosting#opentelemetry" description="Configure export, content capture, and sampling for your trace backend." />
+  <Card title="Workload Optimization" href="/docs/routing/workload-optimization" description="Understand the planned learning loop and the existing evaluation and policy tools." />
+</Cards>

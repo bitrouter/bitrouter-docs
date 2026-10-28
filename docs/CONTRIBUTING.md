@@ -32,10 +32,11 @@ top-level order is the `pages` list in `content/docs/meta.json`:
    DeepSeek Harness, OpenCode, and Pi remain Coming soon placeholders.
 4. **Market** — Buy Inference, Sell Inference, Agentic Payment, Auto-bidding,
    and Market Data, in that order. Buy Inference and Sell Inference are placeholders with links
-   to Cache Affinity; Agentic Payment, Auto-bidding, and Market Data are Coming soon until their
+   to State Affinity; Agentic Payment, Auto-bidding, and Market Data are Coming soon until their
    implementation is verified.
-5. **Router** — Auto Router, Cache Affinity, Auditable Policies, and Strategies,
-   in that order. Cache Affinity is Coming soon. Context Routing and Configuration
+5. **Router** — Auto Router, Workload Optimization, State Affinity, Routing Traces,
+   and Strategies, in that order. Workload Optimization and State Affinity are Coming soon.
+   Context Routing and Configuration
    (YAML) remain supporting guides linked from Strategies, without sidebar entries.
 6. **Model** — Model Fallbacks, Virtual Models, Structured Output, BYOK & Subscriptions,
    and Local Models. Structured Output is a Coming soon placeholder.
@@ -116,7 +117,7 @@ its links. Context Routing and Configuration (YAML) are intentional supporting-g
 exceptions: both remain linked from Strategies without Router sidebar entries.
 Self-hosting is also omitted from Overview navigation and remains accessible through
 deployment-related content links.
-Router's four main guides and Local Models are public sidebar pages. Supporting
+Router's five main guides and Local Models are public sidebar pages. Supporting
 Context Routing and Configuration guides remain discoverable through Strategies,
 search, sitemap, and full-text ingestion. Retained compatibility guides carry
 `noindex` metadata while remaining directly readable.
@@ -126,30 +127,35 @@ Use this boundary when classifying content:
 - **Market** follows Coding Agents and precedes Router. It owns buying and selling
   inference and future trading, delivery, and settlement guides. Buy Inference
   and Sell Inference are canonical under `/docs/market/` and currently have titles
-  and descriptions plus links to Cache Affinity. Agentic Payment, Auto-bidding,
+  and descriptions plus links to State Affinity. Agentic Payment, Auto-bidding,
   and Market Data follow them as Coming soon placeholders; detailed marketplace
   behavior remains unverified.
   Connecting an endpoint belongs to Model; offering its inference for sale belongs
   to Market. Overview's Flex Inference introduces the product concept;
   Market owns the operational workflows.
-- **Router** contains Auto Router, Cache Affinity, Auditable Policies, and
-  Strategies, in that order, under `/docs/routing/`. Auto Router owns setup,
-  binding initialization, per-call overrides, and serving-route inspection.
-  Auditable Policies owns policy artifacts, runtime adequacy, objective evaluation
-  evidence, reproducibility boundaries, and reviewed publication. Strategies owns
-  selector resolution, the inference pool, candidate eligibility, preset routing
-  filters, reusable `variants:`, and ordering limits. Routing Rules redirects to
-  Strategies; Model Variants redirects to its Variants section. Cache Affinity
-  is the canonical guide for cache-aware source selection, currently Coming soon.
-  Market covers trading applications and Overview introduces product value.
-  Context Routing and Configuration (YAML) remain supporting guides linked from
-  Strategies, explicitly allowlisted without sidebar entries. They retain native
-  context-view selection and common file mechanics plus the inline schema reference.
-  Preserve historical section anchors on Auto Router and Strategies; internal links
-  target the current owning guide. Routing uses already-accessible sources and
-  does not purchase supply or grant access. Keep rules in Strategies and policy
-  lifecycle examples in Auditable Policies. External harnesses retain ownership
-  of their history and compaction. Decisions API remains inside API reference.
+- **Router** contains Auto Router, Workload Optimization, State Affinity, Routing
+  Traces, and Strategies, in that order, under `/docs/routing/`. Auto Router owns
+  setup, binding initialization, per-call overrides, and serving-route inspection.
+  Workload Optimization separates the Coming soon recurring-workload learning
+  feature from the existing policy lifecycle: artifacts, runtime adequacy,
+  objective evaluation evidence, reproducibility, and reviewed publication.
+  Collecting observations or deriving a candidate does not automatically publish it.
+  Routing Traces follows router behavior across the available workflow trajectory:
+  requested and serving routes, correlation, upstream attempts, decision evidence,
+  usage, and coverage limits. Use receipts and OTLP export; do not imply a unified
+  timeline UI or complete visibility into an external harness. The former Auditable
+  Policies URL redirects to Routing Traces, with old section anchors linking to
+  their migrated Workload Optimization sections. Legacy policy/evaluation redirects
+  target those sections directly. Strategies owns selector resolution, the inference
+  pool, candidate eligibility, filters, variants, and ordering limits. Routing Rules
+  redirects to Strategies; Model Variants redirects to its Variants section.
+  State Affinity is Coming soon; Market owns its trading applications. Context
+  Routing and Configuration remain supporting guides without sidebar entries.
+  Preserve historical section anchors on Auto Router and Strategies. Routing uses
+  already-accessible sources and does not purchase supply or grant access. Keep
+  rule examples in Strategies and policy lifecycle examples in Workload Optimization.
+  External harnesses retain ownership of their history and compaction. Decisions
+  API remains inside API reference.
 - **Model** owns source connections and callable interfaces: provider credentials,
   subscription accounts, custom endpoints, self-run inference, named model
   endpoints, request defaults, protocol compatibility, and fallback configuration.

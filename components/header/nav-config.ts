@@ -16,7 +16,8 @@ export interface NavItem {
 
 // The shared product navigation follows the homepage's OSS entry path.
 export const NAV_ITEMS: NavItem[] = [
-  { key: "pricing", label: "Pricing", webPath: "/pricing", activePaths: ["/pricing", "/models"] },
+  { key: "models", label: "Models", webPath: "/models" },
+  { key: "pricing", label: "Pricing", webPath: "/pricing" },
   { key: "blog", label: "Blog", webPath: "/blog" },
   { key: "enterprise", label: "Enterprise", webPath: "/enterprise" },
   { key: "docs", label: "Docs", webPath: "/docs" },

@@ -2,8 +2,9 @@
   "title": "Router",
   "pages": [
     "auto-router",
-    "cache-affinity",
-    "auditable-policies",
+    "workload-optimization",
+    "state-affinity",
+    "routing-traces",
     "strategies",
     "context-routing",
     "configuration"

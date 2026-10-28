@@ -2,8 +2,9 @@
   "title": "Router",
   "pagesIndex": "[Auto Router](/docs/routing/auto-router)",
   "pages": [
-    "[Cache Affinity](/docs/routing/cache-affinity)",
-    "[Auditable Policies](/docs/routing/auditable-policies)",
+    "[Workload Optimization](/docs/routing/workload-optimization)",
+    "[State Affinity](/docs/routing/state-affinity)",
+    "[Routing Traces](/docs/routing/routing-traces)",
     "[Strategies](/docs/routing/strategies)"
   ]
 }

@@ -7,6 +7,8 @@ Use `bitrouter/auto` when a bound policy should select the model for each reques
 
 [Strategies](/docs/routing/strategies) explains selector resolution, candidate eligibility, and named variants. [Configuration (YAML)](/docs/routing/configuration) covers file discovery, validation, and reload. Automatic model selection remains separate from [Model Fallbacks](/docs/models-routing/model-fallback) after a retryable failure.
 
+Use [Routing Traces](/docs/routing/routing-traces) to follow the router's decisions, serving models, and upstream attempts across the available workflow trajectory.
+
 ## Local and Cloud pricing
 
 Self-hosting the OSS router has no BitRouter fee. Cloud Auto Routing with BYOK costs **$0.01 per million verifiable routing input tokens**; your provider bills inference separately. Flex Inference instead adds a **5% transaction fee** to the supplier’s actual settled charge and includes Cloud Auto Routing without a separate fee. Enterprise terms are custom. See [pricing](/pricing).
@@ -26,7 +28,7 @@ To constrain candidate providers, reuse preferences with `variants:`, or choose 
 
 ## Policy tiers and runtime adequacy
 
-Initialize a binding with usable models for its tiers, then adjust the policy's supported adequacy settings. An unmatched fingerprint uses the conservative default; escalation, cooldown, and exploration settings govern subsequent runtime behavior. Initialize the binding below; [Auditable Policies](/docs/routing/auditable-policies#let-evidence-improve-the-policy) explains adequacy observations and their publication boundary.
+Initialize a binding with usable models for its tiers, then adjust the policy's supported adequacy settings. An unmatched fingerprint uses the conservative default; escalation, cooldown, and exploration settings govern subsequent runtime behavior. Initialize the binding below; [Workload Optimization](/docs/routing/workload-optimization#let-evidence-improve-the-policy) explains adequacy observations and their publication boundary.
 
 Context-view selection has separate runtime rules. The model policy lock does not configure an external harness's history, and this page does not introduce unsupported context-strategy YAML. See [Context Routing](/docs/routing/context-routing).
 
@@ -81,7 +83,7 @@ An explicit logical id retains eligible provider alternatives. A provider-qualif
 
 ## Review evidence and policy changes
 
-[Auditable Policies](/docs/routing/auditable-policies) documents runtime adequacy, objective-scored [evaluations](/docs/routing/auditable-policies#evaluations), reproducible evidence snapshots, and the [reviewed publication workflow](/docs/routing/auditable-policies#review-and-publish-a-change). Evidence collection does not automatically publish a policy candidate.
+[Workload Optimization](/docs/routing/workload-optimization#existing-policy-tools) documents runtime adequacy, objective-scored [evaluations](/docs/routing/workload-optimization#evaluations), reproducible evidence snapshots, and the [reviewed publication workflow](/docs/routing/workload-optimization#review-and-publish-a-change). Evidence collection does not automatically publish a policy candidate.
 
 <a id="verify-and-apply-a-strategy" />
 
@@ -94,10 +96,11 @@ bro policy check -c bitrouter.yaml
 bro requests --limit 25
 ```
 
-Use `policy check` to inspect the binding used by `bitrouter/auto`. For other selectors and candidate constraints, use [Strategies](/docs/routing/strategies). Route previews do not send inference or establish task quality; settled [Request receipts](/docs/cli/request-receipts) show what actually served a call. Apply configuration changes through [Configuration (YAML)](/docs/routing/configuration#apply-and-review-changes), and publish policy candidates through the [review workflow](/docs/routing/auditable-policies#review-and-publish-a-change).
+Use `policy check` to inspect the binding used by `bitrouter/auto`. For other selectors and candidate constraints, use [Strategies](/docs/routing/strategies). Route previews do not send inference or establish task quality; settled [Request receipts](/docs/cli/request-receipts) show what actually served a call. Apply configuration changes through [Configuration (YAML)](/docs/routing/configuration#apply-and-review-changes), and publish policy candidates through the [review workflow](/docs/routing/workload-optimization#review-and-publish-a-change).
 
 <Cards>
+  <Card title="Workload Optimization" href="/docs/routing/workload-optimization" description="Coming soon: learn from recurring workloads to refine routing toward quality, cost, and latency goals." />
   <Card title="Strategies" href="/docs/routing/strategies" description="Understand selector resolution, candidate constraints, and named routing variants." />
   <Card title="Configuration (YAML)" href="/docs/routing/configuration" description="Load, validate, and apply routing configuration." />
-  <Card title="Auditable Policies" href="/docs/routing/auditable-policies" description="Inspect evidence, evaluate outcomes, and review policy publication." />
+  <Card title="Routing Traces" href="/docs/routing/routing-traces" description="Trace routing decisions, serving models, and upstream attempts across a workflow." />
 </Cards>

@@ -14,7 +14,7 @@ const finalPath = {
   "local-models":"/docs/models-routing/local-models","guardrails":"/docs/routing/configuration#create-a-configuration",
   "observability":"/docs/cli/request-receipts","opentelemetry":"/docs/self-hosting#opentelemetry",
   "tracing":"/docs/cli/request-receipts#cloud-activity","telemetry":"/docs/cli/request-receipts",
-  "evaluation":"/docs/routing/auditable-policies#evaluations","evaluations":"/docs/routing/auditable-policies#evaluations",
+  "evaluation":"/docs/routing/workload-optimization#evaluations","evaluations":"/docs/routing/workload-optimization#evaluations",
   "mcp":"/docs/context-routing/mcp-servers","acp":"/docs/context-routing/acp-servers",
   "agentskills":"/docs/context-routing/skills",
   // bitrouter cloud (was: infrastructure)
@@ -50,6 +50,8 @@ pairs.push(
   ["/privacy-policy", "/docs/privacy-policy"],
   ["/terms-of-service", "/docs/terms-of-service"],
   // Router separates auto policy workflows from reusable routing rules.
+  ["/docs/routing/cache-affinity", "/docs/routing/state-affinity"],
+  ["/docs/routing/auditable-policies", "/docs/routing/routing-traces"],
   ["/docs/routing/routing-rules", "/docs/routing/strategies"],
   ["/docs/routing/model-routing", "/docs/routing/strategies"],
   ["/docs/models-routing/model-variants", "/docs/routing/strategies#variants"],
@@ -89,11 +91,11 @@ pairs.push(
   ["/zh/compare/:slug*", "/docs/overview/comparison/openrouter"],
   // Routing guides consolidated into configuration, mechanisms, and strategies.
   ["/docs/routing/inference-pool", "/docs/routing/strategies"],
-  ["/docs/routing/policy", "/docs/routing/auditable-policies"],
-  ["/docs/routing/evaluations", "/docs/routing/auditable-policies#evaluations"],
+  ["/docs/routing/policy", "/docs/routing/workload-optimization#existing-policy-tools"],
+  ["/docs/routing/evaluations", "/docs/routing/workload-optimization#evaluations"],
   // Routing decisions have their own section.
-  ["/docs/models-routing/policy", "/docs/routing/auditable-policies"],
-  ["/docs/models-routing/evaluations", "/docs/routing/auditable-policies#evaluations"],
+  ["/docs/models-routing/policy", "/docs/routing/workload-optimization#existing-policy-tools"],
+  ["/docs/models-routing/evaluations", "/docs/routing/workload-optimization#evaluations"],
   ["/docs/context-routing/context-switch", "/docs/routing/context-routing"],
   // Model resources and routing decisions now have separate ownership.
   ["/docs/models-routing/inference-pool", "/docs/routing/strategies"],
@@ -111,7 +113,6 @@ pairs.push(
   ["/docs/integration/acp-servers", "/docs/context-routing/acp-servers"],
   ["/docs/context-routing/agents-md", "/docs/context-routing/server-tools"],
   // Model discovery and prices share one page; individual model URLs remain.
-  ["/models", "/pricing#models"],
   ["/docs/api", "/docs/usage/responses-api"],
   // Earlier Config aliases now resolve to the task-specific guides.
   ["/docs/config", "/docs/routing/configuration"],
@@ -132,7 +133,7 @@ pairs.push(
   ["/docs/customization/models", "/docs/models-routing/byok-subscriptions"],
   ["/docs/configuration/models", "/docs/models-routing/virtual-models"],
   ["/docs/configuration/guardrails", "/docs/routing/configuration#create-a-configuration"],
-  ["/docs/configuration/evaluations", "/docs/routing/auditable-policies#evaluations"],
+  ["/docs/configuration/evaluations", "/docs/routing/workload-optimization#evaluations"],
   ["/docs/configuration/policy", "/docs/routing/configuration"],
   ["/docs/configuration/telemetry", "/docs/cli/request-receipts"],
   ["/docs/usage/tui", "/docs/usage/cli#interactive-tui"],
@@ -190,7 +191,7 @@ pairs.push(
   ["/docs/configuration/observability", "/docs/cli/request-receipts"],
   ["/docs/configuration/observability/opentelemetry", "/docs/self-hosting#opentelemetry"],
   ["/docs/configuration/observability/tracing", "/docs/cli/request-receipts#cloud-activity"],
-  ["/docs/configuration/observability/evaluation", "/docs/routing/auditable-policies#evaluations"],
+  ["/docs/configuration/observability/evaluation", "/docs/routing/workload-optimization#evaluations"],
   ["/docs/configuration/observability/:slug*", "/docs/cli/request-receipts"],
   // Customization recipes collapsed around capability families (2026-09).
   ["/docs/customization/models/bring-your-own-model", "/docs/models-routing/byok-subscriptions#custom-endpoints-and-models"],
@@ -267,7 +268,7 @@ pairs.push(
   ["/docs/get-started/comparison", "/docs/overview/comparison/openrouter"],
   ["/docs/get-started/set-up-routing", "/docs/models-routing/virtual-models#resolution-order"],
   ["/docs/get-started/set-up-tracing", "/docs/self-hosting#opentelemetry"],
-  ["/docs/get-started/set-up-evaling", "/docs/routing/auditable-policies#evaluations"],
+  ["/docs/get-started/set-up-evaling", "/docs/routing/workload-optimization#evaluations"],
   ["/docs/get-started/set-up-looping", "/docs/routing/auto-router#initialize-a-policy-binding"],
   // infrastructure → bitrouter cloud (folder renamed; pages merged/moved)
   ["/docs/infrastructure/managed-provider", "/docs/overview/supported-models"],
@@ -376,9 +377,9 @@ pairs.push(
   ["/docs/mcp-and-tool-calling/:slug*", "/docs/customization/tools/:slug*"],
   // evals-and-tracing/ split into objective evidence and operational telemetry.
   ["/docs/evals-and-tracing", "/docs/cli/request-receipts"],
-  ["/docs/evals-and-tracing/evaluation", "/docs/routing/auditable-policies#evaluations"],
-  ["/docs/evals-and-tracing/evaluations", "/docs/routing/auditable-policies#evaluations"],
-  ["/docs/evals-and-tracing/evals", "/docs/routing/auditable-policies#evaluations"],
+  ["/docs/evals-and-tracing/evaluation", "/docs/routing/workload-optimization#evaluations"],
+  ["/docs/evals-and-tracing/evaluations", "/docs/routing/workload-optimization#evaluations"],
+  ["/docs/evals-and-tracing/evals", "/docs/routing/workload-optimization#evaluations"],
   ["/docs/evals-and-tracing/:slug*", "/docs/cli/request-receipts"],
   // agent and tool protocol history → Usage and Extensions.
   ["/docs/models-and-routing/acp-gateway", "/docs/context-routing/acp-servers"],
@@ -449,6 +450,8 @@ const movedGuideRoutes = new Set([
   "/privacy-policy",
   "/terms-of-service",
 
+  "/docs/routing/cache-affinity",
+  "/docs/routing/auditable-policies",
   "/docs/routing/routing-rules",
   "/docs/routing/model-routing",
   "/docs/models-routing/model-variants",

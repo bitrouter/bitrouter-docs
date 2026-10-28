@@ -1,17 +1,7 @@
 import { ZedPricingPage } from "@/components/landing/zed/pricing-page";
 import type { Metadata } from "next";
-import { getDocsModels } from "@/lib/models-catalog";
-import { toPriceModels } from "@/lib/pricing-catalog";
-
-const PRICING_MODEL_IDS = new Set([
-  "deepseek/deepseek-v4.1-flash",
-  "z-ai/glm-5.3-flash",
-  "xiaomi/mimo-v2.6-flash",
-]);
-
-export default async function Page() {
-  const models = (await getDocsModels()).filter(model => PRICING_MODEL_IDS.has(model.id));
-  return <ZedPricingPage models={toPriceModels(models)} />;
+export default function Page() {
+  return <ZedPricingPage />;
 }
 
 export function generateMetadata(): Metadata {

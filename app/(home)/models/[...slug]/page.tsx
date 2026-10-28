@@ -8,6 +8,8 @@ import { CopySnippet } from "@/components/models/copy-snippet";
 import { fetchModelById } from "@/lib/models-server";
 import { modelDisplayName, providerFromId } from "@/lib/model-identity";
 import { formatPricePerMillionTokens } from "@/lib/model-pricing";
+import { findMarketAsset } from "@/lib/flex-market";
+import { MarketDetail } from "@/components/models/market-detail";
 
 const API_BASE_URL = "https://api.bitrouter.ai/v1";
 const OPENAI_CHAT_COMPLETIONS_URL = `${API_BASE_URL}/chat/completions`;
@@ -49,6 +51,8 @@ function anthropicSnippet(modelId: string): string {
 export default async function ModelDetailPage({ params }: Props) {
   const { slug } = await params;
   const modelId = slug.join("/");
+  const marketAsset = findMarketAsset(modelId);
+  if (marketAsset) return <MarketDetail assetId={marketAsset.id} />;
   const model = await fetchModelById(modelId);
   if (!model) notFound();
 
@@ -61,7 +65,7 @@ export default async function ModelDetailPage({ params }: Props) {
     <main className="zed-bg" id="main">
       <article className="zed-wrap" style={{ paddingBottom: "var(--z-sec)" }}>
         <Link
-          href="/pricing#models"
+          href="/models"
           className="zed-eyebrow"
           style={{
             display: "inline-flex",
@@ -71,7 +75,7 @@ export default async function ModelDetailPage({ params }: Props) {
             transition: "color .15s ease",
           }}
         >
-          ← Back to model prices
+          ← Back to model markets
         </Link>
 
         {/* ── Header ─────────────────────────────────────── */}
@@ -301,6 +305,14 @@ function SnippetCard({
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const modelId = slug.join("/");
+  const marketAsset = findMarketAsset(modelId);
+  if (marketAsset) return {
+    title: `${marketAsset.name} — Flex Inference Market`,
+    description: `Explore ${marketAsset.name} bid and ask history and fulfilled token volume. Design preview with illustrative data.`,
+    alternates: { canonical: `https://bitrouter.ai/models/${marketAsset.id}` },
+    robots: { index: false, follow: true },
+    openGraph: { title: `${marketAsset.name} — Flex Inference Market`, description: "Illustrative model market data for design review.", url: `https://bitrouter.ai/models/${marketAsset.id}` },
+  };
   const model = await fetchModelById(modelId);
   if (!model) {
     return { title: "Model not found — BitRouter" };

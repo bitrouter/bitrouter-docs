@@ -157,7 +157,7 @@ For custom sources, declare only verified capabilities in [BYOK & Subscriptions]
 
 A bound model policy maps request fingerprints to configured tiers. Runtime adequacy can temporarily escalate a fingerprint after repeated hard failures and conservatively explore an economy tier. These observations are distinct from objective-scored evaluations: a successful transport or lower cost does not establish task success.
 
-[Auto Router](/docs/routing/auto-router#initialize-a-policy-binding) covers initialization. [Auditable Policies](/docs/routing/auditable-policies) covers adequacy settings, reviewed publication, and evaluation evidence. Evidence collection does not automatically publish a candidate policy. The policy artifact does not establish a context-loading contract for an external harness.
+[Auto Router](/docs/routing/auto-router#initialize-a-policy-binding) covers initialization. [Workload Optimization](/docs/routing/workload-optimization#existing-policy-tools) covers adequacy settings, reviewed publication, and evaluation evidence. Evidence collection does not automatically publish a candidate policy. The policy artifact does not establish a context-loading contract for an external harness.
 
 ## Decisions API and policy ownership
 
@@ -166,8 +166,8 @@ A bound model policy maps request fingerprints to configured tiers. Runtime adeq
 <Cards>
   <Card title="Configuration (YAML)" href="/docs/routing/configuration" description="Find, validate, and apply the configuration and its policy binding." />
   <Card title="Auto Router" href="/docs/routing/auto-router" description="Initialize bitrouter/auto and inspect a policy-bound request." />
-  <Card title="Auditable Policies" href="/docs/routing/auditable-policies" description="Inspect evaluation evidence and review policy publication." />
-  <Card title="Cache Affinity" href="/docs/routing/cache-affinity" description="Cache-aware source selection; documentation coming soon." />
+  <Card title="Routing Traces" href="/docs/routing/routing-traces" description="Inspect routing behavior and upstream attempts across a workflow." />
+  <Card title="State Affinity" href="/docs/routing/state-affinity" description="State-aware source selection; documentation coming soon." />
   <Card title="Model Fallbacks" href="/docs/models-routing/model-fallback" description="Understand when failed attempts advance to another endpoint." />
   <Card title="Context Routing" href="/docs/routing/context-routing" description="Select evidence for the next native model call." />
 </Cards>
@@ -200,4 +200,4 @@ A bound model policy maps request fingerprints to configured tiers. Runtime adeq
 <a id="reproducibility-boundary" />
 <a id="what-evaluation-does-not-establish" />
 
-[Auditable Policies](/docs/routing/auditable-policies) covers runtime adequacy, objective-scored [evaluations](/docs/routing/auditable-policies#evaluations), frozen evidence snapshots, and [reviewed publication](/docs/routing/auditable-policies#review-and-publish-a-change).
+[Workload Optimization](/docs/routing/workload-optimization#existing-policy-tools) covers runtime adequacy, objective-scored [evaluations](/docs/routing/workload-optimization#evaluations), frozen evidence snapshots, and [reviewed publication](/docs/routing/workload-optimization#review-and-publish-a-change).

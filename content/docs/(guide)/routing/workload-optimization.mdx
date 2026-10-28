@@ -1,11 +1,36 @@
 ---
-title: Auditable Policies
-description: Inspect policy artifacts, evaluate evidence, and review routing-policy changes before publication.
+title: Workload Optimization
+description: Learn from recurring agentic workloads to refine routing toward your quality, cost, and latency goals.
 ---
 
-Routing policies connect model-selection behavior to versioned artifacts and evidence. Initialize a binding with [Auto Router](/docs/routing/auto-router#initialize-a-policy-binding), then use this guide to inspect runtime observations, admit evaluation results, and review a candidate before it serves traffic.
+<Callout type="info">
+Coming soon: continuous optimization for recurring workloads. The feature overview below describes the plan; the later policy-tools section documents the existing manual evaluation and publication workflow.
+</Callout>
 
-## Policy artifacts and audit boundaries
+Define a recurring agentic workload. Auto Router learns from its runs and refines the routing policy toward your quality, cost, and latency goals.
+
+## What is a recurring workload?
+
+A workload is a class of work your agent performs repeatedly, such as reviewing pull requests, handling support tickets, or producing research reports. Each run can have different inputs while sharing a purpose and a way to assess the outcome.
+
+Workload Optimization focuses on the routing policy used for that work: which model and inference source to select. Your agent continues to own the task and its tools.
+
+## How it works
+
+1. **Define the workload and goals.** Identify the recurring work, acceptable quality, and the cost or latency you want to improve. Provide an evaluator or feedback signal aligned with task success.
+2. **Run the workload.** Collect outcomes from comparable runs, including task results, serving routes, cost, and latency.
+3. **Learn from the results.** Use that evidence to explore and evaluate candidate routing policies for the workload.
+4. **Adopt supported improvements.** Compare candidates against the existing policy and the workload's goals before changing the policy that serves requests.
+
+The aim is to find better routing over repeated runs. Each individual run need not improve on the last, and a cheaper request alone does not establish acceptable task quality.
+
+## Existing policy tools
+
+The continuous workload-learning feature above is planned. The tools below document the existing evidence and policy lifecycle. Collecting observations or deriving a candidate does not automatically publish it. Review the evidence and apply changes explicitly.
+
+Use [Routing Traces](/docs/routing/routing-traces) to inspect router behavior across the available workflow trajectory, [Auto Router](/docs/routing/auto-router) for setup, and [Strategies](/docs/routing/strategies) for candidate constraints.
+
+### Policy artifacts and audit boundaries
 
 | Artifact or record | What it identifies |
 | --- | --- |
@@ -17,7 +42,7 @@ Routing policies connect model-selection behavior to versioned artifacts and evi
 
 These records have distinct roles. A request receipt does not establish task success, a matching digest does not establish evaluator quality, and a compiled candidate is not an active policy. This guide describes the existing evidence and publication workflow; it does not promise that every upstream execution can be reproduced.
 
-## Let evidence improve the policy
+### Let evidence improve the policy
 
 The policy starts conservatively: an unmatched request fingerprint uses its configured default tier. With `adequacy` enabled, BitRouter records deterministic outcome observations for policy-bound traffic.
 
@@ -39,7 +64,7 @@ The two directions are intentionally asymmetric:
 - **Escalation:** repeated hard failures pin a downgraded fingerprint back to the strong tier; the pin expires after its cooldown.
 - **Exploration:** a cheaper tier must succeed repeatedly before its fingerprint qualifies for that route; a failed trial stops the downgrade.
 
-## Review and publish a change
+### Review and publish a change
 
 Qualified changes remain in the local evidence store until you explicitly project and publish them:
 
@@ -54,7 +79,7 @@ bro policy lock
 
 `evolve --apply` adds qualified routes without overwriting routes you authored, and it aborts when the policy changed after the candidate was derived. Review and commit the resulting lock-file diff.
 
-## Evaluations
+### Evaluations
 
 An evaluation answers whether a result met an objective. It is deliberately separate from telemetry, which records what ran, and from optimization, which decides how admitted evidence may change a routing policy.
 
@@ -66,7 +91,7 @@ An evaluation answers whether a result met an objective. It is deliberately sepa
 
 An HTTP `200`, a completed stream, or a cheaper route is not proof of task success. Those are observations that an evaluator may use, not the objective result itself.
 
-### Two evidence paths
+#### Two evidence paths
 
 BitRouter keeps runtime adequacy and objective-scored evaluations distinct:
 
@@ -75,9 +100,9 @@ BitRouter keeps runtime adequacy and objective-scored evaluations distinct:
 
 The two paths can inform the same routing-policy lifecycle, but their records are not interchangeable. An adequacy observation does not silently become an evaluator result, and exporting a trace does not evaluate its outcome.
 
-### Evidence lifecycle
+#### Evidence lifecycle
 
-#### 1. Define and seal a subject
+##### 1. Define and seal a subject
 
 An evaluation subject identifies what is being evaluated and carries redacted evidence items. Seal a draft to calculate its canonical digest and write validated JSON:
 
@@ -88,13 +113,13 @@ bro eval subject put subject.json
 
 The digest makes the subject content-addressed. Changing the evidence creates a different subject rather than mutating the one an evaluator already scored.
 
-#### 2. Evaluate outside the router
+##### 2. Evaluate outside the router
 
 Run the evaluator appropriate to the objective: a test suite, benchmark harness, rubric implementation, human review, or another process whose configuration you can identify. BitRouter does not infer task success from model text or choose an evaluator for you.
 
 The result should name the sealed subject and preserve enough evaluator identity to distinguish materially different scoring configurations.
 
-#### 3. Submit the result
+##### 3. Submit the result
 
 Submit the result through the configured authority boundary:
 
@@ -105,7 +130,7 @@ bro eval status
 
 Admission determines which results are eligible evidence. A stored result is not permission to rewrite a policy, and an unadmitted or malformed result must not influence optimization.
 
-#### 4. Freeze a snapshot
+##### 4. Freeze a snapshot
 
 Freeze the currently admitted results into an immutable, content-addressed manifest:
 
@@ -116,7 +141,7 @@ bro eval snapshot get <EVIDENCE_ROOT>
 
 The evidence root pins the exact set used for a later decision. This prevents a candidate from changing meaning when new results arrive.
 
-#### 5. Consume the evidence explicitly
+##### 5. Consume the evidence explicitly
 
 Optimization can advance its controller from admitted evaluation history:
 
@@ -136,7 +161,7 @@ bro policy diff policy-lock.yaml candidate-policy.yaml
 
 Compilation and optimization do not make every candidate active. Review the candidate and use the explicit policy publication workflow when it should serve traffic.
 
-### Reproducibility boundary
+#### Reproducibility boundary
 
 A defensible evaluation decision needs all of the following to stay identifiable:
 
@@ -148,7 +173,7 @@ A defensible evaluation decision needs all of the following to stay identifiable
 
 Keep private prompts, responses, and artifacts out of the subject unless the evaluator requires them. Redaction changes the evidence and therefore belongs before sealing, not as an undocumented post-processing step.
 
-### What evaluation does not establish
+#### What evaluation does not establish
 
 - A successful transport or HTTP status does not establish task success.
 - Lower token cost does not establish acceptable quality.
@@ -158,7 +183,7 @@ Keep private prompts, responses, and artifacts out of the subject unless the eva
 
 Use repeated, comparable subjects and an evaluator aligned with the workload objective. Keep exploratory conclusions separate from policy changes you are prepared to serve.
 
-## Inspect the active policy
+### Inspect the active policy
 
 ```bash
 bro policy status
@@ -169,7 +194,7 @@ bro requests --limit 25
 Review the active binding and policy artifact alongside the evidence used for a proposed change. [Configuration (YAML)](/docs/routing/configuration#apply-and-review-changes) covers validation and reload boundaries; [Request receipts](/docs/cli/request-receipts) covers recorded execution outcomes.
 
 <Cards>
-  <Card title="Auto Router" href="/docs/routing/auto-router" description="Initialize bitrouter/auto and send policy-bound requests." />
-  <Card title="Strategies" href="/docs/routing/strategies" description="Choose eligible sources, endpoint ordering, presets, and variants." />
+  <Card title="Auto Router" href="/docs/routing/auto-router" description="Initialize bitrouter/auto and inspect a policy-bound request." />
+  <Card title="Routing Traces" href="/docs/routing/routing-traces" description="Trace routing decisions and upstream attempts across a workflow." />
   <Card title="CLI reference" href="/docs/usage/cli#bro-eval" description="Inspect captured evaluation, optimization, and policy commands." />
 </Cards>

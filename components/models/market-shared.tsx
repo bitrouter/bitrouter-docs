@@ -25,9 +25,9 @@ export function DemoNotice() {
 
 export function QuoteDetails({ showUnit = true }: { showUnit?: boolean }) {
   return <div className="market-quote-context">{showUnit && <span>USD / 1M tokens</span>}<MarketInfo title="Quote details">
-    <dl><div><dt>Price basis</dt><dd>Per 1M total tokens · 3:1 input / output · No cache · Standard delivery</dd></div><div><dt>Buyer fee</dt><dd>5% included in bid, ask, and last trade</dd></div><div><dt>Global metrics</dt><dd>All four markets; supplier amounts exclude platform fees</dd></div></dl>
+    <dl><div><dt>Price basis</dt><dd>Per 1M total tokens · 3:1 input / output · No cache · Standard delivery</dd></div><div><dt>Cloud platform fee</dt><dd>$0.01 per million processed input + output tokens, included once in bid, ask, and last trade · Early access pricing</dd></div><div><dt>Global metrics</dt><dd>All four markets; supplier amounts exclude platform fees</dd></div></dl>
     <p>Each ask uses one complete supplier quote. Other request conditions can change the price.</p>
     <p>Change compares the ask at the selected window’s boundaries. Volume counts fulfilled input + output tokens for the actual model delivered. Last trade can differ from the current ask. No bids and historical gaps mean missing quotes.</p>
-    <p>Elastic includes Cloud Auto Routing. Payment-processing charges are separate. <Link href="/pricing">Platform pricing</Link> · <Link href="/docs/overview/elastic-inference">Elastic Inference docs</Link></p>
+    <p>Cloud Auto Routing and Elastic share one platform fee per request. Payment-processing charges are separate. <Link href="/pricing">Platform pricing</Link> · <Link href="/docs/overview/elastic-inference">Elastic Inference docs</Link></p>
   </MarketInfo></div>;
 }

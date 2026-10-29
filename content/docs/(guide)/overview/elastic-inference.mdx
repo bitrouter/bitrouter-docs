@@ -21,7 +21,7 @@ Cache affinity informs source selection: opportunities to reuse context can affe
 
 You control the acceptable range. BitRouter makes purchasing decisions within it.
 
-Elastic Inference charges a **5% transaction fee** on the supplier’s actual settled inference charge. Cloud Auto Routing is included without a separate routing input fee. Your total price cap includes the transaction fee. See [pricing](/pricing).
+Elastic Inference uses **$0.01 per million processed tokens — early access pricing**. Processed tokens are actual input + output tokens. The Cloud platform fee is added to the supplier’s actual inference charge and counted once per request, including when Auto Routing selects Elastic Inference. Your total price cap includes both charges. See [pricing](/pricing).
 
 <a id="why-flex-inference" />
 
@@ -80,7 +80,7 @@ These payloads illustrate the order design. Field names are provisional and are 
 }
 ```
 
-BitRouter compares eligible offers for both models and may purchase immediately or wait and reassess. The order authorizes one selected option. A candidate qualifies only when its maximum authorized charge, including the 5% transaction fee, fits the cap; a lower estimated charge alone is insufficient.
+BitRouter compares eligible offers for both models and may purchase immediately or wait and reassess. The order authorizes one selected option. A candidate qualifies only when its maximum authorized charge, including the Cloud platform fee calculated using input tokens and the full output limit, fits the cap; a lower estimated charge alone is insufficient.
 
 ### Sell limit offer
 
@@ -121,7 +121,7 @@ The corresponding JSON uses micro-USD per million tokens. Its expiry is 30 minut
 }
 ```
 
-Each acceptance checks the request against the offer's scope, service conditions, and available capacity. Input, cached-input, and output rates determine the supplier charge. The maximum buyer charge also includes the 5% transaction fee and must fit the buyer's cap. A $1.00 actual supplier charge gives a $0.05 fee and a $1.05 buyer total. The fee is calculated from the actual supplier charge, rather than the budget cap or top-up amount.
+Each acceptance checks the request against the offer's scope, service conditions, and available capacity. Input, cached-input, and output rates determine the supplier charge. The maximum buyer charge also includes the Cloud platform fee for input tokens plus the full output limit and must fit the buyer's cap. At early access pricing, a request processing 3,000 input + 1,000 output tokens incurs a $0.00004 platform fee, in addition to its actual supplier charge. The platform fee is based on processed tokens and counted once per request, rather than on the supplier charge, budget cap, or top-up amount.
 
 *All prices, durations, and identifiers above are illustrative.*
 

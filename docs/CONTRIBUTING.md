@@ -305,14 +305,22 @@ beyond the whitelisted components. The build enforces this:
 
 ## Pricing language
 
-Use four commercial paths consistently: OSS Self-hosted (no BitRouter fee),
-Cloud Auto Routing with BYOK ($0.01 per million verifiable routing input tokens),
-Elastic Inference (supplier’s actual settled charge plus a 5% transaction fee,
-without a separate Cloud Auto Routing fee), and Enterprise (custom terms).
-Routing input and upstream inference usage are separate meters. Elastic buyer caps
-include the transaction fee; catalog rates are supplier rates before that fee.
+Use three commercial options consistently: OSS Self-hosted (no BitRouter fee),
+Cloud ($0.01 per million processed tokens — Early access pricing), and Enterprise
+(custom terms). Cloud Auto Routing with BYOK and Elastic Inference share the
+same platform fee. Processed usage is actual input + output tokens, accumulated
+across requests and counted once per request, including routing into Elastic.
+Model inference charges are separate; Elastic adds supplier charges to the same
+Cloud platform fee, with no percentage-based transaction fee. Buyer caps cover
+both charges at the full output limit, while estimates use expected output.
+Catalog rates remain supplier rates before platform fees; market buyer quotes
+include $0.01 per million total tokens. Keep settlement fees token-based and
+preserve supplier-based volume, slippage, and the independent 5% liquidity band.
+The homepage shows one Cloud rate and a short self-hosting message. Pricing
+shows BYOK/Elastic as two usage paths, one 80M input + 20M output = $1 platform-fee
+example, and compact OSS/Enterprise entries without a second Enterprise section.
 Payment-processing fees are separate. Do not invent token floors, minimums,
-retry/failed-request billing rules, or new refund terms.
+cached-token discounts, retry/failed-request billing rules, or new refund terms.
 
 `lib/commercial-pricing.ts` supplies website options; authored docs use the same
 terms. These publication changes do not verify deployed billing behavior.

@@ -12,8 +12,8 @@ export function EnterprisePricing() {
             <span>Scale on your terms.</span>
           </h2>
           <p>
-            Self-host the open-source router free. Cloud BYOK is billed by routing input usage;
-            Elastic Inference adds a 5% transaction fee with no separate Cloud Auto Routing fee. Enterprise terms are custom.
+            Self-host the open-source router free. Cloud Auto Routing and Elastic Inference share
+            $0.01 per million processed input + output tokens at early access pricing. Model inference charges are separate. Enterprise terms are custom.
           </p>
           <div className="zed-action-row">
             <a className="zed-btn zed-btn-ghost" href={ZED_LINKS.pricing}>

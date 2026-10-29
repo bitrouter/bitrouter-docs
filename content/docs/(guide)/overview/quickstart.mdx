@@ -5,7 +5,7 @@ description: Install BitRouter and get your agent routing in under a minute — 
 
 This page gets BitRouter routing for your agent in under a minute. There are two deployment modes, and three ways to onboard either one — the Agent Skill, the CLI wizard, or manual env keys.
 
-- **BitRouter Cloud (default).** Hosted endpoint at `api.bitrouter.ai`. Use Cloud Auto Routing with your own provider keys at $0.01 per million routing input tokens, or purchase Elastic Inference at supplier charges plus a 5% transaction fee. Elastic has no separate Cloud Auto Routing fee.
+- **BitRouter Cloud (default).** Hosted endpoint at `api.bitrouter.ai`. Cloud Auto Routing with your own provider keys and Elastic Inference share $0.01 per million processed input + output tokens at early access pricing. Each request is counted once. Provider or supplier inference charges are separate.
 - **Local proxy.** A single binary on your machine, BYOK with your own provider keys. Basic routing requires no external service.
 
 Both modes use the **same open-source routing core** (Apache 2.0). The deployment boundary changes, but the client protocol does not, so you can switch modes without rewriting your harness.
@@ -32,12 +32,12 @@ The routing contract is shared, while operational surfaces follow the deployment
 | Namespace isolation primitive | ✅ | ✅ |
 | Managed provider network (no upstream keys needed) | — | ✅ |
 | Hosted activity and request receipts | — | ✅ |
-| Elastic Inference (supplier charges + 5% transaction fee) | — | ✅ |
-| Cloud Auto Routing with BYOK ($0.01 / 1M routing input tokens) | — | ✅ |
+| Elastic Inference (supplier charges + Cloud platform usage) | — | ✅ |
+| Cloud Auto Routing with BYOK (same Cloud platform usage) | — | ✅ |
 
 BitRouter does not package a separate enterprise suite today. Teams with deployment, security, procurement, or support requirements can [contact the founders](mailto:contact@bitrouter.ai) and help shape the team offering.
 
-Do you need your own provider keys? Cloud BYOK uses your provider credentials; the provider bills inference separately from the Cloud Auto Routing fee. Elastic Inference purchases supplier inference through BitRouter and includes routing in its 5% transaction fee. You can attach Cloud to a self-hosted binary and use both. Self-hosted routing remains free of BitRouter fees. See [pricing](/pricing).
+Do you need your own provider keys? Cloud BYOK uses your provider credentials; the provider bills inference separately. Elastic Inference purchases supplier inference through BitRouter. Both use the same Cloud platform fee of $0.01 per million processed input + output tokens at early access pricing, counted once per request. You can attach Cloud to a self-hosted binary and use both. Self-hosted routing remains free of BitRouter fees. See [pricing](/pricing).
 
 ## Install the binary
 
@@ -132,7 +132,7 @@ bro start
 
 ## Use BitRouter Cloud
 
-Sign in to a BitRouter Cloud account from the terminal. Cloud BYOK uses your provider keys and bills $0.01 per million routing input tokens, with inference billed by the provider. Elastic Inference uses supplier charges plus a 5% transaction fee, without a separate Cloud Auto Routing fee:
+Sign in to a BitRouter Cloud account from the terminal. Cloud BYOK uses your provider keys, with inference billed by the provider. Elastic Inference bills supplier inference charges through BitRouter. Both share a Cloud platform fee of $0.01 per million processed input + output tokens at early access pricing, counted once per request:
 
 ```bash
 bro cloud login   # RFC 8628 device flow against api.bitrouter.ai

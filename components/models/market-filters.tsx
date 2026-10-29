@@ -38,7 +38,7 @@ function FilterFields({ value, onChange, developers, bidCount }: FilterProps) {
       <summary>Best ask<ChevronDown size={14} aria-hidden="true" /></summary>
       <div className="market-filter-price">
         <div><span>Maximum</span><output>{value.maxAsk === null ? "Any" : formatMarketPrice(value.maxAsk)}</output></div>
-        <input type="range" aria-label="Maximum best ask" aria-valuetext={value.maxAsk === null ? "Any price" : `${formatMarketPrice(value.maxAsk)} per million tokens, including buyer fee`} min={0} max={ASK_FILTER_CEILING} step={0.01} value={value.maxAsk ?? ASK_FILTER_CEILING} onChange={event => { const maxAsk = Number(event.target.value); onChange({ ...value, maxAsk: maxAsk >= ASK_FILTER_CEILING ? null : maxAsk }); }} />
+        <input type="range" aria-label="Maximum best ask" aria-valuetext={value.maxAsk === null ? "Any price" : `${formatMarketPrice(value.maxAsk)} per million tokens, including platform fee`} min={0} max={ASK_FILTER_CEILING} step={0.01} value={value.maxAsk ?? ASK_FILTER_CEILING} onChange={event => { const maxAsk = Number(event.target.value); onChange({ ...value, maxAsk: maxAsk >= ASK_FILTER_CEILING ? null : maxAsk }); }} />
         <div className="market-filter-scale"><span>$0</span><span>{formatMarketPrice(ASK_FILTER_CEILING)}+</span></div>
         <span className="market-filter-unit">USD / 1M tokens · fee included</span>
       </div>

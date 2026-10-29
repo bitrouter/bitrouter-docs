@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { PRICING_OPTIONS } from "@/lib/commercial-pricing";
+import { CLOUD_PRICING } from "@/lib/commercial-pricing";
 import { ArrowUpRight, Download } from "lucide-react";
 import { ValueTui } from "./value-tui";
 import { InstallTabs } from "./install-tabs";
@@ -103,10 +103,6 @@ function ValueTabs() {
   </section>;
 }
 
-const CLOUD_PRICING_OPTIONS = PRICING_OPTIONS.filter(
-  (option) => option.id === "cloud-auto-routing" || option.id === "elastic-inference",
-);
-
 function PricingSection() {
   return <section className="ws-pricing ws-wrap" id="pricing" aria-labelledby="home-pricing-title">
     <div className="ws-pricing-header">
@@ -115,16 +111,12 @@ function PricingSection() {
     </div>
 
     <div className="ws-cloud-pricing">
-      {CLOUD_PRICING_OPTIONS.map((option) => <article key={option.id}>
-        <h3>{option.label}{option.id === "cloud-auto-routing" ? " · BYOK" : ""}</h3>
-        <p className="ws-cloud-rate">
-          <strong>{option.price}</strong>
-          <span>{option.id === "cloud-auto-routing" ? "/ 1M routing input tokens" : "transaction fee"}</span>
-        </p>
-        <p className="ws-pricing-note">{option.id === "cloud-auto-routing"
-          ? "Your provider bills inference separately."
-          : `Supplier charges + ${option.price}. Cloud routing included.`}</p>
-      </article>)}
+      <article>
+        <div className="ws-cloud-heading"><h3>Cloud</h3><span className="ws-access-badge">{CLOUD_PRICING.stage}</span></div>
+        <p className="ws-cloud-rate"><strong>{CLOUD_PRICING.price}</strong><span>/ million processed tokens</span></p>
+        <p className="ws-pricing-note">Input + output tokens. Cloud Auto Routing and Elastic Inference.</p>
+        <p className="ws-pricing-note">Model inference charges are separate.</p>
+      </article>
     </div>
 
     <a className="ws-text-link ws-pricing-details" href="/pricing">View pricing <ArrowUpRight size={15} aria-hidden="true" /></a>
@@ -147,7 +139,7 @@ const faqs = [
   ["Do I need to switch agents?", "Keep your existing agent. Connect through BitRouter’s API or use the CLI. The setup and supported capabilities depend on your agent; the integration guides cover each supported path."],
   ["What’s the difference between the API and CLI?", "The API gives applications and agents a local routing endpoint. The CLI lets you configure BitRouter, inspect routes, and work with supported agents from your terminal. Both use the open-source router."],
   ["Can I use my existing subscription?", "Supported subscription-backed providers can be configured in BitRouter. Availability, authentication, and usage limits depend on the provider. Check the provider guide for your subscription."],
-  ["What do I pay for?", "Self-hosting is free of BitRouter fees. Cloud Auto Routing with BYOK costs $0.01 per million metered routing input tokens, with provider inference billed separately. Elastic Inference adds a 5% transaction fee to supplier charges and has no separate Cloud Auto Routing fee. Enterprise terms are custom."],
+  ["What do I pay for?", "Self-hosting is free of BitRouter fees. Cloud Auto Routing and Elastic Inference share one platform fee: $0.01 per million processed input + output tokens at early access pricing. Each request is counted once, including when routing into Elastic Inference. Model inference charges are separate. Enterprise terms are custom."],
   ["Can I run it on my own infrastructure?", "Yes. Self-host the Apache-2.0 router and connect your own provider keys, local models, or private inference endpoints. A BitRouter Cloud account is not required for local routing."],
 ];
 

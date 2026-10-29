@@ -1,7 +1,8 @@
 // A deterministic design fixture, deliberately separate from the supplier catalog
 // and any future market API. None of these observations are live market data.
+import { CLOUD_PRICING } from "./commercial-pricing";
+
 export const MARKET_AS_OF = "2026-10-27T16:00:00Z";
-export const BUYER_FEE_RATE = 0.05;
 export const MARKET_WINDOWS = ["24H", "7D", "30D"] as const;
 export type MarketWindow = (typeof MARKET_WINDOWS)[number];
 export type MarketLayout = "table" | "cards";
@@ -35,9 +36,13 @@ export interface MarketAsset {
   lastTrade: { price: number; time: number } | null;
 }
 
-/** Blend one complete supplier quote, then apply the buyer transaction fee. */
+export function referenceSupplierPrice(rates: SupplierRates): number {
+  return rates.input * REFERENCE_PROFILE.inputShare + rates.output * REFERENCE_PROFILE.outputShare;
+}
+
+/** One million total tokens incurs the same Cloud fee regardless of model price. */
 export function referenceBuyerPrice(rates: SupplierRates): number {
-  return (rates.input * REFERENCE_PROFILE.inputShare + rates.output * REFERENCE_PROFILE.outputShare) * (1 + BUYER_FEE_RATE);
+  return referenceSupplierPrice(rates) + CLOUD_PRICING.usdPerMillionTokens;
 }
 
 const HOUR = 3_600_000;
@@ -51,28 +56,28 @@ function makeAsset(
   id: string, name: string, developer: string, icon: string,
   supplierAsk: SupplierRates, volumeScale: number, trend: number, index: number,
 ): MarketAsset {
-  const ask = referenceBuyerPrice(supplierAsk);
+  const supplierPrice = referenceSupplierPrice(supplierAsk);
   const history: MarketPoint[] = Array.from({ length: 721 }, (_, i) => {
     const hoursAgo = 720 - i;
     const day = Math.floor(i / 24);
     const hour = i % 24;
     const factor = hoursAgo < 24 ? intraday[23 - hoursAgo] : daily[day] + (intraday[hour] - 1) * 0.5;
-    const price = ask * (1 + (factor - 1) * trend);
+    const price = supplierPrice * (1 + (factor - 1) * trend);
     // A real gap and absent current bids exercise honest missing-data rendering.
     const quoteGap = index === 2 && hoursAgo >= 11 && hoursAgo <= 13;
     const noBids = index === 1 && hoursAgo <= 3;
     const inputTokens = i === 0 ? 0 : activity[(i + index * 3) % 24] * volumeScale;
     return {
       time: end - hoursAgo * HOUR,
-      ask: quoteGap ? null : price,
-      bid: quoteGap || noBids ? null : price * (0.945 + index * 0.005),
+      ask: quoteGap ? null : price + CLOUD_PRICING.usdPerMillionTokens,
+      bid: quoteGap || noBids ? null : price * (0.945 + index * 0.005) + CLOUD_PRICING.usdPerMillionTokens,
       inputTokens,
       outputTokens: Math.round(inputTokens / 3),
     };
   });
   return {
     id, name, developer, icon, supplierAsk, history,
-    lastTrade: { price: ask * 0.983, time: end - (index + 1) * 17 * 60_000 },
+    lastTrade: { price: supplierPrice * 0.983 + CLOUD_PRICING.usdPerMillionTokens, time: end - (index + 1) * 17 * 60_000 },
   };
 }
 

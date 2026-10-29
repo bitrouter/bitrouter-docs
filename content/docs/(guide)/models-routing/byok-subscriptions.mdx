@@ -192,7 +192,7 @@ providers:
 
 Cloud BYOK stores a provider credential for your account and routes eligible calls through it. The recommended path is the Cloud console, which fetches the node's encryption public key and seals the provider key in the browser before upload.
 
-Cloud Auto Routing with BYOK costs **$0.01 per million routing input tokens**, based on verifiable input usage processed by the routing service. Your provider bills model inference separately, including output usage under its own rates. Routing input usage is a separate meter from provider inference usage. Local, self-hosted BYOK routing has no BitRouter fee. See [pricing](/pricing).
+Cloud Auto Routing with BYOK uses **$0.01 per million processed tokens — early access pricing**, based on verifiable actual input + output tokens processed by BitRouter Cloud. The same platform fee applies to Elastic Inference and is counted once per request, including when routing into the market. Your provider bills model inference separately under its own rates. Local, self-hosted BYOK routing has no BitRouter fee. See [pricing](/pricing).
 
 For automated onboarding, start with the [BYOK API reference](/docs/reference/byok/getEncryptionPubkey). Keep encryption and upload code in the client; never send a plaintext provider key to a logging or application endpoint.
 

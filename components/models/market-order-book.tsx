@@ -35,7 +35,7 @@ export function MarketOrderBook({ asset, selected, onSelect }: { asset: MarketAs
 
   return <section className="market-terminal-panel market-book" aria-labelledby="order-book-heading">
     <div className="market-panel-heading"><h2 id="order-book-heading">Order book</h2><MarketInfo title="Order book">
-      <p>Fixed-profile demo orders: 3,000 input and 1,000 output tokens, no cache, accepted now and completed within five minutes. Prices include the 5% buyer fee.</p>
+      <p>Fixed-profile demo orders: 3,000 input and 1,000 output tokens, no cache, accepted now and completed within five minutes. Prices include the Cloud platform fee of $0.01 per million processed input + output tokens at early access pricing, counted once.</p>
       <p>Size and cumulative depth count complete reference requests. Each supplier capacity allocation appears once. A displayed quote does not reserve capacity.</p>
       <p>Bids are illustrative demand for this exact profile, not arbitrary buyer budgets converted into token prices. Click an ask to select its supplier in Quote Preview.</p>
     </MarketInfo></div>

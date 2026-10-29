@@ -1,8 +1,9 @@
 import {
-  BUYER_FEE_RATE, MARKET_AS_OF, marketStats, referenceBuyerPrice,
+  MARKET_AS_OF, marketStats, referenceBuyerPrice, referenceSupplierPrice,
   type MarketAsset, type MarketWindow, type SupplierRates,
 } from "./elastic-market";
 import { DEMO_LIQUIDITY, DEMO_SETTLEMENTS, LIQUIDITY_PROFILE, summarizeSettlements } from "./elastic-market-metrics";
+import { CLOUD_PRICING, cloudPlatformFee } from "./commercial-pricing";
 
 const asOf = Date.parse(MARKET_AS_OF);
 export const REFERENCE_TOKENS = LIQUIDITY_PROFILE.inputTokens + LIQUIDITY_PROFILE.outputTokens;
@@ -71,7 +72,7 @@ export function marketOrderBook(asset: MarketAsset) {
   // Fixed-profile DEMO demand only. Never normalize arbitrary TotalCap orders
   // into bids or treat the developer as the supplier of inference.
   const bids = bid === null ? [] : accumulateLevels([1, 0.985, 0.96].map((factor, index) => ({
-    id: `${asset.id}/demand-${index}`, price: bid * factor,
+    id: `${asset.id}/demand-${index}`, price: (bid - CLOUD_PRICING.usdPerMillionTokens) * factor + CLOUD_PRICING.usdPerMillionTokens,
     requests: Math.round(asks[0].requests * [0.35, 0.55, 0.7][index]),
   })));
   return { asks, bids };
@@ -107,9 +108,9 @@ export function previewBuyQuote(suppliers: readonly MarketSupplier[], request: Q
   const supplier = eligible[0];
   if (!supplier) return { status: "unavailable" as const, message: "No supplier quote matches this completion target." };
   const supplierEstimate = requestCost(supplier.rates, request.inputTokens, request.estimatedOutputTokens);
-  const feeEstimate = supplierEstimate * BUYER_FEE_RATE;
+  const feeEstimate = cloudPlatformFee(request.inputTokens, request.estimatedOutputTokens);
   const estimatedTotal = supplierEstimate + feeEstimate;
-  const ceilingTotal = requestCost(supplier.rates, request.inputTokens, request.maxOutputTokens) * (1 + BUYER_FEE_RATE);
+  const ceilingTotal = requestCost(supplier.rates, request.inputTokens, request.maxOutputTokens) + cloudPlatformFee(request.inputTokens, request.maxOutputTokens);
   return {
     status: ceilingTotal <= request.budgetUsd + 1e-12 ? "ready" as const : "over-budget" as const,
     supplier, supplierEstimate, feeEstimate, estimatedTotal, ceilingTotal,
@@ -133,7 +134,7 @@ export function recentMarketTrades(asset: MarketAsset): MarketTrade[] {
     const accepted = index === 2 || index === 6;
     const inputTokens = 3_000 * (index % 3 + 1);
     const outputTokens = inputTokens / 3;
-    const buyerPrice = index === 0 && asset.lastTrade ? asset.lastTrade.price : referenceBuyerPrice(asset.supplierAsk) * [0.989, 1.002, 0.995, 1.008][index % 4];
+    const buyerPrice = index === 0 && asset.lastTrade ? asset.lastTrade.price : referenceSupplierPrice(asset.supplierAsk) * [0.989, 1.002, 0.995, 1.008][index % 4] + CLOUD_PRICING.usdPerMillionTokens;
     return {
       id: `demo-${asset.id}-${index + 1}`,
       time: (asset.lastTrade?.time ?? asOf) - index * 7 * 60_000,

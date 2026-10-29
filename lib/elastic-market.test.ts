@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { ELASTIC_MARKET_ASSETS, BUYER_FEE_RATE, marketStats, marketSeries, referenceBuyerPrice, volumeSeries } from "./elastic-market";
+import { ELASTIC_MARKET_ASSETS, marketStats, marketSeries, referenceBuyerPrice, volumeSeries } from "./elastic-market";
 
 describe("Elastic market reference observations", () => {
-  it("uses a complete supplier quote and includes the buyer fee exactly once", () => {
-    expect(referenceBuyerPrice({ input: 1, output: 3 })).toBeCloseTo(1.5 * (1 + BUYER_FEE_RATE));
+  it("uses a complete supplier quote and includes the platform fee exactly once", () => {
+    expect(referenceBuyerPrice({ input: 1, output: 3 })).toBeCloseTo(1.51);
+    expect(referenceBuyerPrice({ input: 0, output: 0 })).toBeCloseTo(0.01);
     for (const asset of ELASTIC_MARKET_ASSETS) {
       expect(marketStats(asset, "24H").ask).toBeCloseTo(referenceBuyerPrice(asset.supplierAsk));
     }

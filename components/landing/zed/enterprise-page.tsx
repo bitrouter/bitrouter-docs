@@ -8,7 +8,7 @@ import "./enterprise.css";
 const faqs = [
   {
     question: "How is Enterprise priced?",
-    answer: <>Enterprise services and terms are custom. The OSS router remains free to self-host. Standard Cloud Auto Routing with BYOK is $0.01 per million routing input tokens; Elastic Inference has a 5% transaction fee and no separate Cloud Auto Routing fee. See <Link href="/pricing">pricing</Link> for the standard service terms.</>,
+    answer: <>Enterprise services and terms are custom. The OSS router remains free to self-host. Cloud Auto Routing and Elastic Inference share early access pricing of $0.01 per million processed input + output tokens, counted once per request. Model inference charges are separate. See <Link href="/pricing">pricing</Link> for the standard service terms.</>,
   },
   {
     question: "Do we need to change our agents?",

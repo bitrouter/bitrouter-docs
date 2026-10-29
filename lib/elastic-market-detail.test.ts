@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { BUYER_FEE_RATE, ELASTIC_MARKET_ASSETS, MARKET_AS_OF, marketStats } from "./elastic-market";
+import { ELASTIC_MARKET_ASSETS, MARKET_AS_OF, marketStats } from "./elastic-market";
+import { CLOUD_PRICING } from "./commercial-pricing";
 import { DEMO_LIQUIDITY, availableLiquidity, globalMarketStats } from "./elastic-market-metrics";
 import { marketOrderBook, marketSuppliers, modelSettlementStats, previewBuyQuote, recentMarketTrades, requestCost, type QuoteRequest } from "./elastic-market-detail";
 
@@ -20,8 +21,9 @@ describe("model trading workspace", () => {
       expect(asks).toHaveLength(3);
       expect(new Set(asks.map(row => row.id)).size).toBe(asks.length);
       expect(asks[0].price).toBeCloseTo(marketStats(asset, "24H").ask!);
-      const inBand = asks.filter(row => row.price <= asks[0].price * 1.05);
-      const supplierUsd = inBand.reduce((sum, row) => sum + row.price * row.requests * 0.004 / (1 + BUYER_FEE_RATE), 0);
+      const fee = CLOUD_PRICING.usdPerMillionTokens;
+      const inBand = asks.filter(row => row.price - fee <= (asks[0].price - fee) * 1.05 + 1e-12);
+      const supplierUsd = inBand.reduce((sum, row) => sum + (row.price - fee) * row.requests * 0.004, 0);
       expect(supplierUsd).toBeCloseTo(availableLiquidity(DEMO_LIQUIDITY.filter(offer => offer.assetId === asset.id), Date.parse(MARKET_AS_OF))!);
       expect(asks.at(-1)!.cumulativeRequests).toBe(asks.reduce((sum, row) => sum + row.requests, 0));
       expect(bids[0]?.price ?? null).toBe(marketStats(asset, "24H").bid);
@@ -39,10 +41,30 @@ describe("model trading workspace", () => {
     if (quote.status !== "over-budget") throw new Error("Expected over-budget quote");
     expect(quote.estimatedTotal).toBeLessThan(0.004);
     expect(quote.ceilingTotal).toBeGreaterThan(0.004);
-    expect(quote.feeEstimate).toBeCloseTo(quote.supplierEstimate * 0.05);
-    expect(quote.estimatedTotal).toBeCloseTo(quote.supplierEstimate * 1.05);
+    expect(quote.feeEstimate).toBeCloseTo(0.000031, 10); // 3,000 input + 100 expected output.
+    expect(quote.estimatedTotal).toBeCloseTo(quote.supplierEstimate + 0.000031, 10);
     const exact = previewBuyQuote(marketSuppliers(asset), { ...request, budgetUsd: quote.ceilingTotal });
     expect(exact.status).toBe("ready");
+  });
+
+  it("charges the same token-based fee for differently priced suppliers, once per request", () => {
+    const suppliers = marketSuppliers(asset);
+    const quotes = suppliers.slice(0, 3).map(supplier => previewBuyQuote(suppliers, request, supplier.id));
+    for (const quote of quotes) {
+      if (quote.status !== "ready") throw new Error("Expected ready quote");
+      expect(quote.feeEstimate).toBeCloseTo(0.00004, 10);
+      expect(quote.estimatedTotal - quote.supplierEstimate).toBeCloseTo(0.00004, 10);
+    }
+    expect(quotes[0].supplierEstimate).not.toBe(quotes[1].supplierEstimate);
+  });
+
+  it("reserves the platform fee for the full output limit even with free supplier inference", () => {
+    const suppliers = marketSuppliers(asset).map(supplier => ({ ...supplier, rates: { input: 0, output: 0 } }));
+    const quote = previewBuyQuote(suppliers, { ...request, estimatedOutputTokens: 100, budgetUsd: 0.000035 });
+    expect(quote.status).toBe("over-budget");
+    if (quote.status !== "over-budget") throw new Error("Expected over-budget quote");
+    expect(quote.estimatedTotal).toBeCloseTo(0.000031, 10);
+    expect(quote.ceilingTotal).toBeCloseTo(0.00004, 10);
   });
 
   it("filters completion and selected supplier independently of price", () => {

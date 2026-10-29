@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { ArrowUpRight, Check, ArrowRight } from "lucide-react";
-import { BUYER_FEE_RATE, MARKET_AS_OF, formatMarketPrice, referenceBuyerPrice, type MarketAsset } from "@/lib/elastic-market";
+import { MARKET_AS_OF, formatMarketPrice, referenceBuyerPrice, type MarketAsset } from "@/lib/elastic-market";
 import { formatQuoteUsd, previewBuyQuote, type MarketSupplier } from "@/lib/elastic-market-detail";
 import { MarketInfo } from "./market-info";
+import { CLOUD_PRICING, cloudPlatformFee } from "@/lib/commercial-pricing";
 
 export function MarketQuoteTicket({ asset, suppliers, selected, onSelect, side, onSideChange }: {
   asset: MarketAsset; suppliers: MarketSupplier[]; selected: string; onSelect: (id: string) => void;
@@ -37,7 +38,7 @@ export function MarketQuoteTicket({ asset, suppliers, selected, onSelect, side, 
   return <aside className="market-terminal-panel market-ticket" aria-labelledby="quote-preview-heading" id="quote-preview" tabIndex={-1}>
     <div className="market-panel-heading"><h2 id="quote-preview-heading">Quote Preview</h2><MarketInfo title="Quote Preview">
       <p>Local design preview only. No request is sent, no order is placed, and no capacity is reserved.</p>
-      <p>Buy estimates use expected output. The budget check uses the full output limit and includes the 5% fee. The final fee is based on the supplier’s actual settled charge.</p>
+      <p>Buy estimates use expected output. The budget check uses the full output limit for both inference and the Cloud platform fee. Early access platform pricing is $0.01 per million processed input + output tokens, counted once per request. Final charges use actual metered usage.</p>
       <p>Purchase validity controls when an order may buy. Completion time starts after acceptance. Waiting orders need fresh quotes; the current supplier quote is not a price lock.</p>
       <p>Available capacity is quoted for the reference profile. Custom request admission must be confirmed by the supplier.</p>
     </MarketInfo></div>
@@ -51,7 +52,7 @@ export function MarketQuoteTicket({ asset, suppliers, selected, onSelect, side, 
       {validity === "GTD" && <label className="market-ticket-field">Purchase by · UTC<input type="datetime-local" value={purchaseBy} onInput={event => setPurchaseBy(event.currentTarget.value)} onChange={event => setPurchaseBy(event.target.value)} /></label>}
       <div className="market-ticket-estimate" aria-live="polite" aria-atomic="true">
         {hasQuote ? <><div className="market-ticket-match"><span>{quote.supplier.name}</span><span>≤ {quote.supplier.completionMinutes} min</span></div><dl>
-          <div><dt>Supplier estimate</dt><dd>{formatQuoteUsd(quote.supplierEstimate)}</dd></div><div><dt>Buyer fee · 5%</dt><dd>{formatQuoteUsd(quote.feeEstimate)}</dd></div>
+          <div><dt>Supplier estimate</dt><dd>{formatQuoteUsd(quote.supplierEstimate)}</dd></div><div><dt>Cloud platform fee</dt><dd>{formatQuoteUsd(quote.feeEstimate)}</dd></div>
           <div className="market-ticket-total"><dt>Estimated total</dt><dd>{formatQuoteUsd(quote.estimatedTotal)}</dd></div>
           <div><dt>Cost at output limit</dt><dd>{formatQuoteUsd(quote.ceilingTotal)}</dd></div><div><dt>Maximum authorized</dt><dd>{formatQuoteUsd(request.budgetUsd)}</dd></div>
         </dl><div className={`market-quote-result ${quote.status === "ready" && validExpiry ? "market-quote-ok" : "market-quote-warning"}`}>{!validExpiry ? "Purchase expiry must follow the demo snapshot." : quote.status === "ready" ? <><Check size={13} aria-hidden="true" />Within budget · estimate only</> : "Output-limit cost exceeds your budget."}</div></> : <p className="market-quote-warning">{quote.message}</p>}
@@ -65,7 +66,7 @@ export function MarketQuoteTicket({ asset, suppliers, selected, onSelect, side, 
       <label className="market-ticket-field">Complete within<select value={sellCompletion} onChange={event => setSellCompletion(event.target.value)}><option value="3">3 min</option><option value="5">5 min</option><option value="10">10 min</option></select></label>
       <div className="market-sell-profile">3K input / 1K output · No cache</div>
       <button className="market-preview-button" type="submit" disabled={!sellValid}>Preview offer <ArrowRight size={14} aria-hidden="true" /></button>
-      {showOffer && sellValid && <div className="market-ticket-estimate" role="status"><div className="market-ticket-match"><span>Offer preview</span><span>Unpublished</span></div><dl><div><dt>Source</dt><dd>{suppliers.find(supplier => supplier.id === source)?.name}</dd></div><div><dt>Buyer ask / 1M</dt><dd>{formatMarketPrice(offerPrice)}</dd></div><div><dt>Supplier / request</dt><dd>{formatQuoteUsd((Number(inputRate) * 3000 + Number(outputRate) * 1000) / 1_000_000)}</dd></div><div><dt>Buyer / request</dt><dd>{formatQuoteUsd((offerPrice ?? 0) * 0.004)}</dd></div><div><dt>Capacity</dt><dd>{Number(capacity).toLocaleString("en-US")} requests</dd></div><div><dt>Completion</dt><dd>≤ {sellCompletion} min</dd></div><div><dt>Buyer fee</dt><dd>{BUYER_FEE_RATE * 100}% added</dd></div></dl></div>}
+      {showOffer && sellValid && <div className="market-ticket-estimate" role="status"><div className="market-ticket-match"><span>Offer preview</span><span>Unpublished</span></div><dl><div><dt>Source</dt><dd>{suppliers.find(supplier => supplier.id === source)?.name}</dd></div><div><dt>Buyer ask / 1M</dt><dd>{formatMarketPrice(offerPrice)}</dd></div><div><dt>Supplier / request</dt><dd>{formatQuoteUsd((Number(inputRate) * 3000 + Number(outputRate) * 1000) / 1_000_000)}</dd></div><div><dt>Buyer / request</dt><dd>{formatQuoteUsd((offerPrice ?? 0) * 0.004)}</dd></div><div><dt>Capacity</dt><dd>{Number(capacity).toLocaleString("en-US")} requests</dd></div><div><dt>Completion</dt><dd>≤ {sellCompletion} min</dd></div><div><dt>Platform / request</dt><dd>{formatQuoteUsd(cloudPlatformFee(3000, 1000))}</dd></div><div><dt>Cloud rate · early access</dt><dd>{CLOUD_PRICING.price} / 1M processed tokens</dd></div></dl></div>}
       <p className="market-ticket-disclosure">Preview only · no offer published</p><Link href="/docs/market/sell-inference" className="market-ticket-link">Selling inference <ArrowUpRight size={13} aria-hidden="true" /></Link>
     </form>}
   </aside>;

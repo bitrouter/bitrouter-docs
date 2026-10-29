@@ -1,7 +1,8 @@
 import {
-  BUYER_FEE_RATE, ELASTIC_MARKET_ASSETS, MARKET_AS_OF,
-  referenceBuyerPrice, windowHours, type MarketWindow, type SupplierRates,
+  ELASTIC_MARKET_ASSETS, MARKET_AS_OF,
+  referenceSupplierPrice, windowHours, type MarketWindow, type SupplierRates,
 } from "./elastic-market";
+import { CLOUD_PRICING, cloudPlatformFee } from "./commercial-pricing";
 
 export const LIQUIDITY_PROFILE = {
   inputTokens: 3_000,
@@ -53,7 +54,7 @@ export const DEMO_SETTLEMENTS: SettlementCohort[] = ELASTIC_MARKET_ASSETS.flatMa
     const count = Math.max(3, Math.round((point.inputTokens + point.outputTokens) / 4_000));
     const counts = [Math.floor(count * 0.5), Math.floor(count * 0.35)];
     counts.push(count - counts[0] - counts[1]);
-    const factor = point.ask === null ? 1 : point.ask / referenceBuyerPrice(asset.supplierAsk);
+    const factor = point.ask === null ? 1 : (point.ask - CLOUD_PRICING.usdPerMillionTokens) / referenceSupplierPrice(asset.supplierAsk);
     const rates = { input: asset.supplierAsk.input * factor, output: asset.supplierAsk.output * factor };
     let remainingInput = point.inputTokens;
     let remainingOutput = point.outputTokens;
@@ -69,7 +70,7 @@ export const DEMO_SETTLEMENTS: SettlementCohort[] = ELASTIC_MARKET_ASSETS.flatMa
         assetId: asset.id,
         settledAt: point.time,
         supplierUsd,
-        platformFeesUsd: supplierUsd * BUYER_FEE_RATE,
+        platformFeesUsd: cloudPlatformFee(input, output),
         deliveredTokens: input + output,
         purchases,
         referenceUsd: hasBenchmark ? supplierUsd / (1 + bps / 10_000) : null,
@@ -125,7 +126,7 @@ const liquidityHistory = ELASTIC_MARKET_ASSETS[0].history.map((point, index) => 
   const capacityFactor = capacityLevels[index % capacityLevels.length] * (1 - Math.floor((asOf - point.time) / 86_400_000) * 0.005);
   const allocations = DEMO_LIQUIDITY.map(offer => {
     const asset = ELASTIC_MARKET_ASSETS[assetIndices.get(offer.assetId)!];
-    const priceFactor = asset.history[index].ask! / referenceBuyerPrice(asset.supplierAsk);
+    const priceFactor = (asset.history[index].ask! - CLOUD_PRICING.usdPerMillionTokens) / referenceSupplierPrice(asset.supplierAsk);
     return {
       ...offer,
       requests: Math.floor(offer.requests * capacityFactor),

@@ -13,7 +13,7 @@ export function EnterprisePricing() {
           </h2>
           <p>
             Self-host the open-source router free. Cloud Auto Routing and Elastic Inference share
-            $0.01 per million processed input + output tokens at early access pricing. Model inference charges are separate. Enterprise terms are custom.
+            $0.01 per million processed input + output tokens at early access pricing. 0% markup on inference. Enterprise terms are custom.
           </p>
           <div className="zed-action-row">
             <a className="zed-btn zed-btn-ghost" href={ZED_LINKS.pricing}>

@@ -115,7 +115,7 @@ function PricingSection() {
         <div className="ws-cloud-heading"><h3>Cloud</h3><span className="ws-access-badge">{CLOUD_PRICING.stage}</span></div>
         <p className="ws-cloud-rate"><strong>{CLOUD_PRICING.price}</strong><span>/ million processed tokens</span></p>
         <p className="ws-pricing-note">Input + output tokens. Cloud Auto Routing and Elastic Inference.</p>
-        <p className="ws-pricing-note">Model inference charges are separate.</p>
+        <p className="ws-pricing-note">0% markup on inference.</p>
       </article>
     </div>
 
@@ -139,7 +139,7 @@ const faqs = [
   ["Do I need to switch agents?", "Keep your existing agent. Connect through BitRouter’s API or use the CLI. The setup and supported capabilities depend on your agent; the integration guides cover each supported path."],
   ["What’s the difference between the API and CLI?", "The API gives applications and agents a local routing endpoint. The CLI lets you configure BitRouter, inspect routes, and work with supported agents from your terminal. Both use the open-source router."],
   ["Can I use my existing subscription?", "Supported subscription-backed providers can be configured in BitRouter. Availability, authentication, and usage limits depend on the provider. Check the provider guide for your subscription."],
-  ["What do I pay for?", "Self-hosting is free of BitRouter fees. Cloud Auto Routing and Elastic Inference share one platform fee: $0.01 per million processed input + output tokens at early access pricing. Each request is counted once, including when routing into Elastic Inference. Model inference charges are separate. Enterprise terms are custom."],
+  ["What do I pay for?", "Self-hosting is free of BitRouter fees. Cloud Auto Routing and Elastic Inference share one platform fee: $0.01 per million processed input + output tokens at early access pricing. Each request is counted once, including when routing into Elastic Inference. 0% markup on inference. Enterprise terms are custom."],
   ["Can I run it on my own infrastructure?", "Yes. Self-host the Apache-2.0 router and connect your own provider keys, local models, or private inference endpoints. A BitRouter Cloud account is not required for local routing."],
 ];
 

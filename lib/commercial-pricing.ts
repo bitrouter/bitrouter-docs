@@ -19,7 +19,7 @@ export const PRICING_OPTIONS = [
   },
   {
     id: "cloud", label: "Cloud", price: CLOUD_PRICING.price, unit: CLOUD_PRICING.unit,
-    description: "Early access pricing for Cloud Auto Routing and Elastic Inference. Input + output tokens, counted once per request. Model inference charges are separate.",
+    description: "Early access pricing for Cloud Auto Routing and Elastic Inference. Input + output tokens, counted once per request. 0% markup on inference.",
     action: "Explore Elastic Inference", href: "/docs/overview/elastic-inference",
   },
   {

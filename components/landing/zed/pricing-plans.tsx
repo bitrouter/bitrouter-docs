@@ -7,7 +7,7 @@ export function PricingPlans() {
         <div className="price-cloud-heading"><h2 id="cloud-price-title">Cloud</h2><span className="price-access-badge">{CLOUD_PRICING.stage}</span></div>
         <p className="price-cloud-rate"><strong>{CLOUD_PRICING.price}</strong><span>/ million processed tokens</span></p>
         <p className="price-cloud-meter">Input + output tokens.</p>
-        <p className="price-cloud-separate">Model inference charges are separate.</p>
+        <p className="price-cloud-separate">0% markup on inference.</p>
       </div>
       <div className="price-cloud-paths">
         <div className="price-cloud-path" id="cloud-auto-routing"><h3>Cloud Auto Routing · BYOK</h3><p>Your provider bills inference separately.</p><a href="/docs/models-routing/byok-subscriptions#bitrouter-cloud-byok">Explore Cloud BYOK →</a></div>

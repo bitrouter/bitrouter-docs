@@ -162,7 +162,7 @@ export default async function ModelDetailPage({ params }: Props) {
           </div>
           <p style={{ color: "var(--z-ink-5)", fontSize: 13, lineHeight: 1.7, marginTop: 16 }}>
             Supplier rates exclude the Cloud platform fee. Early access pricing is $0.01 per million processed input + output tokens,
-            counted once per request across Cloud Auto Routing and Elastic Inference. Model inference charges are separate.
+            counted once per request across Cloud Auto Routing and Elastic Inference. 0% markup on inference.
             See <Link href="/pricing">pricing</Link>.
           </p>
         </section>

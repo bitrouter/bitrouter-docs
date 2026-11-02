@@ -5,7 +5,7 @@
     "cli",
     "responses-api",
     "mcp",
-    "web",
+    "agentic-payment",
     "cloud"
   ]
 }

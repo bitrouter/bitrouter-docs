@@ -27,7 +27,7 @@ function SupplierTable({ suppliers, selected, onSelect }: { suppliers: MarketSup
 function ModelSpecifications({ asset }: { asset: MarketAsset }) {
   return <div className="market-specifications"><dl>
     <div><dt>Model ID</dt><dd><code>{asset.id}</code></dd></div><div><dt>Developer</dt><dd>{asset.developer}</dd></div><div><dt>Market</dt><dd>Elastic Inference · Demo listing</dd></div><div><dt>Quote currency</dt><dd>USD</dd></div><div><dt>Reference request</dt><dd>3K input / 1K output · No cache</dd></div><div><dt>Completion target</dt><dd>Within 5 minutes after acceptance</dd></div><div><dt>Cloud platform fee</dt><dd>$0.01 / 1M processed input + output tokens · Early access pricing</dd></div><div><dt>Cloud Auto Routing</dt><dd>Same fee, counted once per request</dd></div><div><dt>Version / precision</dt><dd className="market-unverified">Not verified</dd></div><div><dt>Context / capabilities</dt><dd className="market-unverified">Not verified</dd></div>
-  </dl><div className="market-spec-links"><Link href="/docs/overview/elastic-inference">Elastic Inference <ArrowUpRight size={13} aria-hidden="true" /></Link><Link href="/docs/market/market-data">Market Data <ArrowUpRight size={13} aria-hidden="true" /></Link></div></div>;
+  </dl><div className="market-spec-links"><Link href="/docs/overview/elastic-inference">Elastic Inference <ArrowUpRight size={13} aria-hidden="true" /></Link><Link href="/docs/market/service-tiers">Service Tiers <ArrowUpRight size={13} aria-hidden="true" /></Link></div></div>;
 }
 
 export function MarketActivity({ asset, suppliers, selected, onSelect }: { asset: MarketAsset; suppliers: MarketSupplier[]; selected: string; onSelect: (id: string) => void }) {

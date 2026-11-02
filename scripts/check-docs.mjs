@@ -80,6 +80,11 @@ const NAV_FILES = [
   "(usage-nav)/meta.json",
   "(reference-nav)/meta.json",
 ];
+// Explicit product-navigation exception. Traverse it from its parent so an
+// orphaned folder cannot pass sidebar coverage, and duplicate entries still fail.
+const NESTED_NAV_FOLDERS = new Map([
+  ["(market-nav)/meta.json:service-tiers", "(market-nav)/service-tiers/meta.json"],
+]);
 const ROOT_NAV_PAGES = [
   "---Overview---",
   "...(overview-nav)",
@@ -187,10 +192,15 @@ async function main() {
     }
   }
 
-  for (const navFile of NAV_FILES) {
+  async function checkNavFile(navFile) {
     const meta = JSON.parse(await readFile(join(ROOT, navFile), "utf8"));
     const entries = [meta.pagesIndex, ...(meta.pages ?? [])].filter((entry) => entry !== undefined);
     for (const entry of entries) {
+      const nested = NESTED_NAV_FOLDERS.get(`${navFile}:${entry}`);
+      if (nested) {
+        await checkNavFile(nested);
+        continue;
+      }
       const route = navRoute(entry);
       if (!route) {
         errors.push(`${navFile}  every sidebar entry must be a direct /docs link: ${entry}`);
@@ -202,9 +212,11 @@ async function main() {
       }
     }
   }
+  for (const navFile of NAV_FILES) await checkNavFile(navFile);
 
   for (const navFile of [
     "(comparison-nav)/meta.json",
+    "(market-nav)/service-tiers/meta.json",
     "reference/meta.json",
   ]) {
     const meta = JSON.parse(await readFile(join(ROOT, navFile), "utf8"));

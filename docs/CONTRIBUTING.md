@@ -14,7 +14,7 @@ top-level order is the `pages` list in `content/docs/meta.json`:
    `/docs/overview/supported-models` URL. Elastic Inference is an authored overview
    of the optional cloud service, with price/time/model flexibility, the
    electricity-exchange vision, illustrative buy/sell limit-order tables and JSON,
-   and next-step links to all five Market guides in sidebar order. The concise
+   and next-step links to the five top-level Market entries in sidebar order. The concise
    description replaces a duplicate introduction.
    An opening info Callout explains the optional Cloud service and standalone OSS
    path, linking to Auto Router before the What section.
@@ -26,17 +26,21 @@ top-level order is the `pages` list in `content/docs/meta.json`:
    `/docs/overview/flex-inference` URL redirects directly here. Preserve its
    historical What/Why section anchors and `/pricing#flex-inference` anchor.
    Enterprise remains a linked deployment-decision entry.
-2. **Usage** — Desktop, CLI, Responses API, MCP, and Web, in that order.
-   MCP and Web are Coming soon placeholders. Desktop is Coming soon until
+2. **Usage** — Desktop, CLI, Responses API, MCP, and Agentic Payment, in that order.
+   MCP and Agentic Payment are Coming soon placeholders. Agentic Payment is canonical
+   at `/docs/usage/agentic-payment`; its former Market URL redirects here. Web is
+   retired and `/docs/usage/web` redirects to `/docs/usage/desktop`. Desktop is Coming soon until
    its installation and behavior can be documented from a verified implementation.
    CLI combines the self-driving, interactive terminal, and headless guides.
 3. **Coding Agents** — Claude Code, Codex, DeepSeek Harness, OpenCode, and Pi,
    in that order. Claude Code and Codex have authored integration guides;
    DeepSeek Harness, OpenCode, and Pi remain Coming soon placeholders.
-4. **Market** — Buy Inference, Sell Inference, Agentic Payment, Auto-bidding,
-   and Market Data, in that order. Buy Inference and Sell Inference are placeholders with links
-   to State Affinity; Agentic Payment, Auto-bidding, and Market Data are Coming soon until their
-   implementation is verified.
+4. **Market** — Buy Inference, Sell Inference, Verify Inference, Auto-bidding,
+   and Service Tiers, in that order. Buy Inference and Sell Inference are placeholders
+   with links to State Affinity; Verify Inference and Auto-bidding are Coming soon.
+   Service Tiers is a collapsed folder with a clickable overview and Priority,
+   Standard, and Flex children, in that order. All four pages are Coming soon.
+   `/docs/market/market-data` redirects permanently to `/docs/market/service-tiers`.
 5. **Router** — Auto Router, Workload Optimization, State Affinity, Routing Traces,
    and Strategies, in that order. Workload Optimization and State Affinity are Coming soon.
    Context Routing and Configuration
@@ -58,10 +62,14 @@ a page or collapsible folder. Eight meta-only guide folders — `(overview-nav)`
 `(models-routing-nav)`, `(context-routing-nav)`, and `(reference-nav)` — are extracted into the root with `...folder`.
 They link to canonical pages rather than copies.
 
-Comparison under Overview and API reference are the only hierarchy exceptions.
-Both are native folders with `collapsible: true` and `defaultOpen: false`.
-Comparison has no index page: its header only expands or collapses its four
-canonical comparison guides. Keep competitor claims sourced and qualified.
+Comparison under Overview, Service Tiers under Market, and API reference are
+the explicit hierarchy exceptions. All are native folders with `collapsible: true`
+and `defaultOpen: false`. Comparison has no index page: its header only expands
+or collapses its four canonical comparison guides. Keep competitor claims sourced
+and qualified. Service Tiers has a clickable overview and Priority, Standard,
+and Flex children, projected through `(market-nav)/service-tiers/meta.json`.
+Its canonical sources live in `(guide)/market/service-tiers/`; the public metadata
+uses a `pagesIndex` link for the overview and three direct child links.
 
 API reference retains `content/docs/reference/` and its generated endpoint URLs.
 Only the outer API reference folder collapses: generated tag folders are extracted
@@ -105,10 +113,12 @@ Three rules keep the unified navigation intact:
 ### Keep non-Reference sections flat
 
 Source pages can remain nested where that keeps related files together, but the
-public sidebar is a flat list beneath each section separator, with Comparison
-and API reference as explicit exceptions. Every public page
+public sidebar is a flat list beneath each section separator, with Comparison,
+Service Tiers, and API reference as explicit exceptions. Every public page
 must be listed exactly once in the matching `*-nav/meta.json`, including the
-four Comparison children. Cards and inline links provide additional
+four Comparison children and the Service Tiers overview and three children.
+`scripts/check-docs.mjs` follows the explicitly allowed Service Tiers folder
+from its parent so detached or duplicate entries fail coverage. Cards and inline links provide additional
 discovery, not a substitute for sidebar visibility.
 Rare intentional exceptions must be added to `HIDDEN_SIDEBAR_ROUTES` in
 `scripts/check-docs.mjs`. The Cloud placeholder remains accessible at
@@ -128,11 +138,15 @@ search, sitemap, and full-text ingestion. Retained compatibility guides carry
 Use this boundary when classifying content:
 
 - **Market** follows Coding Agents and precedes Router. It owns buying and selling
-  inference and future trading, delivery, and settlement guides. Buy Inference
+  inference, inference verification guidance, and future trading, delivery, and
+  settlement guides. Buy Inference
   and Sell Inference are canonical under `/docs/market/` and currently have titles
-  and descriptions plus links to State Affinity. Agentic Payment, Auto-bidding,
-  and Market Data follow them as Coming soon placeholders; detailed marketplace
-  behavior remains unverified.
+  and descriptions plus links to State Affinity. Verify Inference and Auto-bidding
+  follow as Coming soon placeholders. Verification behavior remains unverified;
+  Agentic Payment belongs to Usage. Service Tiers is the final Market entry,
+  with a clickable overview and Priority, Standard, and Flex children; all remain
+  Coming soon. Service-tier semantics and detailed marketplace behavior remain
+  unverified.
   Connecting an endpoint belongs to Model; offering its inference for sale belongs
   to Market. Overview's Elastic Inference introduces the product concept;
   Market owns the operational workflows.
@@ -200,8 +214,9 @@ Use this boundary when classifying content:
   are separate capabilities. Link to Self-driving for Goal coordination, Model
   for named routes and inference sources, Market for buying and selling, and
   Context for ACP/MCP behavior.
-- **Usage > MCP and Web** are Coming soon entry pages. Context retains the MCP
-  servers configuration/use guide.
+- **Usage > MCP and Agentic Payment** are Coming soon entry pages. Agentic Payment
+  owns payment usage guidance; its existing pricing and State Affinity links remain.
+  Context retains the MCP servers configuration/use guide.
 - **Usage > Responses API** explains the default generation interface and its
   request examples. **API reference** owns typed decisions and System One,
   Chat Completions/Messages compatibility, and generated endpoint schemas.

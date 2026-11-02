@@ -45,7 +45,7 @@ References:
 - [CLI](${BASE_URL}/docs/usage/cli): Self-driving workflows, interactive terminal, and native headless scripting, and the complete captured command reference, with preview boundaries
 - [Responses API](${BASE_URL}/docs/usage/responses-api): Recommended generation interface, streaming, tool results, and continuation
 - [MCP](${BASE_URL}/docs/usage/mcp): Coming soon
-- [Web](${BASE_URL}/docs/usage/web): Coming soon
+- [Agentic Payment](${BASE_URL}/docs/usage/agentic-payment): Coming soon
 
 ## Coding Agents
 
@@ -59,9 +59,12 @@ References:
 
 - [Buy Inference](${BASE_URL}/docs/market/buy-inference): Documentation placeholder for obtaining inference access through BitRouter
 - [Sell Inference](${BASE_URL}/docs/market/sell-inference): Documentation placeholder for optional marketplace supply
-- [Agentic Payment](${BASE_URL}/docs/market/agentic-payment): Coming soon
+- [Verify Inference](${BASE_URL}/docs/market/verify-inference): Coming soon
 - [Auto-bidding](${BASE_URL}/docs/market/auto-bidding): Coming soon
-- [Market Data](${BASE_URL}/docs/market/market-data): Coming soon
+- [Service Tiers](${BASE_URL}/docs/market/service-tiers): Coming soon
+  - [Priority](${BASE_URL}/docs/market/service-tiers/priority): Coming soon
+  - [Standard](${BASE_URL}/docs/market/service-tiers/standard): Coming soon
+  - [Flex](${BASE_URL}/docs/market/service-tiers/flex): Coming soon
 
 ## Router
 

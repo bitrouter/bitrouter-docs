@@ -3,8 +3,8 @@
   "pages": [
     "buy-inference",
     "sell-inference",
-    "agentic-payment",
+    "verify-inference",
     "auto-bidding",
-    "market-data"
+    "service-tiers"
   ]
 }

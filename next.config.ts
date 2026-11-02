@@ -44,6 +44,11 @@ pairs.push(
   ["/docs/overview/inference-flex-market", "/docs/overview/elastic-inference"],
   ["/docs/overview/inference-spot", "/docs/overview/elastic-inference"],
   ["/docs/overview/inference-forwards", "/docs/overview/elastic-inference"],
+  // Market service-tier guides replace the former market-data placeholder.
+  ["/docs/market/market-data", "/docs/market/service-tiers"],
+  // Payment belongs to Usage; the retired Web entry opens the Desktop usage guide.
+  ["/docs/market/agentic-payment", "/docs/usage/agentic-payment"],
+  ["/docs/usage/web", "/docs/usage/desktop"],
   // Guides include their references; legal policies use the documentation layout.
   ["/docs/cli/reference", "/docs/usage/cli"],
   ["/docs/configuration-reference", "/docs/routing/configuration"],
@@ -442,6 +447,9 @@ pairs.push(
 // rule at the end of redirects() folds them to the English path, which then
 // takes its own 301 to the final destination. One extra hop, on a dead locale.
 const movedGuideRoutes = new Set([
+  "/docs/market/agentic-payment",
+  "/docs/usage/web",
+  "/docs/market/market-data",
   "/docs/overview/flex-inference",
   "/docs/overview/inference-flex-market",
   "/docs/overview/inference-spot",

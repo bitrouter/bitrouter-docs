@@ -2,11 +2,13 @@
   "title": "Coding Agents",
   "icon": "Plug",
   "pages": [
-    "claude-code",
-    "codex",
     "deepseek-harness",
+    "hermes-agent",
+    "openclaw",
     "opencode",
     "pi",
+    "claude-code",
+    "codex",
     "bro-harness"
   ]
 }

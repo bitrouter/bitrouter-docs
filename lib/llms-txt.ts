@@ -49,9 +49,9 @@ References:
 
 ## Coding Agents
 
-- [Claude Code](${BASE_URL}/docs/integration/claude-code): Local/Cloud proxy setup, a Claude-only model pool, customization, and request verification
-- [Codex](${BASE_URL}/docs/integration/codex): Local/Cloud provider setup, a GPT-only model pool, catalog requirements, and request verification
 - [DeepSeek Harness](${BASE_URL}/docs/integration/deepseek-harness): Coming soon
+- [Hermes Agent](${BASE_URL}/docs/integration/hermes-agent): Coming soon
+- [OpenClaw](${BASE_URL}/docs/integration/openclaw): Coming soon
 - [OpenCode](${BASE_URL}/docs/integration/opencode): Coming soon
 - [Pi](${BASE_URL}/docs/integration/pi): Coming soon
 

@@ -64,6 +64,9 @@ const HIDDEN_SIDEBAR_ROUTES = new Set([
   "/docs/cli/agent",
   // Supporting guides remain linked from content, without CLI sidebar entries.
   "/docs/cli/request-receipts",
+  // Temporarily hidden Coding Agents guides remain directly accessible.
+  "/docs/integration/claude-code",
+  "/docs/integration/codex",
   // Shared native-launch guide remains reachable without a sidebar entry.
   "/docs/integration/bro-harness",
   // Retained for existing links after replacing the generic Coding Agents entry.

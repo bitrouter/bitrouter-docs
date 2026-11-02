@@ -32,9 +32,10 @@ top-level order is the `pages` list in `content/docs/meta.json`:
    retired and `/docs/usage/web` redirects to `/docs/usage/desktop`. Desktop is Coming soon until
    its installation and behavior can be documented from a verified implementation.
    CLI combines the self-driving, interactive terminal, and headless guides.
-3. **Coding Agents** — Claude Code, Codex, DeepSeek Harness, OpenCode, and Pi,
-   in that order. Claude Code and Codex have authored integration guides;
-   DeepSeek Harness, OpenCode, and Pi remain Coming soon placeholders.
+3. **Coding Agents** — DeepSeek Harness, Hermes Agent, OpenClaw, OpenCode, and Pi,
+   in alphabetical order. These five pages are Coming soon placeholders. Claude Code
+   and Codex retain their authored integration guides but are temporarily hidden
+   from the sidebar; their existing URLs remain accessible.
 4. **Market** — Buy Inference, Sell Inference, Verify Inference, Auto-bidding,
    and Service Tiers, in that order. Buy Inference and Sell Inference are placeholders
    with links to State Affinity; Verify Inference and Auto-bidding are Coming soon.
@@ -125,7 +126,9 @@ Rare intentional exceptions must be added to `HIDDEN_SIDEBAR_ROUTES` in
 `/docs/usage/cloud` without a sidebar entry. Models is visible under Overview at
 `/docs/overview/supported-models`. BitRouter Agent and the
 retained Coding agents guide remain hidden. The shared `bro [harness]` launch
-guide also remains accessible at `/docs/integration/bro-harness` without a sidebar entry. The supporting Request receipts page has no sidebar entry; feature guides retain
+guide also remains accessible at `/docs/integration/bro-harness` without a sidebar entry.
+Claude Code and Codex are temporarily hidden from the sidebar at the user's request;
+their existing pages and URLs remain intact. The supporting Request receipts page has no sidebar entry; feature guides retain
 its links. Context Routing and Configuration (YAML) are intentional supporting-guide
 exceptions: both remain linked from Strategies without Router sidebar entries.
 Self-hosting is also omitted from Overview navigation and remains accessible through
@@ -201,14 +204,14 @@ Use this boundary when classifying content:
   task execution, managed sessions, structured output, verification gates, and
   the pending full Goal automation contract. External one-prompt ACP invocation
   and its approval policies live in ACP servers. Keep each feature's YAML example in its guide.
-- **Coding Agents** shows Claude Code, Codex, DeepSeek Harness, OpenCode, and Pi
-  in that order. Claude Code and Codex cover prerequisites and one launch command,
+- **Coding Agents** shows DeepSeek Harness, Hermes Agent, OpenClaw, OpenCode, and Pi
+  in alphabetical order, all Coming soon. Claude Code and Codex are temporarily hidden
+  from the sidebar, with their authored guides and URLs retained. They cover prerequisites and one launch command,
   official local/Cloud proxy configuration, default model pools and customization,
   and Verify & troubleshoot. Claude Code pools contain only Claude models; Codex
   pools contain only GPT models. Example pools require explicit configuration and
   do not promise account access or install a routing policy. Keep Codex catalog
-  metadata distinct from BitRouter model routing. DeepSeek Harness, OpenCode, and
-  Pi remain Coming soon. The shared `bro [harness]` guide retains native
+  metadata distinct from BitRouter model routing. The shared `bro [harness]` guide retains native
   harness launch configuration without a sidebar entry. Native launch keeps the harness's interface and does not create a
   BRO Goal. Native launch support, ACP connectivity, and managed worker execution
   are separate capabilities. Link to Self-driving for Goal coordination, Model

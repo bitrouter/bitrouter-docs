@@ -33,7 +33,9 @@ top-level order is the `pages` list in `content/docs/meta.json`:
    its installation and behavior can be documented from a verified implementation.
    CLI combines the self-driving, interactive terminal, and headless guides.
 3. **Coding Agents** — DeepSeek Harness, Hermes Agent, OpenClaw, OpenCode, and Pi,
-   in alphabetical order. These five pages are Coming soon placeholders. Claude Code
+   in alphabetical order. These five authored guides follow the development `bro connect`
+   CLI in BitRouter PR #1016 and qualify availability separately from the installed
+   release and captured CLI reference. Claude Code
    and Codex retain their authored integration guides but are temporarily hidden
    from the sidebar; their existing URLs remain accessible.
 4. **Market** — Buy Inference, Sell Inference, Verify Inference, Auto-bidding,
@@ -205,7 +207,16 @@ Use this boundary when classifying content:
   the pending full Goal automation contract. External one-prompt ACP invocation
   and its approval policies live in ACP servers. Keep each feature's YAML example in its guide.
 - **Coding Agents** shows DeepSeek Harness, Hermes Agent, OpenClaw, OpenCode, and Pi
-  in alphabetical order, all Coming soon. Claude Code and Codex are temporarily hidden
+  in alphabetical order, with native-connection guides based on development PR #1016.
+  The five independent-provider adapters preserve existing defaults and register one
+  exact gateway model per connection. Multi-selector registration and automated
+  workflow binding remain pending. Explain that strategies are defined in BitRouter
+  and selected through native agent/profile/session/job model settings. Basic setup
+  requires no self-driving extension or separate classifier; submitted request
+  context is distinct from full native session observation. The retained Coding
+  agents guide owns shared endpoint/authentication, lifecycle, and strategy-boundary
+  details. Keep the captured CLI snapshot unchanged until a verified replacement is
+  captured. Claude Code and Codex are temporarily hidden
   from the sidebar, with their authored guides and URLs retained. They cover prerequisites and one launch command,
   official local/Cloud proxy configuration, default model pools and customization,
   and Verify & troubleshoot. Claude Code pools contain only Claude models; Codex

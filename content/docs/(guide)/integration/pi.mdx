@@ -1,6 +1,52 @@
 ---
 title: Pi
-description: Pi integration documentation is coming soon.
+description: Configure a persistent BitRouter provider in Pi and route native CLI or TUI requests through the gateway.
 ---
 
-Coming soon.
+Add BitRouter to Pi's native model picker. Pi owns generation, history, compaction, tools, and permissions; BitRouter serves requests using the selected gateway route.
+
+<Callout type="info">
+This guide follows the development CLI in [BitRouter PR #1016](https://github.com/bitrouter/bitrouter/pull/1016). Use a build that includes `bro connect`; check `bro connect --help` first. The connector targets current `@earendil-works/pi-coding-agent` configuration; legacy `@mariozechner/pi-coding-agent` credential behavior is not covered by this guide.
+</Callout>
+
+## Connect Pi
+
+Install Pi and prepare a usable [BitRouter gateway](/docs/overview/quickstart):
+
+```bash
+bro connect pi --dry-run
+bro connect pi
+```
+
+The command adds a `bitrouter` provider to `models.json` and a saved credential to `auth.json` in Pi's agent directory. Existing providers, credentials, and startup defaults are retained. Open `/model` to reload the configuration, then select the connected model under **bitrouter**.
+
+The default wire ID is `bitrouter/automatos`. Pi picker rows show exact model IDs; `--display-name` supplies detail/search text. Pi's fully qualified local identity includes the provider plus the wire ID, so a repeated provider segment there does not change the request model.
+
+For Cloud or another existing gateway, use [the shared endpoint and credential setup](/docs/integration/coding-agents#connect-an-existing-gateway). Use `--model` to connect another exact advertised ID.
+
+## Agent directory and protocol
+
+```bash
+bro connect pi --instance /path/to/pi-agent-dir
+```
+
+The agent directory is selected by `--instance`, then `PI_CODING_AGENT_DIR`, then `~/.pi/agent`. Supply the agent directory itself. SDK clients using another `agentDir` need that same directory configured explicitly.
+
+Chat Completions is the default protocol. `--protocol responses` uses Responses; `--protocol messages` uses Anthropic Messages. Choose a protocol supported by the actual route. Configuration does not certify upstream tool or media compatibility.
+
+The connector does not require `pi-self-driving`, a classification model, or a five-tier model pool. That separate extension manages host-side resource selection; the basic gateway connection works independently. See [strategies and workflows](/docs/integration/coding-agents#strategies-and-workflows) for the current single-selector boundary.
+
+## Verify and manage the connection
+
+```bash
+bro connect pi --status
+bro connect pi --check
+bro connect pi --update
+bro connect pi --remove
+```
+
+Use the same `--instance` for a custom agent directory. `--status` checks saved configuration offline; `--check` also verifies the exact model in the gateway catalog using the saved key. Neither sends inference. Select BitRouter, send a small request, exercise the tools your workflow uses, and inspect [request receipts](/docs/cli/request-receipts).
+
+Pi supplies defaults for omitted model metadata. Displayed context windows or zero estimated cost do not establish the gateway route's actual limits or pricing.
+
+Updating replaces the managed connection and can restore its saved native startup default; select BitRouter again afterward if desired. Removal preserves unrelated provider/auth/preferences and restores the previous default only while the connected model is still selected. Resolve edits to managed provider or credential fields before changing the connection. See [connection management](/docs/integration/coding-agents#manage-a-connection).

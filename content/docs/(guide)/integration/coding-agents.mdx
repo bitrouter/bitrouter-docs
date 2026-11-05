@@ -1,14 +1,94 @@
 ---
 title: Coding agents
-description: Connect coding harnesses through native launch or ACP, with session ownership separate from BRO Goal coordination.
+description: Connect existing agents to BitRouter, choose gateway routes in native model controls, and distinguish persistent setup from launch and ACP.
 ---
 
-BitRouter separates the **agent harness** that drives the loop from the **model source** that supplies tokens. The same Claude, Codex, OpenCode, or Pi harness can use a hosted model, a subscription, or a model running on your machine.
+BitRouter separates the **agent harness** that drives the loop from the **model source** that supplies tokens. Connect the agent you already use, then select its BitRouter route in the native model controls. The harness retains its sessions, history, compaction, tools, permissions, and schedules.
+
+## Persistent native connections
+
+<Callout type="info">
+`bro connect` is documented here from [BitRouter PR #1016](https://github.com/bitrouter/bitrouter/pull/1016), currently a development CLI capability. Use a build containing that command and check `bro connect --help`. These instructions do not establish availability in an older installed binary or replace the separately captured CLI reference.
+</Callout>
+
+`bro connect` configures a persistent native provider. No self-driving extension, separate classifier, or BitRouter-managed agent session is required. After setup, open the native application normally and select the connected route.
+
+```bash
+bro connect
+```
+
+Choose a client in the menu, review the destination files, and confirm the connection. For a local gateway, prepare working inference sources first with [Quickstart](/docs/overview/quickstart). Setup can start that local gateway after confirmation. It does not install the native client.
+
+| Client | Direct setup | Configuration scope |
+| --- | --- | --- |
+| [DeepSeek Harness](/docs/integration/deepseek-harness) | `bro connect deepseek-harness` | Selected initialized profiles in one Harness home |
+| [Hermes Agent](/docs/integration/hermes-agent) | `bro connect hermes` | The selected home/current profile, or explicitly named profiles |
+| [OpenClaw](/docs/integration/openclaw) | `bro connect openclaw` | One Gateway state root and its agent catalogs |
+| [OpenCode](/docs/integration/opencode) | `bro connect opencode` | One native configuration file |
+| [Pi](/docs/integration/pi) | `bro connect pi` | One Pi agent directory |
+
+These five adapters add an independent BitRouter provider and retain existing startup defaults. Select BitRouter in the native picker after the required reload. Codex and Claude are also available in the connector menu; their client-specific configuration and restoration differ.
+
+BitRouter is the provider; Automatos is its default router model. The default gateway wire ID is `bitrouter/automatos`. `--model` chooses another exact ID already advertised by the target gateway's `/v1/models`; it does not create a model, strategy, or alias. Display labels and native selection IDs can differ from the wire ID, as described in each client guide.
+
+### Connect an existing gateway
+
+For Cloud or another existing gateway, supply its root URL or `/v1` URL and its gateway credential. For example, after replacing the model placeholder with an exact ID advertised by your Cloud endpoint:
+
+```bash
+export BITROUTER_API_KEY='your-bitrouter-gateway-key'
+bro connect hermes --base-url https://api.bitrouter.ai \
+  --model 'exact-advertised-model-id' --dry-run
+bro connect hermes --base-url https://api.bitrouter.ai \
+  --model 'exact-advertised-model-id'
+```
+
+The explicit endpoint path configures the native client without reading a local BitRouter config or starting a daemon. Remote URLs require HTTPS; HTTP is allowed on loopback. The saved gateway credential is separate from upstream provider keys. For unattended writes, choose an explicit client and add `--yes`.
+
+The default `bitrouter/automatos` must also be advertised before setup succeeds. Availability depends on the chosen gateway configuration and deployment. A callable selector that is absent from `/v1/models` does not pass this connector's catalog check.
+
+### Request context and routing
+
+The connected client sends its normal model request: the selected wire ID, submitted conversation context, and supported tool declarations/results. BitRouter can apply the selected route to that request. The harness determines what is submitted after its own context loading and compaction.
+
+Persistent connection does not export the complete native session store or install a lifecycle observer. It does not itself configure tool permissions, context-profile switching, automatic approvals, or workload learning. Optional self-driving extensions have a separate host-side resource-management role and are not prerequisites for model routing.
+
+### Strategies and workflows
+
+Define model combinations and routing behavior in BitRouter using [Strategies](/docs/routing/strategies) and [Virtual Models](/docs/models-routing/virtual-models). Select a registered gateway route through the harness's own agent, profile, session, or job model settings. The harness remains the owner of those workflow bindings.
+
+The current connector registers **one gateway model per connection**. `--update --model` replaces it; repeated setup does not append more model entries. It does not register a collection of strategy selectors or provide a workflow-binding wizard. Manually changing the managed provider can also cause update/removal conflicts.
+
+For separate interactive and scheduled strategies in the same native provider, multiple selectable routes must first be registered. That multi-selector connector extension remains pending. Hermes' native cron defaults/per-job pins and OpenClaw's per-job model overrides can select routes once registered; they are not changed by `bro connect`. See the [Hermes](/docs/integration/hermes-agent#chat-and-scheduled-work) and [OpenClaw](/docs/integration/openclaw#agent-and-automation-routes) guides.
+
+A label such as `background` or `flex` does not activate a service tier. The selected gateway must implement the intended policy and support its model/protocol requirements. [Service Tiers](/docs/market/service-tiers) remains a separate Coming soon guide.
+
+### Manage a connection
+
+For these five independent-provider clients, replace `hermes` with the intended client and retain any custom `--instance`:
+
+```bash
+bro connect hermes --dry-run
+bro connect hermes --status
+bro connect hermes --check
+bro connect hermes --update
+bro connect hermes --remove
+```
+
+- `--dry-run` previews files and effects without starting a daemon or writing configuration.
+- `--status` checks saved configuration offline. `--check` also verifies the exact gateway model using the saved credential. Neither submits inference or tool calls, and neither proves that a running client has reloaded.
+- `--update` replaces the managed provider. Omitted settings retain the saved connection; an omitted key is reused only for an unchanged endpoint. An update can restore the earlier native startup selection, so reselect BitRouter afterward if desired.
+- `--remove` removes owned settings and restores earlier selections only where the connected model is still selected. Later unrelated preferences remain. Edits to owned fields are conflicts to resolve before retrying.
+
+Close config-writing clients during updates or removal. Private connection receipts contain restoration data and credentials; keep them private. For Desktop/Web attached to a different backend, configure that backend on its own host. Each client guide describes reload requirements and state outside the connector's ownership.
+
+After a catalog check, verify inference separately: select BitRouter in the native client, send a small request, exercise any required tool roundtrip, and inspect [request receipts](/docs/cli/request-receipts). Native default context/cost metadata is not proof of route capacity, actual pricing, or model quality.
 
 ## Choose the interface
 
 | Goal | Command | Interface owner |
 | --- | --- | --- |
+| Add a persistent native provider (development CLI) | `bro connect <client>` | Native client configuration; BitRouter gateway routing |
 | Delegate a persistent Goal (design preview) | `bro` / `bro code` | BRO coordination |
 | Run one turn from a script | `bro run <agent> "..."` | BitRouter, headless |
 | Use the harness's own terminal UI | `bro launch <agent>` | The harness |
@@ -20,7 +100,7 @@ bro run claude "Review the current diff" --format quiet
 bro launch opencode
 ```
 
-`bro run` and `bro acp serve` use ACP adapters. `bro launch` starts the harness's native interface with process-local routing overrides and leaves normal harness configuration in place. Neither invocation automatically creates a BRO Goal.
+`bro connect` changes persistent native configuration. `bro run` and `bro acp serve` use ACP adapters. `bro launch` starts the harness's native interface with process-local routing overrides and leaves normal harness configuration in place. These are separate capabilities; connecting or launching a native client does not create a BRO Goal.
 
 The [Self-driving preview](/docs/usage/cli#self-driving-workflows) describes the separate goal-oriented `bro` / `bro code` contract. In that design, a built-in executor can complete work and ACP-compatible harnesses are optional managed workers. Check native launch, ACP connectivity, and managed execution capabilities independently. Earlier `bro code <agent>` behavior remains in the captured [command reference](/docs/usage/cli#bro-code); it is not the preview Goal entry point.
 

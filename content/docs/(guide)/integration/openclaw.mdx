@@ -1,6 +1,70 @@
 ---
 title: OpenClaw
-description: OpenClaw integration documentation is coming soon.
+description: Add BitRouter to an existing OpenClaw gateway and select its route from native agent and automation model controls.
 ---
 
-Coming soon.
+Connect the OpenClaw gateway you already use to BitRouter. OpenClaw retains its agents, sessions, memory, tools, and automations; the gateway model selector determines which BitRouter route receives each model request.
+
+<Callout type="info">
+This guide follows the development CLI in [BitRouter PR #1016](https://github.com/bitrouter/bitrouter/pull/1016), validated with OpenClaw 2026.10.9. Use a build with `bro connect` and check `bro connect --help` first. Older OpenClaw configurations using `agents.list` require an upgrade.
+</Callout>
+
+## Connect your gateway
+
+Install and initialize OpenClaw, then prepare a usable [BitRouter gateway](/docs/overview/quickstart):
+
+```bash
+bro connect openclaw --dry-run
+bro connect openclaw
+```
+
+Setup adds an independent BitRouter provider to one OpenClaw state root and keeps existing agent defaults, providers, and fallback selections. Start or reload that native gateway yourself. Its TUI, Web Control UI, and connected Desktop companion use the same backend catalog. No routing plugin is required.
+
+In the TUI, select:
+
+```text
+/model bitrouter/automatos
+```
+
+In the native model picker, the provider group is currently **Bitrouter**, with **automatos** beneath it. The native alias resolves to the exact gateway request ID `bitrouter/automatos`.
+
+For Cloud or another existing gateway, use [the shared endpoint and credential setup](/docs/integration/coding-agents#connect-an-existing-gateway). `--model` selects an exact advertised wire ID; `--display-name` only changes its label.
+
+## Select the state root
+
+```bash
+bro connect openclaw --instance /path/to/openclaw-state
+```
+
+`--instance` accepts the state directory or a config file inside it. Default discovery follows `OPENCLAW_CONFIG_PATH`, then `OPENCLAW_STATE_DIR`, then the normal OpenClaw home. Start OpenClaw with the matching state/config settings. A config-path override alone does not relocate native agent state.
+
+The connection applies to configured agents and their model catalogs in that gateway instance. Existing model policies must allow the connected route; setup does not widen those policies. Select a different native OpenClaw profile through its actual state directory, not BitRouter's `--profile` flag.
+
+A Desktop or Web client attached to a remote gateway needs configuration on that gateway's host. Local file changes do not configure a remote server. Existing sessions can retain their selected models.
+
+## Agent and automation routes
+
+Use OpenClaw's native agent/session model controls and per-job automation overrides to select a registered route. The connector does not change schedules, job inference accounts, or model bindings. See [agent models](https://docs.openclaw.ai/gateway/config-agents/models) and [automation model selection](https://docs.openclaw.ai/automation/cron-jobs/payloads).
+
+The current connector registers **one gateway model per connection**. `--update --model` replaces that model; it does not add another option. Multiple strategies in the same provider and a BitRouter workflow-binding wizard are not implemented here. See the shared [strategy and workflow boundary](/docs/integration/coding-agents#strategies-and-workflows).
+
+## Verify and manage the connection
+
+Use the same `--instance` for a nondefault connection:
+
+```bash
+bro connect openclaw --status
+bro connect openclaw --check
+bro connect openclaw --update
+bro connect openclaw --remove
+```
+
+`--status` is an offline configuration check. `--check` also verifies catalog access with the saved credential; neither runs inference. Select BitRouter in the native client, send a small request, test any required tool roundtrip, and inspect [request receipts](/docs/cli/request-receipts) to verify actual execution.
+
+The connector supports Chat Completions only. Native streaming and file-read tool turns were exercised with a deterministic upstream; this does not establish real-model quality or compatibility with arbitrary upstreams. OpenClaw's displayed default limits and cost estimates are not verified Automatos metadata.
+
+## Credentials and removal
+
+The gateway key is stored in a private file beside the selected config and referenced through OpenClaw's native file SecretRef. Config backups and generated model catalogs receive references rather than the literal key. JSON5 comments and unrelated configuration are preserved. Configurations using `$include` need explicit consolidation before this adapter can manage them.
+
+Stop the selected native gateway before removal so it releases its in-memory credential. Removal restores owned defaults still selecting the connected model and removes the managed provider, alias, credential source, and recorded catalog replicas. Existing sessions must choose another available model afterward. Later references to the managed secret or unrecorded provider replicas need reconciliation before removal. See [connection management](/docs/integration/coding-agents#manage-a-connection).

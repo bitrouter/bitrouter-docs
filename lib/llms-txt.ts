@@ -19,7 +19,7 @@ References:
 - Full quickstart walkthrough: ${BASE_URL}/docs/overview/quickstart
 - Agent Skill (install/configure BitRouter from inside an agent): https://github.com/bitrouter/bitrouter/tree/main/skills/bitrouter
 - BitRouter CLI (proxy, onboarding, and TUI conversation): https://github.com/bitrouter/bitrouter
-- Coding-agent modes and supported adapters (Claude, Codex, OpenCode, Pi, and more): ${BASE_URL}/docs/integration/coding-agents
+- Native agent connections (development bro connect), request-context routing, single-selector limits, launch, and ACP: ${BASE_URL}/docs/integration/coding-agents
 
 ## Overview
 
@@ -49,11 +49,11 @@ References:
 
 ## Coding Agents
 
-- [DeepSeek Harness](${BASE_URL}/docs/integration/deepseek-harness): Coming soon
-- [Hermes Agent](${BASE_URL}/docs/integration/hermes-agent): Coming soon
-- [OpenClaw](${BASE_URL}/docs/integration/openclaw): Coming soon
-- [OpenCode](${BASE_URL}/docs/integration/opencode): Coming soon
-- [Pi](${BASE_URL}/docs/integration/pi): Coming soon
+- [DeepSeek Harness](${BASE_URL}/docs/integration/deepseek-harness): Development bro connect setup for initialized profiles, native model selection, protocols, and restoration
+- [Hermes Agent](${BASE_URL}/docs/integration/hermes-agent): Development bro connect setup for an existing profile/backend; native chat and cron route selection, with a single-selector limit
+- [OpenClaw](${BASE_URL}/docs/integration/openclaw): Development bro connect setup for a Gateway instance; native agent/automation route selection, credentials, and removal
+- [OpenCode](${BASE_URL}/docs/integration/opencode): Development bro connect setup for native CLI/TUI, Desktop, or Web backends; gateway protocols and connection checks
+- [Pi](${BASE_URL}/docs/integration/pi): Development bro connect setup for a persistent native provider, agent-directory scope, model selection, and restoration
 
 ## Market
 

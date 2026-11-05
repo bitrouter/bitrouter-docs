@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { CLOUD_PRICING } from "@/lib/commercial-pricing";
-import { ArrowUpRight, Download } from "lucide-react";
+import { CLOUD_PRICING, CLOUD_WELCOME_CREDIT } from "@/lib/commercial-pricing";
+import { ArrowRight, ArrowUpRight, Check, Download, Server } from "lucide-react";
 import { ValueTui } from "./value-tui";
 import { InstallTabs } from "./install-tabs";
 import { HomepageFeatures } from "./features";
@@ -116,6 +116,11 @@ function PricingSection() {
         <p className="ws-cloud-rate"><strong>{CLOUD_PRICING.price}</strong><span>/ million processed tokens</span></p>
         <p className="ws-pricing-note">Input + output tokens. Cloud Auto Routing and Elastic Inference.</p>
         <p className="ws-pricing-note">0% markup on inference.</p>
+        <div className="ws-welcome-credit">
+          <h4>{CLOUD_WELCOME_CREDIT.headline}</h4>
+          <p className="ws-welcome-no-card">{CLOUD_WELCOME_CREDIT.noCardRequired}</p>
+          <p>{CLOUD_WELCOME_CREDIT.description}</p>
+        </div>
       </article>
     </div>
 
@@ -124,12 +129,39 @@ function PricingSection() {
   </section>;
 }
 
-function PrivacySection() {
-  return <section className="ws-privacy ws-wrap" id="privacy" aria-labelledby="ws-privacy-title">
-    <h2 id="ws-privacy-title">Built for<br /><em>privacy first.</em></h2>
-    <div>
-      <p>Route on your infrastructure. Telemetry excludes prompt and response bodies by default.</p>
-      <a className="ws-text-link" href="/enterprise#enterprise-self-hosting">Explore enterprise <ArrowUpRight size={15} aria-hidden="true" /></a>
+function TrustSection() {
+  return <section className="ws-trust ws-wrap" id="trust" aria-label="Permissionless participation and trustless inference">
+    <span id="privacy" className="ws-trust-legacy-anchor" aria-hidden="true" />
+    <div className="ws-trust-flow">
+      <div className="ws-trust-pillar">
+        <h2>Permissionless</h2>
+        <p className="ws-trust-description">Open technical requirements.<br />No case-by-case approval.</p>
+        <div className="ws-trust-provider-map">
+          <ul className="ws-trust-providers" aria-label="Illustrative participating providers">
+            {["Provider A", "Provider B", "Provider C"].map(provider => <li key={provider}>
+              <Server size={17} strokeWidth={1.5} aria-hidden="true" />{provider}
+            </li>)}
+          </ul>
+        </div>
+      </div>
+      <div className="ws-trust-bridge" aria-hidden="true"><span /><ArrowRight size={20} strokeWidth={1.5} /></div>
+      <div className="ws-trust-pillar">
+        <h2>Trustless</h2>
+        <p className="ws-trust-description">One verification standard.<br />Applied to every platform request.</p>
+        <div className="ws-trust-proof">
+          <h3>Model specification</h3>
+          <ul aria-label="Verified model specifications">
+            {["Version", "Weights", "Precision"].map(specification => <li key={specification}>
+              <Check size={15} strokeWidth={1.5} aria-hidden="true" />{specification}
+            </li>)}
+          </ul>
+          <p className="ws-trust-proof-scope">Request ↔ execution ↔ response</p>
+        </div>
+      </div>
+    </div>
+    <div className="ws-trust-footer">
+      <p>Illustrative verification flow</p>
+      <a className="ws-text-link" href="/enterprise">Explore enterprise <ArrowUpRight size={15} aria-hidden="true" /></a>
     </div>
   </section>;
 }
@@ -140,6 +172,7 @@ const faqs = [
   ["What’s the difference between the API and CLI?", "The API gives applications and agents a local routing endpoint. The CLI lets you configure BitRouter, inspect routes, and work with supported agents from your terminal. Both use the open-source router."],
   ["Can I use my existing subscription?", "Supported subscription-backed providers can be configured in BitRouter. Availability, authentication, and usage limits depend on the provider. Check the provider guide for your subscription."],
   ["What do I pay for?", "Self-hosting is free of BitRouter fees. Cloud Auto Routing and Elastic Inference share one platform fee: $0.01 per million processed input + output tokens at early access pricing. Each request is counted once, including when routing into Elastic Inference. 0% markup on inference. Enterprise terms are custom."],
+  ["How does the welcome credit work?", `${CLOUD_WELCOME_CREDIT.description} At the current early access rate, $10 covers the platform fees for one billion processed input + output tokens. This is a one-time credit, not a monthly allowance. No credit card is required to create an account and receive the welcome credit.`],
   ["Can I run it on my own infrastructure?", "Yes. Self-host the Apache-2.0 router and connect your own provider keys, local models, or private inference endpoints. A BitRouter Cloud account is not required for local routing."],
 ];
 
@@ -150,7 +183,7 @@ export function Homepage() {
       <ValueTabs />
       <HomepageFeatures />
       <PricingSection />
-      <PrivacySection />
+      <TrustSection />
       <section className="ws-faq ws-wrap" id="faq" aria-labelledby="ws-faq-title"><div className="ws-faq-list"><h2 id="ws-faq-title">FAQ</h2>{faqs.map(([q, a]) => <details key={q}><summary>{q}<span className="ws-faq-plus" aria-hidden="true">+</span></summary><p>{a}</p></details>)}</div></section>
       <section className="ws-final ws-wrap"><h2>Make your agent<br /><em>self-driving.</em></h2><p>Keep your agent. Let BitRouter handle the routing.</p><div className="ws-actions"><a className="ws-button ws-primary" href="https://github.com/bitrouter/bitrouter/releases/latest"><Download size={16} aria-hidden="true" />Download BitRouter</a><GitHubStarsBadge className="ws-button" label="Star on GitHub" compact={false} /></div><span className="ws-hero-note">Open source. Ready for your workspace.</span></section>
     </main>

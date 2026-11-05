@@ -334,14 +334,52 @@ both charges at the full output limit, while estimates use expected output.
 Catalog rates remain supplier rates before platform fees; market buyer quotes
 include $0.01 per million total tokens. Keep settlement fees token-based and
 preserve supplier-based volume, slippage, and the independent 5% liquidity band.
-The homepage shows one Cloud rate and a short self-hosting message. Pricing
-shows BYOK/Elastic as two usage paths, one 80M input + 20M output = $1 platform-fee
-example, and compact OSS/Enterprise entries without a second Enterprise section.
+The homepage shows one Cloud rate, a short self-hosting message, and the welcome
+offer. Pricing presents BYOK/Elastic as two usage paths and compact OSS/Enterprise
+entries without a second Enterprise section. The former model-market promotional
+block stays removed.
 Payment-processing fees are separate. Do not invent token floors, minimums,
 cached-token discounts, retry/failed-request billing rules, or new refund terms.
 
+New Cloud accounts receive a one-time $10 welcome credit toward platform fees,
+covering one billion processed input + output tokens at the current early access
+rate. Keep provider inference charges explicitly separate wherever this offer is
+promoted. The website does not grant credit or read an account balance.
+The credit is not a monthly allowance. Do not invent expiry or refund rules or
+change existing refund commitments. Keep the homepage, Pricing/FAQ, metadata,
+and LLM discovery consistent with `CLOUD_WELCOME_CREDIT`.
+
+Pricing has no calculator or fictional savings explorer. Defer cost or performance
+comparisons until real supplier prices and service conditions are available.
+
 `lib/commercial-pricing.ts` supplies website options; authored docs use the same
 terms. These publication changes do not verify deployed billing behavior.
+
+## Enterprise positioning
+
+The homepage trust section and Enterprise page pair open provider participation
+with verified inference. The homepage connects illustrative provider nodes under
+“Permissionless” to a per-request model-specification checklist under “Trustless,”
+with one Enterprise link. Label the flow as illustrative, stack it on narrow
+screens, and preserve `/#trust` and the legacy `/#privacy` anchor. The nodes and
+checks are not live provider inventory or verification results.
+Providers meet open technical requirements without case-by-case
+approval. Every inference request on the BitRouter platform is verified against
+its declared model version, weights, and precision, with end-to-end request and
+response evidence. These are user-confirmed product claims; the website does not
+implement or validate the verification service. Arbitrary sources connected to
+the OSS router do not acquire attestation automatically.
+
+Enterprise explains suitable workflows: Background agents, Evaluation &
+distillation, and Batch pipelines. Distillation refers to inference for generating
+distillation data, not a managed training service. Inference capacity reservations
+are in alpha testing, presented in a callout linked to the contact form without
+capacity guarantees, reservation prices, or SLA claims. Verification scope lives
+in the FAQ at `/enterprise#verification`, not in a separate section.
+Describe actual capabilities without fabricated reports, hashes, statuses, or
+verifier endpoints. Privacy and self-hosting are supporting topics. Preserve
+the `/#privacy` and `/enterprise#enterprise-self-hosting` anchors, existing privacy
+commitments, custom Enterprise pricing, and contact-form delivery behavior.
 
 ## Adding a page
 

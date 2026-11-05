@@ -1,4 +1,4 @@
-import { CLOUD_PRICING, PRICING_OPTIONS } from "@/lib/commercial-pricing";
+import { CLOUD_PRICING, CLOUD_WELCOME_CREDIT, PRICING_OPTIONS } from "@/lib/commercial-pricing";
 
 export function PricingPlans() {
   return <section className="price-options" id="teams" aria-label="Cloud pricing and deployment options">
@@ -9,12 +9,18 @@ export function PricingPlans() {
         <p className="price-cloud-meter">Input + output tokens.</p>
         <p className="price-cloud-separate">0% markup on inference.</p>
       </div>
-      <div className="price-cloud-paths">
+      <div className="price-welcome" aria-labelledby="price-welcome-title">
+        <p className="price-welcome-eyebrow">New account welcome credit</p>
+        <h3 id="price-welcome-title">{CLOUD_WELCOME_CREDIT.headline}</h3>
+        <p>{CLOUD_WELCOME_CREDIT.description}</p>
+        <p className="price-no-card">{CLOUD_WELCOME_CREDIT.noCardRequired}</p>
+      </div>
+    </article>
+    <div className="price-cloud-paths">
         <div className="price-cloud-path" id="cloud-auto-routing"><h3>Cloud Auto Routing · BYOK</h3><p>Your provider bills inference separately.</p><a href="/docs/models-routing/byok-subscriptions#bitrouter-cloud-byok">Explore Cloud BYOK →</a></div>
         <div className="price-cloud-path" id="elastic-inference"><span id="flex-inference" className="price-legacy-anchor" aria-hidden="true" /><h3>Elastic Inference</h3><p>Pay the supplier’s actual inference charge, plus the same Cloud platform fee.</p><a href="/docs/overview/elastic-inference">Explore Elastic Inference →</a></div>
         <p className="price-cloud-once">One platform fee per request, including requests routed to Elastic Inference. No percentage-based transaction fee.</p>
-      </div>
-    </article>
+    </div>
     <div className="price-secondary-options">
       {PRICING_OPTIONS.filter(option => option.id !== "cloud").map(option => <article className="price-secondary-option" id={option.id === "enterprise" ? "enterprise" : option.id} key={option.id}>
         {option.id === "enterprise" && <span id="enterprise-plan" className="price-legacy-anchor" aria-hidden="true" />}

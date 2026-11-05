@@ -6,7 +6,7 @@ export default function Page() {
 
 export function generateMetadata(): Metadata {
   const description =
-    "Free OSS self-hosting. Cloud Auto Routing and Elastic Inference at $0.01 per million processed input + output tokens — early access pricing. 0% markup on inference; Enterprise is custom.";
+    "Cloud at $0.01 per million processed input + output tokens — early access pricing. New accounts get $10 in one-time platform credits; no credit card required. 0% markup on inference; provider charges still apply. Free OSS self-hosting; custom Enterprise terms.";
   const ogTitle = "BitRouter Pricing — self-hosted, Cloud BYOK, Elastic, and Enterprise";
   return {
     title: "Pricing",

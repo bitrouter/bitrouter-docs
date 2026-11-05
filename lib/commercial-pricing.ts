@@ -6,6 +6,13 @@ export const CLOUD_PRICING = {
   stage: "Early access pricing",
 } as const;
 
+export const CLOUD_WELCOME_CREDIT = {
+  usd: 10,
+  headline: "First billion tokens on us.",
+  noCardRequired: "No credit card required.",
+  description: "New accounts receive a one-time $10 credit toward Cloud platform fees. Provider inference charges still apply.",
+} as const;
+
 /** Count input + output once; routing and market selection do not add another fee. */
 export function cloudPlatformFee(inputTokens: number, outputTokens: number): number {
   return (inputTokens + outputTokens) / 1_000_000 * CLOUD_PRICING.usdPerMillionTokens;

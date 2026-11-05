@@ -41,7 +41,7 @@ Select the connected model through Hermes' native model controls. A main-model s
 
 Hermes also has a cron default (`cron.model` / `cron.model_provider`) and per-job model pins. Those native settings determine which route a job requests. `bro connect` registers the provider; it does not change those settings or assign policies to jobs. See [Hermes model configuration](https://hermes-agent.nousresearch.com/docs/user-guide/configuring-models) and [scheduled tasks](https://hermes-agent.nousresearch.com/docs/user-guide/features/cron).
 
-The current connector registers **one gateway model per connection** and disables automatic model discovery. Registering separate interactive and background strategies in the same provider needs a multi-selector extension; it is not provided by this command yet. The shared [strategy and workflow boundary](/docs/integration/coding-agents#strategies-and-workflows) explains the distinction.
+Repeat `--model` to register separate interactive and background selectors in the same provider, for example `bro connect hermes --model bitrouter/automatos --model team/background` when both IDs are advertised. Automatic discovery stays disabled; the provider contains the explicit model set and uses the first ID as its provider default. Choose chat and cron routes through Hermes itself. Updates replace the full list when model flags are supplied and preserve it otherwise. The shared [strategy and workflow boundary](/docs/integration/coding-agents#strategies-and-workflows) explains the distinction.
 
 ## Verify and manage the connection
 
@@ -58,4 +58,4 @@ bro connect hermes --remove
 
 This connector currently supports Chat Completions only. Displayed context limits, prices, and capabilities for an unknown model are Hermes defaults, not verified gateway metadata.
 
-Credentials are persisted in the private profile configuration and BitRouter connection receipt. Removal restores the earlier main route if the connected model is still selected, while retaining unrelated preferences and auxiliary settings. Desktop can retain a manual composer pin after removal; reopen its picker and choose another available model. Resolve edits to the managed provider before updating or removing it. See [connection management](/docs/integration/coding-agents#manage-a-connection).
+Credentials are persisted in the private profile configuration and BitRouter connection receipt. Removal restores the earlier main route if any connected model is still selected, while retaining unrelated preferences and auxiliary settings. Desktop can retain a manual composer pin after removal; reopen its picker and choose another available model. Resolve edits to the managed provider before updating or removing it. See [connection management](/docs/integration/coding-agents#manage-a-connection).

@@ -208,9 +208,11 @@ Use this boundary when classifying content:
   and its approval policies live in ACP servers. Keep each feature's YAML example in its guide.
 - **Coding Agents** shows DeepSeek Harness, Hermes Agent, OpenClaw, OpenCode, and Pi
   in alphabetical order, with native-connection guides based on development PR #1016.
-  The five independent-provider adapters preserve existing defaults and register one
-  exact gateway model per connection. Multi-selector registration and automated
-  workflow binding remain pending. Explain that strategies are defined in BitRouter
+  The five independent-provider adapters preserve existing defaults and support
+  repeated `--model` for an explicit ordered selector set. The first retains its
+  primary native alias/display name. Updates replace the full set when model flags
+  are supplied and preserve it otherwise; catalog checks cover every ID. Workflow
+  bindings remain native, with no BitRouter binding wizard. Explain that strategies are defined in BitRouter
   and selected through native agent/profile/session/job model settings. Basic setup
   requires no self-driving extension or separate classifier; submitted request
   context is distinct from full native session observation. The retained Coding

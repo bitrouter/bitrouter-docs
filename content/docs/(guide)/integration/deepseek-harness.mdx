@@ -41,7 +41,7 @@ To include another initialized profile later, use `--update` with the complete d
 
 Chat Completions is the default. `--protocol responses` and `--protocol messages` select the other supported native adapters. One provider uses one protocol; text input is declared, while image and reasoning capabilities are not inferred from a model ID.
 
-Basic routing does not require `dsh-self-driving` or context-profile classification. That separate plugin changes host-side working context between Turns. This connector currently registers one gateway model, shared across its selected profile scope; see [strategies and workflows](/docs/integration/coding-agents#strategies-and-workflows).
+Basic routing does not require `dsh-self-driving` or context-profile classification. That separate plugin changes host-side working context between Turns. Repeat `--model` to register several exact advertised IDs in the same provider across the selected profile scope. The first retains the supplied display name; additional labels use exact IDs. Updates replace the full list when model flags are supplied and preserve it otherwise; see [strategies and workflows](/docs/integration/coding-agents#strategies-and-workflows).
 
 ## Verify and manage the connection
 

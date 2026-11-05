@@ -22,7 +22,7 @@ The command adds a `bitrouter` provider to `models.json` and a saved credential 
 
 The default wire ID is `bitrouter/automatos`. Pi picker rows show exact model IDs; `--display-name` supplies detail/search text. Pi's fully qualified local identity includes the provider plus the wire ID, so a repeated provider segment there does not change the request model.
 
-For Cloud or another existing gateway, use [the shared endpoint and credential setup](/docs/integration/coding-agents#connect-an-existing-gateway). Use `--model` to connect another exact advertised ID.
+For Cloud or another existing gateway, use [the shared endpoint and credential setup](/docs/integration/coding-agents#connect-an-existing-gateway). Repeat `--model` to register several exact advertised IDs in the same provider. `--display-name` applies to the first entry; additional labels use exact IDs. Updates replace the full list when model flags are supplied and preserve it otherwise. Removal recognizes startup selections of any registered model.
 
 ## Agent directory and protocol
 
@@ -34,7 +34,7 @@ The agent directory is selected by `--instance`, then `PI_CODING_AGENT_DIR`, the
 
 Chat Completions is the default protocol. `--protocol responses` uses Responses; `--protocol messages` uses Anthropic Messages. Choose a protocol supported by the actual route. Configuration does not certify upstream tool or media compatibility.
 
-The connector does not require `pi-self-driving`, a classification model, or a five-tier model pool. That separate extension manages host-side resource selection; the basic gateway connection works independently. See [strategies and workflows](/docs/integration/coding-agents#strategies-and-workflows) for the current single-selector boundary.
+The connector does not require `pi-self-driving`, a classification model, or a five-tier model pool. That separate extension manages host-side resource selection; the basic gateway connection works independently. See [strategies and workflows](/docs/integration/coding-agents#strategies-and-workflows) for registering multiple selectors and native workflow ownership.
 
 ## Verify and manage the connection
 

@@ -46,7 +46,7 @@ A Desktop or Web client attached to a remote gateway needs configuration on that
 
 Use OpenClaw's native agent/session model controls and per-job automation overrides to select a registered route. The connector does not change schedules, job inference accounts, or model bindings. See [agent models](https://docs.openclaw.ai/gateway/config-agents/models) and [automation model selection](https://docs.openclaw.ai/automation/cron-jobs/payloads).
 
-The current connector registers **one gateway model per connection**. `--update --model` replaces that model; it does not add another option. Multiple strategies in the same provider and a BitRouter workflow-binding wizard are not implemented here. See the shared [strategy and workflow boundary](/docs/integration/coding-agents#strategies-and-workflows).
+Repeat `--model` to register multiple advertised selectors. The first keeps the `automatos` alias; additional entries use `bitrouter/<wire-ID>` native refs and exact-ID labels. An additional wire ID equal to `automatos` conflicts with the primary alias and is refused. Existing model policies must permit every added route; allowing the primary alias does not authorize other models. `--update` replaces the complete list when model flags are supplied, and preserves it otherwise. Workflow bindings stay in OpenClaw; saved jobs are not migrated when selectors are removed. See the shared [strategy and workflow boundary](/docs/integration/coding-agents#strategies-and-workflows).
 
 ## Verify and manage the connection
 

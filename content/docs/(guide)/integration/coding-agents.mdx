@@ -57,9 +57,15 @@ Persistent connection does not export the complete native session store or insta
 
 Define model combinations and routing behavior in BitRouter using [Strategies](/docs/routing/strategies) and [Virtual Models](/docs/models-routing/virtual-models). Select a registered gateway route through the harness's own agent, profile, session, or job model settings. The harness remains the owner of those workflow bindings.
 
-The current connector registers **one gateway model per connection**. `--update --model` replaces it; repeated setup does not append more model entries. It does not register a collection of strategy selectors or provide a workflow-binding wizard. Manually changing the managed provider can also cause update/removal conflicts.
+For these five independent-provider clients, repeat `--model` to register an ordered collection of exact advertised selectors under one provider. The first retains the existing primary alias/display-name behavior; additional entries use their exact IDs as labels. Duplicate IDs and conflicting native keys are refused. Setup and `--check` validate every ID. Codex and Claude retain their single-model connector contract.
 
-For separate interactive and scheduled strategies in the same native provider, multiple selectable routes must first be registered. That multi-selector connector extension remains pending. Hermes' native cron defaults/per-job pins and OpenClaw's per-job model overrides can select routes once registered; they are not changed by `bro connect`. See the [Hermes](/docs/integration/hermes-agent#chat-and-scheduled-work) and [OpenClaw](/docs/integration/openclaw#agent-and-automation-routes) guides.
+For example, if the gateway advertises both IDs, register them together:
+
+```bash
+bro connect hermes --model bitrouter/automatos --model team/background
+```
+
+Then choose a registered route in the native workflow settings. Hermes' cron defaults/per-job pins and OpenClaw's per-job model overrides remain harness-owned; `bro connect` does not provide a workflow-binding wizard or rewrite those settings. See the [Hermes](/docs/integration/hermes-agent#chat-and-scheduled-work) and [OpenClaw](/docs/integration/openclaw#agent-and-automation-routes) guides.
 
 A label such as `background` or `flex` does not activate a service tier. The selected gateway must implement the intended policy and support its model/protocol requirements. [Service Tiers](/docs/market/service-tiers) remains a separate Coming soon guide.
 
@@ -77,8 +83,8 @@ bro connect hermes --remove
 
 - `--dry-run` previews files and effects without starting a daemon or writing configuration.
 - `--status` checks saved configuration offline. `--check` also verifies the exact gateway model using the saved credential. Neither submits inference or tool calls, and neither proves that a running client has reloaded.
-- `--update` replaces the managed provider. Omitted settings retain the saved connection; an omitted key is reused only for an unchanged endpoint. An update can restore the earlier native startup selection, so reselect BitRouter afterward if desired.
-- `--remove` removes owned settings and restores earlier selections only where the connected model is still selected. Later unrelated preferences remain. Edits to owned fields are conflicts to resolve before retrying.
+- `--update` replaces the managed provider. Supplying model flags replaces the complete selector list; omitting them preserves it. Supply the full remaining list to drop a selector. Other omitted settings retain the saved connection; an omitted key is reused only for an unchanged endpoint. An update can restore the earlier native startup selection, so reselect BitRouter afterward if desired.
+- `--remove` removes owned settings and restores earlier selections only where the connected model is still selected. Later unrelated preferences remain. Saved job/session bindings are not migrated when routes are removed, so change those bindings in the native harness as needed. Edits to owned fields are conflicts to resolve before retrying.
 
 Close config-writing clients during updates or removal. Private connection receipts contain restoration data and credentials; keep them private. For Desktop/Web attached to a different backend, configure that backend on its own host. Each client guide describes reload requirements and state outside the connector's ownership.
 

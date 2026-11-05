@@ -40,7 +40,7 @@ bro connect opencode --instance /path/to/opencode.jsonc
 
 A Desktop/Web client connected to a remote OpenCode server needs configuration on that server. Changing local files does not update a remote backend. Restart the backend that reads the selected config when its catalog is stale.
 
-No `opencode-self-driving` plugin, classification model, or host-side model pool is required for this connection. That separate experiment controls additional host-side resource selection. The connector currently registers one gateway model; see [strategies and workflows](/docs/integration/coding-agents#strategies-and-workflows).
+No `opencode-self-driving` plugin, classification model, or host-side model pool is required for this connection. That separate experiment controls additional host-side resource selection. Repeat `--model` to register additional advertised routes. The first retains the native `bitrouter/automatos` key; each additional entry uses `bitrouter/<wire-ID>`. An additional ID equal to `automatos` conflicts with that primary key and is refused. Updates replace the full list when model flags are supplied and preserve it otherwise; see [strategies and workflows](/docs/integration/coding-agents#strategies-and-workflows).
 
 ## Verify and manage the connection
 

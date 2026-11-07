@@ -29,6 +29,7 @@ describe("LLMS_TXT", () => {
     expect(LLMS_TXT).toContain(`[Model catalog JSON](${origin}/api/bitrouter/models)`);
     expect(LLMS_TXT).not.toContain("/docs/integration/coding-agents");
     expect(LLMS_TXT).toContain("https://api.bitrouter.ai/v1");
+    expect(LLMS_TXT).toContain("The local proxy is `http://127.0.0.1:4356`; the hosted API is `https://api.bitrouter.ai/v1`.");
     expect(LLMS_TXT).not.toContain("/blog/introducing-bitrouter");
     if (environment === "staging") expect(LLMS_TXT).not.toContain("https://bitrouter.ai/");
   });

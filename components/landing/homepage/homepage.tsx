@@ -7,6 +7,7 @@ import { ValueTui } from "./value-tui";
 import { InstallTabs } from "./install-tabs";
 import { HomepageFeatures } from "./features";
 import { GitHubStarsBadge } from "../github-stars-badge";
+import { Playground } from "../playground/playground";
 import "./homepage.css";
 
 const values = [
@@ -176,11 +177,11 @@ const faqs = [
   ["Can I run it on my own infrastructure?", "Yes. Self-host the Apache-2.0 router and connect your own provider keys, local models, or private inference endpoints. A BitRouter Cloud account is not required for local routing."],
 ];
 
-export function Homepage() {
+export function Homepage({ playgroundPreview = false }: { playgroundPreview?: boolean }) {
   return <div className="workspace-site">
     <main id="main">
       <section className="ws-hero ws-wrap"><h1 aria-label="The Open Market for Elastic Inference"><span>The Open Market</span>{" "}<em>for Elastic Inference</em></h1><p>The right inference for your workload, on your terms.</p><InstallTabs /></section>
-      <ValueTabs />
+      {playgroundPreview ? <Playground /> : <ValueTabs />}
       <HomepageFeatures />
       <PricingSection />
       <TrustSection />

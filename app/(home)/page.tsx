@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Homepage } from "@/components/landing/homepage/homepage";
+import { isPlaygroundPreviewEnabled } from "@/lib/playground-preview";
 
 export const metadata: Metadata = {
   title: { absolute: "BitRouter — The Open Market for Elastic Inference" },
@@ -8,5 +9,5 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-  return <Homepage />;
+  return <Homepage playgroundPreview={isPlaygroundPreviewEnabled()} />;
 }

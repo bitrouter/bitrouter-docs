@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "node scripts/check-agent-discovery.mjs",
     "prebuild": "node scripts/generate-openapi.mjs && node scripts/generate-cli.mjs && node scripts/generate-config.mjs && node scripts/generate-models.mjs && node scripts/generate-supported-tables.mjs && node scripts/generate-changelog-latest.mjs && node scripts/check-changelog.mjs && node scripts/check-docs.mjs",
     "start": "next start",
     "test": "vitest run",
@@ -14,6 +15,7 @@
     "generate:changelog": "node scripts/generate-changelog-latest.mjs",
     "sync:changelog": "node scripts/sync-changelog.mjs",
     "lint:docs": "node scripts/check-docs.mjs --verbose",
+    "lint:agent-index": "node scripts/check-agent-discovery.mjs",
     "generate:cli": "node scripts/generate-cli.mjs",
     "snapshot:cli": "node scripts/snapshot-cli.mjs",
     "generate:tables": "node scripts/generate-supported-tables.mjs",

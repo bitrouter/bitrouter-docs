@@ -1,5 +1,7 @@
 import { getDocumentationIndex } from "@/lib/source";
 
+export const dynamic = "force-static";
+
 export function GET() {
   return new Response(getDocumentationIndex(), {
     headers: {

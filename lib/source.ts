@@ -1,5 +1,5 @@
 import { docs, blog, legal, changelog } from "@/.source/server";
-import { llms, loader, type InferPageType } from "fumadocs-core/source";
+import { loader, type InferPageType } from "fumadocs-core/source";
 import { lucideIconsPlugin } from "fumadocs-core/source/plugins/lucide-icons";
 import { renderPlaceholder } from "fumadocs-core/mdx-plugins/remark-llms.runtime";
 import type { ChangelogItem } from "@/lib/changelog";
@@ -10,6 +10,7 @@ import { indexOperationMarkdown } from "@/lib/docs-sync/operation-markdown";
 import { getSiteOrigin } from "@/lib/site-origin";
 import { portableMarkdown } from "@/lib/docs-markdown";
 import { LLMS_TXT } from "@/lib/llms-txt";
+import { renderDocumentationIndex } from "@/lib/docs-sync/documentation-index.mjs";
 
 export const source = loader(docs.toFumadocsSource(), {
   baseUrl: "/docs",
@@ -39,14 +40,8 @@ export function getCanonicalDocs() {
 
 const operationMarkdown = indexOperationMarkdown(apiDocument as unknown as OpenAPIV3_1.Document);
 
-const docsIndex = llms(source, {
-  renderUrl: (page) => new URL(`${page.url}.md`, getSiteOrigin()).href,
-});
-
 export function getDocumentationIndex() {
-  const index = docsIndex.index();
-  const pages = index.slice(index.indexOf("\n") + 1).trim();
-  return `${LLMS_TXT.trim()}\n\n## Complete documentation\n\n${pages}\n`;
+  return renderDocumentationIndex(LLMS_TXT, getCanonicalDocs(), getSiteOrigin());
 }
 
 const markdownComponents: Parameters<typeof renderPlaceholder>[1] = {

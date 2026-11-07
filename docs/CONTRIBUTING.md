@@ -334,6 +334,23 @@ beyond the whitelisted components. The build enforces this:
 5. **English only** — the site no longer ships localized docs; don't add
    `<name>.zh.md` translation files.
 
+## Agent discovery
+
+The complete `llms.txt` index, documentation sitemap entries, and full-text export
+share `getCanonicalDocs()` and the policy in `lib/docs-visibility.ts`. Supporting
+guides omitted from the sidebar still belong in this public inventory. Retained
+compatibility pages remain reachable but are excluded from canonical discovery.
+Curated task links precede the complete index, and model data has a separate JSON
+catalog entry.
+
+`pnpm build` ends with `scripts/check-agent-discovery.mjs`. It compares the built
+index against every canonical documentation URL in the sitemap, requires each
+page exactly once in the complete list, and verifies the emitted Markdown and
+linked section anchors. `pnpm lint:agent-index` repeats that check after a build.
+The report at `.next/agent-discovery-report.json` separates exhaustive docs
+coverage from model detail pages and other site pages; model pages do not count
+toward the documentation denominator.
+
 ## Pricing language
 
 Use three commercial options consistently: OSS Self-hosted (no BitRouter fee),

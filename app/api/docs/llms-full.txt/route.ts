@@ -12,5 +12,7 @@ export async function GET() {
   // tree alone doesn't, then append the canonical doc pages.
   const header = `# BitRouter\n\n${LLMS_PRODUCT_SUMMARY}`;
 
-  return new Response([header, ...scanned].join("\n\n"));
+  return new Response([header, ...scanned].join("\n\n"), {
+    headers: { "Content-Type": "text/plain; charset=utf-8" },
+  });
 }

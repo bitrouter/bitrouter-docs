@@ -1,6 +1,7 @@
 import { LLMS_PRODUCT_SUMMARY } from "./llms-shared";
+import { getSiteOrigin } from "./site-origin";
 
-const BASE_URL = "https://bitrouter.ai";
+const BASE_URL = getSiteOrigin();
 
 export const LLMS_TXT = `# BitRouter
 
@@ -12,7 +13,7 @@ If you are an AI agent setting up BitRouter, follow these steps:
 
 1. Install via Agent Skills (recommended for skill-capable runtimes — Claude Code, Cursor, Codex, Copilot): run \`npx skills add bitrouter/bitrouter\`, then invoke the skill ("Set up BitRouter for me"). The skill runs the wizard, defaults to BitRouter Cloud, and verifies the connection autonomously — no further input needed.
 2. Or install the CLI directly (pick one): \`curl --proto '=https' --tlsv1.2 -LsSf https://github.com/bitrouter/bitrouter/releases/latest/download/bitrouter-installer.sh | sh\` · \`npm install -g bitrouter\` · \`brew install bitrouter/tap/bitrouter\` · \`cargo install bitrouter\`. Then run \`bro\` for onboarding. Choose local to BYOK with your own provider keys, or Cloud for the hosted endpoint; use \`bro claude\` or \`bro codex\` for native harness interaction. The goal-oriented BRO interface is documented as a design preview under CLI.
-3. Route your runtime through BitRouter by changing its base URL: local proxy \`http://127.0.0.1:4356/v1\` (OpenAI-compatible) or \`http://127.0.0.1:4356\` (Anthropic-compatible); hosted Cloud \`https://api.bitrouter.ai/v1\`. Ask for \`bitrouter/auto\` to apply a routing policy, or name a logical \`provider/model\` id such as \`anthropic/claude-opus-4.8\`. Use \`provider:model\` only to pin one configured provider.
+3. Route your runtime through BitRouter by changing its base URL: local proxy \`http://127.0.0.1:4356/v1\` (OpenAI-compatible) or \`http://127.0.0.1:4356\` (Anthropic-compatible); hosted Cloud \`https://api.bitrouter.ai/v1\`. On the local proxy, use \`bitrouter/auto\` with a bound routing policy, a logical \`provider/model\` id, or \`provider:model\` to pin one configured provider. On Cloud, use a catalog model ID or an enabled workspace routing preset such as \`@<name>\`.
 4. Verify: \`curl http://127.0.0.1:4356/v1/chat/completions -H "Content-Type: application/json" -d '{"model":"anthropic/claude-haiku-4.5","messages":[{"role":"user","content":"Hello!"}]}'\`
 
 References:
@@ -24,10 +25,10 @@ References:
 ## Overview
 
 - [Model markets](${BASE_URL}/models): Elastic Inference design preview with four assumed listings, illustrative bid/ask history, token volume, settled trading volume, available liquidity, weighted slippage, and platform fees; all data is demo, not live
-- [Quickstart](${BASE_URL}/docs/overview/quickstart): Install via Agent Skills or the CLI, start routing in under a minute, then optimize against your own workflow
+- [Quickstart](${BASE_URL}/docs/overview/quickstart.md): Install via Agent Skills or the CLI, start routing in under a minute, then optimize against your own workflow
 - [How BitRouter Works](${BASE_URL}/docs/overview/what-is-bitrouter): The one-page explanation — \`bitrouter/auto\`, how routing reads each call, and the two loops that improve it
 - [Models](${BASE_URL}/docs/overview/supported-models): Hosted model catalog, pricing, and model IDs
-- [Elastic Inference](${BASE_URL}/docs/overview/elastic-inference): Optional cloud service for buying and selling inference across price, time, and heterogeneous models, with limit-order tables and provisional JSON examples
+- [Elastic Inference](${BASE_URL}/docs/overview/elastic-inference.md): Optional cloud service for buying and selling inference across price, time, and heterogeneous models, with limit-order tables and provisional JSON examples
 - [Agent Skill](https://github.com/bitrouter/bitrouter/tree/main/skills/bitrouter): Versioned instructions that teach an agent to install and operate BitRouter
 - [BitRouter CLI](https://github.com/bitrouter/bitrouter): \`cargo install bitrouter\` — the Rust binary, onboarding, and TUI conversation
 - [Enterprise](${BASE_URL}/enterprise): Choose between self-hosted OSS, BitRouter Cloud, and a design partnership for requirements not shipped today
@@ -43,7 +44,7 @@ References:
 
 - [Desktop](${BASE_URL}/docs/usage/desktop): Coming soon; current terminal and API alternatives
 - [CLI](${BASE_URL}/docs/usage/cli): Self-driving workflows, interactive terminal, and native headless scripting, and the complete captured command reference, with preview boundaries
-- [Responses API](${BASE_URL}/docs/usage/responses-api): Recommended generation interface, streaming, tool results, and continuation
+- [Responses API](${BASE_URL}/docs/usage/responses-api.md): Recommended generation interface, streaming, tool results, and continuation
 - [MCP](${BASE_URL}/docs/usage/mcp): Coming soon
 - [Agentic Payment](${BASE_URL}/docs/usage/agentic-payment): Coming soon
 
@@ -100,10 +101,11 @@ Supporting guides linked from Strategies:
 - [Privacy Policy](${BASE_URL}/docs/privacy-policy): Data collection, storage, third-party processing, and privacy contact
 - [Terms of Service](${BASE_URL}/docs/terms-of-service): Service terms, usage policies, payments, and availability
 - [Troubleshooting](${BASE_URL}/docs/troubleshooting): Coming soon
-- [API reference](${BASE_URL}/docs/reference): Authentication, typed decisions, compatibility guides, and generated endpoint families
+- [API reference](${BASE_URL}/docs/reference.md): Authentication, typed decisions, compatibility guides, and generated endpoint families
+- [Create a response](${BASE_URL}/docs/reference/openai-responses/createResponse.md): Hosted POST /v1/responses contract, authentication, example request and errors
+- [OpenAPI schema](${BASE_URL}/openapi.json): Machine-readable Cloud contract used by this documentation release
 
 ## Optional
 
-- [llms-full.txt](${BASE_URL}/api/docs/llms-full.txt): Complete documentation as plain text for ingestion
-- [Blog: Introducing BitRouter](${BASE_URL}/blog/introducing-bitrouter): Long-form launch post
+- [llms-full.txt](${BASE_URL}/llms-full.txt): Complete documentation as plain text for ingestion
 `;

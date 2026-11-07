@@ -31,7 +31,7 @@ Use a [virtual model](/docs/models-routing/virtual-models#define-a-virtual-model
 
 A request for `coding` tries its eligible endpoints in YAML order. Connect and validate both sources first using [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions). Adding another model to the available catalog does not automatically make it a replacement for the first.
 
-Use `strategy: cascade` only when the endpoints are interchangeable and selection preferences may reorder or filter them. The documented alpha.31 `cost` and `latency` sorts use deterministic priority/provider-id ordering rather than measured live optimization.
+Use `strategy: cascade` only when the endpoints are interchangeable and selection preferences may reorder or filter them. The self-hosted alpha.33 `cost` and `latency` sorts use deterministic priority/provider-id ordering rather than measured live optimization.
 
 ## Which failures advance the chain?
 

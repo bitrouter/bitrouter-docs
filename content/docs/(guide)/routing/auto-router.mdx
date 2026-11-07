@@ -3,7 +3,7 @@ title: Auto Router
 description: Set up bitrouter/auto, send policy-bound requests, override one call, and inspect the serving route.
 ---
 
-Use `bitrouter/auto` when a bound policy should select the model for each request. Connect usable inference sources first, initialize the policy binding, then inspect the serving route and review evidence before publishing policy changes.
+Use the self-hosted `bitrouter/auto` selector when a bound policy should select the model for each request. Connect usable inference sources first, initialize the policy binding, then inspect the serving route and review evidence before publishing policy changes.
 
 [Strategies](/docs/routing/strategies) explains selector resolution, candidate eligibility, and named variants. [Configuration (YAML)](/docs/routing/configuration) covers file discovery, validation, and reload. Automatic model selection remains separate from [Model Fallbacks](/docs/models-routing/model-fallback) after a retryable failure.
 
@@ -26,27 +26,29 @@ Self-hosting the OSS router has no BitRouter fee. Cloud Auto Routing and Elastic
 
 To constrain candidate providers, reuse preferences with `variants:`, or choose ordered endpoints instead of policy-bound selection, use [Strategies](/docs/routing/strategies#choose-a-routing-approach). Its examples cover [request presets](/docs/routing/strategies#request-presets), [variants](/docs/routing/strategies#variants), and [ordering limits](/docs/routing/strategies#ordering-and-release-limits).
 
-## Policy tiers and runtime adequacy
+<a id="policy-tiers-and-runtime-adequacy" />
 
-Initialize a binding with usable models for its tiers, then adjust the policy's supported adequacy settings. An unmatched fingerprint uses the conservative default; escalation, cooldown, and exploration settings govern subsequent runtime behavior. Initialize the binding below; [Workload Optimization](/docs/routing/workload-optimization#let-evidence-improve-the-policy) explains adequacy observations and their publication boundary.
+## Policy tiers and evidence
+
+Initialize a binding with usable models for its tiers. An unmatched fingerprint uses the configured default tier. In alpha.33, legacy request-time adequacy learning is disabled. [Workload Optimization](/docs/routing/workload-optimization#let-evidence-improve-the-policy) explains how to use admitted evidence to update the policy.
 
 Context-view selection has separate runtime rules. The model policy lock does not configure an external harness's history, and this page does not introduce unsupported context-strategy YAML. See [Context Routing](/docs/routing/context-routing).
 
 ## Initialize a policy binding
 
-`bitrouter/auto` uses the routing policy bound to the `auto` preset. An explicit logical model id selects that model while retaining eligible provider fallback; a provider-qualified id pins one provider. Automatic selection and failure-driven fallback are separate decisions.
+`bitrouter/auto` uses the routing policy bound to the named `auto` router. An explicit logical model id selects that model while retaining eligible provider fallback; a provider-qualified id pins one provider. Automatic selection and failure-driven fallback are separate decisions.
 
-For a local deployment, initialize the policy binding with connected, usable tier models:
+For a local deployment, initialize the policy binding with two active `provider:model` routes available in your deployment:
 
 ```bash
-bro policy init auto --preset auto \
-  --strong openai/gpt-5.4 \
-  --economy moonshotai/kimi-k2.7-code
+bro policy init auto --router auto \
+  --strong openai:openai/gpt-5.6-sol \
+  --economy moonshotai:moonshotai/kimi-k2.7-code
 bro policy check
 bro route bitrouter/auto
 ```
 
-The initializer writes `policy-lock.yaml` and updates `bitrouter.yaml`. The endpoint fails visibly if the required binding is missing. Cloud callers need an `auto` policy available to their active workspace.
+The initializer writes `policy-lock.yaml` and updates `bitrouter.yaml` while preserving the configured policy mode. The local endpoint fails visibly if the binding is missing. Hosted callers use a catalog model ID or an enabled workspace routing preset addressed as `@<name>`. A hosted preset can supply its own model or accept one as `@<name>/<base-model>`.
 
 Use the selector in an API request or native harness launch:
 
@@ -83,7 +85,7 @@ An explicit logical id retains eligible provider alternatives. A provider-qualif
 
 ## Review evidence and policy changes
 
-[Workload Optimization](/docs/routing/workload-optimization#existing-policy-tools) documents runtime adequacy, objective-scored [evaluations](/docs/routing/workload-optimization#evaluations), reproducible evidence snapshots, and the [reviewed publication workflow](/docs/routing/workload-optimization#review-and-publish-a-change). Evidence collection does not automatically publish a policy candidate.
+[Workload Optimization](/docs/routing/workload-optimization#existing-policy-tools) documents objective-scored [evaluations](/docs/routing/workload-optimization#evaluations), reproducible evidence snapshots, and the [reviewed publication workflow](/docs/routing/workload-optimization#review-and-publish-a-change). Evidence collection does not automatically publish a policy candidate.
 
 <a id="verify-and-apply-a-strategy" />
 

@@ -7,14 +7,14 @@ Routing strategies determine **which models and providers are eligible for a cal
 
 ## How a call is routed
 
-1. **Resolve the selector.** Apply a named model, request preset, or explicit provider/model route.
-2. **Apply a bound policy when present.** A policy-bound preset selects a configured tier from the request's routing fingerprint. An unmatched fingerprint uses the conservative default tier.
+1. **Resolve the selector.** Resolve a named router, virtual model, legacy preset, or explicit provider/model route.
+2. **Apply a bound policy when present.** A policy-bound local router selects a configured tier from the request's routing fingerprint. An unmatched fingerprint uses the conservative default tier.
 3. **Resolve eligible endpoints.** Apply the selected route's endpoint rules, capabilities, protocol, credentials, and caller-access requirements.
 4. **Execute and inspect.** Retryable upstream failures may advance the eligible chain. A settled receipt records the route that actually served the call.
 
 | Requested selector | Selection behavior |
 | --- | --- |
-| `bitrouter/auto` | Use the policy bound to the `auto` preset; initialize the binding before use |
+| `bitrouter/auto` | Use the policy bound to the local `auto` router; initialize the binding before use |
 | A virtual model such as `coding` | Resolve its configured endpoints using its declared strategy |
 | A logical model id such as `openai/gpt-5.4` | Select that model across eligible connected providers |
 | `openai:openai/gpt-5.4` | Pin one configured provider and model |
@@ -28,9 +28,9 @@ Use [Auto Router](/docs/routing/auto-router) for policy-bound model selection, o
 | --- | --- | --- |
 | Ordered endpoints | You want a declared primary endpoint and explicit replacements | A virtual model with `strategy: priority` |
 | Candidate-based selection | Endpoints are interchangeable and provider preferences should filter or reorder them | A bare logical model or a virtual model with `strategy: cascade`, plus routing preferences |
-| Policy-bound selection | Different request fingerprints should use configured strong/economy tiers | A preset bound to `policy-lock.yaml`, such as `bitrouter/auto` |
+| Policy-bound selection | Different request fingerprints should use configured strong/economy tiers | A named router bound to `policy-lock.yaml`, such as `bitrouter/auto` |
 
-The available building blocks have different scopes. A request preset under `presets` supplies a model and defaults; it is not an independent routing algorithm. The `strategy` field on a virtual model controls its endpoint resolution. A policy binding adds tier selection. Account strategies select credentials within a provider and are described in [Model Fallbacks](/docs/models-routing/model-fallback#account-fallback).
+The available building blocks have different scopes. A named local router supplies model selection and request defaults. Legacy presets remain available for compatibility. The `strategy` field on a virtual model controls its endpoint resolution. A policy binding adds tier selection. Account strategies select credentials within a provider and are described in [Model Fallbacks](/docs/models-routing/model-fallback#account-fallback).
 
 ### Ordered endpoints
 
@@ -48,7 +48,7 @@ Use [Auto Router](/docs/routing/auto-router) when model selection should depend 
 
 The **inference pool** is the set of connected models and provider routes a request may consider. Supply can come from your own provider credentials, local or private endpoints, or inference access obtained through BitRouter. Buying or selling inference is optional; routing uses existing access and does not purchase supply.
 
-Connection alone does not make a source eligible for every request. Membership uses the existing provider, preset, and variant settings in `bitrouter.yaml`; there is no separate `pool:` block.
+Connection alone does not make a source eligible for every request. Membership uses the existing provider, router, preset, and variant settings in `bitrouter.yaml`; there is no separate `pool:` block.
 
 Connect sources with [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions) or [Local Models](/docs/models-routing/local-models).
 
@@ -78,30 +78,31 @@ Choose the models and providers first, then configure candidate constraints and 
 
 ### Request presets
 
-Give a supported configuration a reusable name under `presets`. For example,
+Define a reusable local router under `routers`. For example,
 this fragment selects one logical model and restricts its provider candidates:
 
 ```yaml
-presets:
+routers:
   openai_only:
-    model: openai/gpt-5.4
-    routing:
-      only: [openai]
-      sort: alphabetical
+    selection:
+      kind: model
+      model: openai/gpt-5.4
+      routing:
+        only: [openai]
 ```
 
-Configure the `openai` provider separately, then inspect the preset:
+Configure the `openai` provider separately, then inspect the named router:
 
 ```bash
 bro config validate -c bitrouter.yaml
-bro route @openai_only -c bitrouter.yaml
-bro claude --model @openai_only
+bro route bitrouter/openai_only -c bitrouter.yaml
+bro claude --model bitrouter/openai_only
 ```
 
 Change the model or provider list to customize this profile. To choose among
 different models by request fingerprint, initialize an [Auto Router policy binding](/docs/routing/auto-router#initialize-a-policy-binding).
 [Virtual Models](/docs/models-routing/virtual-models#presets) covers request defaults
-and their precedence; a preset can also refer to a virtual model.
+and their precedence. Legacy `@name` selectors address presets. On Cloud, use a catalog model ID or an enabled workspace preset addressed as `@<name>`.
 
 ### Variants
 
@@ -117,22 +118,22 @@ variants:
       only: [openai]
 ```
 
-Append a known variant to a logical model or preset, for example `openai/gpt-5.4:primary` or `@fast:primary`. Configure the referenced providers and presets first. The `private` variant requires matching provider tags; its name does not establish a privacy guarantee. An unknown suffix remains part of the selector.
+Append a known variant to a logical model or preset, for example `openai/gpt-5.4:primary` or `@fast:primary`. Configure the referenced providers and presets first. The `private` variant requires matching provider tags; its name does not establish a privacy guarantee. Named local routers do not generally accept variant suffixes. `bitrouter/auto` retains its compatibility variants. An unknown suffix remains part of the selector.
 
-Preset and variant `routing` blocks accept `only`, `ignore`, and `require_tags`. These constrain bare-model and cascade selection. They do not prune a `priority` virtual model's authoritative endpoint list: remove disallowed endpoints from that list instead. Filters do not grant access, bypass guardrails, or supply credentials.
+Router, legacy preset, and variant `routing` blocks accept `only`, `ignore`, and `require_tags`. These constrain bare-model and cascade selection. They do not prune a `priority` virtual model's authoritative endpoint list: remove disallowed endpoints from that list instead. Filters do not grant access, bypass guardrails, or supply credentials.
 
 ### Ordering and release limits
 
 Use provider `priority` for explicit provider order in candidate-based selection, or `strategy: priority` and endpoint order for an explicit virtual-model chain. Presets and variants also accept these sort values:
 
-| Value | alpha.31 behavior |
+| Value | alpha.33 behavior |
 | --- | --- |
 | `alphabetical` | Provider priority, then provider ID |
 | `cost` | Accepted, but currently uses the same deterministic fallback order |
 | `latency` | Accepted, but currently uses the same deterministic fallback order |
 
 <Callout type="warning">
-Cost- and latency-based live scoring are not active in alpha.31. Do not treat a `cost` or `latency` sort as measured optimization. Check the behavior supported by the binary you deploy.
+The self-hosted alpha.33 proxy uses deterministic ordering. Hosted `:cost`, `:latency`, and `:throughput` profiles bias a separate Cloud ranking.
 </Callout>
 
 ## Capability and protocol constraints
@@ -155,9 +156,9 @@ For custom sources, declare only verified capabilities in [BYOK & Subscriptions]
 
 ## Policy-driven selection and evidence
 
-A bound model policy maps request fingerprints to configured tiers. Runtime adequacy can temporarily escalate a fingerprint after repeated hard failures and conservatively explore an economy tier. These observations are distinct from objective-scored evaluations: a successful transport or lower cost does not establish task success.
+A bound model policy maps request fingerprints to configured tiers. In alpha.33, frozen and adaptive modes both use the lock for request-time routing. Adequacy fields remain inputs for policy compilation. Objective-scored evaluations use explicitly admitted evidence.
 
-[Auto Router](/docs/routing/auto-router#initialize-a-policy-binding) covers initialization. [Workload Optimization](/docs/routing/workload-optimization#existing-policy-tools) covers adequacy settings, reviewed publication, and evaluation evidence. Evidence collection does not automatically publish a candidate policy. The policy artifact does not establish a context-loading contract for an external harness.
+[Auto Router](/docs/routing/auto-router#initialize-a-policy-binding) covers initialization. [Workload Optimization](/docs/routing/workload-optimization#existing-policy-tools) covers policy compilation, reviewed publication, and evaluation evidence. Evidence collection does not automatically publish a candidate policy. The policy artifact does not establish a context-loading contract for an external harness.
 
 ## Decisions API and policy ownership
 
@@ -200,4 +201,4 @@ A bound model policy maps request fingerprints to configured tiers. Runtime adeq
 <a id="reproducibility-boundary" />
 <a id="what-evaluation-does-not-establish" />
 
-[Workload Optimization](/docs/routing/workload-optimization#existing-policy-tools) covers runtime adequacy, objective-scored [evaluations](/docs/routing/workload-optimization#evaluations), frozen evidence snapshots, and [reviewed publication](/docs/routing/workload-optimization#review-and-publish-a-change).
+[Workload Optimization](/docs/routing/workload-optimization#existing-policy-tools) covers policy compilation, objective-scored [evaluations](/docs/routing/workload-optimization#evaluations), frozen evidence snapshots, and [reviewed publication](/docs/routing/workload-optimization#review-and-publish-a-change).

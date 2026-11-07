@@ -11,17 +11,17 @@ For a complete field lookup, use [config reference](/docs/routing/configuration#
 
 | Artifact | Responsibility |
 | --- | --- |
-| `bitrouter.yaml` | Provider connections, virtual models, request presets, variants, and links to routing-policy artifacts |
-| `policy-lock.yaml` | Versioned model-selection policy, tier assignments, and runtime adequacy settings |
+| `bitrouter.yaml` | Provider connections, virtual models, named routers, legacy presets, variants, and links to routing-policy artifacts |
+| `policy-lock.yaml` | Versioned model-selection policy, tier assignments, and adequacy inputs for compilation |
 
-A request preset supplies a model and defaults. A policy binding adds model-selection decisions to that preset. A valid configuration file alone does not create the binding required by `bitrouter/auto`.
+A named router supplies model selection and defaults. A policy binding connects that router to a versioned selection policy. A valid configuration file alone does not create the binding required by `bitrouter/auto`.
 
 [Strategies](/docs/routing/strategies) explains candidate eligibility and selection. [Auto Router](/docs/routing/auto-router) covers policy-bound model selection. [Workload Optimization](/docs/routing/workload-optimization#existing-policy-tools) covers evidence and reviewed publication. [Context Routing](/docs/routing/context-routing) describes native evidence views; this guide does not imply that every context-view rule has a public YAML setting.
 
 ## Create a configuration
 
 ```bash
-bro init
+bro init -c ./bitrouter.yaml
 bro config validate -c bitrouter.yaml
 ```
 

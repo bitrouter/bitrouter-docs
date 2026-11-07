@@ -8,12 +8,12 @@ BitRouter self-hosted is one binary in the request path between your agents and 
 ## Start locally
 
 ```bash
-curl --proto '=https' --tlsv1.2 -LsSf https://github.com/bitrouter/bitrouter/releases/latest/download/bitrouter-installer.sh | sh
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/bitrouter/bitrouter/releases/download/v1.0.0-alpha.33/bitrouter-installer.sh | sh
 export OPENAI_API_KEY=sk-...        # any provider key in the environment is auto-detected
 bro start                           # http://127.0.0.1:4356
 ```
 
-This starts a loopback-only router with local authentication skipped. No config or database is required until you opt into features that need them.
+This starts a loopback-only router with local authentication skipped. No configuration file or external database service is required; the default local database is SQLite.
 
 ## Choose a deployment shape
 
@@ -24,13 +24,13 @@ This starts a loopback-only router with local authentication skipped. No config 
 | Let another machine call it | TLS, `skip_auth: false`, and virtual keys |
 | Preserve identity, metering, or adaptive evidence | SQLite, Postgres, or MySQL plus backups |
 
-The open-source binary includes protocol translation, routing, guardrails, server tools, MCP/ACP integration, and OpenTelemetry export. BitRouter Cloud adds managed provider access, billing, and a hosted control plane; it does not replace the local binary.
+The open-source binary includes protocol translation, routing, server tools, MCP/ACP integration, and OpenTelemetry export. Request checks require a [compiled extension in a custom host](https://github.com/bitrouter/bitrouter/blob/main/docs/GUARDRAILS_EXTENSION.md); the default `bro` binary does not include a matcher. BitRouter Cloud adds managed provider access, billing, and a hosted control plane; it does not replace the local binary.
 
 <Callout type="info">
 You can attach a Cloud account with `bro cloud login` while continuing to route through your own provider accounts from the same process.
 </Callout>
 
-Routing decisions come from configuration. A database becomes important only when you use virtual keys, request metering, or the adequacy ledger that adaptive routing learns from. SQLite is the default; Postgres and MySQL use the same binary.
+Routing decisions come from configuration and the active policy lock. The database also stores virtual keys, request metering, and evaluation evidence. SQLite is the default; Postgres and MySQL use the same binary.
 
 ## Install
 
@@ -40,7 +40,7 @@ BitRouter ships as a single binary with no runtime dependencies. The install met
 <Tab value="macOS / Linux">
 
 ```bash
-curl --proto '=https' --tlsv1.2 -LsSf https://github.com/bitrouter/bitrouter/releases/latest/download/bitrouter-installer.sh | sh
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/bitrouter/bitrouter/releases/download/v1.0.0-alpha.33/bitrouter-installer.sh | sh
 ```
 
 The installer fetches a prebuilt release binary. This is the method `bro update` can drive in place.
@@ -82,13 +82,13 @@ bro --version
 Pin deployed hosts so two machines provisioned at different times do not silently run different routers. `bro update --tag` moves the installer-managed binary to an exact release, up or down:
 
 ```bash
-bro update --tag 1.0.0-alpha.31
+bro update --tag 1.0.0-alpha.33
 ```
 
 Pin the config schema to the same release:
 
 ```yaml
-# yaml-language-server: $schema=https://raw.githubusercontent.com/bitrouter/bitrouter/v1.0.0-alpha.31/dist/schema/bitrouter.config.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bitrouter/bitrouter/v1.0.0-alpha.33/dist/schema/bitrouter.config.schema.json
 ```
 
 <Callout type="warning">
@@ -110,7 +110,7 @@ Homebrew and `cargo install` builds are updated by their package manager. `bro u
 For a production host, separate the binary swap from validation and restart:
 
 ```bash
-bro update --tag 1.0.0-alpha.31 -y
+bro update --tag 1.0.0-alpha.33 -y
 bro config validate -c /etc/bitrouter/bitrouter.yaml
 bro restart -c /etc/bitrouter/bitrouter.yaml
 bro status -c /etc/bitrouter/bitrouter.yaml
@@ -366,7 +366,7 @@ bro status -c /etc/bitrouter/bitrouter.yaml
 | `bitrouter.yaml` and `policy-lock.yaml` | Desired routing state; keep both in version control |
 | Virtual-key tables | Losing them invalidates every self-hosted caller key |
 | Metering rows | Cost history and caller attribution |
-| Adequacy evidence | Observations used by adaptive routing |
+| Evaluation evidence | Admitted results used for policy compilation and optimization |
 | Provider credentials | Recover through your normal secret store, not the database |
 
 The database URL supports SQLite, Postgres, and MySQL:

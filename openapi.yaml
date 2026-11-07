@@ -9489,9 +9489,9 @@ paths:
                   format: double
                   default: null
                 reasoning_effort:
-                  type:
-                  - string
-                  - 'null'
+                  anyOf:
+                  - $ref: '#/$defs/ReasoningEffort'
+                  - type: 'null'
                   default: null
                 response_format:
                   description: |-
@@ -9725,6 +9725,37 @@ paths:
                       default: null
                   required:
                   - name
+                ReasoningEffort:
+                  description: |-
+                    Qualitative reasoning-effort levels understood by BitRouter's built-in
+                    OpenAI, Anthropic, and Gemini protocol adapters.
+
+                    This is the cross-provider superset, not a claim that every model supports
+                    every value. Exact provider/model routes advertise their supported subset
+                    separately and policy-owned effort targets are validated against it before
+                    dispatch.
+                  oneOf:
+                  - description: Disable reasoning where the selected model supports doing so.
+                    type: string
+                    const: none
+                  - description: Use the smallest non-zero reasoning setting exposed by the model.
+                    type: string
+                    const: minimal
+                  - description: Prefer low reasoning cost and latency.
+                    type: string
+                    const: low
+                  - description: Balance reasoning depth with cost and latency.
+                    type: string
+                    const: medium
+                  - description: Prefer deeper reasoning over cost and latency.
+                    type: string
+                    const: high
+                  - description: Use the provider's extra-high reasoning setting.
+                    type: string
+                    const: xhigh
+                  - description: Use the provider's maximum reasoning setting.
+                    type: string
+                    const: max
         required: true
       responses:
         '200':
@@ -10273,16 +10304,47 @@ paths:
               required:
               - input
               $defs:
+                ReasoningEffort:
+                  description: |-
+                    Qualitative reasoning-effort levels understood by BitRouter's built-in
+                    OpenAI, Anthropic, and Gemini protocol adapters.
+
+                    This is the cross-provider superset, not a claim that every model supports
+                    every value. Exact provider/model routes advertise their supported subset
+                    separately and policy-owned effort targets are validated against it before
+                    dispatch.
+                  oneOf:
+                  - description: Disable reasoning where the selected model supports doing so.
+                    type: string
+                    const: none
+                  - description: Use the smallest non-zero reasoning setting exposed by the model.
+                    type: string
+                    const: minimal
+                  - description: Prefer low reasoning cost and latency.
+                    type: string
+                    const: low
+                  - description: Balance reasoning depth with cost and latency.
+                    type: string
+                    const: medium
+                  - description: Prefer deeper reasoning over cost and latency.
+                    type: string
+                    const: high
+                  - description: Use the provider's extra-high reasoning setting.
+                    type: string
+                    const: xhigh
+                  - description: Use the provider's maximum reasoning setting.
+                    type: string
+                    const: max
                 ResponsesReasoningConfig:
                   description: |-
-                    `reasoning` knob on [`ResponsesRequest`] — only `effort` is read; other
-                    fields (`summary`, …) round-trip via no slot today (matching v0 behavior).
+                    `reasoning` knob on [`ResponsesRequest`]. `effort` is promoted to the
+                    canonical slot; sibling fields such as `summary` round-trip via `extra`.
                   type: object
                   properties:
                     effort:
-                      type:
-                      - string
-                      - 'null'
+                      anyOf:
+                      - $ref: '#/$defs/ReasoningEffort'
+                      - type: 'null'
                       default: null
                 ResponsesText:
                   description: |-
@@ -10798,9 +10860,9 @@ paths:
                   properties:
                     effort:
                       description: Reasoning effort (`low` | `medium` | `high` | `xhigh` | `max`).
-                      type:
-                      - string
-                      - 'null'
+                      anyOf:
+                      - $ref: '#/$defs/ReasoningEffort'
+                      - type: 'null'
                       default: null
                     format:
                       anyOf:
@@ -10856,6 +10918,37 @@ paths:
                       - string
                       - 'null'
                       default: null
+                ReasoningEffort:
+                  description: |-
+                    Qualitative reasoning-effort levels understood by BitRouter's built-in
+                    OpenAI, Anthropic, and Gemini protocol adapters.
+
+                    This is the cross-provider superset, not a claim that every model supports
+                    every value. Exact provider/model routes advertise their supported subset
+                    separately and policy-owned effort targets are validated against it before
+                    dispatch.
+                  oneOf:
+                  - description: Disable reasoning where the selected model supports doing so.
+                    type: string
+                    const: none
+                  - description: Use the smallest non-zero reasoning setting exposed by the model.
+                    type: string
+                    const: minimal
+                  - description: Prefer low reasoning cost and latency.
+                    type: string
+                    const: low
+                  - description: Balance reasoning depth with cost and latency.
+                    type: string
+                    const: medium
+                  - description: Prefer deeper reasoning over cost and latency.
+                    type: string
+                    const: high
+                  - description: Use the provider's extra-high reasoning setting.
+                    type: string
+                    const: xhigh
+                  - description: Use the provider's maximum reasoning setting.
+                    type: string
+                    const: max
         required: true
       responses:
         '200':
@@ -11455,6 +11548,14 @@ paths:
                       - 'null'
                       format: double
                       default: null
+                    thinkingConfig:
+                      description: |-
+                        Qualitative reasoning effort for Gemini 3+ models. Numeric
+                        `thinkingBudget` remains an opaque sibling because it is a distinct
+                        Gemini 2.5 control with no lossless qualitative mapping.
+                      anyOf:
+                      - $ref: '#/$defs/GenerateContentThinkingConfig'
+                      - type: 'null'
                     topK:
                       description: |-
                         Top-k sampling. Promoted to the canonical `top_k` slot so it translates
@@ -11471,6 +11572,15 @@ paths:
                       - number
                       - 'null'
                       format: double
+                      default: null
+                GenerateContentThinkingConfig:
+                  description: Gemini `generationConfig.thinkingConfig`.
+                  type: object
+                  properties:
+                    thinkingLevel:
+                      anyOf:
+                      - $ref: '#/$defs/ReasoningEffort'
+                      - type: 'null'
                       default: null
                 GenerateContentTool:
                   description: |-
@@ -11492,6 +11602,37 @@ paths:
                       type: array
                       items:
                         $ref: '#/$defs/GenerateContentFunctionDecl'
+                ReasoningEffort:
+                  description: |-
+                    Qualitative reasoning-effort levels understood by BitRouter's built-in
+                    OpenAI, Anthropic, and Gemini protocol adapters.
+
+                    This is the cross-provider superset, not a claim that every model supports
+                    every value. Exact provider/model routes advertise their supported subset
+                    separately and policy-owned effort targets are validated against it before
+                    dispatch.
+                  oneOf:
+                  - description: Disable reasoning where the selected model supports doing so.
+                    type: string
+                    const: none
+                  - description: Use the smallest non-zero reasoning setting exposed by the model.
+                    type: string
+                    const: minimal
+                  - description: Prefer low reasoning cost and latency.
+                    type: string
+                    const: low
+                  - description: Balance reasoning depth with cost and latency.
+                    type: string
+                    const: medium
+                  - description: Prefer deeper reasoning over cost and latency.
+                    type: string
+                    const: high
+                  - description: Use the provider's extra-high reasoning setting.
+                    type: string
+                    const: xhigh
+                  - description: Use the provider's maximum reasoning setting.
+                    type: string
+                    const: max
         required: true
       responses:
         '200':

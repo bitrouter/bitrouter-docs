@@ -1,0 +1,54 @@
+name: Railway release
+
+on:
+  workflow_call:
+    inputs:
+      promote:
+        type: boolean
+        required: true
+    secrets:
+      RAILWAY_DEPLOY_TOKEN:
+        required: true
+
+jobs:
+  staging:
+    name: Deploy and verify staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment:
+      name: staging
+      url: ${{ vars.RAILWAY_SITE_URL }}
+    steps: &deploy_steps
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check release is still current
+        shell: bash
+        run: |
+          head_sha=$(git ls-remote --exit-code origin refs/heads/main | cut -f1)
+          if [[ "$head_sha" != "$GITHUB_SHA" ]]; then
+            echo "::error::This release was superseded by $head_sha. Use the CI run for that commit."
+            exit 1
+          fi
+      - name: Deploy commit and run smoke checks
+        run: node scripts/deploy-railway.mjs
+        env:
+          RAILWAY_DEPLOY_TOKEN: ${{ secrets.RAILWAY_DEPLOY_TOKEN }}
+          RAILWAY_DEPLOY_ENVIRONMENT_ID: ${{ vars.RAILWAY_DEPLOY_ENVIRONMENT_ID }}
+          RAILWAY_DEPLOY_SERVICE_ID: ${{ vars.RAILWAY_DEPLOY_SERVICE_ID }}
+          RAILWAY_SITE_URL: ${{ vars.RAILWAY_SITE_URL }}
+          RAILWAY_RELEASE_ENVIRONMENT: ${{ github.job }}
+
+  production:
+    name: Deploy and verify production
+    needs: staging
+    if: inputs.promote
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment:
+      name: production
+      url: ${{ vars.RAILWAY_SITE_URL }}
+    steps: *deploy_steps

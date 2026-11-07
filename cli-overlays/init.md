@@ -15,7 +15,7 @@ The full onboarding walkthrough — wizard steps, headless flags, recipes — is
 
 ## @init
 
-Re-runs the wizard interactively; with `--yes` it never blocks and emits a JSON result envelope — the form an agent or CI should drive. Refuses to overwrite an existing `bitrouter.yaml` unless `--force`.
+Runs the wizard interactively. With `--yes`, credential prompts are skipped and a JSON result envelope is emitted; choose `--after exit` for a noninteractive setup. Onboarding updates the existing config by default; `--force` starts from the starter template.
 
 ```bash
 bro init --yes --use-detected --harness claude --after serve

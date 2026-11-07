@@ -106,6 +106,10 @@ The goal-oriented entry replaces the earlier `bro code <agent>` conversation con
 
 The TUI gives you three views of the same ongoing work: a **Goals** list, the **current Goal**, and its read-only **Workflow**. [Self-driving Workflows](/docs/usage/cli#self-driving-workflows) explains how planning, execution, verification, and completion fit together.
 
+### Released ACP conversation controls
+
+In the released ACP conversation, `Enter` submits a draft or queues a follow-up. `Shift-Enter`, `Alt-Enter`, and `Ctrl-J` insert a newline. Use `/` at the start of the composer to open the command menu, then select **Review permission** for a pending request. You can configure a shortcut with `/hotkeys`. `F2` has no default binding. `PageUp` and `PageDown` scroll an open inspector. `Esc` closes a temporary surface or requests cancellation. `Ctrl-C` cancels work, clears a draft, or exits an idle empty composer. `Ctrl-D` exits an idle empty composer.
+
 ### Open Goals
 
 In the goal-oriented interface, either entry opens Goals:

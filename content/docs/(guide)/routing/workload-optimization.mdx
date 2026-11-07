@@ -34,8 +34,8 @@ Use [Routing Traces](/docs/routing/routing-traces) to inspect router behavior ac
 
 | Artifact or record | What it identifies |
 | --- | --- |
-| `bitrouter.yaml` | Connected sources, presets, variants, and the policy binding |
-| `policy-lock.yaml` | Model-selection tiers and supported runtime adequacy settings |
+| `bitrouter.yaml` | Connected sources, named routers, legacy presets, variants, and the policy binding |
+| `policy-lock.yaml` | Model-selection tiers and adequacy inputs for compilation |
 | Request receipts | The route that served a call and its recorded execution outcome |
 | Sealed subjects and admitted evaluator results | The evidence eligible for an objective-scored evaluation |
 | Frozen evidence snapshots | The exact admitted evidence set consumed by a later policy decision |
@@ -44,40 +44,21 @@ These records have distinct roles. A request receipt does not establish task suc
 
 ### Let evidence improve the policy
 
-The policy starts conservatively: an unmatched request fingerprint uses its configured default tier. With `adequacy` enabled, BitRouter records deterministic outcome observations for policy-bound traffic.
-
-```yaml
-# policy-lock.yaml
-adequacy:
-  enabled: true
-  escalation_tier: strong
-  escalation_threshold: 2
-  pin_cooldown_secs: 1800
-  explore_enabled: true
-  explore_tier: economy
-  explore_threshold: 3
-  explore_interval: 5
-```
-
-The two directions are intentionally asymmetric:
-
-- **Escalation:** repeated hard failures pin a downgraded fingerprint back to the strong tier; the pin expires after its cooldown.
-- **Exploration:** a cheaper tier must succeed repeatedly before its fingerprint qualifies for that route; a failed trial stops the downgrade.
+The active lock determines request-time routes; unmatched fingerprints use its configured default tier. In alpha.33, both frozen and adaptive modes route from the lock and disable legacy request-time adequacy learning. Adequacy thresholds in a lock remain compiler inputs, not switches for live escalation or exploration.
 
 ### Review and publish a change
 
-Qualified changes remain in the local evidence store until you explicitly project and publish them:
+After admitting evaluation results, freeze a snapshot and use its evidence root to compile a candidate. Publication requires `policy.mode: adaptive` in `bitrouter.yaml`; frozen mode permits inspection but refuses publication. Replace `<EVIDENCE_ROOT>` with the root returned by the freeze command, then review the mode and candidate before publishing:
 
 ```bash
 bro policy status
-bro policy evolve          # dry-run the candidate
-bro policy unlock
-bro policy evolve --apply  # atomically update policy-lock.yaml
-bro policy reload
-bro policy lock
+bro eval snapshot freeze
+bro policy compile --eval-snapshot <EVIDENCE_ROOT> --output candidate-policy.yaml
+bro policy diff policy-lock.yaml candidate-policy.yaml
+bro policy publish candidate-policy.yaml
 ```
 
-`evolve --apply` adds qualified routes without overwriting routes you authored, and it aborts when the policy changed after the candidate was derived. Review and commit the resulting lock-file diff.
+Compilation can add or update compiler-owned routes while preserving operator-authored routes. Publication validates the candidate and rejects stale or conflicting changes. Review and commit the resulting lock-file diff. To freeze later publication, set `policy.mode: frozen` in `bitrouter.yaml` and reload the configuration.
 
 ### Evaluations
 
@@ -91,14 +72,13 @@ An evaluation answers whether a result met an objective. It is deliberately sepa
 
 An HTTP `200`, a completed stream, or a cheaper route is not proof of task success. Those are observations that an evaluator may use, not the objective result itself.
 
-#### Two evidence paths
+<a id="two-evidence-paths" />
 
-BitRouter keeps runtime adequacy and objective-scored evaluations distinct:
+#### Evaluation evidence
 
-- **Runtime adequacy** records deterministic outcome classes for policy-bound live traffic. It supports fast escalation and conservative exploration for a request fingerprint.
-- **Evaluator-neutral exchange** accepts immutable evaluation subjects and results from an evaluator you choose. Admitted results can be frozen into a reproducible snapshot for optimization or policy compilation.
+The evaluator-neutral exchange accepts immutable evaluation subjects and results from an evaluator you choose. Admitted results can be frozen into a reproducible snapshot for optimization or policy compilation. A trace does not evaluate its outcome by itself.
 
-The two paths can inform the same routing-policy lifecycle, but their records are not interchangeable. An adequacy observation does not silently become an evaluator result, and exporting a trace does not evaluate its outcome.
+In alpha.33, legacy request-time adequacy learning is disabled in both policy modes. Adequacy fields remain compiler inputs; they do not enable live escalation or exploration.
 
 #### Evidence lifecycle
 
@@ -143,7 +123,7 @@ The evidence root pins the exact set used for a later decision. This prevents a 
 
 ##### 5. Consume the evidence explicitly
 
-Optimization can advance its controller from admitted evaluation history:
+Optimization can advance its controller from admitted evaluation history. `status` is read-only; `run` authorizes one controller step, may enable adaptive mode, and can publish a policy change without a separate approval:
 
 ```bash
 bro optimize status --policy auto
@@ -159,7 +139,7 @@ bro policy compile \
 bro policy diff policy-lock.yaml candidate-policy.yaml
 ```
 
-Compilation and optimization do not make every candidate active. Review the candidate and use the explicit policy publication workflow when it should serve traffic.
+Compilation does not make the candidate active. Review it and use `bro policy publish candidate-policy.yaml` when it should serve traffic. The optimizer is a separate, explicitly authorized workflow and can publish its own transition during `bro optimize run`.
 
 #### Reproducibility boundary
 
@@ -179,7 +159,7 @@ Keep private prompts, responses, and artifacts out of the subject unless the eva
 - Lower token cost does not establish acceptable quality.
 - A trace or request receipt does not become evaluation evidence merely because it is detailed.
 - One admitted result does not prove a general routing policy is better.
-- A candidate policy is not active until it passes the explicit publication boundary.
+- A compiled candidate is not active until it passes publication; an authorized optimizer step can publish its own transition.
 
 Use repeated, comparable subjects and an evaluator aligned with the workload objective. Keep exploratory conclusions separate from policy changes you are prepared to serve.
 

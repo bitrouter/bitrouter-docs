@@ -1,10 +1,10 @@
-import { LLMS_TXT } from "@/lib/llms-txt";
+import { getDocumentationIndex } from "@/lib/source";
 
 export function GET() {
-  return new Response(LLMS_TXT.trim(), {
+  return new Response(getDocumentationIndex(), {
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
-      "Cache-Control": "public, max-age=86400, s-maxage=86400",
+      "Cache-Control": "public, max-age=300, s-maxage=300, must-revalidate",
     },
   });
 }

@@ -25,6 +25,28 @@ Choose the API family that matches your task:
 | Manage Cloud accounts, keys, usage, billing, or policy | Cloud management |
 | Check node health or scrape metrics | Health or Metrics |
 
+## Get a Cloud credential
+
+Sign in to the [BitRouter Cloud console](https://cloud.bitrouter.ai/sign-in) for your Cloud account.
+For terminal access, run the documented device sign-in flow and mint a scoped API key.
+The key is printed once, so store it as `BITROUTER_API_KEY` for the request below.
+
+```bash
+bro cloud login
+bro cloud keys mint --name my-integration --scope inference:invoke
+```
+
+The [CLI credential reference](/docs/usage/cli#bro-cloud-keys-mint) describes scopes and expiry.
+Use a Cloud catalog model ID or an enabled workspace routing preset. The local
+`bitrouter/auto` selector belongs to self-hosted routing.
+
+```bash
+curl https://api.bitrouter.ai/v1/responses \
+  -H "Authorization: Bearer $BITROUTER_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"anthropic/claude-haiku-4.5","input":"Hello!"}'
+```
+
 ## Route a request
 
 Choose the protocol your client already speaks. BitRouter keeps the request and response shape for that protocol while routing the requested model to an eligible upstream.

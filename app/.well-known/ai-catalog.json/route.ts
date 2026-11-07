@@ -7,7 +7,7 @@ export function GET() {
   const host = new URL(origin).hostname;
   const entries = [
     ["mcp:docs", "BitRouter documentation MCP", "application/mcp-server-card+json", "/.well-known/mcp/server-card.json"],
-    ["api:cloud", "BitRouter Cloud OpenAPI", "application/vnd.oai.openapi+json", "/openapi.json"],
+    ["api:cloud", "BitRouter Cloud OpenAPI", "application/vnd.oai.openapi+json;version=3.1", "/openapi.json"],
     ["docs:index", "BitRouter documentation index", "text/plain", "/llms.txt"],
     ["docs:quickstart", "BitRouter Quickstart", "text/markdown", "/docs/overview/quickstart.md"],
   ].map(([id, displayName, type, path]) => ({

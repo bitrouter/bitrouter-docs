@@ -1,1 +1,5 @@
-export const docsMcpServerInfo = { name: "bitrouter-docs", version: "1.0.0" };
+export const docsMcpServerInfo = {
+  name: "ai.bitrouter/docs",
+  title: "BitRouter Docs",
+  version: "1.0.0",
+};

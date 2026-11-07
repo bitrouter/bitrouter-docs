@@ -1,4 +1,5 @@
 import { afterEach, describe, it, expect, vi } from "vitest";
+import { indexLinks, renderDocumentationIndex } from "./docs-sync/documentation-index.mjs";
 
 afterEach(() => {
   vi.unstubAllEnvs();
@@ -29,7 +30,9 @@ describe("LLMS_TXT", () => {
     expect(LLMS_TXT).toContain(`[Model catalog JSON](${origin}/api/bitrouter/models)`);
     expect(LLMS_TXT).not.toContain("/docs/integration/coding-agents");
     expect(LLMS_TXT).toContain("https://api.bitrouter.ai/v1");
-    expect(LLMS_TXT).toContain("The local proxy is `http://127.0.0.1:4356`; the hosted API is `https://api.bitrouter.ai/v1`.");
+    const links = indexLinks(renderDocumentationIndex(LLMS_TXT, [], origin));
+    expect(links.some((url) => url.startsWith("http://127.0.0.1:4356"))).toBe(false);
+    expect(links.some((url) => url.startsWith("https://api.bitrouter.ai/v1"))).toBe(false);
     expect(LLMS_TXT).not.toContain("/blog/introducing-bitrouter");
     if (environment === "staging") expect(LLMS_TXT).not.toContain("https://bitrouter.ai/");
   });

@@ -141,6 +141,9 @@ bro cloud login   # RFC 8628 device flow against api.bitrouter.ai
 bro start         # the `bitrouter` provider auto-enables once signed in
 ```
 
+To call Cloud directly from an application, use the [Cloud credential and first-request guide](/docs/reference#get-a-cloud-credential).
+It links to the console sign-in and shows how to mint a scoped API key with the CLI.
+
 Cloud is not a different binary — it's an account you attach. Signing in from a self-hosted binary routes Cloud-managed models alongside your BYOK keys, and you can add or remove the Cloud account at any time without affecting the binary's self-hosted capabilities. You can also point an agent straight at the hosted endpoint without running a local binary at all. See the [Models](/docs/overview/supported-models) catalog for pricing.
 
 ## Point your agent at the proxy

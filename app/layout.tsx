@@ -116,6 +116,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
       </head>
       <body className="font-sans antialiased">
+        <p className="sr-only">
+          For AI agents, the <a href="/llms.txt">documentation index</a> lists all pages.
+          Append .md to a documentation URL for Markdown, or request text/markdown.
+        </p>
         {children}
       </body>
     </html>

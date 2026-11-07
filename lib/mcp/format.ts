@@ -106,7 +106,7 @@ export function selectMarkdownSection(markdown: string, anchor: string): string 
       continue;
     }
     if (fence) continue;
-    const heading = /^ {0,3}(#{1,6})\s+(.+?)(?:\s+\[#([^\]]+)\])?\s*$/.exec(line);
+    const heading = /^ {0,3}(#{1,6})\s+(.+?)(?:\s+\[#([^\]]+)\])?\s*$/.exec(line.replaceAll("\\[", "[").replaceAll("\\]", "]"));
     if (!heading) continue;
     if (start >= 0 && heading[1].length <= level) return lines.slice(start, index).join("\n").trim();
     if (start === -1 && heading[3] === anchor) {

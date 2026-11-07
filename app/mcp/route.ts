@@ -1,7 +1,7 @@
 import { createMcpHandler } from "mcp-handler";
 import { z } from "zod";
 import { searchDocs, getDoc, lookupModel } from "@/lib/mcp/tools";
-import { LLMS_TXT } from "@/lib/llms-txt";
+import { getDocumentationIndex } from "@/lib/source";
 import { docsMcpServerInfo } from "@/lib/mcp/server-info";
 
 export const runtime = "nodejs";
@@ -82,7 +82,7 @@ const handler = createMcpHandler(
         mimeType: "text/markdown",
       },
       async (uri) => ({
-        contents: [{ uri: uri.href, mimeType: "text/markdown", text: LLMS_TXT.trim() }],
+        contents: [{ uri: uri.href, mimeType: "text/markdown", text: getDocumentationIndex() }],
       }),
     );
   },

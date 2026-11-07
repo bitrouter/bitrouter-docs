@@ -516,16 +516,23 @@ pre:has(code) { background:var(--muted); border:1px solid var(--border); }
    the grid and never move; only article body scrolls. Scoped via
    `body:has(#nd-subnav)` so home/blog keep normal document scroll.
 
-   `min-height: 0` on the article is required: grid items default to
-   `min-height: auto` (= min-content), which would let the article push
-   row 3 past the viewport and break the lock. */
+   Both the grid's main wrapper and its article need `min-height: 0`.
+   Fumadocs wraps the article in `[data-layout-main]`; leaving that grid
+   item at `min-height: auto` makes it grow to the article's full content
+   height, so the article cannot overflow and the locked body cannot scroll. */
 body:has(#nd-subnav) {
+  position: fixed;
+  inset: 0;
   overflow: hidden;
   height: 100dvh;
 }
 
 body:has(#nd-subnav) #nd-notebook-layout {
   height: 100dvh;
+  min-height: 0;
+}
+
+body:has(#nd-subnav) #nd-notebook-layout > [data-layout-main] {
   min-height: 0;
 }
 
@@ -539,4 +546,16 @@ body:has(#nd-subnav) #nd-page {
    anymore), but harmless and protects against future layout regressions. */
 [data-toc-popover] > header.bg-fd-background\/80 {
   background-color: var(--background) !important;
+}
+
+/* Progressive enhancement for selected-text feedback. */
+::highlight(fd-feedback-text) {
+  background-color: var(--color-fd-primary);
+  color: var(--color-fd-primary-foreground);
+}
+
+/* Timeline titles follow their dates, rather than the prose section spacing. */
+.zed-docs .changelog-timeline [data-release-title] {
+  margin: 8px 0 16px !important;
+  padding-top: 0;
 }

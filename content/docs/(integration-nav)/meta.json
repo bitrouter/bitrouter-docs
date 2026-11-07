@@ -1,8 +1,9 @@
 {
-  "title": "Integration",
-  "pagesIndex": "[ACP servers](/docs/integration/acp-servers)",
+  "title": "Coding Agents",
+  "pagesIndex": "[DeepSeek Harness](/docs/integration/deepseek-harness)",
   "pages": [
-    "[DeepSeek Harness](/docs/integration/deepseek-harness)",
+    "[Hermes Agent](/docs/integration/hermes-agent)",
+    "[OpenClaw](/docs/integration/openclaw)",
     "[OpenCode](/docs/integration/opencode)",
     "[Pi](/docs/integration/pi)"
   ]

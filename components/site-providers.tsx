@@ -1,5 +1,6 @@
 import { RootProvider } from "fumadocs-ui/provider/next";
 import { AISearch, AISearchPanel } from "@/components/ai/search";
+import { WebMCP } from "@/components/webmcp";
 
 // Providers for every site surface (landing, models, recipes, legal, blog,
 // docs). No fumadocs `i18n` prop on purpose — the site is English-only.
@@ -9,11 +10,7 @@ import { AISearch, AISearchPanel } from "@/components/ai/search";
 // it here — a second copy created conflicting entity descriptions on the
 // (home)/blog/changelog surfaces that nest this provider inside the root layout.
 
-export function SiteProviders({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function SiteProviders({ children }: { children: React.ReactNode }) {
   return (
     <RootProvider
       theme={{
@@ -23,6 +20,7 @@ export function SiteProviders({
         storageKey: "bitrouter-theme",
       }}
     >
+      <WebMCP />
       <AISearch>
         {children}
         <AISearchPanel />

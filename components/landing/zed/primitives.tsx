@@ -190,10 +190,10 @@ export const ZED_LINKS = {
   docs: "/docs",
   quickstart: "/docs/overview/quickstart",
   selfHosting: "/docs/self-hosting",
-  models: "/pricing#models",
+  models: "/models",
   pricing: "/pricing",
   blog: "/blog",
-  changelog: "/changelog",
+  changelog: "/docs/changelog",
   github: "https://github.com/bitrouter/bitrouter",
   cloneSource: "https://github.com/bitrouter/bitrouter",
 };

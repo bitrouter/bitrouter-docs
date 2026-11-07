@@ -6,8 +6,10 @@ import { ProviderIcon } from "@/components/models/provider-icon";
 import { CopyIdButton } from "@/components/models/copy-id-button";
 import { CopySnippet } from "@/components/models/copy-snippet";
 import { fetchModelById } from "@/lib/models-server";
-import { modelDisplayName, providerFromId } from "@/lib/models-filter";
+import { modelDisplayName, providerFromId } from "@/lib/model-identity";
 import { formatPricePerMillionTokens } from "@/lib/model-pricing";
+import { findMarketAsset } from "@/lib/elastic-market";
+import { MarketDetail } from "@/components/models/market-detail";
 
 const API_BASE_URL = "https://api.bitrouter.ai/v1";
 const OPENAI_CHAT_COMPLETIONS_URL = `${API_BASE_URL}/chat/completions`;
@@ -49,6 +51,8 @@ function anthropicSnippet(modelId: string): string {
 export default async function ModelDetailPage({ params }: Props) {
   const { slug } = await params;
   const modelId = slug.join("/");
+  const marketAsset = findMarketAsset(modelId);
+  if (marketAsset) return <MarketDetail assetId={marketAsset.id} />;
   const model = await fetchModelById(modelId);
   if (!model) notFound();
 
@@ -61,7 +65,7 @@ export default async function ModelDetailPage({ params }: Props) {
     <main className="zed-bg" id="main">
       <article className="zed-wrap" style={{ paddingBottom: "var(--z-sec)" }}>
         <Link
-          href="/pricing#models"
+          href="/models"
           className="zed-eyebrow"
           style={{
             display: "inline-flex",
@@ -71,7 +75,7 @@ export default async function ModelDetailPage({ params }: Props) {
             transition: "color .15s ease",
           }}
         >
-          ← Back to model prices
+          ← Back to model markets
         </Link>
 
         {/* ── Header ─────────────────────────────────────── */}
@@ -156,6 +160,11 @@ export default async function ModelDetailPage({ params }: Props) {
             <Stat label="Output / 1M" value={formatPricePerMillionTokens(model.pricing.output)} />
             <Stat label="Modalities" value={model.modalities.join(", ") || "text"} />
           </div>
+          <p style={{ color: "var(--z-ink-5)", fontSize: 13, lineHeight: 1.7, marginTop: 16 }}>
+            Supplier rates exclude the Cloud platform fee. Early access pricing is $0.01 per million processed input + output tokens,
+            counted once per request across Cloud Auto Routing and Elastic Inference. 0% markup on inference.
+            See <Link href="/pricing">pricing</Link>.
+          </p>
         </section>
 
         {/* ── Quickstart ─────────────────────────────────── */}
@@ -296,6 +305,14 @@ function SnippetCard({
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const modelId = slug.join("/");
+  const marketAsset = findMarketAsset(modelId);
+  if (marketAsset) return {
+    title: `${marketAsset.name} — Elastic Inference Market`,
+    description: `Explore ${marketAsset.name} bid and ask history and fulfilled token volume. Design preview with illustrative data.`,
+    alternates: { canonical: `https://bitrouter.ai/models/${marketAsset.id}` },
+    robots: { index: false, follow: true },
+    openGraph: { title: `${marketAsset.name} — Elastic Inference Market`, description: "Illustrative model market data for design review.", url: `https://bitrouter.ai/models/${marketAsset.id}` },
+  };
   const model = await fetchModelById(modelId);
   if (!model) {
     return { title: "Model not found — BitRouter" };
@@ -305,6 +322,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     : modelDisplayName(model);
   return {
     title: `${friendlyName} — BitRouter`,
-    description: `Route ${model.id} through BitRouter. ${formatPricePerMillionTokens(model.pricing.input)} input, ${formatPricePerMillionTokens(model.pricing.output)} output, ${formatTokens(model.maxInputTokens)} context.`,
+    description: `Route ${model.id} through BitRouter. Supplier rates: ${formatPricePerMillionTokens(model.pricing.input)} input, ${formatPricePerMillionTokens(model.pricing.output)} output, before the Cloud platform fee of $0.01 per million processed input + output tokens (early access pricing). ${formatTokens(model.maxInputTokens)} context.`,
   };
 }

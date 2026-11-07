@@ -4,6 +4,7 @@ import {
   formatSearchResults,
   truncateMarkdown,
   stripMdxNoise,
+  selectMarkdownSection,
   matchModels,
   buildConfigSnippet,
   formatModelAnswer,
@@ -55,12 +56,45 @@ describe("formatSearchResults", () => {
   it("returns one hit per distinct page", () => {
     expect(formatSearchResults(raw, 10)).toHaveLength(2);
   });
+  it("keeps a heading URL for the best hit even at the page limit", () => {
+    expect(formatSearchResults(raw, 1)[0].sectionUrl).toBe(
+      "https://bitrouter.ai/docs/configuration/models#fallback-chains",
+    );
+  });
+  it("returns staging URLs and deduplicates absolute canonical and relative hits", () => {
+    const origin = "https://bitrouter-docs-staging.up.railway.app";
+    const hits = formatSearchResults([
+      ...raw,
+      { id: "4", url: "https://bitrouter.ai/docs/configuration/models#example", type: "heading", content: "Example" },
+      { id: "5", url: "https://bitrouter.ai/docs/overview/quickstart", type: "page", content: "Quickstart" },
+    ], 10, origin);
+    expect(hits.map((hit) => hit.url)).toEqual([
+      `${origin}/docs/configuration/models`,
+      `${origin}/docs/customization/models`,
+      `${origin}/docs/overview/quickstart`,
+    ]);
+    expect(hits.at(-1)?.path).toBe("overview/quickstart");
+  });
   it("strips fumadocs <mark> highlight tags from the title", () => {
     const hits = formatSearchResults(
       [{ id: "1", url: "/docs/configuration/models", type: "page", content: "Configured <mark>Models</mark>" }],
       5,
     );
     expect(hits[0].title).toBe("Configured Models");
+  });
+});
+
+describe("selectMarkdownSection", () => {
+  it("includes child headings and ignores heading-like lines in fenced examples", () => {
+    const text = [
+      "## Other [#other]", "Before",
+      "## Set up [#setup]", "```bash", "# An example comment", "```",
+      "### Verify [#verify]", "Verification", "## Next [#next]", "After",
+    ].join("\n");
+    expect(selectMarkdownSection(text, "setup")).toBe(
+      "## Set up [#setup]\n```bash\n# An example comment\n```\n### Verify [#verify]\nVerification",
+    );
+    expect(selectMarkdownSection(text, "missing")).toBeUndefined();
   });
 });
 

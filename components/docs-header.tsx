@@ -23,10 +23,12 @@ function NotebookHeader() {
   const SidebarTrigger = slots.sidebar?.trigger;
 
   // The docs shell scrolls #nd-page instead of the window. Next.js resets the
-  // window on navigation, so without this a newly opened page can inherit the
-  // previous article's scroll offset and appear tucked under the header.
+  // window on navigation, so reset the article too. Preserve section links:
+  // resetting unconditionally would undo the browser's initial hash scroll.
   useEffect(() => {
-    document.getElementById("nd-page")?.scrollTo({ top: 0 });
+    if (!window.location.hash) {
+      document.getElementById("nd-page")?.scrollTo({ top: 0 });
+    }
   }, [pathname]);
 
   return (
@@ -42,7 +44,7 @@ function NotebookHeader() {
       )}
     >
       {/* Below `md` the sidebar becomes a drawer. Without this trigger the docs
-          tree and changelog release list are unreachable on a phone. Native
+          tree are unreachable on a phone. Native
           notebook headers render the same slot; ours has to opt in because it
           replaces the whole header. */}
       <WebHeaderBody
@@ -63,10 +65,5 @@ function NotebookHeader() {
 
 /** Notebook header for the unified documentation tree. */
 export function DocsHeader() {
-  return <NotebookHeader />;
-}
-
-/** Standalone top-level Changelog, retaining the native notebook shell. */
-export function ChangelogHeader() {
   return <NotebookHeader />;
 }

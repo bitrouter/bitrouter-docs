@@ -1,9 +1,10 @@
 {
   "title": "Overview",
-  "pagesIndex": "what-is-bitrouter",
+  "pagesIndex": "quickstart",
   "pages": [
-    "quickstart",
+    "what-is-bitrouter",
     "supported-models",
+    "elastic-inference",
     "comparison"
   ]
 }

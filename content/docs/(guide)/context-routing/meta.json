@@ -1,9 +1,10 @@
 {
   "title": "Context",
   "pages": [
+    "acp-servers",
     "mcp-servers",
     "skills",
-    "agents-md",
-    "server-tools"
+    "server-tools",
+    "context-switcher"
   ]
 }

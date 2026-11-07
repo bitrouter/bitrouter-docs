@@ -1,11 +1,17 @@
-import { source } from "@/lib/source";
-import { DocsBody, DocsDescription, DocsPage, DocsTitle } from "fumadocs-ui/page";
+import { getLLMText, source } from "@/lib/source";
+import {
+  DocsBody,
+  DocsDescription,
+  DocsPage,
+  DocsTitle,
+} from "fumadocs-ui/page";
 import { notFound } from "next/navigation";
 import { getMDXComponents } from "@/mdx-components";
 import { createRelativeLink } from "fumadocs-ui/mdx";
 import { DocsMeta, readingMinutes } from "@/components/docs-meta";
-import { Feedback } from "@/components/feedback/client";
-import { onPageFeedbackAction } from "@/lib/github";
+import { DocsChangelog } from "@/components/changelog/docs-timeline";
+import { Feedback, FeedbackText } from "@/components/feedback/client";
+import { onPageFeedbackAction, onBlockFeedbackAction } from "@/lib/github";
 import type { Metadata } from "next";
 import { isCanonicalDoc } from "@/lib/docs-visibility";
 
@@ -23,7 +29,7 @@ export default async function Page({ params }: Props) {
 
   const MDX = page.data.body;
   const slugPath = slug?.join("/") ?? "";
-  const markdownUrl = `/api/docs/llms-mdx/${slugPath}`;
+  const markdownUrl = `/docs/${slugPath}.md`;
   // `page.path` is the real file path relative to content/docs — slugs can't be
   // used here, since folder groups like `(guide)/` are stripped from the URL and
   // pages are a mix of `<name>.md` and `<name>/index.mdx`.
@@ -32,7 +38,7 @@ export default async function Page({ params }: Props) {
   // `postprocess.includeProcessedMarkdown` is on in source.config.ts, so the
   // rendered Markdown is available here without a remark plugin or a new dep.
   // fumadocs has no built-in read-time estimate.
-  const minutes = readingMinutes(await page.data.getText("processed"));
+  const minutes = readingMinutes(await getLLMText(page));
 
   const isFaqPage =
     slug?.length === 2 && slug[0] === "overview" && slug[1] === "faqs";
@@ -71,6 +77,7 @@ export default async function Page({ params }: Props) {
       // fumadocs' own pair at the foot of the article instead.
       breadcrumb={{ includePage: true }}
     >
+      <link rel="alternate" type="text/markdown" href={markdownUrl} />
       {faqJsonLd && (
         <script
           type="application/ld+json"
@@ -78,21 +85,37 @@ export default async function Page({ params }: Props) {
         />
       )}
       <DocsTitle className="zed-doc-title">{page.data.title}</DocsTitle>
-      <DocsDescription className="zed-doc-desc">{page.data.description}</DocsDescription>
+      <DocsDescription className="zed-doc-desc">
+        {page.data.description}
+      </DocsDescription>
       <DocsMeta
         lastModified={page.data.lastModified}
         minutes={minutes}
         githubUrl={githubUrl}
         markdownUrl={markdownUrl}
       />
-      <DocsBody className="zed-docs">
-        <MDX
-          components={getMDXComponents({
-            a: createRelativeLink(source, page),
-          })}
-        />
-      </DocsBody>
-      <Feedback onSendAction={onPageFeedbackAction} />
+      <FeedbackText
+        key={`text-${page.url}`}
+        onSendAction={onBlockFeedbackAction}
+        version={
+          page.data.lastModified
+            ? new Date(page.data.lastModified).toISOString()
+            : "unversioned"
+        }
+      >
+        <DocsBody className="zed-docs">
+          {slugPath === "changelog" ? (
+            <DocsChangelog toc={page.data.toc} />
+          ) : (
+            <MDX
+              components={getMDXComponents({
+                a: createRelativeLink(source, page),
+              })}
+            />
+          )}
+        </DocsBody>
+      </FeedbackText>
+      <Feedback key={`page-${page.url}`} onSendAction={onPageFeedbackAction} />
     </DocsPage>
   );
 }
@@ -109,7 +132,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: page.data.title,
     description: page.data.description,
-    ...(!isCanonicalDoc(page) ? { robots: { index: false, follow: true } } : {}),
+    ...(!isCanonicalDoc(page)
+      ? { robots: { index: false, follow: true } }
+      : {}),
     alternates: {
       canonical: `https://bitrouter.ai${page.url}`,
     },

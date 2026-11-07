@@ -1,0 +1,12 @@
+{
+  "title": "Router",
+  "pages": [
+    "auto-router",
+    "workload-optimization",
+    "state-affinity",
+    "routing-traces",
+    "strategies",
+    "context-routing",
+    "configuration"
+  ]
+}

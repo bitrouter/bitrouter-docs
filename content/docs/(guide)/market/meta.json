@@ -1,0 +1,10 @@
+{
+  "title": "Market",
+  "pages": [
+    "buy-inference",
+    "sell-inference",
+    "verify-inference",
+    "auto-bidding",
+    "service-tiers"
+  ]
+}

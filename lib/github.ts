@@ -1,15 +1,16 @@
-import { App, Octokit } from 'octokit';
+import { getSiteOrigin } from "./site-origin";
+import { App, Octokit } from "octokit";
 import {
   blockFeedback,
   BlockFeedback,
   pageFeedback,
   type ActionResponse,
   type PageFeedback,
-} from '@/components/feedback/schema';
+} from "../components/feedback/schema";
 
-export const repo = 'bitrouter-docs';
-export const owner = 'bitrouter';
-export const DocsCategory = 'Docs Feedback';
+export const repo = "bitrouter-docs";
+export const owner = "bitrouter";
+export const DocsCategory = "Docs Feedback";
 
 let instance: Octokit | undefined;
 
@@ -20,7 +21,7 @@ async function getOctokit(): Promise<Octokit> {
 
   if (!appId || !privateKey) {
     throw new Error(
-      'No GitHub keys provided for Github app, docs feedback feature will not work.',
+      "No GitHub keys provided for Github app, docs feedback feature will not work.",
     );
   }
 
@@ -30,12 +31,12 @@ async function getOctokit(): Promise<Octokit> {
   });
 
   const { data } = await app.octokit.request(
-    'GET /repos/{owner}/{repo}/installation',
+    "GET /repos/{owner}/{repo}/installation",
     {
       owner,
       repo,
       headers: {
-        'X-GitHub-Api-Version': '2022-11-28',
+        "X-GitHub-Api-Version": "2022-11-28",
       },
     },
   );
@@ -80,22 +81,24 @@ async function getFeedbackDestination() {
 export async function onPageFeedbackAction(
   feedback: PageFeedback,
 ): Promise<ActionResponse> {
-  'use server';
+  "use server";
   feedback = pageFeedback.parse(feedback);
   return createDiscussionThread(
     feedback.url,
-    `[${feedback.opinion}] ${feedback.message}\n\n> Forwarded from user feedback.`,
+    `[${feedback.opinion}] ${feedback.message}\n\n> [Forwarded from user feedback](${new URL(feedback.url, getSiteOrigin()).href}).`,
   );
 }
 
 export async function onBlockFeedbackAction(
   feedback: BlockFeedback,
 ): Promise<ActionResponse> {
-  'use server';
+  "use server";
   feedback = blockFeedback.parse(feedback);
+  const url = new URL(feedback.url, getSiteOrigin());
+  url.hash = feedback.blockId;
   return createDiscussionThread(
     feedback.url,
-    `> ${feedback.blockBody ?? feedback.blockId}\n\n${feedback.message}\n\n> Forwarded from user feedback.`,
+    `> ${feedback.blockBody.split("\n").join("\n> ")}\n\n${feedback.message}\n\nReported page revision: ${feedback.version ?? "unknown"}\n\n> [Forwarded from user feedback](${url.href}).`,
   );
 }
 
@@ -112,22 +115,16 @@ async function createDiscussionThread(pageId: string, body: string) {
     );
 
   const title = `Feedback for ${pageId}`;
-  const {
-    search: {
-      nodes: [discussion],
-    },
-  }: {
-    search: {
-      nodes: { id: string; url: string }[];
-    };
-  } = await octokit.graphql(`
-          query {
-            search(type: DISCUSSION, query: ${JSON.stringify(`${title} in:title repo:${owner}/${repo} author:@me`)}, first: 1) {
-              nodes {
-                ... on Discussion { id, url }
-              }
-            }
-          }`);
+  const result = await octokit.graphql<{
+    search: { nodes: ({ id: string; title: string; url: string } | null)[] };
+  }>(`
+    query {
+      search(type: DISCUSSION, query: ${JSON.stringify(`"${title}" in:title repo:${owner}/${repo} author:@me`)}, first: 10) {
+        nodes { ... on Discussion { id, title, url } }
+      }
+    }
+  `);
+  const discussion = result.search.nodes.find((item) => item?.title === title);
 
   if (discussion) {
     const result: {

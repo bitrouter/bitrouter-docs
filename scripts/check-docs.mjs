@@ -25,58 +25,88 @@ import { COMPONENT_WHITELIST } from "../lib/docs-sync/constants.mjs";
 // under the `(guide)` folder group, which fumadocs strips from the URL.
 const SECTIONS = [
   "(guide)/overview",
-  "(guide)/config",
+  "(guide)/integration",
+  "(guide)/routing",
   "(guide)/models-routing",
+  "(guide)/market",
   "(guide)/context-routing",
   "(guide)/cli",
-  "(guide)/integration",
-  "(guide)/api",
+  "(guide)/usage",
   "self-hosting",
 ];
-// Reference endpoint pages are generated, but its overview is hand-authored
-// and must obey the same import-free contract.
-const STANDALONE_DOCS = ["reference/index.mdx"];
+// Root reference guides and the generated changelog obey the import-free contract.
+const STANDALONE_DOCS = [
+  "privacy-policy.mdx",
+  "terms-of-service.mdx",
+  "troubleshooting.mdx",
+  "reference/index.mdx",
+  "reference/decisions.mdx",
+  "reference/chat-completions-messages.mdx",
+  "changelog.mdx",
+];
 const ROOT = "content/docs";
-// Generated output, exempt from the hand-authoring contract: it is emitted by
-// scripts/generate-cli.mjs from the binary's own `--help`.
-const GENERATED = new Set(["(guide)/cli/reference.mdx"]);
+// Full guide outputs are generated; lint their authored guide inputs below.
+// Captured command help and schema field tables remain generator-owned.
+const GENERATED = new Set(["(guide)/usage/cli.mdx", "(guide)/routing/configuration.mdx"]);
+const AUTHORED_GUIDES = ["cli-overlays/guide.md", "config-reference/guide.md"];
 const isGenerated = (path) => GENERATED.has(path) || path.startsWith("(guide)/cli/reference/");
 // Intentional exceptions to the otherwise complete public sidebar. Keep this
 // list short and document each product-navigation decision.
 const HIDDEN_SIDEBAR_ROUTES = new Set([
+  // Router main navigation is limited to the four product guides.
+  // Strategies links to these supporting context and configuration guides.
+  "/docs/routing/context-routing",
+  "/docs/routing/configuration",
+  // Retain the Cloud placeholder URL after removing its Usage navigation entry.
+  "/docs/usage/cloud",
+  // Deployment guide remains accessible through content links, outside Overview.
+  "/docs/self-hosting",
   "/docs/cli/agent",
-  "/docs/models-routing/local-inference",
-  "/docs/cli/reference",
-  // Retained for existing links after replacing the generic Integration entry.
+  // Supporting guides remain linked from content, without CLI sidebar entries.
+  "/docs/cli/request-receipts",
+  // Temporarily hidden Coding Agents guides remain directly accessible.
+  "/docs/integration/claude-code",
+  "/docs/integration/codex",
+  // Shared native-launch guide remains reachable without a sidebar entry.
+  "/docs/integration/bro-harness",
+  // Retained for existing links after replacing the generic Coding Agents entry.
   "/docs/integration/coding-agents",
 ]);
 const NAV_FILES = [
   "(overview-nav)/meta.json",
-  "(config-nav)/meta.json",
-  "(models-routing-nav)/meta.json",
-  "(context-routing-nav)/meta.json",
-  "(cli-nav)/meta.json",
-  "(cli-reference-nav)/meta.json",
+  "(comparison-nav)/meta.json",
   "(integration-nav)/meta.json",
-  "(api-nav)/meta.json",
+  "(routing-nav)/meta.json",
+  "(models-routing-nav)/meta.json",
+  "(market-nav)/meta.json",
+  "(context-routing-nav)/meta.json",
+  "(usage-nav)/meta.json",
+  "(reference-nav)/meta.json",
 ];
+// Explicit product-navigation exception. Traverse it from its parent so an
+// orphaned folder cannot pass sidebar coverage, and duplicate entries still fail.
+const NESTED_NAV_FOLDERS = new Map([
+  ["(market-nav)/meta.json:service-tiers", "(market-nav)/service-tiers/meta.json"],
+]);
 const ROOT_NAV_PAGES = [
   "---Overview---",
   "...(overview-nav)",
-  "---Config---",
-  "...(config-nav)",
+  "(comparison-nav)",
+  "---Usage---",
+  "...(usage-nav)",
+  "---Coding Agents---",
+  "...(integration-nav)",
+  "---Market---",
+  "...(market-nav)",
+  "---Router---",
+  "...(routing-nav)",
   "---Model---",
   "...(models-routing-nav)",
   "---Context---",
   "...(context-routing-nav)",
-  "---CLI---",
-  "...(cli-nav)",
-  "(cli-reference-nav)",
-  "---Integration---",
-  "...(integration-nav)",
-  "---API---",
-  "...(api-nav)",
-  "reference",
+  "---Reference---",
+  "...(reference-nav)",
+  "reference"
 ];
 
 async function walk(dir) {
@@ -140,13 +170,13 @@ async function main() {
   const files = [];
   for (const s of SECTIONS) files.push(...(await walk(join(ROOT, s))));
   files.push(...STANDALONE_DOCS.map((path) => join(ROOT, path)));
-  const docs = files.filter(isDoc).filter((p) => !isGenerated(relative(ROOT, p)));
+  const docs = [...files.filter(isDoc).filter((p) => !isGenerated(relative(ROOT, p))), ...AUTHORED_GUIDES];
   const errors = [];
 
   const rootMeta = JSON.parse(await readFile(join(ROOT, "meta.json"), "utf8"));
   if (JSON.stringify(rootMeta.pages) !== JSON.stringify(ROOT_NAV_PAGES)) {
     errors.push(
-      "meta.json  top-level navigation must use the seven section separators and extracted folders",
+      "meta.json  top-level navigation must use the eight section separators and extracted folders",
     );
   }
 
@@ -165,10 +195,15 @@ async function main() {
     }
   }
 
-  for (const navFile of NAV_FILES) {
+  async function checkNavFile(navFile) {
     const meta = JSON.parse(await readFile(join(ROOT, navFile), "utf8"));
     const entries = [meta.pagesIndex, ...(meta.pages ?? [])].filter((entry) => entry !== undefined);
     for (const entry of entries) {
+      const nested = NESTED_NAV_FOLDERS.get(`${navFile}:${entry}`);
+      if (nested) {
+        await checkNavFile(nested);
+        continue;
+      }
       const route = navRoute(entry);
       if (!route) {
         errors.push(`${navFile}  every sidebar entry must be a direct /docs link: ${entry}`);
@@ -180,11 +215,19 @@ async function main() {
       }
     }
   }
+  for (const navFile of NAV_FILES) await checkNavFile(navFile);
 
-  for (const navFile of ["(cli-reference-nav)/meta.json", "reference/meta.json"]) {
+  for (const navFile of [
+    "(comparison-nav)/meta.json",
+    "(market-nav)/service-tiers/meta.json",
+    "reference/meta.json",
+  ]) {
     const meta = JSON.parse(await readFile(join(ROOT, navFile), "utf8"));
     if (meta.collapsible !== true || meta.defaultOpen !== false) {
-      errors.push(`${navFile}  Reference must be collapsible and closed by default`);
+      errors.push(`${navFile}  navigation folder must be collapsible and closed by default`);
+    }
+    if (navFile === "(comparison-nav)/meta.json" && meta.pagesIndex !== undefined) {
+      errors.push(`${navFile}  Comparison is a folder-only entry without an index page`);
     }
   }
 
@@ -195,7 +238,7 @@ async function main() {
   }
 
   for (const abs of docs) {
-    const rel = relative(ROOT, abs);
+    const rel = abs.startsWith(`${ROOT}/`) ? relative(ROOT, abs) : abs;
     const raw = await readFile(abs, "utf8");
     const { body } = splitFrontmatter(raw);
     const offset = bodyOffset(raw, body);

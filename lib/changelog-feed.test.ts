@@ -21,13 +21,15 @@ describe("buildChangelogFeed", () => {
     expect(feed.items.map((i) => i.title)).toEqual(["B", "A"]);
   });
 
-  it("uses absolute links", () => {
-    expect(feed.items[0].link).toBe("https://bitrouter.ai/changelog/b");
+  it("links to the single-page release anchor while preserving subscriber IDs", () => {
+    expect(feed.items[0].link).toBe("https://bitrouter.ai/docs/changelog#b");
+    expect(feed.items[0].id).toBe("https://bitrouter.ai/changelog/b");
   });
 
   it("emits rss2 and atom1 XML containing the entries", () => {
     const rss = feed.rss2();
     expect(rss).toContain("<rss");
+    expect(rss).toContain("https://bitrouter.ai/docs/changelog#b");
     expect(rss).toContain("https://bitrouter.ai/changelog/b");
     expect(feed.atom1()).toContain("<feed");
   });

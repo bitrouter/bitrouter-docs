@@ -22,7 +22,7 @@ async function main() {
   if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, `sha=${release.sha}\n`);
   if (process.env.GITHUB_STEP_SUMMARY) {
     appendFileSync(process.env.GITHUB_STEP_SUMMARY,
-      `Approved source commit \`${release.sha}\`. [Successful staging CI](${release.runUrl}).\n`);
+      `Staged source commit \`${release.sha}\`. [Successful staging CI](${release.runUrl}).\n`);
   }
 }
 

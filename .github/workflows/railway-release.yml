@@ -6,6 +6,9 @@ on:
       promote:
         type: boolean
         required: true
+    secrets:
+      RAILWAY_DEPLOY_TOKEN:
+        required: true
 
 jobs:
   staging:

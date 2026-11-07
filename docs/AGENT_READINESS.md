@@ -172,7 +172,7 @@ The existing focused AFDocs regression can verify discovery and links separately
 from the unrelated content-size/API-parity backlog:
 
 ```sh
-npx --yes afdocs@0.23.0 check https://bitrouter-docs-staging.up.railway.app --canonical-origin https://bitrouter.ai --checks llms-txt-exists,llms-txt-links-resolve,llms-txt-coverage --coverage-exclusions '/models/**,/,/enterprise,/pricing,/blog,/subprocessors' --max-links 200 --sampling none --format json
+npx --yes afdocs@0.23.0 check https://bitrouter-docs-staging.up.railway.app --canonical-origin https://bitrouter.ai --checks llms-txt-exists,llms-txt-links-resolve,llms-txt-coverage --coverage-exclusions '/models/**,/,/enterprise,/pricing,/blog,/blog/**,/subprocessors' --max-links 200 --sampling none --format json
 ```
 
 This is an explicit docs-only denominator. Review exclusions when site structure
@@ -207,7 +207,8 @@ checks until a new change, failure, or unresolved concern warrants rerunning the
 Current limitations to consider when touching the relevant implementation:
 generated API Markdown does not yet expose every nested request/response schema
 field; the full CLI and configuration references can exceed an agent's fetch
-budget. The docs MCP supports section reads, but full-page reads can truncate.
+budget. The compatibility `get_doc` tool supports section reads and caps full-page reads;
+native `get_page` returns the complete page and can exceed an agent fetch budget.
 Validate the affected content and report remaining gaps; unrelated maintenance
 does not require implementing the entire backlog. Update this list when the
 underlying capabilities change.

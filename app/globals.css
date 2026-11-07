@@ -540,3 +540,15 @@ body:has(#nd-subnav) #nd-page {
 [data-toc-popover] > header.bg-fd-background\/80 {
   background-color: var(--background) !important;
 }
+
+/* Progressive enhancement for selected-text feedback. */
+::highlight(fd-feedback-text) {
+  background-color: var(--color-fd-primary);
+  color: var(--color-fd-primary-foreground);
+}
+
+/* Timeline titles follow their dates, rather than the prose section spacing. */
+.zed-docs .changelog-timeline [data-release-title] {
+  margin: 8px 0 16px !important;
+  padding-top: 0;
+}

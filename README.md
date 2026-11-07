@@ -16,6 +16,39 @@ pnpm dev
 pnpm build   # prebuild regenerates the API reference from openapi.yaml + the models snapshot
 ```
 
+## Release on Railway
+
+After CI passes on `main`, the release workflow deploys that commit to Railway
+staging and checks the homepage, quickstart, API reference, pricing, and
+changelog. When production releases are enabled, the same run waits for a
+GitHub environment reviewer before deploying the same commit to production.
+Review the staging URL and commit in the Actions run before approving. Release
+runs are serialized, and an older run fails if `main` has moved before it deploys.
+
+### Configure the release workflow
+
+1. Create `staging` in the existing Railway project and connect its service to
+   this repository. Assign it a separate HTTPS domain and set
+   `NEXT_PUBLIC_WEB_URL` to that origin. Use staging credentials for any enabled
+   integrations. The app sends `X-Robots-Tag: noindex` in this environment.
+2. Configure both services with the Railpack build, start command, and health
+   check in `railway.toml`. New services use Railway service settings for these
+   values. Railway ends legacy `railway.toml` support on December 1, 2026.
+3. In GitHub Settings → Environments, create `staging` and `production` with
+   deployments restricted to `main`. Set **Required reviewers** on `production`.
+   In each environment set the `RAILWAY_DEPLOY_TOKEN` secret to a Railway Project
+   Token for that environment. Add `RAILWAY_DEPLOY_ENVIRONMENT_ID`,
+   `RAILWAY_DEPLOY_SERVICE_ID`, and `RAILWAY_SITE_URL` as environment variables.
+   The production URL is `https://bitrouter.ai`.
+4. Disable Railway GitHub autodeploy for staging and set the GitHub repository
+   variable `RAILWAY_STAGING_ENABLED` to `true`. Verify a release reaches staging
+   and passes its smoke checks. Then disable Railway GitHub autodeploy for
+   production and set `RAILWAY_PRODUCTION_ENABLED` to `true` for future runs.
+
+If a deployment times out, check its ID in Railway before retrying. If a
+production smoke check fails after Railway has switched traffic, use **Rollback**
+on the previous successful production deployment in Railway.
+
 ## OpenAPI spec
 
 `openapi.yaml` is the committed copy of the BitRouter API spec. It is the source

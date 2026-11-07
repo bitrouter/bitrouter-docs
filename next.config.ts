@@ -373,6 +373,11 @@ const docsRedirects = pairs.map(([source, destination]) => ({
 const nextConfig: NextConfig = {
   skipTrailingSlashRedirect: true,
   transpilePackages: ["@wterm/core", "@wterm/dom", "@wterm/react"],
+  async headers() {
+    if (process.env.RAILWAY_ENVIRONMENT_NAME !== "staging") return [];
+
+    return [{ source: "/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex" }] }];
+  },
   async rewrites() {
     return [
       {

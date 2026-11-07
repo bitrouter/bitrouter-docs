@@ -28,6 +28,11 @@ References:
 - Agent Skill (install/configure BitRouter from inside an agent): https://github.com/bitrouter/bitrouter/tree/main/skills/bitrouter
 - BitRouter CLI (proxy, onboarding, and TUI conversation): https://github.com/bitrouter/bitrouter
 
+## Documentation tools and publications
+
+- [Docs MCP server](${BASE_URL}/mcp): Public read-only Streamable HTTP endpoint; native Fumadocs tools list_pages, get_page, and search; compatibility search_docs/get_doc and model lookup remain available
+- [Blog Markdown index](${BASE_URL}/blog/llms.txt): Published articles, separate from the documentation index
+
 ## Overview
 
 - [Model markets](${BASE_URL}/models): Elastic Inference design preview with four assumed listings, illustrative bid/ask history, token volume, settled trading volume, available liquidity, weighted slippage, and platform fees; all data is demo, not live

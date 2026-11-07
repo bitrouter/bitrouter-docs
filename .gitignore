@@ -15,3 +15,6 @@ next-env.d.ts
 # owns them here; content/docs/reference/ operation pages are regenerated at build
 # by scripts/generate-openapi.mjs.
 .claude/launch.json
+
+# Local browser verification artifacts
+output/playwright/

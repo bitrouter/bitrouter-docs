@@ -1,150 +1,82 @@
 import "@/components/landing/zed/zed.css";
 import { blogSource } from "@/lib/source";
+import { blogAuthors, findPost, getPosts } from "@/lib/blog";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { getMDXComponents } from "@/mdx-components";
-import { AUTHORS, blogDate, blogSortKey } from "@/components/landing/zed/blog-meta";
-import type { BlogPage } from "@/lib/source";
+import {
+  BlogAuthors,
+  BlogBackLink,
+  BlogBody,
+  BlogDate,
+  BlogDescription,
+  BlogHeader,
+  BlogPage,
+  BlogPostNav,
+  BlogTags,
+  BlogTitle,
+} from "@/components/blog";
+import { CopyPageButton, ViewOptions } from "@/components/page-actions";
 import type { Metadata } from "next";
 
 type Props = { params: Promise<{ slug: string }> };
-
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-
   const page = blogSource.getPage([slug]);
-  if (!page) notFound();
-
+  const found =
+    page && findPost(getPosts(blogSource.getPages(), blogAuthors), page.url);
+  if (!page || !found) notFound();
+  const { post, newer, older } = found;
   const MDX = page.data.body;
-  const author = AUTHORS[(page.data as { author?: string }).author ?? ""];
-  const date = blogDate(page as BlogPage);
-
-  // Previous / next by date (newest first list).
-  const sorted = [...blogSource.getPages()].sort(
-    (a, b) => blogSortKey(b as BlogPage) - blogSortKey(a as BlogPage),
-  );
-  const idx = sorted.findIndex((p) => p.url === page.url);
-  const newer = idx > 0 ? sorted[idx - 1] : null;
-  const older = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : null;
-
   return (
     <main className="zed-bg" id="main">
-      <section style={{ position: "relative" }}>
-        <div className="zed-wrap" style={{ maxWidth: 760 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "48px 0 0", fontFamily: "var(--font-sans)", fontSize: 11, letterSpacing: "0", textTransform: "none", color: "var(--z-ink-6)" }}>
-            <Link href="/blog" style={{ color: "var(--z-ink-6)" }}>
-              Blog
-            </Link>
-            <span style={{ color: "var(--z-rule-2)" }}>/</span>
-            <span style={{ color: "var(--z-ink-3)" }}>Post</span>
+      <link rel="alternate" type="text/markdown" href={`${page.url}.md`} />
+      <BlogPage toc={page.data.toc}>
+        <BlogHeader className="border-0 bg-transparent shadow-none px-0">
+          <BlogBackLink href="/blog" />
+          <BlogTitle className="zed-display text-4xl">{post.title}</BlogTitle>
+          <BlogDescription>{post.description}</BlogDescription>
+          <BlogAuthors authors={post.authors} />
+          <BlogTags tags={post.tags} />
+          {post.date && <BlogDate date={post.date} />}
+          <div className="flex gap-4">
+            <CopyPageButton markdownUrl={`${page.url}.md`} />
+            <ViewOptions
+              markdownUrl={`${page.url}.md`}
+              githubUrl={`https://github.com/bitrouter/bitrouter-docs/blob/main/content/blog/${page.path}`}
+            />
           </div>
-
-          <h1
-            className="zed-display"
-            style={{ fontSize: "clamp(32px, 5vw, 44px)", lineHeight: 1.06, margin: "26px 0 0" }}
-          >
-            {page.data.title}
-          </h1>
-          {page.data.description && (
-            <p style={{ fontFamily: "var(--font-sans)", fontSize: 14.5, lineHeight: 1.75, color: "var(--z-ink-5)", margin: "20px 0 0", maxWidth: "68ch", textWrap: "pretty" }}>
-              {page.data.description}
-            </p>
-          )}
-
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-              margin: "28px 0 0",
-              paddingTop: 20,
-
-              fontFamily: "var(--font-sans)",
-              fontSize: 11,
-              letterSpacing: "0.1em",
-              textTransform: "none",
-              color: "var(--z-ink-6)",
-            }}
-          >
-            {author && (
-              <>
-                <span
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: 26,
-                    height: 26,
-                    borderRadius: "50%",
-                    background: "var(--z-wash)",
-                    color: "var(--z-ink-2)",
-                    fontSize: 10,
-                    letterSpacing: 0,
-                  }}
-                >
-                  {author.initials}
-                </span>
-                <span style={{ color: "var(--z-ink-2)" }}>{author.name}</span>
-                <span>·</span>
-              </>
-            )}
-            {date && <time>{date}</time>}
-          </div>
-
-          <div className="zed-article" style={{ marginTop: 32 }}>
-            <MDX components={getMDXComponents({})} />
-          </div>
-
-          {(newer || older) && (
-            <div
-              className="zed-grid-2"
-              style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1, background: "var(--z-rule)",  margin: "80px 0 var(--z-sec)" }}
-            >
-              {older ? (
-                <Link href={older.url} style={navCard()}>
-                  <div style={navKick()}>← Previous</div>
-                  <div style={navTitle()}>{older.data.title}</div>
-                </Link>
-              ) : (
-                <span />
-              )}
-              {newer ? (
-                <Link href={newer.url} style={{ ...navCard(), textAlign: "right" }}>
-                  <div style={navKick()}>Next →</div>
-                  <div style={navTitle()}>{newer.data.title}</div>
-                </Link>
-              ) : (
-                <span />
-              )}
-            </div>
-          )}
-        </div>
-      </section>
+        </BlogHeader>
+        <BlogBody className="[&>:first-child]:mt-0">
+          <MDX components={getMDXComponents({})} />
+        </BlogBody>
+        <BlogPostNav newer={newer} older={older} />
+      </BlogPage>
     </main>
   );
 }
-
-function navCard(): React.CSSProperties {
-  return { background: "var(--z-bg)", padding: "24px 0", display: "block" };
-}
-function navKick(): React.CSSProperties {
-  return { fontFamily: "var(--font-sans)", fontSize: 10.5, letterSpacing: "0.16em", textTransform: "none", color: "var(--z-ink-6)" };
-}
-function navTitle(): React.CSSProperties {
-  return { fontFamily: "var(--font-sans)", fontSize: 14, color: "var(--z-ink-2)", marginTop: 10 };
-}
-
 export function generateStaticParams() {
   return blogSource.generateParams().map((p) => ({ slug: p.slug[0] }));
 }
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const page = blogSource.getPage([slug]);
   if (!page) notFound();
+  const post = getPosts([page], blogAuthors)[0];
   return {
-    title: page.data.title,
-    description: page.data.description,
-    alternates: { canonical: `https://bitrouter.ai${page.url}` },
+    title: post.title,
+    description: post.description,
+    alternates: {
+      canonical: `https://bitrouter.ai${post.url}`,
+      types: { "text/markdown": `${post.url}.md` },
+    },
+    openGraph: {
+      type: "article",
+      title: post.title,
+      description: post.description,
+      publishedTime: post.date?.toISOString(),
+      authors: post.authors.map((a) => a.name),
+      tags: post.tags.map((t) => t.name),
+      ...(post.image ? { images: [post.image] } : {}),
+    },
   };
 }

@@ -467,3 +467,40 @@ Four parts of the docs are generated at build time:
   the snapshot, review matching prose, and regenerate. Never edit snapshots or
   generated output by hand. `pnpm lint:config` checks for drift. Workflow and schema
   reference are one Router page; the former standalone reference URL redirects there.
+
+## Blog, changelog and feedback integrations
+
+Blog posts live in `content/blog/*.mdx`. Use an ISO `date`, `tags`, `authors`
+(keys registered in `lib/blog.ts`), and optionally a local cover `image`. Unknown
+registered-author keys display as names. Keep the singular `author: kelsen` or
+`author: archer` as the primary publication account for the existing blog-to-X
+workflow; `authors` controls the displayed byline. Legacy posts without `authors`
+fall back to `author`, and missing publish dates fall back to the Git date.
+Use local images by default; allow specific remote hosts in `next.config.ts`
+before using remote covers or avatars. The post filename is its URL slug; avoid
+the reserved `tags` and `llms.txt` names. Tags have their own index and pages.
+Each post exposes `.md` and content negotiation; `/blog/llms.txt` is a separate
+blog index and does not change the canonical documentation denominator.
+
+Changelog remains one page at `/docs/changelog`. Its Fumadocs timeline uses the
+curated `content/changelog/` collection and the generated aggregate page's TOC
+for heading IDs. Keep generation and editorial significance checks: do not replace
+these files with live, unreviewed GitHub release bodies. RSS/Atom GUIDs and old
+release redirects remain stable. Verify historical anchors after timeline changes.
+
+Page and selected-text feedback use the Fumadocs components and `remarkBlockId`.
+Heading anchors are unchanged. Block IDs depend on content and order; feedback
+includes the selected quote and reported page revision, rather than treating a
+block ID as a permanent identifier. GitHub App settings and the `Docs Feedback`
+discussion category are required for delivery. Test delivery with a mocked GitHub
+adapter; do not publish test feedback to the repository.
+
+The public documentation MCP endpoint stays at `/mcp`. Native Fumadocs tools
+`list_pages`, `get_page`, and `search` use the canonical source and shared Markdown
+renderer; compatibility tools `search_docs`, `get_doc`, and `lookup_model` remain.
+The `bitrouter-docs://llms-index` resource and `list_pages` must match `/llms.txt`.
+WebMCP follows the Fumadocs CLI feature and registers `search_docs`, `read_page`,
+and `open_page` only when `document.modelContext` exists. Registration is scoped
+to the component lifecycle. Reads/navigation stay under `/docs` on the current
+deployment, including when an agent supplies a production URL while on staging.
+Browser support is experimental; HTTP Markdown and MCP remain independently usable.

@@ -37,3 +37,16 @@ jobs:
           # Authenticates the docs/changelog sync fetches against GitHub
           # (5000/hr) so they don't hit unauthenticated / raw.* rate limits.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  release:
+    name: Release docs to Railway
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.RAILWAY_STAGING_ENABLED == 'true'
+    concurrency:
+      group: railway-docs-release
+      cancel-in-progress: false
+    permissions:
+      contents: read
+    uses: ./.github/workflows/railway-release.yml
+    with:
+      promote: ${{ vars.RAILWAY_PRODUCTION_ENABLED == 'true' }}

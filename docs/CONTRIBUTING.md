@@ -351,6 +351,9 @@ The report at `.next/agent-discovery-report.json` separates exhaustive docs
 coverage from model detail pages and other site pages; model pages do not count
 toward the documentation denominator.
 
+See [Maintaining agent readiness](AGENT_READINESS.md) for change-based verification,
+the live HTTP/MCP command, external scans, and the required evidence handoff.
+
 ## Pricing language
 
 Use three commercial options consistently: OSS Self-hosted (no BitRouter fee),

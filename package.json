@@ -16,6 +16,7 @@
     "sync:changelog": "node scripts/sync-changelog.mjs",
     "lint:docs": "node scripts/check-docs.mjs --verbose",
     "lint:agent-index": "node scripts/check-agent-discovery.mjs",
+    "check:agent-http": "node scripts/check-agent-http.mjs",
     "generate:cli": "node scripts/generate-cli.mjs",
     "snapshot:cli": "node scripts/snapshot-cli.mjs",
     "generate:tables": "node scripts/generate-supported-tables.mjs",

@@ -2,6 +2,30 @@
 
 Next.js 16 (App Router) + fumadocs site for [bitrouter.ai](https://bitrouter.ai) — landing, models catalog, recipes, blog, changelog, and the documentation under `content/docs/`.
 
+## Website maintenance workflow
+
+Use [AgentReady](https://www.agentready.org/)'s Find → Read → Act sequence and the project procedure in [docs/AGENT_READINESS.md](docs/AGENT_READINESS.md). AgentReady's optional features that this site already ships, including Markdown mirrors, are maintained project contracts. Preserve the product and authoring rules below.
+
+1. **Identify the source and impact before editing.** Find the owning authored file, schema, overlay, or shared data module. List affected HTML, Markdown, discovery, and task surfaces. Modify sources and regenerate their outputs.
+2. **Keep public content discoverable.** Sidebar visibility does not determine canonical discovery. `getCanonicalDocs()` and `lib/docs-visibility.ts` govern the complete index, sitemap, and full-text export. Add useful curated task links when needed; preserve old URLs with the existing redirect rules. Keep model data and whole-site coverage separate from canonical docs coverage.
+3. **Preserve readable, truthful content.** Key setup, authentication, pricing, constraints, and examples belong in initial HTML and the applicable Markdown representation, with JSON-LD as supplementary metadata. Keep shared facts consistent. Label previews and verify commands/API contracts rather than inventing SDKs, endpoints, scopes, or availability.
+4. **Verify according to the change table.** Fix failures introduced by this change. Existing unrelated limitations belong in the report and maintenance handoff; they do not expand every task into a full-site migration. CI runs the full test suite and build. `pnpm build` already includes the exhaustive built-index check; use `pnpm lint:agent-index` only to repeat it against existing build output.
+5. **Report evidence and deployment scope.** State changes, checks actually run, target environment/version, and remaining limitations. Distinguish build checks, live HTTP checks, retrieval journeys, mock execution, and real product execution. Record scanner scope, version, timestamp, and exclusions; `partial` remains partial. Follow existing deployment authorization and release gates; verify the deployed commit when releasing.
+
+| Change | Required verification for the affected behavior |
+| --- | --- |
+| Ordinary docs wording | `pnpm lint:docs`; check affected facts, links, and fenced examples |
+| Add, move, or retire a public doc | Build/index gate; canonical policy, discovery links, and redirects; HTTP verification when serving routes change |
+| API, CLI, or configuration reference | Regenerate from the owning source; relevant tests; compare changed parameters, permissions, examples, and responses in HTML/Markdown |
+| Landing, Pricing, or interactive UI | Browser checks plus initial-HTML facts; keep applicable Markdown and shared metadata consistent |
+| Routes, cache, Fumadocs, or Markdown rendering | Relevant tests/build; `pnpm check:agent-http` against a production-mode server, including representation order, 404, and cache checks |
+| MCP, search, or discovery metadata | Build/index gate and HTTP/MCP check; use `--exhaustive` when canonical inventory or model-catalog links change |
+| Authorized release | Verify target commit/environment; run affected live checks on staging; honor the existing production environment gate |
+
+Keep staging document navigation on staging and preserve staging `noindex`. Actual Cloud API calls still use the documented API host. Preserve content types and real HTTP status codes, Markdown recovery links, and isolation between HTML/Markdown cache entries. The current `private, no-store` fallback is intentional where Next overwrites HTML `Vary`; changing it requires validating both request orders.
+
+Use external scanners and real-agent tasks for changes to discovery, authentication, protocols, major workflows, or important releases. A wording-only change does not require all external scanners. Consult current tool documentation when using them; scanners are evidence, not a substitute for the specification or task success. Do not add empty protocols, fake facts, or transaction endpoints to improve a score. Keep changing page counts and scores in acceptance reports, not these instructions.
+
 ## Documentation rules
 
 - **English only.** The site no longer ships localized docs — do not create `<name>.zh.md` translation files or reintroduce i18n plumbing. Old `/zh/*` URLs 301 to the English pages via `next.config.ts` redirects.
@@ -54,6 +78,8 @@ Next.js 16 (App Router) + fumadocs site for [bitrouter.ai](https://bitrouter.ai)
 - `pnpm dev` / `pnpm build` / `pnpm start`
 - `pnpm test` — vitest unit tests (`lib/**/*.test.*`)
 - `pnpm lint:docs` — docs authoring-contract check (also runs at `prebuild`)
+- `pnpm lint:agent-index` — recheck existing build output; `pnpm build` already runs it at `postbuild`
+- `pnpm check:agent-http <origin> --environment <local|staging|production>` — live HTTP/MCP checks; see `docs/AGENT_READINESS.md` for local origin mapping, exhaustive checks, and reports
 - `pnpm generate:openapi` / `pnpm generate:cli` — regenerate the reference sections (both run at `prebuild`)
 - `pnpm generate:config` / `pnpm lint:config` — generate/check the configuration reference and downloadable schema from the pinned snapshot
 - `pnpm snapshot:config --repo <checkout> --ref <commit-or-tag>` — capture a committed upstream schema with provenance and checksum

@@ -30,7 +30,7 @@ References:
 
 ## Documentation tools and publications
 
-- [Docs MCP server](${BASE_URL}/mcp): Public read-only Streamable HTTP endpoint; native Fumadocs tools list_pages, get_page, and search; compatibility search_docs/get_doc and model lookup remain available
+- [Docs MCP server card](${BASE_URL}/.well-known/mcp/server-card.json): Public read-only Streamable HTTP endpoint at /mcp; native Fumadocs tools list_pages, get_page, and search; compatibility search_docs/get_doc and model lookup remain available
 - [Blog Markdown index](${BASE_URL}/blog/llms.txt): Published articles, separate from the documentation index
 
 ## Overview

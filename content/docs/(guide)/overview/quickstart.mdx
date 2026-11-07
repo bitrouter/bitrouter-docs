@@ -8,6 +8,8 @@ This page gets BitRouter routing for your agent in under a minute. There are two
 - **BitRouter Cloud (default).** Hosted endpoint at `api.bitrouter.ai`. Cloud Auto Routing with your own provider keys and Elastic Inference share $0.01 per million processed input + output tokens at early access pricing. Each request is counted once. Provider or supplier inference charges are separate.
 - **Local proxy.** A single binary on your machine, BYOK with your own provider keys. Basic routing requires no external service.
 
+For a hosted API integration, start with [Cloud authentication and your first request](#authenticate-and-send-your-first-request).
+
 Both modes use the **same open-source routing core** (Apache 2.0). The deployment boundary changes, but the client protocol does not, so you can switch modes without rewriting your harness.
 
 ## Self-host or Cloud?
@@ -74,6 +76,47 @@ cargo install bitrouter
 </Tab>
 </Tabs>
 
+## Use BitRouter Cloud
+
+### Authenticate and send your first request
+
+1. Sign in to your account at the [BitRouter Cloud console](https://cloud.bitrouter.ai/sign-in).
+2. After [installing the CLI](#install-the-binary), sign in from the terminal and mint a key with the `inference:invoke` scope:
+
+```bash
+bro cloud login
+bro cloud keys mint --name my-integration --scope inference:invoke
+```
+
+`bro cloud login` uses a browser device sign-in flow. Follow the displayed URL and code to complete it.
+The mint command prints the new key once. Replace the placeholder below with that key:
+
+```bash
+export BITROUTER_API_KEY='paste-your-cloud-key-here'
+```
+
+3. Send a Responses API request directly to the hosted Cloud endpoint:
+
+```bash
+curl https://api.bitrouter.ai/v1/responses \
+  -H "Authorization: Bearer $BITROUTER_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"anthropic/claude-haiku-4.5","input":"Hello!"}'
+```
+
+The Cloud API host is `https://api.bitrouter.ai`; the SDK base URL is `https://api.bitrouter.ai/v1`.
+Use a [Cloud catalog model ID](/docs/overview/supported-models) that your account can access, or an enabled workspace routing preset.
+The local `bitrouter/auto` selector requires a self-hosted policy binding.
+See [Cloud authentication](/docs/reference#get-a-cloud-credential), the [Python client example](/docs/reference#python-client), and the [Responses API contract](/docs/reference/openai-responses/createResponse).
+
+### Use Cloud through a local proxy
+
+After `bro cloud login`, run `bro start`. The `bitrouter` provider auto-enables once signed in, so Cloud-managed models can be routed alongside your BYOK keys through `http://127.0.0.1:4356/v1`.
+The direct Cloud request above does not require a local proxy.
+
+Cloud BYOK uses your provider keys, with inference billed by the provider. Elastic Inference bills supplier inference charges through BitRouter.
+Both share a Cloud platform fee of $0.01 per million processed input + output tokens at early access pricing, counted once per request. See [pricing](/pricing).
+
 ## Onboard via the Agent Skill
 
 For agent runtimes that support skills (Claude Code, Cursor, Codex, Copilot, etc.). BitRouter ships a `/bitrouter` [Agent Skill](https://agentskills.io) so the agent can install, configure, migrate to, and troubleshoot BitRouter **on its own** — the skill carries the facts that drift easily (the listen port, env var names, the `provider/model` slash form, which subcommands exist), and it lives in the main repo at `skills/bitrouter/`, kept in sync with the code in the same change. Install once:
@@ -131,20 +174,6 @@ For advanced routing rules or multi-account failover, scaffold a config file:
 bro init -c ./bitrouter.yaml  # choose an explicit destination
 bro start
 ```
-
-## Use BitRouter Cloud
-
-Sign in to a BitRouter Cloud account from the terminal. Cloud BYOK uses your provider keys, with inference billed by the provider. Elastic Inference bills supplier inference charges through BitRouter. Both share a Cloud platform fee of $0.01 per million processed input + output tokens at early access pricing, counted once per request:
-
-```bash
-bro cloud login   # RFC 8628 device flow against api.bitrouter.ai
-bro start         # the `bitrouter` provider auto-enables once signed in
-```
-
-To call Cloud directly from an application, use the [Cloud credential and first-request guide](/docs/reference#get-a-cloud-credential).
-It links to the console sign-in and shows how to mint a scoped API key with the CLI.
-
-Cloud is not a different binary — it's an account you attach. Signing in from a self-hosted binary routes Cloud-managed models alongside your BYOK keys, and you can add or remove the Cloud account at any time without affecting the binary's self-hosted capabilities. You can also point an agent straight at the hosted endpoint without running a local binary at all. See the [Models](/docs/overview/supported-models) catalog for pricing.
 
 ## Point your agent at the proxy
 

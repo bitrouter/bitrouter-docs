@@ -119,14 +119,15 @@ function parseOverlay(slug) {
 // this applies even inside code spans). Prose needs `{`/`}`/`<` escaped or
 // MDX parses them as expressions/JSX — but only OUTSIDE inline-code spans:
 // escapes inside code would render literally, so split on backtick spans and
-// escape just the plain-text segments.
+// escape just the plain-text segments. Escape both angle brackets: leaving a
+// literal `>` after an escaped `<` makes GFM include it in an autolink URL.
 const escCell = (s) => s.replace(/\|/g, "\\|");
 const escProse = (s) =>
   s
     .replace(/\|/g, "\\|")
     .split(/(`[^`]*`)/g)
     .map((seg, i) =>
-      i % 2 === 1 ? seg : seg.replace(/([{}])/g, "\\$1").replace(/</g, "&lt;"),
+      i % 2 === 1 ? seg : seg.replace(/([{}])/g, "\\$1").replace(/</g, "&lt;").replace(/>/g, "&gt;"),
     )
     .join("");
 

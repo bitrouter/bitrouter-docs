@@ -16,6 +16,67 @@ Base URL: `https://api.bitrouter.ai`
 
 The [BitRouter Cloud OpenAPI schema](/openapi.json) is the JSON contract used to generate this reference. The Cloud gateway also publishes its [deployed schema](https://api.bitrouter.ai/openapi.json).
 
+## Get a Cloud credential
+
+Sign in to your account at the [BitRouter Cloud console](https://cloud.bitrouter.ai/sign-in).
+With the [CLI installed](/docs/overview/quickstart#install-the-binary), run the browser device sign-in flow and mint a key with the `inference:invoke` scope:
+
+```bash
+bro cloud login
+bro cloud keys mint --name my-integration --scope inference:invoke
+```
+
+Follow the URL and code printed by `bro cloud login` to finish signing in.
+The mint command prints the key once. Replace the placeholder with that key:
+
+```bash
+export BITROUTER_API_KEY='paste-your-cloud-key-here'
+```
+
+The [CLI credential reference](/docs/usage/cli#bro-cloud-keys-mint) describes scopes and expiry.
+Cloud inference requests authenticate with `Authorization: Bearer $BITROUTER_API_KEY`.
+The gateway also accepts `x-api-key`; see [Chat Completions / Messages](/docs/reference/chat-completions-messages) for protocol-specific details.
+
+## First Cloud request
+
+```bash
+curl https://api.bitrouter.ai/v1/responses \
+  -H "Authorization: Bearer $BITROUTER_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"anthropic/claude-haiku-4.5","input":"Hello!"}'
+```
+
+This calls the hosted API directly; `bro start` is only needed when using a local proxy.
+Use a [Cloud catalog model ID](/docs/overview/supported-models) that your account can access or an enabled workspace routing preset.
+The local `bitrouter/auto` selector belongs to self-hosted routing.
+Read the [Responses API guide](/docs/usage/responses-api) and [endpoint contract](/docs/reference/openai-responses/createResponse) for output, streaming, and error handling.
+
+## Python client
+
+Use the [OpenAI Python SDK](https://developers.openai.com/api/reference/python) as a compatible client for the Responses request above:
+
+```bash
+python -m pip install openai
+```
+
+```python
+import os
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.bitrouter.ai/v1",
+    api_key=os.environ["BITROUTER_API_KEY"],
+)
+response = client.responses.create(
+    model="anthropic/claude-haiku-4.5",
+    input="Hello!",
+)
+print(response.output_text)
+```
+
+The SDK uses your BitRouter Cloud key and sends this request to BitRouter.
+Compatibility depends on the fields and capabilities supported by the [BitRouter endpoint contract](/docs/reference/openai-responses/createResponse).
+
 Choose the API family that matches your task:
 
 | Need | Start with |
@@ -24,28 +85,6 @@ Choose the API family that matches your task:
 | Discover available models or providers | Models & providers |
 | Manage Cloud accounts, keys, usage, billing, or policy | Cloud management |
 | Check node health or scrape metrics | Health or Metrics |
-
-## Get a Cloud credential
-
-Sign in to the [BitRouter Cloud console](https://cloud.bitrouter.ai/sign-in) for your Cloud account.
-For terminal access, run the documented device sign-in flow and mint a scoped API key.
-The key is printed once, so store it as `BITROUTER_API_KEY` for the request below.
-
-```bash
-bro cloud login
-bro cloud keys mint --name my-integration --scope inference:invoke
-```
-
-The [CLI credential reference](/docs/usage/cli#bro-cloud-keys-mint) describes scopes and expiry.
-Use a Cloud catalog model ID or an enabled workspace routing preset. The local
-`bitrouter/auto` selector belongs to self-hosted routing.
-
-```bash
-curl https://api.bitrouter.ai/v1/responses \
-  -H "Authorization: Bearer $BITROUTER_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"model":"anthropic/claude-haiku-4.5","input":"Hello!"}'
-```
 
 ## Route a request
 

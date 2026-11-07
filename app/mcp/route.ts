@@ -2,6 +2,7 @@ import { createMcpHandler } from "mcp-handler";
 import { z } from "zod";
 import { searchDocs, getDoc, lookupModel } from "@/lib/mcp/tools";
 import { LLMS_TXT } from "@/lib/llms-txt";
+import { docsMcpServerInfo } from "@/lib/mcp/server-info";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -17,7 +18,7 @@ const handler = createMcpHandler(
       {
         title: "Search BitRouter docs",
         description:
-          "Full-text search over BitRouter's documentation. Returns titled hits, each with a canonical URL and a `path` to pass to get_doc. Use this first to find relevant guides.",
+          "Full-text search over BitRouter's documentation. Pass a result's sectionUrl or path to get_doc.",
         inputSchema: {
           query: z.string().describe("Search query, e.g. 'provider fallback'"),
           limit: z
@@ -40,13 +41,14 @@ const handler = createMcpHandler(
       {
         title: "Read a BitRouter doc page",
         description:
-          "Fetch one documentation page as Markdown. Pass the `path` (or full URL) returned by search_docs, e.g. 'guides/routing/model-fallback'.",
+          "Fetch one documentation page or section as Markdown. Use a path or sectionUrl returned by search_docs.",
         inputSchema: {
           path: z.string().describe("Doc slug path or full URL"),
+          section: z.string().optional().describe("Heading anchor, e.g. send-a-request"),
         },
       },
-      async ({ path }) => {
-        const res = await getDoc(path);
+      async ({ path, section }) => {
+        const res = await getDoc(path, section);
         if (!res.ok)
           return { content: [{ type: "text", text: res.error }], isError: true };
         return { content: [{ type: "text", text: res.markdown }] };
@@ -85,7 +87,7 @@ const handler = createMcpHandler(
     );
   },
   {
-    serverInfo: { name: "bitrouter-docs", version: "1.0.0" },
+    serverInfo: docsMcpServerInfo,
     instructions:
       "BitRouter documentation server (public, no auth). Use search_docs to find guides, get_doc to read a page, and lookup_model to check model availability and config.",
   },

@@ -1,4 +1,4 @@
-import { source } from "@/lib/source";
+import { getLLMText, source } from "@/lib/source";
 import { DocsBody, DocsDescription, DocsPage, DocsTitle } from "fumadocs-ui/page";
 import { notFound } from "next/navigation";
 import { getMDXComponents } from "@/mdx-components";
@@ -23,7 +23,7 @@ export default async function Page({ params }: Props) {
 
   const MDX = page.data.body;
   const slugPath = slug?.join("/") ?? "";
-  const markdownUrl = `/api/docs/llms-mdx/${slugPath}`;
+  const markdownUrl = `/docs/${slugPath}.md`;
   // `page.path` is the real file path relative to content/docs — slugs can't be
   // used here, since folder groups like `(guide)/` are stripped from the URL and
   // pages are a mix of `<name>.md` and `<name>/index.mdx`.
@@ -32,7 +32,7 @@ export default async function Page({ params }: Props) {
   // `postprocess.includeProcessedMarkdown` is on in source.config.ts, so the
   // rendered Markdown is available here without a remark plugin or a new dep.
   // fumadocs has no built-in read-time estimate.
-  const minutes = readingMinutes(await page.data.getText("processed"));
+  const minutes = readingMinutes(await getLLMText(page));
 
   const isFaqPage =
     slug?.length === 2 && slug[0] === "overview" && slug[1] === "faqs";
@@ -71,6 +71,7 @@ export default async function Page({ params }: Props) {
       // fumadocs' own pair at the foot of the article instead.
       breadcrumb={{ includePage: true }}
     >
+      <link rel="alternate" type="text/markdown" href={markdownUrl} />
       {faqJsonLd && (
         <script
           type="application/ld+json"

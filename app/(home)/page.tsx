@@ -9,5 +9,10 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-  return <Homepage playgroundPreview={isPlaygroundPreviewEnabled()} />;
+  return <>
+    <link rel="ai-catalog" type="application/ai-catalog+json" href="/.well-known/ai-catalog.json" />
+    <link rel="ard" type="application/ai-catalog+json" href="/.well-known/ard.json" />
+    <link rel="alternate" type="text/markdown" href="/index.md" />
+    <Homepage playgroundPreview={isPlaygroundPreviewEnabled()} />
+  </>;
 }

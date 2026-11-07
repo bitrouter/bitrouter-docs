@@ -6,10 +6,11 @@ import {
   legalSource,
 } from "@/lib/source";
 import { fetchModels } from "@/lib/models-server";
+import { getSiteOrigin } from "@/lib/site-origin";
 
 export const dynamic = "force-static";
 
-const BASE_URL = "https://bitrouter.ai";
+const BASE_URL = getSiteOrigin();
 
 function getGitLastModified(filePath: string): Date {
   try {

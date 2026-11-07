@@ -526,12 +526,22 @@ const nextConfig: NextConfig = {
   skipTrailingSlashRedirect: true,
   transpilePackages: ["@wterm/core", "@wterm/dom", "@wterm/react"],
   async headers() {
-    if (process.env.RAILWAY_ENVIRONMENT_NAME !== "staging") return [];
-
-    return [{ source: "/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex" }] }];
+    return [
+      { source: "/", headers: [{
+        key: "Link",
+        value: '</.well-known/ai-catalog.json>; rel="ai-catalog", </.well-known/ard.json>; rel="ard"',
+      }] },
+      ...(process.env.RAILWAY_ENVIRONMENT_NAME === "staging"
+        ? [{ source: "/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex" }] }]
+        : []),
+    ];
   },
   async rewrites() {
     return [
+      { source: "/.well-known/ard.json", destination: "/.well-known/ai-catalog.json" },
+      { source: "/.well-known/mcp/server-card", destination: "/.well-known/mcp/server-card.json" },
+      { source: "/docs/:slug*.md", destination: "/api/docs/llms-mdx/:slug*" },
+      { source: "/llms-full.txt", destination: "/api/docs/llms-full.txt" },
       {
         source: "/ingest/static/:path*",
         destination: "https://us-assets.i.posthog.com/static/:path*",

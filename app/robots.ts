@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { getSiteOrigin } from "@/lib/site-origin";
 
 // Crawler policy. Everything public is open; only the app's POST/JSON API
 // routes are withheld (except /api/docs/* — the markdown + llms-full feeds we
@@ -56,6 +57,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: DISALLOW,
       },
     ],
-    sitemap: "https://bitrouter.ai/sitemap.xml",
+    sitemap: `${getSiteOrigin()}/sitemap.xml`,
   };
 }

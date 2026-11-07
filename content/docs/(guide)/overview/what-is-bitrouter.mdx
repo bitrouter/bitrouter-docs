@@ -5,6 +5,8 @@ description: Route model requests through an inspectable policy and use evidence
 
 **BitRouter is a context-aware LLM router for agent workflows.** In a self-hosted deployment, a configured `bitrouter/auto` router selects models using a policy you can inspect, review, and update from admitted evidence.
 
+Agents can browse the [documentation index](/llms.txt), connect to the public [documentation MCP endpoint](/mcp) over Streamable HTTP to search docs and look up models, or read the [BitRouter Cloud OpenAPI schema](/openapi.json).
+
 Model prices and capabilities change. BitRouter helps operators compare routes against their own workload and publish reviewed policy changes; evaluating a workload still requires an external evaluator or benchmark.
 
 On a strict 80-task common-valid Terminal-Bench 2.1 comparison, an initial BitRouter configuration reached **81.25% task success** versus **81.56%** for a fixed strong-model baseline and **76.50%** for same-pool random routing. Its frozen-price nominal API cost for accepted valid-path requests was **40.93% lower** than the strong-model baseline. These are research results, not provider billing or an official leaderboard submission; review the [data and protocol](https://huggingface.co/datasets/BitRouterAI/benchmarks).

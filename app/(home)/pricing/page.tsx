@@ -1,7 +1,10 @@
 import { ZedPricingPage } from "@/components/landing/zed/pricing-page";
 import type { Metadata } from "next";
 export default function Page() {
-  return <ZedPricingPage />;
+  return <>
+    <link rel="alternate" type="text/markdown" href="/pricing.md" />
+    <ZedPricingPage />
+  </>;
 }
 
 export function generateMetadata(): Metadata {

@@ -26,8 +26,8 @@ const newsreader = Newsreader({
 
 const BASE_URL = "https://bitrouter.ai";
 const SITE_DESCRIPTION =
-  "Make every step of your agent’s work count. Open-source model routing, through an API or your terminal. Your agents. Your models. Your infrastructure.";
-const SITE_TITLE = "BitRouter — Time is money. More done per token.";
+  "The right inference for your workload, on your terms.";
+const SITE_TITLE = "BitRouter — The Open Market for Elastic Inference";
 
 const siteJsonLd = {
   "@context": "https://schema.org",
@@ -57,7 +57,8 @@ const siteJsonLd = {
         "@type": "Offer",
         price: "0",
         priceCurrency: "USD",
-        description: "Routing is free. Self-host BitRouter or use Cloud-hosted models at provider token prices with 0% markup.",
+        name: "OSS Self-hosted",
+        description: "Self-host the Apache-2.0 router free of BitRouter fees. Provider inference and infrastructure costs are separate. Optional Cloud services have separate pricing.",
       },
     },
   ],

@@ -42,7 +42,7 @@ function NotebookHeader() {
       )}
     >
       {/* Below `md` the sidebar becomes a drawer. Without this trigger the docs
-          tree and changelog release list are unreachable on a phone. Native
+          tree are unreachable on a phone. Native
           notebook headers render the same slot; ours has to opt in because it
           replaces the whole header. */}
       <WebHeaderBody
@@ -63,10 +63,5 @@ function NotebookHeader() {
 
 /** Notebook header for the unified documentation tree. */
 export function DocsHeader() {
-  return <NotebookHeader />;
-}
-
-/** Standalone top-level Changelog, retaining the native notebook shell. */
-export function ChangelogHeader() {
   return <NotebookHeader />;
 }

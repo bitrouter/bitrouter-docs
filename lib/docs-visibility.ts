@@ -1,7 +1,6 @@
 // Compatibility guides remain reachable for existing links. Canonical discovery
-// surfaces use the current sidebar's guide and command-group pages instead.
+// surfaces use the current sidebar's guides and single-page CLI manual instead.
 const COMPATIBILITY_URLS = new Set([
-  "/docs/cli/reference",
   "/docs/integration/coding-agents",
 ]);
 

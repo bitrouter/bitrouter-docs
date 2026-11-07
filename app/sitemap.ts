@@ -4,7 +4,6 @@ import {
   getCanonicalDocs,
   blogSource,
   legalSource,
-  getChangelogItems,
 } from "@/lib/source";
 import { fetchModels } from "@/lib/models-server";
 
@@ -57,20 +56,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  // ── Changelog posts ──
-  const changelogPages: Entry[] = getChangelogItems().map((item) => ({
-    url: `${BASE_URL}${item.url}`,
-    lastModified: item.date ? new Date(item.date) : undefined,
-    changeFrequency: "monthly",
-    priority: 0.5,
-  }));
-
   // ── Legal pages (English-only) ──
   // The legal MDX source has baseUrl "/legal", but each page is served at its
   // own top-level route, so map slugs to their real URLs.
   const LEGAL_ROUTES: Record<string, string> = {
-    privacy: "/privacy-policy",
-    terms: "/terms-of-service",
     subprocessors: "/subprocessors",
   };
   const legalPages: Entry[] = legalSource.getPages().map((page) => {
@@ -86,6 +75,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   // ── Static marketing/index pages, git-dated by their source file ──
+  // /models and its four demo market assets are intentionally noindex and absent
+  // until observations come from the market. Legacy catalog detail URLs remain.
   const staticPages: Entry[] = (
     [
       { url: BASE_URL, file: "app/(home)/page.tsx", priority: 1.0, changeFrequency: "weekly" },
@@ -95,7 +86,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       // and now redirect into canonical docs routes already covered above.
       // A redirecting URL must not be listed here.
       { url: `${BASE_URL}/blog`, file: "app/blog/page.tsx", priority: 0.6, changeFrequency: "weekly" },
-      { url: `${BASE_URL}/changelog`, file: "app/changelog/page.tsx", priority: 0.6, changeFrequency: "weekly" },
     ] as const
   ).map(({ url, file, priority, changeFrequency }) => ({
     url,
@@ -108,7 +98,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...staticPages,
     ...modelPages,
     ...blogPages,
-    ...changelogPages,
     ...legalPages,
     ...docPages,
   ];

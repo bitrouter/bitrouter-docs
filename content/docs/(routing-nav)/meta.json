@@ -1,0 +1,10 @@
+{
+  "title": "Router",
+  "pagesIndex": "[Auto Router](/docs/routing/auto-router)",
+  "pages": [
+    "[Workload Optimization](/docs/routing/workload-optimization)",
+    "[State Affinity](/docs/routing/state-affinity)",
+    "[Routing Traces](/docs/routing/routing-traces)",
+    "[Strategies](/docs/routing/strategies)"
+  ]
+}

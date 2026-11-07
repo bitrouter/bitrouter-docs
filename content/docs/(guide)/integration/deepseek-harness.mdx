@@ -1,6 +1,57 @@
 ---
 title: DeepSeek Harness
-description: DeepSeek Harness integration documentation is coming soon.
+description: Add BitRouter to initialized DeepSeek Harness profiles and use its routes from the native model picker.
 ---
 
-Coming soon.
+Connect existing DeepSeek Harness profiles to BitRouter. Harness continues to own its Turns, history, tools, and permissions; BitRouter serves model requests through the selected gateway route.
+
+<Callout type="info">
+This guide follows the development CLI in [BitRouter PR #1016](https://github.com/bitrouter/bitrouter/pull/1016). Use a build that includes `bro connect`; check `bro connect --help` first. Profiles must already be initialized in the installed Harness.
+</Callout>
+
+## Connect your profiles
+
+Install Harness, open the native surface you intend to use to initialize its profile, and prepare a usable [BitRouter gateway](/docs/overview/quickstart):
+
+```bash
+bro connect deepseek-harness --dry-run
+bro connect deepseek-harness
+```
+
+The connector adds an independent **BitRouter** provider through the built-in `llm-pi-ai` adapter and a private stored credential reference. Existing providers and default models are retained. Select the connected model in Harness' native picker; that selection also becomes the profile's default for new sessions.
+
+The default gateway wire ID and model label are `bitrouter/automatos`. `--model` chooses another exact advertised ID; `--display-name` only changes the native label. For Cloud or another existing gateway, use [the shared endpoint and credential setup](/docs/integration/coding-agents#connect-an-existing-gateway).
+
+## Home and profile scope
+
+```bash
+bro connect deepseek-harness --instance /path/to/harness-home \
+  --profile web --profile headless
+```
+
+`--instance` selects the actual Harness home; otherwise discovery uses `DSH_HOME`, then `~/.dsh`. Repeat `--profile` to name initialized profiles explicitly. Without profile flags, a new connection configures the supported initialized profiles detected under that home. It does not initialize missing profiles.
+
+Desktop owns its `desktop` profile and runtime. Open Desktop first to initialize it; configuring an npm CLI installation does not install or configure Desktop's executable. Web, Desktop, and headless compatibility must be checked against their actual profiles.
+
+The connector edits each selected `cordis.patch.yml`, preserves existing provider configuration, and enables the built-in credential service where needed. Unsupported custom bundles or higher-precedence home overrides require explicit configuration. Adapter settings apply on the next request; restart headless processes after changing their startup profile.
+
+To include another initialized profile later, use `--update` with the complete desired profile set. An update without profile flags retains the saved scope.
+
+## Protocol and routing
+
+Chat Completions is the default. `--protocol responses` and `--protocol messages` select the other supported native adapters. One provider uses one protocol; text input is declared, while image and reasoning capabilities are not inferred from a model ID.
+
+Basic routing does not require `dsh-self-driving` or context-profile classification. That separate plugin changes host-side working context between Turns. Repeat `--model` to register several exact advertised IDs in the same provider across the selected profile scope. The first retains the supplied display name; additional labels use exact IDs. Updates replace the full list when model flags are supplied and preserve it otherwise; see [strategies and workflows](/docs/integration/coding-agents#strategies-and-workflows).
+
+## Verify and manage the connection
+
+```bash
+bro connect deepseek-harness --status
+bro connect deepseek-harness --check
+bro connect deepseek-harness --update
+bro connect deepseek-harness --remove
+```
+
+Use the same custom `--instance` when applicable. `--status` inspects the recorded profile scope offline; `--check` also verifies the gateway catalog with the saved key. Neither sends inference. Select BitRouter, send a small request, test a required tool roundtrip, and inspect [request receipts](/docs/cli/request-receipts).
+
+Removal covers the complete recorded profile scope and preserves unrelated preferences and providers. Owned settings that were edited, or later profiles referencing the same managed credential, need reconciliation before removal. Credentials and restore receipts are private local files. See [connection management](/docs/integration/coding-agents#manage-a-connection).

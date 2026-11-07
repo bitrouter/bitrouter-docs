@@ -1,6 +1,58 @@
 ---
 title: OpenCode
-description: OpenCode integration documentation is coming soon.
+description: Add a persistent BitRouter provider to OpenCode while retaining its native sessions, tools, and interface.
 ---
 
-Coming soon.
+Connect OpenCode's existing backend to BitRouter. OpenCode keeps its session history, compaction, tool loop, and permissions. BitRouter receives the submitted model request and serves the selected route.
+
+<Callout type="info">
+This guide follows the development CLI in [BitRouter PR #1016](https://github.com/bitrouter/bitrouter/pull/1016). Use a build that includes `bro connect`; check `bro connect --help` first. The captured CLI reference describes a separate, earlier binary.
+</Callout>
+
+## Connect OpenCode
+
+Install OpenCode and prepare a usable [BitRouter gateway](/docs/overview/quickstart):
+
+```bash
+bro connect opencode --dry-run
+bro connect opencode
+```
+
+Setup adds `provider.bitrouter` to the selected OpenCode configuration. Existing providers, the main `model`, and `small_model` remain unchanged. Restart OpenCode CLI/TUI or its local Desktop/Web server, then choose **BitRouter** and the connected model (`/models` in the TUI).
+
+The native selection ID is `bitrouter/automatos`. Its underlying gateway model defaults to the same string. `--model` changes the exact gateway wire ID while retaining that native selection key; `--display-name` changes the label. Labels do not create routes.
+
+For Cloud or another existing gateway, use [the shared endpoint and credential setup](/docs/integration/coding-agents#connect-an-existing-gateway).
+
+## Configuration and protocol
+
+```bash
+bro connect opencode --instance /path/to/opencode.jsonc
+```
+
+`--instance` accepts a config file or directory. Without it, discovery follows `OPENCODE_CONFIG_DIR`, `OPENCODE_CONFIG`, then the normal global config directory. The connector preserves JSONC comments and unrelated settings. It does not implicitly write a project configuration. Project, inline, or managed settings can still take precedence.
+
+| Connector protocol | OpenCode provider SDK | Gateway API |
+| --- | --- | --- |
+| `chat-completions` (default) | `@ai-sdk/openai-compatible` | `/v1/chat/completions` |
+| `responses` | `@ai-sdk/openai` | `/v1/responses` |
+| `messages` | `@ai-sdk/anthropic` | `/v1/messages` |
+
+A Desktop/Web client connected to a remote OpenCode server needs configuration on that server. Changing local files does not update a remote backend. Restart the backend that reads the selected config when its catalog is stale.
+
+No `opencode-self-driving` plugin, classification model, or host-side model pool is required for this connection. That separate experiment controls additional host-side resource selection. Repeat `--model` to register additional advertised routes. The first retains the native `bitrouter/automatos` key; each additional entry uses `bitrouter/<wire-ID>`. An additional ID equal to `automatos` conflicts with that primary key and is refused. Updates replace the full list when model flags are supplied and preserve it otherwise; see [strategies and workflows](/docs/integration/coding-agents#strategies-and-workflows).
+
+## Verify and manage the connection
+
+```bash
+bro connect opencode --status
+bro connect opencode --check
+bro connect opencode --update
+bro connect opencode --remove
+```
+
+Use the same `--instance` for a custom config. `--status` checks saved configuration offline. `--check` also checks the exact advertised model using the saved gateway credential; it does not send inference. Select BitRouter in OpenCode, send a small request, exercise a required tool roundtrip, and inspect [request receipts](/docs/cli/request-receipts).
+
+No model context limit, price, modality, or reasoning capability is inferred from an ID. Validate those requirements against the chosen gateway route and OpenCode version.
+
+The key is stored in the private owned provider configuration and connection receipt. Updates replace the managed connection; saved defaults selecting BitRouter can return to their earlier native values. Removal restores owned selections when applicable and preserves unrelated later changes. Edited managed provider fields are conflicts. See [connection management](/docs/integration/coding-agents#manage-a-connection).

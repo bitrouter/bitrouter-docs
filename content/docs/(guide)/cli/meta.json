@@ -1,9 +1,7 @@
 {
   "title": "CLI",
   "pages": [
-    "tui",
-    "headless",
-    "reference",
+    "request-receipts",
     "agent"
   ]
 }

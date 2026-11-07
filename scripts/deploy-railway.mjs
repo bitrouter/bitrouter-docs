@@ -2,7 +2,7 @@ import { setTimeout as delay } from "node:timers/promises";
 
 const apiUrl = "https://backboard.railway.com/graphql/v2";
 const productionOrigin = "https://bitrouter.ai";
-const smokePaths = ["/", "/docs/overview/quickstart", "/docs/reference", "/pricing", "/changelog"];
+const smokePaths = ["/", "/docs/overview/quickstart", "/docs/reference", "/pricing", "/docs/changelog"];
 const failedStatuses = new Set(["FAILED", "CRASHED", "REMOVED", "SKIPPED"]);
 
 const {

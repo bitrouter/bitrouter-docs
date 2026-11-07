@@ -8,7 +8,7 @@ export type FooterLink = { label: string; href: string; external?: boolean };
  * The compact strip keeps pricing, releases, and community links close.
  */
 export const FOOTER_LINKS: FooterLink[] = [
-  { label: "Changelog", href: "/changelog" },
+  { label: "Changelog", href: "/docs/changelog" },
   { label: "GitHub", href: socialHref("github"), external: true },
   { label: "Discord", href: socialHref("discord"), external: true },
   { label: "X", href: socialHref("x"), external: true },
@@ -16,7 +16,7 @@ export const FOOTER_LINKS: FooterLink[] = [
 
 /** Compliance links for the bottom row — these are not navigation. */
 export const LEGAL_LINKS: FooterLink[] = [
-  { label: "Privacy", href: "/privacy-policy" },
-  { label: "Terms", href: "/terms-of-service" },
+  { label: "Privacy", href: "/docs/privacy-policy" },
+  { label: "Terms", href: "/docs/terms-of-service" },
   { label: "Subprocessors", href: "/subprocessors" },
 ];

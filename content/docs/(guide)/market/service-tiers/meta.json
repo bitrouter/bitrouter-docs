@@ -1,0 +1,7 @@
+{
+  "title": "Service Tiers",
+  "defaultOpen": false,
+  "collapsible": true,
+  "pagesIndex": "index",
+  "pages": ["priority", "standard", "flex"]
+}

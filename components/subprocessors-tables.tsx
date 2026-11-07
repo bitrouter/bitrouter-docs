@@ -39,7 +39,7 @@ const CORE: Subprocessor[] = [
   },
   {
     name: "Resend",
-    purpose: "Transactional email delivery & optional newsletter",
+    purpose: "Transactional email delivery & opted-in product updates",
     data: "Email address, subscription status, message and delivery data",
     location: "United States",
     privacy: "https://resend.com/legal/privacy-policy",

@@ -1,0 +1,10 @@
+{
+  "title": "Usage",
+  "pages": [
+    "[Desktop](/docs/usage/desktop)",
+    "[CLI](/docs/usage/cli)",
+    "[Responses API](/docs/usage/responses-api)",
+    "[MCP](/docs/usage/mcp)",
+    "[Agentic Payment](/docs/usage/agentic-payment)"
+  ]
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import { Download, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -15,6 +15,8 @@ import { GitHubStarsBadge } from "@/components/landing/github-stars-badge";
 import { socialHref } from "@/components/landing/social-links";
 import { NAV_ITEMS, isNavItemActive } from "./nav-config";
 import "./site-header.css";
+
+const SIGN_IN_URL = `${(process.env.NEXT_PUBLIC_CONSOLE_URL ?? "https://cloud.bitrouter.ai").replace(/\/$/, "")}/sign-in`;
 
 export interface SiteHeaderProps {
   pathname?: string;
@@ -56,7 +58,7 @@ export function SiteHeaderBody({ pathname, leadingSlot, searchSlot }: SiteHeader
           <div className="site-header-tools">
             {searchSlot}
             <div className="site-desktop-community"><CommunityLinks /></div>
-            <a className="site-download" href="https://github.com/bitrouter/bitrouter/releases/latest"><Download size={15} aria-hidden="true" /><span>Download</span></a>
+            <a className="site-sign-in" href={SIGN_IN_URL}>Sign in</a>
             <NavigationMenuItem value="mobile" asChild>
               <div className="site-menu-item">
                 <NavigationMenuTrigger className="site-menu-trigger" aria-label={menu ? "Close navigation" : "Open navigation"} onPointerMove={event => event.preventDefault()} onPointerLeave={event => event.preventDefault()}>

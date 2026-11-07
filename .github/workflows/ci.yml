@@ -48,8 +48,6 @@ jobs:
     permissions:
       contents: read
     uses: ./.github/workflows/railway-release.yml
-    with:
-      promote: ${{ vars.RAILWAY_PRODUCTION_ENABLED == 'true' }}
     secrets:
       # GitHub requires this mapping even though each deploy job gets its token
       # from its own environment.

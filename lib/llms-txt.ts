@@ -7,6 +7,13 @@ export const LLMS_TXT = `# BitRouter
 
 ${LLMS_PRODUCT_SUMMARY}
 
+## Cloud API tasks
+
+- [Cloud authentication](${BASE_URL}/docs/reference.md#get-a-cloud-credential): Console sign-in, browser device login, and an API key scoped to inference:invoke
+- [First Cloud request](${BASE_URL}/docs/reference.md#first-cloud-request): Call the hosted Responses API with a BitRouter Cloud key
+- [Python client](${BASE_URL}/docs/reference.md#python-client): OpenAI Python SDK example using the BitRouter base URL and Cloud key
+- [Cloud quickstart](${BASE_URL}/docs/overview/quickstart.md#authenticate-and-send-your-first-request): Install the CLI, sign in, mint a key, and send the first request
+
 ## Quickstart for Agents
 
 If you are an AI agent setting up BitRouter, follow these steps:
@@ -20,7 +27,6 @@ References:
 - Full quickstart walkthrough: ${BASE_URL}/docs/overview/quickstart
 - Agent Skill (install/configure BitRouter from inside an agent): https://github.com/bitrouter/bitrouter/tree/main/skills/bitrouter
 - BitRouter CLI (proxy, onboarding, and TUI conversation): https://github.com/bitrouter/bitrouter
-- Native agent connections (development bro connect), request-context routing, multi-selector registration, launch, and ACP: ${BASE_URL}/docs/integration/coding-agents
 
 ## Overview
 
@@ -107,5 +113,6 @@ Supporting guides linked from Strategies:
 
 ## Optional
 
+- [Model catalog JSON](${BASE_URL}/api/bitrouter/models): Structured model catalog from the hosted API; model IDs, metadata, and available pricing. This is JSON data, separate from the documentation and the illustrative market preview.
 - [llms-full.txt](${BASE_URL}/llms-full.txt): Complete documentation as plain text for ingestion
 `;

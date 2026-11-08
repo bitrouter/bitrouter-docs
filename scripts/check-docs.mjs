@@ -86,7 +86,7 @@ const NAV_FILES = [
 // Explicit product-navigation exception. Traverse it from its parent so an
 // orphaned folder cannot pass sidebar coverage, and duplicate entries still fail.
 const NESTED_NAV_FOLDERS = new Map([
-  ["(market-nav)/meta.json:service-tiers", "(market-nav)/service-tiers/meta.json"],
+  ["(market-nav)/meta.json:inference-types", "(market-nav)/inference-types/meta.json"],
 ]);
 const ROOT_NAV_PAGES = [
   "---Overview---",
@@ -219,7 +219,7 @@ async function main() {
 
   for (const navFile of [
     "(comparison-nav)/meta.json",
-    "(market-nav)/service-tiers/meta.json",
+    "(market-nav)/inference-types/meta.json",
     "reference/meta.json",
   ]) {
     const meta = JSON.parse(await readFile(join(ROOT, navFile), "utf8"));

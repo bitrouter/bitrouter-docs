@@ -1,10 +1,10 @@
 {
   "title": "Market",
   "pages": [
+    "pricing",
+    "inference-types",
+    "inference-tiers",
     "buy-inference",
-    "sell-inference",
-    "verify-inference",
-    "auto-bidding",
-    "service-tiers"
+    "sell-inference"
   ]
 }

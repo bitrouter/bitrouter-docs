@@ -69,14 +69,14 @@ References:
 
 ## Market
 
+- [Pricing](${BASE_URL}/docs/market/pricing): Cloud platform fees, supplier inference charges, and the one-time welcome credit
+- [Inference Types](${BASE_URL}/docs/market/inference-types): Coming soon
+  - [Priority](${BASE_URL}/docs/market/inference-types/priority): Coming soon
+  - [Standard](${BASE_URL}/docs/market/inference-types/standard): Coming soon
+  - [Flex](${BASE_URL}/docs/market/inference-types/flex): Coming soon
+- [Inference Tiers](${BASE_URL}/docs/market/inference-tiers): Coming soon
 - [Buy Inference](${BASE_URL}/docs/market/buy-inference): Documentation placeholder for obtaining inference access through BitRouter
 - [Sell Inference](${BASE_URL}/docs/market/sell-inference): Documentation placeholder for optional marketplace supply
-- [Verify Inference](${BASE_URL}/docs/market/verify-inference): Coming soon
-- [Auto-bidding](${BASE_URL}/docs/market/auto-bidding): Coming soon
-- [Service Tiers](${BASE_URL}/docs/market/service-tiers): Coming soon
-  - [Priority](${BASE_URL}/docs/market/service-tiers/priority): Coming soon
-  - [Standard](${BASE_URL}/docs/market/service-tiers/standard): Coming soon
-  - [Flex](${BASE_URL}/docs/market/service-tiers/flex): Coming soon
 
 ## Router
 

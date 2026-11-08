@@ -58,7 +58,9 @@ export function ChangelogTimeline({
     <div className="changelog-timeline flex flex-col gap-8">
       {Array.from(months, ([month, items]) => (
         <section key={month}>
-          <p className="sticky top-14 z-1 bg-fd-background/80 py-4 text-sm font-medium text-fd-muted-foreground backdrop-blur-sm">
+          {/* The docs article scrolls independently. Sticky month labels would
+              float over release headings and notes inside that scroll area. */}
+          <p className="py-4 text-sm font-medium text-fd-muted-foreground">
             {month}
           </p>
           <ol className="ms-3 border-s ps-6" style={{ listStyleType: "none" }}>

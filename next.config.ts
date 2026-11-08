@@ -44,8 +44,21 @@ pairs.push(
   ["/docs/overview/inference-flex-market", "/docs/overview/elastic-inference"],
   ["/docs/overview/inference-spot", "/docs/overview/elastic-inference"],
   ["/docs/overview/inference-forwards", "/docs/overview/elastic-inference"],
-  // Market service-tier guides replace the former market-data placeholder.
-  ["/docs/market/market-data", "/docs/market/service-tiers"],
+  // Inference Types replaces Service Tiers; keep every legacy URL direct.
+  ["/docs/market/market-data", "/docs/market/inference-types"],
+  ["/docs/market/service-tiers", "/docs/market/inference-types"],
+  ["/docs/market/service-tiers/priority", "/docs/market/inference-types/priority"],
+  ["/docs/market/service-tiers/standard", "/docs/market/inference-types/standard"],
+  ["/docs/market/service-tiers/flex", "/docs/market/inference-types/flex"],
+  ["/docs/market/auto-bidding", "/docs/market/buy-inference"],
+  ["/docs/market/verify-inference", "/enterprise#verification"],
+  ["/docs/market/market-data.md", "/docs/market/inference-types.md"],
+  ["/docs/market/service-tiers.md", "/docs/market/inference-types.md"],
+  ["/docs/market/service-tiers/priority.md", "/docs/market/inference-types/priority.md"],
+  ["/docs/market/service-tiers/standard.md", "/docs/market/inference-types/standard.md"],
+  ["/docs/market/service-tiers/flex.md", "/docs/market/inference-types/flex.md"],
+  ["/docs/market/auto-bidding.md", "/docs/market/buy-inference.md"],
+  ["/docs/market/verify-inference.md", "/enterprise#verification"],
   // Payment belongs to Usage; the retired Web entry opens the Desktop usage guide.
   ["/docs/market/agentic-payment", "/docs/usage/agentic-payment"],
   ["/docs/usage/web", "/docs/usage/desktop"],
@@ -450,6 +463,12 @@ const movedGuideRoutes = new Set([
   "/docs/market/agentic-payment",
   "/docs/usage/web",
   "/docs/market/market-data",
+  "/docs/market/service-tiers",
+  "/docs/market/service-tiers/priority",
+  "/docs/market/service-tiers/standard",
+  "/docs/market/service-tiers/flex",
+  "/docs/market/auto-bidding",
+  "/docs/market/verify-inference",
   "/docs/overview/flex-inference",
   "/docs/overview/inference-flex-market",
   "/docs/overview/inference-spot",
@@ -517,7 +536,7 @@ const movedGuideRoutes = new Set([
 const docsRedirects = pairs.map(([source, destination]) => ({
   source,
   destination,
-  ...(source === "/models" || movedGuideRoutes.has(source) || source.startsWith("/changelog/") || source.startsWith("/docs/changelog/") || destination.startsWith("/docs/overview/comparison")
+  ...(source === "/models" || movedGuideRoutes.has(source.replace(/\.md$/, "")) || source.startsWith("/changelog/") || source.startsWith("/docs/changelog/") || destination.startsWith("/docs/overview/comparison")
     ? { statusCode: 301 }
     : { permanent: true }),
 }));

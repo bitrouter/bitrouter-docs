@@ -38,12 +38,15 @@ top-level order is the `pages` list in `content/docs/meta.json`:
    release and captured CLI reference. Claude Code
    and Codex retain their authored integration guides but are temporarily hidden
    from the sidebar; their existing URLs remain accessible.
-4. **Market** — Buy Inference, Sell Inference, Verify Inference, Auto-bidding,
-   and Service Tiers, in that order. Buy Inference and Sell Inference are placeholders
-   with links to State Affinity; Verify Inference and Auto-bidding are Coming soon.
-   Service Tiers is a collapsed folder with a clickable overview and Priority,
-   Standard, and Flex children, in that order. All four pages are Coming soon.
-   `/docs/market/market-data` redirects permanently to `/docs/market/service-tiers`.
+4. **Market** — Pricing, Inference Types, Inference Tiers, Buy Inference, and
+   Sell Inference, in that order. Pricing documents the approved public terms.
+   Buy Inference and Sell Inference retain their pricing and State Affinity links.
+   Inference Types is a collapsed folder with a clickable overview and Priority,
+   Standard, and Flex children, in that order. Those four pages and Inference Tiers
+   are Coming soon. The former Service Tiers URLs and `/docs/market/market-data`
+   redirect directly to Inference Types and its corresponding children.
+   Auto-bidding and Verify Inference are retired, redirecting to Buy Inference
+   and `/enterprise#verification`, respectively.
 5. **Router** — Auto Router, Workload Optimization, State Affinity, Routing Traces,
    and Strategies, in that order. Workload Optimization and State Affinity are Coming soon.
    Context Routing and Configuration
@@ -65,13 +68,13 @@ a page or collapsible folder. Eight meta-only guide folders — `(overview-nav)`
 `(models-routing-nav)`, `(context-routing-nav)`, and `(reference-nav)` — are extracted into the root with `...folder`.
 They link to canonical pages rather than copies.
 
-Comparison under Overview, Service Tiers under Market, and API reference are
+Comparison under Overview, Inference Types under Market, and API reference are
 the explicit hierarchy exceptions. All are native folders with `collapsible: true`
 and `defaultOpen: false`. Comparison has no index page: its header only expands
 or collapses its four canonical comparison guides. Keep competitor claims sourced
-and qualified. Service Tiers has a clickable overview and Priority, Standard,
-and Flex children, projected through `(market-nav)/service-tiers/meta.json`.
-Its canonical sources live in `(guide)/market/service-tiers/`; the public metadata
+and qualified. Inference Types has a clickable overview and Priority, Standard,
+and Flex children, projected through `(market-nav)/inference-types/meta.json`.
+Its canonical sources live in `(guide)/market/inference-types/`; the public metadata
 uses a `pagesIndex` link for the overview and three direct child links.
 
 API reference retains `content/docs/reference/` and its generated endpoint URLs.
@@ -117,10 +120,10 @@ Three rules keep the unified navigation intact:
 
 Source pages can remain nested where that keeps related files together, but the
 public sidebar is a flat list beneath each section separator, with Comparison,
-Service Tiers, and API reference as explicit exceptions. Every public page
+Inference Types, and API reference as explicit exceptions. Every public page
 must be listed exactly once in the matching `*-nav/meta.json`, including the
-four Comparison children and the Service Tiers overview and three children.
-`scripts/check-docs.mjs` follows the explicitly allowed Service Tiers folder
+four Comparison children and the Inference Types overview and three children.
+`scripts/check-docs.mjs` follows the explicitly allowed Inference Types folder
 from its parent so detached or duplicate entries fail coverage. Cards and inline links provide additional
 discovery, not a substitute for sidebar visibility.
 Rare intentional exceptions must be added to `HIDDEN_SIDEBAR_ROUTES` in
@@ -142,16 +145,16 @@ search, sitemap, and full-text ingestion. Retained compatibility guides carry
 
 Use this boundary when classifying content:
 
-- **Market** follows Coding Agents and precedes Router. It owns buying and selling
-  inference, inference verification guidance, and future trading, delivery, and
-  settlement guides. Buy Inference
-  and Sell Inference are canonical under `/docs/market/` and currently have titles
-  and descriptions plus links to State Affinity. Verify Inference and Auto-bidding
-  follow as Coming soon placeholders. Verification behavior remains unverified;
-  Agentic Payment belongs to Usage. Service Tiers is the final Market entry,
-  with a clickable overview and Priority, Standard, and Flex children; all remain
-  Coming soon. Service-tier semantics and detailed marketplace behavior remain
-  unverified.
+- **Market** follows Coding Agents and precedes Router. It owns pricing, inference
+  types and tiers, buying and selling inference, and future trading, delivery, and
+  settlement guides. Its order is Pricing, Inference Types, Inference Tiers,
+  Buy Inference, and Sell Inference, all canonical under `/docs/market/`.
+  Pricing uses the approved commercial terms; Buy Inference and Sell Inference
+  retain their pricing boundaries and State Affinity links. Inference Types
+  replaces Service Tiers, with a clickable overview and Priority, Standard, and
+  Flex children. Those four pages and Inference Tiers remain Coming soon;
+  detailed marketplace behavior remains unverified. Auto-bidding and Verify
+  Inference are retired. Agentic Payment belongs to Usage.
   Connecting an endpoint belongs to Model; offering its inference for sale belongs
   to Market. Overview's Elastic Inference introduces the product concept;
   Market owns the operational workflows.

@@ -1,12 +1,10 @@
-import { cloudAccount, isPlaygroundSameOrigin, playgroundError, playgroundPrincipal } from "../../../../../lib/playground-auth";
-import { hasPlaygroundImages, playgroundCloudConfig, playgroundCloudRequest, playgroundProfile, streamPlaygroundCloud } from "../../../../../lib/playground-cloud";
-import { isPlaygroundPreviewEnabled } from "../../../../../lib/playground-preview";
+import { allowsLocalLive, cloudAccount, isPlaygroundSameOrigin, playgroundError } from "../../../../../lib/playground-auth";
+import { hasPlaygroundImages, playgroundCloudConfig, playgroundCloudRequest, streamPlaygroundCloud } from "../../../../../lib/playground-cloud";
+import { isPlaygroundEnabled } from "../../../../../lib/playground-config";
+import { admitPlaygroundRequest, playgroundQuotaConfig, releaseAdmissionAfterStream } from "../../../../../lib/playground-quota";
 
 const maxBodyBytes = 2 * 1024 * 1024;
 const maxTextBytes = 64 * 1024;
-// Count paid admissions across tabs in this development-only route.
-const maxPreviewCalls = 24;
-let admitted = 0;
 
 async function readBody(request: Request) {
   if (!request.body) throw new SyntaxError("Missing request body");
@@ -31,47 +29,50 @@ async function readBody(request: Request) {
 }
 
 export async function POST(request: Request) {
-  if (!isPlaygroundPreviewEnabled()) return new Response(null, { status: 404 });
-  if (!isPlaygroundSameOrigin(request)) {
-    return playgroundError("Open the same-origin playground to run a task.", 403);
-  }
+  if (!isPlaygroundEnabled()) return playgroundError("The agent is temporarily unavailable. Please try again later.", 503);
+  if (!isPlaygroundSameOrigin(request)) return playgroundError("Open this site's playground to run a task.", 403);
 
   let account: string | null;
   try {
-    account = await cloudAccount(request);
+    account = await cloudAccount(request) ?? (allowsLocalLive(request) ? "loopback-operator" : null);
   } catch {
-    return playgroundError("Could not check your Cloud session.", 503);
+    return playgroundError("Could not check your Cloud session. Please try again.", 503);
   }
-  const owner = playgroundPrincipal(request, account);
-  if (!owner) return playgroundError("Sign in to BitRouter Cloud to run a task.", 401);
+  if (!account) return playgroundError("Sign in to BitRouter Cloud to run a task.", 401);
   const config = playgroundCloudConfig();
-  if (!config) return playgroundError("Live BitRouter preview has no inference credential configured.", 503);
-
-  const profile = playgroundProfile.safeParse(request.headers.get("x-playground-profile"));
-  if (!profile.success) return playgroundError("Select a supported routing preference.", 400);
+  const quota = playgroundQuotaConfig();
+  if (!config || !quota) return playgroundError("The agent is temporarily unavailable. Please try again later.", 503);
 
   let payload: unknown;
   try {
     payload = await readBody(request);
   } catch (error) {
-    if (error instanceof RangeError) return playgroundError("The preview prompt is too large. Reset the playground to continue.", 413);
-    return playgroundError("Expected a JSON playground request.", 400);
+    if (error instanceof RangeError) return playgroundError("The conversation is too large. Reset the workspace to continue.", 413);
+    return playgroundError("Expected a JSON agent request.", 400);
   }
   const input = playgroundCloudRequest.safeParse(payload);
-  if (!input.success) return playgroundError("This preview accepts text, supported image attachments, and allowlisted tool messages.", 400);
+  if (!input.success) return playgroundError("This task contains unsupported content or tool messages.", 400);
   const textPayload = JSON.stringify(input.data, (key, value) => key === "url" ? undefined : value);
-  if (new TextEncoder().encode(textPayload).byteLength > maxTextBytes) {
-    return playgroundError("The preview conversation is too large. Reset the playground to continue.", 413);
+  if (new TextEncoder().encode(textPayload).length > maxTextBytes) {
+    return playgroundError("The conversation is too large. Reset the workspace to continue.", 413);
   }
   if (hasPlaygroundImages(input.data) && !config.visionModel) {
-    return playgroundError("This preview needs a configured vision model to run a task with images.", 422);
+    return playgroundError("Image input is unavailable right now. Remove the image to continue.", 422);
   }
-  if (admitted >= maxPreviewCalls) return playgroundError("The local preview request limit has been reached.", 429);
-  admitted++;
 
+  let admission;
+  try { admission = await admitPlaygroundRequest(quota, account, request.signal); }
+  catch { return playgroundError("The agent could not start. Please try again later.", 503); }
+  if (!admission.allowed) {
+    return playgroundError(admission.reason === "account" ? "You’ve reached your playground allowance."
+      : admission.reason === "busy" ? "The agent is busy. Please try again shortly."
+      : "The agent has reached its current allowance. Please try again later.", 429);
+  }
   try {
-    return await streamPlaygroundCloud(config, input.data, profile.data, owner, AbortSignal.any([request.signal, AbortSignal.timeout(45_000)]));
+    const response = await streamPlaygroundCloud(config, input.data, AbortSignal.any([request.signal, AbortSignal.timeout(45_000)]));
+    return await releaseAdmissionAfterStream(response, admission.release);
   } catch {
-    return playgroundError("BitRouter Cloud inference could not start.", 502);
+    await admission.release();
+    return playgroundError("BitRouter Cloud inference could not start. Please try again.", 502);
   }
 }

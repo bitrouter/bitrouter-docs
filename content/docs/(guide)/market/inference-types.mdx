@@ -1,0 +1,18 @@
+---
+title: Inference Types
+description: Compare on-demand, interruptible, and reserved inference capacity.
+---
+
+An inference type describes how capacity is made available and whether the supplier can interrupt execution. These types describe the market design. For verification and security requirements, see [Inference Tiers](/docs/market/inference-tiers).
+
+## On-demand
+
+Use capacity available when the request is accepted. On-demand inference suits interactive work and other requests that need a prompt start.
+
+## Interruptible
+
+Use capacity that the supplier can reclaim while inference is running. Interruptible inference suits workloads that can tolerate an interrupted attempt, such as background jobs that can be run again.
+
+## Reserved
+
+**Coming soon.** Arrange capacity ahead of time for scheduled or recurring workloads. See the [Enterprise capacity reservations alpha](/enterprise#enterprise-reservation-title) for the existing alpha test.

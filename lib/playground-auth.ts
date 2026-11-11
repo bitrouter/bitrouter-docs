@@ -28,20 +28,12 @@ export async function cloudAccount(request: Request) {
   if (session.status === 401) return null;
   if (!session.ok) throw new Error("Cloud session lookup failed");
   const user = (await session.json())?.user;
-  return typeof user?.id === "string" ? user.id : null;
+  return typeof user?.id === "string" && user.id.length > 0 && user.isAnonymous !== true ? user.id : null;
 }
 
 export function allowsLocalLive(request: Request) {
   const hostname = new URL(request.url).hostname;
-  return process.env.BITROUTER_PLAYGROUND_LOCAL_LIVE === "1" && loopbackHosts.has(hostname);
-}
-
-export function playgroundPrincipal(request: Request, account: string | null) {
-  const session = request.headers.get("x-playground-session");
-  if (!session || !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(session)) return null;
-  if (account) return JSON.stringify(["account", account, session]);
-  if (allowsLocalLive(request)) return JSON.stringify(["loopback", session]);
-  return null;
+  return process.env.NODE_ENV === "development" && process.env.BITROUTER_PLAYGROUND_LOCAL_LIVE === "1" && loopbackHosts.has(hostname);
 }
 
 export function playgroundError(message: string, status: number) {

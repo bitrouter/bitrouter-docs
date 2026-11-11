@@ -4,8 +4,7 @@ import { Terminal, type TerminalHandle, type WTerm } from "@wterm/react";
 import "@wterm/react/css";
 import { useLayoutEffect, useRef, type RefObject } from "react";
 import stringWidth from "string-width";
-import type { PlaygroundProfile } from "./cloud-transport";
-import { profiles, toolArgument, type PlaygroundTurn } from "./use-playground";
+import type { PlaygroundTurn } from "./use-playground";
 
 const escape = "\x1b";
 const clearRow = "\r\x1b[2K";
@@ -21,7 +20,6 @@ const segmenter = new Intl.Segmenter(undefined, { granularity: "grapheme" });
 type Draft = { text: string; cursor: number };
 type History = { position: number; draft: Draft };
 type Paint = { terminal: WTerm; output: string; prompt: string; cols: number; rows: number };
-export type TerminalTurn = { profile: PlaygroundProfile; turn: PlaygroundTurn };
 
 function plainText(text: string) {
   // Model and user text may contain control characters. Only the UI emits terminal commands.
@@ -32,16 +30,20 @@ function terminalText(text: string) {
   return plainText(text).replaceAll("\n", newline);
 }
 
-function transcript(turns: TerminalTurn[]) {
+const toolLabels: Record<string, string> = {
+  read_file: "Reading a file", search_files: "Searching files", shell: "Working in the workspace",
+  docs_search_docs: "Searching documentation", docs_get_doc: "Reading documentation", docs_lookup_model: "Looking up a model",
+};
+
+function transcript(turns: PlaygroundTurn[]) {
   let output = `${muted}Browser workspace · Type a task and press Enter.${resetStyle}${newline}${newline}`;
-  for (const { turn, profile } of turns) {
+  for (const turn of turns) {
     output += `${bold}┃ ${terminalText(turn.prompt)}${resetStyle}${newline}${newline}`;
     if (turn.imageName) output += `${muted}Image · ${terminalText(turn.imageName)}${resetStyle}${newline}`;
-    for (const { text } of turn.steers) output += `${muted}Steering · ${terminalText(text)}${resetStyle}${newline}`;
     for (const [index, step] of turn.steps.entries()) {
       for (const tool of step.tools) {
-        const label = [tool.name, toolArgument(tool.input)].filter(Boolean).join(" ");
-        output += `${muted}  ↳ ${terminalText(label)}${resetStyle}${newline}`;
+        const label = toolLabels[tool.name] ?? "Using a tool";
+        output += `${muted}  ↳ ${label}${tool.failed ? " · Failed" : tool.done ? " · Done" : "…"}${resetStyle}${newline}`;
       }
       if (step.text) {
         output += terminalText(step.text);
@@ -51,10 +53,6 @@ function transcript(turns: TerminalTurn[]) {
     if (turn.status === "running") continue;
     if (turn.status === "stopped") output += `${muted}Run stopped.${resetStyle}${newline}`;
     if (turn.message) output += terminalText(turn.message) + newline;
-    if (turn.elapsed !== undefined) {
-      const count = turn.steps.length;
-      output += `${muted}${profiles[profile]} · ${(turn.elapsed / 1000).toFixed(2)} s · ${count} model request${count === 1 ? "" : "s"}${resetStyle}${newline}`;
-    }
     output += newline;
   }
   return output;
@@ -88,7 +86,7 @@ function draftRow(draft: Draft, cols: number) {
 
 export function PlaygroundTerminal({ terminalRef, turns, draft, running, checking, onDraft, onSubmit, onCancel, onImage, onReady }: {
   terminalRef: RefObject<TerminalHandle | null>;
-  turns: TerminalTurn[];
+  turns: PlaygroundTurn[];
   draft: string;
   running: boolean;
   checking: boolean;
@@ -140,7 +138,7 @@ export function PlaygroundTerminal({ terminalRef, turns, draft, running, checkin
     if (browse.position === turns.length) {
       update(browse.draft);
     } else {
-      const text = turns[browse.position].turn.prompt;
+      const text = turns[browse.position].prompt;
       update({ text, cursor: text.length }, true);
     }
   }

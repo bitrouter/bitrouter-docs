@@ -1,6 +1,9 @@
 {
   "title": "CLI",
   "pages": [
+    "getting-started",
+    "run-inspect",
+    "cloud-management",
     "request-receipts",
     "agent"
   ]

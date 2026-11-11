@@ -24,9 +24,13 @@ describe("LLMS_TXT", () => {
     const { LLMS_TXT } = await import("./llms-txt");
     expect(LLMS_TXT).toContain(`[Elastic Inference](${origin}/docs/overview/elastic-inference.md)`);
     expect(LLMS_TXT).toContain(`[llms-full.txt](${origin}/llms-full.txt)`);
-    expect(LLMS_TXT).toContain(`[Cloud authentication](${origin}/docs/reference.md#get-a-cloud-credential)`);
+    expect(LLMS_TXT).toContain(`[Cloud authentication](${origin}/docs/reference/authentication.md#cloud-api-keys)`);
     expect(LLMS_TXT).toContain(`[First Cloud request](${origin}/docs/reference.md#first-cloud-request)`);
     expect(LLMS_TXT).toContain(`[Python client](${origin}/docs/reference.md#python-client)`);
+    expect(LLMS_TXT).toContain(`[Cloud Management](${origin}/docs/cli/cloud-management.md)`);
+    expect(LLMS_TXT).toContain(`[Inference APIs](${origin}/docs/usage/responses-api.md)`);
+    expect(LLMS_TXT).not.toContain("/docs/cli/interactive");
+    expect(LLMS_TXT).not.toContain("/docs/cli/headless-scripting");
     expect(LLMS_TXT).toContain(`[Model catalog JSON](${origin}/api/bitrouter/models)`);
     expect(LLMS_TXT).not.toContain("/docs/integration/coding-agents");
     expect(LLMS_TXT).toContain("https://api.bitrouter.ai/v1");

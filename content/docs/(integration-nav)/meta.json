@@ -1,7 +1,8 @@
 {
-  "title": "Coding Agents",
-  "pagesIndex": "[DeepSeek Harness](/docs/integration/deepseek-harness)",
+  "title": "Integrations",
+  "root": true,
   "pages": [
+    "[DeepSeek Harness](/docs/integration/deepseek-harness)",
     "[Hermes Agent](/docs/integration/hermes-agent)",
     "[OpenClaw](/docs/integration/openclaw)",
     "[OpenCode](/docs/integration/opencode)",

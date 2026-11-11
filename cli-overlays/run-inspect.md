@@ -1,0 +1,96 @@
+---
+title: Run & Inspect
+description: Operate the local router, preview model routes, inspect settled requests, and automate routine checks.
+---
+
+Start with a validated [configuration](/docs/routing/configuration). Commands here follow the captured `bro 1.0.0-alpha.33` reference; compare your installed `--help` before using version-specific options.
+
+## Start in the foreground or background
+
+Run the router in the foreground for a terminal session, container, or process supervisor:
+
+```bash
+bro serve -c ./bitrouter.yaml
+```
+
+Alternatively, start a detached background process:
+
+```bash
+bro start -c ./bitrouter.yaml
+bro status -c ./bitrouter.yaml
+```
+
+The default local listener is `http://127.0.0.1:4356`. `bro status` reports the daemon's state; it does not establish that an upstream model request will succeed. The [Self-hosting guide](/docs/self-hosting) owns service deployment, network exposure, authentication, and telemetry setup.
+
+## Apply configuration changes
+
+Validate the intended file before applying it to the daemon:
+
+```bash
+bro config validate -c ./bitrouter.yaml
+bro reload -c ./bitrouter.yaml
+```
+
+Use the same configuration path to locate the daemon you intend to control. Reload only applies supported changes; consult [reload boundaries](/docs/routing/configuration#apply-and-review-changes) before deciding whether to restart.
+
+```bash
+bro restart -c ./bitrouter.yaml
+```
+
+Stop the daemon when it is no longer needed:
+
+```bash
+bro stop -c ./bitrouter.yaml
+```
+
+## Inspect model routes
+
+```bash
+bro models -c ./bitrouter.yaml
+bro route anthropic/claude-haiku-4.5 -c ./bitrouter.yaml
+```
+
+Replace the example selector with one available in your configuration. `bro route` uses the running daemon when reachable and otherwise resolves from the configuration on disk. It is read-only and sends nothing upstream. [Virtual Models](/docs/models-routing/virtual-models#model-selector-forms) explains selector forms; [Auto Router](/docs/routing/auto-router) owns policy initialization and route overrides.
+
+## Inspect settled requests
+
+```bash
+bro requests --limit 25 -c ./bitrouter.yaml
+```
+
+Inspect the model and provider that served each request, recorded usage, cost, latency, and status. A route preview and a completed request answer different questions. [Request receipts](/docs/cli/request-receipts) explains the recorded fields; [Routing Traces](/docs/routing/routing-traces) explains correlation and attempt evidence.
+
+Cloud account activity is available through [Cloud Management](/docs/cli/cloud-management#inspect-usage-and-balance).
+
+## Diagnose a failed request
+
+1. Check the daemon with `bro status` and confirm the configuration path.
+2. Run `bro config validate` and inspect its warnings as well as its exit status.
+3. Use `bro models` and `bro route` to inspect the configured selector and eligible sources.
+4. Inspect settled requests with `bro requests`; use the daemon log and configured telemetry for failures not explained by a receipt.
+
+`bro start` writes daemon output to `bitrouter.log` in the configuration directory by default; `--log` selects another path. Foreground `bro serve` writes to its attached process output. For exporter setup and coverage, see [Self-hosting](/docs/self-hosting#opentelemetry).
+
+## Scripting
+
+Use noninteractive onboarding when the required credentials are already supplied through the environment or explicit configuration:
+
+```bash
+bro init --yes --use-detected --after exit -c ./bitrouter.yaml
+bro config validate -c ./bitrouter.yaml
+```
+
+`--yes` does not complete a browser sign-in flow. Use [API-key login](/docs/cli/cloud-management#noninteractive-use) for Cloud automation.
+
+Stop a deployment script when validation fails:
+
+```bash
+if ! bro config validate -c ./bitrouter.yaml; then
+  exit 1
+fi
+bro reload -c ./bitrouter.yaml
+```
+
+An unset environment reference can be reported as a warning while validation uses a placeholder. Validation is a configuration check, not proof that credentials work or an upstream request will succeed. Inspect the running deployment after applying a change.
+
+Output controls vary by command. The captured local inspection commands describe JSON output, while Cloud commands such as `bro cloud usage` expose their own `--json` option. Consult [Command Reference](/docs/usage/cli) before parsing output; do not infer fields or successful execution from human-readable text alone.

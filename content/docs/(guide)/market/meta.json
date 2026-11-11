@@ -1,7 +1,7 @@
 {
   "title": "Market",
   "pages": [
-    "pricing",
+    "price-time-priority",
     "inference-types",
     "inference-tiers",
     "buy-inference",

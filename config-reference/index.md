@@ -32,8 +32,8 @@ Schema defaults and onboarding defaults differ. The schema declares `server.list
 | Named model endpoints and request defaults | `models`, `presets`, `variants` | [Virtual Models](/docs/models-routing/virtual-models) |
 | Named routers, policy artifacts, and checks | `routers`, `policy`, `checkers` | [Workload Optimization](/docs/routing/workload-optimization#existing-policy-tools) |
 | Native semantic decision backend | `decision_model` | [Context Routing](/docs/routing/context-routing) |
-| ACP adapters and saved interactive defaults | `agents`, `chat` | [ACP servers](/docs/context-routing/acp-servers) |
-| Upstream MCP connections and aggregation | `mcp_servers`, `mcp` | [MCP servers](/docs/context-routing/mcp-servers) |
+| ACP adapters and saved interactive defaults | `agents`, `chat` | [Agent configuration fields](/docs/routing/configuration#acp-agent-config) |
+| Upstream MCP connections and aggregation | `mcp_servers`, `mcp` | [MCP configuration fields](/docs/routing/configuration#agents-and-mcp) |
 | Retention, recording, and continuation | `trajectory`, `acp_recording`, `continuation` | [Request receipts](/docs/cli/request-receipts) |
 
 Native harness launch prepares connection settings for the child process. `agents` configures ACP adapters; it is not a replacement for the harness's own configuration. See [native launch settings](/docs/integration/bro-harness#what-gets-configured) for that boundary.

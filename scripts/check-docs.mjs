@@ -20,6 +20,7 @@ import {
   assertWhitelisted,
 } from "../lib/docs-sync/transform.mjs";
 import { COMPONENT_WHITELIST } from "../lib/docs-sync/constants.mjs";
+import { HIDDEN_SIDEBAR_SECTIONS } from "../lib/docs-navigation.mjs";
 
 // Hand-authored sections, relative to content/docs. The primary sections live
 // under the `(guide)` folder group, which fumadocs strips from the URL.
@@ -29,7 +30,6 @@ const SECTIONS = [
   "(guide)/routing",
   "(guide)/models-routing",
   "(guide)/market",
-  "(guide)/context-routing",
   "(guide)/cli",
   "(guide)/usage",
   "self-hosting",
@@ -41,37 +41,18 @@ const STANDALONE_DOCS = [
   "troubleshooting.mdx",
   "reference/index.mdx",
   "reference/decisions.mdx",
-  "reference/chat-completions-messages.mdx",
+  "reference/authentication.mdx",
   "changelog.mdx",
 ];
 const ROOT = "content/docs";
 // Full guide outputs are generated; lint their authored guide inputs below.
 // Captured command help and schema field tables remain generator-owned.
-const GENERATED = new Set(["(guide)/usage/cli.mdx", "(guide)/routing/configuration.mdx"]);
-const AUTHORED_GUIDES = ["cli-overlays/guide.md", "config-reference/guide.md"];
+const GENERATED = new Set(["(guide)/usage/cli.mdx", "(guide)/cli/getting-started.mdx", "(guide)/cli/run-inspect.mdx", "(guide)/cli/cloud-management.mdx", "(guide)/routing/configuration.mdx"]);
+const AUTHORED_GUIDES = ["cli-overlays/guide.md", "cli-overlays/run-inspect.md", "cli-overlays/cloud-management.md", "cli-overlays/legacy-workflows.md", "config-reference/guide.md"];
 const isGenerated = (path) => GENERATED.has(path) || path.startsWith("(guide)/cli/reference/");
 // Intentional exceptions to the otherwise complete public sidebar. Keep this
 // list short and document each product-navigation decision.
-const HIDDEN_SIDEBAR_ROUTES = new Set([
-  // Router main navigation is limited to the four product guides.
-  // Strategies links to these supporting context and configuration guides.
-  "/docs/routing/context-routing",
-  "/docs/routing/configuration",
-  // Retain the Cloud placeholder URL after removing its Usage navigation entry.
-  "/docs/usage/cloud",
-  // Deployment guide remains accessible through content links, outside Overview.
-  "/docs/self-hosting",
-  "/docs/cli/agent",
-  // Supporting guides remain linked from content, without CLI sidebar entries.
-  "/docs/cli/request-receipts",
-  // Temporarily hidden Coding Agents guides remain directly accessible.
-  "/docs/integration/claude-code",
-  "/docs/integration/codex",
-  // Shared native-launch guide remains reachable without a sidebar entry.
-  "/docs/integration/bro-harness",
-  // Retained for existing links after replacing the generic Coding Agents entry.
-  "/docs/integration/coding-agents",
-]);
+const HIDDEN_SIDEBAR_ROUTES = new Set(Object.keys(HIDDEN_SIDEBAR_SECTIONS));
 const NAV_FILES = [
   "(overview-nav)/meta.json",
   "(comparison-nav)/meta.json",
@@ -79,34 +60,27 @@ const NAV_FILES = [
   "(routing-nav)/meta.json",
   "(models-routing-nav)/meta.json",
   "(market-nav)/meta.json",
-  "(context-routing-nav)/meta.json",
-  "(usage-nav)/meta.json",
+  "(cli-nav)/meta.json",
+  "(api-nav)/meta.json",
   "(reference-nav)/meta.json",
 ];
-// Explicit product-navigation exception. Traverse it from its parent so an
-// orphaned folder cannot pass sidebar coverage, and duplicate entries still fail.
-const NESTED_NAV_FOLDERS = new Map([
-  ["(market-nav)/meta.json:inference-types", "(market-nav)/inference-types/meta.json"],
-]);
 const ROOT_NAV_PAGES = [
+  "(documentation-nav)",
+  "(cli-nav)",
+  "(api-nav)",
+  "(integration-nav)",
+];
+const DOCUMENTATION_NAV_PAGES = [
   "---Overview---",
-  "...(overview-nav)",
-  "(comparison-nav)",
-  "---Usage---",
-  "...(usage-nav)",
-  "---Coding Agents---",
-  "...(integration-nav)",
+  "...../(overview-nav)",
   "---Market---",
-  "...(market-nav)",
+  "...../(market-nav)",
   "---Router---",
-  "...(routing-nav)",
+  "...../(routing-nav)",
   "---Model---",
-  "...(models-routing-nav)",
-  "---Context---",
-  "...(context-routing-nav)",
+  "...../(models-routing-nav)",
   "---Reference---",
-  "...(reference-nav)",
-  "reference"
+  "...../(reference-nav)"
 ];
 
 async function walk(dir) {
@@ -176,13 +150,26 @@ async function main() {
   const rootMeta = JSON.parse(await readFile(join(ROOT, "meta.json"), "utf8"));
   if (JSON.stringify(rootMeta.pages) !== JSON.stringify(ROOT_NAV_PAGES)) {
     errors.push(
-      "meta.json  top-level navigation must use the eight section separators and extracted folders",
+      "meta.json  top-level navigation must contain Guides, CLI, API, and Integrations root folders",
     );
   }
+  const documentationMeta = JSON.parse(await readFile(join(ROOT, "(documentation-nav)/meta.json"), "utf8"));
+  if (JSON.stringify(documentationMeta.pages) !== JSON.stringify(DOCUMENTATION_NAV_PAGES)) {
+    errors.push("(documentation-nav)/meta.json  Guides must retain its five flat section groups");
+  }
+  for (const [folder, title] of [["(documentation-nav)", "Guides"], ["(cli-nav)", "CLI"], ["(api-nav)", "API"], ["(integration-nav)", "Integrations"]]) {
+    const meta = JSON.parse(await readFile(join(ROOT, folder, "meta.json"), "utf8"));
+    if (meta.root !== true || meta.title !== title) {
+      errors.push(`${folder}/meta.json  layout tab must be a native root folder titled ${title}`);
+    }
+  }
+  const apiMeta = JSON.parse(await readFile(join(ROOT, "(api-nav)/meta.json"), "utf8"));
+  if (apiMeta.pages.at(-1) !== "../reference") {
+    errors.push("(api-nav)/meta.json  API must end with the generated Endpoint Reference folder");
+  }
 
-  const sidebarDocs = files
-    .filter(isDoc)
-    .filter((path) => !relative(ROOT, path).replace(/\\/g, "/").startsWith("reference/"));
+  // Root API guides participate in flat coverage; generated endpoints have their own tree test.
+  const sidebarDocs = files.filter(isDoc);
   const allSidebarRoutes = new Set(sidebarDocs.map(docRoute));
   const expectedRoutes = new Set(
     [...allSidebarRoutes].filter((route) => !HIDDEN_SIDEBAR_ROUTES.has(route)),
@@ -199,11 +186,8 @@ async function main() {
     const meta = JSON.parse(await readFile(join(ROOT, navFile), "utf8"));
     const entries = [meta.pagesIndex, ...(meta.pages ?? [])].filter((entry) => entry !== undefined);
     for (const entry of entries) {
-      const nested = NESTED_NAV_FOLDERS.get(`${navFile}:${entry}`);
-      if (nested) {
-        await checkNavFile(nested);
-        continue;
-      }
+      if (navFile === "(api-nav)/meta.json" && entry === "../reference") continue;
+      if (navFile === "(overview-nav)/meta.json" && entry === "../(comparison-nav)") continue;
       const route = navRoute(entry);
       if (!route) {
         errors.push(`${navFile}  every sidebar entry must be a direct /docs link: ${entry}`);
@@ -219,7 +203,6 @@ async function main() {
 
   for (const navFile of [
     "(comparison-nav)/meta.json",
-    "(market-nav)/inference-types/meta.json",
     "reference/meta.json",
   ]) {
     const meta = JSON.parse(await readFile(join(ROOT, navFile), "utf8"));

@@ -3,7 +3,6 @@
   "pagesIndex": "quickstart",
   "pages": [
     "what-is-bitrouter",
-    "supported-models",
     "elastic-inference",
     "comparison"
   ]

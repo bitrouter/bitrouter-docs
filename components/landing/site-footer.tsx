@@ -17,6 +17,6 @@ export function SiteFooter() {
         ))}
       </nav>
     </div>
-    <div className="site-footer-meta"><span>© {new Date().getFullYear()} BitRouter, Inc.</span><nav aria-label="Legal">{LEGAL_LINKS.map(link => <a key={link.href} href={link.href}>{link.label}</a>)}<a href="https://status.bitrouter.ai">Status</a></nav></div>
+    <div className="site-footer-meta"><span>© {new Date().getFullYear()} BitRouter, Inc.</span><nav aria-label="Legal">{LEGAL_LINKS.map(link => <a key={link.href} href={link.href}>{link.label}</a>)}<a href="/status">Status</a></nav></div>
   </footer>;
 }

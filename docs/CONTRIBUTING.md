@@ -6,12 +6,22 @@ is rendered from this repo — docs are committed directly here under
 
 ## What publishes
 
-Documentation uses one unified Fumadocs page tree with no layout tabs. Its
-top-level order is the `pages` list in `content/docs/meta.json`:
+Documentation uses four native Fumadocs Layout Tabs:
+**Guides, CLI, API, Integrations**.
+`content/docs/meta.json` lists their root folders in that order. Each root's
+`meta.json` has `root: true`, and Notebook Layout uses `tabMode="navbar"`.
+The shared site Header composes the native Notebook Header for the desktop tab
+row; the native sidebar supplies the section dropdown on smaller screens.
+Guides contains Overview, Market, Router, Model, and Reference.
+CLI, API, and Integrations have independent sidebars. Integrations retains the
+existing five coding-agent connection guides. Changelog is the last entry in
+Guides > Overview, after Comparison, and opens its existing single page.
+Content ownership is:
 
-1. **Overview** — Quickstart, How BitRouter Works, Models, Elastic Inference,
-   then a collapsed Comparison folder. Models restores the catalog at its existing
-   `/docs/overview/supported-models` URL. Elastic Inference is an authored overview
+1. **Overview** — Quickstart, How BitRouter Works, Elastic Inference,
+   then a collapsed Comparison folder and Changelog. The retired Models URL redirects to API
+   model discovery at `/docs/reference#model-discovery`; selector forms belong to
+   Virtual Models. The catalog snapshot and model detail pages remain separate. Elastic Inference is an authored overview
    of the optional cloud service, with price/time/model flexibility, the
    electricity-exchange vision, illustrative buy/sell limit-order tables and JSON,
    and next-step links to the five top-level Market entries in sidebar order. The concise
@@ -26,72 +36,78 @@ top-level order is the `pages` list in `content/docs/meta.json`:
    `/docs/overview/flex-inference` URL redirects directly here. Preserve its
    historical What/Why section anchors and `/pricing#flex-inference` anchor.
    Enterprise remains a linked deployment-decision entry.
-2. **Usage** — Desktop, CLI, Responses API, MCP, and Agentic Payment, in that order.
-   MCP and Agentic Payment are Coming soon placeholders. Agentic Payment is canonical
-   at `/docs/usage/agentic-payment`; its former Market URL redirects here. Web is
-   retired and `/docs/usage/web` redirects to `/docs/usage/desktop`. Desktop is Coming soon until
-   its installation and behavior can be documented from a verified implementation.
-   CLI combines the self-driving, interactive terminal, and headless guides.
-3. **Coding Agents** — DeepSeek Harness, Hermes Agent, OpenClaw, OpenCode, and Pi,
+2. **CLI** — Getting Started, Configuration, Run & Inspect, Cloud Management,
+   Command Reference. It owns router setup, operation, inspection, and Cloud
+   management. The three generated workflows use `/docs/cli/getting-started`,
+   `/docs/cli/run-inspect`, and `/docs/cli/cloud-management`. Configuration is
+   visible here at its existing `/docs/routing/configuration` URL. Command Reference
+   retains `/docs/usage/cli` and every captured command.
+3. **API** — Getting Started (`/docs/reference`), Authentication
+   (`/docs/reference/authentication`), Inference APIs (`/docs/usage/responses-api`),
+   then collapsed Endpoint Reference. Inference APIs combines Responses, Chat
+   Completions, Messages, and GenerateContent; preserve old anchors and redirect
+   the retired compatibility guide directly. Decisions stays a hidden supporting
+   local-interface guide with explicit hosted-availability boundaries.
+4. **Integrations** — DeepSeek Harness, Hermes Agent, OpenClaw, OpenCode, and Pi,
    in alphabetical order. These five authored guides follow the development `bro connect`
    CLI in BitRouter PR #1016 and qualify availability separately from the installed
    release and captured CLI reference. Claude Code
    and Codex retain their authored integration guides but are temporarily hidden
    from the sidebar; their existing URLs remain accessible.
-4. **Market** — Pricing, Inference Types, Inference Tiers, Buy Inference, and
-   Sell Inference, in that order. Pricing documents the approved public terms.
+5. **Market** — Price-Time Priority, Inference Types, Inference Tiers, Buy
+   Inference, and Sell Inference, in that order. Price-Time Priority covers
+   purchase timing, price caps, and the approved public pricing terms.
    Buy Inference and Sell Inference retain their pricing and State Affinity links.
-   Inference Types is a collapsed folder with a clickable overview and Priority,
-   Standard, and Flex children, in that order. Those four pages and Inference Tiers
-   are Coming soon. The former Service Tiers URLs and `/docs/market/market-data`
-   redirect directly to Inference Types and its corresponding children.
+   Inference Types is one page with On-demand, Interruptible, and Reserved sections.
+   Reserved is Coming soon. Inference Tiers covers Unverified, Verified, and
+   Secured as a market design preview. The former Market Pricing URL redirects to
+   Price-Time Priority. The former On-demand and Interruptible child URLs redirect
+   to their sections. The retired Priority, Standard, and Flex pages, former
+   Service Tiers URLs, and `/docs/market/market-data` redirect to Inference Types.
    Auto-bidding and Verify Inference are retired, redirecting to Buy Inference
    and `/enterprise#verification`, respectively.
-5. **Router** — Auto Router, Workload Optimization, State Affinity, Routing Traces,
+6. **Router** — Auto Router, Workload Optimization, State Affinity, Routing Traces,
    and Strategies, in that order. Workload Optimization and State Affinity are Coming soon.
-   Context Routing and Configuration
-   (YAML) remain supporting guides linked from Strategies, without sidebar entries.
-6. **Model** — Model Fallbacks, Virtual Models, Structured Output, BYOK & Subscriptions,
+   Context Routing remains a supporting guide linked from Strategies;
+   Configuration is visible under CLI at its existing URL.
+7. **Model** — Model Fallbacks, Virtual Models, Structured Output, BYOK & Subscriptions,
    and Local Models. Structured Output is a Coming soon placeholder.
-7. **Context** — ACP servers, MCP gateway configuration/use,
-   Agent Skills, Server tools, and Context Switcher. Context Switcher is Coming soon.
-8. **Reference** — Changelog, Privacy Policy, Terms of Service, Troubleshooting,
-   and API reference. The two policies are authored docs pages; Troubleshooting
-   is Coming soon. API reference has one collapsed outer folder, with endpoints
-   directly visible beneath static family separators, alongside Decisions / System
-   One and Chat Completions / Messages. CLI commands and configuration fields are
-   embedded in their corresponding guides, rather than separate sidebar pages.
+8. **Reference** — Privacy Policy, Terms of Service, Troubleshooting.
+   The two policies are authored docs pages; Troubleshooting is Coming soon.
+   Configuration fields remain embedded in Configuration under CLI.
 
-Each group name in `content/docs/meta.json` is a native Fumadocs separator, not
-a page or collapsible folder. Eight meta-only guide folders — `(overview-nav)`,
-`(usage-nav)`, `(integration-nav)`, `(market-nav)`, `(routing-nav)`,
-`(models-routing-nav)`, `(context-routing-nav)`, and `(reference-nav)` — are extracted into the root with `...folder`.
-They link to canonical pages rather than copies.
+Desktop, Usage MCP, Agentic Payment, and Context remain outside first-release
+scope. Their HTML and Markdown URLs redirect to retained task guides. Desktop
+and Web lead to CLI Getting Started; MCP leads to Responses; payment leads to Buy Inference.
 
-Comparison under Overview, Inference Types under Market, and API reference are
-the explicit hierarchy exceptions. All are native folders with `collapsible: true`
+`(documentation-nav)/meta.json` extracts the five Guides groups from
+their existing meta-only `*-nav` folders using relative `...../folder` entries.
+Their labels are native separators, not pages or collapsible folders.
+`(cli-nav)`, `(api-nav)`, and `(integration-nav)` are sibling root folders with direct links to their
+canonical pages. API also references `../reference` for its generated endpoint
+folder. These metadata projections do not move or copy authored pages or URLs.
+
+Comparison under Overview and Endpoint Reference under API are the explicit hierarchy
+exceptions. Both are native folders with `collapsible: true`
 and `defaultOpen: false`. Comparison has no index page: its header only expands
 or collapses its four canonical comparison guides. Keep competitor claims sourced
-and qualified. Inference Types has a clickable overview and Priority, Standard,
-and Flex children, projected through `(market-nav)/inference-types/meta.json`.
-Its canonical sources live in `(guide)/market/inference-types/`; the public metadata
-uses a `pagesIndex` link for the overview and three direct child links.
+and qualified.
 
 API reference retains `content/docs/reference/` and its generated endpoint URLs.
-Only the outer API reference folder collapses: generated tag folders are extracted
+Only the outer Endpoint Reference folder collapses: generated tag folders are extracted
 with `...folder` beneath native separators, so no family needs a second expansion.
 New operations and tags stay visible automatically; undeclared tags are inferred
 from operations, and untagged operations use an Other endpoints group.
-Its overview and the Decisions and compatibility guides
-are hand-authored root files. Change generated ordering through
+Getting Started, Authentication, and the supporting Decisions guide are
+hand-authored root files excluded from the endpoint folder. `(api-nav)/meta.json`
+projects the first two and Inference APIs into API. Decisions stays linked from content. Change generated ordering through
 `scripts/generate-openapi.mjs`; builds replace generated metadata.
 
-The complete CLI page at `content/docs/(guide)/usage/cli.mdx` is generated by
-`scripts/generate-cli.mjs`. Edit `cli-overlays/guide.md` for its workflow guide,
-`cli-overlays/index.md` for the reference introduction, and `cli-overlays/<group>.md`
-for command sections. The command reference follows the guide under
-`/docs/usage/cli#command-reference`. Command and group anchors remain stable;
-retired CLI reference URLs redirect to this page. Never edit the generated page.
+All four CLI pages are generated by `scripts/generate-cli.mjs`. Edit
+`cli-overlays/guide.md`, `run-inspect.md`, and `cloud-management.md` for their
+respective workflow pages. `index.md` and `<group>.md` own the command manual at
+`/docs/usage/cli#command-reference`; `legacy-workflows.md` retains the old workflow
+anchors with a retirement notice and links to current operational guides. Never hand-edit the generated pages.
 
 The Configuration (YAML) page at `content/docs/(guide)/routing/configuration.mdx`
 is also generated in full. Edit `config-reference/guide.md` for the setup workflow
@@ -107,10 +123,10 @@ render on `/docs/changelog`; old `/changelog` and per-release URLs redirect into
 this page. The established RSS/Atom endpoints remain available. Do not hand-edit
 the generated changelog page.
 
-Three rules keep the unified navigation intact:
+Three rules keep the layout tabs consistent:
 
-1. Do not add `"root": true`; Fumadocs root folders isolate content into layout
-   tabs and would split the page tree again.
+1. Keep `"root": true` only on the four approved meta-only layout folders.
+   Do not introduce additional tabs or nested root folders by default.
 2. Keep source paths aligned with the information architecture. When a page
    changes jobs, move it and update its internal links and URL-history target.
 3. A page should appear in one user-facing group. Cross-link it from content
@@ -119,23 +135,22 @@ Three rules keep the unified navigation intact:
 ### Keep non-Reference sections flat
 
 Source pages can remain nested where that keeps related files together, but the
-public sidebar is a flat list beneath each section separator, with Comparison,
-Inference Types, and API reference as explicit exceptions. Every public page
-must be listed exactly once in the matching `*-nav/meta.json`, including the
-four Comparison children and the Inference Types overview and three children.
-`scripts/check-docs.mjs` follows the explicitly allowed Inference Types folder
-from its parent so detached or duplicate entries fail coverage. Cards and inline links provide additional
+public sidebar is a flat list beneath each section separator, with Comparison
+and Endpoint Reference as explicit exceptions. Every public guide must be listed
+exactly once in the matching `*-nav/meta.json`, including the four Comparison
+children. `scripts/check-docs.mjs` checks sidebar coverage. Cards and inline links provide additional
 discovery, not a substitute for sidebar visibility.
-Rare intentional exceptions must be added to `HIDDEN_SIDEBAR_ROUTES` in
-`scripts/check-docs.mjs`. The Cloud placeholder remains accessible at
-`/docs/usage/cloud` without a sidebar entry. Models is visible under Overview at
-`/docs/overview/supported-models`. BitRouter Agent and the
+Rare intentional exceptions must be assigned to `HIDDEN_SIDEBAR_SECTIONS` in
+`lib/docs-navigation.mjs`, shared by the sidebar and lint. The Cloud placeholder remains accessible at
+`/docs/usage/cloud` without a sidebar entry. The retired Models page is absent
+from canonical discovery; API owns catalog discovery and Virtual Models owns selector forms. BitRouter Agent and the
 retained Coding agents guide remain hidden. The shared `bro [harness]` launch
 guide also remains accessible at `/docs/integration/bro-harness` without a sidebar entry.
 Claude Code and Codex are temporarily hidden from the sidebar at the user's request;
 their existing pages and URLs remain intact. The supporting Request receipts page has no sidebar entry; feature guides retain
 its links. Context Routing and Configuration (YAML) are intentional supporting-guide
-exceptions: both remain linked from Strategies without Router sidebar entries.
+exceptions in Router: Context Routing is hidden; Configuration is shown under CLI.
+Both remain linked from Strategies.
 Self-hosting is also omitted from Overview navigation and remains accessible through
 deployment-related content links.
 Router's five main guides and Local Models are public sidebar pages. Supporting
@@ -145,16 +160,16 @@ search, sitemap, and full-text ingestion. Retained compatibility guides carry
 
 Use this boundary when classifying content:
 
-- **Market** follows Coding Agents and precedes Router. It owns pricing, inference
+- **Market** follows Overview and precedes Router within Guides. It owns pricing, inference
   types and tiers, buying and selling inference, and future trading, delivery, and
-  settlement guides. Its order is Pricing, Inference Types, Inference Tiers,
-  Buy Inference, and Sell Inference, all canonical under `/docs/market/`.
-  Pricing uses the approved commercial terms; Buy Inference and Sell Inference
-  retain their pricing boundaries and State Affinity links. Inference Types
-  replaces Service Tiers, with a clickable overview and Priority, Standard, and
-  Flex children. Those four pages and Inference Tiers remain Coming soon;
-  detailed marketplace behavior remains unverified. Auto-bidding and Verify
-  Inference are retired. Agentic Payment belongs to Usage.
+  settlement guides. Its order is Price-Time Priority, Inference Types, Inference
+  Tiers, Buy Inference, and Sell Inference, all canonical under `/docs/market/`.
+  Price-Time Priority covers purchasing constraints and the approved commercial
+  terms. Buy Inference and Sell Inference retain their pricing boundaries and
+  State Affinity links. Inference Types covers On-demand, Interruptible, and
+  Reserved, with Reserved marked Coming soon. Inference Tiers describes
+  Unverified, Verified, and Secured as a design preview. Auto-bidding and Verify
+  Inference are retired. The Agentic Payment guide is omitted from the first release.
   Connecting an endpoint belongs to Model; offering its inference for sale belongs
   to Market. Overview's Elastic Inference introduces the product concept;
   Market owns the operational workflows.
@@ -175,12 +190,12 @@ Use this boundary when classifying content:
   pool, candidate eligibility, filters, variants, and ordering limits. Routing Rules
   redirects to Strategies; Model Variants redirects to its Variants section.
   State Affinity is Coming soon; Market owns its trading applications. Context
-  Routing and Configuration remain supporting guides without sidebar entries.
+  Routing remains a hidden supporting guide; Configuration is visible under CLI.
   Preserve historical section anchors on Auto Router and Strategies. Routing uses
   already-accessible sources and does not purchase supply or grant access. Keep
   rule examples in Strategies and policy lifecycle examples in Workload Optimization.
   External harnesses retain ownership of their history and compaction. Decisions
-  API remains inside API reference.
+  remains a supporting local-interface guide linked from API and Router.
 - **Model** owns source connections and callable interfaces: provider credentials,
   subscription accounts, custom endpoints, self-run inference, named model
   endpoints, request defaults, protocol compatibility, and fallback configuration.
@@ -192,24 +207,23 @@ Use this boundary when classifying content:
   Model and provider remain distinct technical concepts in the same navigation group.
   Keep feature-specific configuration examples with their owning guide and link
   from Router when explaining execution.
-- **Context** shows ACP servers, MCP servers, Agent Skills, Server tools, and
-  Context Switcher. Context Switcher is a Coming soon placeholder at
-  `/docs/context-routing/context-switcher`; the existing native Context Routing
-  supporting guide and its historical redirects retain their current URLs. It keeps
-  ACP session ownership and transport
-  configuration, MCP configuration and use, and harness-owned instructions/skills.
-  Server tools has a title and description only during its implementation refactor.
-  The former Config Server tools guide redirects to this Context placeholder.
-- **Usage > CLI** owns interactive/headless operation. Request receipts stays
-  a supporting guide; the command manual is embedded in the CLI page. Common configuration-file mechanics belong to Router's
-  Configuration (YAML) guide. Self-driving, Interactive TUI, and Headless & Scripting are sections of
-  the single CLI guide; receipts remain a supporting guide. The Self-driving guide
-  owns Goal coordination and completion semantics; Interactive TUI owns navigation, input
-  scope, decisions, and result inspection. Headless & Scripting describes native BRO
-  task execution, managed sessions, structured output, verification gates, and
-  the pending full Goal automation contract. External one-prompt ACP invocation
-  and its approval policies live in ACP servers. Keep each feature's YAML example in its guide.
-- **Coding Agents** shows DeepSeek Harness, Hermes Agent, OpenClaw, OpenCode, and Pi
+- **First-release scope** omits the Context group and its five authored guides:
+  ACP servers, MCP servers, Agent Skills, Server tools, and Context Switcher.
+  They are absent from published content, search, and canonical discovery. Their
+  HTML and Markdown URLs redirect directly to the retained CLI/configuration
+  references, Quickstart skill setup, or supporting Context Routing guide.
+  Update historical aliases to the final destination. The supporting Router guide
+  `/docs/routing/context-routing` and public read-only documentation MCP remain
+  separate capabilities. Preserve source-faithful captured CLI and schema references.
+- **CLI** owns setup, configuration-file mechanics, operation, inspection, and
+  Cloud account management. Configuration keeps its existing URL and generated
+  schema reference. Feature-specific settings stay in Router or Model. Routine
+  scripting belongs in Run & Inspect and Cloud Management. Request receipts
+  stays a supporting guide. BRO/Goal orchestration previews, Interactive, and
+  Headless & Scripting are retired from first-release docs; retain direct HTML
+  and Markdown redirects and fragment recovery without advertising those previews.
+  Keep every source-faithful captured command in Command Reference.
+- **Integrations** shows DeepSeek Harness, Hermes Agent, OpenClaw, OpenCode, and Pi
   in alphabetical order, with native-connection guides based on development PR #1016.
   The five independent-provider adapters preserve existing defaults and support
   repeated `--model` for an explicit ordered selector set. The first retains its
@@ -230,49 +244,21 @@ Use this boundary when classifying content:
   metadata distinct from BitRouter model routing. The shared `bro [harness]` guide retains native
   harness launch configuration without a sidebar entry. Native launch keeps the harness's interface and does not create a
   BRO Goal. Native launch support, ACP connectivity, and managed worker execution
-  are separate capabilities. Link to Self-driving for Goal coordination, Model
+  are separate capabilities. Link to CLI for router operation and Cloud management, Model
   for named routes and inference sources, Market for buying and selling, and
-  Context for ACP/MCP behavior.
-- **Usage > MCP and Agentic Payment** are Coming soon entry pages. Agentic Payment
-  owns payment usage guidance; its existing pricing and State Affinity links remain.
-  Context retains the MCP servers configuration/use guide.
-- **Usage > Responses API** explains the default generation interface and its
-  request examples. **API reference** owns typed decisions and System One,
-  Chat Completions/Messages compatibility, and generated endpoint schemas.
-  Availability is stated per deployment.
+  the CLI/configuration references for captured ACP/MCP commands and fields.
+- **API > Inference APIs** explains the four supported generation protocols,
+  with their own request and response shapes. Authentication owns caller credentials
+  and scopes. Decisions / System One remains an advanced local guide with hosted
+  availability explicitly unverified. Generated endpoint contracts stay in Endpoint Reference.
 
-### BRO design preview and merge validation
+### First-release CLI scope
 
-The Self-driving and Interactive TUI sections of the CLI guide describe the target product contract from
-`006-BRO-Goal-Oriented-Workflow-PRD.md`, Draft v0.8 (2026-10-15), sections 1,
-4, 6, 7, 8, 9, and 10. The CLI guide is at `/docs/usage/cli` and introduces the product
-as BitRouter Orchestrator (BRO). Both sections are preview documentation pending the BRO refactor;
-the PRD is not evidence that a released binary supports the behavior.
-
-Before merging or removing the preview notices, validate the Goals entry for
-`bro` / `bro code`, independent built-in execution, supported ACP workers, input
-scope and in-flight steering, read-only Workflow, evidence-backed completion,
-and pause/budget/recovery behavior against the implemented runtime. Confirm that
-`bro code <agent>` is removed without silently interpreting its old argument as
-Goal input. Check native launch and external `bro acp serve <agent>` independently.
-
-Regenerate command references only after capturing a verified implementation's
-CLI snapshot. Update the matching `cli-overlays/harnesses.md` explanations from
-that verified command behavior before regenerating. The current reference retains the older ACP conversation
-contract; do not rewrite it by hand or invent future flags or headless Goal
-commands from the PRD. Keep external ACP invocation semantics separate from native BRO tasks.
-
-Headless & Scripting's native examples are source-checked against the local BRO
-refactor checkout's `apps/bitrouter/src/main.rs` (`TaskRunArgs`, `TaskAction`, and
-`run_native_task`), `managed_task.rs`, `crates/bitrouter-orchestrator/src/turn.rs`,
-and `docs/CLI.md`. This is static source evidence, not released-binary or live
-provider validation. `task run` executes one native Turn; `task managed` retains a
-native managed session. Neither establishes the full persistent Goal lifecycle.
-Verify native argument parsing, output/exit behavior, permissions, verification,
-and recovery against the eventual binary before removing the development notice.
-A full Goal scripting contract must independently define creation/control,
-identity, retry, budgets, observation, and completion; no future syntax is inferred
-from 006 or from the existing one-prompt ACP flags.
+The public CLI guides focus on router and Cloud operation. BRO Goal coordination
+and the former Interactive and Headless & Scripting previews are outside this
+release. Keep legacy anchors as recovery links, without reintroducing the preview
+copy. Captured command reference output remains source-faithful. A future BRO
+workflow publication requires validation against its implemented runtime.
 
 ### Documentation vs Self-hosting
 
@@ -423,7 +409,9 @@ commitments, custom Enterprise pricing, and contact-form delivery behavior.
 2. Add it to the source section's `meta.json` when that local ordering is used.
 3. Add its canonical URL link to the appropriate `*-nav/meta.json`; every public
    non-Reference page must appear in the sidebar exactly once. If the product
-   decision is to hide it, add the route to `HIDDEN_SIDEBAR_ROUTES` instead.
+   decision is to hide it, assign the route to `HIDDEN_SIDEBAR_SECTIONS` in
+   `lib/docs-navigation.mjs` instead. The layout projection retains its native
+   section context while the sidebar Item slot omits the link.
 4. Run `pnpm lint:docs` to check the authoring contract.
 
 ## Adding a section
@@ -450,10 +438,11 @@ Four parts of the docs are generated at build time:
 - **API reference** (`content/docs/reference/<tag>/`) — `pnpm generate:openapi`
   regenerates endpoints, families, and metadata from `openapi.yaml`. Root authored
   MDX files survive regeneration. Update ordering in `scripts/generate-openapi.mjs`.
-- **CLI page** (`content/docs/(guide)/usage/cli.mdx`) — `pnpm generate:cli`
-  combines `cli-overlays/guide.md`, the reference intro in `cli-overlays/index.md`,
-  command overlays, and `.cli-snapshot.json`. Author guide changes in the input;
-  never hand-edit the published page. Command and group anchors stay stable.
+- **CLI workflows and command manual** — `pnpm generate:cli`
+  publishes the three workflow inputs (`guide.md`, `run-inspect.md`,
+  `cloud-management.md`) separately. The command manual combines `index.md`,
+  command overlays, `.cli-snapshot.json`, and `legacy-workflows.md`. Author changes
+  in those inputs; never hand-edit the published pages. Command and group anchors stay stable.
   The generator rejects missing or duplicate command ownership. Capture and
   verify a binary before changing the snapshot.
 - **Changelog** (`content/docs/changelog.mdx`) — `pnpm generate:changelog` combines
@@ -485,7 +474,7 @@ the reserved `tags` and `llms.txt` names. Tags have their own index and pages.
 Each post exposes `.md` and content negotiation; `/blog/llms.txt` is a separate
 blog index and does not change the canonical documentation denominator.
 
-Changelog remains one page at `/docs/changelog`. Its Fumadocs timeline uses the
+Changelog remains one page at `/docs/changelog`, under Guides > Overview. Its Fumadocs timeline uses the
 curated `content/changelog/` collection and the generated aggregate page's TOC
 for heading IDs. Keep generation and editorial significance checks: do not replace
 these files with live, unreviewed GitHub release bodies. RSS/Atom GUIDs and old

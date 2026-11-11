@@ -1,11 +1,11 @@
 {
-  "title": "API reference",
+  "title": "Endpoint Reference",
   "defaultOpen": false,
   "collapsible": true,
   "pages": [
-    "index",
-    "decisions",
-    "chat-completions-messages",
+    "!index",
+    "!authentication",
+    "!decisions",
     "---OpenAI Chat Completions---",
     "...openai-compatible",
     "---OpenAI Responses---",

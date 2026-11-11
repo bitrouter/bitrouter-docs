@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { PanelLeft } from "lucide-react";
 import { useNotebookLayout } from "fumadocs-ui/layouts/notebook";
+import { Header } from "fumadocs-ui/layouts/notebook/slots/header";
 import { WebHeaderBody } from "@/components/site-header-wired";
 import { cn } from "@/lib/cn";
 
@@ -23,26 +24,24 @@ function NotebookHeader() {
   const SidebarTrigger = slots.sidebar?.trigger;
 
   // The docs shell scrolls #nd-page instead of the window. Next.js resets the
-  // window on navigation, so without this a newly opened page can inherit the
-  // previous article's scroll offset and appear tucked under the header.
+  // window on navigation, so reset the article too. Preserve section links:
+  // resetting unconditionally would undo the browser's initial hash scroll.
   useEffect(() => {
-    document.getElementById("nd-page")?.scrollTo({ top: 0 });
+    if (!window.location.hash) {
+      document.getElementById("nd-page")?.scrollTo({ top: 0 });
+    }
   }, [pathname]);
 
   return (
-    <header
-      id="nd-subnav"
+    <div
+      id="nd-docs-header"
       className={cn(
         "sticky [grid-area:header] flex flex-col top-(--fd-docs-row-1) z-10",
         "bg-background",
-        // The `layout:` variant sets the var on the layout container so the
-        // sidebar/TOC siblings (which read `--fd-docs-row-2`) get the right
-        // offset. Setting it directly on the header would only scope it here.
-        "layout:[--fd-header-height:62px]",
       )}
     >
       {/* Below `md` the sidebar becomes a drawer. Without this trigger the docs
-          tree and changelog release list are unreachable on a phone. Native
+          tree are unreachable on a phone. Native
           notebook headers render the same slot; ours has to opt in because it
           replaces the whole header. */}
       <WebHeaderBody
@@ -57,16 +56,19 @@ function NotebookHeader() {
           ) : null
         }
       />
-    </header>
+      {/* Keep Fumadocs' own tab rendering and active-root behavior. Its default
+          site-navigation row is replaced by WebHeaderBody above. The native
+          sidebar provides the section dropdown below the lg breakpoint.
+          The layout: height variables offset the sidebar and TOC for both rows. */}
+      <Header
+        aria-label="Documentation sections"
+        className="static backdrop-blur-none layout:[--fd-header-height:62px] lg:layout:[--fd-header-height:102px] [&>[data-header-body]]:hidden"
+      />
+    </div>
   );
 }
 
-/** Notebook header for the unified documentation tree. */
+/** Shared site navigation above the native Notebook layout tabs. */
 export function DocsHeader() {
-  return <NotebookHeader />;
-}
-
-/** Standalone top-level Changelog, retaining the native notebook shell. */
-export function ChangelogHeader() {
   return <NotebookHeader />;
 }

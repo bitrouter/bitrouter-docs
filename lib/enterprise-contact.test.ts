@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { POST } from "../app/api/enterprise/contact/route";
 import { enterpriseContactSchema } from "./enterprise-contact";
-import { resendRequest } from "./newsletter";
+import { resendRequest } from "./resend";
 
-vi.mock("./newsletter", () => ({ resendRequest: vi.fn() }));
-vi.mock("./newsletter-rate-limit", () => ({ allowNewsletterConfirmation: vi.fn(() => true) }));
+vi.mock("./resend", () => ({ resendRequest: vi.fn() }));
+vi.mock("./enterprise-contact-rate-limit", () => ({ allowEnterpriseContact: vi.fn(() => true) }));
 const input = { name: "Review Tester", email: "tester@example.com", company: "Example", role: "Engineering lead", workload: "Evaluate private deployment for our coding agents." };
 const request = (fields: unknown = input, origin = "http://localhost:3100") => new Request("http://localhost:3100/api/enterprise/contact", {
   method: "POST", headers: { "Content-Type": "application/json", Origin: origin }, body: JSON.stringify(fields),
@@ -33,6 +33,10 @@ describe("Enterprise inquiry delivery", () => {
     expect((await POST(request())).status).toBe(503);
     expect(resendRequest).not.toHaveBeenCalled();
     vi.stubEnv("RESEND_API_KEY", "test-only-key");
+    vi.stubEnv("RESEND_ENTERPRISE_FROM", "");
+    expect((await POST(request())).status).toBe(503);
+    expect(resendRequest).not.toHaveBeenCalled();
+    vi.stubEnv("RESEND_ENTERPRISE_FROM", "BitRouter <test@example.com>");
     vi.mocked(resendRequest).mockResolvedValue(new Response(JSON.stringify({ error: "fixture rejection" }), { status: 400 }));
     expect((await POST(request())).status).toBe(502);
   });

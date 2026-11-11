@@ -1,0 +1,166 @@
+// Adapted from the Fumadocs blog registry (2026-11-07).
+import { createGetUrl } from "fumadocs-core/source";
+import { pageSchema } from "fumadocs-core/source/schema";
+import { z } from "zod";
+
+export const blogPageSchema = pageSchema.extend({
+  /** publish date, posts are sorted by it */
+  date: z.iso.date().or(z.date()).optional(),
+  tags: z.array(z.string().trim().min(1)).optional(),
+  // Primary author is retained for the blog-to-X publication workflow.
+  author: z.enum(["kelsen", "archer"]).optional(),
+  /** keys of the authors passed to `getPosts()` */
+  authors: z.array(z.string()).optional(),
+  /** cover image URL */
+  image: z.string().optional(),
+});
+
+export interface BlogAuthor {
+  name: string;
+  /** role or job title */
+  title?: string;
+  /** link to profile or website */
+  url?: string;
+  /** avatar URL */
+  image?: string;
+}
+
+export interface BlogTag {
+  /** as written in the first post using it */
+  name: string;
+  /** URL segment, see `tagSlug()` */
+  slug: string;
+  /** URL of the tag page */
+  url: string;
+}
+
+export interface BlogPost {
+  url: string;
+  title: string;
+  description?: string;
+  date?: Date;
+  /** cover image URL */
+  image?: string;
+  tags: BlogTag[];
+  authors: BlogAuthor[];
+}
+
+interface BlogPage {
+  url: string;
+  locale?: string;
+  data: z.output<typeof blogPageSchema> & { lastModified?: string | Date };
+}
+
+/**
+ * URL of blog routes, like `getBlogUrl(['tags'], locale)` for the tags page.
+ *
+ * With i18n, pass your config to it: `createGetUrl('/blog', i18n)`.
+ */
+export const getBlogUrl = createGetUrl("/blog");
+
+/** lowercase, whitespace replaced by `-` */
+export function tagSlug(tag: string): string {
+  return encodeURIComponent(tag.trim().toLowerCase().replace(/\s+/g, "-"));
+}
+
+/**
+ * Posts of blog pages, newest first, undated posts on top.
+ *
+ * @param authors - authors by their keys in frontmatter, unknown keys are shown as names
+ */
+export function getPosts(
+  pages: BlogPage[],
+  authors: Record<string, BlogAuthor> = {},
+): BlogPost[] {
+  const posts: BlogPost[] = [];
+
+  for (const { url, locale, data } of pages) {
+    const post: BlogPost = {
+      url,
+      title: data.title,
+      description: data.description,
+      date:
+        data.date || data.lastModified
+          ? new Date(data.date ?? data.lastModified!)
+          : undefined,
+      image: data.image,
+      tags: [],
+      authors: [],
+    };
+
+    for (const name of new Set(data.tags ?? [])) {
+      const slug = tagSlug(name);
+      if (post.tags.some((tag) => tag.slug === slug)) continue;
+      post.tags.push({ name, slug, url: getBlogUrl(["tags", slug], locale) });
+    }
+    for (const id of new Set(
+      data.authors ?? (data.author ? [data.author] : []),
+    ))
+      post.authors.push(authors[id] ?? { name: id });
+    posts.push(post);
+  }
+
+  return posts.sort(
+    (a, b) =>
+      (b.date?.getTime() ?? 0) - (a.date?.getTime() ?? 0) ||
+      a.url.localeCompare(b.url),
+  );
+}
+
+/** the post of `url`, and the posts published right after (`newer`) and before (`older`) it */
+export function findPost(
+  posts: BlogPost[],
+  url: string,
+): { post: BlogPost; newer?: BlogPost; older?: BlogPost } | undefined {
+  const index = posts.findIndex((post) => post.url === url);
+  const post = posts[index];
+  if (!post) return;
+
+  return { post, newer: posts[index - 1], older: posts[index + 1] };
+}
+
+/** tags of posts with their number of posts, most used first */
+export function getTags(posts: BlogPost[]): (BlogTag & { count: number })[] {
+  const tags = new Map<string, BlogTag & { count: number }>();
+
+  for (const post of posts) {
+    for (const tag of post.tags) {
+      const info = tags.get(tag.slug);
+      if (info) info.count++;
+      else tags.set(tag.slug, { ...tag, count: 1 });
+    }
+  }
+
+  return Array.from(tags.values()).sort((a, b) => b.count - a.count);
+}
+
+/** a tag and its posts, `undefined` when no post has it */
+export function getTagPosts(posts: BlogPost[], slug: string) {
+  const key = tagSlug(decode(slug));
+  let tag: BlogTag | undefined;
+  const tagged: BlogPost[] = [];
+
+  for (const post of posts) {
+    const match = post.tags.find((item) => item.slug === key);
+    if (!match) continue;
+
+    tag ??= match;
+    tagged.push(post);
+  }
+
+  if (tag) return { tag, posts: tagged };
+}
+
+/** routers may pass the slug URI encoded */
+function decode(slug: string) {
+  try {
+    return decodeURIComponent(slug);
+  } catch {
+    return slug;
+  }
+}
+
+export const blogAuthors: Record<string, BlogAuthor> = {
+  kelsen: { name: "Kelsen" },
+  archer: { name: "Archer" },
+};

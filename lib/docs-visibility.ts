@@ -1,7 +1,7 @@
-// Compatibility guides remain reachable for existing links. Canonical discovery
-// surfaces use the current sidebar's guide and command-group pages instead.
+// One canonical-page policy for sitemap, complete agent index, and full text.
+// Sidebar visibility is independent: supporting guides remain discoverable.
+// Retained compatibility URLs stay reachable but are not canonical entries.
 const COMPATIBILITY_URLS = new Set([
-  "/docs/cli/reference",
   "/docs/integration/coding-agents",
 ]);
 

@@ -1,0 +1,187 @@
+---
+title: Inference APIs
+description: Choose Responses, Chat Completions, Messages, or GenerateContent and integrate routed inference with the matching protocol.
+---
+
+Choose the protocol your application speaks. For a new integration, start with Responses. Each endpoint retains its own request and response format; compatible routing does not make every provider-specific capability interchangeable.
+
+| Protocol | Endpoint path | Use it for |
+| --- | --- | --- |
+| [Responses](#responses) | `/v1/responses` | New integrations using output items, tool results, and supported continuation |
+| [Chat Completions](#chat-completions) | `/v1/chat/completions` | Existing OpenAI-compatible message-list clients |
+| [Messages](#messages) | `/v1/messages` | Existing Anthropic-compatible clients |
+| [GenerateContent](#generatecontent) | `/v1beta/models/{model}:generateContent` | Google-format content requests |
+
+## Choose an endpoint and model
+
+Cloud uses `https://api.bitrouter.ai`; the default local daemon uses `http://127.0.0.1:4356`. [Getting Started](/docs/reference) covers the first Cloud request and model discovery. [Authentication](/docs/reference/authentication) explains Cloud keys, local virtual keys, and permissions.
+
+The local examples below use a configured `bitrouter/auto` selector. Initialize its [policy binding](/docs/routing/auto-router#initialize-a-policy-binding) first, or replace it with an available [model selector](/docs/models-routing/virtual-models#model-selector-forms). For Cloud, replace the local origin and credential with their Cloud equivalents and use a catalog ID or enabled workspace preset. Upstream provider credentials belong in provider configuration.
+
+## Responses
+
+### Send a request
+
+```bash
+curl http://127.0.0.1:4356/v1/responses \
+  -H "Authorization: Bearer $BITROUTER_VIRTUAL_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "bitrouter/auto",
+    "instructions": "Explain the result in plain English.",
+    "input": "Summarize what a model-routing policy controls."
+  }'
+```
+
+Read the result's `output` items according to their type. A raw HTTP response can contain message, reasoning, or tool-call items; a completed request does not necessarily contain only assistant text. The generated [endpoint reference](/docs/reference/openai-responses/createResponse) owns the full hosted request schema.
+
+### Stream output
+
+Set `stream` to `true` and let your HTTP client consume Server-Sent Events:
+
+```bash
+curl -N http://127.0.0.1:4356/v1/responses \
+  -H "Authorization: Bearer $BITROUTER_VIRTUAL_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "bitrouter/auto",
+    "input": "Explain provider fallback in two sentences.",
+    "stream": true
+  }'
+```
+
+Handle lifecycle events as well as text deltas. Keep the terminal response and usage when available, and handle failure or incomplete output before deciding that the workflow succeeded.
+
+### Handle function calls
+
+For caller-owned functions, your application runs the tool loop:
+
+1. Declare the function's name and argument schema in `tools`.
+2. Inspect returned function-call items and validate their arguments.
+3. Execute the permitted function in your application.
+4. Submit a `function_call_output` item with the original `call_id`.
+5. Continue until the response reaches the application's completion condition.
+
+Preserve the required prior input and output items, including replay metadata needed by the selected route. OpenAI's [function-calling guide](https://developers.openai.com/api/docs/guides/function-calling) explains the wire items.
+
+### Continue a conversation
+
+When using `previous_response_id`, keep the response id returned by the gateway and continue against that deployment. The current local daemon stores provider-native continuation independently of trajectory capture and exposes gateway continuation ids to clients. Treat those ids as opaque; provider-private ids are not interchangeable with them.
+
+Continuation depends on retained state and the route's replay capabilities. A different model, provider, or deployment may require a self-contained history or reject a continuation. Verify the behavior of your deployment before changing a live conversation's route. Local continuation configuration is described in the [BitRouter operational reference](https://github.com/bitrouter/bitrouter/blob/main/skills/bitrouter/references/cli.md).
+
+## Chat Completions
+
+```bash
+curl http://127.0.0.1:4356/v1/chat/completions \
+  -H "Authorization: Bearer $BITROUTER_VIRTUAL_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "bitrouter/auto",
+    "messages": [
+      {"role": "system", "content": "Answer in two sentences."},
+      {"role": "user", "content": "What does a routing policy control?"}
+    ]
+  }'
+```
+
+Read assistant output from `choices[].message`, checking the finish reason and any tool calls before treating the turn as complete. The [Chat Completions reference](/docs/reference/openai-compatible/createChatCompletion) contains the hosted request and response schemas.
+
+For an OpenAI-compatible SDK, set its base URL to `http://127.0.0.1:4356/v1` locally or `https://api.bitrouter.ai/v1` in Cloud, then call its Chat Completions method.
+
+## Messages
+
+```bash
+curl http://127.0.0.1:4356/v1/messages \
+  -H "Authorization: Bearer $BITROUTER_VIRTUAL_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "bitrouter/auto",
+    "max_tokens": 256,
+    "system": "Answer in two sentences.",
+    "messages": [
+      {"role": "user", "content": "What does a routing policy control?"}
+    ]
+  }'
+```
+
+Read the response's `content` blocks by type and inspect `stop_reason`. Text blocks and tool-use blocks need different handling. The [Messages reference](/docs/reference/anthropic-compatible/createMessage) contains the hosted request and response schemas.
+
+For an Anthropic-compatible SDK, set its base URL to `http://127.0.0.1:4356` locally or `https://api.bitrouter.ai` in Cloud. The SDK appends `/v1/messages`; adding `/v1` to that base would duplicate the path segment.
+
+## GenerateContent
+
+The generated Cloud contract encodes the model and action in the URL path. Replace `YOUR_MODEL` with a model identifier supported by your deployment for this route:
+
+```bash
+curl https://api.bitrouter.ai/v1beta/models/YOUR_MODEL:generateContent \
+  -H "Authorization: Bearer $BITROUTER_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"contents":[{"role":"user","parts":[{"text":"Hello!"}]}]}'
+```
+
+The request uses `contents` and `parts`. Use the `:streamGenerateContent` action for the documented SSE form. These are BitRouter requests authenticated with a BitRouter credential. The [GenerateContent endpoint reference](/docs/reference/google-compatible/googleGenerateContent) owns the model/action parameter and full hosted request and response contract.
+
+## Streaming and tool results
+
+For Chat Completions and Messages, set `stream` to `true` and consume Server-Sent Events in the chosen format. Chat Completions emits completion chunks and ends with `data: [DONE]`. Messages uses typed events such as `message_start`, `content_block_delta`, and `message_stop`. Preserve usage when available and handle error or incomplete output before continuing the workflow.
+
+For caller-owned tools, your application validates arguments, executes permitted tools, and returns their results in the same protocol:
+
+| Format | Returned tool call | Caller-supplied result |
+| --- | --- | --- |
+| Chat Completions | Assistant `tool_calls` | A `tool` message with the matching `tool_call_id` |
+| Messages | A `tool_use` content block | A `tool_result` block with the matching `tool_use_id` in a user message |
+
+Keep the assistant tool call and its matching result in the conversation history. Subsequent requests supply the required history in `messages`; use the [Responses continuation guide](/docs/usage/responses-api#continue-a-conversation) when working with `previous_response_id`.
+
+<a id="inspect-routing-and-compatibility" />
+
+## Routing and compatibility
+
+The inbound format determines the client contract. BitRouter can translate a compatible request to a different upstream protocol after model resolution. Choose routes that support the capabilities your request needs; protocol translation alone does not establish support for every provider-specific field or tool.
+
+See [Virtual Models](/docs/models-routing/virtual-models#protocol-compatibility) for route compatibility, [structured outputs](/docs/usage/responses-api#structured-outputs-across-protocols) for each protocol's schema field, and [Request receipts](/docs/cli/request-receipts) for the model and provider that actually served the request.
+
+## Structured outputs across protocols
+
+Structured output is a request-time constraint, not a global router setting. Supply a JSON Schema in the client's native request shape:
+
+| Inbound API | Schema field |
+| --- | --- |
+| OpenAI Chat Completions | `response_format.json_schema` |
+| OpenAI Responses | `text.format` |
+| Anthropic Messages | `output_config.format` |
+| Google Generate Content | `generationConfig.responseSchema` |
+
+BitRouter promotes these fields into one canonical response-format constraint, then renders the corresponding outbound field after model resolution. The same request can therefore resolve to a Messages or Generate Content upstream without the caller rewriting the schema field.
+
+```bash
+curl http://127.0.0.1:4356/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "openai:gpt-5",
+    "messages": [{"role": "user", "content": "Return the issue priority."}],
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "issue_priority",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "properties": {
+            "priority": {"type": "string", "enum": ["low", "medium", "high"]}
+          },
+          "required": ["priority"],
+          "additionalProperties": false
+        }
+      }
+    }
+  }'
+```
+
+There is no router-wide schema or enable switch. Presets can supply ordinary request defaults, but the response constraint belongs to each request.
+
+## Local Decisions interface
+
+A local build with native Decisions support can evaluate typed questions through the separate [Decisions guide](/docs/reference/decisions). That interface is not declared in the current hosted OpenAPI reference; this guide does not establish Cloud availability for it.

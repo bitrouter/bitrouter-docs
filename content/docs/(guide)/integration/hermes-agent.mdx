@@ -1,0 +1,61 @@
+---
+title: Hermes Agent
+description: Add BitRouter to an existing Hermes profile and select its gateway route in the native model picker.
+---
+
+Connect an existing Hermes profile to BitRouter. Hermes owns its conversation, memory, tools, approvals, and scheduled jobs; BitRouter receives the model request and applies the selected gateway route.
+
+<Callout type="info">
+This guide follows the development CLI in [BitRouter PR #1016](https://github.com/bitrouter/bitrouter/pull/1016). Use a build that includes `bro connect`; check `bro connect --help` before following these steps. The captured CLI reference describes a separate, earlier binary.
+</Callout>
+
+## Connect your profile
+
+Install and initialize Hermes, then prepare a usable [BitRouter gateway](/docs/overview/quickstart). Preview the local connection and apply it:
+
+```bash
+bro connect hermes --dry-run
+bro connect hermes
+```
+
+Setup adds a **BitRouter** provider to the selected profile's `config.yaml`. It keeps the current main model, auxiliary models, other providers, and existing jobs. Start or reload that Hermes backend, open its model picker, and choose **BitRouter** and the connected model. No self-driving extension or separate classifier is required.
+
+The default gateway model ID is `bitrouter/automatos`. Hermes picker rows use the exact model ID; the chat chip may shorten it to `automatos`. Changing `--display-name` does not rename Hermes' picker row.
+
+For Cloud or another existing gateway, use [the shared endpoint and credential setup](/docs/integration/coding-agents#connect-an-existing-gateway). `--model` must match an ID advertised by that gateway.
+
+## Choose the right Hermes home
+
+```bash
+bro connect hermes --instance /path/to/hermes-home
+bro connect hermes --instance /path/to/hermes-root --profile work
+```
+
+`--instance` selects an actual Hermes home. Otherwise discovery follows `HERMES_HOME`, or the platform default and Hermes' active profile. Only the selected/current home is configured. Repeat `--profile` to name initialized profiles explicitly; the connector does not create profiles or configure every profile automatically.
+
+CLI, TUI, official Desktop, and Web Dashboard use the configured backend/profile's catalog. If Desktop or Web connects to another machine, run the connector on that backend's host. A long-running backend may need a restart to refresh its catalog; existing chats can retain their own model selection.
+
+## Chat and scheduled work
+
+Select the connected model through Hermes' native model controls. A main-model selection and the auxiliary slots are separate settings.
+
+Hermes also has a cron default (`cron.model` / `cron.model_provider`) and per-job model pins. Those native settings determine which route a job requests. `bro connect` registers the provider; it does not change those settings or assign policies to jobs. See [Hermes model configuration](https://hermes-agent.nousresearch.com/docs/user-guide/configuring-models) and [scheduled tasks](https://hermes-agent.nousresearch.com/docs/user-guide/features/cron).
+
+Repeat `--model` to register separate interactive and background selectors in the same provider, for example `bro connect hermes --model bitrouter/automatos --model team/background` when both IDs are advertised. Automatic discovery stays disabled; the provider contains the explicit model set and uses the first ID as its provider default. Choose chat and cron routes through Hermes itself. Updates replace the full list when model flags are supplied and preserve it otherwise. The shared [strategy and workflow boundary](/docs/integration/coding-agents#strategies-and-workflows) explains the distinction.
+
+## Verify and manage the connection
+
+Use the same `--instance` and profile scope for later operations when applicable:
+
+```bash
+bro connect hermes --status
+bro connect hermes --check
+bro connect hermes --update
+bro connect hermes --remove
+```
+
+`--status` inspects saved configuration offline. `--check` also checks the gateway catalog with the saved credential; neither submits inference. To verify execution, select BitRouter in Hermes, send a small request, exercise a tool if the workflow needs one, and inspect the gateway's [request receipts](/docs/cli/request-receipts).
+
+This connector currently supports Chat Completions only. Displayed context limits, prices, and capabilities for an unknown model are Hermes defaults, not verified gateway metadata.
+
+Credentials are persisted in the private profile configuration and BitRouter connection receipt. Removal restores the earlier main route if any connected model is still selected, while retaining unrelated preferences and auxiliary settings. Desktop can retain a manual composer pin after removal; reopen its picker and choose another available model. Resolve edits to the managed provider before updating or removing it. See [connection management](/docs/integration/coding-agents#manage-a-connection).

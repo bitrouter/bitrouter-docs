@@ -1,5 +1,10 @@
 {
   "title": "API",
-  "pagesIndex": "[Responses API](/docs/api/responses)",
-  "pages": ["[Decisions API](/docs/api/decisions)"]
+  "root": true,
+  "pages": [
+    "[Getting Started](/docs/reference)",
+    "[Authentication](/docs/reference/authentication)",
+    "[Inference APIs](/docs/usage/responses-api)",
+    "../reference"
+  ]
 }

@@ -10226,6 +10226,9 @@ paths:
         description: OpenAI Responses API request.
         content:
           application/json:
+            example:
+              model: anthropic/claude-haiku-4.5
+              input: Hello!
             schema:
               $schema: https://json-schema.org/draft/2020-12/schema
               title: ResponsesRequest

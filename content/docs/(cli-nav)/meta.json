@@ -1,7 +1,11 @@
 {
   "title": "CLI",
-  "pagesIndex": "[TUI](/docs/cli/tui)",
+  "root": true,
   "pages": [
-    "[Headless](/docs/cli/headless)"
+    "[Getting Started](/docs/cli/getting-started)",
+    "[Configuration](/docs/routing/configuration)",
+    "[Run & Inspect](/docs/cli/run-inspect)",
+    "[Cloud Management](/docs/cli/cloud-management)",
+    "[Command Reference](/docs/usage/cli)"
   ]
 }

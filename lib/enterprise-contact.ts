@@ -11,7 +11,7 @@ export const enterpriseContactSchema = z.object({
 
 export function enterpriseContactConfig() {
   const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_ENTERPRISE_FROM || process.env.RESEND_NEWSLETTER_FROM;
+  const from = process.env.RESEND_ENTERPRISE_FROM;
   if (!apiKey || !from) return null;
   return { apiKey, from, to: "contact@bitrouter.ai" };
 }

@@ -2,11 +2,11 @@
   "title": "Documentation",
   "pages": [
     "overview",
-    "config",
-    "models-routing",
-    "context-routing",
-    "cli",
+    "usage",
     "integration",
-    "api"
+    "market",
+    "routing",
+    "models-routing",
+    "cli"
   ]
 }

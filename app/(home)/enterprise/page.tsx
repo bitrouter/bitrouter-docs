@@ -10,12 +10,12 @@ export default function Page() {
 export const metadata: Metadata = {
   title: "Enterprise",
   description:
-    "Match inference resources to your agents’ work. Discuss model routing, private deployment, and your team’s requirements with BitRouter.",
+    "Permissionless participation. Trustless inference. Every inference request on the BitRouter platform is verified against its declared model version, weights, and precision.",
   alternates: { canonical: "https://bitrouter.ai/enterprise" },
   openGraph: {
     title: "Enterprise | BitRouter",
     description:
-      "Match inference resources to your agents’ work. Discuss model routing, private deployment, and your team’s requirements with BitRouter.",
+      "Permissionless participation. Trustless inference. Every inference request on the BitRouter platform is verified against its declared model version, weights, and precision.",
     url: "https://bitrouter.ai/enterprise",
     type: "website",
   },

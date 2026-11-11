@@ -2,10 +2,10 @@
 title: Policy
 ---
 
-Local routing policies are the artifact used by the [self-improving loop](/docs/overview/what-is-bitrouter): `init` scaffolds `policy-lock.yaml` and binds it to a named router. Operators can compile candidates from evidence and publish them, or authorize an optimizer step that may publish a transition. See [Routing policy](/docs/models-routing/policy#let-evidence-improve-the-policy).
+Local routing policies are the artifact used by the [self-improving loop](/docs/overview/what-is-bitrouter): `init` scaffolds `policy-lock.yaml` and binds it to a named router. Operators can compile candidates from evidence and publish them, or authorize an optimizer step that may publish a transition. See [Workload Optimization](/docs/routing/workload-optimization#let-evidence-improve-the-policy).
 
 <Callout type="info">
-`bro policy create` + `bro key sign` are a **different surface** — per-virtual-key access control (allowed models, budgets, rate limits), not routing. See [access-control policies](/docs/config/configuration-file#three-meanings-of-policy).
+`bro policy create` + `bro key sign` are a **different surface** — per-virtual-key access control (allowed models, budgets, rate limits), not routing. See [access-control policies](/docs/routing/configuration#validate-the-contract).
 </Callout>
 
 ## @policy init

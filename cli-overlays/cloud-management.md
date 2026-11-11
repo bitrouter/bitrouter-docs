@@ -1,0 +1,95 @@
+---
+title: Cloud Management
+description: Sign in, manage Cloud API keys and workspaces, and inspect usage, balances, budgets, and policies from the terminal.
+---
+
+`bro cloud` manages your BitRouter Cloud account independently of the local daemon. Commands here follow the captured `bro 1.0.0-alpha.33` reference. Each account operation requires the permissions documented by its [HTTP endpoint](/docs/reference/management/listNamespaces).
+
+## Sign in and check the account
+
+Sign in or create an account at the [Cloud console](https://cloud.bitrouter.ai/sign-in), then start the CLI device flow:
+
+```bash
+bro cloud login
+```
+
+Open the verification URL printed by the command and complete the browser flow. Confirm the account and workspace before making changes:
+
+```bash
+bro cloud whoami
+bro cloud namespace current
+bro cloud namespace list
+```
+
+The CLI uses *namespace* for the workspace bound to its credential. To choose another namespace, repeat `bro cloud login` and select it in the browser. `whoami` and `namespace current` describe locally stored identity; a successful account API request provides an online permission check.
+
+## Create an API key
+
+Create a key for an inference application:
+
+```bash
+bro cloud keys mint --name my-integration --scope inference:invoke
+```
+
+The plaintext key is printed once. Save it in your application's secret storage. Requested scopes must be a subset of your effective permissions; optional expiry and other flags are in the [mint command reference](/docs/usage/cli#bro-cloud-keys-mint).
+
+Inspect existing keys:
+
+```bash
+bro cloud keys list
+```
+
+Use `bro cloud keys revoke <key-id>` when retiring a key. Applications attach their Cloud key as described in [API Authentication](/docs/reference/authentication#cloud-api-keys). A Cloud API key, a local virtual key, and an upstream provider key have different roles.
+
+## Inspect usage and balance
+
+```bash
+bro cloud usage
+bro cloud requests --limit 25
+bro cloud billing balance
+```
+
+These inspect account usage, request activity, and the current balance. They do not report the activity of an unrelated local daemon. See [request receipts](/docs/cli/request-receipts#cloud-activity) for recorded fields and [Pricing](/pricing) for commercial terms. The captured `cloud billing checkout` command creates a payment checkout session; its required permission and arguments are in [Command Reference](/docs/usage/cli#bro-cloud-billing-checkout).
+
+## Manage budgets and policies
+
+Start by inspecting existing settings:
+
+```bash
+bro cloud budget list
+bro cloud policy list
+bro cloud preset list
+```
+
+The command groups support creating, updating, and removing account resources. Use the [Cloud command reference](/docs/usage/cli#cloud) for required IDs, flags, and spec inputs, and the generated [policy](/docs/reference/management/createPolicy) and [budget](/docs/reference/management/createBudget) contracts for HTTP fields. Review the target namespace and permissions before changing a resource.
+
+Cloud account policies are separate from the local routing-policy artifacts explained in [Workload Optimization](/docs/routing/workload-optimization). Buy and sell workflows remain in [Market](/docs/market/buy-inference).
+
+## Noninteractive use
+
+Supply an existing scoped Cloud key through your environment's secret mechanism, then authenticate without a browser:
+
+```bash
+bro cloud login --api-key "$BITROUTER_API_KEY"
+bro cloud usage --json
+```
+
+API-key login stores the supplied credential; it is not an online validation of its scope or account access. Check the exit status and response of the subsequent account command. `usage` requires `usage:read`; an inference-only key does not grant account-management access.
+
+For a raw request to an existing Cloud endpoint:
+
+```bash
+bro cloud api /v1/models
+```
+
+`cloud api` attaches the stored credential to a relative path on the configured Cloud origin. It rejects absolute URLs and does not follow redirects. See [Command Reference](/docs/usage/cli#bro-cloud-api) for method, request body, and diagnostic options.
+
+## Sign out and handle permissions
+
+```bash
+bro cloud logout
+```
+
+Logout revokes the stored login token on a best-effort basis and removes the local credential. Manage separately issued application keys through the key commands.
+
+If Cloud reports a missing scope, use the scope required by that operation. OAuth sign-in can request a different scope set through `bro cloud login --scope`; API-key users need a key with the required effective permissions. [API Authentication](/docs/reference/authentication#permissions-and-authentication-failures) explains request credentials and permission boundaries.

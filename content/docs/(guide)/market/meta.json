@@ -1,0 +1,10 @@
+{
+  "title": "Market",
+  "pages": [
+    "price-time-priority",
+    "inference-types",
+    "inference-tiers",
+    "buy-inference",
+    "sell-inference"
+  ]
+}

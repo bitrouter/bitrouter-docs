@@ -1,9 +1,11 @@
 ---
-title: What is BitRouter?
+title: How BitRouter Works
 description: Route model requests through an inspectable policy and use evidence to improve your agent workflows.
 ---
 
 **BitRouter is a context-aware LLM router for agent workflows.** In a self-hosted deployment, a configured `bitrouter/auto` router selects models using a policy you can inspect, review, and update from admitted evidence.
+
+Agents can browse the [documentation index](/llms.txt), connect to the public [documentation MCP endpoint](/mcp) over Streamable HTTP to search docs and look up models, or read the [BitRouter Cloud OpenAPI schema](/openapi.json).
 
 Model prices and capabilities change. BitRouter helps operators compare routes against their own workload and publish reviewed policy changes; evaluating a workload still requires an external evaluator or benchmark.
 
@@ -23,7 +25,7 @@ Explicit model ids select that model and can still use eligible provider fallbac
 
 The local router can classify request context and resolve it against a versioned policy. Its configured tiers and explicit routes determine which model is selected; unmatched requests use the policy's default tier.
 
-The local `bitrouter/auto` selector needs a bound policy before first use; an unbound install reports the missing binding. Follow the [setup guide](/docs/models-routing/bitrouter-auto) before sending the example.
+The local `bitrouter/auto` selector needs a bound policy before first use; an unbound install reports the missing binding. Follow the [setup guide](/docs/routing/auto-router) before sending the example.
 
 ## Use traffic and evaluations as evidence
 
@@ -40,11 +42,11 @@ In alpha.33, the active lock controls request-time routes in both policy modes; 
 
 Every other gateway's unit of optimization is the request: pick a model, return a response, done. BitRouter's unit is the workflow — the whole run, judged on whether it did the job you wanted.
 
-For workflow-level evaluation, run a benchmark or evaluator appropriate to your task and admit its results into the evidence store. The [evaluation guide](/docs/models-routing/evaluations) explains the subject, result, and snapshot boundaries.
+For workflow-level evaluation, run a benchmark or evaluator appropriate to your task and admit its results into the evidence store. The [evaluation guide](/docs/routing/workload-optimization#evaluations) explains the subject, result, and snapshot boundaries.
 
 Use the compile and publish workflow to review a candidate before activating it. Policy rollback can restore an earlier lock by digest.
 
-Scope isn't only models, either. A workflow's cost includes model calls, tool definitions, and the agent loops that generate them. The [MCP gateway](/docs/context-routing/mcp-servers#mcp-gateway) centralizes upstream tools; [ACP adapters](/docs/integration/acp-servers) let the same router policy cover supported coding-agent sessions; and the [BitRouter Skill](/docs/context-routing/skills) gives shell-capable agents a maintained operational interface.
+Use [Integrations](/docs/integration/coding-agents) to connect a native harness to BitRouter. The harness retains its own history, tools, and permissions; BitRouter routes the model requests it receives. The [CLI Getting Started](/docs/cli/getting-started) covers terminal setup and entry points.
 
 The Core is Apache 2.0 and free to self-host; Cloud adds managed providers and account-wide policies on top. [Quickstart](/docs/overview/quickstart) has the split.
 
@@ -52,7 +54,10 @@ The Core is Apache 2.0 and free to self-host; Cloud adds managed providers and a
 
 <Cards>
   <Card title="Quickstart" href="/docs/overview/quickstart" description="Self-host or Cloud, routing in under a minute." />
-  <Card title="Use bitrouter/auto" href="/docs/models-routing/bitrouter-auto" description="Run policy-driven traffic, inspect its route, and publish reviewed changes." />
-  <Card title="Coding agents" href="/docs/integration/coding-agents" description="Run supported harnesses interactively, headlessly, or in their native interface." />
-  <Card title="Comparison" href="/docs/overview/comparison" description="Compare BitRouter with OpenRouter and LiteLLM." />
+  <Card title="Use bitrouter/auto" href="/docs/routing/auto-router#initialize-a-policy-binding" description="Run policy-driven traffic, inspect its route, and publish reviewed changes." />
+  <Card title="Integrations" href="/docs/integration/coding-agents" description="Run supported harnesses interactively, headlessly, or in their native interface." />
+  <Card title="OpenRouter" href="/docs/overview/comparison/openrouter" description="Compare hosted model access and routing policy ownership." />
+  <Card title="Router (Ramp)" href="/docs/overview/comparison/router-ramp" description="Compare managed routing, evaluation, and deployment control." />
+  <Card title="vLLM Semantic Router" href="/docs/overview/comparison/vllm-semantic-router" description="Compare programmable routing signals and runtime responsibilities." />
+  <Card title="LiteLLM" href="/docs/overview/comparison/litellm" description="Compare SDK and proxy integration, routing, and gateway operations." />
 </Cards>

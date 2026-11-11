@@ -2,14 +2,15 @@ import "server-only";
 import { searchServer } from "@/lib/search-server";
 import { getLLMText, source } from "@/lib/source";
 import { fetchModels } from "@/lib/models-server";
+import { getSiteOrigin } from "@/lib/site-origin";
 import {
   formatSearchResults,
   pathToSlug,
   truncateMarkdown,
   stripMdxNoise,
+  selectMarkdownSection,
   matchModels,
   formatModelAnswer,
-  SITE_ORIGIN,
   type DocHit,
   type ModelAnswer,
   type RawSearchResult,
@@ -26,14 +27,14 @@ export async function searchDocs(
   const limit = Math.min(Math.max(1, opts.limit ?? DEFAULT_LIMIT), MAX_LIMIT);
   const results = await searchServer.search(query);
   if (!Array.isArray(results)) return [];
-  return formatSearchResults(results as unknown as RawSearchResult[], limit);
+  return formatSearchResults(results as unknown as RawSearchResult[], limit, getSiteOrigin());
 }
 
 export type GetDocResult =
   | { ok: true; markdown: string; url: string }
   | { ok: false; error: string };
 
-export async function getDoc(path: string): Promise<GetDocResult> {
+export async function getDoc(path: string, section?: string): Promise<GetDocResult> {
   const slug = pathToSlug(path);
   const page = source.getPage(slug);
   if (!page) {
@@ -42,9 +43,16 @@ export async function getDoc(path: string): Promise<GetDocResult> {
       error: `No doc found for "${path}". Use search_docs to find a valid path.`,
     };
   }
-  const url = page.url.startsWith("http") ? page.url : `${SITE_ORIGIN}${page.url}`;
+  const url = new URL(page.url, getSiteOrigin());
   const text = stripMdxNoise(await getLLMText(page));
-  return { ok: true, markdown: truncateMarkdown(text, url, DOC_CHAR_CAP), url };
+  const anchor = section?.replace(/^#/, "") ?? path.split("#", 2)[1];
+  if (anchor) {
+    const content = selectMarkdownSection(text, anchor);
+    if (!content) return { ok: false, error: `No section "#${anchor}" found in ${url.href}.` };
+    url.hash = anchor;
+    return { ok: true, markdown: truncateMarkdown(content, url.href, DOC_CHAR_CAP), url: url.href };
+  }
+  return { ok: true, markdown: truncateMarkdown(text, url.href, DOC_CHAR_CAP), url: url.href };
 }
 
 export async function lookupModel(query: string): Promise<ModelAnswer> {

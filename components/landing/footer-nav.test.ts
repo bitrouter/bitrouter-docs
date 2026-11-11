@@ -42,7 +42,7 @@ describe("footer links", () => {
 
   it("keeps the compliance links reachable", () => {
     expect(LEGAL_LINKS.map((l) => l.href)).toEqual(
-      expect.arrayContaining(["/privacy-policy", "/terms-of-service", "/subprocessors"]),
+      expect.arrayContaining(["/docs/privacy-policy", "/docs/terms-of-service", "/subprocessors"]),
     );
   });
 

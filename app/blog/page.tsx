@@ -1,132 +1,48 @@
 import "@/components/landing/zed/zed.css";
 import { blogSource } from "@/lib/source";
-import Link from "next/link";
+import { blogAuthors, getPosts } from "@/lib/blog";
+import { BlogCards } from "@/components/blog";
 import { PageHead } from "@/components/landing/zed/primitives";
-import { AUTHORS, blogDate, blogSortKey } from "@/components/landing/zed/blog-meta";
+import Link from "next/link";
 import type { Metadata } from "next";
-import type { BlogPage } from "@/lib/source";
 
-export default async function BlogIndexPage() {
-  const pages = [...blogSource.getPages()].sort(
-    (a, b) => blogSortKey(b as BlogPage) - blogSortKey(a as BlogPage),
-  );
-
+export default function BlogIndexPage() {
+  const posts = getPosts(blogSource.getPages(), blogAuthors);
   return (
     <main className="zed-bg" id="main">
-      <section style={{ position: "relative" }}>
-        <div className="zed-wrap" style={{ maxWidth: 1180 }}>
-          <PageHead
-            eyebrow="Blog"
-            title={<>From the work.<br /><em>For your workflow.</em></>}
-            sub="How the router actually decides — routing, evals, cost and the self-tuning loop, written by the people building it."
-          />
-
-          {pages.length === 0 ? (
-            <p style={{ padding: "64px 0", textAlign: "center", fontFamily: "var(--font-sans)", color: "var(--z-ink-5)" }}>
-              No posts yet. Check back soon.
-            </p>
-          ) : (
-            <div style={{ marginTop: 64,  marginBottom: "var(--z-sec)" }}>
-              {pages.map((page) => {
-                const author = AUTHORS[(page.data as { author?: string }).author ?? ""];
-                return (
-                  <Link
-                    key={page.url}
-                    href={page.url}
-                    className="zed-metagrid zed-post-row"
-                    style={{  padding: "34px 0" }}
-                  >
-                    <div>
-                      <div style={{ fontFamily: "var(--font-sans)", fontSize: 12, color: "var(--z-ink-6)" }}>
-                        {blogDate(page as BlogPage)}
-                      </div>
-                      {author && (
-                        <div style={{ fontFamily: "var(--font-sans)", fontSize: 12, color: "var(--z-ink-7)", marginTop: 6 }}>
-                          {author.name}
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <h2
-                        style={{
-                          fontFamily: "var(--font-sans)",
-                          fontStyle: "normal",
-                          fontWeight: 500,
-                          fontSize: 27,
-                          lineHeight: 1.12,
-                          color: "var(--z-ink)",
-                          margin: "0 0 10px",
-                          maxWidth: "26ch",
-                        }}
-                      >
-                        {page.data.title}
-                      </h2>
-                      {page.data.description && (
-                        <p
-                          style={{
-                            fontFamily: "var(--font-sans)",
-                            fontSize: 15,
-                            lineHeight: 1.7,
-                            color: "var(--z-ink-5)",
-                            margin: 0,
-                            maxWidth: "64ch",
-                          }}
-                        >
-                          {page.data.description}
-                        </p>
-                      )}
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 10,
-                          marginTop: 18,
-                          fontFamily: "var(--font-sans)",
-                          fontSize: 12,
-                          color: "var(--z-ink-6)",
-                        }}
-                      >
-                        {author && (
-                          <>
-                            <span
-                              style={{
-                                display: "inline-flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                width: 22,
-                                height: 22,
-                                borderRadius: "50%",
-                                background: "var(--z-wash)",
-                                color: "var(--z-ink-2)",
-                                fontSize: 10,
-                              }}
-                            >
-                              {author.initials}
-                            </span>
-                            <span style={{ color: "var(--z-ink-2)" }}>{author.name}</span>
-                          </>
-                        )}
-                        <span style={{ marginLeft: "auto", letterSpacing: "0", textTransform: "none", fontSize: 11 }}>
-                          Read →
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </section>
+      <div className="zed-wrap pb-20" style={{ maxWidth: 1180 }}>
+        <PageHead
+          eyebrow="Blog"
+          title={
+            <>
+              From the work.
+              <br />
+              <em>For your workflow.</em>
+            </>
+          }
+          sub="Routing, evals, cost and the self-tuning loop, written by the people building BitRouter."
+        />
+        <nav className="mb-8 flex gap-4 text-sm" aria-label="Blog resources">
+          <Link href="/blog/tags">Browse tags</Link>
+          <a href="/blog/llms.txt">Markdown index</a>
+        </nav>
+        {posts.length ? (
+          <BlogCards posts={posts} className="md:grid-cols-2 xl:grid-cols-3" />
+        ) : (
+          <p className="py-16 text-center text-fd-muted-foreground">
+            No posts yet. Check back soon.
+          </p>
+        )}
+      </div>
     </main>
   );
 }
-
-export function generateMetadata(): Metadata {
-  return {
-    title: "Blog - BitRouter",
-    description:
-      "Field notes from production — routing, evals, cost and the self-tuning loop, from the BitRouter team.",
-    alternates: { canonical: "https://bitrouter.ai/blog" },
-  };
-}
+export const metadata: Metadata = {
+  title: "Blog - BitRouter",
+  description:
+    "Routing, evals, cost and the self-tuning loop, from the BitRouter team.",
+  alternates: {
+    canonical: "https://bitrouter.ai/blog",
+    types: { "text/markdown": "/blog/llms.txt" },
+  },
+};

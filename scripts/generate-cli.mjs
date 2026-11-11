@@ -1,11 +1,13 @@
-// Generates command-group pages and their collapsed Reference navigation,
-// plus the compatibility manual at content/docs/(guide)/cli/reference.mdx
+// Generates three CLI workflow pages and the command reference at /docs/usage/cli
 // from .cli-snapshot.json (captured by scripts/snapshot-cli.mjs) plus the
 // hand-authored overlays in cli-overlays/.
 //
 // Usage: node scripts/generate-cli.mjs
 //
-// Overlays are the only hand-edited input:
+// Authored inputs:
+//   cli-overlays/guide.md, run-inspect.md, cloud-management.md — workflows.
+//   cli-overlays/legacy-workflows.md — former workflow anchors and current owners.
+// Overlays supply the reference:
 //   cli-overlays/index.md   — page frontmatter (title/description) + the intro
 //                             prose that opens the page.
 //   cli-overlays/<group>.md — frontmatter `title:` becomes the `##` section
@@ -13,15 +15,22 @@
 //                             section intro, and each `## @<command>` block is
 //                             appended to that command's subsection.
 //
-// The whole page carries a GENERATED banner — never hand-edit it. Re-run
+// Each page carries a GENERATED banner — never hand-edit it. Re-run
 // snapshot-cli.mjs first when the documented binary changes.
-import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, rmSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync, rmSync } from "node:fs";
 import { join, dirname } from "node:path";
+import { appendReference } from "../lib/docs-sync/compose-reference.mjs";
 
 const ROOT = process.cwd();
 const SNAPSHOT = join(ROOT, ".cli-snapshot.json");
 const OVERLAY_DIR = join(ROOT, "cli-overlays");
-const OUT_FILE = join(ROOT, "content/docs/(guide)/cli/reference.mdx");
+const OUT_FILE = join(ROOT, "content/docs/(guide)/usage/cli.mdx");
+const GUIDES = [
+  ["guide.md", "getting-started.mdx"],
+  ["run-inspect.md", "run-inspect.mdx"],
+  ["cloud-management.md", "cloud-management.mdx"],
+];
+const LEGACY_FILE = join(ROOT, "content/docs/(guide)/cli/reference.mdx");
 const GROUP_DIR = join(ROOT, "content/docs/(guide)/cli/reference");
 const NAV_FILE = join(ROOT, "content/docs/(cli-reference-nav)/meta.json");
 
@@ -43,10 +52,7 @@ const GROUPS = [
 ];
 
 // Flags every command accepts. They are lifted into one `## Global flags`
-// table and filtered out of the per-command tables — repeating them 107 times
-// buries the flags that actually differ, and the sheer row count is what the
-// MDX compiler chokes on (a few hundred table rows in one page is its ceiling;
-// past that the build OOMs). Payloads must match the snapshot exactly.
+// table and filtered out of per-command lists. Payloads match the snapshot.
 const GLOBAL_FLAGS = [];
 
 const snapshot = JSON.parse(readFileSync(SNAPSHOT, "utf8"));
@@ -118,14 +124,15 @@ function parseOverlay(slug) {
 // this applies even inside code spans). Prose needs `{`/`}`/`<` escaped or
 // MDX parses them as expressions/JSX — but only OUTSIDE inline-code spans:
 // escapes inside code would render literally, so split on backtick spans and
-// escape just the plain-text segments.
+// escape just the plain-text segments. Escape both angle brackets: leaving a
+// literal `>` after an escaped `<` makes GFM include it in an autolink URL.
 const escCell = (s) => s.replace(/\|/g, "\\|");
 const escProse = (s) =>
   s
     .replace(/\|/g, "\\|")
     .split(/(`[^`]*`)/g)
     .map((seg, i) =>
-      i % 2 === 1 ? seg : seg.replace(/([{}])/g, "\\$1").replace(/</g, "&lt;"),
+      i % 2 === 1 ? seg : seg.replace(/([{}])/g, "\\$1").replace(/</g, "&lt;").replace(/>/g, "&gt;"),
     )
     .join("");
 
@@ -136,21 +143,31 @@ function table(headers, rows) {
   return `${head}\n${body}\n`;
 }
 
+function fieldList(label, fields) {
+  return `**${label}**\n\n` + fields.map(({ payload, help }) => {
+    // Snapshot payloads can themselves contain backticks in help continuations.
+    const ticks = "`".repeat(Math.max(0, ...[...payload.matchAll(/`+/g)].map((m) => m[0].length)) + 1);
+    const value = payload.startsWith("`") || payload.endsWith("`") ? ` ${payload} ` : payload;
+    return `- ${ticks}${value}${ticks}${help ? ` — ${escProse(help).trimEnd()}` : ""}`;
+  }).join("\n");
+}
+
 // One command per subsection. Depth drives the heading level so the page reads
 // as sections → commands → subcommands: a top-level command is `###`, each
-// level of subcommand one deeper. Arguments and options are bare tables — no
-// headings of their own, which keeps the table of contents to command names.
+// level of subcommand one deeper. Arguments and options use compact lists:
+// hundreds of GFM table rows in one MDX page exhaust the development compiler.
+// Bold labels keep the table of contents focused on command names.
 function commandSection(node, extras, depthOffset = 2) {
   const level = "#".repeat(Math.min(node.path.length + depthOffset, 6));
   const out = [`${level} \`${commandName} ${node.path.join(" ")}\``];
   if (node.about) out.push(escProse(node.about));
   if (node.usage) out.push(`**Usage:** \`${node.usage}\``);
   if (node.args.length) {
-    out.push(table(["Argument", "Description"], node.args.map((a) => [`\`${escCell(a.payload)}\``, escProse(a.help)])));
+    out.push(fieldList("Arguments", node.args));
   }
   const options = node.options.filter((o) => !GLOBAL_FLAGS.includes(o.payload));
   if (options.length) {
-    out.push(table(["Flag", "Description"], options.map((o) => [`\`${escCell(o.payload)}\``, escProse(o.help)])));
+    out.push(fieldList("Options", options));
   }
   const extra = extras[node.path.join(" ")];
   if (extra) out.push(extra);
@@ -183,9 +200,6 @@ const globalSection = globalRows.length
   : "";
 
 const sections = [];
-const groupPages = [];
-const generatedBanner = `{/* GENERATED by scripts/generate-cli.mjs from .cli-snapshot.json (${snapshot.version}). Edit cli-overlays/ and re-run; do not edit this file. */}`;
-const commonIntro = page.intro.split(/^## Command map\s*$/m)[0].trim();
 for (const group of GROUPS) {
   const overlay = parseOverlay(group.slug);
   // Nodes whose tree root is one of this group's commands. The snapshot is in
@@ -208,66 +222,32 @@ for (const group of GROUPS) {
   if (overlay.intro) body.push(overlay.intro);
   body.push(...groupNodes.map((n) => commandSection(n, overlay.extras)));
   sections.push(body.join("\n\n"));
-  groupPages.push({
-    slug: group.slug,
-    title,
-    content: [
-      [
-        "---",
-        `title: ${JSON.stringify(title)}`,
-        `description: ${JSON.stringify(overlay.frontmatter.description ?? `bro command reference for ${title.toLowerCase()}.`)}`,
-        "---",
-      ].join("\n"),
-      generatedBanner,
-      "",
-      ...(group.slug === "init"
-        ? [commonIntro, globalSection]
-        : ["See [Init and config](/docs/cli/reference/init#conventions) for shared conventions and environment variables."]),
-      overlay.intro,
-      ...groupNodes.map((node) => commandSection(node, overlay.extras, 1)),
-      "",
-    ].filter((part) => part !== "").join("\n\n").trimEnd() + "\n",
-  });
 }
 
-const mdx = [
-  "---",
-  `title: ${page.frontmatter.title}`,
-  ...(page.frontmatter.description ? [`description: ${page.frontmatter.description}`] : []),
-  "---",
-  "",
-  `{/* GENERATED by scripts/generate-cli.mjs from .cli-snapshot.json (${snapshot.version}). Edit cli-overlays/index.md (intro) or cli-overlays/<group>.md (sections) and re-run; do not edit this file. */}`,
-  "",
-  page.intro,
-  "",
-  globalSection,
-  "",
-  sections.join("\n\n"),
-  "",
-].join("\n");
+const reference = [page.intro, globalSection, sections.join("\n\n")].filter(Boolean).join("\n\n");
+const frontmatter = `---\ntitle: ${page.frontmatter.title}\ndescription: ${page.frontmatter.description}\n---\n\nUse [Getting Started](/docs/cli/getting-started), [Run & Inspect](/docs/cli/run-inspect), or [Cloud Management](/docs/cli/cloud-management) for workflow guidance.\n`;
+const mdx = appendReference(frontmatter, reference, {
+  heading: "Command reference",
+  banner: `GENERATED by scripts/generate-cli.mjs from cli-overlays/index.md, cli-overlays/<group>.md, cli-overlays/legacy-workflows.md, and .cli-snapshot.json (${snapshot.version}). Edit the authored inputs and re-run; do not edit this page.`,
+});
 
 mkdirSync(dirname(OUT_FILE), { recursive: true });
-writeFileSync(OUT_FILE, mdx);
-mkdirSync(GROUP_DIR, { recursive: true });
-const expected = new Set(groupPages.map((group) => `${group.slug}.mdx`));
-for (const file of readdirSync(GROUP_DIR)) {
-  const path = join(GROUP_DIR, file);
-  if (
-    file.endsWith(".mdx") &&
-    !expected.has(file) &&
-    readFileSync(path, "utf8").includes("GENERATED by scripts/generate-cli.mjs")
-  ) {
-    rmSync(path);
-  }
+writeFileSync(OUT_FILE, mdx + "\n" + readFileSync(join(OVERLAY_DIR, "legacy-workflows.md"), "utf8"));
+for (const [input, output] of GUIDES) {
+  const guide = readFileSync(join(OVERLAY_DIR, input), "utf8");
+  const frontmatter = /^---\n[\s\S]*?\n---\n/.exec(guide);
+  if (!frontmatter) throw new Error(`Missing frontmatter: ${input}`);
+  const file = join(ROOT, "content/docs/(guide)/cli", output);
+  mkdirSync(dirname(file), { recursive: true });
+  const legacy = input === "guide.md" ? "\n" + readFileSync(join(OVERLAY_DIR, "legacy-workflows.md"), "utf8") : "";
+  writeFileSync(file, guide.replace(frontmatter[0], `${frontmatter[0]}\n{/* GENERATED by scripts/generate-cli.mjs from cli-overlays/${input}. Edit the authored input, not this page. */}\n`) + legacy);
 }
-for (const group of groupPages) writeFileSync(join(GROUP_DIR, `${group.slug}.mdx`), group.content);
-const referenceMeta = { title: "Reference", defaultOpen: false, collapsible: true };
-writeFileSync(join(GROUP_DIR, "meta.json"), JSON.stringify({ ...referenceMeta, pages: groupPages.map((group) => group.slug) }, null, 2) + "\n");
-mkdirSync(dirname(NAV_FILE), { recursive: true });
-writeFileSync(NAV_FILE, JSON.stringify({
-  ...referenceMeta,
-  pages: groupPages.map((group) => `[${group.title}](/docs/cli/reference/${group.slug})`),
-}, null, 2) + "\n");
-console.log(
-  `generate-cli: wrote ${groupPages.length} command-group page(s) covering ${commandNodes.length} command(s), collapsed navigation, and the compatibility manual`,
-);
+rmSync(LEGACY_FILE, { force: true });
+for (const retired of ["interactive.mdx", "headless-scripting.mdx"]) {
+  rmSync(join(ROOT, "content/docs/(guide)/cli", retired), { force: true });
+}
+// Remove the former generated group pages and navigation, never authored input.
+for (const directory of [GROUP_DIR, dirname(NAV_FILE)]) {
+  if (existsSync(directory)) rmSync(directory, { recursive: true });
+}
+console.log(`generate-cli: wrote three workflow guides and a command reference covering ${commandNodes.length} command(s)`);

@@ -1,22 +1,31 @@
-'use client';
-import { cn } from '../../lib/cn';
-import { buttonVariants } from '../ui/button';
-import { CornerDownRightIcon, MessageSquare, ThumbsDown, ThumbsUp } from 'lucide-react';
-import posthog from 'posthog-js';
+"use client";
+// Adapted from the Fumadocs feedback registry (2026-11-07).
+import { cn } from "@/lib/cn";
 import {
-  ReactNode,
+  autoUpdate,
+  flip,
+  offset,
+  shift,
+  useFloating,
+} from "@floating-ui/react-dom";
+import { buttonVariants } from "fumadocs-ui/components/ui/button";
+import posthog from "posthog-js";
+import { CornerDownRightIcon, ThumbsDown, ThumbsUp } from "lucide-react";
+import {
+  type HTMLAttributes,
+  type ReactNode,
   type SyntheticEvent,
-  useCallback,
   useEffect,
+  useEffectEvent,
   useRef,
   useState,
   useTransition,
-} from 'react';
-import { Collapsible, CollapsibleContent } from '../ui/collapsible';
-import { cva } from 'class-variance-authority';
-import { usePathname } from 'next/navigation';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import type { FeedbackBlockProps } from 'fumadocs-core/mdx-plugins/remark-feedback-block';
+} from "react";
+import {
+  Collapsible,
+  CollapsibleContent,
+} from "fumadocs-ui/components/ui/collapsible";
+import { cva } from "class-variance-authority";
 import {
   actionResponse,
   blockFeedback,
@@ -24,26 +33,27 @@ import {
   type ActionResponse,
   type BlockFeedback,
   type PageFeedback,
-} from './schema';
-import { z } from 'zod/mini';
+} from "./schema";
+import { z } from "zod";
+import { usePathname } from "fumadocs-core/framework";
 
 const rateButtonVariants = cva(
-  'inline-flex items-center gap-2 px-3 py-2 rounded-full font-medium border text-sm [&_svg]:size-4 disabled:cursor-not-allowed',
+  "inline-flex items-center gap-2 px-3 py-2 rounded-full font-medium border text-sm [&_svg]:size-4 disabled:cursor-not-allowed",
   {
     variants: {
       active: {
-        true: 'bg-fd-accent text-fd-accent-foreground [&_svg]:fill-current',
-        false: 'text-fd-muted-foreground',
+        true: "bg-fd-accent text-fd-accent-foreground [&_svg]:fill-current",
+        false: "text-fd-muted-foreground",
       },
     },
   },
 );
 
-const pageFeedbackResult = z.extend(pageFeedback, {
+const pageFeedbackResult = pageFeedback.extend({
   response: actionResponse,
 });
 
-const blockFeedbackResult = z.extend(blockFeedback, {
+const blockFeedbackResult = blockFeedback.extend({
   response: actionResponse,
 });
 
@@ -55,36 +65,49 @@ export function Feedback({
 }: {
   onSendAction: (feedback: PageFeedback) => Promise<ActionResponse>;
 }) {
-  const url = usePathname();
-  const { previous, setPrevious } = useSubmissionStorage(url, (v) => {
+  const pathname = usePathname();
+  const { previous, setPrevious } = useSubmissionStorage(pathname, (v) => {
     const result = pageFeedbackResult.safeParse(v);
     return result.success ? result.data : null;
   });
-  const [opinion, setOpinion] = useState<'good' | 'bad' | null>(null);
-  const [message, setMessage] = useState('');
+  const [opinion, setOpinion] = useState<"good" | "bad" | null>(null);
+  const [message, setMessage] = useState("");
   const [isPending, startTransition] = useTransition();
+  const sending = useRef(false);
+  const [error, setError] = useState<string | null>(null);
 
   function submit(e?: SyntheticEvent) {
-    if (opinion == null) return;
-
-    startTransition(async () => {
-      const feedback: PageFeedback = {
-        url,
-        opinion,
-        message,
-      };
-
-      const response = await onSendAction(feedback);
-      setPrevious({
-        response,
-        ...feedback,
-      });
-      posthog.capture("doc_feedback_submitted", { opinion, url });
-      setMessage('');
-      setOpinion(null);
-    });
-
     e?.preventDefault();
+    if (opinion == null || sending.current || !message.trim()) return;
+
+    sending.current = true;
+    setError(null);
+    startTransition(async () => {
+      try {
+        const feedback: PageFeedback = {
+          url: pathname,
+          opinion,
+          message,
+        };
+
+        const response = await onSendAction(feedback);
+        posthog.capture("doc_feedback_submitted", {
+          url: pathname,
+          kind: "opinion" in feedback ? "page" : "text",
+          ...("opinion" in feedback ? { opinion: feedback.opinion } : {}),
+        });
+        setPrevious({
+          response,
+          ...feedback,
+        });
+        setMessage("");
+        setOpinion(null);
+      } catch {
+        setError("Feedback could not be sent. Please try again.");
+      } finally {
+        sending.current = false;
+      }
+    });
   }
 
   const activeOpinion = previous?.opinion ?? opinion;
@@ -100,28 +123,28 @@ export function Feedback({
       <div className="flex flex-row items-center gap-2">
         <p className="text-sm font-medium pe-2">How is this guide?</p>
         <button
-          disabled={previous !== null}
+          disabled={previous !== null || isPending}
           className={cn(
             rateButtonVariants({
-              active: activeOpinion === 'good',
+              active: activeOpinion === "good",
             }),
           )}
           onClick={() => {
-            setOpinion('good');
+            setOpinion("good");
           }}
         >
           <ThumbsUp />
           Good
         </button>
         <button
-          disabled={previous !== null}
+          disabled={previous !== null || isPending}
           className={cn(
             rateButtonVariants({
-              active: activeOpinion === 'bad',
+              active: activeOpinion === "bad",
             }),
           )}
           onClick={() => {
-            setOpinion('bad');
+            setOpinion("bad");
           }}
         >
           <ThumbsDown />
@@ -139,9 +162,9 @@ export function Feedback({
                 target="_blank"
                 className={cn(
                   buttonVariants({
-                    variant: 'default',
+                    variant: "default",
                   }),
-                  'text-xs',
+                  "text-xs",
                 )}
               >
                 View on GitHub
@@ -150,9 +173,9 @@ export function Feedback({
               <button
                 className={cn(
                   buttonVariants({
-                    variant: 'secondary',
+                    variant: "secondary",
                   }),
-                  'text-xs',
+                  "text-xs",
                 )}
                 onClick={() => {
                   setOpinion(previous.opinion);
@@ -168,22 +191,34 @@ export function Feedback({
             <textarea
               autoFocus
               required
+              aria-label="Your feedback"
+              maxLength={5000}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               className="border rounded-lg bg-fd-secondary text-fd-secondary-foreground p-3 resize-none focus-visible:outline-none placeholder:text-fd-muted-foreground"
               placeholder="Leave your feedback..."
               onKeyDown={(e) => {
-                if (!e.shiftKey && e.key === 'Enter') {
+                // keyCode 229: Safari fires `compositionend` before this keydown, `isComposing` is already false
+                if (e.nativeEvent.isComposing || e.keyCode === 229) return;
+                if (!e.shiftKey && e.key === "Enter") {
                   submit(e);
                 }
               }}
             />
+            {error && (
+              <p role="alert" className="text-sm text-red-700">
+                {error}
+              </p>
+            )}
             <button
               type="submit"
-              className={cn(buttonVariants({ variant: 'outline' }), 'w-fit px-3')}
+              className={cn(
+                buttonVariants({ variant: "outline" }),
+                "w-fit px-3",
+              )}
               disabled={isPending}
             >
-              Submit
+              {isPending ? "Sending..." : "Submit"}
             </button>
           </form>
         )}
@@ -192,165 +227,391 @@ export function Feedback({
   );
 }
 
+export interface FeedbackTextProps {
+  onSendAction: (feedback: BlockFeedback) => Promise<ActionResponse>;
+  children?: ReactNode;
+  version?: string;
+}
+
 /**
- * A feedback component for each content block in page, should be used with `remark-feedback-block`.
+ * A feedback component for each content block in page, should be used with `remark-block-id`.
  *
- * See https://fumadocs.dev/docs/usage/feedback.
+ * See https://fumadocs.dev/docs/integrations/feedback.
  */
-export function FeedbackBlock({
-  id,
-  body,
+export function FeedbackText({
   onSendAction,
   children,
-}: FeedbackBlockProps & {
-  onSendAction: (feedback: BlockFeedback) => Promise<ActionResponse>;
-  children: ReactNode;
-}) {
-  const url = usePathname();
-  const blockId = `${url}-${id}`;
-  const { previous, setPrevious } = useSubmissionStorage(blockId, (v) => {
-    const result = blockFeedbackResult.safeParse(v);
-    if (result.success) return result.data;
-    return null;
+  version,
+}: FeedbackTextProps) {
+  const [popup, _setPopup] = useState<{
+    mode: "tooltip" | "expanded";
+    blockId: string;
+    selection: string;
+    range: Range;
+  } | null>(null);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { refs, floatingStyles } = useFloating({
+    open: popup !== null,
+    placement: "bottom",
+    middleware: [offset(6), flip(), shift({ padding: 8 })],
+    whileElementsMounted: autoUpdate,
   });
-  const [message, setMessage] = useState('');
-  const [isPending, startTransition] = useTransition();
-  const [open, setOpen] = useState(false);
 
-  function submit(e?: SyntheticEvent) {
-    startTransition(async () => {
-      const feedback: BlockFeedback = {
-        blockId,
-        blockBody: body,
-        url,
-        message,
-      };
+  function expandPopup() {
+    if (popup?.mode !== "tooltip") return;
 
-      const response = await onSendAction(feedback);
-      setPrevious({
-        response,
-        ...feedback,
-      });
-      setMessage('');
-    });
+    if (typeof Highlight !== "undefined" && CSS.highlights) {
+      CSS.highlights.set("fd-feedback-text", new Highlight(popup.range));
+    }
 
-    e?.preventDefault();
+    _setPopup({ ...popup, mode: "expanded" });
   }
 
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <div className="relative group/feedback">
-        <div
-          className={cn(
-            'absolute -inset-1 rounded-sm pointer-events-none transition-colors duration-100 z-[-1]',
-            open
-              ? 'bg-fd-accent'
-              : 'group-hover/feedback:bg-fd-accent group-hover/feedback:delay-100',
-          )}
-        />
-        <PopoverTrigger
-          className={cn(
-            buttonVariants({ variant: 'secondary', size: 'sm' }),
-            'absolute -top-7 end-0 backdrop-blur-sm text-fd-muted-foreground gap-1.5 transition-all duration-100 data-[state=open]:bg-fd-accent data-[state=open]:text-fd-accent-foreground',
-            !open &&
-              'opacity-0 pointer-events-none group-hover/feedback:pointer-events-auto group-hover/feedback:opacity-100 group-hover/feedback:delay-100 hover:pointer-events-auto hover:opacity-100 hover:delay-100',
-          )}
-          onClick={(e) => {
-            setOpen((prev) => !prev);
-            e.stopPropagation();
-            e.preventDefault();
-          }}
-        >
-          <MessageSquare className="size-3.5" />
-          Feedback
-        </PopoverTrigger>
+  function closePopup() {
+    if (popup?.mode === "expanded") {
+      CSS.highlights?.delete("fd-feedback-text");
+    }
 
-        <div className="in-[.prose-no-margin]:prose-no-margin">{children}</div>
+    _setPopup(null);
+  }
+
+  const updateSelectionPopover = useEffectEvent(() => {
+    if (popup && popup.mode === "expanded") return;
+
+    const container = containerRef.current;
+    const selection = window.getSelection();
+
+    if (
+      !container ||
+      !selection ||
+      selection.isCollapsed ||
+      selection.rangeCount === 0
+    ) {
+      closePopup();
+      return;
+    }
+
+    const range = selection.getRangeAt(0).cloneRange();
+    if (!container.contains(range.commonAncestorContainer)) {
+      closePopup();
+      return;
+    }
+
+    const selectionText = selection.toString().trim();
+    // also prevent cross-paragraph selection
+    if (
+      selectionText.length === 0 ||
+      selectionText.length > 5000 ||
+      selectionText.includes("\n")
+    ) {
+      closePopup();
+      return;
+    }
+
+    const element =
+      range.startContainer instanceof Element
+        ? range.startContainer
+        : range.startContainer.parentElement;
+    const blockId = element?.closest('[data-block="feedback"]')?.id;
+    if (!blockId) {
+      closePopup();
+      return;
+    }
+
+    refs.setReference({
+      getBoundingClientRect() {
+        return range.getBoundingClientRect();
+      },
+      contextElement: container,
+    });
+
+    _setPopup({ mode: "tooltip", range, selection: selectionText, blockId });
+  });
+
+  const closeOnEscape = useEffectEvent((event: KeyboardEvent) => {
+    if (popup === null) return;
+    if (event.key === "Escape") closePopup();
+  });
+
+  const closeOnPointerDown = useEffectEvent((event: PointerEvent) => {
+    const target = event.target;
+    if (popup === null || !(target instanceof Node)) return;
+
+    if (
+      refs.floating.current?.contains(target) ||
+      (popup.mode === "tooltip" && containerRef.current?.contains(target))
+    ) {
+      return;
+    }
+
+    closePopup();
+  });
+
+  useEffect(() => {
+    let frame: number | null = null;
+
+    function scheduleSelectionPopover() {
+      if (frame !== null) window.cancelAnimationFrame(frame);
+
+      frame = window.requestAnimationFrame(() => {
+        frame = null;
+        updateSelectionPopover();
+      });
+    }
+
+    document.addEventListener("selectionchange", scheduleSelectionPopover);
+    document.addEventListener("keydown", closeOnEscape);
+    document.addEventListener("pointerdown", closeOnPointerDown);
+
+    return () => {
+      document.removeEventListener("keydown", closeOnEscape);
+      document.removeEventListener("pointerdown", closeOnPointerDown);
+      document.removeEventListener("selectionchange", scheduleSelectionPopover);
+      if (frame !== null) window.cancelAnimationFrame(frame);
+      CSS.highlights?.delete("fd-feedback-text");
+    };
+  }, []);
+
+  return (
+    <>
+      <div ref={containerRef} className="prose-no-margin">
+        {children}
       </div>
 
-      <PopoverContent className="min-w-[300px] bg-fd-card text-fd-card-foreground">
-        {previous ? (
-          <div className="flex flex-col items-center py-2 gap-2 text-fd-muted-foreground text-sm text-center rounded-xl">
-            <p>Thank you for your feedback!</p>
-            <div className="flex flex-row items-center gap-2">
-              <a
-                href={previous.response?.githubUrl}
-                rel="noreferrer noopener"
-                target="_blank"
-                className={cn(
-                  buttonVariants({
-                    variant: 'default',
-                  }),
-                  'text-xs',
-                )}
-              >
-                View on GitHub
-              </a>
-
+      {popup && (
+        <div
+          ref={refs.setFloating}
+          role={popup.mode === "expanded" ? "dialog" : undefined}
+          aria-label={popup.mode === "expanded" ? "Feedback on selected text" : undefined}
+          className={cn(
+            "not-prose z-40 text-sm bg-fd-popover text-fd-popover-foreground border overflow-hidden shadow-lg rounded-xl w-30 min-h-9.5 box-content",
+            popup.mode === "expanded"
+              ? "w-[320px] max-w-[98vw]"
+              : "select-none",
+          )}
+          style={floatingStyles}
+        >
+          {popup.mode === "tooltip" ? (
+            <div className="w-30 h-9.5 p-1">
               <button
                 className={cn(
-                  buttonVariants({
-                    variant: 'secondary',
-                  }),
-                  'text-xs',
+                  buttonVariants({ variant: "ghost", size: "sm" }),
+                  "size-full gap-1.5",
                 )}
-                onClick={() => {
-                  setPrevious(null);
-                }}
+                onClick={expandPopup}
               >
-                Submit Again
+                <CornerDownRightIcon className="size-4 text-fd-muted-foreground" />
+                Feedback
               </button>
             </div>
-          </div>
-        ) : (
-          <form className="flex flex-col gap-2" onSubmit={submit}>
-            <textarea
-              autoFocus
-              required
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              className="border rounded-lg bg-fd-secondary text-fd-secondary-foreground p-3 resize-none focus-visible:outline-none placeholder:text-fd-muted-foreground"
-              placeholder="Leave your feedback..."
-              onKeyDown={(e) => {
-                if (!e.shiftKey && e.key === 'Enter') {
-                  submit(e);
-                }
+          ) : (
+            <FeedbackTextForm
+              key={popup.blockId}
+              version={version}
+              blockId={popup.blockId}
+              selection={popup.selection}
+              onSendAction={onSendAction}
+              onClose={closePopup}
+              container={{
+                className: "p-2 w-[320px] max-w-[98vw] animate-fd-fade-in",
               }}
             />
-            <button
-              type="submit"
-              className={cn(buttonVariants({ variant: 'secondary', size: 'sm' }), 'gap-1.5')}
-              disabled={isPending}
-            >
-              <CornerDownRightIcon className="text-fd-muted-foreground size-4" />
-              Submit
-            </button>
-          </form>
-        )}
-      </PopoverContent>
-    </Popover>
+          )}
+        </div>
+      )}
+    </>
   );
 }
 
-function useSubmissionStorage<Result>(blockId: string, validate: (v: unknown) => Result | null) {
-  const storageKey = `docs-feedback-${blockId}`;
+function FeedbackTextForm({
+  version,
+  blockId,
+  selection,
+  onSendAction,
+  onClose,
+  container,
+}: {
+  container: HTMLAttributes<HTMLElement>;
+  blockId: string;
+  version?: string;
+  selection: string;
+  onSendAction: (feedback: BlockFeedback) => Promise<ActionResponse>;
+  onClose: () => void;
+}) {
+  const pathname = usePathname();
+  const { previous, setPrevious } = useSubmissionStorage(
+    `${pathname}-${blockId}`,
+    (v) => {
+      const result = blockFeedbackResult.safeParse(v);
+      if (result.success) return result.data;
+      return null;
+    },
+  );
+  const [message, setMessage] = useState("");
+  const [isPending, startTransition] = useTransition();
+  const sending = useRef(false);
+  const [error, setError] = useState<string | null>(null);
+
+  function submit(e?: SyntheticEvent) {
+    e?.preventDefault();
+    if (sending.current || !message.trim()) return;
+    sending.current = true;
+    setError(null);
+    startTransition(async () => {
+      try {
+        const feedback: BlockFeedback = {
+          blockId,
+          version,
+          blockBody: selection,
+          url: pathname,
+          message,
+        };
+
+        const response = await onSendAction(feedback);
+        posthog.capture("doc_feedback_submitted", {
+          url: pathname,
+          kind: "opinion" in feedback ? "page" : "text",
+          ...("opinion" in feedback ? { opinion: feedback.opinion } : {}),
+        });
+        setPrevious({
+          response,
+          ...feedback,
+        });
+        setMessage("");
+      } catch {
+        setError("Feedback could not be sent. Please try again.");
+      } finally {
+        sending.current = false;
+      }
+    });
+  }
+
+  if (previous)
+    return (
+      <div
+        {...container}
+        className={cn(
+          "flex flex-col items-center justify-center gap-2 text-fd-muted-foreground text-center",
+          container.className,
+        )}
+      >
+        <p>Thank you for your feedback!</p>
+        <div className="flex flex-row items-center gap-2">
+          <a
+            href={previous.response?.githubUrl}
+            rel="noreferrer noopener"
+            target="_blank"
+            className={cn(
+              buttonVariants({
+                variant: "default",
+              }),
+              "text-xs",
+            )}
+          >
+            View on GitHub
+          </a>
+
+          <button
+            className={cn(
+              buttonVariants({
+                variant: "secondary",
+              }),
+              "text-xs",
+            )}
+            onClick={() => {
+              setPrevious(null);
+            }}
+          >
+            Submit Again
+          </button>
+        </div>
+      </div>
+    );
+
+  return (
+    <form
+      {...container}
+      className={cn("flex flex-col gap-2", container.className)}
+      onSubmit={submit}
+    >
+      <textarea
+        autoFocus
+        required
+        aria-label="Your feedback on selected text"
+        maxLength={5000}
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        className="border rounded-lg bg-fd-secondary text-fd-secondary-foreground p-3 resize-none focus-visible:outline-none placeholder:text-fd-muted-foreground"
+        placeholder="Leave your feedback..."
+        onKeyDown={(e) => {
+          // keyCode 229: Safari fires `compositionend` before this keydown, `isComposing` is already false
+          if (e.nativeEvent.isComposing || e.keyCode === 229) return;
+          if (!e.shiftKey && e.key === "Enter") {
+            submit(e);
+          }
+        }}
+      />
+      {error && (
+        <p role="alert" className="text-sm text-red-700">
+          {error}
+        </p>
+      )}
+      <div className="grid grid-cols-2 gap-2 mt-auto">
+        <button
+          type="submit"
+          className={cn(
+            buttonVariants({ variant: "default", size: "sm" }),
+            "gap-1.5",
+          )}
+          disabled={isPending}
+        >
+          <CornerDownRightIcon className="size-4" />
+          {isPending ? "Sending..." : "Submit"}
+        </button>
+        <button
+          type="button"
+          className={cn(
+            buttonVariants({ variant: "secondary", size: "sm" }),
+            "gap-1.5",
+          )}
+          disabled={isPending}
+          onClick={onClose}
+        >
+          Close
+        </button>
+      </div>
+    </form>
+  );
+}
+
+function useSubmissionStorage<Result>(
+  key: string,
+  validate: (v: unknown) => Result | null,
+) {
+  const storageKey = `docs-feedback-${key}`;
   const [value, setValue] = useState<Result | null>(null);
-  const validateRef = useRef(validate);
-  validateRef.current = validate;
+  const validateCallback = useEffectEvent(validate);
 
   useEffect(() => {
-    const item = localStorage.getItem(storageKey);
-    if (item === null) return;
-    const validated = validateRef.current(JSON.parse(item));
-
-    if (validated !== null) setValue(validated);
+    setValue(null);
+    try {
+      const item = localStorage.getItem(storageKey);
+      if (item !== null) setValue(validateCallback(JSON.parse(item)));
+    } catch {
+      /* Corrupt or blocked browser storage must not break feedback. */
+    }
   }, [storageKey]);
 
   return {
     previous: value,
     setPrevious(result: Result | null) {
-      if (result) localStorage.setItem(storageKey, JSON.stringify(result));
-      else localStorage.removeItem(storageKey);
+      try {
+        if (result) localStorage.setItem(storageKey, JSON.stringify(result));
+        else localStorage.removeItem(storageKey);
+      } catch {
+        /* Submission still succeeded when storage is unavailable. */
+      }
 
       setValue(result);
     },

@@ -1,0 +1,68 @@
+name: Production release
+
+on:
+  pull_request:
+    branches: [production]
+    types: [opened, synchronize, reopened, ready_for_review, closed]
+
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+
+concurrency:
+  group: railway-docs-production
+  cancel-in-progress: false
+
+jobs:
+  check:
+    name: Production release ready
+    if: github.event.action != 'closed' || github.event.pull_request.merged
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      sha: ${{ steps.verify.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify the release PR and staging evidence
+        id: verify
+        run: node scripts/check-production-release.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+  production:
+    name: Deploy and verify production
+    needs: check
+    if: github.event.pull_request.merged && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment:
+      name: production
+      url: ${{ vars.RAILWAY_SITE_URL }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.check.outputs.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # Revalidate on retries so an old job cannot overwrite a newer release.
+      - name: Recheck the approved release
+        run: node scripts/check-production-release.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: Deploy the approved source commit and run smoke checks
+        run: node scripts/deploy-railway.mjs
+        env:
+          RAILWAY_RELEASE_SHA: ${{ needs.check.outputs.sha }}
+          RAILWAY_DEPLOY_TOKEN: ${{ secrets.RAILWAY_DEPLOY_TOKEN }}
+          RAILWAY_DEPLOY_ENVIRONMENT_ID: ${{ vars.RAILWAY_DEPLOY_ENVIRONMENT_ID }}
+          RAILWAY_DEPLOY_SERVICE_ID: ${{ vars.RAILWAY_DEPLOY_SERVICE_ID }}
+          RAILWAY_SITE_URL: ${{ vars.RAILWAY_SITE_URL }}
+          RAILWAY_RELEASE_ENVIRONMENT: production

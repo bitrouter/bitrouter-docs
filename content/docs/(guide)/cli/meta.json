@@ -1,9 +1,10 @@
 {
   "title": "CLI",
   "pages": [
-    "tui",
-    "headless",
-    "reference",
+    "getting-started",
+    "run-inspect",
+    "cloud-management",
+    "request-receipts",
     "agent"
   ]
 }

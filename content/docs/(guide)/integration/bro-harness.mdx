@@ -1,0 +1,110 @@
+---
+title: "bro [harness]"
+description: Launch a supported harness with BitRouter routing configured for that process.
+---
+
+Use `bro claude` or `bro codex` to open a harness's native interface with its BitRouter connection already configured. BitRouter supplies the gateway endpoint, gateway authentication, and any model override needed for the launch. The harness continues to own its tools, permissions, and session history.
+
+To add BitRouter to an existing native application's model picker instead, use the development [persistent connection guide](/docs/integration/coding-agents#persistent-native-connections). `bro connect` changes the selected native configuration; the launch commands on this page prepare only the child process.
+
+For other supported native harnesses, use the general form `bro launch <harness>`.
+
+<a id="native-launch-and-bro" />
+
+## Native launch boundaries
+
+Native launch keeps you in the harness's interface. It prepares the connection for that process and does not create a BRO Goal or register the process as a managed worker.
+
+
+The harness retains its private history, compaction, tools, and permission behavior. See the [ACP command reference](/docs/usage/cli#agents-acp-and-mcp) for adapter commands, and [`bro run`](/docs/usage/cli#bro-run) for sending one prompt from a script.
+
+## Start with one command
+
+Once you have a working BitRouter model route and a supported harness installed, run either command from your project:
+
+```bash
+bro claude
+bro codex
+```
+
+To select a route explicitly:
+
+```bash
+bro claude --model bitrouter/auto
+bro codex --model bitrouter/auto
+```
+
+BitRouter prepares the harness's connection and starts its native interface. For a routed local launch, it can start the local daemon if needed. Use [Quickstart](/docs/overview/quickstart) to set up BitRouter and provider credentials first.
+
+## Choose a harness
+
+| Harness | Command | How routing is supplied |
+| --- | --- | --- |
+| Claude Code | `bro claude` or `bro launch claude` | Child-process environment variables |
+| Codex | `bro codex` or `bro launch codex` | Command-line configuration overrides |
+| OpenCode | `bro launch opencode` | A generated launch configuration |
+| Pi | `bro launch pi` | A generated launch configuration |
+| Hermes | `bro launch hermes` | A generated launch configuration |
+| OpenClaw | `bro launch openclaw` | A generated launch profile |
+
+The `bro [harness]` short form is available for Claude and Codex; `bro claude-code` is also an alias for `bro claude`. Use `bro launch <harness>` for the other entries above. Native launch support depends on the catalog shipped with your installed version; see the [CLI reference](/docs/usage/cli#bro-launch) for the full command contract.
+
+## What gets configured
+
+For the routed harnesses above, BitRouter prepares the connection for the child process:
+
+- **Endpoint:** the local daemon address derived from BitRouter configuration, or an explicit `--base-url`.
+- **Authentication:** `BITROUTER_API_KEY` when set. The local placeholder works only when the daemon allows unauthenticated requests; an authenticated gateway requires a valid BitRouter key.
+- **Model:** the daemon-routable id supplied with `--model`, when specified.
+- **MCP:** the configured aggregate [MCP gateway](/docs/routing/configuration#agents-and-mcp), when the harness supports injection. Pi does not expose this injection surface.
+
+Claude and Codex receive routing through environment variables or command-line overrides. Harnesses that need generated files receive them under the project's self-ignoring `.bitrouter/launch/` directory. These settings apply to the launched process; BitRouter leaves the harness's normal user configuration in place.
+
+This command prepares the harness to use an existing router configuration. Author providers, credentials, and routes in [bitrouter.yaml](/docs/routing/configuration); look up their field types and defaults in [config reference](/docs/routing/configuration#configuration-reference). A catalog harness using its own authentication, such as `grok` or `agy`, launches directly rather than receiving gateway redirection.
+
+## Select a configuration or endpoint
+
+Point the launcher at a particular BitRouter configuration file:
+
+```bash
+bro claude --config ./bitrouter.yaml --model bitrouter/auto
+bro launch pi --config ./bitrouter.yaml --model bitrouter/auto
+```
+
+Use an explicit gateway endpoint when needed:
+
+```bash
+bro codex --base-url http://127.0.0.1:4356 --model bitrouter/auto
+```
+
+`--config` selects the BitRouter policy file. BitRouter translates the connection into the selected harness's native configuration format.
+
+## Pass harness arguments
+
+Put BitRouter options before `--`. Everything after it is forwarded to the harness:
+
+```bash
+bro claude --model bitrouter/auto -- --permission-mode plan
+bro codex --model bitrouter/auto -- --search
+```
+
+Permission flags after `--` follow the harness's own rules. See the [ACP command reference](/docs/usage/cli#agents-acp-and-mcp) for commands that connect a client to an adapter.
+
+## Check before launching
+
+Use `--check` to verify the executable, endpoint, and route without opening the harness's interface:
+
+```bash
+bro claude --check
+bro codex --model bitrouter/auto --check
+bro launch pi --check
+```
+
+Review the launch report for the route and MCP injection actually applied. `--no-start` prevents automatic daemon startup, and `--no-install` prevents an offer to install a missing supported harness. Passing the launch checks verifies the connection setup; a completed model request provides the next check of the working integration.
+
+<Cards>
+  <Card title="Quickstart" href="/docs/overview/quickstart" description="Set up BitRouter and a working model route." />
+  <Card title="Configuration (YAML)" href="/docs/routing/configuration" description="Choose the BitRouter policy used by the launcher." />
+  <Card title="ACP command reference" href="/docs/usage/cli#agents-acp-and-mcp" description="Inspect ACP adapter and connection commands." />
+  <Card title="CLI reference" href="/docs/usage/cli#coding-agents" description="Inspect launch commands and every available option." />
+</Cards>

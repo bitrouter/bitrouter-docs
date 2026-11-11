@@ -1,26 +1,113 @@
 ---
 title: Coding agents
-description: Run supported coding agents through BitRouter interactively, headlessly, or in their native interface.
+description: Connect existing agents to BitRouter, choose gateway routes in native model controls, and distinguish persistent setup from launch and ACP.
 ---
 
-BitRouter separates the **agent harness** that drives the loop from the **model source** that supplies tokens. The same Claude, Codex, OpenCode, or Pi harness can use a hosted model, a subscription, or a model running on your machine.
+BitRouter separates the **agent harness** that drives the loop from the **model source** that supplies tokens. Connect the agent you already use, then select its BitRouter route in the native model controls. The harness retains its sessions, history, compaction, tools, permissions, and schedules.
+
+## Persistent native connections
+
+<Callout type="info">
+`bro connect` is documented here from [BitRouter PR #1016](https://github.com/bitrouter/bitrouter/pull/1016), currently a development CLI capability. Use a build containing that command and check `bro connect --help`. These instructions do not establish availability in an older installed binary or replace the separately captured CLI reference.
+</Callout>
+
+`bro connect` configures a persistent native provider. No self-driving extension, separate classifier, or BitRouter-managed agent session is required. After setup, open the native application normally and select the connected route.
+
+```bash
+bro connect
+```
+
+Choose a client in the menu, review the destination files, and confirm the connection. For a local gateway, prepare working inference sources first with [Quickstart](/docs/overview/quickstart). Setup can start that local gateway after confirmation. It does not install the native client.
+
+| Client | Direct setup | Configuration scope |
+| --- | --- | --- |
+| [DeepSeek Harness](/docs/integration/deepseek-harness) | `bro connect deepseek-harness` | Selected initialized profiles in one Harness home |
+| [Hermes Agent](/docs/integration/hermes-agent) | `bro connect hermes` | The selected home/current profile, or explicitly named profiles |
+| [OpenClaw](/docs/integration/openclaw) | `bro connect openclaw` | One Gateway state root and its agent catalogs |
+| [OpenCode](/docs/integration/opencode) | `bro connect opencode` | One native configuration file |
+| [Pi](/docs/integration/pi) | `bro connect pi` | One Pi agent directory |
+
+These five adapters add an independent BitRouter provider and retain existing startup defaults. Select BitRouter in the native picker after the required reload. Codex and Claude are also available in the connector menu; their client-specific configuration and restoration differ.
+
+BitRouter is the provider; Automatos is its default router model. The default gateway wire ID is `bitrouter/automatos`. `--model` chooses another exact ID already advertised by the target gateway's `/v1/models`; it does not create a model, strategy, or alias. Display labels and native selection IDs can differ from the wire ID, as described in each client guide.
+
+### Connect an existing gateway
+
+For Cloud or another existing gateway, supply its root URL or `/v1` URL and its gateway credential. For example, after replacing the model placeholder with an exact ID advertised by your Cloud endpoint:
+
+```bash
+export BITROUTER_API_KEY='your-bitrouter-gateway-key'
+bro connect hermes --base-url https://api.bitrouter.ai \
+  --model 'exact-advertised-model-id' --dry-run
+bro connect hermes --base-url https://api.bitrouter.ai \
+  --model 'exact-advertised-model-id'
+```
+
+The explicit endpoint path configures the native client without reading a local BitRouter config or starting a daemon. Remote URLs require HTTPS; HTTP is allowed on loopback. The saved gateway credential is separate from upstream provider keys. For unattended writes, choose an explicit client and add `--yes`.
+
+The default `bitrouter/automatos` must also be advertised before setup succeeds. Availability depends on the chosen gateway configuration and deployment. A callable selector that is absent from `/v1/models` does not pass this connector's catalog check.
+
+### Request context and routing
+
+The connected client sends its normal model request: the selected wire ID, submitted conversation context, and supported tool declarations/results. BitRouter can apply the selected route to that request. The harness determines what is submitted after its own context loading and compaction.
+
+Persistent connection does not export the complete native session store or install a lifecycle observer. It does not itself configure tool permissions, context-profile switching, automatic approvals, or workload learning. Optional self-driving extensions have a separate host-side resource-management role and are not prerequisites for model routing.
+
+### Strategies and workflows
+
+Define model combinations and routing behavior in BitRouter using [Strategies](/docs/routing/strategies) and [Virtual Models](/docs/models-routing/virtual-models). Select a registered gateway route through the harness's own agent, profile, session, or job model settings. The harness remains the owner of those workflow bindings.
+
+For these five independent-provider clients, repeat `--model` to register an ordered collection of exact advertised selectors under one provider. The first retains the existing primary alias/display-name behavior; additional entries use their exact IDs as labels. Duplicate IDs and conflicting native keys are refused. Setup and `--check` validate every ID. Codex and Claude retain their single-model connector contract.
+
+For example, if the gateway advertises both IDs, register them together:
+
+```bash
+bro connect hermes --model bitrouter/automatos --model team/background
+```
+
+Then choose a registered route in the native workflow settings. Hermes' cron defaults/per-job pins and OpenClaw's per-job model overrides remain harness-owned; `bro connect` does not provide a workflow-binding wizard or rewrite those settings. See the [Hermes](/docs/integration/hermes-agent#chat-and-scheduled-work) and [OpenClaw](/docs/integration/openclaw#agent-and-automation-routes) guides.
+
+A label such as `background` or `flex` does not activate an inference type. The selected gateway must implement the intended policy and support its model/protocol requirements. See [Inference Types](/docs/market/inference-types) for the market capacity types.
+
+### Manage a connection
+
+For these five independent-provider clients, replace `hermes` with the intended client and retain any custom `--instance`:
+
+```bash
+bro connect hermes --dry-run
+bro connect hermes --status
+bro connect hermes --check
+bro connect hermes --update
+bro connect hermes --remove
+```
+
+- `--dry-run` previews files and effects without starting a daemon or writing configuration.
+- `--status` checks saved configuration offline. `--check` also verifies the exact gateway model using the saved credential. Neither submits inference or tool calls, and neither proves that a running client has reloaded.
+- `--update` replaces the managed provider. Supplying model flags replaces the complete selector list; omitting them preserves it. Supply the full remaining list to drop a selector. Other omitted settings retain the saved connection; an omitted key is reused only for an unchanged endpoint. An update can restore the earlier native startup selection, so reselect BitRouter afterward if desired.
+- `--remove` removes owned settings and restores earlier selections only where the connected model is still selected. Later unrelated preferences remain. Saved job/session bindings are not migrated when routes are removed, so change those bindings in the native harness as needed. Edits to owned fields are conflicts to resolve before retrying.
+
+Close config-writing clients during updates or removal. Private connection receipts contain restoration data and credentials; keep them private. For Desktop/Web attached to a different backend, configure that backend on its own host. Each client guide describes reload requirements and state outside the connector's ownership.
+
+After a catalog check, verify inference separately: select BitRouter in the native client, send a small request, exercise any required tool roundtrip, and inspect [request receipts](/docs/cli/request-receipts). Native default context/cost metadata is not proof of route capacity, actual pricing, or model quality.
 
 ## Choose the interface
 
 | Goal | Command | Interface owner |
 | --- | --- | --- |
-| Work in BitRouter's conversation | `bro code <agent>` | BitRouter |
+| Add a persistent native provider (development CLI) | `bro connect <client>` | Native client configuration; BitRouter gateway routing |
 | Run one turn from a script | `bro run <agent> "..."` | BitRouter, headless |
 | Use the harness's own terminal UI | `bro launch <agent>` | The harness |
 | Let another ACP client launch the adapter | `bro acp serve <agent>` | The ACP client |
 
 ```bash
-bro code codex
+bro codex
 bro run claude "Review the current diff" --format quiet
 bro launch opencode
 ```
 
-`bro code`, `bro run`, and `bro acp serve` use ACP adapters. `bro launch` starts the harness's native interface with process-local routing overrides. It does not rewrite the user's normal harness configuration.
+`bro connect` changes persistent native configuration. `bro run` and `bro acp serve` use ACP adapters. `bro launch` starts the harness's native interface with process-local routing overrides and leaves normal harness configuration in place. These are separate capabilities; connecting or launching a native client does not create a BRO Goal.
+
+The captured [command reference](/docs/usage/cli#bro-code) documents the released ACP conversation interface. Check native launch and ACP connectivity separately for the adapter and version you use.
 
 ## Supported agents
 
@@ -40,6 +127,8 @@ Use `bro agents check <agent>` before a long task. It verifies that the adapter 
 
 ## What launch changes
 
+See [bro [harness]](/docs/integration/bro-harness) for the shared setup workflow, launch configuration, and command options.
+
 For Claude and Codex, BitRouter passes temporary environment variables or command-line overrides. For OpenCode, Pi, Hermes, and OpenClaw, it writes a generated profile under the working tree's self-ignoring `.bitrouter/launch/` directory and points only the child process at it.
 
 ```bash
@@ -50,7 +139,7 @@ bro launch claude -- --permission-mode plan
 
 Arguments after `--` belong to the harness. BitRouter options such as `--model`, `--base-url`, and `--check` must come before it.
 
-Supported native harnesses also receive the aggregate [MCP gateway](/docs/context-routing/mcp-servers#mcp-gateway) when they expose a compatible injection mechanism. The launch summary states what was actually routed or injected; Pi and some other harnesses do not expose an MCP injection surface.
+Supported native harnesses also receive the aggregate [MCP gateway](/docs/routing/configuration#agents-and-mcp) when they expose a compatible injection mechanism. The launch summary states what was actually routed or injected; Pi and some other harnesses do not expose an MCP injection surface.
 
 ## Other harnesses
 
@@ -70,7 +159,6 @@ Claude Code owns the agent loop and tools. BitRouter supplies its model route, f
 ### Pick a mode
 
 ```bash
-bro code claude                         # BitRouter conversation
 bro run claude "Summarize this repo"   # headless ACP turn
 bro claude                              # Claude Code's native interface
 ```
@@ -115,45 +203,7 @@ For Cloud, use `https://api.bitrouter.ai` and set `ANTHROPIC_AUTH_TOKEN` to a Bi
 
 ### Use a Claude subscription
 
-The `claude-code` provider uses a Claude Pro or Max credential instead of an Anthropic API key. It is separate from the standard `anthropic` provider, but it can be used with the Claude Code harness described above.
-
-Sign in:
-
-```bash
-bro providers login claude-code
-```
-
-BitRouter adopts a compatible local Claude Code login when possible and otherwise starts the provider's login flow. The stored credential refreshes automatically; no `providers:` block is required.
-
-Verify the models and route:
-
-```bash
-bro models --provider claude-code
-bro route claude-code:claude-sonnet-4-6
-```
-
-Use the provider-qualified id to require the subscription source. A request routed to `anthropic:<model>` uses `ANTHROPIC_API_KEY` instead.
-
-Then launch any Claude Code mode normally:
-
-```bash
-bro start
-bro claude
-# or: bro code claude
-# or: bro run claude "Summarize this repo"
-```
-
-Sign out with:
-
-```bash
-bro providers logout claude-code
-```
-
-This removes BitRouter's stored subscription credential and route. It does not modify Claude Code's own configuration.
-
-<Callout type="info">
-Provider login and BitRouter Cloud login are separate. `bro providers login claude-code` authenticates the upstream subscription; `bro cloud login` authenticates your BitRouter account.
-</Callout>
+Use [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions#use-a-claude-subscription) for login, explicit subscription routes, and logout. The subscription source is independent of the harness interface.
 
 ## Codex
 
@@ -162,7 +212,6 @@ Codex owns the agent loop and tools. BitRouter supplies its model route, fallbac
 ### Pick a mode
 
 ```bash
-bro code codex                         # BitRouter conversation
 bro run codex "Summarize this repo"   # headless ACP turn
 bro codex                              # Codex's native interface
 ```
@@ -208,49 +257,7 @@ Codex model-provider configuration belongs in the user-level `~/.codex/config.to
 
 ### Use a Codex subscription
 
-The `openai-codex` provider uses a ChatGPT Plus or Pro credential and the Codex Responses backend. It is separate from the standard `openai` API-key provider, but it can be used with the Codex harness described above.
-
-Sign in:
-
-```bash
-bro providers login openai-codex
-```
-
-BitRouter can import a compatible local Codex login or start the provider's browser flow. For automation that must not open a browser:
-
-```bash
-bro providers login openai-codex --import-existing --no-browser
-```
-
-No `providers:` block is required. Verify the models and route:
-
-```bash
-bro models --provider openai-codex
-bro route openai-codex:gpt-5-codex
-```
-
-Use the provider-qualified id to require the subscription source. A request routed to `openai:<model>` uses `OPENAI_API_KEY` and the public OpenAI API instead.
-
-Then launch any Codex mode normally:
-
-```bash
-bro start
-bro codex
-# or: bro code codex
-# or: bro run codex "Summarize this repo"
-```
-
-Sign out with:
-
-```bash
-bro providers logout openai-codex
-```
-
-This removes BitRouter's stored subscription credential. It does not sign the Codex CLI out of its own account.
-
-<Callout type="info">
-Provider login and BitRouter Cloud login are separate. `bro providers login openai-codex` authenticates the upstream subscription; `bro cloud login` authenticates your BitRouter account.
-</Callout>
+Use [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions#use-a-codex-subscription) for login, explicit subscription routes, and logout. The subscription source is independent of the harness interface.
 
 ## Model sources
 
@@ -292,11 +299,11 @@ bro start
 - `route` previews resolution without making an inference request.
 - The provider-qualified form pins one source; the bare model id lets BitRouter select among every source that serves it.
 
-To combine sources, define a [virtual model or fallback chain](/docs/models-routing/models#fallback-chains). A common pattern is local inference first and a hosted source second.
+To combine sources, define a [virtual model](/docs/models-routing/virtual-models#define-a-virtual-model) or fallback chain. A common pattern is local inference first and a hosted source second.
 
 <Cards>
-  <Card title="Local inference" href="/docs/models-routing/local-inference" description="Connect Ollama, vLLM, Unsloth, or another OpenAI-compatible server." />
-  <Card title="Providers" href="/docs/config/providers" description="Add a hosted API or provider account with a key." />
-  <Card title="TUI" href="/docs/cli/tui" description="Use BitRouter's interactive ACP conversation." />
-  <Card title="ACP servers" href="/docs/integration/acp-servers" description="Inspect adapters and run headless turns." />
+  <Card title="Local Models" href="/docs/models-routing/local-models" description="Connect Ollama, vLLM, Unsloth, or another OpenAI-compatible server." />
+  <Card title="BYOK & Subscriptions" href="/docs/models-routing/byok-subscriptions" description="Add a hosted API or provider account with a key." />
+  <Card title="Run & Inspect" href="/docs/cli/run-inspect" description="Operate the router and inspect routed requests." />
+  <Card title="ACP command reference" href="/docs/usage/cli#agents-acp-and-mcp" description="Inspect adapter commands and their options." />
 </Cards>

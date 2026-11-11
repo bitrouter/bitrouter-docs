@@ -1,108 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
 import { CLOUD_PRICING, CLOUD_WELCOME_CREDIT } from "@/lib/commercial-pricing";
 import { ArrowRight, ArrowUpRight, Check, Download, Server } from "lucide-react";
-import { ValueTui } from "./value-tui";
 import { InstallTabs } from "./install-tabs";
 import { HomepageFeatures } from "./features";
 import { GitHubStarsBadge } from "../github-stars-badge";
 import { Playground } from "../playground/playground";
 import "./homepage.css";
-
-const values = [
-  {
-    id: "spending", label: "overspending.",
-  },
-  {
-    id: "waiting", label: "waiting around.",
-  },
-  {
-    id: "managing", label: "micromanaging.",
-  },
-] as const;
-
-function ValueTabs() {
-  const [selection, setSelection] = useState({ index: 0, run: 0 });
-  const [columns, setColumns] = useState(100);
-  const [visible, setVisible] = useState(false);
-  const [pageVisible, setPageVisible] = useState(true);
-  const [reducedMotion, setReducedMotion] = useState(false);
-  const [hovering, setHovering] = useState(false);
-  const [keyboardFocus, setKeyboardFocus] = useState(false);
-  const section = useRef<HTMLElement>(null);
-  const stage = useRef<HTMLDivElement>(null);
-  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const value = values[selection.index];
-
-  useEffect(() => {
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const updateMotion = () => setReducedMotion(media.matches);
-    const updateVisibility = () => setPageVisible(!document.hidden);
-    updateMotion();
-    updateVisibility();
-    media.addEventListener("change", updateMotion);
-    document.addEventListener("visibilitychange", updateVisibility);
-    const intersection = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting && entry.intersectionRatio >= 0.2), { threshold: [0, 0.2] });
-    const resize = new ResizeObserver(([entry]) => setColumns(Math.max(28, Math.min(112, Math.floor((entry.contentRect.width - 36) / 7.55)))));
-    if (section.current) intersection.observe(section.current);
-    if (stage.current) resize.observe(stage.current);
-    return () => {
-      intersection.disconnect();
-      resize.disconnect();
-      media.removeEventListener("change", updateMotion);
-      document.removeEventListener("visibilitychange", updateVisibility);
-    };
-  }, []);
-
-  const updateProgress = useCallback((progress: number) => {
-    tabRefs.current.forEach((tab, index) => tab?.style.setProperty("--value-progress", index === selection.index ? String(progress) : "0"));
-  }, [selection.index]);
-  const select = (index: number) => {
-    tabRefs.current.forEach(tab => tab?.style.setProperty("--value-progress", "0"));
-    setSelection(current => ({ index, run: current.run + 1 }));
-  };
-  const advance = useCallback((finishedRun: number) => {
-    setSelection(current => current.run === finishedRun
-      ? { index: (current.index + 1) % values.length, run: current.run + 1 }
-      : current);
-  }, []);
-
-  return <section ref={section} className="ws-values ws-wrap" id="values" aria-label="What BitRouter does for your workflow"
-    onPointerDownCapture={() => setKeyboardFocus(false)}
-    onFocusCapture={event => {
-      const target = event.target as HTMLElement;
-      // WTerm focuses its hidden input on first mount. Ignore that autofocus,
-      // while preserving keyboard reading when focus moves into the terminal.
-      if (target.matches(":focus-visible") && !target.closest(".ws-value-terminal")) setKeyboardFocus(true);
-    }}
-    onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget as Node)) setKeyboardFocus(false); }}
-  >
-    <div className="ws-value-tabs" role="tablist" aria-label="Product benefits">
-      {values.map((item, i) => <button
-        key={item.id} ref={element => { tabRefs.current[i] = element; }}
-        id={`value-tab-${item.id}`} role="tab" type="button"
-        aria-selected={selection.index === i} aria-controls="value-panel" tabIndex={selection.index === i ? 0 : -1}
-        onClick={() => select(i)}
-        onKeyDown={event => {
-          const next = event.key === "ArrowRight" ? (i + 1) % values.length : event.key === "ArrowLeft" ? (i + values.length - 1) % values.length : event.key === "Home" ? 0 : event.key === "End" ? values.length - 1 : null;
-          if (next === null) return;
-          event.preventDefault(); setKeyboardFocus(true); select(next); tabRefs.current[next]?.focus();
-        }}
-      ><span className="ws-tab-progress" aria-hidden="true" /><span className="ws-tab-label">Stop <em>{item.label}</em></span></button>)}
-    </div>
-    <div id="value-panel" role="tabpanel" aria-labelledby={`value-tab-${value.id}`} tabIndex={0}>
-      <div className="ws-value-animation">
-        <div ref={stage} className="ws-tui-stage"
-          onPointerEnter={event => { if (event.pointerType === "mouse") setHovering(true); }}
-          onPointerLeave={() => setHovering(false)}
-        >
-          <ValueTui scenario={value.id} run={selection.run} columns={columns} playing={visible && pageVisible} canAdvance={!hovering && !keyboardFocus} reducedMotion={reducedMotion} onAdvance={advance} onProgress={updateProgress} />
-        </div>
-      </div>
-    </div>
-  </section>;
-}
 
 function PricingSection() {
   return <section className="ws-pricing ws-wrap" id="pricing" aria-labelledby="home-pricing-title">
@@ -177,11 +81,11 @@ const faqs = [
   ["Can I run it on my own infrastructure?", "Yes. Self-host the Apache-2.0 router and connect your own provider keys, local models, or private inference endpoints. A BitRouter Cloud account is not required for local routing."],
 ];
 
-export function Homepage({ playgroundPreview = false }: { playgroundPreview?: boolean }) {
+export function Homepage() {
   return <div className="workspace-site">
     <main id="main">
       <section className="ws-hero ws-wrap"><h1 aria-label="The Open Market for Elastic Inference"><span>The Open Market</span>{" "}<em>for Elastic Inference</em></h1><p>The right inference for your workload, on your terms.</p><InstallTabs /></section>
-      {playgroundPreview ? <Playground /> : <ValueTabs />}
+      <Playground />
       <HomepageFeatures />
       <PricingSection />
       <TrustSection />

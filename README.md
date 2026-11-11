@@ -67,6 +67,53 @@ on the previous successful production deployment in Railway.
 of truth for the rendered API reference and is updated by an automated PR from
 `bitrouter-cloud` on each release — do not hand-edit it.
 
+## Public status page
+
+`/status` reads one monitor-backed component from a public OpenStatus page with
+the server-side `@openstatus/sdk-node` client. Set `OPENSTATUS_API_KEY` to a
+read-only key, `OPENSTATUS_PAGE_ID` to the public page ID, and
+`OPENSTATUS_COMPONENT_ID` to the Inference API component ID. These variables
+remain server-only. Verify the component is linked to the intended monitor.
+
+Without configuration or when data cannot be read, the page shows **Status
+unknown**. Old cached data is labeled out of date. Probe availability and
+synthetic response times describe OpenStatus checks; they are not an SLA or
+measurements of every inference request. Incident routes only expose reports
+listed in the configured public page/component snapshot.
+
+## Agent Playground
+
+The homepage and `/try` share one fx conversation and virtual browser workspace.
+Visitors can draft before signing in to Cloud. Runs use real Cloud inference;
+there is no sample response or comparison mode. WebAssembly JSPI is required.
+Expand/back preserves the conversation, workspace and active task. Stop cancels
+execution. An unavailable service keeps the draft and reports an error.
+
+To configure inference, set the server-only variables in `.env.example`:
+
+- `BITROUTER_PLAYGROUND_ENABLED=1`
+- A dedicated `BITROUTER_PLAYGROUND_API_KEY` and qualified
+  `BITROUTER_PLAYGROUND_MODEL`; optional `BITROUTER_PLAYGROUND_VISION_MODEL`.
+- `BITROUTER_PLAYGROUND_REDIS_REST_URL` and `BITROUTER_PLAYGROUND_REDIS_REST_TOKEN`
+  for a durable primary Redis REST endpoint. No extra service is provisioned.
+- An explicit `BITROUTER_PLAYGROUND_QUOTA_ID`, `BITROUTER_PLAYGROUND_SITE_REQUEST_LIMIT`,
+  `BITROUTER_PLAYGROUND_ACCOUNT_REQUEST_LIMIT` and `BITROUTER_PLAYGROUND_MAX_CONCURRENCY`.
+
+All instances must share the quota ID/store. Counts are lifetime admitted model
+requests for that campaign, including failures and cancellations. They do not
+reset when the browser resets, the service restarts, or a new session opens.
+Configure persistence and no eviction. One account can run one model request at a
+time; the site concurrency cap uses expiring leases. Missing configuration or a
+quota-store failure stops inference before the Cloud call.
+
+These shared request/concurrency limits do not implement a USD spending ledger.
+Qualify the dedicated credential's funding/spending controls and the actual
+Cloud sign-in, tool-capable model, streaming and cancellation before enabling a
+hosted trial. See [the playground contract](docs/agent-playground-spec.md).
+For a local operator run, use `pnpm dev --hostname 127.0.0.1`, the same quota
+configuration, and `BITROUTER_PLAYGROUND_LOCAL_LIVE=1`. That exception is disabled
+in production mode. The former `BITROUTER_PLAYGROUND_CLOUD_PREVIEW` flag is retired.
+
 ## Email setup
 
 The Enterprise contact form uses the server-only `RESEND_API_KEY` and

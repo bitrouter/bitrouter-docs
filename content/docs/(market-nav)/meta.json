@@ -1,8 +1,8 @@
 {
   "title": "Market",
   "pages": [
-    "[Pricing](/docs/market/pricing)",
-    "inference-types",
+    "[Price-Time Priority](/docs/market/price-time-priority)",
+    "[Inference Types](/docs/market/inference-types)",
     "[Inference Tiers](/docs/market/inference-tiers)",
     "[Buy Inference](/docs/market/buy-inference)",
     "[Sell Inference](/docs/market/sell-inference)"

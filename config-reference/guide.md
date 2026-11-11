@@ -43,8 +43,8 @@ Use the guide for the setting you need:
 | Evaluate evidence and review policy changes | [Workload Optimization](/docs/routing/workload-optimization#existing-policy-tools) |
 | Restrict candidates or reuse named routing variants | [Strategies](/docs/routing/strategies#configure-routing-rules) |
 | Define failure-driven replacement routes | [Model Fallbacks](/docs/models-routing/model-fallback) |
-| Connect an upstream MCP server | [MCP servers](/docs/context-routing/mcp-servers) |
-| Configure a custom ACP adapter | [ACP servers](/docs/context-routing/acp-servers#configure-a-custom-agent) |
+| Connect an upstream MCP server | [MCP configuration fields](/docs/routing/configuration#agents-and-mcp) |
+| Configure a custom ACP adapter | [Agent configuration fields](/docs/routing/configuration#acp-agent-config) |
 | Deploy the process and export telemetry | [Self-hosting](/docs/self-hosting) |
 
 ## Find the active configuration

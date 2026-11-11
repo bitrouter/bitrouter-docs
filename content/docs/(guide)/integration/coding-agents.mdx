@@ -67,7 +67,7 @@ bro connect hermes --model bitrouter/automatos --model team/background
 
 Then choose a registered route in the native workflow settings. Hermes' cron defaults/per-job pins and OpenClaw's per-job model overrides remain harness-owned; `bro connect` does not provide a workflow-binding wizard or rewrite those settings. See the [Hermes](/docs/integration/hermes-agent#chat-and-scheduled-work) and [OpenClaw](/docs/integration/openclaw#agent-and-automation-routes) guides.
 
-A label such as `background` or `flex` does not activate an inference type. The selected gateway must implement the intended policy and support its model/protocol requirements. [Inference Types](/docs/market/inference-types) remains a separate Coming soon guide.
+A label such as `background` or `flex` does not activate an inference type. The selected gateway must implement the intended policy and support its model/protocol requirements. See [Inference Types](/docs/market/inference-types) for the market capacity types.
 
 ### Manage a connection
 
@@ -95,7 +95,6 @@ After a catalog check, verify inference separately: select BitRouter in the nati
 | Goal | Command | Interface owner |
 | --- | --- | --- |
 | Add a persistent native provider (development CLI) | `bro connect <client>` | Native client configuration; BitRouter gateway routing |
-| Delegate a persistent Goal (design preview) | `bro` / `bro code` | BRO coordination |
 | Run one turn from a script | `bro run <agent> "..."` | BitRouter, headless |
 | Use the harness's own terminal UI | `bro launch <agent>` | The harness |
 | Let another ACP client launch the adapter | `bro acp serve <agent>` | The ACP client |
@@ -108,7 +107,7 @@ bro launch opencode
 
 `bro connect` changes persistent native configuration. `bro run` and `bro acp serve` use ACP adapters. `bro launch` starts the harness's native interface with process-local routing overrides and leaves normal harness configuration in place. These are separate capabilities; connecting or launching a native client does not create a BRO Goal.
 
-The [Self-driving preview](/docs/usage/cli#self-driving-workflows) describes the separate goal-oriented `bro` / `bro code` contract. In that design, a built-in executor can complete work and ACP-compatible harnesses are optional managed workers. Check native launch, ACP connectivity, and managed execution capabilities independently. Earlier `bro code <agent>` behavior remains in the captured [command reference](/docs/usage/cli#bro-code); it is not the preview Goal entry point.
+The captured [command reference](/docs/usage/cli#bro-code) documents the released ACP conversation interface. Check native launch and ACP connectivity separately for the adapter and version you use.
 
 ## Supported agents
 
@@ -140,7 +139,7 @@ bro launch claude -- --permission-mode plan
 
 Arguments after `--` belong to the harness. BitRouter options such as `--model`, `--base-url`, and `--check` must come before it.
 
-Supported native harnesses also receive the aggregate [MCP gateway](/docs/context-routing/mcp-servers#mcp-gateway) when they expose a compatible injection mechanism. The launch summary states what was actually routed or injected; Pi and some other harnesses do not expose an MCP injection surface.
+Supported native harnesses also receive the aggregate [MCP gateway](/docs/routing/configuration#agents-and-mcp) when they expose a compatible injection mechanism. The launch summary states what was actually routed or injected; Pi and some other harnesses do not expose an MCP injection surface.
 
 ## Other harnesses
 
@@ -305,6 +304,6 @@ To combine sources, define a [virtual model](/docs/models-routing/virtual-models
 <Cards>
   <Card title="Local Models" href="/docs/models-routing/local-models" description="Connect Ollama, vLLM, Unsloth, or another OpenAI-compatible server." />
   <Card title="BYOK & Subscriptions" href="/docs/models-routing/byok-subscriptions" description="Add a hosted API or provider account with a key." />
-  <Card title="Interactive TUI" href="/docs/usage/cli#interactive-tui" description="Preview the goal-oriented BitRouter terminal interface." />
-  <Card title="ACP servers" href="/docs/context-routing/acp-servers" description="Inspect adapters and run headless turns." />
+  <Card title="Run & Inspect" href="/docs/cli/run-inspect" description="Operate the router and inspect routed requests." />
+  <Card title="ACP command reference" href="/docs/usage/cli#agents-acp-and-mcp" description="Inspect adapter commands and their options." />
 </Cards>

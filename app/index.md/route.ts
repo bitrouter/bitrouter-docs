@@ -10,6 +10,14 @@ export function GET() {
 
 ${LLMS_PRODUCT_SUMMARY}
 
+## Agent Playground
+
+[Try the fx agent](${origin}/try) in a browser workspace, or use the embedded
+playground on the homepage. Draft a task, sign in to BitRouter Cloud, and run it
+with streamed responses and browser file tools. The workspace cannot access
+files on your computer. WebAssembly JSPI support is required. Inference depends
+on service availability; an unavailable service preserves your task for retry.
+
 ## Start here
 
 - [Quickstart](${origin}/docs/overview/quickstart.md)

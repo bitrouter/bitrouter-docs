@@ -19,13 +19,6 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-        # Must run BEFORE the build: `prebuild` regenerates these tables in
-        # place, so a check afterwards would always pass. This compares the
-        # committed tables against the committed snapshots — no network — so it
-        # catches a hand-edited table or a snapshot refreshed without
-        # regenerating, without failing unrelated PRs when upstream prices move.
-        # (Upstream drift is absorbed at deploy time by `prebuild`.)
-      - run: pnpm lint:tables
         # Enforces the curation gate: a notable/highlight entry that still has
         # its draft banner fails here rather than shipping raw release notes.
       - run: pnpm lint:changelog

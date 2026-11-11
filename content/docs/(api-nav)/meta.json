@@ -1,0 +1,10 @@
+{
+  "title": "API",
+  "root": true,
+  "pages": [
+    "[Getting Started](/docs/reference)",
+    "[Authentication](/docs/reference/authentication)",
+    "[Inference APIs](/docs/usage/responses-api)",
+    "../reference"
+  ]
+}

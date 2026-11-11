@@ -1,13 +1,13 @@
 ---
-title: CLI reference
+title: Command Reference
 description: The bro CLI — run and inspect the local router, launch coding agents, and manage your BitRouter Cloud account.
 ---
 
 BitRouter ships as one **static binary**, `bro`, with no runtime dependencies to install. It runs the local router your applications call, launches supported coding agents, and exposes scriptable commands for routing, evaluation, optimization, and your hosted account.
 
-Start with `bro init` for guided setup, `bro serve` for a foreground router, or `bro code` for BitRouter's coding conversation.
+Start with `bro init` for guided setup, `bro serve` for a foreground router, or `bro cloud login` to manage Cloud.
 
-Every command below is **generated from the binary's own `--help`**, so the flags you see here are the flags your installed version accepts.
+Commands below are generated from the captured `bro 1.0.0-alpha.33 --help` snapshot. Compare `bro --version` and your installed command's `--help` before using them. The complete captured command set is retained even when a command is outside the first-release workflow guides.
 
 ## Conventions
 
@@ -38,4 +38,4 @@ Every command below is **generated from the binary's own `--help`**, so the flag
 - **Coding agents** — [coding agents](#coding-agents): native launch, interactive conversation, and headless ACP runs
 - **Misc** — [key, workflow-state, and update](#key-workflow-state-and-update): virtual keys, benchmark tooling, self-update
 
-The deprecated `bitrouter` command may still be installed as a compatibility alias, but documentation uses `bro`. Agents can operate BitRouter through the shipped [Agent Skill](/docs/context-routing/skills); BitRouter's MCP support is an upstream client and aggregate gateway, not a first-party origin tool server.
+The deprecated `bitrouter` command may still be installed as a compatibility alias, but documentation uses `bro`. Agents can operate BitRouter through the shipped [Agent Skill](/docs/overview/quickstart#onboard-via-the-agent-skill); BitRouter's MCP support is an upstream client and aggregate gateway, not a first-party origin tool server.

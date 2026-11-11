@@ -4,16 +4,16 @@ export const maxPlaygroundImageBytes = 512 * 1024;
 
 export const playgroundToolDefinitions = {
   read_file: {
-    description: "Read a file in the sample workspace. Files include src/session.ts and test-output.txt.",
+    description: "Read a file in the browser workspace. Files include src/session.ts and test-output.txt (a recorded failure log).",
     inputSchema: {
       type: "object",
-      properties: { path: { type: "string", description: "Path relative to the sample workspace." } },
+      properties: { path: { type: "string", description: "Path relative to the browser workspace." } },
       required: ["path"],
       additionalProperties: false,
     },
   },
   search_files: {
-    description: "Find lines containing a literal query in the sample workspace.",
+    description: "Find lines containing a literal query in the browser workspace.",
     inputSchema: {
       type: "object",
       properties: { query: { type: "string", minLength: 1, maxLength: 120 } },
@@ -22,7 +22,7 @@ export const playgroundToolDefinitions = {
     },
   },
   shell: {
-    description: "Run a command in the browser's sample workspace using an offline virtual Bash. Supports file inspection, editing, pipes, and diff.",
+    description: "Run a command in the browser workspace using an offline virtual Bash. Supports file inspection, editing, pipes, and diff. No test runner is installed.",
     inputSchema: {
       type: "object",
       properties: { command: { type: "string", minLength: 1, maxLength: 2000 } },

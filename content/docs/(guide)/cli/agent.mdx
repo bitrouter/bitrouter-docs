@@ -70,7 +70,7 @@ The package also ships a **read-only chat session**, launched as `bitrouter` fro
 
 ### Which skills load
 
-By default the session loads **only BitRouter-family skills** — every skill whose front-matter `name` is `bitrouter` or `bitrouter-<thing>`, such as the bundled `bitrouter` analysis skill and the provider's `bitrouter-pi` setup skill. pi's usual skill auto-discovery (`~/.agents/skills`, ancestor `.agents/skills`, and so on) is otherwise disabled, so unrelated skills don't leak into the appliance. See [Agent Skills](/docs/context-routing/skills) for the skills BitRouter itself publishes.
+By default the session loads **only BitRouter-family skills** — every skill whose front-matter `name` is `bitrouter` or `bitrouter-<thing>`, such as the bundled `bitrouter` analysis skill and the provider's `bitrouter-pi` setup skill. pi's usual skill auto-discovery (`~/.agents/skills`, ancestor `.agents/skills`, and so on) is otherwise disabled, so unrelated skills don't leak into the appliance. See [Agent Skills](/docs/overview/quickstart#onboard-via-the-agent-skill) for the skills BitRouter itself publishes.
 
 Discovery is **by declared name, not directory name**, and de-duplicates by name — the bundled copy wins over a stray `~/.agents/skills` copy. Naming a skill `bitrouter-<thing>` is all it takes to have it auto-load.
 
@@ -96,5 +96,5 @@ bitrouter-agent is an **adoption and tuning** tool, not a runtime surface — it
 <Cards>
   <Card title="Configuration (YAML)" href="/docs/routing/configuration" description="Understand how bitrouter.yaml expresses the router's complete desired behavior." />
   <Card title="CLI" href="/docs/usage/cli#init-and-config" description="Start the daemon the agent routes through, and validate the policy it wrote." />
-  <Card title="Interactive TUI" href="/docs/usage/cli#interactive-tui" description="Preview Goals, ongoing work, and read-only Workflow inspection." />
+  <Card title="Run & Inspect" href="/docs/cli/run-inspect" description="Operate the router and inspect requests after setup." />
 </Cards>

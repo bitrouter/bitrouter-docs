@@ -1,10 +1,10 @@
 {
   "title": "Market",
   "pages": [
+    "[Price-Time Priority](/docs/market/price-time-priority)",
+    "[Inference Types](/docs/market/inference-types)",
+    "[Inference Tiers](/docs/market/inference-tiers)",
     "[Buy Inference](/docs/market/buy-inference)",
-    "[Sell Inference](/docs/market/sell-inference)",
-    "[Verify Inference](/docs/market/verify-inference)",
-    "[Auto-bidding](/docs/market/auto-bidding)",
-    "service-tiers"
+    "[Sell Inference](/docs/market/sell-inference)"
   ]
 }

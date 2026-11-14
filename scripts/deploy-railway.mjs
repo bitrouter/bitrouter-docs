@@ -6,13 +6,13 @@ const smokePaths = ["/", "/docs/overview/quickstart", "/docs/reference", "/prici
 const failedStatuses = new Set(["FAILED", "CRASHED", "REMOVED", "SKIPPED"]);
 
 const {
-  GITHUB_SHA: commitSha,
   RAILWAY_DEPLOY_TOKEN: token,
   RAILWAY_DEPLOY_ENVIRONMENT_ID: environmentId,
   RAILWAY_DEPLOY_SERVICE_ID: serviceId,
   RAILWAY_RELEASE_ENVIRONMENT: environmentName,
   RAILWAY_SITE_URL: siteUrl,
 } = process.env;
+const commitSha = process.env.RAILWAY_RELEASE_SHA ?? process.env.GITHUB_SHA;
 
 async function railway(query, variables = {}) {
   const response = await fetch(apiUrl, {
@@ -36,7 +36,7 @@ async function waitForDeployment(id) {
   while (Date.now() < deadline) {
     const { deployment } = await railway(`
       query Deployment($id: String!) {
-        deployment(id: $id) { id status serviceId environmentId }
+        deployment(id: $id) { id status serviceId environmentId meta }
       }
     `, { id });
     if (deployment?.id !== id || deployment.serviceId !== serviceId || deployment.environmentId !== environmentId) {
@@ -45,7 +45,10 @@ async function waitForDeployment(id) {
 
     const { status } = deployment;
     if (status !== previousStatus) console.log(`${id}: ${status}`);
-    if (status === "SUCCESS") return;
+    if (status === "SUCCESS") {
+      if (deployment.meta?.commitHash !== commitSha) throw new Error(`Deployment ${id} has a different source commit`);
+      return;
+    }
     if (failedStatuses.has(status)) throw new Error(`Deployment ${id} ended with ${status}`);
     previousStatus = status;
     await delay(5_000);
@@ -73,7 +76,7 @@ async function smokeTest(origin) {
 }
 
 async function main() {
-  if (!/^[a-f0-9]{40}$/i.test(commitSha ?? "")) throw new Error("GITHUB_SHA must be a full commit SHA");
+  if (!/^[a-f0-9]{40}$/i.test(commitSha ?? "")) throw new Error("The release must specify a full commit SHA");
   if (!token || !environmentId || !serviceId || !siteUrl) throw new Error("Railway release configuration is incomplete");
   if (environmentName !== "staging" && environmentName !== "production") throw new Error("Unknown release environment");
   const url = new URL(siteUrl);

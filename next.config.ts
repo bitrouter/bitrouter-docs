@@ -16,14 +16,14 @@ const finalPath = {
   "observability":"/docs/cli/request-receipts","opentelemetry":"/docs/self-hosting#opentelemetry",
   "tracing":"/docs/cli/request-receipts#cloud-activity","telemetry":"/docs/cli/request-receipts",
   "evaluation":"/docs/routing/workload-optimization#evaluations","evaluations":"/docs/routing/workload-optimization#evaluations",
-  "mcp":"/docs/context-routing/mcp-servers","acp":"/docs/context-routing/acp-servers",
-  "agentskills":"/docs/context-routing/skills",
+  "mcp":"/docs/routing/configuration#agents-and-mcp","acp":"/docs/usage/cli#agents-acp-and-mcp",
+  "agentskills":"/docs/overview/quickstart#onboard-via-the-agent-skill",
   // bitrouter cloud (was: infrastructure)
-  "managed-provider":"/docs/overview/supported-models","discounted-models":"/docs/overview/supported-models",
+  "managed-provider":"/docs/reference#model-discovery","discounted-models":"/docs/reference#model-discovery",
   "payment":"/docs/overview/quickstart#self-host-or-cloud","workspaces":"/docs/reference/management/listNamespaces",
   "for-providers":"/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
   // usage (CLI + MCP moved out of reference/ into the Documentation tab, 2026-08)
-  "cli":"/docs/usage/cli",
+  "cli":"/docs/cli/getting-started",
 };
 const legacyBuckets = ["core","cloud","features","routing"]; // /docs/guides/<bucket>/<slug>
 const pairs: Array<[string, string]> = [];
@@ -40,16 +40,77 @@ for (const file of readdirSync("content/changelog")) {
 }
 // overview + root + special
 pairs.push(
+  // First-release CLI operations and consolidated inference guides.
+  ["/docs/cli/interactive", "/docs/cli/getting-started#previous-workflow-links"],
+  ["/docs/cli/interactive.md", "/docs/cli/getting-started.md#previous-workflow-links"],
+  ["/docs/cli/headless-scripting", "/docs/cli/run-inspect#scripting"],
+  ["/docs/cli/headless-scripting.md", "/docs/cli/run-inspect.md#scripting"],
+  ["/docs/reference/chat-completions-messages", "/docs/usage/responses-api"],
+  ["/docs/reference/chat-completions-messages.md", "/docs/usage/responses-api.md"],
+  // API owns model discovery; a fixed fragment also recovers old catalog anchors.
+  ["/docs/overview/supported-models", "/docs/reference#model-discovery"],
+  ["/docs/overview/supported-models.md", "/docs/reference.md#model-discovery"],
+  ["/docs/cli.md", "/docs/cli/getting-started.md"],
+  ["/docs/cli/orchestrator.md", "/docs/cli/getting-started.md#previous-workflow-links"],
+  ["/docs/cli/tui.md", "/docs/cli/getting-started.md#previous-workflow-links"],
+  ["/docs/cli/headless.md", "/docs/cli/run-inspect.md#scripting"],
+  // First release omits the Desktop/payment/MCP placeholders and Context guides.
+  ["/docs/usage/desktop", "/docs/cli/getting-started"],
+  ["/docs/usage/mcp", "/docs/usage/responses-api"],
+  ["/docs/usage/agentic-payment", "/docs/market/buy-inference"],
+  ["/docs/context-routing/acp-servers", "/docs/usage/cli#agents-acp-and-mcp"],
+  ["/docs/context-routing/mcp-servers", "/docs/routing/configuration#agents-and-mcp"],
+  ["/docs/context-routing/skills", "/docs/overview/quickstart#onboard-via-the-agent-skill"],
+  ["/docs/context-routing/server-tools", "/docs/routing/configuration#server-tools-config"],
+  ["/docs/context-routing/context-switcher", "/docs/routing/context-routing"],
+  ["/docs/context-routing", "/docs/routing/context-routing"],
+  ["/docs/usage/desktop.md", "/docs/cli/getting-started.md"],
+  ["/docs/usage/mcp.md", "/docs/usage/responses-api.md"],
+  ["/docs/usage/agentic-payment.md", "/docs/market/buy-inference.md"],
+  ["/docs/context-routing/acp-servers.md", "/docs/usage/cli.md#agents-acp-and-mcp"],
+  ["/docs/context-routing/mcp-servers.md", "/docs/routing/configuration.md#agents-and-mcp"],
+  ["/docs/context-routing/skills.md", "/docs/overview/quickstart.md#onboard-via-the-agent-skill"],
+  ["/docs/context-routing/server-tools.md", "/docs/routing/configuration.md#server-tools-config"],
+  ["/docs/context-routing/context-switcher.md", "/docs/routing/context-routing.md"],
+  ["/docs/context-routing.md", "/docs/routing/context-routing.md"],
+  ["/docs/usage/web.md", "/docs/cli/getting-started.md"],
+  ["/docs/market/agentic-payment.md", "/docs/market/buy-inference.md"],
+  ["/docs/usage.md", "/docs/cli/getting-started.md"],
   // Overview consolidates the former market placeholders into Elastic Inference.
   ["/docs/overview/flex-inference", "/docs/overview/elastic-inference"],
   ["/docs/overview/inference-flex-market", "/docs/overview/elastic-inference"],
   ["/docs/overview/inference-spot", "/docs/overview/elastic-inference"],
   ["/docs/overview/inference-forwards", "/docs/overview/elastic-inference"],
-  // Market service-tier guides replace the former market-data placeholder.
-  ["/docs/market/market-data", "/docs/market/service-tiers"],
-  // Payment belongs to Usage; the retired Web entry opens the Desktop usage guide.
-  ["/docs/market/agentic-payment", "/docs/usage/agentic-payment"],
-  ["/docs/usage/web", "/docs/usage/desktop"],
+  ["/docs/market/pricing", "/docs/market/price-time-priority"],
+  ["/docs/market/pricing.md", "/docs/market/price-time-priority.md"],
+  ["/docs/market/inference-types/on-demand", "/docs/market/inference-types#on-demand"],
+  ["/docs/market/inference-types/interruptible", "/docs/market/inference-types#interruptible"],
+  ["/docs/market/inference-types/on-demand.md", "/docs/market/inference-types.md#on-demand"],
+  ["/docs/market/inference-types/interruptible.md", "/docs/market/inference-types.md#interruptible"],
+  // Retired placeholders lead directly to the current Inference Types overview.
+  ["/docs/market/market-data", "/docs/market/inference-types"],
+  ["/docs/market/service-tiers", "/docs/market/inference-types"],
+  ["/docs/market/service-tiers/priority", "/docs/market/inference-types"],
+  ["/docs/market/service-tiers/standard", "/docs/market/inference-types"],
+  ["/docs/market/service-tiers/flex", "/docs/market/inference-types"],
+  ["/docs/market/inference-types/priority", "/docs/market/inference-types"],
+  ["/docs/market/inference-types/standard", "/docs/market/inference-types"],
+  ["/docs/market/inference-types/flex", "/docs/market/inference-types"],
+  ["/docs/market/auto-bidding", "/docs/market/buy-inference"],
+  ["/docs/market/verify-inference", "/enterprise#verification"],
+  ["/docs/market/market-data.md", "/docs/market/inference-types.md"],
+  ["/docs/market/service-tiers.md", "/docs/market/inference-types.md"],
+  ["/docs/market/service-tiers/priority.md", "/docs/market/inference-types.md"],
+  ["/docs/market/service-tiers/standard.md", "/docs/market/inference-types.md"],
+  ["/docs/market/service-tiers/flex.md", "/docs/market/inference-types.md"],
+  ["/docs/market/inference-types/priority.md", "/docs/market/inference-types.md"],
+  ["/docs/market/inference-types/standard.md", "/docs/market/inference-types.md"],
+  ["/docs/market/inference-types/flex.md", "/docs/market/inference-types.md"],
+  ["/docs/market/auto-bidding.md", "/docs/market/buy-inference.md"],
+  ["/docs/market/verify-inference.md", "/enterprise#verification"],
+  // Retired payment and Web aliases go directly to the retained task guides.
+  ["/docs/market/agentic-payment", "/docs/market/buy-inference"],
+  ["/docs/usage/web", "/docs/cli/getting-started"],
   // Guides include their references; legal policies use the documentation layout.
   ["/docs/cli/reference", "/docs/usage/cli"],
   ["/docs/configuration-reference", "/docs/routing/configuration"],
@@ -73,12 +134,12 @@ pairs.push(
   ["/newsletter/confirm", "/"],
   ["/newsletter/confirmed", "/"],
   // Usage guides and single-page references (2026-10).
-  ["/docs/cli/orchestrator", "/docs/usage/cli"],
-  ["/docs/cli/tui", "/docs/usage/cli"],
-  ["/docs/cli/headless", "/docs/usage/cli"],
+  ["/docs/cli/orchestrator", "/docs/cli/getting-started#previous-workflow-links"],
+  ["/docs/cli/tui", "/docs/cli/getting-started#previous-workflow-links"],
+  ["/docs/cli/headless", "/docs/cli/run-inspect#scripting"],
   ["/docs/api/responses", "/docs/usage/responses-api"],
   ["/docs/api/decisions", "/docs/reference/decisions"],
-  ["/docs/api/chat-completions-messages", "/docs/reference/chat-completions-messages"],
+  ["/docs/api/chat-completions-messages", "/docs/usage/responses-api"],
   ["/docs/cli/reference/daemon", "/docs/usage/cli#command-reference"],
   ["/docs/cli/reference/init", "/docs/usage/cli#command-reference"],
   ["/docs/cli/reference/route", "/docs/usage/cli#command-reference"],
@@ -110,17 +171,17 @@ pairs.push(
   ["/docs/config/configuration-file", "/docs/routing/configuration"],
   ["/docs/config/providers", "/docs/models-routing/byok-subscriptions"],
   ["/docs/config/model-routes", "/docs/models-routing/virtual-models"],
-  ["/docs/config/mcp-connections", "/docs/context-routing/mcp-servers"],
-  ["/docs/config/server-tools", "/docs/context-routing/server-tools"],
+  ["/docs/config/mcp-connections", "/docs/routing/configuration#agents-and-mcp"],
+  ["/docs/config/server-tools", "/docs/routing/configuration#server-tools-config"],
   ["/docs/config/telemetry", "/docs/cli/request-receipts"],
   ["/docs/models-routing/models", "/docs/models-routing/virtual-models"],
   ["/docs/models-routing/bitrouter-auto", "/docs/routing/auto-router#initialize-a-policy-binding"],
   ["/docs/models-routing/local-inference", "/docs/models-routing/local-models"],
   // Context guides reorganized; retain retired canonical URLs.
-  ["/docs/integration/acp-servers", "/docs/context-routing/acp-servers"],
-  ["/docs/context-routing/agents-md", "/docs/context-routing/server-tools"],
+  ["/docs/integration/acp-servers", "/docs/usage/cli#agents-acp-and-mcp"],
+  ["/docs/context-routing/agents-md", "/docs/routing/configuration#server-tools-config"],
   // Model discovery and prices share one page; individual model URLs remain.
-  ["/docs/api", "/docs/usage/responses-api"],
+  ["/docs/api", "/docs/reference"],
   // Earlier Config aliases now resolve to the task-specific guides.
   ["/docs/config", "/docs/routing/configuration"],
   ["/docs/config/guardrails", "/docs/routing/configuration#create-a-configuration"],
@@ -131,10 +192,10 @@ pairs.push(
   ["/docs/models-routing/guardrails", "/docs/routing/configuration#create-a-configuration"],
   // Development section retired; retain entry points to related product guides.
   ["/docs/development", "/docs/overview/what-is-bitrouter"],
-  ["/docs/development/mcp", "/docs/context-routing/mcp-servers"],
-  ["/docs/development/agent-skills", "/docs/context-routing/skills"],
+  ["/docs/development/mcp", "/docs/routing/configuration#agents-and-mcp"],
+  ["/docs/development/agent-skills", "/docs/overview/quickstart#onboard-via-the-agent-skill"],
   ["/docs/cli/telemetry", "/docs/cli/request-receipts"],
-  ["/docs/cli/permissions", "/docs/context-routing/acp-servers#headless-permissions"],
+  ["/docs/cli/permissions", "/docs/usage/cli#bro-run"],
   // Documentation reorganized around models, context, and CLI (2026-10).
   ["/docs/usage/bitrouter-auto", "/docs/routing/auto-router#initialize-a-policy-binding"],
   ["/docs/customization/models", "/docs/models-routing/byok-subscriptions"],
@@ -143,12 +204,12 @@ pairs.push(
   ["/docs/configuration/evaluations", "/docs/routing/workload-optimization#evaluations"],
   ["/docs/configuration/policy", "/docs/routing/configuration"],
   ["/docs/configuration/telemetry", "/docs/cli/request-receipts"],
-  ["/docs/usage/tui", "/docs/usage/cli#interactive-tui"],
-  ["/docs/usage/skills", "/docs/context-routing/skills"],
+  ["/docs/usage/tui", "/docs/cli/getting-started#previous-workflow-links"],
+  ["/docs/usage/skills", "/docs/overview/quickstart#onboard-via-the-agent-skill"],
   ["/docs/usage/coding-agents", "/docs/integration/coding-agents"],
   ["/docs/usage/model-sources/local-inference", "/docs/models-routing/local-models"],
   ["/docs/usage/agent", "/docs/cli/agent"],
-  ["/docs/customization/tools/server-tools", "/docs/context-routing/server-tools"],
+  ["/docs/customization/tools/server-tools", "/docs/routing/configuration#server-tools-config"],
   ["/docs/customization/tools/model-backed-tools", "/docs/overview/what-is-bitrouter"],
   ["/docs/customization/tools/web-tools", "/docs/overview/what-is-bitrouter"],
   ["/docs/customization/tools", "/docs/overview/what-is-bitrouter"],
@@ -156,7 +217,7 @@ pairs.push(
   ["/docs/enterprise", "/enterprise"],
   // Section overview pages retired in 2026-09. Each section now starts with
   // its first concrete task page.
-  ["/docs/usage", "/docs/usage/desktop"],
+  ["/docs/usage", "/docs/cli/getting-started"],
   ["/docs/configuration", "/docs/routing/configuration"],
   ["/docs/customization", "/docs/models-routing/byok-subscriptions"],
   // Claude Code, Codex, and model-source guidance now live on one Coding
@@ -166,9 +227,9 @@ pairs.push(
   ["/docs/usage/model-sources", "/docs/integration/coding-agents#model-sources"],
   // 2026-09 information-architecture cleanup. The command remains `bro code`;
   // TUI is the user-facing documentation name.
-  ["/docs/usage/code", "/docs/usage/cli#interactive-tui"],
+  ["/docs/usage/code", "/docs/cli/getting-started#previous-workflow-links"],
   ["/docs/usage/protocols", "/docs/usage/cli#init-and-config"],
-  ["/docs/usage/mcp-gateway", "/docs/context-routing/mcp-servers#mcp-gateway"],
+  ["/docs/usage/mcp-gateway", "/docs/routing/configuration#agents-and-mcp"],
   ["/docs/usage/model-sources/claude-subscription", "/docs/integration/coding-agents#use-a-claude-subscription"],
   ["/docs/usage/model-sources/codex-subscription", "/docs/integration/coding-agents#use-a-codex-subscription"],
   ["/docs/usage/migrate", "/docs/overview/comparison/openrouter"],
@@ -176,8 +237,8 @@ pairs.push(
   ["/docs/usage/migrate/openrouter", "/docs/overview/comparison/openrouter#migrate-from-openrouter"],
   ["/docs/usage/migrate/tensorzero", "/docs/overview/comparison/openrouter"],
   // ACP integration guide moved from Usage (2026-10).
-  ["/docs/usage/acp", "/docs/context-routing/acp-servers"],
-  ["/docs/usage/acp-gateway", "/docs/context-routing/acp-servers"],
+  ["/docs/usage/acp", "/docs/usage/cli#agents-acp-and-mcp"],
+  ["/docs/usage/acp-gateway", "/docs/usage/cli#agents-acp-and-mcp"],
   // Product-specific recipes collapsed into maintained task pages (2026-09).
   ["/docs/usage/coding-agents/opencode", "/docs/integration/coding-agents"],
   ["/docs/usage/coding-agents/pi", "/docs/integration/coding-agents"],
@@ -241,8 +302,8 @@ pairs.push(
   ["/docs/overview/recursive-self-improvement", "/docs/overview/what-is-bitrouter"],
   // overview/get-started split + features→models-and-routing (2026-07 reorg)
   ["/docs/get-started/introduction", "/docs/overview/what-is-bitrouter"],
-  ["/docs/get-started/supported-models", "/docs/overview/supported-models"],
-  ["/docs/get-started/supported-providers", "/docs/overview/supported-models"],
+  ["/docs/get-started/supported-models", "/docs/reference#model-discovery"],
+  ["/docs/get-started/supported-providers", "/docs/reference#model-discovery"],
   ["/docs/features/provider-selection", "/docs/routing/strategies#candidate-eligibility"],
   ["/docs/features/model-fallback", "/docs/models-routing/model-fallback#fallback-chains"],
   ["/docs/features/model-variants", "/docs/routing/strategies#variants"],
@@ -251,12 +312,12 @@ pairs.push(
   ["/docs/features/byok", "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key"],
   // concepts/ section dissolved (2026-07 reorg) → pages land next to their features
   ["/docs/concepts", "/docs/overview/what-is-bitrouter"],
-  ["/docs/concepts/models", "/docs/overview/supported-models#how-model-ids-work"],
+  ["/docs/concepts/models", "/docs/models-routing/virtual-models#model-selector-forms"],
   ["/docs/concepts/policy", "/docs/routing/auto-router#initialize-a-policy-binding"],
-  ["/docs/concepts/tools", "/docs/context-routing/mcp-servers"],
-  ["/docs/concepts/agents", "/docs/context-routing/acp-servers"],
+  ["/docs/concepts/tools", "/docs/routing/configuration#agents-and-mcp"],
+  ["/docs/concepts/agents", "/docs/usage/cli#agents-acp-and-mcp"],
   ["/docs/concepts/cli", "/docs/usage/cli#init-and-config"],
-  ["/docs/concepts/mcp", "/docs/context-routing/mcp-servers"],
+  ["/docs/concepts/mcp", "/docs/routing/configuration#agents-and-mcp"],
   ["/docs/concepts/agent-skill", "/docs/overview/quickstart"],
   // get-started consolidation (2026-07): onboarding merge, FAQs dissolved, cli/mcp → reference
   ["/docs/get-started/configuration", "/docs/overview/quickstart"],
@@ -264,7 +325,7 @@ pairs.push(
   ["/docs/get-started/agent-skill", "/docs/overview/quickstart"],
   ["/docs/get-started/faqs", "/docs/overview/quickstart"],
   ["/docs/get-started/cli", "/docs/usage/cli#init-and-config"],
-  ["/docs/get-started/mcp", "/docs/context-routing/mcp-servers"],
+  ["/docs/get-started/mcp", "/docs/routing/configuration#agents-and-mcp"],
   // get-started/ section dissolved (2026-08): onboarding → overview/quickstart,
   // the four set-up-* walkthroughs → the quickstart or the page that owns each topic
   ["/docs/get-started", "/docs/overview/quickstart"],
@@ -278,8 +339,8 @@ pairs.push(
   ["/docs/get-started/set-up-evaling", "/docs/routing/workload-optimization#evaluations"],
   ["/docs/get-started/set-up-looping", "/docs/routing/auto-router#initialize-a-policy-binding"],
   // infrastructure → bitrouter cloud (folder renamed; pages merged/moved)
-  ["/docs/infrastructure/managed-provider", "/docs/overview/supported-models"],
-  ["/docs/infrastructure/discounted-models", "/docs/overview/supported-models"],
+  ["/docs/infrastructure/managed-provider", "/docs/reference#model-discovery"],
+  ["/docs/infrastructure/discounted-models", "/docs/reference#model-discovery"],
   ["/docs/infrastructure/payment", "/docs/overview/quickstart#self-host-or-cloud"],
   ["/docs/infrastructure/workspaces", "/docs/reference/management/listNamespaces"],
   ["/docs/infrastructure/for-providers", "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key"],
@@ -289,14 +350,14 @@ pairs.push(
   ["/docs/cloud/get-started", "/docs/overview/quickstart#self-host-or-cloud"],
   ["/docs/cloud/byok", "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key"],
   ["/docs/cloud/tracing", "/docs/cli/request-receipts#cloud-activity"],
-  ["/docs/cloud/managed-models", "/docs/overview/supported-models"],
+  ["/docs/cloud/managed-models", "/docs/reference#model-discovery"],
   ["/docs/cloud/workspaces", "/docs/reference/management/listNamespaces"],
   ["/docs/cloud/payment", "/docs/overview/quickstart#self-host-or-cloud"],
   // CLI + MCP left the API Reference tab for Documentation → Usage (2026-08).
   // These must stay above the /docs/reference wildcards below.
   ["/docs/reference/cli", "/docs/usage/cli#init-and-config"],
   ["/docs/reference/cli/:slug*", "/docs/usage/cli/:slug*"],
-  ["/docs/reference/mcp", "/docs/context-routing/mcp-servers"],
+  ["/docs/reference/mcp", "/docs/routing/configuration#agents-and-mcp"],
   // The CLI reference collapsed from ten pages into one (2026-08). Each retired
   // page lands on its `##` section anchor — keep these in sync with the section
   // titles in cli-overlays/<group>.md, which is where the anchors come from.
@@ -313,10 +374,10 @@ pairs.push(
   ["/docs/usage/cli/misc", "/docs/usage/cli#key-workflow-state-and-update"],
   // AI Resources dissolved (2026-08): skills and the docs MCP server moved into
   // Usage; the llms.txt page retired (the endpoints themselves still serve).
-  ["/docs/ai-resources", "/docs/context-routing/skills"],
-  ["/docs/ai-resources/skills", "/docs/context-routing/skills"],
-  ["/docs/ai-resources/mcp", "/docs/context-routing/mcp-servers"],
-  ["/docs/ai-resources/llms-txt", "/docs/context-routing/mcp-servers"],
+  ["/docs/ai-resources", "/docs/overview/quickstart#onboard-via-the-agent-skill"],
+  ["/docs/ai-resources/skills", "/docs/overview/quickstart#onboard-via-the-agent-skill"],
+  ["/docs/ai-resources/mcp", "/docs/routing/configuration#agents-and-mcp"],
+  ["/docs/ai-resources/llms-txt", "/docs/routing/configuration#agents-and-mcp"],
   // reference wildcards (api-reference unwrapped into /docs/reference)
   ["/docs/api-reference/:slug*", "/docs/reference/:slug*"],
   ["/docs/reference/api-reference/:slug*", "/docs/reference/:slug*"],
@@ -365,22 +426,22 @@ pairs.push(
   ["/docs/gateway-and-routing/bring-your-own-provider", "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key"],
   ["/docs/gateway-and-routing/structured-outputs", "/docs/models-routing/virtual-models#protocol-compatibility"],
   ["/docs/gateway-and-routing/guardrails", "/docs/routing/configuration#create-a-configuration"],
-  ["/docs/gateway-and-routing/mcp-gateway", "/docs/context-routing/mcp-servers#mcp-gateway"],
-  ["/docs/gateway-and-routing/server-tools", "/docs/context-routing/server-tools"],
+  ["/docs/gateway-and-routing/mcp-gateway", "/docs/routing/configuration#agents-and-mcp"],
+  ["/docs/gateway-and-routing/server-tools", "/docs/routing/configuration#server-tools-config"],
   ["/docs/gateway-and-routing/advisor", "/docs/overview/what-is-bitrouter"],
   ["/docs/gateway-and-routing/subagent", "/docs/overview/what-is-bitrouter"],
   ["/docs/gateway-and-routing/fusion", "/docs/overview/what-is-bitrouter"],
   ["/docs/gateway-and-routing/websearch", "/docs/overview/what-is-bitrouter"],
   ["/docs/gateway-and-routing/web-fetch", "/docs/overview/what-is-bitrouter"],
-  ["/docs/gateway-and-routing/acp-gateway", "/docs/context-routing/acp-servers"],
+  ["/docs/gateway-and-routing/acp-gateway", "/docs/usage/cli#agents-acp-and-mcp"],
   ["/docs/gateway-and-routing", "/docs/models-routing/virtual-models#resolution-order"],
   // mcp-and-tool-calling/ dissolved: tools live under Extensions, while the
   // The MCP gateway lives in Usage; ACP servers live in Integration.
   // The section index has no page of its own, and `:slug*` matches zero
   // segments too — so the bare path has to be claimed before the wildcard.
   ["/docs/mcp-and-tool-calling", "/docs/overview/what-is-bitrouter"],
-  ["/docs/mcp-and-tool-calling/mcp-gateway", "/docs/context-routing/mcp-servers#mcp-gateway"],
-  ["/docs/mcp-and-tool-calling/acp-gateway", "/docs/context-routing/acp-servers"],
+  ["/docs/mcp-and-tool-calling/mcp-gateway", "/docs/routing/configuration#agents-and-mcp"],
+  ["/docs/mcp-and-tool-calling/acp-gateway", "/docs/usage/cli#agents-acp-and-mcp"],
   ["/docs/mcp-and-tool-calling/:slug*", "/docs/customization/tools/:slug*"],
   // evals-and-tracing/ split into objective evidence and operational telemetry.
   ["/docs/evals-and-tracing", "/docs/cli/request-receipts"],
@@ -389,7 +450,7 @@ pairs.push(
   ["/docs/evals-and-tracing/evals", "/docs/routing/workload-optimization#evaluations"],
   ["/docs/evals-and-tracing/:slug*", "/docs/cli/request-receipts"],
   // agent and tool protocol history → Usage and Extensions.
-  ["/docs/models-and-routing/acp-gateway", "/docs/context-routing/acp-servers"],
+  ["/docs/models-and-routing/acp-gateway", "/docs/usage/cli#agents-acp-and-mcp"],
   // Tool pages keep their filenames, so one wildcard covers them.
   ["/docs/models-and-routing/tool-calling", "/docs/overview/what-is-bitrouter"],
   ["/docs/models-and-routing/tool-calling/:slug*", "/docs/customization/tools/:slug*"],
@@ -402,25 +463,25 @@ pairs.push(
   ["/docs/observability/:slug*", "/docs/cli/request-receipts"],
   // tools/agents pages retitled to name their protocol; features/ dissolved —
   // guardrails moved, namespaces and payment retired (2026-08)
-  ["/docs/gateway-and-routing/tools", "/docs/context-routing/mcp-servers"],
-  ["/docs/gateway-and-routing/agents", "/docs/context-routing/acp-servers"],
+  ["/docs/gateway-and-routing/tools", "/docs/routing/configuration#agents-and-mcp"],
+  ["/docs/gateway-and-routing/agents", "/docs/usage/cli#agents-acp-and-mcp"],
   ["/docs/features", "/docs/routing/configuration#create-a-configuration"],
   ["/docs/features/guardrails", "/docs/routing/configuration#create-a-configuration"],
   ["/docs/features/namespaces", "/docs/reference/management/listNamespaces"],
   ["/docs/features/payment", "/docs/overview/quickstart#self-host-or-cloud"],
-  ["/docs/features/tools", "/docs/context-routing/mcp-servers"],
-  ["/docs/features/server-tools", "/docs/context-routing/server-tools"],
+  ["/docs/features/tools", "/docs/routing/configuration#agents-and-mcp"],
+  ["/docs/features/server-tools", "/docs/routing/configuration#server-tools-config"],
   ["/docs/features/websearch", "/docs/overview/what-is-bitrouter"],
   ["/docs/features/web-fetch", "/docs/overview/what-is-bitrouter"],
-  ["/docs/features/agents", "/docs/context-routing/acp-servers"],
+  ["/docs/features/agents", "/docs/usage/cli#agents-acp-and-mcp"],
   ["/docs/features/subagent", "/docs/overview/what-is-bitrouter"],
   ["/docs/features/advisor", "/docs/overview/what-is-bitrouter"],
   ["/docs/features/fusion", "/docs/overview/what-is-bitrouter"],
   // pages retired (2026-08): the provider directory and the models concept page
   // folded into the model catalog, policy semantics into bitrouter/auto, and the
   // search-provider integrations into the web search feature page.
-  ["/docs/overview/supported-providers", "/docs/overview/supported-models"],
-  ["/docs/gateway-and-routing/models", "/docs/overview/supported-models#how-model-ids-work"],
+  ["/docs/overview/supported-providers", "/docs/reference#model-discovery"],
+  ["/docs/gateway-and-routing/models", "/docs/models-routing/virtual-models#model-selector-forms"],
   ["/docs/gateway-and-routing/policy", "/docs/routing/auto-router#initialize-a-policy-binding"],
   ["/docs/integrations/tools", "/docs/overview/what-is-bitrouter"],
   ["/docs/integrations/exa", "/docs/overview/what-is-bitrouter"],
@@ -448,9 +509,38 @@ pairs.push(
 // rule at the end of redirects() folds them to the English path, which then
 // takes its own 301 to the final destination. One extra hop, on a dead locale.
 const movedGuideRoutes = new Set([
+  "/docs/cli/interactive",
+  "/docs/cli/headless-scripting",
+  "/docs/reference/chat-completions-messages",
+
+  "/docs/overview/supported-models",
+  "/docs/cli",
+  "/docs/usage/desktop",
+  "/docs/usage/mcp",
+  "/docs/usage/agentic-payment",
+  "/docs/context-routing/acp-servers",
+  "/docs/context-routing/mcp-servers",
+  "/docs/context-routing/skills",
+  "/docs/context-routing/server-tools",
+  "/docs/context-routing/context-switcher",
+  "/docs/context-routing",
+  "/docs/usage",
+
   "/docs/market/agentic-payment",
   "/docs/usage/web",
+  "/docs/market/pricing",
+  "/docs/market/inference-types/on-demand",
+  "/docs/market/inference-types/interruptible",
   "/docs/market/market-data",
+  "/docs/market/service-tiers",
+  "/docs/market/service-tiers/priority",
+  "/docs/market/service-tiers/standard",
+  "/docs/market/service-tiers/flex",
+  "/docs/market/inference-types/priority",
+  "/docs/market/inference-types/standard",
+  "/docs/market/inference-types/flex",
+  "/docs/market/auto-bidding",
+  "/docs/market/verify-inference",
   "/docs/overview/flex-inference",
   "/docs/overview/inference-flex-market",
   "/docs/overview/inference-spot",
@@ -517,11 +607,11 @@ const movedGuideRoutes = new Set([
 ]);
 const contentRedirectSources = new Set(contentRedirects.map((item) => item.from));
 const docsRedirects = [
-  ...contentRedirects.map((item) => ({source: item.from, destination: item.to, permanent: item.status === 308})),
+  ...contentRedirects.map((item) => ({source:item.from,destination:item.to,permanent:item.status === 308})),
   ...pairs.filter(([source]) => !contentRedirectSources.has(source)).map(([source, destination]) => ({
   source,
   destination,
-  ...(source === "/models" || movedGuideRoutes.has(source) || source.startsWith("/changelog/") || source.startsWith("/docs/changelog/") || destination.startsWith("/docs/overview/comparison")
+  ...(source === "/models" || movedGuideRoutes.has(source.replace(/\.md$/, "")) || source.startsWith("/changelog/") || source.startsWith("/docs/changelog/") || destination.startsWith("/docs/overview/comparison")
     ? { statusCode: 301 }
     : { permanent: true }),
 })),

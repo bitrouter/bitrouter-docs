@@ -20,10 +20,19 @@ pnpm build   # prebuild regenerates the API reference from openapi.yaml + the mo
 
 After CI passes on `main`, the release workflow deploys that commit to Railway
 staging and checks the homepage, quickstart, API reference, pricing, and
-changelog. When production releases are enabled, the same run waits for a
-GitHub environment reviewer before deploying the same commit to production.
-Review the staging URL and commit in the Actions run before approving. Release
-runs are serialized, and an older run fails if `main` has moved before it deploys.
+changelog. Test the staging site, then open a release PR with `production` as
+the base and `main` as the compare branch. Merging that PR approves production.
+
+The required **Production release ready** check verifies that the PR's exact
+source commit passed main CI and staging smoke checks. It also verifies that
+the proposed merge has the same source tree. If `main` advances while the PR is
+open, its head and checks update. Retest that new staging version before merging.
+If the check runs before staging finishes, rerun it after staging succeeds.
+
+Use **Create a merge commit** to preserve shared history between release PRs.
+After the merge, **Production release** deploys the approved source SHA and runs
+the same smoke checks. Production runs are serialized, and a retry of an older
+release fails after a newer production PR is merged.
 
 ### Configure the release workflow
 
@@ -34,16 +43,19 @@ runs are serialized, and an older run fails if `main` has moved before it deploy
 2. Configure both services with the Railpack build, start command, and health
    check in `railway.toml`. New services use Railway service settings for these
    values. Railway ends legacy `railway.toml` support on December 1, 2026.
-3. In GitHub Settings → Environments, create `staging` and `production` with
-   deployments restricted to `main`. Set **Required reviewers** on `production`.
-   In each environment set the `RAILWAY_DEPLOY_TOKEN` secret to a Railway Project
+3. In GitHub Settings → Environments, restrict `staging` deployments to `main`
+   and `production` deployments to `production`. The release PR merge is the
+   approval for production. In each environment set the `RAILWAY_DEPLOY_TOKEN`
+   secret to a Railway Project
    Token for that environment. Add `RAILWAY_DEPLOY_ENVIRONMENT_ID`,
    `RAILWAY_DEPLOY_SERVICE_ID`, and `RAILWAY_SITE_URL` as environment variables.
    The production URL is `https://bitrouter.ai`.
-4. Disable Railway GitHub autodeploy for staging and set the GitHub repository
-   variable `RAILWAY_STAGING_ENABLED` to `true`. Verify a release reaches staging
-   and passes its smoke checks. Then disable Railway GitHub autodeploy for
-   production and set `RAILWAY_PRODUCTION_ENABLED` to `true` for future runs.
+4. Disable Railway GitHub autodeploy for both environments and set the GitHub
+   repository variable `RAILWAY_STAGING_ENABLED` to `true`.
+5. Initialize `production` at the currently deployed production source commit.
+   Protect it with required PRs, **Build docs site** and **Production release
+   ready** checks, administrator enforcement, and disabled force pushes and
+   deletion. Merging a `main` → `production` PR starts the production workflow.
 
 If a deployment times out, check its ID in Railway before retrying. If a
 production smoke check fails after Railway has switched traffic, use **Rollback**
@@ -54,6 +66,53 @@ on the previous successful production deployment in Railway.
 `openapi.yaml` is the committed copy of the BitRouter API spec. It is the source
 of truth for the rendered API reference and is updated by an automated PR from
 `bitrouter-cloud` on each release — do not hand-edit it.
+
+## Public status page
+
+`/status` reads one monitor-backed component from a public OpenStatus page with
+the server-side `@openstatus/sdk-node` client. Set `OPENSTATUS_API_KEY` to a
+read-only key, `OPENSTATUS_PAGE_ID` to the public page ID, and
+`OPENSTATUS_COMPONENT_ID` to the Inference API component ID. These variables
+remain server-only. Verify the component is linked to the intended monitor.
+
+Without configuration or when data cannot be read, the page shows **Status
+unknown**. Old cached data is labeled out of date. Probe availability and
+synthetic response times describe OpenStatus checks; they are not an SLA or
+measurements of every inference request. Incident routes only expose reports
+listed in the configured public page/component snapshot.
+
+## Agent Playground
+
+The homepage and `/try` share one fx conversation and virtual browser workspace.
+Visitors can draft before signing in to Cloud. Runs use real Cloud inference;
+there is no sample response or comparison mode. WebAssembly JSPI is required.
+Expand/back preserves the conversation, workspace and active task. Stop cancels
+execution. An unavailable service keeps the draft and reports an error.
+
+To configure inference, set the server-only variables in `.env.example`:
+
+- `BITROUTER_PLAYGROUND_ENABLED=1`
+- A dedicated `BITROUTER_PLAYGROUND_API_KEY` and qualified
+  `BITROUTER_PLAYGROUND_MODEL`; optional `BITROUTER_PLAYGROUND_VISION_MODEL`.
+- `BITROUTER_PLAYGROUND_REDIS_REST_URL` and `BITROUTER_PLAYGROUND_REDIS_REST_TOKEN`
+  for a durable primary Redis REST endpoint. No extra service is provisioned.
+- An explicit `BITROUTER_PLAYGROUND_QUOTA_ID`, `BITROUTER_PLAYGROUND_SITE_REQUEST_LIMIT`,
+  `BITROUTER_PLAYGROUND_ACCOUNT_REQUEST_LIMIT` and `BITROUTER_PLAYGROUND_MAX_CONCURRENCY`.
+
+All instances must share the quota ID/store. Counts are lifetime admitted model
+requests for that campaign, including failures and cancellations. They do not
+reset when the browser resets, the service restarts, or a new session opens.
+Configure persistence and no eviction. One account can run one model request at a
+time; the site concurrency cap uses expiring leases. Missing configuration or a
+quota-store failure stops inference before the Cloud call.
+
+These shared request/concurrency limits do not implement a USD spending ledger.
+Qualify the dedicated credential's funding/spending controls and the actual
+Cloud sign-in, tool-capable model, streaming and cancellation before enabling a
+hosted trial. See [the playground contract](docs/agent-playground-spec.md).
+For a local operator run, use `pnpm dev --hostname 127.0.0.1`, the same quota
+configuration, and `BITROUTER_PLAYGROUND_LOCAL_LIVE=1`. That exception is disabled
+in production mode. The former `BITROUTER_PLAYGROUND_CLOUD_PREVIEW` flag is retired.
 
 ## Email setup
 

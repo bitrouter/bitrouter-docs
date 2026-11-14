@@ -1,9 +1,8 @@
 // Regenerates the committed catalog snapshot:
 //   .models-snapshot.json     — the live /v1/models catalog (routable supply)
 //
-// This script owns all network access for the catalog pipeline;
-// `generate-supported-tables.mjs` renders the docs table from this snapshot
-// offline, so its `--check` drift gate is deterministic in CI.
+// This snapshot supports catalog detail pages independently of the docs
+// inventory and the illustrative market listings.
 //
 // Usage: node scripts/generate-models.mjs
 // Env: BITROUTER_API_URL (default https://api.bitrouter.ai)

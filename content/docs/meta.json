@@ -1,23 +1,9 @@
 {
-  "title": "Documentation",
+  "title": "Guides",
   "pages": [
-    "---Overview---",
-    "...(overview-nav)",
-    "(comparison-nav)",
-    "---Usage---",
-    "...(usage-nav)",
-    "---Coding Agents---",
-    "...(integration-nav)",
-    "---Market---",
-    "...(market-nav)",
-    "---Router---",
-    "...(routing-nav)",
-    "---Model---",
-    "...(models-routing-nav)",
-    "---Context---",
-    "...(context-routing-nav)",
-    "---Reference---",
-    "...(reference-nav)",
-    "reference"
+    "(documentation-nav)",
+    "(cli-nav)",
+    "(api-nav)",
+    "(integration-nav)"
   ]
 }

@@ -3,7 +3,8 @@
   "pagesIndex": "[Quickstart](/docs/overview/quickstart)",
   "pages": [
     "[How BitRouter Works](/docs/overview/what-is-bitrouter)",
-    "[Models](/docs/overview/supported-models)",
-    "[Elastic Inference](/docs/overview/elastic-inference)"
+    "[Elastic Inference](/docs/overview/elastic-inference)",
+    "../(comparison-nav)",
+    "[Changelog](/docs/changelog)"
   ]
 }

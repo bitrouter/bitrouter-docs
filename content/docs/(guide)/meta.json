@@ -7,7 +7,6 @@
     "market",
     "routing",
     "models-routing",
-    "context-routing",
     "cli"
   ]
 }

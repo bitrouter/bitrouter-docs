@@ -451,127 +451,127 @@
   },
   {
     "from": "/docs/mcp",
-    "to": "/docs/context-routing/mcp-servers",
+    "to": "/docs/routing/configuration#agents-and-mcp",
     "status": 308
   },
   {
     "from": "/docs/guides/core/mcp",
-    "to": "/docs/context-routing/mcp-servers",
+    "to": "/docs/routing/configuration#agents-and-mcp",
     "status": 308
   },
   {
     "from": "/docs/guides/cloud/mcp",
-    "to": "/docs/context-routing/mcp-servers",
+    "to": "/docs/routing/configuration#agents-and-mcp",
     "status": 308
   },
   {
     "from": "/docs/guides/features/mcp",
-    "to": "/docs/context-routing/mcp-servers",
+    "to": "/docs/routing/configuration#agents-and-mcp",
     "status": 308
   },
   {
     "from": "/docs/guides/routing/mcp",
-    "to": "/docs/context-routing/mcp-servers",
+    "to": "/docs/routing/configuration#agents-and-mcp",
     "status": 308
   },
   {
     "from": "/docs/acp",
-    "to": "/docs/context-routing/acp-servers",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
     "status": 308
   },
   {
     "from": "/docs/guides/core/acp",
-    "to": "/docs/context-routing/acp-servers",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
     "status": 308
   },
   {
     "from": "/docs/guides/cloud/acp",
-    "to": "/docs/context-routing/acp-servers",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
     "status": 308
   },
   {
     "from": "/docs/guides/features/acp",
-    "to": "/docs/context-routing/acp-servers",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
     "status": 308
   },
   {
     "from": "/docs/guides/routing/acp",
-    "to": "/docs/context-routing/acp-servers",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
     "status": 308
   },
   {
     "from": "/docs/agentskills",
-    "to": "/docs/context-routing/skills",
+    "to": "/docs/overview/quickstart#onboard-via-the-agent-skill",
     "status": 308
   },
   {
     "from": "/docs/guides/core/agentskills",
-    "to": "/docs/context-routing/skills",
+    "to": "/docs/overview/quickstart#onboard-via-the-agent-skill",
     "status": 308
   },
   {
     "from": "/docs/guides/cloud/agentskills",
-    "to": "/docs/context-routing/skills",
+    "to": "/docs/overview/quickstart#onboard-via-the-agent-skill",
     "status": 308
   },
   {
     "from": "/docs/guides/features/agentskills",
-    "to": "/docs/context-routing/skills",
+    "to": "/docs/overview/quickstart#onboard-via-the-agent-skill",
     "status": 308
   },
   {
     "from": "/docs/guides/routing/agentskills",
-    "to": "/docs/context-routing/skills",
+    "to": "/docs/overview/quickstart#onboard-via-the-agent-skill",
     "status": 308
   },
   {
     "from": "/docs/managed-provider",
-    "to": "/docs/overview/supported-models",
+    "to": "/docs/reference#model-discovery",
     "status": 308
   },
   {
     "from": "/docs/guides/core/managed-provider",
-    "to": "/docs/overview/supported-models",
+    "to": "/docs/reference#model-discovery",
     "status": 308
   },
   {
     "from": "/docs/guides/cloud/managed-provider",
-    "to": "/docs/overview/supported-models",
+    "to": "/docs/reference#model-discovery",
     "status": 308
   },
   {
     "from": "/docs/guides/features/managed-provider",
-    "to": "/docs/overview/supported-models",
+    "to": "/docs/reference#model-discovery",
     "status": 308
   },
   {
     "from": "/docs/guides/routing/managed-provider",
-    "to": "/docs/overview/supported-models",
+    "to": "/docs/reference#model-discovery",
     "status": 308
   },
   {
     "from": "/docs/discounted-models",
-    "to": "/docs/overview/supported-models",
+    "to": "/docs/reference#model-discovery",
     "status": 308
   },
   {
     "from": "/docs/guides/core/discounted-models",
-    "to": "/docs/overview/supported-models",
+    "to": "/docs/reference#model-discovery",
     "status": 308
   },
   {
     "from": "/docs/guides/cloud/discounted-models",
-    "to": "/docs/overview/supported-models",
+    "to": "/docs/reference#model-discovery",
     "status": 308
   },
   {
     "from": "/docs/guides/features/discounted-models",
-    "to": "/docs/overview/supported-models",
+    "to": "/docs/reference#model-discovery",
     "status": 308
   },
   {
     "from": "/docs/guides/routing/discounted-models",
-    "to": "/docs/overview/supported-models",
+    "to": "/docs/reference#model-discovery",
     "status": 308
   },
   {
@@ -651,27 +651,27 @@
   },
   {
     "from": "/docs/cli",
-    "to": "/docs/usage/cli",
-    "status": 308
+    "to": "/docs/cli/getting-started",
+    "status": 307
   },
   {
     "from": "/docs/guides/core/cli",
-    "to": "/docs/usage/cli",
+    "to": "/docs/cli/getting-started",
     "status": 308
   },
   {
     "from": "/docs/guides/cloud/cli",
-    "to": "/docs/usage/cli",
+    "to": "/docs/cli/getting-started",
     "status": 308
   },
   {
     "from": "/docs/guides/features/cli",
-    "to": "/docs/usage/cli",
+    "to": "/docs/cli/getting-started",
     "status": 308
   },
   {
     "from": "/docs/guides/routing/cli",
-    "to": "/docs/usage/cli",
+    "to": "/docs/cli/getting-started",
     "status": 308
   },
   {
@@ -830,6 +830,71 @@
     "status": 307
   },
   {
+    "from": "/docs/cli/interactive",
+    "to": "/docs/cli/getting-started#previous-workflow-links",
+    "status": 307
+  },
+  {
+    "from": "/docs/cli/headless-scripting",
+    "to": "/docs/cli/run-inspect#scripting",
+    "status": 307
+  },
+  {
+    "from": "/docs/reference/chat-completions-messages",
+    "to": "/docs/usage/responses-api",
+    "status": 307
+  },
+  {
+    "from": "/docs/overview/supported-models",
+    "to": "/docs/reference#model-discovery",
+    "status": 307
+  },
+  {
+    "from": "/docs/usage/desktop",
+    "to": "/docs/cli/getting-started",
+    "status": 307
+  },
+  {
+    "from": "/docs/usage/mcp",
+    "to": "/docs/usage/responses-api",
+    "status": 307
+  },
+  {
+    "from": "/docs/usage/agentic-payment",
+    "to": "/docs/market/buy-inference",
+    "status": 307
+  },
+  {
+    "from": "/docs/context-routing/acp-servers",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
+    "status": 307
+  },
+  {
+    "from": "/docs/context-routing/mcp-servers",
+    "to": "/docs/routing/configuration#agents-and-mcp",
+    "status": 307
+  },
+  {
+    "from": "/docs/context-routing/skills",
+    "to": "/docs/overview/quickstart#onboard-via-the-agent-skill",
+    "status": 307
+  },
+  {
+    "from": "/docs/context-routing/server-tools",
+    "to": "/docs/routing/configuration#server-tools-config",
+    "status": 307
+  },
+  {
+    "from": "/docs/context-routing/context-switcher",
+    "to": "/docs/routing/context-routing",
+    "status": 307
+  },
+  {
+    "from": "/docs/context-routing",
+    "to": "/docs/routing/context-routing",
+    "status": 307
+  },
+  {
     "from": "/docs/overview/flex-inference",
     "to": "/docs/overview/elastic-inference",
     "status": 307
@@ -850,18 +915,73 @@
     "status": 307
   },
   {
+    "from": "/docs/market/pricing",
+    "to": "/docs/market/price-time-priority",
+    "status": 307
+  },
+  {
+    "from": "/docs/market/inference-types/on-demand",
+    "to": "/docs/market/inference-types#on-demand",
+    "status": 307
+  },
+  {
+    "from": "/docs/market/inference-types/interruptible",
+    "to": "/docs/market/inference-types#interruptible",
+    "status": 307
+  },
+  {
     "from": "/docs/market/market-data",
-    "to": "/docs/market/service-tiers",
+    "to": "/docs/market/inference-types",
+    "status": 307
+  },
+  {
+    "from": "/docs/market/service-tiers",
+    "to": "/docs/market/inference-types",
+    "status": 307
+  },
+  {
+    "from": "/docs/market/service-tiers/priority",
+    "to": "/docs/market/inference-types",
+    "status": 307
+  },
+  {
+    "from": "/docs/market/service-tiers/standard",
+    "to": "/docs/market/inference-types",
+    "status": 307
+  },
+  {
+    "from": "/docs/market/service-tiers/flex",
+    "to": "/docs/market/inference-types",
+    "status": 307
+  },
+  {
+    "from": "/docs/market/inference-types/priority",
+    "to": "/docs/market/inference-types",
+    "status": 307
+  },
+  {
+    "from": "/docs/market/inference-types/standard",
+    "to": "/docs/market/inference-types",
+    "status": 307
+  },
+  {
+    "from": "/docs/market/inference-types/flex",
+    "to": "/docs/market/inference-types",
+    "status": 307
+  },
+  {
+    "from": "/docs/market/auto-bidding",
+    "to": "/docs/market/buy-inference",
     "status": 307
   },
   {
     "from": "/docs/market/agentic-payment",
-    "to": "/docs/usage/agentic-payment",
+    "to": "/docs/market/buy-inference",
     "status": 307
   },
   {
     "from": "/docs/usage/web",
-    "to": "/docs/usage/desktop",
+    "to": "/docs/cli/getting-started",
     "status": 307
   },
   {
@@ -931,17 +1051,17 @@
   },
   {
     "from": "/docs/cli/orchestrator",
-    "to": "/docs/usage/cli",
+    "to": "/docs/cli/getting-started#previous-workflow-links",
     "status": 307
   },
   {
     "from": "/docs/cli/tui",
-    "to": "/docs/usage/cli",
+    "to": "/docs/cli/getting-started#previous-workflow-links",
     "status": 307
   },
   {
     "from": "/docs/cli/headless",
-    "to": "/docs/usage/cli",
+    "to": "/docs/cli/run-inspect#scripting",
     "status": 307
   },
   {
@@ -956,7 +1076,7 @@
   },
   {
     "from": "/docs/api/chat-completions-messages",
-    "to": "/docs/reference/chat-completions-messages",
+    "to": "/docs/usage/responses-api",
     "status": 307
   },
   {
@@ -1066,12 +1186,12 @@
   },
   {
     "from": "/docs/config/mcp-connections",
-    "to": "/docs/context-routing/mcp-servers",
+    "to": "/docs/routing/configuration#agents-and-mcp",
     "status": 307
   },
   {
     "from": "/docs/config/server-tools",
-    "to": "/docs/context-routing/server-tools",
+    "to": "/docs/routing/configuration#server-tools-config",
     "status": 307
   },
   {
@@ -1096,17 +1216,17 @@
   },
   {
     "from": "/docs/integration/acp-servers",
-    "to": "/docs/context-routing/acp-servers",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
     "status": 307
   },
   {
     "from": "/docs/context-routing/agents-md",
-    "to": "/docs/context-routing/server-tools",
+    "to": "/docs/routing/configuration#server-tools-config",
     "status": 307
   },
   {
     "from": "/docs/api",
-    "to": "/docs/usage/responses-api",
+    "to": "/docs/reference",
     "status": 308
   },
   {
@@ -1151,12 +1271,12 @@
   },
   {
     "from": "/docs/development/mcp",
-    "to": "/docs/context-routing/mcp-servers",
+    "to": "/docs/routing/configuration#agents-and-mcp",
     "status": 308
   },
   {
     "from": "/docs/development/agent-skills",
-    "to": "/docs/context-routing/skills",
+    "to": "/docs/overview/quickstart#onboard-via-the-agent-skill",
     "status": 308
   },
   {
@@ -1166,7 +1286,7 @@
   },
   {
     "from": "/docs/cli/permissions",
-    "to": "/docs/context-routing/acp-servers#headless-permissions",
+    "to": "/docs/usage/cli#bro-run",
     "status": 307
   },
   {
@@ -1206,12 +1326,12 @@
   },
   {
     "from": "/docs/usage/tui",
-    "to": "/docs/usage/cli#interactive-tui",
+    "to": "/docs/cli/getting-started#previous-workflow-links",
     "status": 308
   },
   {
     "from": "/docs/usage/skills",
-    "to": "/docs/context-routing/skills",
+    "to": "/docs/overview/quickstart#onboard-via-the-agent-skill",
     "status": 308
   },
   {
@@ -1231,7 +1351,7 @@
   },
   {
     "from": "/docs/customization/tools/server-tools",
-    "to": "/docs/context-routing/server-tools",
+    "to": "/docs/routing/configuration#server-tools-config",
     "status": 308
   },
   {
@@ -1251,8 +1371,8 @@
   },
   {
     "from": "/docs/usage",
-    "to": "/docs/usage/desktop",
-    "status": 308
+    "to": "/docs/cli/getting-started",
+    "status": 307
   },
   {
     "from": "/docs/configuration",
@@ -1281,7 +1401,7 @@
   },
   {
     "from": "/docs/usage/code",
-    "to": "/docs/usage/cli#interactive-tui",
+    "to": "/docs/cli/getting-started#previous-workflow-links",
     "status": 308
   },
   {
@@ -1291,7 +1411,7 @@
   },
   {
     "from": "/docs/usage/mcp-gateway",
-    "to": "/docs/context-routing/mcp-servers#mcp-gateway",
+    "to": "/docs/routing/configuration#agents-and-mcp",
     "status": 308
   },
   {
@@ -1326,12 +1446,12 @@
   },
   {
     "from": "/docs/usage/acp",
-    "to": "/docs/context-routing/acp-servers",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
     "status": 308
   },
   {
     "from": "/docs/usage/acp-gateway",
-    "to": "/docs/context-routing/acp-servers",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
     "status": 308
   },
   {
@@ -1581,12 +1701,12 @@
   },
   {
     "from": "/docs/get-started/supported-models",
-    "to": "/docs/overview/supported-models",
+    "to": "/docs/reference#model-discovery",
     "status": 308
   },
   {
     "from": "/docs/get-started/supported-providers",
-    "to": "/docs/overview/supported-models",
+    "to": "/docs/reference#model-discovery",
     "status": 308
   },
   {
@@ -1626,7 +1746,7 @@
   },
   {
     "from": "/docs/concepts/models",
-    "to": "/docs/overview/supported-models#how-model-ids-work",
+    "to": "/docs/models-routing/virtual-models#model-selector-forms",
     "status": 308
   },
   {
@@ -1636,12 +1756,12 @@
   },
   {
     "from": "/docs/concepts/tools",
-    "to": "/docs/context-routing/mcp-servers",
+    "to": "/docs/routing/configuration#agents-and-mcp",
     "status": 308
   },
   {
     "from": "/docs/concepts/agents",
-    "to": "/docs/context-routing/acp-servers",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
     "status": 308
   },
   {
@@ -1651,7 +1771,7 @@
   },
   {
     "from": "/docs/concepts/mcp",
-    "to": "/docs/context-routing/mcp-servers",
+    "to": "/docs/routing/configuration#agents-and-mcp",
     "status": 308
   },
   {
@@ -1686,7 +1806,7 @@
   },
   {
     "from": "/docs/get-started/mcp",
-    "to": "/docs/context-routing/mcp-servers",
+    "to": "/docs/routing/configuration#agents-and-mcp",
     "status": 308
   },
   {
@@ -1736,12 +1856,12 @@
   },
   {
     "from": "/docs/infrastructure/managed-provider",
-    "to": "/docs/overview/supported-models",
+    "to": "/docs/reference#model-discovery",
     "status": 308
   },
   {
     "from": "/docs/infrastructure/discounted-models",
-    "to": "/docs/overview/supported-models",
+    "to": "/docs/reference#model-discovery",
     "status": 308
   },
   {
@@ -1786,7 +1906,7 @@
   },
   {
     "from": "/docs/cloud/managed-models",
-    "to": "/docs/overview/supported-models",
+    "to": "/docs/reference#model-discovery",
     "status": 308
   },
   {
@@ -1806,7 +1926,7 @@
   },
   {
     "from": "/docs/reference/mcp",
-    "to": "/docs/context-routing/mcp-servers",
+    "to": "/docs/routing/configuration#agents-and-mcp",
     "status": 308
   },
   {
@@ -1866,22 +1986,22 @@
   },
   {
     "from": "/docs/ai-resources",
-    "to": "/docs/context-routing/skills",
+    "to": "/docs/overview/quickstart#onboard-via-the-agent-skill",
     "status": 308
   },
   {
     "from": "/docs/ai-resources/skills",
-    "to": "/docs/context-routing/skills",
+    "to": "/docs/overview/quickstart#onboard-via-the-agent-skill",
     "status": 308
   },
   {
     "from": "/docs/ai-resources/mcp",
-    "to": "/docs/context-routing/mcp-servers",
+    "to": "/docs/routing/configuration#agents-and-mcp",
     "status": 308
   },
   {
     "from": "/docs/ai-resources/llms-txt",
-    "to": "/docs/context-routing/mcp-servers",
+    "to": "/docs/routing/configuration#agents-and-mcp",
     "status": 308
   },
   {
@@ -2021,12 +2141,12 @@
   },
   {
     "from": "/docs/gateway-and-routing/mcp-gateway",
-    "to": "/docs/context-routing/mcp-servers#mcp-gateway",
+    "to": "/docs/routing/configuration#agents-and-mcp",
     "status": 308
   },
   {
     "from": "/docs/gateway-and-routing/server-tools",
-    "to": "/docs/context-routing/server-tools",
+    "to": "/docs/routing/configuration#server-tools-config",
     "status": 308
   },
   {
@@ -2056,7 +2176,7 @@
   },
   {
     "from": "/docs/gateway-and-routing/acp-gateway",
-    "to": "/docs/context-routing/acp-servers",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
     "status": 308
   },
   {
@@ -2071,12 +2191,12 @@
   },
   {
     "from": "/docs/mcp-and-tool-calling/mcp-gateway",
-    "to": "/docs/context-routing/mcp-servers#mcp-gateway",
+    "to": "/docs/routing/configuration#agents-and-mcp",
     "status": 308
   },
   {
     "from": "/docs/mcp-and-tool-calling/acp-gateway",
-    "to": "/docs/context-routing/acp-servers",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
     "status": 308
   },
   {
@@ -2101,7 +2221,7 @@
   },
   {
     "from": "/docs/models-and-routing/acp-gateway",
-    "to": "/docs/context-routing/acp-servers",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
     "status": 308
   },
   {
@@ -2131,12 +2251,12 @@
   },
   {
     "from": "/docs/gateway-and-routing/tools",
-    "to": "/docs/context-routing/mcp-servers",
+    "to": "/docs/routing/configuration#agents-and-mcp",
     "status": 308
   },
   {
     "from": "/docs/gateway-and-routing/agents",
-    "to": "/docs/context-routing/acp-servers",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
     "status": 308
   },
   {
@@ -2161,12 +2281,12 @@
   },
   {
     "from": "/docs/features/tools",
-    "to": "/docs/context-routing/mcp-servers",
+    "to": "/docs/routing/configuration#agents-and-mcp",
     "status": 308
   },
   {
     "from": "/docs/features/server-tools",
-    "to": "/docs/context-routing/server-tools",
+    "to": "/docs/routing/configuration#server-tools-config",
     "status": 308
   },
   {
@@ -2181,7 +2301,7 @@
   },
   {
     "from": "/docs/features/agents",
-    "to": "/docs/context-routing/acp-servers",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
     "status": 308
   },
   {
@@ -2201,12 +2321,12 @@
   },
   {
     "from": "/docs/overview/supported-providers",
-    "to": "/docs/overview/supported-models",
+    "to": "/docs/reference#model-discovery",
     "status": 308
   },
   {
     "from": "/docs/gateway-and-routing/models",
-    "to": "/docs/overview/supported-models#how-model-ids-work",
+    "to": "/docs/models-routing/virtual-models#model-selector-forms",
     "status": 308
   },
   {
@@ -2313,125 +2433,5 @@
     "from": "/docs/overview/terms-of-service",
     "to": "/docs/terms-of-service",
     "status": 308
-  },
-  {
-    "from": "/docs/cli/interactive",
-    "to": "/docs/cli/getting-started#previous-workflow-links",
-    "status": 307
-  },
-  {
-    "from": "/docs/cli/headless-scripting",
-    "to": "/docs/cli/run-inspect#scripting",
-    "status": 307
-  },
-  {
-    "from": "/docs/reference/chat-completions-messages",
-    "to": "/docs/usage/responses-api",
-    "status": 307
-  },
-  {
-    "from": "/docs/overview/supported-models",
-    "to": "/docs/reference#model-discovery",
-    "status": 307
-  },
-  {
-    "from": "/docs/usage/desktop",
-    "to": "/docs/cli/getting-started",
-    "status": 307
-  },
-  {
-    "from": "/docs/usage/mcp",
-    "to": "/docs/usage/responses-api",
-    "status": 307
-  },
-  {
-    "from": "/docs/usage/agentic-payment",
-    "to": "/docs/market/buy-inference",
-    "status": 307
-  },
-  {
-    "from": "/docs/context-routing/acp-servers",
-    "to": "/docs/usage/cli#agents-acp-and-mcp",
-    "status": 307
-  },
-  {
-    "from": "/docs/context-routing/mcp-servers",
-    "to": "/docs/routing/configuration#agents-and-mcp",
-    "status": 307
-  },
-  {
-    "from": "/docs/context-routing/skills",
-    "to": "/docs/overview/quickstart#onboard-via-the-agent-skill",
-    "status": 307
-  },
-  {
-    "from": "/docs/context-routing/server-tools",
-    "to": "/docs/routing/configuration#server-tools-config",
-    "status": 307
-  },
-  {
-    "from": "/docs/context-routing/context-switcher",
-    "to": "/docs/routing/context-routing",
-    "status": 307
-  },
-  {
-    "from": "/docs/context-routing",
-    "to": "/docs/routing/context-routing",
-    "status": 307
-  },
-  {
-    "from": "/docs/market/pricing",
-    "to": "/docs/market/price-time-priority",
-    "status": 307
-  },
-  {
-    "from": "/docs/market/inference-types/on-demand",
-    "to": "/docs/market/inference-types#on-demand",
-    "status": 307
-  },
-  {
-    "from": "/docs/market/inference-types/interruptible",
-    "to": "/docs/market/inference-types#interruptible",
-    "status": 307
-  },
-  {
-    "from": "/docs/market/service-tiers",
-    "to": "/docs/market/inference-types",
-    "status": 307
-  },
-  {
-    "from": "/docs/market/service-tiers/priority",
-    "to": "/docs/market/inference-types",
-    "status": 307
-  },
-  {
-    "from": "/docs/market/service-tiers/standard",
-    "to": "/docs/market/inference-types",
-    "status": 307
-  },
-  {
-    "from": "/docs/market/service-tiers/flex",
-    "to": "/docs/market/inference-types",
-    "status": 307
-  },
-  {
-    "from": "/docs/market/inference-types/priority",
-    "to": "/docs/market/inference-types",
-    "status": 307
-  },
-  {
-    "from": "/docs/market/inference-types/standard",
-    "to": "/docs/market/inference-types",
-    "status": 307
-  },
-  {
-    "from": "/docs/market/inference-types/flex",
-    "to": "/docs/market/inference-types",
-    "status": 307
-  },
-  {
-    "from": "/docs/market/auto-bidding",
-    "to": "/docs/market/buy-inference",
-    "status": 307
   }
 ]

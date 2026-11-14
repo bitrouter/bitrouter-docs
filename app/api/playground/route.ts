@@ -1,24 +1,24 @@
-import { allowsLocalLive, cloudAccount, playgroundError, playgroundNoStore, playgroundPrincipal } from "../../../lib/playground-auth";
-import { getPlaygroundReceipt, playgroundCloudConfig } from "../../../lib/playground-cloud";
-import { isPlaygroundPreviewEnabled } from "../../../lib/playground-preview";
+import { createHash } from "node:crypto";
+import { allowsLocalLive, cloudAccount, playgroundError, playgroundNoStore } from "../../../lib/playground-auth";
+import { playgroundCloudConfig } from "../../../lib/playground-cloud";
+import { isPlaygroundEnabled } from "../../../lib/playground-config";
+import { playgroundQuotaConfig } from "../../../lib/playground-quota";
 
 export async function GET(request: Request) {
-  if (!isPlaygroundPreviewEnabled()) return new Response(null, { status: 404 });
+  if (new URL(request.url).searchParams.has("receipt")) return new Response(null, { status: 404, headers: playgroundNoStore });
+  if (!isPlaygroundEnabled()) {
+    return Response.json({ enabled: false, signedIn: false, available: false, visionAvailable: false, account: null }, { headers: playgroundNoStore });
+  }
   try {
-    const account = await cloudAccount(request);
+    const account = await cloudAccount(request) ?? (allowsLocalLive(request) ? "loopback-operator" : null);
     const config = playgroundCloudConfig();
-    const handle = new URL(request.url).searchParams.get("receipt");
-    if (handle !== null) {
-      const owner = playgroundPrincipal(request, account);
-      if (!config || !owner) return new Response(null, { status: 404, headers: playgroundNoStore });
-      return await getPlaygroundReceipt(config, handle, owner, AbortSignal.any([request.signal, AbortSignal.timeout(5000)]));
-    }
-    const liveAvailable = Boolean(config && (account || allowsLocalLive(request)));
-    return Response.json({ signedIn: Boolean(account), liveAvailable, visionAvailable: liveAvailable && Boolean(config?.visionModel) }, {
-      status: account ? 200 : 401,
-      headers: playgroundNoStore,
-    });
+    const available = Boolean(account && config && playgroundQuotaConfig());
+    return Response.json({
+      enabled: true, signedIn: Boolean(account), available,
+      visionAvailable: available && Boolean(config?.visionModel),
+      account: account ? createHash("sha256").update(account).digest("hex") : null,
+    }, { headers: playgroundNoStore });
   } catch {
-    return playgroundError("Could not check your Cloud session or receipt.", 503);
+    return playgroundError("Could not check your Cloud session. Please try again.", 503);
   }
 }

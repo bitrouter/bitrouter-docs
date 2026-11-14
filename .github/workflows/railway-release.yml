@@ -2,10 +2,6 @@ name: Railway release
 
 on:
   workflow_call:
-    inputs:
-      promote:
-        type: boolean
-        required: true
     secrets:
       RAILWAY_DEPLOY_TOKEN:
         required: true
@@ -18,7 +14,7 @@ jobs:
     environment:
       name: staging
       url: ${{ vars.RAILWAY_SITE_URL }}
-    steps: &deploy_steps
+    steps:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
@@ -41,14 +37,3 @@ jobs:
           RAILWAY_DEPLOY_SERVICE_ID: ${{ vars.RAILWAY_DEPLOY_SERVICE_ID }}
           RAILWAY_SITE_URL: ${{ vars.RAILWAY_SITE_URL }}
           RAILWAY_RELEASE_ENVIRONMENT: ${{ github.job }}
-
-  production:
-    name: Deploy and verify production
-    needs: staging
-    if: inputs.promote
-    runs-on: ubuntu-latest
-    timeout-minutes: 25
-    environment:
-      name: production
-      url: ${{ vars.RAILWAY_SITE_URL }}
-    steps: *deploy_steps

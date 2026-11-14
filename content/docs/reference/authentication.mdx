@@ -1,0 +1,65 @@
+---
+title: Authentication
+description: Authenticate Cloud and local API requests, distinguish caller credentials from provider keys, and check required permissions.
+---
+
+Use a credential for the BitRouter deployment receiving the request. Keep caller authentication separate from the credentials BitRouter uses to reach an upstream provider.
+
+| Credential | Sent to | Purpose |
+| --- | --- | --- |
+| Cloud API key | `https://api.bitrouter.ai` | Application access to authorized Cloud operations |
+| Local virtual key | Your self-hosted BitRouter endpoint | Caller authentication when local authentication is enabled |
+| Provider API key or subscription credential | Configured through BitRouter's provider setup | Authenticate BitRouter's upstream inference connection |
+
+A Cloud key does not automatically authenticate a local daemon. Provider keys are configured through [BYOK & Subscriptions](/docs/models-routing/byok-subscriptions); they are not substitutes for the caller credential in these examples.
+
+## Cloud API keys
+
+Create a key with the required scope through [CLI Cloud Management](/docs/cli/cloud-management#create-an-api-key). Inference applications use `inference:invoke`; management operations have their own scope requirements.
+
+Store the plaintext key when it is issued, then supply it to the application through secret storage or an environment variable:
+
+```bash
+export BITROUTER_API_KEY='paste-your-cloud-key-here'
+```
+
+Send it in the request header:
+
+```http
+Authorization: Bearer <cloud-api-key>
+```
+
+The documented Cloud endpoints also accept `x-api-key`. Use that header for clients configured to send an API key directly:
+
+```http
+x-api-key: <cloud-api-key>
+```
+
+Use the documented BitRouter authentication mechanism for the chosen endpoint. A compatible request body does not imply support for every upstream vendor's authentication mechanism. The [OpenAPI schema](/openapi.json) describes the accepted security schemes per endpoint.
+
+## Local virtual keys
+
+The default loopback setup can run with local authentication skipped. An authenticated deployment sets `server.skip_auth: false` and uses a local virtual key:
+
+```http
+Authorization: Bearer <local-virtual-key>
+```
+
+Provision the key against the same database used by the daemon. [Self-hosting](/docs/self-hosting#authenticate-callers) documents configuration, `bro key sign`, database selection, and restart requirements. It also owns TLS and network exposure.
+
+For examples that use a local key, set `BITROUTER_VIRTUAL_KEY` to the issued value. Omit the authentication header only when using a deployment intentionally configured to skip caller authentication.
+
+## Permissions and authentication failures
+
+| Task | Required scope | Contract |
+| --- | --- | --- |
+| Invoke inference | `inference:invoke` | [Cloud API](/openapi.json) |
+| Read aggregate account usage | `usage:read` | [Usage aggregate](/docs/reference/management/getUsageAggregate) |
+| Read the account balance | `billing:read` | [Billing balance](/docs/reference/management/getBillingBalance) |
+| Create an API key | `keys:write` | [Mint API key](/docs/reference/management/mintApiKey) |
+
+Requested key scopes must be a subset of the caller's effective permissions. Resource ownership and namespace checks still apply. Consult each endpoint for its complete requirements and response contract.
+
+When authentication or authorization fails, confirm the destination host, credential type, expiry if configured, namespace, and required scope. A missing scope requires a credential with that permission; changing the model selector does not grant it. [Cloud Management](/docs/cli/cloud-management#sign-out-and-handle-permissions) covers CLI re-login and key management.
+
+A successful public discovery or health request does not test inference authentication. See [API Getting Started](/docs/reference#first-cloud-request) for an authenticated inference request and inspect its actual result.

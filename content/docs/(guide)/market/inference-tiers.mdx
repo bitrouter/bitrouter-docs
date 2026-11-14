@@ -1,0 +1,18 @@
+---
+title: Inference Tiers
+description: Compare the evidence and security requirements for Unverified, Verified, and Secured inference.
+---
+
+Inference tiers describe the evidence and security requirements for a result. [Inference Types](/docs/market/inference-types) describes how capacity is made available. These tier definitions are a market design preview.
+
+## Unverified
+
+The source returns a result without independent evidence of which model ran or how the response was produced. This can describe sources outside the BitRouter platform, such as arbitrary endpoints connected to the OSS router.
+
+## Verified
+
+Evidence connects the request and response to execution against the declared model version, weights, and precision. See [what the BitRouter platform verifies](/enterprise#verification) for the verification scope.
+
+## Secured
+
+The proposed tier adds specified security requirements for execution and data handling to the verification evidence. The applicable safeguards depend on the service terms.

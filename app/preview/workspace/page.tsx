@@ -3,6 +3,7 @@ import { Homepage } from "@/components/landing/homepage/homepage";
 import { SiteProviders } from "@/components/site-providers";
 import { WebHeader } from "@/components/site-header-wired";
 import { SiteFooter } from "@/components/landing/site-footer";
+import { PlaygroundProvider } from "@/components/landing/playground/playground";
 
 export const metadata: Metadata = {
   title: "Homepage preview",
@@ -10,5 +11,5 @@ export const metadata: Metadata = {
 };
 
 export default function WorkspacePreview() {
-  return <SiteProviders><WebHeader /><Homepage /><SiteFooter /></SiteProviders>;
+  return <SiteProviders><WebHeader /><PlaygroundProvider><Homepage /></PlaygroundProvider><SiteFooter /></SiteProviders>;
 }

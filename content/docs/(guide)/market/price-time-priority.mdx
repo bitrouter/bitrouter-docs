@@ -1,0 +1,26 @@
+---
+title: Price-Time Priority
+description: How price and time shape an inference purchase, including supplier charges and Cloud platform fees.
+---
+
+## Price and time
+
+A buy order sets a maximum total charge and a window for accepting an offer. Within those limits, the order design lets buyers prefer a lower estimated charge or an earlier estimated completion. The purchase window controls when an offer can be accepted. Completion timing follows the accepted offer's service terms. See the [illustrative buy limit orders](/docs/overview/elastic-inference#buy-limit-orders).
+
+## Cloud platform fee
+
+Cloud Auto Routing and Elastic Inference share **$0.01 per million processed input + output tokens — Early access pricing**. Processed tokens are verifiable actual input + output tokens processed by Cloud, accumulated across requests. A request is counted once, including when Auto Routing selects Elastic Inference.
+
+Provider or supplier inference charges are separate. Elastic Inference adds the Cloud platform fee to the supplier's actual settled inference charge, with no percentage-based transaction fee. Buyer price caps include both charges: estimates use expected output, budget checks use the full output limit, and final platform fees use actual processed input + output tokens.
+
+## Welcome credit
+
+**First billion tokens on us. No credit card required.**
+
+New Cloud accounts receive a one-time **$10 welcome credit toward platform fees only**, equivalent to one billion processed input + output tokens at the current early access rate. Provider inference charges still apply.
+
+## Other options and charges
+
+OSS self-hosting is free of BitRouter fees; provider and infrastructure costs remain separate. Enterprise pricing is custom. Payment-processing charges are a separate category.
+
+See [platform pricing](/pricing) for the public pricing options, [Buy Inference](/docs/market/buy-inference) for the buyer guide, and [Sell Inference](/docs/market/sell-inference) for the supplier guide.

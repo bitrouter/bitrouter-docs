@@ -1,0 +1,2437 @@
+[
+  {
+    "from": "/docs/installation",
+    "to": "/docs/overview/quickstart",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/installation",
+    "to": "/docs/overview/quickstart",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/installation",
+    "to": "/docs/overview/quickstart",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/installation",
+    "to": "/docs/overview/quickstart",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/installation",
+    "to": "/docs/overview/quickstart",
+    "status": 308
+  },
+  {
+    "from": "/docs/quickstart",
+    "to": "/docs/overview/quickstart",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/quickstart",
+    "to": "/docs/overview/quickstart",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/quickstart",
+    "to": "/docs/overview/quickstart",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/quickstart",
+    "to": "/docs/overview/quickstart",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/quickstart",
+    "to": "/docs/overview/quickstart",
+    "status": 308
+  },
+  {
+    "from": "/docs/comparison",
+    "to": "/docs/overview/comparison/openrouter",
+    "status": 307
+  },
+  {
+    "from": "/docs/guides/core/comparison",
+    "to": "/docs/overview/comparison/openrouter",
+    "status": 307
+  },
+  {
+    "from": "/docs/guides/cloud/comparison",
+    "to": "/docs/overview/comparison/openrouter",
+    "status": 307
+  },
+  {
+    "from": "/docs/guides/features/comparison",
+    "to": "/docs/overview/comparison/openrouter",
+    "status": 307
+  },
+  {
+    "from": "/docs/guides/routing/comparison",
+    "to": "/docs/overview/comparison/openrouter",
+    "status": 307
+  },
+  {
+    "from": "/docs/self-host-vs-cloud",
+    "to": "/docs/overview/quickstart#self-host-or-cloud",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/self-host-vs-cloud",
+    "to": "/docs/overview/quickstart#self-host-or-cloud",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/self-host-vs-cloud",
+    "to": "/docs/overview/quickstart#self-host-or-cloud",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/self-host-vs-cloud",
+    "to": "/docs/overview/quickstart#self-host-or-cloud",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/self-host-vs-cloud",
+    "to": "/docs/overview/quickstart#self-host-or-cloud",
+    "status": 308
+  },
+  {
+    "from": "/docs/provider-selection",
+    "to": "/docs/routing/strategies#candidate-eligibility",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/provider-selection",
+    "to": "/docs/routing/strategies#candidate-eligibility",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/provider-selection",
+    "to": "/docs/routing/strategies#candidate-eligibility",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/provider-selection",
+    "to": "/docs/routing/strategies#candidate-eligibility",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/provider-selection",
+    "to": "/docs/routing/strategies#candidate-eligibility",
+    "status": 308
+  },
+  {
+    "from": "/docs/model-fallback",
+    "to": "/docs/models-routing/model-fallback#fallback-chains",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/model-fallback",
+    "to": "/docs/models-routing/model-fallback#fallback-chains",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/model-fallback",
+    "to": "/docs/models-routing/model-fallback#fallback-chains",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/model-fallback",
+    "to": "/docs/models-routing/model-fallback#fallback-chains",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/model-fallback",
+    "to": "/docs/models-routing/model-fallback#fallback-chains",
+    "status": 308
+  },
+  {
+    "from": "/docs/model-variants",
+    "to": "/docs/routing/strategies#variants",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/model-variants",
+    "to": "/docs/routing/strategies#variants",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/model-variants",
+    "to": "/docs/routing/strategies#variants",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/model-variants",
+    "to": "/docs/routing/strategies#variants",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/model-variants",
+    "to": "/docs/routing/strategies#variants",
+    "status": 308
+  },
+  {
+    "from": "/docs/presets",
+    "to": "/docs/models-routing/virtual-models#presets",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/presets",
+    "to": "/docs/models-routing/virtual-models#presets",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/presets",
+    "to": "/docs/models-routing/virtual-models#presets",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/presets",
+    "to": "/docs/models-routing/virtual-models#presets",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/presets",
+    "to": "/docs/models-routing/virtual-models#presets",
+    "status": 308
+  },
+  {
+    "from": "/docs/structured-outputs",
+    "to": "/docs/models-routing/virtual-models#protocol-compatibility",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/structured-outputs",
+    "to": "/docs/models-routing/virtual-models#protocol-compatibility",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/structured-outputs",
+    "to": "/docs/models-routing/virtual-models#protocol-compatibility",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/structured-outputs",
+    "to": "/docs/models-routing/virtual-models#protocol-compatibility",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/structured-outputs",
+    "to": "/docs/models-routing/virtual-models#protocol-compatibility",
+    "status": 308
+  },
+  {
+    "from": "/docs/byok",
+    "to": "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/byok",
+    "to": "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/byok",
+    "to": "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/byok",
+    "to": "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/byok",
+    "to": "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
+    "status": 308
+  },
+  {
+    "from": "/docs/local-models",
+    "to": "/docs/models-routing/local-models",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/local-models",
+    "to": "/docs/models-routing/local-models",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/local-models",
+    "to": "/docs/models-routing/local-models",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/local-models",
+    "to": "/docs/models-routing/local-models",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/local-models",
+    "to": "/docs/models-routing/local-models",
+    "status": 308
+  },
+  {
+    "from": "/docs/guardrails",
+    "to": "/docs/routing/configuration#create-a-configuration",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/guardrails",
+    "to": "/docs/routing/configuration#create-a-configuration",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/guardrails",
+    "to": "/docs/routing/configuration#create-a-configuration",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/guardrails",
+    "to": "/docs/routing/configuration#create-a-configuration",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/guardrails",
+    "to": "/docs/routing/configuration#create-a-configuration",
+    "status": 308
+  },
+  {
+    "from": "/docs/observability",
+    "to": "/docs/cli/request-receipts",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/observability",
+    "to": "/docs/cli/request-receipts",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/observability",
+    "to": "/docs/cli/request-receipts",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/observability",
+    "to": "/docs/cli/request-receipts",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/observability",
+    "to": "/docs/cli/request-receipts",
+    "status": 308
+  },
+  {
+    "from": "/docs/opentelemetry",
+    "to": "/docs/self-hosting#opentelemetry",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/opentelemetry",
+    "to": "/docs/self-hosting#opentelemetry",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/opentelemetry",
+    "to": "/docs/self-hosting#opentelemetry",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/opentelemetry",
+    "to": "/docs/self-hosting#opentelemetry",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/opentelemetry",
+    "to": "/docs/self-hosting#opentelemetry",
+    "status": 308
+  },
+  {
+    "from": "/docs/tracing",
+    "to": "/docs/cli/request-receipts#cloud-activity",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/tracing",
+    "to": "/docs/cli/request-receipts#cloud-activity",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/tracing",
+    "to": "/docs/cli/request-receipts#cloud-activity",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/tracing",
+    "to": "/docs/cli/request-receipts#cloud-activity",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/tracing",
+    "to": "/docs/cli/request-receipts#cloud-activity",
+    "status": 308
+  },
+  {
+    "from": "/docs/telemetry",
+    "to": "/docs/cli/request-receipts",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/telemetry",
+    "to": "/docs/cli/request-receipts",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/telemetry",
+    "to": "/docs/cli/request-receipts",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/telemetry",
+    "to": "/docs/cli/request-receipts",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/telemetry",
+    "to": "/docs/cli/request-receipts",
+    "status": 308
+  },
+  {
+    "from": "/docs/evaluation",
+    "to": "/docs/routing/workload-optimization#evaluations",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/evaluation",
+    "to": "/docs/routing/workload-optimization#evaluations",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/evaluation",
+    "to": "/docs/routing/workload-optimization#evaluations",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/evaluation",
+    "to": "/docs/routing/workload-optimization#evaluations",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/evaluation",
+    "to": "/docs/routing/workload-optimization#evaluations",
+    "status": 308
+  },
+  {
+    "from": "/docs/evaluations",
+    "to": "/docs/routing/workload-optimization#evaluations",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/evaluations",
+    "to": "/docs/routing/workload-optimization#evaluations",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/evaluations",
+    "to": "/docs/routing/workload-optimization#evaluations",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/evaluations",
+    "to": "/docs/routing/workload-optimization#evaluations",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/evaluations",
+    "to": "/docs/routing/workload-optimization#evaluations",
+    "status": 308
+  },
+  {
+    "from": "/docs/mcp",
+    "to": "/docs/routing/configuration#agents-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/mcp",
+    "to": "/docs/routing/configuration#agents-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/mcp",
+    "to": "/docs/routing/configuration#agents-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/mcp",
+    "to": "/docs/routing/configuration#agents-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/mcp",
+    "to": "/docs/routing/configuration#agents-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/acp",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/acp",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/acp",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/acp",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/acp",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/agentskills",
+    "to": "/docs/overview/quickstart#onboard-via-the-agent-skill",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/agentskills",
+    "to": "/docs/overview/quickstart#onboard-via-the-agent-skill",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/agentskills",
+    "to": "/docs/overview/quickstart#onboard-via-the-agent-skill",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/agentskills",
+    "to": "/docs/overview/quickstart#onboard-via-the-agent-skill",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/agentskills",
+    "to": "/docs/overview/quickstart#onboard-via-the-agent-skill",
+    "status": 308
+  },
+  {
+    "from": "/docs/managed-provider",
+    "to": "/docs/reference#model-discovery",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/managed-provider",
+    "to": "/docs/reference#model-discovery",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/managed-provider",
+    "to": "/docs/reference#model-discovery",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/managed-provider",
+    "to": "/docs/reference#model-discovery",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/managed-provider",
+    "to": "/docs/reference#model-discovery",
+    "status": 308
+  },
+  {
+    "from": "/docs/discounted-models",
+    "to": "/docs/reference#model-discovery",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/discounted-models",
+    "to": "/docs/reference#model-discovery",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/discounted-models",
+    "to": "/docs/reference#model-discovery",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/discounted-models",
+    "to": "/docs/reference#model-discovery",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/discounted-models",
+    "to": "/docs/reference#model-discovery",
+    "status": 308
+  },
+  {
+    "from": "/docs/payment",
+    "to": "/docs/overview/quickstart#self-host-or-cloud",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/payment",
+    "to": "/docs/overview/quickstart#self-host-or-cloud",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/payment",
+    "to": "/docs/overview/quickstart#self-host-or-cloud",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/payment",
+    "to": "/docs/overview/quickstart#self-host-or-cloud",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/payment",
+    "to": "/docs/overview/quickstart#self-host-or-cloud",
+    "status": 308
+  },
+  {
+    "from": "/docs/workspaces",
+    "to": "/docs/reference/management/listNamespaces",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/workspaces",
+    "to": "/docs/reference/management/listNamespaces",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/workspaces",
+    "to": "/docs/reference/management/listNamespaces",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/workspaces",
+    "to": "/docs/reference/management/listNamespaces",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/workspaces",
+    "to": "/docs/reference/management/listNamespaces",
+    "status": 308
+  },
+  {
+    "from": "/docs/for-providers",
+    "to": "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/core/for-providers",
+    "to": "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/for-providers",
+    "to": "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/for-providers",
+    "to": "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/for-providers",
+    "to": "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
+    "status": 308
+  },
+  {
+    "from": "/docs/cli",
+    "to": "/docs/cli/getting-started",
+    "status": 307
+  },
+  {
+    "from": "/docs/guides/core/cli",
+    "to": "/docs/cli/getting-started",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud/cli",
+    "to": "/docs/cli/getting-started",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/features/cli",
+    "to": "/docs/cli/getting-started",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/routing/cli",
+    "to": "/docs/cli/getting-started",
+    "status": 308
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-10",
+    "to": "/docs/changelog#v1-0-0-alpha-10",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-11",
+    "to": "/docs/changelog#v1-0-0-alpha-11",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-12",
+    "to": "/docs/changelog#v1-0-0-alpha-12",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-13",
+    "to": "/docs/changelog#v1-0-0-alpha-13",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-14",
+    "to": "/docs/changelog#v1-0-0-alpha-14",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-15",
+    "to": "/docs/changelog#v1-0-0-alpha-15",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-17",
+    "to": "/docs/changelog#v1-0-0-alpha-17",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-18",
+    "to": "/docs/changelog#v1-0-0-alpha-18",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-19",
+    "to": "/docs/changelog#v1-0-0-alpha-19",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-2",
+    "to": "/docs/changelog#v1-0-0-alpha-2",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-20",
+    "to": "/docs/changelog#v1-0-0-alpha-20",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-21",
+    "to": "/docs/changelog#v1-0-0-alpha-21",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-22",
+    "to": "/docs/changelog#v1-0-0-alpha-22",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-23",
+    "to": "/docs/changelog#v1-0-0-alpha-23",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-24",
+    "to": "/docs/changelog#v1-0-0-alpha-24",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-25",
+    "to": "/docs/changelog#v1-0-0-alpha-25",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-26",
+    "to": "/docs/changelog#v1-0-0-alpha-26",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-27",
+    "to": "/docs/changelog#v1-0-0-alpha-27",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-28",
+    "to": "/docs/changelog#v1-0-0-alpha-28",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-29",
+    "to": "/docs/changelog#v1-0-0-alpha-29",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-3",
+    "to": "/docs/changelog#v1-0-0-alpha-3",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-30",
+    "to": "/docs/changelog#v1-0-0-alpha-30",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-31",
+    "to": "/docs/changelog#v1-0-0-alpha-31",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-32",
+    "to": "/docs/changelog#v1-0-0-alpha-32",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-33",
+    "to": "/docs/changelog#v1-0-0-alpha-33",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-4",
+    "to": "/docs/changelog#v1-0-0-alpha-4",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-5",
+    "to": "/docs/changelog#v1-0-0-alpha-5",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-6",
+    "to": "/docs/changelog#v1-0-0-alpha-6",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-7",
+    "to": "/docs/changelog#v1-0-0-alpha-7",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-8",
+    "to": "/docs/changelog#v1-0-0-alpha-8",
+    "status": 307
+  },
+  {
+    "from": "/docs/changelog/v1-0-0-alpha-9",
+    "to": "/docs/changelog#v1-0-0-alpha-9",
+    "status": 307
+  },
+  {
+    "from": "/docs/cli/interactive",
+    "to": "/docs/cli/getting-started#previous-workflow-links",
+    "status": 307
+  },
+  {
+    "from": "/docs/cli/headless-scripting",
+    "to": "/docs/cli/run-inspect#scripting",
+    "status": 307
+  },
+  {
+    "from": "/docs/reference/chat-completions-messages",
+    "to": "/docs/usage/responses-api",
+    "status": 307
+  },
+  {
+    "from": "/docs/overview/supported-models",
+    "to": "/docs/reference#model-discovery",
+    "status": 307
+  },
+  {
+    "from": "/docs/usage/desktop",
+    "to": "/docs/cli/getting-started",
+    "status": 307
+  },
+  {
+    "from": "/docs/usage/mcp",
+    "to": "/docs/usage/responses-api",
+    "status": 307
+  },
+  {
+    "from": "/docs/usage/agentic-payment",
+    "to": "/docs/market/buy-inference",
+    "status": 307
+  },
+  {
+    "from": "/docs/context-routing/acp-servers",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
+    "status": 307
+  },
+  {
+    "from": "/docs/context-routing/mcp-servers",
+    "to": "/docs/routing/configuration#agents-and-mcp",
+    "status": 307
+  },
+  {
+    "from": "/docs/context-routing/skills",
+    "to": "/docs/overview/quickstart#onboard-via-the-agent-skill",
+    "status": 307
+  },
+  {
+    "from": "/docs/context-routing/server-tools",
+    "to": "/docs/routing/configuration#server-tools-config",
+    "status": 307
+  },
+  {
+    "from": "/docs/context-routing/context-switcher",
+    "to": "/docs/routing/context-routing",
+    "status": 307
+  },
+  {
+    "from": "/docs/context-routing",
+    "to": "/docs/routing/context-routing",
+    "status": 307
+  },
+  {
+    "from": "/docs/overview/flex-inference",
+    "to": "/docs/overview/elastic-inference",
+    "status": 307
+  },
+  {
+    "from": "/docs/overview/inference-flex-market",
+    "to": "/docs/overview/elastic-inference",
+    "status": 307
+  },
+  {
+    "from": "/docs/overview/inference-spot",
+    "to": "/docs/overview/elastic-inference",
+    "status": 307
+  },
+  {
+    "from": "/docs/overview/inference-forwards",
+    "to": "/docs/overview/elastic-inference",
+    "status": 307
+  },
+  {
+    "from": "/docs/market/pricing",
+    "to": "/docs/market/price-time-priority",
+    "status": 307
+  },
+  {
+    "from": "/docs/market/inference-types/on-demand",
+    "to": "/docs/market/inference-types#on-demand",
+    "status": 307
+  },
+  {
+    "from": "/docs/market/inference-types/interruptible",
+    "to": "/docs/market/inference-types#interruptible",
+    "status": 307
+  },
+  {
+    "from": "/docs/market/market-data",
+    "to": "/docs/market/inference-types",
+    "status": 307
+  },
+  {
+    "from": "/docs/market/service-tiers",
+    "to": "/docs/market/inference-types",
+    "status": 307
+  },
+  {
+    "from": "/docs/market/service-tiers/priority",
+    "to": "/docs/market/inference-types",
+    "status": 307
+  },
+  {
+    "from": "/docs/market/service-tiers/standard",
+    "to": "/docs/market/inference-types",
+    "status": 307
+  },
+  {
+    "from": "/docs/market/service-tiers/flex",
+    "to": "/docs/market/inference-types",
+    "status": 307
+  },
+  {
+    "from": "/docs/market/inference-types/priority",
+    "to": "/docs/market/inference-types",
+    "status": 307
+  },
+  {
+    "from": "/docs/market/inference-types/standard",
+    "to": "/docs/market/inference-types",
+    "status": 307
+  },
+  {
+    "from": "/docs/market/inference-types/flex",
+    "to": "/docs/market/inference-types",
+    "status": 307
+  },
+  {
+    "from": "/docs/market/auto-bidding",
+    "to": "/docs/market/buy-inference",
+    "status": 307
+  },
+  {
+    "from": "/docs/market/agentic-payment",
+    "to": "/docs/market/buy-inference",
+    "status": 307
+  },
+  {
+    "from": "/docs/usage/web",
+    "to": "/docs/cli/getting-started",
+    "status": 307
+  },
+  {
+    "from": "/docs/cli/reference",
+    "to": "/docs/usage/cli",
+    "status": 307
+  },
+  {
+    "from": "/docs/configuration-reference",
+    "to": "/docs/routing/configuration",
+    "status": 307
+  },
+  {
+    "from": "/docs/data-handling",
+    "to": "/docs/privacy-policy",
+    "status": 307
+  },
+  {
+    "from": "/docs/routing/cache-affinity",
+    "to": "/docs/routing/state-affinity",
+    "status": 307
+  },
+  {
+    "from": "/docs/routing/auditable-policies",
+    "to": "/docs/routing/routing-traces",
+    "status": 307
+  },
+  {
+    "from": "/docs/routing/routing-rules",
+    "to": "/docs/routing/strategies",
+    "status": 307
+  },
+  {
+    "from": "/docs/routing/model-routing",
+    "to": "/docs/routing/strategies",
+    "status": 307
+  },
+  {
+    "from": "/docs/models-routing/model-variants",
+    "to": "/docs/routing/strategies#variants",
+    "status": 307
+  },
+  {
+    "from": "/docs/providers/byok-subscriptions",
+    "to": "/docs/models-routing/byok-subscriptions",
+    "status": 307
+  },
+  {
+    "from": "/docs/providers/local-models",
+    "to": "/docs/models-routing/local-models",
+    "status": 307
+  },
+  {
+    "from": "/docs/models-routing/buy-inference",
+    "to": "/docs/market/buy-inference",
+    "status": 307
+  },
+  {
+    "from": "/docs/providers/sell-inference",
+    "to": "/docs/market/sell-inference",
+    "status": 307
+  },
+  {
+    "from": "/docs/providers/custom-provider",
+    "to": "/docs/models-routing/byok-subscriptions#custom-endpoints-and-models",
+    "status": 307
+  },
+  {
+    "from": "/docs/cli/orchestrator",
+    "to": "/docs/cli/getting-started#previous-workflow-links",
+    "status": 307
+  },
+  {
+    "from": "/docs/cli/tui",
+    "to": "/docs/cli/getting-started#previous-workflow-links",
+    "status": 307
+  },
+  {
+    "from": "/docs/cli/headless",
+    "to": "/docs/cli/run-inspect#scripting",
+    "status": 307
+  },
+  {
+    "from": "/docs/api/responses",
+    "to": "/docs/usage/responses-api",
+    "status": 307
+  },
+  {
+    "from": "/docs/api/decisions",
+    "to": "/docs/reference/decisions",
+    "status": 307
+  },
+  {
+    "from": "/docs/api/chat-completions-messages",
+    "to": "/docs/usage/responses-api",
+    "status": 307
+  },
+  {
+    "from": "/docs/cli/reference/daemon",
+    "to": "/docs/usage/cli#command-reference",
+    "status": 307
+  },
+  {
+    "from": "/docs/cli/reference/init",
+    "to": "/docs/usage/cli#command-reference",
+    "status": 307
+  },
+  {
+    "from": "/docs/cli/reference/route",
+    "to": "/docs/usage/cli#command-reference",
+    "status": 307
+  },
+  {
+    "from": "/docs/cli/reference/providers",
+    "to": "/docs/usage/cli#command-reference",
+    "status": 307
+  },
+  {
+    "from": "/docs/cli/reference/policy",
+    "to": "/docs/usage/cli#command-reference",
+    "status": 307
+  },
+  {
+    "from": "/docs/cli/reference/cloud",
+    "to": "/docs/usage/cli#command-reference",
+    "status": 307
+  },
+  {
+    "from": "/docs/cli/reference/tools",
+    "to": "/docs/usage/cli#command-reference",
+    "status": 307
+  },
+  {
+    "from": "/docs/cli/reference/skills",
+    "to": "/docs/usage/cli#command-reference",
+    "status": 307
+  },
+  {
+    "from": "/docs/cli/reference/harnesses",
+    "to": "/docs/usage/cli#command-reference",
+    "status": 307
+  },
+  {
+    "from": "/docs/cli/reference/misc",
+    "to": "/docs/usage/cli#command-reference",
+    "status": 307
+  },
+  {
+    "from": "/docs/overview/comparison",
+    "to": "/docs/overview/comparison/openrouter",
+    "status": 307
+  },
+  {
+    "from": "/docs/routing/inference-pool",
+    "to": "/docs/routing/strategies",
+    "status": 307
+  },
+  {
+    "from": "/docs/routing/policy",
+    "to": "/docs/routing/workload-optimization#existing-policy-tools",
+    "status": 307
+  },
+  {
+    "from": "/docs/routing/evaluations",
+    "to": "/docs/routing/workload-optimization#evaluations",
+    "status": 307
+  },
+  {
+    "from": "/docs/models-routing/policy",
+    "to": "/docs/routing/workload-optimization#existing-policy-tools",
+    "status": 307
+  },
+  {
+    "from": "/docs/models-routing/evaluations",
+    "to": "/docs/routing/workload-optimization#evaluations",
+    "status": 307
+  },
+  {
+    "from": "/docs/context-routing/context-switch",
+    "to": "/docs/routing/context-routing",
+    "status": 307
+  },
+  {
+    "from": "/docs/models-routing/inference-pool",
+    "to": "/docs/routing/strategies",
+    "status": 307
+  },
+  {
+    "from": "/docs/config/configuration-file",
+    "to": "/docs/routing/configuration",
+    "status": 307
+  },
+  {
+    "from": "/docs/config/providers",
+    "to": "/docs/models-routing/byok-subscriptions",
+    "status": 307
+  },
+  {
+    "from": "/docs/config/model-routes",
+    "to": "/docs/models-routing/virtual-models",
+    "status": 307
+  },
+  {
+    "from": "/docs/config/mcp-connections",
+    "to": "/docs/routing/configuration#agents-and-mcp",
+    "status": 307
+  },
+  {
+    "from": "/docs/config/server-tools",
+    "to": "/docs/routing/configuration#server-tools-config",
+    "status": 307
+  },
+  {
+    "from": "/docs/config/telemetry",
+    "to": "/docs/cli/request-receipts",
+    "status": 307
+  },
+  {
+    "from": "/docs/models-routing/models",
+    "to": "/docs/models-routing/virtual-models",
+    "status": 307
+  },
+  {
+    "from": "/docs/models-routing/bitrouter-auto",
+    "to": "/docs/routing/auto-router#initialize-a-policy-binding",
+    "status": 307
+  },
+  {
+    "from": "/docs/models-routing/local-inference",
+    "to": "/docs/models-routing/local-models",
+    "status": 307
+  },
+  {
+    "from": "/docs/integration/acp-servers",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
+    "status": 307
+  },
+  {
+    "from": "/docs/context-routing/agents-md",
+    "to": "/docs/routing/configuration#server-tools-config",
+    "status": 307
+  },
+  {
+    "from": "/docs/api",
+    "to": "/docs/reference",
+    "status": 308
+  },
+  {
+    "from": "/docs/config",
+    "to": "/docs/routing/configuration",
+    "status": 308
+  },
+  {
+    "from": "/docs/config/guardrails",
+    "to": "/docs/routing/configuration#create-a-configuration",
+    "status": 308
+  },
+  {
+    "from": "/docs/config/telemetry-export",
+    "to": "/docs/cli/request-receipts",
+    "status": 308
+  },
+  {
+    "from": "/docs/models-routing/telemetry",
+    "to": "/docs/cli/request-receipts",
+    "status": 308
+  },
+  {
+    "from": "/docs/cli/configuration",
+    "to": "/docs/routing/configuration",
+    "status": 307
+  },
+  {
+    "from": "/docs/models-routing/providers",
+    "to": "/docs/models-routing/byok-subscriptions",
+    "status": 308
+  },
+  {
+    "from": "/docs/models-routing/guardrails",
+    "to": "/docs/routing/configuration#create-a-configuration",
+    "status": 308
+  },
+  {
+    "from": "/docs/development",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/development/mcp",
+    "to": "/docs/routing/configuration#agents-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/development/agent-skills",
+    "to": "/docs/overview/quickstart#onboard-via-the-agent-skill",
+    "status": 308
+  },
+  {
+    "from": "/docs/cli/telemetry",
+    "to": "/docs/cli/request-receipts",
+    "status": 308
+  },
+  {
+    "from": "/docs/cli/permissions",
+    "to": "/docs/usage/cli#bro-run",
+    "status": 307
+  },
+  {
+    "from": "/docs/usage/bitrouter-auto",
+    "to": "/docs/routing/auto-router#initialize-a-policy-binding",
+    "status": 308
+  },
+  {
+    "from": "/docs/customization/models",
+    "to": "/docs/models-routing/byok-subscriptions",
+    "status": 308
+  },
+  {
+    "from": "/docs/configuration/models",
+    "to": "/docs/models-routing/virtual-models",
+    "status": 308
+  },
+  {
+    "from": "/docs/configuration/guardrails",
+    "to": "/docs/routing/configuration#create-a-configuration",
+    "status": 308
+  },
+  {
+    "from": "/docs/configuration/evaluations",
+    "to": "/docs/routing/workload-optimization#evaluations",
+    "status": 308
+  },
+  {
+    "from": "/docs/configuration/policy",
+    "to": "/docs/routing/configuration",
+    "status": 308
+  },
+  {
+    "from": "/docs/configuration/telemetry",
+    "to": "/docs/cli/request-receipts",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/tui",
+    "to": "/docs/cli/getting-started#previous-workflow-links",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/skills",
+    "to": "/docs/overview/quickstart#onboard-via-the-agent-skill",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/coding-agents",
+    "to": "/docs/integration/coding-agents",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/model-sources/local-inference",
+    "to": "/docs/models-routing/local-models",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/agent",
+    "to": "/docs/cli/agent",
+    "status": 308
+  },
+  {
+    "from": "/docs/customization/tools/server-tools",
+    "to": "/docs/routing/configuration#server-tools-config",
+    "status": 308
+  },
+  {
+    "from": "/docs/customization/tools/model-backed-tools",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/customization/tools/web-tools",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/customization/tools",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage",
+    "to": "/docs/cli/getting-started",
+    "status": 307
+  },
+  {
+    "from": "/docs/configuration",
+    "to": "/docs/routing/configuration",
+    "status": 308
+  },
+  {
+    "from": "/docs/customization",
+    "to": "/docs/models-routing/byok-subscriptions",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/coding-agents/claude-code",
+    "to": "/docs/integration/coding-agents#claude-code",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/coding-agents/codex",
+    "to": "/docs/integration/coding-agents#codex",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/model-sources",
+    "to": "/docs/integration/coding-agents#model-sources",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/code",
+    "to": "/docs/cli/getting-started#previous-workflow-links",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/protocols",
+    "to": "/docs/usage/cli#init-and-config",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/mcp-gateway",
+    "to": "/docs/routing/configuration#agents-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/model-sources/claude-subscription",
+    "to": "/docs/integration/coding-agents#use-a-claude-subscription",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/model-sources/codex-subscription",
+    "to": "/docs/integration/coding-agents#use-a-codex-subscription",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/migrate",
+    "to": "/docs/overview/comparison/openrouter",
+    "status": 307
+  },
+  {
+    "from": "/docs/usage/migrate/litellm",
+    "to": "/docs/overview/comparison/litellm#migrate-from-litellm",
+    "status": 307
+  },
+  {
+    "from": "/docs/usage/migrate/openrouter",
+    "to": "/docs/overview/comparison/openrouter#migrate-from-openrouter",
+    "status": 307
+  },
+  {
+    "from": "/docs/usage/migrate/tensorzero",
+    "to": "/docs/overview/comparison/openrouter",
+    "status": 307
+  },
+  {
+    "from": "/docs/usage/acp",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/acp-gateway",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/coding-agents/opencode",
+    "to": "/docs/integration/coding-agents",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/coding-agents/pi",
+    "to": "/docs/integration/coding-agents",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/coding-agents/deepseek-harness",
+    "to": "/docs/integration/coding-agents#other-harnesses",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/model-sources/ollama",
+    "to": "/docs/models-routing/local-models",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/model-sources/vllm",
+    "to": "/docs/models-routing/local-models",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/model-sources/unsloth",
+    "to": "/docs/models-routing/local-models",
+    "status": 308
+  },
+  {
+    "from": "/docs/configuration/config-file",
+    "to": "/docs/routing/configuration",
+    "status": 308
+  },
+  {
+    "from": "/docs/configuration/routing",
+    "to": "/docs/models-routing/virtual-models",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/structured-outputs",
+    "to": "/docs/models-routing/virtual-models#protocol-compatibility",
+    "status": 308
+  },
+  {
+    "from": "/docs/configuration/structured-outputs",
+    "to": "/docs/models-routing/virtual-models#protocol-compatibility",
+    "status": 308
+  },
+  {
+    "from": "/docs/configuration/provider-selection",
+    "to": "/docs/routing/strategies#candidate-eligibility",
+    "status": 308
+  },
+  {
+    "from": "/docs/configuration/model-fallback",
+    "to": "/docs/models-routing/model-fallback#fallback-chains",
+    "status": 308
+  },
+  {
+    "from": "/docs/configuration/virtual-model",
+    "to": "/docs/models-routing/virtual-models#define-a-virtual-model",
+    "status": 308
+  },
+  {
+    "from": "/docs/configuration/model-variants",
+    "to": "/docs/routing/strategies#variants",
+    "status": 308
+  },
+  {
+    "from": "/docs/configuration/observability",
+    "to": "/docs/cli/request-receipts",
+    "status": 308
+  },
+  {
+    "from": "/docs/configuration/observability/opentelemetry",
+    "to": "/docs/self-hosting#opentelemetry",
+    "status": 308
+  },
+  {
+    "from": "/docs/configuration/observability/tracing",
+    "to": "/docs/cli/request-receipts#cloud-activity",
+    "status": 308
+  },
+  {
+    "from": "/docs/configuration/observability/evaluation",
+    "to": "/docs/routing/workload-optimization#evaluations",
+    "status": 308
+  },
+  {
+    "from": "/docs/customization/models/bring-your-own-model",
+    "to": "/docs/models-routing/byok-subscriptions#custom-endpoints-and-models",
+    "status": 308
+  },
+  {
+    "from": "/docs/customization/models/bring-your-own-provider",
+    "to": "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
+    "status": 308
+  },
+  {
+    "from": "/docs/customization/tools/advisor",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/customization/tools/subagent",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/customization/tools/fusion",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/customization/tools/websearch",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/customization/tools/web-fetch",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/self-hosting/install",
+    "to": "/docs/self-hosting#install",
+    "status": 308
+  },
+  {
+    "from": "/docs/self-hosting/deploy",
+    "to": "/docs/self-hosting#deploy",
+    "status": 308
+  },
+  {
+    "from": "/docs/self-hosting/secure",
+    "to": "/docs/self-hosting#secure",
+    "status": 308
+  },
+  {
+    "from": "/docs/self-hosting/operate",
+    "to": "/docs/self-hosting#operate",
+    "status": 308
+  },
+  {
+    "from": "/docs/self-hosting/production-config",
+    "to": "/docs/self-hosting#production-configuration",
+    "status": 308
+  },
+  {
+    "from": "/docs/self-hosting/run-as-a-service",
+    "to": "/docs/self-hosting#run-as-a-service",
+    "status": 308
+  },
+  {
+    "from": "/docs/self-hosting/networking",
+    "to": "/docs/self-hosting#network-and-tls",
+    "status": 308
+  },
+  {
+    "from": "/docs/self-hosting/authentication",
+    "to": "/docs/self-hosting#authenticate-callers",
+    "status": 308
+  },
+  {
+    "from": "/docs/self-hosting/hardening",
+    "to": "/docs/self-hosting#production-checklist",
+    "status": 308
+  },
+  {
+    "from": "/docs/self-hosting/operations",
+    "to": "/docs/self-hosting#change-and-diagnose",
+    "status": 308
+  },
+  {
+    "from": "/docs/self-hosting/state-and-backups",
+    "to": "/docs/self-hosting#state-and-backups",
+    "status": 308
+  },
+  {
+    "from": "/docs/overview/comparisons",
+    "to": "/docs/overview/comparison/openrouter",
+    "status": 307
+  },
+  {
+    "from": "/docs/overview/comparisons/openrouter",
+    "to": "/docs/overview/comparison/openrouter",
+    "status": 307
+  },
+  {
+    "from": "/docs/overview/comparisons/litellm",
+    "to": "/docs/overview/comparison/litellm",
+    "status": 307
+  },
+  {
+    "from": "/docs/routers",
+    "to": "/docs/routing/configuration",
+    "status": 308
+  },
+  {
+    "from": "/docs/routers/configuration",
+    "to": "/docs/routing/configuration",
+    "status": 308
+  },
+  {
+    "from": "/docs/extensions",
+    "to": "/docs/models-routing/byok-subscriptions",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides",
+    "to": "/docs/usage/cli#init-and-config",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/overview",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/overview/quickstart",
+    "to": "/docs/overview/quickstart",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/overview/comparison",
+    "to": "/docs/overview/comparison/openrouter",
+    "status": 307
+  },
+  {
+    "from": "/docs/guides/overview/provider",
+    "to": "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
+    "status": 308
+  },
+  {
+    "from": "/docs/overview/recursive-self-improvement",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/get-started/introduction",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/get-started/supported-models",
+    "to": "/docs/reference#model-discovery",
+    "status": 308
+  },
+  {
+    "from": "/docs/get-started/supported-providers",
+    "to": "/docs/reference#model-discovery",
+    "status": 308
+  },
+  {
+    "from": "/docs/features/provider-selection",
+    "to": "/docs/routing/strategies#candidate-eligibility",
+    "status": 308
+  },
+  {
+    "from": "/docs/features/model-fallback",
+    "to": "/docs/models-routing/model-fallback#fallback-chains",
+    "status": 308
+  },
+  {
+    "from": "/docs/features/model-variants",
+    "to": "/docs/routing/strategies#variants",
+    "status": 308
+  },
+  {
+    "from": "/docs/features/presets",
+    "to": "/docs/models-routing/virtual-models#presets",
+    "status": 308
+  },
+  {
+    "from": "/docs/features/structured-outputs",
+    "to": "/docs/models-routing/virtual-models#protocol-compatibility",
+    "status": 308
+  },
+  {
+    "from": "/docs/features/byok",
+    "to": "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
+    "status": 308
+  },
+  {
+    "from": "/docs/concepts",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/concepts/models",
+    "to": "/docs/models-routing/virtual-models#model-selector-forms",
+    "status": 308
+  },
+  {
+    "from": "/docs/concepts/policy",
+    "to": "/docs/routing/auto-router#initialize-a-policy-binding",
+    "status": 308
+  },
+  {
+    "from": "/docs/concepts/tools",
+    "to": "/docs/routing/configuration#agents-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/concepts/agents",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/concepts/cli",
+    "to": "/docs/usage/cli#init-and-config",
+    "status": 308
+  },
+  {
+    "from": "/docs/concepts/mcp",
+    "to": "/docs/routing/configuration#agents-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/concepts/agent-skill",
+    "to": "/docs/overview/quickstart",
+    "status": 308
+  },
+  {
+    "from": "/docs/get-started/configuration",
+    "to": "/docs/overview/quickstart",
+    "status": 308
+  },
+  {
+    "from": "/docs/get-started/wizard",
+    "to": "/docs/overview/quickstart",
+    "status": 308
+  },
+  {
+    "from": "/docs/get-started/agent-skill",
+    "to": "/docs/overview/quickstart",
+    "status": 308
+  },
+  {
+    "from": "/docs/get-started/faqs",
+    "to": "/docs/overview/quickstart",
+    "status": 308
+  },
+  {
+    "from": "/docs/get-started/cli",
+    "to": "/docs/usage/cli#init-and-config",
+    "status": 308
+  },
+  {
+    "from": "/docs/get-started/mcp",
+    "to": "/docs/routing/configuration#agents-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/get-started",
+    "to": "/docs/overview/quickstart",
+    "status": 308
+  },
+  {
+    "from": "/docs/get-started/onboarding",
+    "to": "/docs/overview/quickstart",
+    "status": 308
+  },
+  {
+    "from": "/docs/get-started/quickstart",
+    "to": "/docs/overview/quickstart",
+    "status": 308
+  },
+  {
+    "from": "/docs/get-started/installation",
+    "to": "/docs/overview/quickstart",
+    "status": 308
+  },
+  {
+    "from": "/docs/get-started/comparison",
+    "to": "/docs/overview/comparison/openrouter",
+    "status": 307
+  },
+  {
+    "from": "/docs/get-started/set-up-routing",
+    "to": "/docs/models-routing/virtual-models#resolution-order",
+    "status": 308
+  },
+  {
+    "from": "/docs/get-started/set-up-tracing",
+    "to": "/docs/self-hosting#opentelemetry",
+    "status": 308
+  },
+  {
+    "from": "/docs/get-started/set-up-evaling",
+    "to": "/docs/routing/workload-optimization#evaluations",
+    "status": 308
+  },
+  {
+    "from": "/docs/get-started/set-up-looping",
+    "to": "/docs/routing/auto-router#initialize-a-policy-binding",
+    "status": 308
+  },
+  {
+    "from": "/docs/infrastructure/managed-provider",
+    "to": "/docs/reference#model-discovery",
+    "status": 308
+  },
+  {
+    "from": "/docs/infrastructure/discounted-models",
+    "to": "/docs/reference#model-discovery",
+    "status": 308
+  },
+  {
+    "from": "/docs/infrastructure/payment",
+    "to": "/docs/overview/quickstart#self-host-or-cloud",
+    "status": 308
+  },
+  {
+    "from": "/docs/infrastructure/workspaces",
+    "to": "/docs/reference/management/listNamespaces",
+    "status": 308
+  },
+  {
+    "from": "/docs/infrastructure/for-providers",
+    "to": "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
+    "status": 308
+  },
+  {
+    "from": "/docs/cloud",
+    "to": "/docs/overview/quickstart#self-host-or-cloud",
+    "status": 308
+  },
+  {
+    "from": "/docs/cloud/overview",
+    "to": "/docs/overview/quickstart#self-host-or-cloud",
+    "status": 308
+  },
+  {
+    "from": "/docs/cloud/get-started",
+    "to": "/docs/overview/quickstart#self-host-or-cloud",
+    "status": 308
+  },
+  {
+    "from": "/docs/cloud/byok",
+    "to": "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
+    "status": 308
+  },
+  {
+    "from": "/docs/cloud/tracing",
+    "to": "/docs/cli/request-receipts#cloud-activity",
+    "status": 308
+  },
+  {
+    "from": "/docs/cloud/managed-models",
+    "to": "/docs/reference#model-discovery",
+    "status": 308
+  },
+  {
+    "from": "/docs/cloud/workspaces",
+    "to": "/docs/reference/management/listNamespaces",
+    "status": 308
+  },
+  {
+    "from": "/docs/cloud/payment",
+    "to": "/docs/overview/quickstart#self-host-or-cloud",
+    "status": 308
+  },
+  {
+    "from": "/docs/reference/cli",
+    "to": "/docs/usage/cli#init-and-config",
+    "status": 308
+  },
+  {
+    "from": "/docs/reference/mcp",
+    "to": "/docs/routing/configuration#agents-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/cli/index",
+    "to": "/docs/usage/cli#init-and-config",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/cli/daemon",
+    "to": "/docs/usage/cli#daemon-lifecycle",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/cli/init",
+    "to": "/docs/usage/cli#init-and-config",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/cli/route",
+    "to": "/docs/usage/cli#routing-introspection",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/cli/providers",
+    "to": "/docs/usage/cli#providers",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/cli/policy",
+    "to": "/docs/usage/cli#policy",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/cli/cloud",
+    "to": "/docs/usage/cli#cloud",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/cli/tools",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/cli/skills",
+    "to": "/docs/usage/cli#skills",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/cli/harnesses",
+    "to": "/docs/usage/cli#coding-agents",
+    "status": 308
+  },
+  {
+    "from": "/docs/usage/cli/misc",
+    "to": "/docs/usage/cli#key-workflow-state-and-update",
+    "status": 308
+  },
+  {
+    "from": "/docs/ai-resources",
+    "to": "/docs/overview/quickstart#onboard-via-the-agent-skill",
+    "status": 308
+  },
+  {
+    "from": "/docs/ai-resources/skills",
+    "to": "/docs/overview/quickstart#onboard-via-the-agent-skill",
+    "status": 308
+  },
+  {
+    "from": "/docs/ai-resources/mcp",
+    "to": "/docs/routing/configuration#agents-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/ai-resources/llms-txt",
+    "to": "/docs/routing/configuration#agents-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/features/observability",
+    "to": "/docs/cli/request-receipts",
+    "status": 308
+  },
+  {
+    "from": "/docs/features/tracing",
+    "to": "/docs/cli/request-receipts#cloud-activity",
+    "status": 308
+  },
+  {
+    "from": "/docs/features/telemetry",
+    "to": "/docs/cli/request-receipts",
+    "status": 308
+  },
+  {
+    "from": "/docs/features/opentelemetry",
+    "to": "/docs/self-hosting#opentelemetry",
+    "status": 308
+  },
+  {
+    "from": "/docs/features/local-models",
+    "to": "/docs/models-routing/local-models",
+    "status": 308
+  },
+  {
+    "from": "/docs/features/toolsets",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/export-telemetry",
+    "to": "/docs/self-hosting#opentelemetry",
+    "status": 308
+  },
+  {
+    "from": "/docs/cloud/managed-tools",
+    "to": "/docs/overview/quickstart#self-host-or-cloud",
+    "status": 308
+  },
+  {
+    "from": "/docs/cloud/managed-agents",
+    "to": "/docs/overview/quickstart#self-host-or-cloud",
+    "status": 308
+  },
+  {
+    "from": "/docs/cookbook/local-models",
+    "to": "/docs/models-routing/local-models",
+    "status": 308
+  },
+  {
+    "from": "/docs/integrations/local-models",
+    "to": "/docs/models-routing/local-models",
+    "status": 308
+  },
+  {
+    "from": "/docs/cookbook",
+    "to": "/docs/integration/coding-agents",
+    "status": 308
+  },
+  {
+    "from": "/docs/integrations/migrate/litellm",
+    "to": "/docs/overview/comparison/litellm#migrate-from-litellm",
+    "status": 307
+  },
+  {
+    "from": "/docs/integrations/migrate/openrouter",
+    "to": "/docs/overview/comparison/openrouter#migrate-from-openrouter",
+    "status": 307
+  },
+  {
+    "from": "/docs/cookbook/migration/litellm",
+    "to": "/docs/overview/comparison/litellm#migrate-from-litellm",
+    "status": 307
+  },
+  {
+    "from": "/docs/cookbook/migration/openrouter",
+    "to": "/docs/overview/comparison/openrouter#migrate-from-openrouter",
+    "status": 307
+  },
+  {
+    "from": "/docs/models-and-routing/presets",
+    "to": "/docs/models-routing/virtual-models#presets",
+    "status": 308
+  },
+  {
+    "from": "/docs/models-and-routing/byok",
+    "to": "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
+    "status": 308
+  },
+  {
+    "from": "/docs/models-and-routing",
+    "to": "/docs/models-routing/virtual-models#resolution-order",
+    "status": 308
+  },
+  {
+    "from": "/docs/gateway-and-routing/model-fallback",
+    "to": "/docs/models-routing/model-fallback#fallback-chains",
+    "status": 308
+  },
+  {
+    "from": "/docs/gateway-and-routing/provider-selection",
+    "to": "/docs/routing/strategies#candidate-eligibility",
+    "status": 308
+  },
+  {
+    "from": "/docs/gateway-and-routing/virtual-model",
+    "to": "/docs/models-routing/virtual-models#define-a-virtual-model",
+    "status": 308
+  },
+  {
+    "from": "/docs/gateway-and-routing/model-variants",
+    "to": "/docs/routing/strategies#variants",
+    "status": 308
+  },
+  {
+    "from": "/docs/gateway-and-routing/bring-your-own-model",
+    "to": "/docs/models-routing/byok-subscriptions#custom-endpoints-and-models",
+    "status": 308
+  },
+  {
+    "from": "/docs/gateway-and-routing/bring-your-own-provider",
+    "to": "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
+    "status": 308
+  },
+  {
+    "from": "/docs/gateway-and-routing/structured-outputs",
+    "to": "/docs/models-routing/virtual-models#protocol-compatibility",
+    "status": 308
+  },
+  {
+    "from": "/docs/gateway-and-routing/guardrails",
+    "to": "/docs/routing/configuration#create-a-configuration",
+    "status": 308
+  },
+  {
+    "from": "/docs/gateway-and-routing/mcp-gateway",
+    "to": "/docs/routing/configuration#agents-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/gateway-and-routing/server-tools",
+    "to": "/docs/routing/configuration#server-tools-config",
+    "status": 308
+  },
+  {
+    "from": "/docs/gateway-and-routing/advisor",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/gateway-and-routing/subagent",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/gateway-and-routing/fusion",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/gateway-and-routing/websearch",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/gateway-and-routing/web-fetch",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/gateway-and-routing/acp-gateway",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/gateway-and-routing",
+    "to": "/docs/models-routing/virtual-models#resolution-order",
+    "status": 308
+  },
+  {
+    "from": "/docs/mcp-and-tool-calling",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/mcp-and-tool-calling/mcp-gateway",
+    "to": "/docs/routing/configuration#agents-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/mcp-and-tool-calling/acp-gateway",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/evals-and-tracing",
+    "to": "/docs/cli/request-receipts",
+    "status": 308
+  },
+  {
+    "from": "/docs/evals-and-tracing/evaluation",
+    "to": "/docs/routing/workload-optimization#evaluations",
+    "status": 308
+  },
+  {
+    "from": "/docs/evals-and-tracing/evaluations",
+    "to": "/docs/routing/workload-optimization#evaluations",
+    "status": 308
+  },
+  {
+    "from": "/docs/evals-and-tracing/evals",
+    "to": "/docs/routing/workload-optimization#evaluations",
+    "status": 308
+  },
+  {
+    "from": "/docs/models-and-routing/acp-gateway",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/models-and-routing/tool-calling",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/agents-and-orchestration",
+    "to": "/docs/integration/coding-agents",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/cloud-api",
+    "to": "/docs/usage/cli#init-and-config",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/build-a-plugin",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/register-as-a-provider",
+    "to": "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
+    "status": 308
+  },
+  {
+    "from": "/docs/gateway-and-routing/tools",
+    "to": "/docs/routing/configuration#agents-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/gateway-and-routing/agents",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/features",
+    "to": "/docs/routing/configuration#create-a-configuration",
+    "status": 308
+  },
+  {
+    "from": "/docs/features/guardrails",
+    "to": "/docs/routing/configuration#create-a-configuration",
+    "status": 308
+  },
+  {
+    "from": "/docs/features/namespaces",
+    "to": "/docs/reference/management/listNamespaces",
+    "status": 308
+  },
+  {
+    "from": "/docs/features/payment",
+    "to": "/docs/overview/quickstart#self-host-or-cloud",
+    "status": 308
+  },
+  {
+    "from": "/docs/features/tools",
+    "to": "/docs/routing/configuration#agents-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/features/server-tools",
+    "to": "/docs/routing/configuration#server-tools-config",
+    "status": 308
+  },
+  {
+    "from": "/docs/features/websearch",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/features/web-fetch",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/features/agents",
+    "to": "/docs/usage/cli#agents-acp-and-mcp",
+    "status": 308
+  },
+  {
+    "from": "/docs/features/subagent",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/features/advisor",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/features/fusion",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/overview/supported-providers",
+    "to": "/docs/reference#model-discovery",
+    "status": 308
+  },
+  {
+    "from": "/docs/gateway-and-routing/models",
+    "to": "/docs/models-routing/virtual-models#model-selector-forms",
+    "status": 308
+  },
+  {
+    "from": "/docs/gateway-and-routing/policy",
+    "to": "/docs/routing/auto-router#initialize-a-policy-binding",
+    "status": 308
+  },
+  {
+    "from": "/docs/integrations/tools",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/integrations/exa",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/integrations/parallel",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/integrations/firecrawl",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/integrations/tavily",
+    "to": "/docs/overview/what-is-bitrouter",
+    "status": 308
+  },
+  {
+    "from": "/docs/gateway-and-routing/presets",
+    "to": "/docs/models-routing/virtual-models#presets",
+    "status": 308
+  },
+  {
+    "from": "/docs/gateway-and-routing/byok",
+    "to": "/docs/models-routing/byok-subscriptions#built-in-providers-with-your-own-key",
+    "status": 308
+  },
+  {
+    "from": "/docs/integrations/openrouter",
+    "to": "/docs/integration/coding-agents#model-sources",
+    "status": 308
+  },
+  {
+    "from": "/docs/guides/self-host",
+    "to": "/docs/self-hosting",
+    "status": 308
+  },
+  {
+    "from": "/docs/self-host",
+    "to": "/docs/self-hosting",
+    "status": 308
+  },
+  {
+    "from": "/docs/integrations/openclaw",
+    "to": "/docs/integration/coding-agents",
+    "status": 308
+  },
+  {
+    "from": "/docs/integrations/hermes",
+    "to": "/docs/integration/coding-agents",
+    "status": 308
+  },
+  {
+    "from": "/docs/integrations/models",
+    "to": "/docs/integration/coding-agents#model-sources",
+    "status": 308
+  },
+  {
+    "from": "/docs/integrations/claude-subscription",
+    "to": "/docs/integration/coding-agents#use-a-claude-subscription",
+    "status": 308
+  },
+  {
+    "from": "/docs/integrations/codex-subscription",
+    "to": "/docs/integration/coding-agents#use-a-codex-subscription",
+    "status": 308
+  },
+  {
+    "from": "/docs/integrations/ollama",
+    "to": "/docs/models-routing/local-models",
+    "status": 308
+  },
+  {
+    "from": "/docs/integrations/vllm",
+    "to": "/docs/models-routing/local-models",
+    "status": 308
+  },
+  {
+    "from": "/docs/integrations/unsloth",
+    "to": "/docs/models-routing/local-models",
+    "status": 308
+  },
+  {
+    "from": "/docs/overview/privacy-policy",
+    "to": "/docs/privacy-policy",
+    "status": 308
+  },
+  {
+    "from": "/docs/overview/terms-of-service",
+    "to": "/docs/terms-of-service",
+    "status": 308
+  }
+]

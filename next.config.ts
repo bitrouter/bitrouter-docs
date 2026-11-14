@@ -1,3 +1,4 @@
+import contentRedirects from "./content-redirects.json";
 import type { NextConfig } from "next";
 import { createMDX } from "fumadocs-mdx/next";
 import { readdirSync } from "node:fs";
@@ -604,13 +605,17 @@ const movedGuideRoutes = new Set([
   "/docs/models-routing/local-inference",
   "/docs/integration/acp-servers"
 ]);
-const docsRedirects = pairs.map(([source, destination]) => ({
+const contentRedirectSources = new Set(contentRedirects.map((item) => item.from));
+const docsRedirects = [
+  ...contentRedirects.map((item) => ({source:item.from,destination:item.to,permanent:item.status === 308})),
+  ...pairs.filter(([source]) => !contentRedirectSources.has(source)).map(([source, destination]) => ({
   source,
   destination,
   ...(source === "/models" || movedGuideRoutes.has(source.replace(/\.md$/, "")) || source.startsWith("/changelog/") || source.startsWith("/docs/changelog/") || destination.startsWith("/docs/overview/comparison")
     ? { statusCode: 301 }
     : { permanent: true }),
-}));
+})),
+];
 
 const nextConfig: NextConfig = {
   skipTrailingSlashRedirect: true,

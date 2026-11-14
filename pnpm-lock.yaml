@@ -162,6 +162,9 @@ importers:
         specifier: ^4.6.7
         version: 4.6.7
     devDependencies:
+      '@fumadocs/mdx-remote':
+        specifier: 1.5.3
+        version: 1.5.3(@types/mdx@2.0.14)(@types/react@19.2.17)(fumadocs-core@16.18.1(@mdx-js/mdx@3.1.1)(@modelcontextprotocol/server@2.4.0)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.17)(lucide-react@0.563.0(react@19.2.3))(next@16.2.6(@opentelemetry/api@1.9.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(zod@4.6.7))(react@19.2.3)
       '@standard-schema/spec':
         specifier: 1.1.0
         version: 1.1.0
@@ -922,6 +925,19 @@ packages:
 
   '@fumadocs/changelog@0.1.0':
     resolution: {integrity: sha512-GtfquCcmJYVJHhCDchsKi2LmwxmtkoSuOVB9KfLLlbTqXZC8Ny1oXAc67KmgGNnz/BPnffV8bLDmWZNFcxo8Og==}
+
+  '@fumadocs/mdx-remote@1.5.3':
+    resolution: {integrity: sha512-5NlqKyQrAthToKT48jKT30m87ak/5k+ERd0PzWjn51utIlBUYoXDy9vhZIeyKDKojniO9qK7RDCVemzonAYJTQ==}
+    peerDependencies:
+      '@types/mdx': '*'
+      '@types/react': '*'
+      fumadocs-core: ^15.0.0 || ^16.0.0
+      react: 18.x.x || 19.x.x
+    peerDependenciesMeta:
+      '@types/mdx':
+        optional: true
+      '@types/react':
+        optional: true
 
   '@fumadocs/tailwind@0.1.5':
     resolution: {integrity: sha512-ohzmuLTfNNRvP6B/Xx31lWJ58xu40NcmI+6mc/jivYeOoofnmdxBKu5gCErTgOE/mUqyVv4GvYeqd9FhoLHphg==}
@@ -6746,6 +6762,20 @@ snapshots:
       - date-fns
 
   '@fumadocs/changelog@0.1.0': {}
+
+  '@fumadocs/mdx-remote@1.5.3(@types/mdx@2.0.14)(@types/react@19.2.17)(fumadocs-core@16.18.1(@mdx-js/mdx@3.1.1)(@modelcontextprotocol/server@2.4.0)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.17)(lucide-react@0.563.0(react@19.2.3))(next@16.2.6(@opentelemetry/api@1.9.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(zod@4.6.7))(react@19.2.3)':
+    dependencies:
+      '@mdx-js/mdx': 3.1.1
+      fumadocs-core: 16.18.1(@mdx-js/mdx@3.1.1)(@modelcontextprotocol/server@2.4.0)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.17)(lucide-react@0.563.0(react@19.2.3))(next@16.2.6(@opentelemetry/api@1.9.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(zod@4.6.7)
+      react: 19.2.3
+      unified: 11.0.5
+      vfile: 6.0.3
+      yaml: 2.9.1
+    optionalDependencies:
+      '@types/mdx': 2.0.14
+      '@types/react': 19.2.17
+    transitivePeerDependencies:
+      - supports-color
 
   '@fumadocs/tailwind@0.1.5(tailwindcss@4.3.1)':
     optionalDependencies:

@@ -24,7 +24,9 @@
     "lint:changelog": "node scripts/check-changelog.mjs",
     "generate:config": "node scripts/generate-config.mjs",
     "snapshot:config": "node scripts/snapshot-config.mjs",
-    "lint:config": "node scripts/generate-config.mjs --check"
+    "lint:config": "node scripts/generate-config.mjs --check",
+    "content:pack": "node tools/content/cli.mjs pack",
+    "test:content": "node --test tools/content/*.test.mjs"
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^2.0.35",
@@ -79,6 +81,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@fumadocs/mdx-remote": "1.5.3",
     "@standard-schema/spec": "1.1.0",
     "@tailwindcss/postcss": "^4",
     "@types/hast": "^3.0.5",

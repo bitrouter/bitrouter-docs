@@ -1,0 +1,69 @@
+name: Publish content snapshot
+on:
+  workflow_dispatch:
+    inputs:
+      channel:
+        type: choice
+        options: [staging, production]
+        default: staging
+        required: true
+      source_ref:
+        description: Reviewed immutable content commit (must be on main)
+        required: true
+      expected_head:
+        description: Expected content channel commit; leave empty only for first staging publication
+        required: false
+      renderer_origin:
+        description: Unified Web origin to check before promotion
+        required: true
+        default: https://testing.cloud.bitrouter.ai
+permissions:
+  contents: write
+concurrency:
+  group: content-${{ inputs.channel }}
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.channel == 'production' && 'production' || 'staging' }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.11.0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test:content
+      - name: Check reviewed source and pack committed data
+        env:
+          CONTENT_SOURCE_REF: ${{ inputs.source_ref }}
+        run: |
+          set -euo pipefail
+          source_sha=$(git rev-parse "${CONTENT_SOURCE_REF}^{commit}")
+          git merge-base --is-ancestor "$source_sha" origin/main
+          pnpm content:pack --ref "$source_sha"
+      - name: Verify renderer and promote the complete snapshot
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CONTENT_CHANNEL: ${{ inputs.channel }}
+          CONTENT_EXPECTED_HEAD: ${{ inputs.expected_head }}
+          CONTENT_RENDERER_ORIGIN: ${{ inputs.renderer_origin }}
+          CONTENT_PRODUCTION_APPROVED: ${{ inputs.channel == 'production' && vars.CONTENT_PRODUCTION_PUBLICATION_ENABLED == '1' && '1' || '0' }}
+        run: |
+          set -euo pipefail
+          args=(--channel "content/$CONTENT_CHANNEL" --renderer-origin "$CONTENT_RENDERER_ORIGIN")
+          if [ -n "$CONTENT_EXPECTED_HEAD" ]; then
+            args+=(--expected-head "$CONTENT_EXPECTED_HEAD")
+          elif [ "$CONTENT_CHANNEL" = staging ]; then
+            args+=(--initialize)
+          else
+            echo 'Initialize production only after reviewing the staging publication.' >&2
+            exit 1
+          fi
+          node tools/content/cli.mjs publish "${args[@]}"
